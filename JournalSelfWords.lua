@@ -1,0 +1,2434 @@
+local _, A = ...
+-- Your own journal's storyteller: the words. First person, past tense, plain
+-- like the old quest texts; places and foes carry the journal's markup
+-- ({p:...}, quests {q:...}, people {n:...}). Tokens in braces are filled by
+-- JournalSelfTale.lua. No colons, no words about the telling itself.
+local W = {}
+A.SelfWords = W
+W.originBridge = {
+    "Later, {we} {were} in {zoneD}.",
+    "Later came {zoneD}. That was where this part of the journey began.",
+    "{zoneD} lay further along the way. {We} {were} there now.",
+}
+W.townBackdrop = {"{Town} was {lore}."}
+W.questReturn = {
+    "{We} returned to {thread}.",
+    "{Our} work on {thread} continued.",
+    "There was more to {thread}.",
+}
+W.questThread = {
+    "{We} completed {quest}.",
+    "{We} finished {quest}.",
+}
+W.questOthers = {
+    "{We} also completed {quests}.",
+    "Other work included {quests}.",
+}
+
+-- These encounters are observed by the recorder. The lore explains who was
+-- there; it never invents a conversation, assignment, or reaction.
+W.notableSeen = {"I saw {name} in {place}.", "In {place}, I saw {name}.", "{name} was there in {place}."}
+W.notableSpoke = {"I spoke with {name} in {place}.", "In {place}, I spoke with {name}."}
+W.notableNPCs = {
+    ["Lady Sylvanas Windrunner"] = {"The Dark Lady ruled the Forsaken, free of the Lich King's will.", "Once the ranger-general of Quel'Thalas, she now led the Forsaken from beneath Lordaeron."},
+    ["Thrall"] = {"The warchief led the Horde from Orgrimmar.", "The son of Durotan was both shaman and warchief of the Horde."},
+    ["Cairne Bloodhoof"] = {"The high chieftain led the tauren from Thunder Bluff.", "The Bloodhoof chieftain had brought his people to a home on the heights of Mulgore."},
+    ["Vol'jin"] = {"The Darkspear leader stood with Thrall's Horde.", "Sen'jin's son led the Darkspear trolls."},
+    ["King Magni Bronzebeard"] = {"The eldest Bronzebeard brother ruled Ironforge.", "Magni held the throne beneath the mountain, king of the dwarves of Ironforge."},
+    ["High Tinker Mekkatorque"] = {"The high tinker led the gnomes in exile after the fall of Gnomeregan."},
+    ["Tyrande Whisperwind"] = {"The high priestess of Elune led the night elves from Darnassus."},
+    ["Arch Druid Fandral Staghelm"] = {"The archdruid had led the planting of Teldrassil, the great tree that held Darnassus."},
+    ["Lady Jaina Proudmoore"] = {"The ruler of Theramore had led her people across the sea to Kalimdor."},
+    ["Highlord Bolvar Fordragon"] = {"The highlord guarded Stormwind and served as its regent in the king's absence."},
+    ["King Anduin Wrynn"] = {"The young king held Stormwind's throne while his father was missing."},
+}
+
+-- Opening a chapter --------------------------------------------------------------
+-- {When}: "The next day", "Three days later", "On Tuesday"; {part}: evening...
+-- {zoneE}: the zone, sometimes described; {zoneD}: its plain name.
+-- The first stretch is above your level.
+W.openPeril = {
+    "{When}, I was in {zoneD}, dangerous country for someone of my experience.",
+    "{When}, my journey took me into {zoneD}, where the dangers outmatched me.",
+}
+-- A mine or cave, and what nearly killed or killed you there ({cave}, {foe}).
+W.caveClose = {
+    "I went down into {cave}, where {foe} nearly got me.",
+    "In {cave}, {foe} nearly killed me.",
+}
+W.caveDeath = {
+    "I went down into {cave}, and {foe} killed me there.",
+    "{Foe} killed me deep in {cave}.",
+}
+W.openFirst = {
+    "It began in {zoneE}.",
+    "I began in {zoneE}.",
+    "My first stop was {zoneE}.",
+    "I started out in {zoneE}.",
+    "That first day, I was in {zoneE}.",
+    "I set out from {zoneE}.", -- (no first)
+}
+-- The day begins in a dungeon or raid ({dungeonD}; its story follows).
+W.openDungeon = {
+    "{When}, I made for {dungeonD}.",
+    "{When}, I set out for {dungeonD}.",
+    "{When}, the day's work lay in {dungeonD}.",
+}
+W.openDungeonFirst = {"It began with {dungeonD}.", "My first stop was {dungeonD}."}
+-- A life's first page, by where your people begin (a journal from level 1).
+W.origin = {
+    Scourge = {
+        "My second life began at {p:Deathknell}, among the Forsaken and the graves of Tirisfal.",
+        "My second life began at {p:Deathknell}, where the crypts stood beneath the grey sky of Tirisfal.",
+        "I began among the Forsaken at {p:Deathknell}, where undertakers tended the graves.",
+        "My second life began in the grey light of {p:Deathknell}, in a land of graves and ruined homes.",
+        "My second life began at {p:Deathknell}, among the graves, with the Forsaken waiting to put me to work.",
+    },
+    Orc = {
+        "My road began in the {p:Valley of Trials}, under the red rocks of Durotar, where the young of the Horde prove themselves.",
+        "I began in the {p:Valley of Trials}, where the Horde sends its young to be tested.",
+        "I began at the Den in the {p:Valley of Trials}, where Gornek set the young orcs their first tasks.",
+        "My road began in the {p:Valley of Trials}, where boars and scorpids roamed beneath the red cliffs.",
+    },
+    Troll = {
+        "My road began in the {p:Valley of Trials}, where the Darkspear and the orcs train their young together.",
+        -- (fixed: the Echo Isles cannot be seen from the valley)
+        "I began in the {p:Valley of Trials}, with the Echo Isles of my people off the coast, not far to the east.",
+        "The Darkspear had come to Durotar with Thrall, so I began where the orcs begin, in the {p:Valley of Trials}.",
+        "I began in the {p:Valley of Trials}, a Darkspear among orcs, with boars and scorpids in the surrounding scrub.",
+    },
+    Tauren = {
+        "I began at {p:Camp Narache}, high on the plains of Mulgore, where the young tauren go on their first hunt.",
+        "My road began at {p:Camp Narache}, under a wide sky, with the plains of Mulgore below me.",
+        "I began at {p:Camp Narache}, with plainstriders roaming the grass below.",
+        "I began at {p:Camp Narache}, where Chief Hawkwind sets the young their first tasks.",
+    },
+    Human = {
+        "I began at {p:Northshire Abbey}, where Stormwind trains its recruits.",
+        "My road began at {p:Northshire Abbey}, in the green valley north of Goldshire.",
+        "I began at {p:Northshire Abbey}, with kobold camps in the woods to the north.",
+        "I began at {p:Northshire Abbey}, with the vineyards below and the wolves in the woods.",
+    },
+    Dwarf = {
+        "I began in {p:Coldridge Valley}, in the snows below Ironforge, with the troggs at the door.",
+        "My road began at {p:Anvilmar}, in the cold of {p:Coldridge Valley}.",
+        "I began at {p:Anvilmar}, where the troggs had come up out of the ground and the Frostmane trolls held the hills.",
+        "I began in {p:Coldridge Valley}, in the snow, a long walk through the tunnel from Kharanos.",
+    },
+    Gnome = {
+        "I began in {p:Coldridge Valley}, far from lost Gnomeregan, among the dwarves who took my people in.",
+        "My road began at {p:Anvilmar}, in the snow, with Gnomeregan lost behind me.",
+        "My people had lost Gnomeregan, and I began where the dwarves took us in, in {p:Coldridge Valley}.",
+        "I began at {p:Anvilmar}, a gnome in a dwarf's valley, with troggs in the hills and snow over everything.",
+    },
+    NightElf = {
+        -- (fixed: "woke" belongs to the Forsaken)
+        "I began in {p:Shadowglen}, at the foot of Aldrassil, high on the World Tree.",
+        "My road began in {p:Shadowglen}, among the roots of Teldrassil.",
+        "I began in {p:Shadowglen}, with young nightsabers in the forest and grells beyond the grove.",
+    },
+}
+-- The origin town is named in the line above: its town line is left out.
+W.originTowns = {Scourge = "Deathknell", Human = "Northshire Abbey"}
+W.open = {
+    "{When}, I was in {zoneE}.",
+    "{When}, I set out in {zoneE}.",
+    "{When}, I went out into {zoneE}.",
+    "{When}, I headed into {zoneE}.",
+    "{When}, I made my way to {zoneE}.",
+    "{When}, I went to {zoneE}.",
+    "I spent {when} in {zoneD}.",
+}
+W.openStill = {
+    "{When}, I was still in {zoneD}.",
+    "{When}, I stayed on in {zoneD}.",
+    "{When}, I picked up where I had left off, in {zoneD}.",
+    "{When}, I was back out in {zoneD}.",
+    "{When}, I spent more time in {zoneD}.",
+    "I spent {when} in {zoneD} as well.",
+}
+-- The first stretch of the day is a first visit.
+W.openNew = {
+    "{When}, for the first time, I saw {zoneLore}.",
+    "{When}, I came to {zoneD} for the first time.",
+    "{When}, I went somewhere new, {zoneLore}.",
+}
+W.openBack = {
+    "{When}, I was back in {zoneD}.",
+    "{When}, I returned to {zoneD}.",
+}
+-- Someone of your list, not seen for a long while ({names}, {ago}).
+W.reunion = {
+    "{When}, {names} and I were together again in {zoneD}.",
+    "{When}, in {zoneD}, I travelled with {names} again.",
+}
+W.reunionJoined = {
+    "In {zoneD}, {names} joined me again.",
+    "In {zoneD}, I travelled with {names} again.",
+}
+-- With someone of your list from the start ({names}).
+W.openWith = {
+    "{When}, {names} and I set out in {zoneE}.",
+    "{When}, I was in {zoneE} with {names}.",
+    "{When}, I set out with {names} in {zoneE}.",
+}
+
+-- Company -------------------------------------------------------------------------
+W.joined = {
+    "In {zoneD}, {names} joined me.",
+    "{names} joined me in {zoneD}.",
+    "{names} caught up with me in {zoneD}.",
+}
+-- Joining you on the way into a dungeon, in the same sentence ({names}).
+W.dungeonWith = {
+    fair = {"{names} joined me, and we went into {dungeonE}.", "With {names} beside me, I went into {dungeonE}."},
+    daring = {"{names} joined me, and we tried {dungeonE}, a dangerous place for us.",
+        "With {names} beside me, I went into {dungeonE}, where the foes outmatched us."},
+    reckless = {"{names} joined me, and we went into {dungeonE}, far beyond our strength.",
+        "With {names} beside me, I went into {dungeonE}, though its dangers far exceeded our experience."},
+}
+-- Before going into a dungeon together (the dungeon is named next).
+W.joinedPlain = {
+    "{names} joined me.",
+    "{names} came along.",
+    "{names} caught up with me.",
+}
+-- The zone was just named.
+W.joinedThere = {
+    "There, {names} joined me.",
+    "{names} joined me there.",
+    "{names} caught up with me there.",
+}
+W.withMost = {
+    "{names} was with me.",
+    "I travelled with {names}.",
+    "{names} kept me company.",
+}
+W.withMostPlural = {
+    "{names} were with me.",
+    "I travelled with {names}.",
+}
+
+-- Moving on -----------------------------------------------------------------------
+W.move = {
+    "From there I went on to {zoneD}.",
+    "Then I made my way to {zoneD}.",
+    "Later I went on to {zoneD}.",
+    "After that, I went on to {zoneD}.",
+    "I moved on to {zoneD}.",
+    "I left for {zoneD} after that.",
+    "In time I went on to {zoneD}.",
+}
+-- Now and then (once in several chapters): the road.
+W.moveRoad = {
+    "After that, I took the road to {zoneD}.",
+    "The road took me on to {zoneD}.",
+    "From there the road led on to {zoneD}.",
+    "I set out on the road to {zoneD}.",
+}
+W.moveShort = {
+    "I passed through {zoneD}.",
+    "I crossed {zoneD}.",
+    "I went on through {zoneD} without stopping.",
+}
+W.firstZone = {
+    "I had never been to {zoneD} before.",
+    "It was my first time in {zoneD}.",
+    "I saw {zoneD} for the first time.",
+    "From there I went on to {zoneD}, where I had never been.",
+    "Then I came to {zoneD}, which I had never seen before.",
+    "{zoneD} was new to me.",
+}
+W.firstZoneLore = {
+    "It was my first time in {zoneLore}.",
+    "I had never seen {zoneLore} before.",
+}
+W.perilous = {
+    "{zoneD} was dangerous country for someone of my experience.",
+    "The dangers of {zoneD} outmatched me then.",
+    "I was still inexperienced for a place like {zoneD}.",
+}
+-- The same, when the zone was named just before.
+W.perilousHere = {
+    "It was dangerous country for someone of my experience.",
+    "The dangers there outmatched me then.",
+    "I was still inexperienced for such a place.",
+}
+
+-- The work of the day ------------------------------------------------------------
+-- {count}: "eleven"; {Count}: "Eleven"; {quest}: one quest by name.
+W.questsMany = {
+    "{We} finished {count} quests there.",
+    "{Count} quests kept {us} busy.",
+    "{We} turned in {count} quests.",
+    "{We} worked through {count} quests, one after another.",
+    "{We} had {count} quests finished by then.",
+    "The day's finished work included {count} quests.",
+}
+W.questsMore = {
+    "{We} finished {count} quests there, {quest} among them.",
+    "{We} turned in {count} quests, {quest} among them.",
+    "{We} finished {count} quests, among them {quest}.",
+    "{quest} was one of {count} quests {we} turned in.",
+    "{We} turned in {count} quests, and {quest} was one of them.",
+    "{quest} was among the {count} quests {we} finished.",
+}
+-- A formative stretch of work: the recorded sequence supplies the names;
+-- only the remaining errands are compressed into a count.
+W.questsChapter = {
+    "{We} completed {quests}, along with {remaining}.",
+    "The work included {quests}; {we} finished {remaining} as well.",
+    "{We} finished {quests}, and {remaining} besides.",
+}
+-- Both endpoints are recorded adjacent stretches, so the connection does not
+-- invent a road, mode of travel, or reason for leaving.
+W.moveBetween = {
+    "From {from}, {we} went on to {zoneD}.",
+    "After {from}, {zoneD} was the next stop.",
+    "{We} left {from} for {zoneD}.",
+    "The next part of the day took {us} from {from} to {zoneD}.",
+}
+W.questsFew = {
+    "{We} finished {quests}.",
+    "{We} turned in {quests}.",
+    "{We} saw to {quests}.",
+    "{We} took care of {quests}.",
+    "{We} turned in {quests} while {we} {were} there.",
+    "{We} finished {quests} there.",
+    "The work there came to {quests}, and {we} finished all of it.",
+    "{quests} were among the work {we} finished.",
+}
+W.questOne = {
+    "{We} finished {quest}.",
+    "{We} turned in {quest}.",
+    "{We} saw {quest} through.",
+    "{We} took care of {quest} while {we} {were} there.",
+    "{We} finished {quest} there.",
+    "{quest} was done by then.",
+}
+W.idle = {
+    "I spent {span} there.",
+    "{Span} went by there.",
+    "I stayed {span}.",
+}
+
+-- Honest work: mining, herbs, skinning, crafting --------------------------------
+W.honestDay = {
+    "Most of the day went to honest work.",
+    "It was a day of honest work.",
+    "I spent the day at my trades.",
+}
+W.gatherLead = {
+    "I {work}.",
+    "There, I {work}.",
+}
+-- Herbs, ores and hides by name ({names}: "Kingsblood and Liferoot"; {work}).
+W.gatherNamed = {
+    "I {work}, most of them {names}.",
+    "I {work}, {names} for the most part.",
+}
+-- What was gathered, by name, after the line that says how much ({names}).
+W.gatherNames = {"Most of them were {names}.", "They were {names}, mostly.", "Most were {names}."}
+-- The end of a day: the hearthstone home ({place}: where it is bound).
+W.hearthHome = {
+    "At the end of it, I used my hearthstone and went back to {place}.",
+    "When it was done, my hearthstone took me back to {place}.",
+    "I used my hearthstone, and was back in {place} before the day was out.",
+    "When the day was done, my hearthstone took me home to {place}.",
+    "My hearthstone brought me back to {place} at the end of it.",
+}
+-- Moving on by hearthstone ({zoneD}: where it took you).
+W.hearthMove = {
+    "Then I used my hearthstone, and went back to {zoneD}.",
+    "At the end of it, my hearthstone took me back to {zoneD}.",
+    "My hearthstone took me back to {zoneD} after that.",
+    "I used my hearthstone, and was in {zoneD} a moment later.",
+    "From there my hearthstone brought me to {zoneD}.",
+}
+-- The fish, by name ({names}).
+W.fishNames = {
+    "Most of them were {names}.",
+    "There were {names} among them.",
+    "They were {names}, mostly.",
+}
+-- Fishing on a quiet day ({work}: "caught twelve fish").
+W.quietFish = {
+    "I stood by the water with a line out, and {work}.",
+    "I spent a long while fishing, and {work}.",
+    "I did nothing but fish for a while, and {work}.",
+    "I found a place by the water, put a line in, and {work}.",
+}
+-- A day with no quests and no fights: the pace of it.
+W.quietDay = {
+    "It was a quiet stretch of the journey.",
+    "The day passed quietly.",
+    "For a time, the pace was quieter.",
+}
+-- Walking off the road with the gathering ({work}, {zoneShort}).
+W.quietWander = {
+    "Along the way, I {work}.",
+    "I {work} while I was there.",
+    "Part of my time went to gathering; I {work}.",
+}
+-- After the sunset, to close a quiet day.
+W.quietClose = {
+    "Nothing tried to kill me all day, and I stayed until the stars came out.",
+    "I stayed until the light was gone, and for a while after.",
+    "It was dark before I moved on.",
+    "I did not hurry away.",
+    "The first stars were out by the time I left.",
+}
+-- A sunset, by where it was watched (a line to follow the sunset).
+W.sunsetAfter = {
+    ["The Savage Coast"] = {"Behind me, the jungle went quiet, one bird at a time."},
+    ["Booty Bay"] = {"The lamps came on in {p:Booty Bay}, one by one, behind me."},
+    ["Jaguero Isle"] = {"The island went dark around me, and the sea stayed red a while longer."},
+    ["Echo Isles"] = {"Across the water, the fires of the Echo Isles came on."},
+    ["Sen'jin Village"] = {"The fires of {p:Sen'jin Village} came on behind me."},
+    ["Ratchet"] = {"The goblins of {p:Ratchet} went on shouting on the docks, and the sea went dark."},
+    plain = {"The sea went red, then grey, then dark.", "The light went out of the sky slowly, and I did not hurry it."},
+}
+W.craftMade = {
+    "I worked at my {trade} and made {count} things, {made} among them.",
+    "I sat down to my {trade} and made {count} things, among them {made}.",
+}
+W.craftOne = {
+    "I made {made} at my {trade}.",
+    "At my {trade}, I made {made}.",
+}
+W.craftPlain = {
+    "I worked at my {trade} and made {count} things.",
+    "I spent a while at my {trade}, and made {count} things.",
+}
+
+-- Underground ---------------------------------------------------------------------
+-- {cave}: the mine or cave; {kind}: "mine" or "cave".
+W.cave = {
+    "I went down into {cave}.",
+    "I made my way into {cave}.",
+    "I went into {cave}.",
+    "I went underground, into {cave}.",
+    "I found my way into {cave}.",
+    "I followed the tunnels into {cave}.",
+}
+W.caveDark = {
+    "I went down into {cave} and spent a while in the dark.",
+    "I spent a while underground, in {cave}.",
+}
+
+-- Dungeons ------------------------------------------------------------------------
+-- {dungeonE}: named, sometimes described; {we}: "I" or "we".
+W.dungeon = {
+    fair = {
+        "{We} went into {dungeonE}.",
+        "{We} made for {dungeonE}.",
+        "Then {we} went down into {dungeonE}.",
+    },
+    daring = {
+        "{dungeonE} held foes stronger than {us}, and {we} went in anyway.",
+        "{We} tried {dungeonE}, a dangerous place for {us}.",
+    },
+    reckless = {
+        "{dungeonE} was far beyond {our} strength, and {we} went in all the same.",
+        "{We} went into {dungeonE}, where the dangers far exceeded {our} experience.",
+    },
+    easy = {
+        "{We} went back into {dungeonE}, its dangers well within {our} strength now.",
+        "{dungeonE} held little danger for {us} any more.",
+    },
+}
+W.dungeonFled = {
+    "{We} went into {dungeonE}, beyond {our} strength, and {were} back outside soon after.",
+    "The visit to {dungeonD} was brief. Its dangers were beyond {us} then.",
+    "{We} went into {dungeonE} and came back out shortly afterward.",
+}
+-- Going back ({We}, {dungeonE}).
+W.dungeonAgain = {
+    "{We} went back into {dungeonE}.",
+    "It was another visit to {dungeonE}.",
+}
+W.dungeonRegular = {
+    "{dungeonE} again, after the earlier visits.",
+    "{We} went down into {dungeonE} once more, as {we} had before.",
+}
+-- The very first dungeon of your life, after it.
+W.firstDungeonEnd = {
+    "It was the first time I had gone into such a place.",
+    "I had never been inside a dungeon before.",
+    "It was my first time in such a place, and I came out again.",
+}
+-- Your part in it, once per visit.
+W.role = {
+    tank = {"I went in first and took the blows, so the others did not have to.", "I stood in front, where the blows fell."},
+    healer = {"I stayed at the back and kept the others on their feet.", "My place was behind the others, keeping them alive."},
+    damage = {"My part was to strike, and I struck.", "I left the healing to others and fought."},
+}
+-- Earned, now and then ({boss}, {weapon}: blade, spells, arrows...).
+W.boast = {
+    damage = {"Most of the blows that brought {boss} down were mine.", "{boss} fell mostly to my {weapon}.", "My {weapon} did most of the work on {boss}."},
+    healer = {"Nobody fell while I watched over them.", "Not one of us died while I kept watch."},
+    tank = {"{boss} never got past me.", "{boss} spent the whole fight on me, and never reached the others."},
+}
+W.killOne = {"{We} killed {boss}.", "{boss} fell.", "{We} brought down {boss}."}
+W.killMany = {"{We} killed {bosses}.", "Inside, {we} brought down {bosses}.", "{bosses} fell, one after the other."}
+W.wipe = {"{boss} was too much for {us}.", "{boss} beat {us}.", "{We} lost the fight against {boss}."}
+
+-- Danger ---------------------------------------------------------------------------
+-- {foe}: "a Kobold Tunneler" or a name; {Foe}: capitalized.
+W.death = {
+    foe = {
+        "{Foe} killed me.",
+        "I fell to {foe}.",
+        "{Foe} was the end of me.",
+        "{Foe} got the better of me.",
+        "I died fighting {foe}.",
+        "It was {foe} that killed me.",
+    },
+    FALLING = {
+        "I fell to my death.",
+        "A fall killed me.",
+        "I fell, and it was a long way down.",
+        "I misjudged a drop and died of it.",
+        "I took a fall I did not survive.",
+    },
+    DROWNING = {
+        "I drowned.",
+        "The water took me.",
+        "I stayed under too long, and drowned.",
+        "I ran out of breath under the water.",
+    },
+    LAVA = {"I died in the lava.", "The lava took me.", "The lava killed me. It was as hot as it looked."},
+    FIRE = {"I burned to death.", "The fire killed me.", "I stayed in the fire too long, and it killed me."},
+    FATIGUE = {"I swam too far out and never made it back.", "I swam out further than I could swim back, and died in the water."},
+    SLIME = {"The slime killed me.", "I died in the slime. There are better ways to go."},
+    plain = {"I died.", "I did not survive it.", "I was killed."},
+}
+W.deathIn = {"{Foe} killed me in {sub}.", "I died in {sub}, at the hands of {foe}."}
+W.deaths = {"I died {count} times.", "I died {count} times before it was done."}
+-- The same bad end twice in one day ({count}: "twice", "three times").
+W.deathsSame = {
+    FALLING = {
+        "I fell to my death {count}, and the second time I should have known better.",
+        "{Count}, I misjudged a drop and paid for it with my life.",
+        "I fell to my death {count} before the day was out.",
+    },
+    DROWNING = {
+        "I drowned {count} before the day was out.",
+        "{Count}, I stayed under too long and drowned.",
+    },
+}
+-- The world itself was the danger ({funny}: said after the misadventures).
+W.misadventure = {
+    "Nothing with a sword had anything to do with it.",
+    "It was not my most graceful day.",
+    "The land did more harm to me that day than any enemy.",
+    "{zoneD} did not need monsters to kill me.",
+    "None of it was an enemy's doing.",
+}
+-- The first death of your life (a journal from before level 10).
+W.firstDeath = {
+    "It was the first time I died. I walked back from the graveyard as a spirit, and found my body where it fell.",
+    "It was my first death. The world went grey, and I walked back through it to find my body.",
+    "It was the first time I died, and the first time I saw the grey world that waits after it.",
+    "I had not died before that day. I walked back as a spirit, through a world gone grey, and found my body.",
+}
+W.firstDeathRez = {
+    "It was the first time I died.",
+    "It was my first death, and not my last.",
+    "It was the first time I died, and I did not have to walk back.",
+    "I had never died before.",
+}
+W.firstDeathScourge = {
+    "It was my first death since I rose, and dying had not changed much.",
+    "I had died once before, long ago. This time I walked back from the graveyard.",
+    "It was my second death, if the first one counts.",
+    "Death was nothing new to me. I walked back from the graveyard and found my body where it fell.",
+    "I had been dead before, in Lordaeron. This time it only lasted as long as the walk back.",
+}
+-- A world boss you died to, and saw fall ({what}).
+W.worldbossDied = {
+    "{what} killed me before the fight was over, but I was there when the {kind} fell.",
+    "{what} fell. I was lying dead by then, but I was there to see it.",
+    "{what} killed me, and fell soon after to the others.",
+}
+W.rez = {"{by} brought me back.", "{by} raised me.", "{by} brought me back from death."}
+W.close = {
+    foe = {
+        "{Foe} nearly got me.",
+        "{Foe} nearly killed me.",
+        "I barely got away from {foe}.",
+        "{Foe} came close to killing me.",
+        "I got away from {foe} with very little life left.",
+        "{Foe} had me near death before it was over.",
+    },
+    FALLING = {
+        "I almost fell to my death.",
+        "A fall nearly killed me.",
+        "I fell a long way and only just lived.",
+        "I landed badly, and very nearly did not get up.",
+    },
+    DROWNING = {
+        "I nearly drowned.",
+        "I came up for air just in time.",
+        "I stayed under too long and only just made it up.",
+        "The water very nearly had me.",
+    },
+    LAVA = {"I got out of the lava just in time.", "The lava very nearly killed me."},
+    FATIGUE = {"I swam out too far and only just made it back.", "I swam until I was nearly spent, and only just reached the shore."},
+    plain = {
+        "I nearly died.",
+        "I came close to dying.",
+        "I was very nearly killed.",
+        "I came within a breath of dying.",
+    },
+}
+W.closeIn = {"In {sub}, {foe} nearly got me.", "{Foe} nearly killed me in {sub}."}
+
+-- Firsts -----------------------------------------------------------------------------
+W.tram = {
+    "I rode the {p:Deeprun Tram} for the first time.",
+    "I rode the {p:Deeprun Tram} under the mountain, a first for me.",
+    "The {p:Deeprun Tram} carried me under the earth, which was new to me.",
+    "For the first time, I took the {p:Deeprun Tram} under the mountain.",
+    "I took the {p:Deeprun Tram} for the first time, deep under the earth.",
+}
+W.flight = {
+    "I took my first flight.",
+    "I took a flight, my first.",
+    "For the first time, I flew.",
+    "I flew for the first time, over the country I had walked.",
+}
+
+-- Voyages: crossing to another continent ({to}: Kalimdor, the Eastern Kingdoms...).
+W.voyage = {
+    zeppelin = {"I took the zeppelin across the sea to {to}.", "The zeppelin carried me over the sea to {to}.", "I rode a zeppelin to {to}."},
+    boat = {"I took the boat across the sea to {to}.", "I sailed to {to}.", "A ship carried me across the sea to {to}."},
+    portal = {"A portal took me to {to}.", "I stepped through a portal to {to}."},
+    hearth = {"My hearthstone took me back to {to}.", "I used my hearthstone, and was back in {to}."},
+}
+-- A day that begins with the crossing ({When}).
+W.voyageOpen = {
+    zeppelin = {"{When}, the zeppelin carried me over the sea to {to}.", "{When}, I rode the zeppelin across the sea to {to}."},
+    boat = {"{When}, I took the boat across the sea to {to}.", "{When}, a ship carried me over the sea to {to}."},
+    portal = {"{When}, a portal took me to {to}."},
+    hearth = {"{When}, my hearthstone took me back to {to}."},
+}
+-- The very first time: a zeppelin, a sea crossing, a continent.
+W.voyageFirst = {
+    zeppelin = {
+        "It was my first time on a zeppelin.",
+        "I had never ridden a zeppelin before.",
+        "The zeppelin was new to me, and so was the sea below it.",
+        "It was my first time aboard a goblin zeppelin.",
+        "The zeppelin was goblin-made, and it got me there all the same.",
+    },
+    boat = {
+        "It was my first time on a ship.",
+        "I had never been aboard a ship before.",
+        "The ship was new to me, and so was the open sea around it.",
+        "It was my first voyage by ship.",
+        "I stood on the deck of a ship for the first time.",
+    },
+}
+W.continentFirst = {
+    "I set foot in {to} for the first time.",
+    "It was my first time in {to}.",
+    "All of {to} was new to me.",
+    "I had not set foot in {to} before.",
+}
+
+-- Milestones of a life ({what}: a place, a raid, a boss, an item or a set).
+W.milestone2 = {
+    landmark = {
+        "For the first time, I came to {what}.",
+        "I stood at {what} for the first time.",
+        "I reached {what} for the first time.",
+        "I saw {what} for the first time, and stopped to look.",
+    },
+    -- ENGINE: when the day OPENS on this raid, skip openDungeonFirst and let this line open
+    -- (round 6 named Molten Core three times in three sentences).
+    raid = {
+        "For the first time, I went into {what} with a great company of adventurers.",
+        "I joined my first raid, and we went into {what}.",
+        "{what} was my first raid, and there were many of us.",
+        "My first raid took me into {what}, one of a whole company.",
+    },
+    worldboss = {
+        "I was one of the many who brought down {what}.",
+        "{what} fell, and I was there to see it.",
+        "{what} fell to a crowd of us, and I was in the crowd.",
+        "I was there when {what} came down, one of many.",
+    },
+    -- An honorable kill means you fought and one of them died, not that you won alone.
+    pvp = {
+        "In {what}, I fought the other side for the first time, and one of them fell.",
+        "My first victory against the other side came in {what}.",
+        "In {what}, one of the other side fell in a fight I was part of, the first time that had happened.",
+    },
+    epic = {
+        "{what} was mine, the finest thing I had ever carried.",
+        "I took the {what} from the spoils, the best I had ever owned.",
+        "{what} came into my hands, finer than anything I had carried before.",
+        "I had the {what} now, and nothing else I owned came close to it.",
+    },
+    legendary = {
+        "{what} was mine. There are few like it in the world.",
+        "{what} was mine, one of a handful in all the world.",
+        "I held {what} in my own hands.",
+    },
+    -- DELETE "After all of it, {what} was mine." It read as raid loot when Benediction is a quest item.
+    famous = {
+        "{what} was mine at last.",
+        "I had {what} at last.",
+        "{what} was in my hands at last.",
+    },
+    tier = {
+        "I put on my first piece of {what}.",
+        "The first piece of {what} was mine.",
+        "I had the first piece of {what}.",
+        "I wore my first piece of {what}.",
+    },
+    setfull = {
+        "The last piece of {what} was mine, and I wore all of it.",
+        "For the first time, I wore the whole of {what}.",
+        "With the last piece, I wore all of {what} at once.",
+    },
+    mount = {
+        "For the first time, I rode my own mount.",
+        "I had a mount of my own at last.",
+        "I rode my own mount for the first time, and the country went by faster.",
+    },
+    epicmount = {
+        "My new mount was faster than anything I had ever ridden.",
+        "I rode my new mount for the first time, and it left my old one behind.",
+        "I rode out on my new mount, faster than any I had owned.",
+    },
+    sunset = {
+        "I watched the sun go down over the sea at {what}.",
+        "At {what}, I stopped to watch the sun go down.",
+        "At {what}, I sat down on the sand and watched the sun go into the sea.",
+        "I was at {what} when the sun went down, and I stayed to watch it.",
+        "The sun went down over the water at {what}, and I watched it go.",
+    },
+}
+-- Blackrock Mountain the first time, told with what it is.
+W.landmarkLore = {
+    ["Blackrock Mountain"] = {"For the first time, I came to {p:Blackrock Mountain}, where the Dark Irons and the black dragons make their home."},
+    ["The Dark Portal"] = {"I stood before the {p:Dark Portal} for the first time.",
+        "For the first time, I stood before the {p:Dark Portal}, where the orcs first came into this world."},
+    ["Darkmoon Faire"] = {"For the first time, I walked into the {p:Darkmoon Faire}, all tents and lights and strange games.",
+        "The {p:Darkmoon Faire} had come, and I went in for the first time, among the tents and the music."},
+    ["Gurubashi Arena"] = {"I stood in the {p:Gurubashi Arena} for the first time, where the old trolls once made men fight.",
+        "For the first time, I came to the {p:Gurubashi Arena}, and looked down into its pit."},
+    ["The Great Lift"] = {"For the first time, I rode the {p:Great Lift} down from the Barrens into Thousand Needles.",
+        "The {p:Great Lift} carried me down the cliff for the first time, and Thousand Needles opened below me."},
+    ["Mirage Raceway"] = {"I came to the {p:Mirage Raceway} for the first time, where the goblins and gnomes race across the salt flats."},
+    ["Nesingwary's Expedition"] = {"For the first time, I came to {p:Nesingwary's Expedition}, the hunters' camp in the jungle.",
+        "I found {p:Nesingwary's Expedition}, where old Hemet and his hunters kept their trophies."},
+}
+
+-- Levels -----------------------------------------------------------------------------
+W.level = {
+    "I reached level {level}.",
+    "I made level {level}.",
+    "I climbed to level {level}.",
+    "I went up to level {level}.",
+    "By the end of the day I was level {level}.",
+    "Somewhere along the way I reached level {level}.",
+}
+W.levels = {
+    "I went from level {from} to {level}.",
+    "I climbed from level {from} to {level}.",
+    "I started the day at level {from} and ended it at {level}.",
+    "By the end of the day I had gone from level {from} to {level}.",
+    "I was level {from} when I set out and level {level} when I stopped.",
+}
+W.milestone = {
+    [10] = {"I reached level ten.", "Level ten, at last."},
+    [20] = {"I reached level twenty.", "Level twenty."},
+    [30] = {"I reached level thirty.", "Level thirty."},
+    [40] = {"I reached level forty.", "Level forty, and a long way still to go."},
+    [50] = {"I reached level fifty.", "I reached level fifty, and the end was in sight."},
+    [60] = {"I reached level sixty, as high as any adventurer climbs."},
+}
+-- Level sixty, looking back to the recorded beginning. The quest and death
+-- scenes already tell the intervening work; a second tally obscures that ending.
+W.lookBack = {
+    "I had begun in {origin}, {since} earlier.",
+    "{since} before, I had been in {origin}.",
+    "I had started from {origin}, {since} earlier.",
+    "It had been {since} since these pages began in {origin}.",
+}
+W.lookBackPeople = {"{names} had been with me for much of it.", "I had not done it alone. {names} had been there for much of the way."}
+
+-- Rest ---------------------------------------------------------------------------------
+W.inn = {
+    "{We} rested at the inn in {place}.",
+    "{We} stopped for the night in {place}.",
+    "{We} took a room in {place}.",
+    "{We} rested a while at the inn in {place}.",
+    "{We} found the inn in {place} and rested there.",
+    "The inn in {place} gave {us} a place to rest a while.",
+}
+W.campfire = {
+    "I stopped by a campfire.",
+    "I sat by a campfire for a while.",
+    "I rested by a campfire.",
+    "I found a campfire and sat by it a while.",
+    "I sat down by a campfire and rested.",
+    "There was a campfire, and I sat by it for a while.",
+}
+W.campfireWe = {
+    "We stopped by a campfire.",
+    "We sat by a campfire for a while.",
+    "We rested by a campfire.",
+    "We found a campfire and sat by it a while.",
+    "We sat down by a campfire and rested.",
+    "There was a campfire, and we sat by it for a while.",
+}
+
+-- Closing lines ------------------------------------------------------------------------
+W.late = {"It was past midnight when I stopped.", "I stopped well after midnight.", "Midnight had come and gone when I stopped."}
+W.long = {"All told, it was {span}.", "It came to {span}, all told."}
+
+-- Moments of a life (the research list) ---------------------------------------------
+-- The first of the other side you saw ({side}: "Alliance"; {aRace}: "a night elf";
+-- {class}: "rogue"; {zoneD}).
+W.foeSeen = {
+    "In {zoneD}, I saw one of the {side} for the first time, {aRace} {class}.",
+    "I saw one of the {side} for the first time in {zoneD}, {aRace} {class}. Until then they had only been a name.",
+    "My first sight of the {side} came in {zoneD}, {aRace} {class}.",
+    "In {zoneD} I crossed paths with one of the {side} for the first time, {aRace} {class}.",
+    "In {zoneD} I saw {aRace} {class} of the {side}, the first of them I had ever seen.",
+}
+W.foeSeenHere = {
+    "There I saw one of the {side} for the first time, {aRace} {class}.",
+    "It was there that I first saw one of the {side}, {aRace} {class}. Until then they had only been a name.",
+    "There, for the first time, I crossed paths with one of the {side}, {aRace} {class}.",
+}
+-- Killed by one of the other side ({aRace}, {class}, {side}); again the same day.
+W.deathPvp = {
+    "{ARace} {class} of the {side} killed me.",
+    "One of the {side}, {aRace} {class}, caught me and killed me.",
+    "I died to {aRace} {class} of the {side}.",
+    "{ARace} {class} of the {side} got the better of me.",
+    "I fell to {aRace} {class}, one of the {side}.",
+}
+W.deathPvpAgain = {
+    "When I came back to my body, the {side} were still there, and I died again.",
+    "I went back for my body, and the {side} killed me again.",
+    "The {side} killed me a second time that day.",
+    "I came back to my body, and died again before I could get away.",
+}
+-- Killed by something far below your level ({foe}, {Foe}, {inZone}: "in Durotar" or "there").
+W.deathShameful = {
+    "{Foe} killed me {inZone}. At my level, that takes some doing.",
+    "{Foe} killed me, and the less said about that, the better.",
+    "Of all things, it was {foe} that killed me.",
+    "{Foe} killed me {inZone}, and I would rather not say more.",
+    "I died to {foe} {inZone}, at my level.",
+}
+-- Killed by the guards of a town ({place}).
+W.guardDeath = {
+    "I went too near the guards of {place}, and they made short work of me.",
+    "The guards of {place} killed me, as guards will.",
+    "The guards of {place} cut me down.",
+    "The guards at {place} did their job, and I died of it.",
+}
+-- A rez from someone not of your list ({by}).
+W.rezStranger = {
+    "{by}, a stranger, brought me back.",
+    "A stranger named {by} brought me back.",
+    "{by} brought me back, though we had never met.",
+    "{by}, whom I had never met, brought me back from death.",
+    "{by} stopped to bring me back, though we had never met.",
+}
+-- Named foes everyone has a story about: said after they kill you or nearly do.
+W.infamous = {
+    ["Hogger"] = {
+        "Half of Elwynn had tangled with him at one time or another, and now I had too.",
+        "Marshal Dughan had put a price on his head long before.",
+    },
+    ["Stitches"] = {"He came down the road into Darkshire, and I was in his way."},
+    ["Mor'Ladim"] = {"He still walked the graveyard on Raven Hill, as the people of Darkshire said."},
+    ["Bhag'thera"] = {"She had long eluded Nesingwary's whole party, and I was no luckier."},
+    ["Old Murk-Eye"] = {"He was older and meaner than any other murloc on that coast."},
+    -- ENGINE: only when this is the first death of the book ("the first thing to beat me").
+    ["Sarkoth"] = {"He was only a scorpid, but he was the first thing to beat me."},
+    ["King Bangalash"] = {"He had sent Nesingwary himself back to camp more than once."},
+    ["Sin'Dall"] = {"Nesingwary's camp had tracked her for weeks."},
+    ["Sharptalon"] = {"It had preyed on the peons of Splintertree for a long time."},
+    ["Tethis"] = {"Even Nesingwary had failed to kill it."},
+    ["Mazzranache"] = {"It had been killing on the plains of Mulgore, and the tauren wanted it dead."},
+    ["Gath'Ilzogg"] = {"Lakeshire had a price on his head, and I understood why."},
+}
+-- A battleground, the first time ({what}; {mySide}).
+W.battleground = {
+    "I fought in {what} for the first time, with the {mySide} around me.",
+    "For the first time, I answered the call to {what}.",
+    "I went into {what} for the first time, and fought for the {mySide}.",
+    "I answered the call to {what} and fought beside the {mySide}.", -- (no first)
+}
+W.bgAgain = {"I fought in {what} again.", "Back to {what}, with the {mySide}."}
+-- Class milestones ({family}: a hunter's first pet, "boar").
+W.classFirst = {
+    felsteed = {"I called my felsteed for the first time, a horse of shadow and fire.", "For the first time, a felsteed of my own came when I called.",
+        "My felsteed came when I called, a horse of shadow and fire."},
+    dreadsteed = {"I called my dreadsteed for the first time. Few warlocks ever earn one.", "The dreadsteed was mine, and it came when I called."},
+    warhorse = {"For the first time, I called my warhorse, the Light's gift to those who serve it.", "I rode my own warhorse for the first time.",
+        "My warhorse came when I called, the Light's gift to those who serve it."},
+    charger = {"I called my charger for the first time. It had taken a long time to earn.", "The charger was mine at last."},
+    tame = {"I learned to tame the beasts of the wild.", "The hunters taught me how to tame a beast.", "I learned how a hunter makes a beast its own."},
+    pet = {"I tamed my first beast, a {family}, and it followed me from then on.", "A {family} became my first companion of the wild.",
+        "I tamed a {family}, and it came with me."},
+    petPlain = {"I tamed my first beast, and it followed me from then on.", "I tamed a beast, and it came with me."},
+    bear = {"The druids taught me to take the shape of a bear.", "For the first time, I took the shape of a bear.", "I learned the shape of the bear."},
+    aquatic = {"I learned the form of the sea lion, and swam as fast as any fish.", "The druids taught me to swim as the sea lions do.",
+        "I learned to take the form of a sea lion."},
+    travel = {"I learned the form of the cheetah, and the ground went by quicker after that.", "For the first time, I ran as a cheetah.",
+        "I learned to run as a cheetah runs."},
+    cat = {"I learned to take the form of a cat.", "For the first time, I hunted as a cat hunts.", "The druids taught me the shape of the cat."},
+    ghostwolf = {"The spirits taught me to run as a ghost wolf.", "For the first time, I ran as a ghost wolf.", "I learned to take the form of a ghost wolf."},
+    defensive = {"I learned to fight behind my shield, in the defensive stance.", "I learned the defensive stance.", "My trainer taught me the defensive stance."},
+    berserker = {"I learned the berserker stance.", "I learned to fight as a berserker, with no thought for my own guard.", "My trainer taught me the berserker stance."},
+    poisons = {"I learned the use of poisons.", "I learned how to make poisons, and how to use them.", "I learned to coat my blades with poison."},
+    voidwalker = {"I bound my first voidwalker, and it did as I told it.", "For the first time, a voidwalker answered my call.",
+        "I bound a voidwalker to my service."},
+    succubus = {"I bound a succubus to my service.", "For the first time, I summoned a succubus.", "A succubus answered my call."},
+    felhunter = {"I bound a felhunter, a hound that feeds on magic.", "For the first time, I summoned a felhunter.", "A felhunter answered my call."},
+    summon = {"I learned the ritual of summoning.", "I learned to call others to my side by ritual."},
+    portal = {"I opened my first portal, and others could follow me through it.", "I learned to open portals to the great cities."},
+    teleport = {"I learned to take myself home by magic.", "For the first time, I went home by magic, in the space of a breath.",
+        "I learned to go home by magic, in the space of a breath."},
+}
+-- The first time you brought someone back ({who}).
+W.rezOther = {
+    "For the first time, I brought someone back from death. It was {who}.",
+    "I raised {who} from death, the first I ever brought back.",
+    "I brought {who} back from death, the first time I had raised anyone.",
+}
+W.rezOtherPlain = {"For the first time, I brought someone back from death."}
+-- The first thing worth keeping ({what}: a blue item).
+W.rare = {
+    "{what} was the first thing I found worth keeping.",
+    "I found {what}, the first thing of any worth I had owned.",
+    "{what} was mine, the first thing I owned that was not plain.",
+    "I came by {what}, and kept it.", -- (no first)
+}
+-- A guild ({guild}: its name, in angle brackets).
+W.guild = {
+    "I joined a guild, {guild}.",
+    "{guild} took me in.",
+    "I joined {guild}, and its name went under mine.",
+    "I became one of {guild}.",
+    "I took the tabard of {guild}.", -- ENGINE: only when a guild tabard was equipped
+}
+-- A new home, where your hearthstone takes you ({place}).
+W.home = {
+    "I made the inn at {place} my home.",
+    "I made {place} my home, and set my hearthstone there.",
+    "From then on, my hearthstone took me back to {place}.",
+    "I bound my hearthstone at the inn in {place}.",
+}
+-- The first sight of a capital (by city; your side or neutral ground).
+W.capitalFirst = {
+    ["Orgrimmar"] = {
+        "For the first time, I walked through the gates of {p:Orgrimmar}, into the red canyon where Thrall built his city.",
+        "I saw {p:Orgrimmar} for the first time. The drums were beating, and the Horde was everywhere.",
+        "I came into {p:Orgrimmar} through the great gate, and the Valley of Strength opened up in front of me.",
+        "I walked into {p:Orgrimmar} past the spiked walls and the grunts at the gate.", -- (no first)
+    },
+    ["Undercity"] = {
+        "For the first time, I went down into the {p:Undercity}, a city of the dead under the ruins of the old capital.",
+        "I rode the lift down into the {p:Undercity} for the first time, and the green light of the canals came up to meet me.",
+        "I walked through the ruined throne room of Lordaeron and rode the lift down into the {p:Undercity}.", -- (no first)
+        "I went down into the {p:Undercity}, where the Forsaken had made a city of the old crypts.", -- (no first)
+    },
+    ["Thunder Bluff"] = {
+        "For the first time, I rode the lift up to {p:Thunder Bluff}, and saw all of Mulgore below me.",
+        "I came to {p:Thunder Bluff} for the first time. The wind never stopped up there, and the totems stood taller than the tents.",
+        "I rode the lift up to {p:Thunder Bluff}, and all of Mulgore lay below me.", -- (no first)
+        "I came up to {p:Thunder Bluff}, where the tauren had built on the tops of the mesas and joined them with rope bridges.", -- (no first)
+    },
+    ["Stormwind City"] = {
+        "For the first time, I crossed the bridge into {p:Stormwind}, under its white walls.",
+        "I saw {p:Stormwind} for the first time, its canals and its towers, and the cathedral over them all.",
+        "I came through the gate of {p:Stormwind} and down the Valley of Heroes, between the statues.", -- (no first)
+        "I crossed the bridge into {p:Stormwind}, under its white walls, and into the Valley of Heroes.", -- (no first)
+    },
+    ["Ironforge"] = {
+        "For the first time, I went into {p:Ironforge}, and heard the Great Forge before I saw it.",
+        "I came to {p:Ironforge} for the first time, a city cut into the heart of the mountain.",
+        "I went into {p:Ironforge}, a city cut into the heart of the mountain, with the Great Forge at its centre.", -- (no first)
+        "I walked through the great gate of {p:Ironforge}, out of the snow and into the mountain.", -- (no first)
+    },
+    ["Darnassus"] = {
+        "For the first time, I came to {p:Darnassus}, high in the branches of Teldrassil.",
+        "I came up into {p:Darnassus}, high in the branches of Teldrassil, where the night elves keep their temple.", -- (no first)
+        "I came to {p:Darnassus}, on the great tree the druids had planted after the war.", -- (no first)
+    },
+}
+
+-- Titles ----------------------------------------------------------------------------
+W.titles = {
+    honest = {"Honest Work", "At My Trades", "A Working Day"},
+    death = {"A Hard Day", "Hard Lessons", "A Bad Day", "Back on My Feet"},
+    fall = {"A Bad Fall", "A Long Way Down"},
+    close = {"A Near Thing", "A Narrow Escape"},
+    firstDeath = {"The First Death", "The Graveyard"},
+    origin = {"The Beginning", "Where It Began", "First Steps"},
+    reunion = {"{names} Again", "An Old Friend"},
+    quiet = {"A Quiet Day", "No Hurry"},
+    misadventure = {"A Clumsy Day", "Misadventures", "A Long Way Down"},
+    tram = {"The Tram"},
+    raid = {"The First Raid", "{what}"},
+    worldboss = {"{what}"},
+    pvp = {"First Blood", "The Other Side"},
+    epic = {"{what}", "Spoils"},
+    legendary = {"{what}"},
+    famous = {"{what}"},
+    tier = {"{what}"},
+    setfull = {"{what}", "The Whole Set"},
+    mount = {"My Own Mount", "In the Saddle"},
+    epicmount = {"A Faster Mount", "In the Saddle"},
+    sunset = {"Sunset", "The Sun Goes Down"},
+    landmark = {"{what}"},
+    firstDungeon = {"Into the Dark", "The First Descent"},
+    voyage = {"Across the Sea", "Over the Water", "The Crossing"},
+    continent = {"{to}", "A New Land"},
+    flight = {"First Flight", "Wings"},
+    firstZone = {"{zoneD}", "New Country"},
+    home = {"Home", "{zoneD}"},
+    with = {"With {names}", "{names}"},
+    level = {"Level {level}"},
+    foeSeen = {"The Other Side", "The Enemy"},
+    pvpDeath = {"Ambushed", "Caught Alone"},
+    guard = {"The Guards"},
+    battleground = {"{what}"},
+    class = {"A New Power", "Something New"},
+    rezOther = {"Back from Death", "The First I Raised"},
+    rare = {"Something Worth Keeping", "A First Find"},
+    guild = {"{guild}", "A Guild"},
+    newHome = {"A New Home", "Hearth and Home"},
+    capital = {"{city}"},
+}
+
+-- Towns and cities ----------------------------------------------------------------------
+-- side: whose town it is ("Horde", "Alliance", or "neutral"); home: the races
+-- it is home to; lore: what the place is (after its name); homeLines: how
+-- someone from there sees it. The tone follows who you are: home, the same
+-- side, neutral ground, or the other side.
+W.towns = {
+    -- Horde
+    ["Orgrimmar"] = {side = "Horde", home = {"Orc", "Troll"}, name = "{p:Orgrimmar}",
+        lore = {"the city Thrall built in the red canyon", "the orc capital"},
+        homeLines = {"I walked the Valley of Strength in {p:Orgrimmar} again.", "I came home to {p:Orgrimmar}, and the drums were beating."}},
+    ["Razor Hill"] = {side = "Horde", home = {"Orc", "Troll"}, name = "{p:Razor Hill}",
+        lore = {"the orc town in Durotar"},
+        homeLines = {"I passed the barracks at {p:Razor Hill}, as I had many times."}},
+    ["Sen'jin Village"] = {side = "Horde", home = {"Troll"}, name = "{p:Sen'jin Village}",
+        lore = {"where the Darkspear keep their huts by the sea"},
+        homeLines = {"The huts of {p:Sen'jin Village} stood by the sea, as always."}},
+    ["Undercity"] = {side = "Horde", home = {"Scourge"}, name = "the {p:Undercity}",
+        lore = {"beneath the ruins of Lordaeron", "where the Banshee Queen holds court"},
+        homeLines = {"I went down into the {p:Undercity}, among my own.", "I went home to the {p:Undercity}, under the ruins of Lordaeron."}},
+    ["Brill"] = {side = "Horde", home = {"Scourge"}, name = "{p:Brill}",
+        lore = {"the Forsaken town in the glades", "with its Gallows' End Tavern"},
+        homeLines = {"{p:Brill} was quiet, as the dead are.", "I stopped at the Gallows' End Tavern in {p:Brill}."}},
+    ["Deathknell"] = {side = "Horde", home = {"Scourge"}, name = "{p:Deathknell}",
+        lore = {"where the Forsaken rise from their graves"},
+        homeLines = {"I walked through {p:Deathknell}, where I had first risen."}},
+    ["The Sepulcher"] = {side = "Horde", home = {"Scourge"}, name = "the {p:Sepulcher}",
+        lore = {"the Forsaken outpost in the pines"}},
+    ["Tarren Mill"] = {side = "Horde", home = {"Scourge"}, name = "{p:Tarren Mill}",
+        lore = {"the Forsaken hold above {p:Southshore}"}},
+    ["Thunder Bluff"] = {side = "Horde", home = {"Tauren"}, name = "{p:Thunder Bluff}",
+        lore = {"on its mesas above the plains", "where the tauren raise their totems"},
+        homeLines = {"I rode the lifts up to {p:Thunder Bluff}.", "The wind was up on the mesas of {p:Thunder Bluff}, as it always is."}},
+    ["Bloodhoof Village"] = {side = "Horde", home = {"Tauren"}, name = "{p:Bloodhoof Village}",
+        lore = {"where the tauren of Mulgore gather"},
+        homeLines = {"{p:Bloodhoof Village} was as I had left it."}},
+    ["The Crossroads"] = {side = "Horde", name = "the {p:Crossroads}",
+        lore = {"the Horde fort at the heart of the Barrens"}},
+    ["Camp Taurajo"] = {side = "Horde", home = {"Tauren"}, name = "{p:Camp Taurajo}",
+        lore = {"the tauren camp in the southern Barrens"}},
+    ["Sun Rock Retreat"] = {side = "Horde", name = "{p:Sun Rock Retreat}", lore = {"high in the Stonetalon peaks"}},
+    ["Splintertree Post"] = {side = "Horde", name = "{p:Splintertree Post}", lore = {"the Horde camp among the Ashenvale woodcutters"}},
+    ["Freewind Post"] = {side = "Horde", name = "{p:Freewind Post}", lore = {"on its mesa above Thousand Needles"}},
+    ["Shadowprey Village"] = {side = "Horde", name = "{p:Shadowprey Village}", lore = {"on the Desolace coast"}},
+    ["Camp Mojache"] = {side = "Horde", name = "{p:Camp Mojache}", lore = {"the tauren camp in Feralas"}},
+    ["Hammerfall"] = {side = "Horde", home = {"Orc"}, name = "{p:Hammerfall}", lore = {"the orc hold in the Arathi Highlands", "where the orcs keep watch on the eastern hills"}},
+    ["Kargath"] = {side = "Horde", name = "{p:Kargath}", lore = {"the Horde outpost in the Badlands"}},
+    ["Grom'gol Base Camp"] = {side = "Horde", name = "{p:Grom'gol}", lore = {"the Horde camp on the jungle coast"}},
+    ["Stonard"] = {side = "Horde", name = "{p:Stonard}", lore = {"the orc fortress in the Swamp of Sorrows"}},
+    ["Revantusk Village"] = {side = "Horde", home = {"Troll"}, name = "{p:Revantusk Village}", lore = {"where the Revantusk trolls watch the coast"}},
+    ["Brackenwall Village"] = {side = "Horde", name = "{p:Brackenwall Village}", lore = {"in the marsh of Dustwallow"}},
+    ["Bloodvenom Post"] = {side = "Horde", name = "{p:Bloodvenom Post}", lore = {"the Horde camp in the fel-sick woods"}},
+    ["Valormok"] = {side = "Horde", name = "{p:Valormok}", lore = {"the Horde camp in Azshara"}},
+    -- Alliance
+    ["Stormwind City"] = {side = "Alliance", home = {"Human"}, name = "{p:Stormwind}",
+        lore = {"behind its white walls", "the human capital"},
+        homeLines = {"I crossed the canals of {p:Stormwind} again.", "I came home to {p:Stormwind}, bells and all."}},
+    ["Goldshire"] = {side = "Alliance", home = {"Human"}, name = "{p:Goldshire}",
+        lore = {"with its Lion's Pride Inn", "the village outside Stormwind"},
+        homeLines = {"I stopped at the Lion's Pride in {p:Goldshire}, as I often had.", "{p:Goldshire} was busy, as it always is."}},
+    ["Northshire Abbey"] = {side = "Alliance", home = {"Human"}, name = "{p:Northshire}",
+        lore = {"where new recruits of Stormwind train"},
+        homeLines = {"I walked past {p:Northshire Abbey}, where I had begun."}},
+    ["Sentinel Hill"] = {side = "Alliance", name = "{p:Sentinel Hill}", lore = {"where the People's Militia keeps watch over Westfall"}},
+    ["Lakeshire"] = {side = "Alliance", home = {"Human"}, name = "{p:Lakeshire}", lore = {"by the lake in Redridge"}},
+    ["Darkshire"] = {side = "Alliance", home = {"Human"}, name = "{p:Darkshire}", lore = {"the town of the Night Watch in Duskwood"}},
+    ["Southshore"] = {side = "Alliance", home = {"Human"}, name = "{p:Southshore}", lore = {"the town on the Hillsbrad coast"}},
+    ["Refuge Pointe"] = {side = "Alliance", name = "{p:Refuge Pointe}", lore = {"the last Alliance hold in Arathi"}},
+    ["Menethil Harbor"] = {side = "Alliance", name = "{p:Menethil Harbor}", lore = {"the port on the Wetlands coast"}},
+    ["Ironforge"] = {side = "Alliance", home = {"Dwarf", "Gnome"}, name = "{p:Ironforge}",
+        lore = {"the dwarven city inside the mountain", "where the Great Forge burns"},
+        homeLines = {"The Great Forge was burning in {p:Ironforge}, as it always is.", "I was back inside the mountain, in {p:Ironforge}."}},
+    ["Kharanos"] = {side = "Alliance", home = {"Dwarf", "Gnome"}, name = "{p:Kharanos}",
+        lore = {"with its Thunderbrew Distillery"},
+        homeLines = {"I stopped at the Thunderbrew Distillery in {p:Kharanos}."}},
+    ["Thelsamar"] = {side = "Alliance", home = {"Dwarf"}, name = "{p:Thelsamar}", lore = {"the dwarf town in Loch Modan"}},
+    ["Darnassus"] = {side = "Alliance", home = {"NightElf"}, name = "{p:Darnassus}",
+        lore = {"high in the boughs of Teldrassil", "the night elf capital"},
+        homeLines = {"I walked under the trees of {p:Darnassus} again."}},
+    ["Dolanaar"] = {side = "Alliance", home = {"NightElf"}, name = "{p:Dolanaar}", lore = {"the night elf village on Teldrassil"}},
+    ["Auberdine"] = {side = "Alliance", home = {"NightElf"}, name = "{p:Auberdine}", lore = {"the night elf port on Darkshore"}},
+    ["Astranaar"] = {side = "Alliance", home = {"NightElf"}, name = "{p:Astranaar}", lore = {"on its island in the Ashenvale lake"}},
+    ["Stonetalon Peak"] = {side = "Alliance", name = "{p:Stonetalon Peak}", lore = {"the druid hold high in Stonetalon"}},
+    ["Nijel's Point"] = {side = "Alliance", name = "{p:Nijel's Point}", lore = {"the Alliance camp in the Desolace hills"}},
+    ["Feathermoon Stronghold"] = {side = "Alliance", name = "{p:Feathermoon}", lore = {"the night elf fortress off the Feralas coast"}},
+    ["Theramore Isle"] = {side = "Alliance", name = "{p:Theramore}", lore = {"Jaina Proudmoore's city on the marsh"}},
+    ["Aerie Peak"] = {side = "Alliance", name = "{p:Aerie Peak}", lore = {"where the Wildhammer keep their gryphons"}},
+    ["Morgan's Vigil"] = {side = "Alliance", name = "{p:Morgan's Vigil}", lore = {"the Alliance camp in the Burning Steppes"}},
+    ["Chillwind Camp"] = {side = "Alliance", name = "{p:Chillwind Camp}", lore = {"the Alliance camp in the Western Plaguelands"}},
+    ["Talonbranch Glade"] = {side = "Alliance", name = "{p:Talonbranch Glade}", lore = {"the night elf camp in Felwood"}},
+    -- Neutral ground
+    ["Booty Bay"] = {side = "neutral", name = "{p:Booty Bay}", lore = {"where the goblins take everyone's coin", "the goblin port behind the jaws of a great shark",
+        "the Steamwheedle port at the southern tip of Stranglethorn", "where the ships put in from Ratchet"}},
+    ["Ratchet"] = {side = "neutral", name = "{p:Ratchet}", lore = {"the goblin port on the Barrens coast", "where the ship from Booty Bay puts in", "the Steamwheedle town on the Merchant Coast"}},
+    ["Gadgetzan"] = {side = "neutral", name = "{p:Gadgetzan}", lore = {"the goblin town in the Tanaris sands"}},
+    ["Everlook"] = {side = "neutral", name = "{p:Everlook}", lore = {"the goblin town in the snows of Winterspring"}},
+    ["Cenarion Hold"] = {side = "neutral", name = "{p:Cenarion Hold}", lore = {"the druids' fort against the silithid"}},
+    ["Light's Hope Chapel"] = {side = "neutral", name = "{p:Light's Hope Chapel}", lore = {"where the Argent Dawn holds out against the Scourge"}},
+    ["Thorium Point"] = {side = "neutral", name = "{p:Thorium Point}", lore = {"where the Thorium Brotherhood keeps its camp"}},
+    ["Marshal's Refuge"] = {side = "neutral", name = "{p:Marshal's Refuge}", lore = {"the camp at the heart of Un'Goro"}},
+}
+-- How a town is seen: {town} its name, {lore} what it is.
+W.townHome = {"I was back in {town}, {lore}.", "I was home again in {town}, {lore}."}
+-- Home ground, but the first time the journal sees it.
+W.townHomeFirst = {
+    "I stopped in {town}, {lore}.",
+    "I came to {town}, {lore}.",
+    "I reached {town}, {lore}.",
+    "I stopped a while in {town}, {lore}.",
+    "I made my way to {town}, {lore}.",
+}
+W.townAlly = {
+    "I stopped in {town}, {lore}.",
+    "I passed through {town}, {lore}.",
+    "I came through {town}, {lore}.",
+    "My way took me through {town}, {lore}.",
+    "I stopped a while in {town}, {lore}.",
+    "I looked in at {town}, {lore}.",
+}
+W.townNeutral = {
+    "I stopped in {town}, {lore}.",
+    "I made my way to {town}, {lore}.",
+    "I came into {town}, {lore}.",
+    "I spent a while in {town}, {lore}.",
+    "Horde and Alliance alike passed through {town}, {lore}, and so did I.",
+    "I came down into {town}, {lore}.",
+    "I looked in at {town}, {lore}.",
+}
+W.townFoe = {
+    "I kept clear of {town}, a town of the {side}.","I passed through {town}, a town of the {side}.", "{Town} belonged to the {side}."}
+W.townFirst = {"For the first time, I came to {town}, {lore}.", "I saw {town} for the first time, {lore}."}
+
+-- Round 6: the writer pools, new ones and sub-pools set after their tables.
+W.openStillWork = {
+    "{When}, I went back to work in {zoneD}.",
+    "{When}, {zoneD} had more work for me.",
+    "{When}, there was still work for me in {zoneD}.",
+    "{When}, I took up the work in {zoneD} again.",
+}
+W.openSame = {
+    "{When}, I went back to {zoneD}, where I had left off.",
+    "{When}, I was back in {zoneD}.",
+    "{When}, I returned to {zoneD}.",
+}
+W.townAllyWe = {
+    "We stopped in {town}, {lore}.",
+    "We passed through {town}, {lore}.",
+    "We came through {town}, {lore}.",
+    "We stopped a while in {town}, {lore}.",
+}
+W.townNeutralWe = {
+    "We stopped in {town}, {lore}.",
+    "We made our way to {town}, {lore}.",
+    "We spent a while in {town}, {lore}.",
+    "Horde and Alliance alike passed through {town}, {lore}, and so did we.",
+    "We came into {town}, {lore}.",
+}
+W.questsMoreRepeat = {
+    "{We} turned in {count} quests, {quest} more than once.",
+    "{We} finished {count} quests, and went back to {quest} more than once.",
+    "{quest} brought {us} back more than once, among {count} quests in all.",
+}
+W.quietDayOne = {
+    "One errand marked an otherwise quiet day.",
+    "I finished a single quest that day.",
+    "There was one errand amid the quieter hours.",
+}
+W.sunsetAfter.plain = {
+    "The sea went red, then grey, then dark.",
+    "The light went out of the sky slowly, and I did not hurry it.",
+    "The waves kept coming in after the light was gone.",
+    "Out on the water, the light stayed longest.",
+    "The first stars came out over the water.",
+    "The water went gold, and then it went dark.",
+}
+W.sunsetAfter["Menethil Harbor"] = W.sunsetAfter["Menethil Harbor"] or {"The ships at anchor in {p:Menethil Harbor} went dark one by one."}
+W.sunsetAfter["Auberdine"] = {"The lamps came on along the shore behind me, one by one."}
+W.sunsetAfter["Southshore"] = W.sunsetAfter["Southshore"] or {"The lights of {p:Southshore} came on down by the water."}
+W.boast.healer = {
+    "More of the healing came from me than from anyone else there.",
+    "I did more of the healing than anyone else in the company.",
+}
+W.titles.firstDungeon = {"The First Dungeon", "Past the Gate"}
+W.voyageFirstLand = {
+    zeppelin = {
+        "For the first time, I rode a zeppelin, and it carried me over the sea to {to}, where I had never been.",
+        "The zeppelin carried me over the sea to {to}. I had never ridden one before, and I had never seen {to}.",
+        "I took the zeppelin across the sea to {to}, my first time on a zeppelin and my first sight of that land.",
+    },
+    boat = {
+        "For the first time, I went aboard a ship, and it carried me across the sea to {to}, where I had never been.",
+        "A ship carried me across the sea to {to}. I had never sailed before, and I had never seen {to}.",
+        "I took the boat across the sea to {to}, my first time on a ship and my first sight of that land.",
+    },
+}
+
+-- Round 6: the writer pools, new ones and sub-pools set after their tables.
+W.milestone2.pvpHere = {
+    "There I fought the other side for the first time, and one of them fell.",
+    "My first victory against the other side came there.",
+}
+
+-- Small wonders (CRITIQUE6 section 6) ------------------------------------------------
+-- The first snow ({zoneD}); not for dwarves and gnomes, who were born to it.
+W.snowFirst = {
+    "Snow lay on the ground in {zoneD}, the first I had ever seen.",
+    "I left tracks in the snow of {zoneD}, the first snow I had ever walked in.",
+    "It was the first time I had walked in snow.",
+    "I had never seen snow before.",
+    "I walked through snow that day, and left tracks behind me.", -- (no first)
+}
+-- A rare creature seen ({what}, {zoneD}).
+W.rareBeast = {
+    "In {zoneD}, I came across {what}, and few ever do.",
+    "{what} crossed my path in {zoneD}. Not many people ever see it.",
+    "There I came across {what}, and few ever do.",
+    "I saw {what} in {zoneD}, which not many people can say.",
+    "{what} was about that day, and our paths crossed.", -- (no first)
+}
+-- The first sale at the auction house ({what}).
+W.aucSale = {
+    "Somebody bought my {what} at the auction house. I never learned who.",
+    "My {what} sold at the auction house, the first thing I ever sold there.",
+    "I sold {what} at the auction house, my first sale there.",
+    "The auction house sold my {what}, and the coin came to me by mail.", -- (no first)
+}
+-- A long swim ({place}).
+W.swim = {
+    "I swam across {place} rather than walk around it.",
+    "It was a long swim in {place}, and I made it without drowning.",
+    "I swam a long way through {place}.",
+    "I took to the water in {place} and swam a long way.",
+    "I swam a long way out into {place}.",
+}
+-- A flight by night ({to}).
+W.nightFlight = {
+    "I flew to {to} after dark, with the lights of the towns below me.",
+    "It was night when I took the flight to {to}, and the land went by dark beneath me.",
+    "I flew to {to} by night, and saw little of the way.",
+    "I took the flight to {to} at night, and came down in the dark.",
+    "It was dark when I flew to {to}.",
+}
+-- A night at the inn: the day's last word, when the next day began after a long sleep ({place}).
+W.sleepInn = {
+    "That night I took a room at the inn in {place} and slept there.",
+    "The innkeeper at {place} had a bed for me that night.",
+    "I slept at the inn in {place}.",
+    "I spent the night at the inn in {place}.",
+    "I ended the day at the inn in {place}, and slept there.",
+}
+-- The long walk back as a ghost ({span}).
+W.ghostWalk = {
+    "It was a long walk back from the graveyard, and I made all of it as a spirit.",
+    "My spirit walked {span} to get back to my body.",
+    "The graveyard was a long way from where I fell, and I walked every step of it as a ghost.",
+    "It took {span} to walk back to my body.",
+    "I spent {span} as a spirit, walking back to where I fell.",
+}
+-- Fishing from a dock ({place}, {work}: "caught twelve fish").
+W.fishAt = {
+    "I fished from the dock at {place}, and {work}.",
+    "I cast a line at {place}, and {work}.",
+    "I spent a while fishing at {place}, and {work}.",
+    "I stood on the dock at {place} with a line in the water, and {work}.",
+    "At {place}, I put a line in the water for a while, and {work}.",
+}
+W.titles.snow = {"First Snow", "Snow"}
+W.titles.auction = {"The Auction House", "A First Sale"}
+
+-- Round 7: the writer pools, new ones and sub-pools set after their tables.
+W.oncePerBook = {
+    "Horde and Alliance alike passed through {town}, {lore}, and so did I.",
+    "Horde and Alliance alike passed through {town}, {lore}, and so did we.",
+    "I came to {town}, {lore}, and my own people were there.",
+    "Between {quests}, {we} had enough to do.",
+    "The work there came to {quests}, and {we} finished all of it.",
+    "Somebody bought my {what} at the auction house. I never learned who.",
+    "It was a long swim in {place}, and I made it without drowning.",
+    "The guards of {place} killed me, as guards will.",
+    "Of all things, it was {foe} that killed me.",
+    "{Foe} killed me {inZone}. At my level, that takes some doing.",
+    "The lava killed me. It was as hot as it looked.",
+    "I died in the slime. There are better ways to go.",
+    "It was my second death, if the first one counts.",
+    "The zeppelin was goblin-made, and it got me there all the same.",
+    "{We} took care of {quest} while {we} {were} there.",
+}
+W.dungeon.fair = {
+    "{We} went into {dungeonE}.",
+    "{We} made for {dungeonE}.",
+    "Then {we} went into {dungeonE}.",
+    "{We} set out for {dungeonE}.",
+}
+W.dungeonDown = {
+    "{We} went down into {dungeonE}.",
+    "Then {we} went down into {dungeonE}.",
+    "{We} made {our} way down into {dungeonE}.",
+}
+W.homeHere = {
+    "I made the inn there my home.",
+    "I bound my hearthstone at the inn there.",
+    "From then on, my hearthstone took me back there.",
+}
+W.firstDeathLate = {
+    "I had come a long way without dying once, and {foe} ended that.",
+    "It was my first death, after all that way.",
+    "I had never died before, not once in all those levels.",
+}
+W.milestone2.sunset = {
+    "I watched the sun go down over the sea at {what}.",
+    "At {what}, I stopped to watch the sun go down.",
+    "At {what}, I sat down on the sand and watched the sun go into the sea.",
+    "I was at {what} when the sun went down, and I stayed to watch it.",
+    "The sun went down over the water at {what}, and I watched it go.",
+}
+W.milestone2.sunsetEast = {
+    "At {what}, I watched the light go off the water as the sun went down behind me.",
+    "I was at {what} when the sun went down behind the land, and the sea in front of me went grey.",
+    "At {what}, I stopped to watch the evening come in over the sea.",
+}
+
+-- Round 8 engine hooks (first drafts) ------------------------------------------------
+-- Someone met for the first time ({names}: "Tarok, a tauren warrior").
+W.joinedNew = {
+    "{names}, joined me.",
+    "I fell in with {names}.",
+    "{names}, came along with me.",
+    "I met {names}, and we went on together.",
+}
+W.joinedNewMany = {
+    "{names}, joined me.",
+    "I fell in with {names}.",
+    "I met {names}, and we went on together.",
+}
+-- Back out of a dungeon into its zone ({zoneD}, {We}).
+W.leaveDungeon = {
+    "{We} came back out into {zoneD}.",
+    "{We} came out of the dark into {zoneD} again.",
+    "Then {we} were back out in {zoneD}.",
+}
+-- Ore smelted at the forge ({count}, {made}).
+W.smelt = W.smelt or {
+    "I smelted the ore into {count} bars of {made}.",
+    "At the forge, I smelted {count} bars of {made}.",
+}
+W.titles.classBy = W.titles.classBy or {
+    pet = {"A Beast of My Own", "The Hunter's Companion"},
+    tame = {"Taming the Wild"},
+    bear = {"The Bear's Shape", "Lunaclaw"},
+    aquatic = {"The Sea Lion's Shape"},
+    travel = {"The Cheetah's Shape"},
+    cat = {"The Cat's Shape"},
+    warhorse = {"The Warhorse"},
+    charger = {"The Charger"},
+    felsteed = {"The Felsteed"},
+    dreadsteed = {"The Dreadsteed"},
+    voidwalker = {"The Voidwalker"},
+    ghostwolf = {"The Ghost Wolf"},
+}
+-- Someone close, the first time the book names them ({names}, {bond}: "my wife").
+W.joinedBond = W.joinedBond or {
+    "{names}, {bond}, was beside me from the first day.",
+    "{names}, {bond}, was with me.",
+    "I had {names}, {bond}, at my side.",
+}
+-- Killed again and again by the other side ({count}, {side}).
+W.deathPvpMany = W.deathPvpMany or {
+    "The {side} kept coming back, and I died {count} times before it was over.",
+    "In all, the {side} killed me {count} times that day.",
+}
+-- A night at the inn, when the place was just said.
+W.sleepInnHere = W.sleepInnHere or {
+    "I took a room there for the night.",
+    "I slept at the inn there that night.",
+}
+-- Back after a month or more away from the road ({ago}: "four months").
+
+W.titles.returned = W.titles.returned or {"Back on the Road", "After Long Away"}
+
+-- Round 8: the writer pools.
+W.origin.Troll = {
+    "I began in the {p:Valley of Trials}, where the Darkspear and the orcs train their young together.",
+    "The witch doctor Zalazane held the Echo Isles, the old home of my people, so I began on the mainland, in the {p:Valley of Trials}.",
+    "The Darkspear had come to Durotar with Thrall, so I began where the orcs begin, in the {p:Valley of Trials}.",
+    "I began in the {p:Valley of Trials}, a Darkspear among orcs, with boars and scorpids in the surrounding scrub.",
+}
+W.origin.Tauren = {
+    "I began at {p:Camp Narache}, high on the plains of Mulgore, where the young tauren go on their first hunt.",
+    "I began at {p:Camp Narache}, where the young tauren start on the Rites of the Earthmother.",
+    "I began at {p:Camp Narache}, with plainstriders roaming the grass below.",
+    "I began at {p:Camp Narache}, where Chief Hawkwind sets the young their first tasks.",
+    "I began at {p:Camp Narache}, under a wide sky, with the plains of Mulgore below me.",
+}
+W.origin.Gnome = {
+    "My people had lost Gnomeregan, and I began where the dwarves took us in, in {p:Coldridge Valley}.",
+    "I began in {p:Coldridge Valley}, far from lost Gnomeregan, among the dwarves who took my people in.",
+    "I began at {p:Anvilmar}, a gnome in a dwarf's valley, with troggs in the hills and snow over everything.",
+    "The troggs and the poison had taken Gnomeregan, so I began among the dwarves, at {p:Anvilmar}.",
+    "I began at {p:Anvilmar}, in the snow, with Gnomeregan lost behind me.",
+}
+W.origin.NightElf = {
+    "I began in {p:Shadowglen}, at the foot of Aldrassil, high on the World Tree.",
+    "I began in {p:Shadowglen}, among the roots of Teldrassil.",
+    "I began in {p:Shadowglen}, with young nightsabers in the forest and grells beyond the grove.",
+    "I began in {p:Shadowglen}, where Conservator Ilthalaine kept the balance of the forest and gave the young their first tasks.",
+    "I began in {p:Shadowglen}, on the new World Tree the druids had grown out of the sea.",
+}
+W.origin.Dwarf = {
+    "I began in {p:Coldridge Valley}, in the snows below Ironforge, with the troggs at the door.",
+    "I began at {p:Anvilmar}, in the cold of {p:Coldridge Valley}.",
+    "I began at {p:Anvilmar}, where the troggs had come up out of the ground and the Frostmane trolls held the hills.",
+    "I began in {p:Coldridge Valley}, in the snow, a long walk through the tunnel from Kharanos.",
+}
+W.openFirstLate = {
+    Dwarf = {"I was level {level}, and a long way from Ironforge, when I set out from {zoneE}.",
+        "I set out from {zoneE} at level {level}, with Ironforge far behind me."},
+    Gnome = {"I was level {level}, and a long way from Ironforge and lost Gnomeregan, when I set out from {zoneE}."},
+    Human = {"I was level {level}, and a long way from Stormwind, when I set out from {zoneE}."},
+    NightElf = {"I was level {level}, and far from Teldrassil, when I set out from {zoneE}."},
+    Orc = {"I was level {level}, and a long way from Orgrimmar, when I set out from {zoneE}."},
+    Troll = {"I was level {level}, and far from the huts of Sen'jin, when I set out from {zoneE}."},
+    Tauren = {"I was level {level}, and a long way from Mulgore, when I set out from {zoneE}."},
+    Scourge = {"I was level {level}, and a long way from the graves of Deathknell, when I set out from {zoneE}."},
+    other = {"I was already level {level} when I set out from {zoneE}.", "I set out from {zoneE} at level {level}."},
+}
+W.openWithNew = {
+    "{When}, I fell in with {names}, in {zoneD}.",
+    "{When}, in {zoneD}, I fell in with {names}.",
+    "{When}, I set out in {zoneE} with {names}, whom I had not met before.",
+    "{When}, {names}, joined me in {zoneD}.",
+}
+W.joinedNewUs = {
+    "{names}, joined {known} and me.",
+    "{known} and I fell in with {names}.",
+    "{names}, made one more in our party.",
+}
+W.partyDeath = {
+    foe = {
+        "{Foe} killed {names}.",
+        "{names} died fighting {foe}.",
+    },
+    -- (the killer was then killed in the same fight: one sentence)
+    foeCostly = {
+        "{Foe} killed {names}, and died all the same.",
+        "{Foe} killed {names}, but did not live out the fight.",
+    },
+    plain = {"{names} died there.", "{We} lost {names} there."},
+}
+W.quietDayOneWe = {
+    "{With} and I saw to one errand on an otherwise quiet day.",
+    "{With} and I finished a single quest that day.",
+    "There was one errand amid the quieter hours I shared with {with}.",
+}
+W.quietDayWe = {
+    "I shared a quiet stretch with {with}.",
+    "It was a quiet day in the company of {with}.",
+    "{With} and I had a quieter part of the journey together.",
+}
+W.capitalFirstRace = {
+    Gnome = {
+        ["Ironforge"] = {
+            "For the first time, I went into {p:Ironforge}, and down into Tinker Town, where my people had made a home inside the dwarves' mountain.",
+            "I came into {p:Ironforge}, a dwarf city, and in Tinker Town I found my own people.",
+            "I went into {p:Ironforge} for the first time, and found Tinker Town, where the High Tinker kept the gnomes together after Gnomeregan.",
+        },
+    },
+    Dwarf = {
+        ["Ironforge"] = {
+            "I walked through the great gate of {p:Ironforge}, into the city of my people, and heard the Great Forge before I saw it.",
+            "For the first time, I went into {p:Ironforge}, where King Magni Bronzebeard held the High Seat and the Great Forge burned below.",
+        },
+    },
+    Troll = {
+        ["Orgrimmar"] = {
+            "I came into {p:Orgrimmar} through the great gate, and found trolls of the Darkspear in the Valley of Spirits.",
+            "For the first time, I walked into {p:Orgrimmar}, the city of the Horde my people had joined.",
+        },
+    },
+    Orc = {
+        ["Orgrimmar"] = {
+            "For the first time, I walked through the gates of {p:Orgrimmar}, the city Thrall built for my people.",
+        },
+    },
+    NightElf = {
+        ["Darnassus"] = {
+            "For the first time, I came to {p:Darnassus}, the city my people had built on the new World Tree.",
+            "I came up into {p:Darnassus} for the first time, and saw the Temple of the Moon, where the priestesses of Elune keep watch.",
+        },
+    },
+    Tauren = {
+        ["Thunder Bluff"] = {
+            "For the first time, I rode the lift up to {p:Thunder Bluff}, where Cairne Bloodhoof and the elders of my people keep their lodges.",
+            "I came up to {p:Thunder Bluff} for the first time, the high city of my people, with all of Mulgore below.",
+        },
+    },
+    Human = {
+        ["Stormwind City"] = {
+            "For the first time, I crossed the bridge into {p:Stormwind}, the city of my people, under its white walls.",
+        },
+    },
+    Scourge = {
+        ["Undercity"] = {
+            "I rode the lift down into the {p:Undercity} for the first time, and found the Forsaken had made a city of the old crypts.",
+        },
+    },
+}
+W.leaveCity = {
+    ["Orgrimmar"] = {"I went back out through the great gate into {zoneD}.", "{We} left the city by the great gate, back into {zoneD}."},
+    ["Darnassus"] = {"I came down out of the city, back into the forest of {zoneD}.", "{We} left {p:Darnassus} and went back down into the forest."},
+    ["Thunder Bluff"] = {"I rode the lift back down to the plains of {zoneD}.", "{We} took the lift down into {zoneD}."},
+    ["Ironforge"] = {"I went back out through the gate of {p:Ironforge}, into the snow of {zoneD}.", "{We} left the mountain and went back out into {zoneD}."},
+    ["Stormwind City"] = {"I went out over the bridge into {zoneD}.", "{We} left the city walls behind and went out into {zoneD}."},
+    ["Undercity"] = {"I rode the lift back up into the grey light of {zoneD}.", "{We} went back up into {zoneD}."},
+}
+W.leaveHomeFirst = {
+    NightElf = {"It was the first time I had left Teldrassil.", "Teldrassil was behind me now, across the water."},
+    Troll = {"It was the first time I had gone beyond Durotar.", "Durotar and the huts of Sen'jin were behind me now."},
+    Orc = {"It was the first time I had gone beyond Durotar.", "Durotar was behind me now."},
+    Tauren = {"It was the first time I had gone beyond Mulgore.", "Mulgore and its mesas were behind me now."},
+    Dwarf = {"It was the first time I had gone beyond Dun Morogh.", "The snows of Dun Morogh were behind me now."},
+    Gnome = {"It was the first time I had gone beyond Dun Morogh.", "The snows of Dun Morogh were behind me now."},
+    Human = {"It was the first time I had gone beyond Elwynn.", "Elwynn was behind me now."},
+    Scourge = {"It was the first time I had gone beyond Tirisfal.", "The grey glades of Tirisfal were behind me now."},
+}
+W.tramRace = {
+    Gnome = {"The {p:Deeprun Tram} was gnome work, and it carried me under the mountains to Stormwind."},
+    Dwarf = {"I rode the {p:Deeprun Tram} for the first time, from Ironforge to Stormwind, deep under the mountains."},
+}
+W.classFirstRace = {
+    Dwarf = {
+        warhorse = {"My warhorse came when I called, the Light's gift. Most dwarves ride rams, but the Light sent me a horse."},
+    },
+}
+W.petName = {
+    "I named my {family} {pet}.",
+    "My {family} had a name now, {pet}.",
+}
+W.petWith = {
+    "{Pet} went everywhere I went.",
+    "{Pet} fought beside me all the way.",
+    "{Pet} was at my side, as always.",
+}
+W.petRevive = {
+    "{Pet} was killed, and I called it back to life, as hunters can.",
+    "{Pet} died, and I brought it back.",
+}
+W.petDungeon = {
+    "{Pet} came down into the dark with {us}.",
+    "{Pet} went in with {us}, too.",
+}
+W.druidForm = {
+    "I fought most of that day in the shape of the {form}.",
+    "Most of my fighting that day I did as a {form}.",
+}
+W.deathFallIrony = {
+    "I had learned to swim like a sea lion that day, and then a fall killed me on dry land.",
+}
+W.rezOtherBy = {
+    PRIEST = {"I prayed {who} back from death, the first I ever raised.",
+        "The Light answered me over {who}, the first I ever brought back from death."},
+    PALADIN = {"I called on the Light, and {who} rose, the first I ever brought back from death."},
+    SHAMAN = {"I called the spirit of {who} back, the first I ever raised."},
+    DRUID = {"I brought {who} back with Rebirth, the first I ever raised."},
+}
+W.roleBy = {
+    PALADIN = {
+        tank = {"I went in first and took the blows, and the Light kept me standing.",
+            "I stood in front, and called on the Light when the blows came too fast."}, -- (the second only when the meter shows your own healing)
+        healer = {"I stayed behind the others and kept them standing with the Light."},
+    },
+    PRIEST = {
+        healer = {"I stayed at the back, and the Light kept the others on their feet.",
+            "I stayed at the back and prayed the others through it."},
+    },
+    DRUID = {
+        tank = {"I took the shape of the bear and went in first, and the blows fell on me."},
+        healer = {"I stayed at the back and kept the others alive, as the druids had taught me."},
+    },
+    HUNTER = {
+        damage = {"I kept my distance, and my arrows did the rest."},
+    },
+}
+W.boast.damage = {
+    "I did more than anyone to bring {boss} down.",
+    "{boss} fell mostly to my {weapon}.",
+    "My {weapon} did most of the work on {boss}.",
+}
+W.wipeThenWin = {
+    "{boss} beat {us} the first time, and fell the second.",
+    "The first fight with {boss} went against {us}, and the second did not.",
+}
+W.killAfter = {
+    "After {short}, {we} killed {bosses}.",
+    "{We} went on and killed {bosses}.",
+}
+W.foeSeenPlace = {
+    ["Ashenvale"] = {
+        "It was there that I first saw one of the {side}, {aRace} {class}, in the forest where Grom Hellscream had killed Cenarius.",
+        "In {zoneD}, where Grom Hellscream had killed Cenarius, I saw one of the {side} for the first time, {aRace} {class}.",
+    },
+}
+W.rezSelf = {
+    soulstone = {"I came back on {by}'s soulstone.", "{by}'s soulstone brought me back."},
+    reincarnation = {"I rose again by my own ankh, as shamans can.", "I came back by Reincarnation, as shamans can."},
+}
+
+-- Round 8 (the writer): extensions, towns, class lines.
+local function Extend(pool, list) for _, line in ipairs(list) do pool[#pool + 1] = line end end
+Extend(W.oncePerBook, {
+    "I had learned to swim like a sea lion that day, and then a fall killed me on dry land.",
+    "My warhorse came when I called, the Light's gift. Most dwarves ride rams, but the Light sent me a horse.",
+    "The {p:Deeprun Tram} was gnome work, and it carried me under the mountains to Stormwind.",
+    "I came to {p:Sen'jin Village}, where my people kept their huts by the sea, and the Echo Isles lay out across the water.",
+    "Apart from one small errand, the day was our own.",
+})
+for i = #W.oncePerBook, 1, -1 do
+    if W.oncePerBook[i] == "I came to {town}, {lore}, and my own people were there." then table.remove(W.oncePerBook, i) end
+end
+if W.towns["Razor Hill"] then W.towns["Razor Hill"].home = {"Orc"} end
+local function Town(name, homeFirst, homeLines)
+    local town = W.towns[name]
+    if not town then return end
+    town.homeFirst = homeFirst
+    if homeLines then town.homeLines = town.homeLines or {}; Extend(town.homeLines, homeLines) end
+end
+-- Troll
+Town("Sen'jin Village", {
+    "I came to {p:Sen'jin Village}, where my people kept their huts by the sea, and the Echo Isles lay out across the water.",
+    "I came to {p:Sen'jin Village}, named for the old chief of the Darkspear, and found my own people there.",
+    "The huts of {p:Sen'jin Village} stood on the shore, and from there I could see the Echo Isles, where Zalazane ruled.",
+}, {"I passed through {p:Sen'jin Village}, among my own people.", "The fires of {p:Sen'jin Village} were burning by the sea."})
+-- Orc (Razor Hill is now the orcs' alone; Orgnil Soulscar kept its barracks)
+Town("Razor Hill", {
+    "I came to {p:Razor Hill}, where Orgnil Soulscar kept the barracks and the watch on the coast.", -- (check on Forever)
+    "I came to {p:Razor Hill}, the first orc town past the Valley of Trials.",
+}, {"I stopped at {p:Razor Hill}, where the grunts watched the coast."})
+-- Night elf
+Town("Dolanaar", {
+    "I came to {p:Dolanaar}, a village of my own people under the boughs of Teldrassil.",
+    "I came down the path to {p:Dolanaar}, where the Sentinels kept watch on the road to Darnassus.",
+}, {"I passed through {p:Dolanaar} again, under the boughs."})
+Town("Auberdine", {
+    "I came to {p:Auberdine}, where the boats leave for Teldrassil and the lands beyond.",
+    "I came to {p:Auberdine}, the only town of my people on that long coast.",
+}, {"The boats were in at {p:Auberdine}, as they always were."})
+Town("Astranaar", {
+    "I came to {p:Astranaar}, where the Sentinels held the lake against the Horde in the woods.",
+    "I crossed the bridge to {p:Astranaar}, on its island in the lake, among my own people.",
+})
+Town("Darnassus", nil, {"I came back up into {p:Darnassus}, among my own people.",
+    "The priestesses of the Temple of the Moon were at their prayers in {p:Darnassus}, as always."})
+-- Tauren (corpus, "Rites of the Earthmother", 763: Baine Bloodhoof, son of Cairne, chief of the village)
+Town("Bloodhoof Village", {
+    "I came down the road to {p:Bloodhoof Village}, where Baine Bloodhoof, son of Cairne, was chief.",
+    "I came to {p:Bloodhoof Village}, among the tents and the kodos of my people.",
+}, {"I passed through {p:Bloodhoof Village}, among my own people."})
+Town("Camp Taurajo", {
+    "I came to {p:Camp Taurajo}, where my people kept watch over the southern Barrens.",
+    "I came to {p:Camp Taurajo}, the last of my people's camps before the south.",
+})
+Town("Thunder Bluff", nil, {"I rode the lift up to {p:Thunder Bluff}, where the elders keep their lodges on the high mesas."})
+-- Dwarf and gnome (Kharanos is both: the dwarves' brewery town, and the gnomes' trainers kept
+-- shop there after Gnomeregan; the lines below hold for either race)
+Town("Kharanos", {
+    "I came to {p:Kharanos}, where the Thunderbrews brewed their ale and the mountaineers kept watch on the road.",
+    "I came to {p:Kharanos}, the town on the road between the valley and Ironforge.",
+}, {"I stopped at the Thunderbrew Distillery in {p:Kharanos}, as I often had."})
+Town("Thelsamar", {
+    "I came to {p:Thelsamar}, where the mountaineers of Ironforge kept the road through Loch Modan.",
+    "I came to {p:Thelsamar}, a town of my own people under the hills of the loch.",
+}, {"I stopped at the Stoutlager Inn in {p:Thelsamar} again."}) -- (check on Forever: the inn's name)
+Town("Ironforge", nil, {"I went back into {p:Ironforge}, out of the snow.", "The forges were loud in {p:Ironforge}, as they always are."})
+Town("Orgrimmar", nil, {"I walked through the great gate of {p:Orgrimmar} again."})
+Extend(W.capitalFirst["Ironforge"], {
+    "I went into {p:Ironforge}, where the Explorers' League keeps its maps and its finds in the Hall of Explorers.", -- (no first)
+})
+Extend(W.classFirst.pet, {
+    "For the first time, a beast of the wild answered to me, a {family}.",
+    "I tamed a {family}, and from then on I did not hunt alone.", -- ENGINE: only when the pet stayed (it is seen in a later chapter)
+})
+-- The Great Bear Spirit teaches the bear (corpus, "Body and Heart"). Said AFTER the quest line.
+Extend(W.classFirst.bear, {
+    "The Great Bear Spirit had taught me its way, and I took the shape of the bear.",
+})
+Extend(W.classFirst.aquatic, {
+    "I learned to take the shape of a sea lion, and the water was mine to go where I liked.",
+})
+-- NEW KEY (engine hook: Teleport: Moonglade learned or first cast, spell 18960; it carries the
+-- arrival, so the next "Then I came to Moonglade" line is skipped). No tokens.
+W.classFirst.moonglade = {
+    "For the first time, I went to Moonglade the druids' way, by my own magic.",
+    "I learned the way to Moonglade, and could go there by magic whenever I was called.",
+    "I spoke the words the druids had taught me, and I was in Moonglade.",
+}
+W.titles.classBy = W.titles.classBy or {}
+W.titles.classBy.moonglade = {"Moonglade", "The Druids' Way"}
+
+-- Round 8b (the writer).
+W.leaveCity = W.leaveCity or {}
+W.leaveCity["Darnassus"] = {
+    "I came down out of the city, back into the forest of {zoneD}.",
+    "{We} left the city and went back down into the forest.",
+}
+
+-- W.foeSeenPlace.Ashenvale  ({side} {aRace} {ARace} {class} {zoneD}). The {zoneD} line named Ashenvale
+-- again in the chapter that opens on it ("I came to Ashenvale ... In Ashenvale, where..."). No zone now.
+W.foeSeenPlace = W.foeSeenPlace or {}
+W.foeSeenPlace["Ashenvale"] = {
+    "It was there that I first saw one of the {side}, {aRace} {class}, in the forest where Grom Hellscream had killed Cenarius.",
+    "Where Grom Hellscream had killed Cenarius, I saw one of the {side} for the first time, {aRace} {class}.",
+}
+
+-- W.joinedNewUs  (st + {names} {known}). DELETE "{names}, made one more in our party.": it says "our"
+-- without saying who ("Tarok, a tauren warrior, made one more in our party." and Morwen unnamed).
+W.joinedNewUs = {
+    "{names}, joined {known} and me.",
+    "{known} and I fell in with {names}.",
+}
+
+-- W.deathFallIrony  (no tokens). "I learned to take the form of a sea lion. I had learned to swim like a
+-- sea lion that day, and then..." said the form twice. The form line is said just before; this one
+-- leans on it.
+W.deathFallIrony = {
+    "Later that day a fall killed me, on dry land.",
+    "Before the day was out, I fell to my death, and not in the water.",
+}
+for i = #W.oncePerBook, 1, -1 do
+    if W.oncePerBook[i] == "I had learned to swim like a sea lion that day, and then a fall killed me on dry land." then table.remove(W.oncePerBook, i) end
+end
+W.oncePerBook[#W.oncePerBook + 1] = "Later that day a fall killed me, on dry land."
+W.oncePerBook[#W.oncePerBook + 1] = "Before the day was out, I fell to my death, and not in the water."
+-- back." ("back" twice). The new line says the same with what was not seen.
+W.firstDeathRez = {
+    "It was the first time I died.",
+    "It was my first death, and not my last.",
+    "It was the first time I died, and I never saw the graveyard.",
+    "I had never died before.",
+}
+
+-- NEW POOL (engine hook: W.rez, by the class of the one who raised you, from the roster; before W.rez).
+-- Tokens {by}. The own journal said "Grosh brought me back." where his book said the spirits.
+W.rezBy = {
+    SHAMAN = {"{by} called my spirit back.", "{by} called on the spirits, and I came back."},
+    PRIEST = {"{by} prayed me back from death.", "{by}'s prayers brought me back."},
+    PALADIN = {"{by} called on the Light, and I rose.", "The Light answered {by}, and I rose."},
+    DRUID = {"{by} brought me back with Rebirth.", "{by} would not let death keep me."},
+}
+-- A level reached earlier in a day whose work went on after it ({level}).
+W.levelEarly = W.levelEarly or {
+    "I had reached level {level} earlier in the day.",
+    "Level {level} had come earlier that day.",
+    "Somewhere in all of it, I had reached level {level}.",
+}
+
+-- A second way to say each town, without its zone's name (said already, as often as not).
+for name, extra in pairs({
+    ["Astranaar"] = "the night elf town on its island in the lake",
+    ["Auberdine"] = "the only town of the night elves on that long coast",
+    ["Bloodhoof Village"] = "Cairne's village below the bluffs",
+    ["Brackenwall Village"] = "where the Darkspear and the orcs keep a camp in the marsh",
+    ["Camp Mojache"] = "where the tauren keep their camp among the great trees",
+    ["Camp Taurajo"] = "the last of the tauren camps before the south",
+    ["Darkshire"] = "where the Night Watch keeps its lamps lit",
+    ["Dolanaar"] = "the village under the great tree",
+    ["Everlook"] = "the goblin town at the end of the snow road",
+    ["Gadgetzan"] = "the goblin town in the desert",
+    ["Grom'gol Base Camp"] = "the Horde camp among the jungle trolls",
+    ["Kargath"] = "the orc outpost carved into the canyon",
+    ["Lakeshire"] = "the town by the lake and its long bridge",
+    ["Menethil Harbor"] = "the dwarf port where the ships come in",
+    ["Morgan's Vigil"] = "the Alliance camp in sight of Blackrock Mountain",
+    ["Nijel's Point"] = "the Alliance camp in the hills",
+    ["Razor Hill"] = "the orc town on the road south",
+    ["Refuge Pointe"] = "the last Alliance hold on the highlands",
+    ["Sen'jin Village"] = "where the Darkspear keep their huts",
+    ["Sentinel Hill"] = "where the People's Militia keeps watch",
+    ["Shadowprey Village"] = "the troll fishing village by the sea",
+    ["Southshore"] = "the town by the water, under the hills",
+    ["Splintertree Post"] = "the Horde camp in the night elf woods",
+    ["Stonard"] = "the orc fortress in the swamp",
+    ["Stonetalon Peak"] = "the druid hold high on the mountain",
+    ["Sun Rock Retreat"] = "the tauren hold high in the peaks",
+    ["Talonbranch Glade"] = "the night elf camp in the poisoned woods",
+    ["Thelsamar"] = "the dwarf town by the lake",
+    ["The Crossroads"] = "the Horde fort where the roads meet",
+    ["The Sepulcher"] = "the Forsaken outpost among the graves",
+    ["Valormok"] = "the Horde camp on the edge of the old elf ruins",
+}) do
+    local town = W.towns and W.towns[name]
+    if town and town.lore and #town.lore == 1 then town.lore[2] = extra end
+end
+
+-- Round 8c (writer).
+-- W.partyDeath.plain  (st + {names}). DELETE "{We} lost {names} there." (mine, REWRITES8): it reads as
+-- for good, and two sentences later "Grosh called my spirit back." (Nahiri 4).
+W.partyDeath = W.partyDeath or {}
+W.partyDeath.plain = {"{names} died there.", "{names} was killed there."} -- ENGINE: the second for one name only
+
+-- W.townFoe  ({town} {Town} {side} {lore}). DELETE "{Town} belonged to the {side}." (a stub: "Kargath
+-- belonged to the Horde.") and "I passed through {town}, a town of the {side}." (an Alliance pair does not
+-- walk through Kargath; the guards would kill them).
+W.townFoe = {
+    "I kept clear of {town}, a town of the {side}.",
+    "I went wide of {town}, which belonged to the {side}.",
+}
+
+-- NEW POOL (engine hook: W.fishAt when {place} was named in the sentence before). Tokens st + {work}.
+-- Fixes "We spent a while in Ratchet, the Steamwheedle town ... I cast a line at Ratchet" (Nahiri 5).
+W.fishAtHere = {
+    "I cast a line off the dock there, and {work}.",
+    "I put a line in the water there, and {work}.",
+}
+
+-- Round 9 (the writer): batch 2 (the ganker, the couple, Duskwood, the crafter, the healer).
+do
+local PB = A.JournalTale and A.JournalTale.phrases
+local L = A.Lore
+local P = A.JournalTellers
+if L then
+---------------------------------------------------------------------------
+-- 1. MY OWN ERROR FROM 8c, AND DATA THAT IS FALSE
+---------------------------------------------------------------------------
+
+-- W.townFoe  ({town} {Town} {side} {lore}). 8c was WRONG: a "town" event means you were IN the
+-- town. "I went wide of Southshore, which belonged to the Alliance. The guards of Southshore killed
+-- me" (Vesk 2) is the result. Say you went in; the guards line that may follow then makes sense.
+W.townFoe = {
+    "I passed through {town}, a town of the {side}.",
+    "I went into {town}, though it belonged to the {side}.",
+    "I came into {town}, where the {side} held the streets.",
+}
+
+-- Second town lore (round 9's table). Menethil Harbor was built by the humans of Lordaeron and named
+-- for their royal house; "the dwarf port" is false. Bloodhoof Village is the Bloodhoof tribe's
+-- village, and Baine, not Cairne, is its chief.
+if W.towns["Menethil Harbor"] and W.towns["Menethil Harbor"].lore then
+    W.towns["Menethil Harbor"].lore[2] = "the harbor where the ships come in from Kalimdor"
+end
+if W.towns["Bloodhoof Village"] and W.towns["Bloodhoof Village"].lore then
+    for i, l in ipairs(W.towns["Bloodhoof Village"].lore) do
+        if l == "Cairne's village below the bluffs" then W.towns["Bloodhoof Village"].lore[i] = "the Bloodhoof tribe's village below the bluffs" end
+    end
+end
+
+-- L.dungeonStory["Ragefire Chasm"].why: "led by a Felguard" (a kind of demon, not a name).
+for i, l in ipairs(L.dungeonStory["Ragefire Chasm"].why or {}) do
+    L.dungeonStory["Ragefire Chasm"].why[i] = (l:gsub("a Felguard", "a felguard"))
+end
+
+-- W.sunsetAfter["Echo Isles"]  (no tokens). "At the Echo Isles, I watched the light go off the water
+-- ... Across the water, the fires of the Echo Isles came on." (Durka 3, telling 3): she was ON the isles.
+W.sunsetAfter["Echo Isles"] = {"The water around the isles went dark, and then the sky."}
+
+-- L.zones["Durotar"].e[3]. Mine, REWRITES8: "in Durotar, on the eastern coast of Kalimdor" (Ragh I)
+-- reads as a geography lesson on home ground.
+L.zones["Durotar"].e[3] = "{p:Durotar}, among the red rocks"
+
+---------------------------------------------------------------------------
+-- 2. THE WRY STORYTELLER'S ASIDES (JournalTellers.lua). An empty teller pool falls back to the
+-- common one. Each of these was an aside or a false mood:
+--   "Poor soul." after meeting Gorm (who did not die) and Corwin (whose death had not happened yet);
+--   "The beds, as ever, were a matter of opinion." (beds: not recorded; a wink at the reader);
+--   "Well. That could have gone better." on two days the dungeon was cleared and its lord killed.
+---------------------------------------------------------------------------
+if P and P.wry then
+    P.wry.meetGroup = {}
+    P.wry.inn = {}
+    P.wry.closegrim = {}
+end
+
+---------------------------------------------------------------------------
+-- 3. A COUPLE WHO BEGAN TOGETHER (Durka and Ragh)
+---------------------------------------------------------------------------
+
+-- NEW POOL (engine hook: the first chapter of a book whose companion began with you, origin =
+-- "together", keyed by race; in place of W.origin + W.joinedBond). Tokens {names} {bond} ("Ragh",
+-- "my wife"). The book opened "My first task in the Valley of Trials was to thin out the boars...
+-- Ragh, my wife, was with me." for a life the two of them began side by side.
+W.originTogether = {
+    Orc = {"{names}, {bond}, and I began together in the {p:Valley of Trials}, where the Horde sends its young to be tested.",
+        "{names}, {bond}, and I came of age together in the {p:Valley of Trials}."},
+    Troll = {"{names}, {bond}, and I began together in the {p:Valley of Trials}, two Darkspear among the orcs."},
+    Tauren = {"{names}, {bond}, and I began together at {p:Camp Narache}, on the plains of Mulgore."},
+    Scourge = {"{names}, {bond}, and I rose together at {p:Deathknell}."},
+    Human = {"{names}, {bond}, and I began together at {p:Northshire Abbey}."},
+    Dwarf = {"{names}, {bond}, and I began together at {p:Anvilmar}, in the snow."},
+    Gnome = {"{names}, {bond}, and I began together at {p:Anvilmar}, far from lost Gnomeregan."},
+    NightElf = {"{names}, {bond}, and I began together in {p:Shadowglen}, under Aldrassil."},
+}
+-- NEW POOLS (engine hook: the day's sunset while a companion was with you; the "we" form of
+-- W.milestone2.sunset / sunsetEast). Tokens {what} {names}. "I was at the Echo Isles when the sun
+-- went down" was told as one person's, on the warmest evening of the couple's book.
+W.milestone2.sunsetWe = {
+    "{names} and I watched the sun go down over the sea at {what}.",
+    "At {what}, {names} and I stopped to watch the sun go down.",
+}
+W.milestone2.sunsetEastWe = {
+    "At {what}, {names} and I watched the light go off the water as the sun went down behind us.",
+    "{names} and I were at {what} when the sun went down behind the land, and the sea in front of us went grey.",
+}
+-- NEW POOL (engine hook: W.caveDeath when someone was with you). Tokens {cave} {foe} {Foe}.
+-- "Ragh was with me ... I went down into Dustwind Cave, and a Burning Blade Thug killed me there."
+W.caveDeathWe = {
+    "We went down into {cave}, and {foe} killed me there.",
+    "{Foe} killed me deep in {cave}, with the others beside me.",
+}
+-- NEW POOL (engine hook: PB.dungeonFirstEver when the companion began with you, so it was the first
+-- for both). Tokens {us}. "You had never been inside a dungeon before." told to a couple.
+if PB then
+PB.dungeonFirstEverBoth = {
+    "Neither of {us} had ever been inside a dungeon before.",
+    "It was the first dungeon either of {us} had ever gone into.",
+}
+end
+
+---------------------------------------------------------------------------
+-- 4. RACE AND CLASS
+---------------------------------------------------------------------------
+
+-- NEW POOL (engine hook: W.rezOtherBy for a PRIEST of a race whose priests do not call on the Light,
+-- keyed by race; before W.rezOtherBy). Tokens {who}. "The Light answered me over Bruk" was said by
+-- a troll; night elf priests pray to Elune. Use the Light lines for Human, Dwarf and Gnome priests.
+-- ENGINE: the same gate for L.dungeonStory["Scarlet Monastery"].whyClass.PRIEST ("the same Light I did").
+W.rezOtherByRace = {
+    Troll = {"I prayed {who} back from death."},
+    NightElf = {"Elune answered me over {who}, and death let go."},
+    Scourge = {"I raised {who} from death with the old prayers."},
+    Tauren = {"I prayed {who} back from death."},
+}
+-- NEW POOLS: the life-first raise in a book begun late (level 11 or above). "the first I ever raised"
+-- cannot be known at level 34 (Kahlu 1, and Bruk I). Tokens {who} / companion {I} {them}.
+W.rezOtherLate = {
+    "I prayed {who} back from death.",
+    "I brought {who} back from death.",
+}
+if PB then
+PB.sharedRezOtherLate = {
+    "{I} prayed {them} back from death.",
+    "{I} brought {them} back from death before the fight was cold.",
+}
+end
+
+-- W.roleBy -- EXTEND (st). The classes of batch 2.
+W.roleBy = W.roleBy or {}
+W.roleBy.SHAMAN = {healer = {"I stayed behind the others and kept them on their feet, as the spirits had taught me."}}
+W.roleBy.ROGUE = {damage = {"I struck from behind while the others held their attention."}}
+W.roleBy.MAGE = {damage = {"I kept back, and my spells did the work."}}
+W.roleBy.WARLOCK = {damage = {"I kept back, and my spells and my demon did the work."}}
+W.roleBy.PRIEST = W.roleBy.PRIEST or {}
+W.roleBy.PRIEST.healer = {"My place was behind the others, keeping them alive.", "I stayed at the back and prayed the others through it."}
+
+-- NEW FIELD L.dungeonStory[...].whyRace -- the races of batch 2.
+L.dungeonStory["Zul'Farrak"].whyRace = {
+    Troll = {"The Sandfury were trolls, but no kin of the Darkspear, and they had no welcome for us."},
+}
+L.dungeonStory["Shadowfang Keep"].whyRace = {
+    Scourge = {"The Forsaken could not hold Silverpine for the Dark Lady while Arugal lived in the keep."},
+}
+-- NEW FIELD (engine hook: Gnomeregan's race lines in a companion book; {my} is "your"/"my").
+L.dungeonStory["Gnomeregan"].whyRaceC = {
+    Gnome = {"Gnomeregan had been {my} people's city, and the troggs and the traitor Thermaplugg held it now."},
+}
+
+-- Lords' consequences. Arugal was named in the boast just before ("Arugal fell mostly to your
+-- spells... Silverpine was rid of Arugal, for now." in Grak III).
+if L.bosses["Archmage Arugal"] then
+    L.bosses["Archmage Arugal"].after = "The worgen of Silverpine had lost their master, for now."
+    L.bosses["Archmage Arugal"].afterMore = {"Silverpine was free of the worgen's master, for now."}
+end
+-- NEW FIELD L.bosses[...].afterRace (engine hook: in place of after, for that race, own journal).
+if L.bosses["Mekgineer Thermaplugg"] then
+    L.bosses["Mekgineer Thermaplugg"].afterRace = {Gnome = "The traitor who had poisoned my people's city was dead."}
+end
+
+-- NEW POOL (engine hook: the first mount, keyed by its kind, from the summon spell's name: Raptor,
+-- Wolf, Kodo, Horse/Stallion/Mare/Pinto/Palomino, Ram, Mechanostrider, Saber, Skeletal). No tokens.
+-- "For the first time, I rode my own mount." said of a troll; a Darkspear rides a raptor.
+W.mountFirstKind = {
+    raptor = {"For the first time, I rode a raptor of my own.", "I had a raptor of my own at last, and the land went by faster."},
+    wolf = {"For the first time, I rode a wolf of my own.", "I had a wolf of my own at last, and the land went by faster."},
+    kodo = {"For the first time, I rode a kodo of my own.", "I had a kodo of my own at last, slow to start and hard to stop."},
+    horse = {"For the first time, I rode a horse of my own.", "I had a horse of my own at last, and the land went by faster."},
+    ram = {"For the first time, I rode a ram of my own.", "I had a ram of my own at last, and the land went by faster."},
+    mechanostrider = {"For the first time, I rode a mechanostrider of my own.", "I had a mechanostrider of my own at last, and it clanked the whole way."},
+    saber = {"For the first time, I rode a nightsaber of my own.", "I had a nightsaber of my own at last, and the land went by faster."},
+    skeletal = {"For the first time, I rode a skeletal horse of my own.", "I had a skeletal horse of my own at last, and the land went by faster."},
+}
+
+-- NEW POOL (engine hook: W.craftMade / craftPlain by trade, before them). Tokens {count} {made}.
+-- "I sat down to my tailoring and made fourteen things" (Tinka 1): "things" for a tailor's work.
+W.craftBy = {
+    Tailoring = {"I sat down with needle and thread and made {count} pieces, among them {made}.", "I sewed {count} pieces, {made} among them."},
+    Leatherworking = {"I worked {count} pieces of leather, {made} among them."},
+    Blacksmithing = {"I worked at the anvil and made {count} pieces, {made} among them."},
+    Engineering = {"I built {count} contraptions, {made} among them."},
+    Alchemy = {"I mixed {count} potions and elixirs, {made} among them."},
+    Cooking = {"I cooked {count} dishes, {made} among them."},
+    Enchanting = {"I made {count} enchanted things, {made} among them."},
+    FirstAid = {"I made {count} bandages, {made} among them."},
+}
+
+-- W.milestone[20] / [30]  (no tokens). "Level twenty." and "Level thirty." closed three chapters of
+-- batch 2 as two-word fragments.
+W.milestone[20] = {"I reached level twenty.", "By the end of it I was level twenty."}
+W.milestone[30] = {"I reached level thirty.", "By the end of it I was level thirty."}
+
+-- PB.rolesPair["healer+damage"]  ({I} {name} {they}). "High Inquisitor Whitemane killed Nyx...
+-- You kept Nyx alive while she fought." (Nyx I). No line here claims they lived.
+if PB then
+PB.rolesPair["healer+damage"] = {"{I} healed, and {name} fought.", "{name} fought, and {I} did the healing."}
+end
+end
+end
+
+-- A day in a battleground ({what}, {mySide}, {times}: "twice", "three times").
+W.bgOnce = {"I fought in {what}, with the {mySide}.", "I went into {what} to fight for the {mySide}."}
+W.bgTimes = {"I fought in {what} {times}, with the {mySide}.", "I went into {what} {times} to fight for the {mySide}."}
+W.bgTimesAgain = {"I was back in {what}, and fought there {times}.", "I fought in {what} again, {times} over."}
+
+-- Your part, joined to the kill that just named the boss ({weapon}): "We killed X, and ...".
+W.boastHere = {"my {weapon} did most of the work.", "most of the damage was mine."}
+
+-- The quest named for what had killed you, turned in after it did ({foe}).
+W.questRevenge = {"This time it was {foe} who died.", "{foe} did not get the better of me a second time."}
+
+-- The quiet "we" lines when the opening already named who "we" were.
+W.quietDayOneWeBare = {
+    "One errand marked an otherwise quiet day.",
+    "We finished a single quest that day.",
+    "There was one errand amid the quieter hours.",
+}
+W.quietDayWeBare = {
+    "It was a quiet stretch of our journey.",
+    "The day passed quietly.",
+    "For a time, the pace was quieter.",
+}
+
+-- A book begun late, at home ({level}, {zoneE}).
+W.openFirstLate.home = {"I was level {level}, and in {zoneE}, among my own people.", "At level {level}, I was at home in {zoneE}."}
+
+-- A level reached in an earlier part of the day ({level}, {where}).
+W.levelEarlyDungeon = {"I had reached level {level} down in {where}.", "Level {level} had come in {where}, earlier that day."}
+W.levelEarlyIn = {"I had reached level {level} in {where}, earlier that day.", "Level {level} had come in {where}, earlier that day."}
+
+-- A long swim that nearly drowned you ({place}).
+W.swimNearly = {"I swam a long way through {place}, and very nearly drowned.", "I swam out into {place} and came up for air just in time."}
+
+-- What a skinner took, by name ({names}: "Thick Leather"; {work}).
+W.gatherNamesHides = {"Most of it was {names}.", "Most of what I took was {names}."}
+W.gatherNamedHides = {"I {work}, and took mostly {names}.", "I {work}, for {names} for the most part."}
+
+-- Round 10 (the writer): batch 2, second pass.
+do
+local PB = A.JournalTale and A.JournalTale.phrases
+local L = A.Lore
+if L then
+-- W.questRevenge  ({foe} {Foe}). DELETE "{foe} did not get the better of me a second time.": Aldric 5
+-- says it right after "Mor'Ladim was the end of me", the second time Mor'Ladim had killed him. The
+-- lines below hold whatever the count.
+-- ENGINE: when the quest's title is the foe's own name ("Mor'Ladim"), leave the title out of the quest
+-- list and join: "We finished The Legend of Stalvan, and this time it was Mor'Ladim who died."
+W.questRevenge = {
+    "This time it was {foe} who died.",
+    "In the end it was {foe} who went down.",
+}
+
+-- Menethil Harbor's second lore (mine, REWRITES9): "Menethil Harbor, the harbor where the ships come in".
+if W.towns["Menethil Harbor"] and W.towns["Menethil Harbor"].lore then
+    for i, l in ipairs(W.towns["Menethil Harbor"].lore) do
+        if l == "the harbor where the ships come in from Kalimdor" then W.towns["Menethil Harbor"].lore[i] = "the port where the ships come in from Kalimdor" end
+    end
+end
+
+-- Shadowfang Keep, whyRace (mine, REWRITES9): "...while Arugal lived in the keep. The keep was cold, ..."
+L.dungeonStory["Shadowfang Keep"].whyRace = {
+    Scourge = {"The Forsaken could not hold Silverpine for the Dark Lady while Arugal lived."},
+}
+
+-- PB.sharedRezOtherLate  ({I} {them}). DELETE "...before the fight was cold." (mine): a flourish, and
+-- "fight" twice after "did not live out the fight".
+if PB then
+PB.sharedRezOtherLate = {
+    "{I} prayed {them} back from death.",
+    "{I} brought {them} back from death.",
+}
+end
+
+-- W.voyageFirstLand.boat / .zeppelin  ({to}). DELETE the two-sentence line "A ship carried me across the
+-- sea to {to}. I had never sailed before, and I had never seen {to}.": it names {to} twice and, with the
+-- first-zone line after it, made three firsts in a row (Sylwen 7: "...I had never seen the Eastern
+-- Kingdoms. I saw the Wetlands for the first time.").
+W.voyageFirstLand.boat = {
+    "For the first time, I went aboard a ship, and it carried me across the sea to {to}, where I had never been.",
+    "I took the boat across the sea to {to}, my first time on a ship and my first sight of that land.",
+    "A ship carried me across the sea to {to}, where I had never been.",
+}
+W.voyageFirstLand.zeppelin = {
+    "For the first time, I rode a zeppelin, and it carried me over the sea to {to}, where I had never been.",
+    "I took the zeppelin across the sea to {to}, my first time on a zeppelin and my first sight of that land.",
+    "A zeppelin carried me over the sea to {to}, where I had never been.",
+}
+
+-- W.aucSale  ({what}). "I sold Blue Linen Vest at the auction house" reads without its article. ENGINE:
+-- in a book begun at level 11 or above, only the line marked (no first): "my first sale there" cannot be
+-- known for a crafter of 22 (Tinka 1), the same rule as the raise in round 9.
+W.aucSale = {
+    "Somebody bought my {what} at the auction house. I never learned who.",
+    "My {what} sold at the auction house, the first thing I ever sold there.",
+    "I sold my {what} at the auction house, my first sale there.",
+    "The auction house sold my {what}, and the coin came to me by mail.", -- (no first)
+}
+
+-- NEW POOL (engine hook: W.quietClose after a sunset shared with company; the companion is named in
+-- the sunset line just before). Tokens st. "At the Echo Isles, Ragh and I watched ... I did not hurry
+-- away." (Durka 3) and "Grosh and I watched ... The first stars were out by the time I left." (Nahiri 5).
+W.quietCloseWe = {
+    "We did not hurry away.",
+    "The first stars were out by the time we left.",
+    "We stayed until the light was gone, and for a while after.",
+}
+
+-- NEW POOL (engine hook: W.townHomeFirst when st.We == "We"). Tokens {town} {lore}.
+-- "Ragh and I set out in Durotar. I came to Razor Hill..." (Durka 2).
+W.townHomeFirstWe = {
+    "We came to {town}, {lore}.",
+    "We stopped in {town}, {lore}.",
+    "We stopped a while in {town}, {lore}.",
+}
+
+-- NEW POOL (engine hook: you and the companion reached the same level the same day; in place of
+-- W.level). Tokens {names} {level}. The couple's book says "You both reached level 20" in Ragh's
+-- journal and only "I reached level twenty." in Durka's own.
+W.levelBoth = {
+    "{names} and I both reached level {level}.",
+    "{names} and I reached level {level} together.",
+}
+end
+end
+
+-- Darkshire's second lore without the Night Watch (the zone's own lines name it).
+if W.towns["Darkshire"] and W.towns["Darkshire"].lore then
+    for i, l in ipairs(W.towns["Darkshire"].lore) do
+        if l == "where the Night Watch keeps its lamps lit" then W.towns["Darkshire"].lore[i] = "the one lit town in those dark woods" end
+    end
+end
+
+-- The revenge when the quest's own title names the foe (no name again).
+W.questRevengeBare = {"this time it went the other way.", "this time I was the one still standing."}
+
+-- Round 11 (the writer): batch 3.
+do
+local PB = A.JournalTale and A.JournalTale.phrases
+local L = A.Lore
+local P = A.JournalTellers
+if L then
+-- 1. THE WRY TELLER'S FALL JOKES. "You discovered the ground. Hard." (Tobias III) is a fragment and a
+-- wink; "In your defence, it was a very convincing ledge." speaks to the reader. The common FALLING pool
+-- already has the dry line ("The drop was further than it looked."), once per book.
+---------------------------------------------------------------------------
+if P and P.wry then P.wry.dieFALLING = {} end
+
+---------------------------------------------------------------------------
+-- 2. THE RETURNER (Liriel)
+---------------------------------------------------------------------------
+
+-- W.reunion  ({When} {names} {ago} {zoneD}). DELETE "...and we took the road together again." (the road
+-- as a metaphor; CRITIQUE6 rewrote it, and it is back: "Ithil turned up in Ashenvale after four months,
+-- and we took the road together again." Liriel 4).
+W.reunion = {
+    "I was in {zoneD} with {names}.",
+    "{names} and I travelled together in {zoneD}.",
+}
+-- An entry event supports entering the dungeon, rather than another greeting.
+-- Chapter dates carry the chronology; none of these lines implies an absence.
+W.reunionDungeon = {
+    "{names} and I went into {zoneD} together.",
+    "With {names}, I entered {zoneD}.",
+}
+-- NEW POOL (engine hook: W.reunion for a bonded companion; before it). Tokens {When} {names} {bond}
+-- {ago} {zoneD}. Her oldest friend after four months was told like any acquaintance.
+W.reunionBond = {
+    "{names}, {bond}, was beside me in {zoneD}.",
+    "I was in {zoneD} with {names}, {bond}.",
+}
+W.reunionDungeonBond = {
+    "{names}, {bond}, went into {zoneD} with me.",
+    "I entered {zoneD} with {names}, {bond}.",
+}
+-- W.returned  ({ago}). DELETE "...and it took a while to remember the way of things." (a feeling, invented).
+
+-- W.titles.returned. "Back on the Road" is the road metaphor; "After Long Away" is not English.
+W.titles.returned = {"The Return", "Back Again"}
+-- NEW POOL (engine hook: the last chapter before a gap of 30 days or more; said last, hindsight the
+-- engine has). Tokens {ago}. Liriel's sunset at Auberdine was her last evening for four months.
+
+-- NEW POOL (companion; engine hook: a bonded companion back after 30 days or more, in place of
+-- PB.rare / PB.pauseFar). Tokens {name} {bondWord} {gap} {pair}. "Ithil was in the party for the first
+-- time in four months." (Ithil III).
+if PB then
+    PB.reunionBond = {
+        "{name}, {bondWord}, came back after {gap}, and {pair} went out together as before.",
+        "After {gap}, {name}, {bondWord}, was back at {my} side.",
+    }
+end
+
+---------------------------------------------------------------------------
+-- 3. NAMES SAID TWICE OR THRICE (data)
+---------------------------------------------------------------------------
+-- "The last of them, Emperor Dagran Thaurissan, the Dark Iron emperor, fell too. The Dark Iron empire
+-- had lost its emperor." (Shael I, Vor I): "emperor" three times. Shadowforge City is the Dark Irons'
+-- city in Blackrock Depths.
+if L.bosses["Emperor Dagran Thaurissan"] then L.bosses["Emperor Dagran Thaurissan"].e = "the master of Shadowforge City" end
+-- "Baron Rivendare, the Scourge's baron ... Stratholme had lost its baron." (Shael II).
+if L.bosses["Baron Rivendare"] then L.bosses["Baron Rivendare"].e = "the Lich King's man in Stratholme" end
+-- Feralas: "The ruins of Dire Maul stood deep in the forest ... Gordunni ogres held the ruins".
+for i, l in ipairs(L.zoneStory["Feralas"].stakes or {}) do
+    L.zoneStory["Feralas"].stakes[i] = (l:gsub("Gordunni ogres held the ruins", "Gordunni ogres held the old city"))
+end
+-- Duskwood: "...and the Night Watch kept Darkshire lit. I stopped a while in Darkshire, the one lit town".
+for i, l in ipairs(L.zoneStory["Duskwood"].stakes or {}) do
+    if l == "The dead walked in its woods, and the Night Watch kept Darkshire lit." then
+        L.zoneStory["Duskwood"].stakes[i] = "The dead walked in its woods, and only the Night Watch stood against them."
+    end
+end
+
+---------------------------------------------------------------------------
+-- 4. RACE: the dungeons of batch 3
+---------------------------------------------------------------------------
+L.dungeonStory["Blackfathom Deeps"].whyRace = {
+    NightElf = {"Blackfathom had been a temple of my people, to Elune, until something from below fouled its moonwell."},
+}
+L.dungeonStory["Scarlet Monastery"].whyRace = {
+    Scourge = {"The Crusade burned every undead it found, and I was one."},
+}
+
+---------------------------------------------------------------------------
+-- 5. NEW POOLS FOR THE PERSONAS
+---------------------------------------------------------------------------
+-- (engine hook: a rare beast seen, then killed you; one sentence, in place of rareBeast + death).
+-- Tokens {what} {zoneD}. "King Mosh was about that day, and our paths crossed. It was King Mosh that
+-- killed me." (Bram 3).
+W.rareBeastKilled = {
+    "I came across {what}, and few ever do, and it killed me.",
+    "{what} was about that day, and it killed me.",
+}
+-- (engine hook: an unsure class first for a class past its level, a hunter's tame at 50; told without
+-- "first"). No tokens. Bram's new pet in Azshara was dropped.
+W.classAgain = {
+    tame = {"I tamed a new beast that day.", "I tamed a new companion of the wild."},
+    teleport = {"I learned to take myself home by magic."},
+}
+-- (engine hook: three levels or more in one day; in place of W.levels). Tokens {from} {level}.
+W.levelsFast = {
+    "I went from level {from} to {level} in a single evening.",
+    "In one evening I went from level {from} to {level}.",
+}
+-- (engine hook: eight levels or more in seven days or fewer, once per book, last in its chapter).
+-- Tokens {from} {level} {span} ("four days"). Morv is a speed leveller, and his book never says so.
+W.paceTally = {
+    "I had gone from level {from} to {level} in {span}.",
+    "In {span}, I had gone from level {from} to {level}.",
+}
+-- (engine hook: level 60 in a book begun at 50 or above, after the milestone line; the look back for a
+-- short book). Tokens {fromLevel} {origin} {since}. Garrum's sixty was one line.
+W.lookBackLate = {
+    "{since} before, I had been level {fromLevel} in {origin}.",
+    "It had been {since} since I set out from {origin} at level {fromLevel}.",
+}
+-- (engine hook: the first epic mount, by the kind of its summon aura; in place of milestone2.epicmount).
+-- No tokens. "I rode my new mount for the first time" said of a tauren's great kodo.
+W.epicMountKind = {
+    kodo = {"My great kodo came when I called, and it left my old one behind."},
+    raptor = {"My swift raptor came when I called, and it left my old one behind."},
+    wolf = {"My swift wolf came when I called, and it left my old one behind."},
+    horse = {"My swift horse came when I called, and it left my old one behind."},
+    ram = {"My swift ram came when I called, and it left my old one behind."},
+    mechanostrider = {"My swift mechanostrider came when I called, and it left my old one behind."},
+    saber = {"My swift saber came when I called, and it left my old one behind."},
+    skeletal = {"My skeletal warhorse came when I called, and it left my old one behind."},
+}
+-- (engine hook: the third FALLING death in a book or more, once per book; after the death line).
+-- Tokens {nth} ("third"). Wenna is the clumsy one; the count is the joke, and the engine has it.
+W.fallCount = {
+    "It was the {nth} time I had fallen to my death.",
+}
+-- (engine hook: a second death in one day by a different cause; in place of the plain death line).
+-- Tokens {foe} {Foe}. "I stayed under too long, and drowned ... A Defias Bandit killed me." (Wenna 1).
+W.deathAgainDay = {
+    "{Foe} killed me as well, before the day was out.",
+    "Later that day, {foe} killed me too.",
+}
+-- Companion revenge (engine hook: the same fold as W.questRevenge). Tokens {foe}. Bryn II and
+-- Tobias I tell the death and the quest, but not that the foe died.
+if PB then
+    PB.questRevenge = {
+        "This time it was {foe} who died.",
+        "In the end it was {foe} who went down.",
+    }
+end
+end
+end
+
+-- A dungeon day that begins with the company going in ({When} {names} {dungeonD}).
+W.openDungeonWith = {"{When}, {names} and I made for {dungeonD}.", "{When}, {names} and I set out for {dungeonD}."}
+W.openDungeonWithAgain = {"{When}, {names} and I went back into {dungeonD}.", "{When}, {names} and I were back in {dungeonD}."}
+
+-- Back after a long time, said in the opening sentence ({ago}).
+
+-- Round 12 (the writer).
+W.gatherNamedHides = {
+    "I {work}, and took mostly {names}.",
+    "I {work}, and most of the hides were {names}.",
+}
+W.classAgain = W.classAgain or {}
+W.classAgain.teleport = {"I went home by magic, in the space of a breath.", "I took myself home by magic that day."}
+do
+    local P = A.JournalTellers
+    if P and P.wry then P.wry.closetriumph = {} end
+end
+-- The tank's part, joined to the kill that named the boss.
+W.boastHereTank = {"I took the blows the whole fight.", "nothing got past me the whole fight."}
+
+-- Round 13 (the writer): the fifteen-life recheck.
+do
+local PB = A.JournalTale and A.JournalTale.phrases
+local L = A.Lore
+local P = A.JournalTellers
+if L then
+
+---------------------------------------------------------------------------
+-- 1. FALSE OR BROKEN
+---------------------------------------------------------------------------
+
+-- PB.rolesPairClass["healer+tank"].PRIEST (mine, REWRITES8). "Bruk stood in front, and you kept him standing
+-- with the Light." (Kahlu: Bruk III and IV, telling 5) is said of a troll priest. The own journal gates the
+-- Light by race; this line had no gate. "prayed" holds for every priest.
+if PB and PB.rolesPairClass and PB.rolesPairClass["healer+tank"] then
+    PB.rolesPairClass["healer+tank"].PRIEST = {"{name} stood in front, and {I} prayed {them} through it."}
+end
+
+-- L.dungeonStory.Uldaman.whyRace (mine, REWRITES8b). With the rule "one race line per visit", the reworded
+-- why ("...looking for where the dwarves came from") now takes the slot and blocks the detail that says
+-- "how the earthen became my people". Thorgrim, a dwarf, lost his line in Uldaman. Emptied: the race line
+-- is the detail.
+L.dungeonStory["Uldaman"].whyRace = {}
+
+-- The veteran storyteller's death lines (JournalTellers.lua). "You drowned. Mind the breath next time."
+-- (Ithil IV, telling 5) and "...Watch the edges." give the reader advice. Emptied; the common pools tell
+-- the death plainly.
+if P and P.veteran then P.veteran.dieDROWNING = {}; P.veteran.dieFALLING = {} end
+
+-- Sunsets after a sunset watched with company. "Ithil and I watched the sun go down over the sea at
+-- Auberdine. The lamps came on along the shore behind me" (Liriel 2, telling 5). The image lines take no
+-- pronoun now, so they hold for one or for two.
+W.sunsetAfter["Auberdine"] = {"The lamps of the town came on along the shore, one by one."}
+W.sunsetAfter["Booty Bay"] = {"The lamps came on in {p:Booty Bay}, one by one."}
+W.sunsetAfter["Sen'jin Village"] = {"The fires of {p:Sen'jin Village} came on along the shore."}
+W.sunsetAfter["The Savage Coast"] = {"Back from the beach, the jungle went quiet, one bird at a time."}
+W.sunsetAfter.plain = {
+    "The sea went red, then grey, then dark.",
+    "The waves kept coming in after the light was gone.",
+    "Out on the water, the light stayed longest.",
+    "The first stars came out over the water.",
+    "The water went gold, and then it went dark.",
+}
+
+-- Ironforge's first lore. "I was back in Ironforge, the dwarven city inside the mountain." (Thorgrim 6)
+-- tells a dwarf what his own city is.
+if W.towns["Ironforge"] then W.towns["Ironforge"].lore[1] = "the city cut into the mountain" end
+
+---------------------------------------------------------------------------
+-- 2. THE SAME LINES IN MANY BOOKS
+---------------------------------------------------------------------------
+
+-- W.openFirstLate -- EXTEND. "I was level N, and a long way from X, when I set out from Y." opens eight of
+-- the fifteen books, the same sentence in every telling of a life. Each race gets two more shapes, and
+-- "other" two more. Tokens {zoneE} {zoneD} {level}.
+local late = {
+    Dwarf = {"Ironforge was far behind me, and I was level {level} when I set out from {zoneE}.",
+        "At level {level}, I set out from {zoneE}, a long way from the mountain."},
+    Gnome = {"Ironforge was far behind me, and I was level {level} when I set out from {zoneE}.",
+        "At level {level}, I set out from {zoneE}, far from the snows where my people had found a home."},
+    Human = {"Stormwind was far behind me, and I was level {level} when I set out from {zoneE}.",
+        "At level {level}, I set out from {zoneE}."},
+    NightElf = {"Teldrassil was far behind me, and I was level {level} when I set out from {zoneE}.",
+        "At level {level}, I set out from {zoneE}, a long way from the World Tree."},
+    Orc = {"Orgrimmar was far behind me, and I was level {level} when I set out from {zoneE}.",
+        "At level {level}, I set out from {zoneE}, a long way from the red rocks of Durotar."},
+    Troll = {"The huts of Sen'jin were far behind me, and I was level {level} when I set out from {zoneE}.",
+        "At level {level}, I set out from {zoneE}, a long way from the sea at Sen'jin."},
+    Tauren = {"Mulgore was far behind me, and I was level {level} when I set out from {zoneE}.",
+        "At level {level}, I set out from {zoneE}, a long way from the plains of Mulgore."},
+    Scourge = {"The graves of Deathknell were far behind me, and I was level {level} when I set out from {zoneE}.",
+        "At level {level}, I set out from {zoneE}, a long way from the glades of Tirisfal."},
+    other = {"At level {level}, I set out from {zoneE}.", "My first stop, at level {level}, was {zoneE}."},
+}
+for race, lines in pairs(late) do
+    W.openFirstLate[race] = W.openFirstLate[race] or {}
+    Extend(W.openFirstLate[race], lines)
+end
+
+-- W.killMany -- EXTEND (st + {bosses}). "...fell, one after the other." is in eleven of the fifteen books,
+-- twenty-six times. Two more shapes.
+Extend(W.killMany, {"{We} put an end to {bosses}.", "{bosses} went down in turn."})
+
+-- W.joinedNew / W.joinedNewMany -- EXTEND (st + {names}). "I met X, and we went on together." is in seven
+-- books.
+Extend(W.joinedNew, {"{names}, fell in beside me.", "I was joined by {names}."})
+Extend(W.joinedNewMany, {"I was joined by {names}."})
+
+-- W.oncePerBook -- EXTEND. "Somewhere along the way I reached level {level}." is in fourteen of the
+-- fifteen books and ends twenty-two chapters across the three tellings. Once a book is enough for it.
+Extend(W.oncePerBook, {"Somewhere along the way I reached level {level}."})
+
+-- PB.myLevel -- EXTEND ({I} {mine}). "You made level N along the way." is in eleven of the fifteen books.
+if PB and PB.myLevel then
+    Extend(PB.myLevel, {"{I} went up to level {mine}.", "By the end of it, {Iwas} level {mine}."})
+end
+end
+end

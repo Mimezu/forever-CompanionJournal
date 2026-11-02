@@ -1,0 +1,49 @@
+## Interface: 16001
+## Title: Companion Journal
+## Notes: The players and NPCs you want to remember: display names, icons, notes, and a journal of your adventures together. Works on Blizzard's nameplates, and with Forever Names.
+## Author: Mimezu
+## Version: 1.12.3
+## SavedVariables: CompanionJournalDB
+## LoadSavedVariablesFirst: 1
+## OptionalDeps: ForeverNames, Blizzard_NamePlates
+## Category: Mimezu's Suite
+## Group: Mimezu_Journals
+## IconTexture: Interface\Icons\INV_Misc_Book_11
+
+Core.lua
+Glyphs.lua
+OptionsSkin.lua
+ColorPicker.lua
+People.lua
+Characters.lua
+GroupPrompt.lua
+LoreData.lua
+Lore.lua
+LoreHordeStories.lua
+LoreAllianceStories.lua
+LoreWorldStories.lua
+LoreClassStories.lua
+LoreNotes.lua
+LorePlaces.lua
+LorePeopleHistory.lua
+LoreWorldConnections.lua
+LoreDiscovery.lua
+LoreDiscoveryData.lua
+Journal.lua
+JournalSelf.lua
+JournalBook.lua
+JournalTellers.lua
+JournalTale.lua
+JournalWords.lua
+JournalSelfWords.lua
+JournalSelfTale.lua
+JournalReader.lua
+JournalStyles.lua
+JournalPagination.lua
+LoreNotesUI.lua
+JournalUI.lua
+BookManagement.lua
+JournalBookUI.lua
+Plates.lua
+API.lua
+Options.lua

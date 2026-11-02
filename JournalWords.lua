@@ -1,0 +1,1343 @@
+local _, A = ...
+-- The storyteller's phrasebook (Story mode): every line the chapters are made
+-- of, by moment. JournalTale.lua is the engine that picks them. Written to the
+-- style guide of the writing review (StorageInvestigation/journal-voice/review/
+-- CRITIQUE.md), in the voice of the vanilla quests:
+--   * say what happened, in order, in full sentences; never what was not
+--     recorded (who struck, what was said or felt, food, weather);
+--   * never narrate the telling (no journal, tale, song, verse, record, page,
+--     and no "road" unless there is one); no colon reveals, no aphorisms;
+--   * one adjective per sentence at most; name a place once; romanticize
+--     through consequence ("The Searing Blade had lost its master.").
+-- Tokens: {name} {pair} (a subject: "you and Kael", then mostly "you") {I}
+-- {me} {my} {we} {us} {our} ("you"/"your", or I/we in the diary voice)
+-- {Iwas} {they} {them} {their} {was}; the day's {zoneE} {zoneD} {length}
+-- {later} {gap} {part} {weekday} {qcount}; the moment's {quest} {dungeonE}
+-- {lore} {boss} {short} {bossE} {bossFell} {roll} {killer} {place} {theirs}
+-- {mine}... A line whose pool is empty drops its beat.
+local T = A.JournalTale
+local PB = T and T.phrases
+if not PB then return end
+PB.close, PB.stage, PB.dungeon, PB.kill, PB.rez, PB.fire = PB.close or {}, PB.stage or {}, PB.dungeon or {}, PB.kill or {}, PB.rez or {}, PB.fire or {}
+PB.dieEnv, PB.rezClass, PB.title, PB.origin = PB.dieEnv or {}, PB.rezClass or {}, PB.title or {}, PB.origin or {}
+
+---------------------------------------------------------------------------
+-- 1. FIRST DAYS: meetings, origins, the bond
+---------------------------------------------------------------------------
+
+-- PB.meetGroup: the companion's introduction. Plain is right here: who, what, where.
+PB.meetGroup = {
+    "{I} met {name}, {aWho}, in {zoneE}.",
+    "{name}, {aWho}, joined {my} party in {zoneE}.",
+    "In {zoneE} a party formed, and {aWho} named {name} was in it.",
+    "{I} first grouped with {name}, {aWho}, in {zoneE}.",
+    "That {part}, in {zoneE}, {I} fell in with {aWho} named {name}.",
+    "{I} fell in with {name}, {aWho}, in {zoneE}.",
+    "It was in {zoneE} that {I} first went out with {name}, {aWho}.",
+}
+
+-- PB.meetFire
+PB.meetFire = {
+    "{I} met {name}, {aWho}, at a campfire in {zoneE}.",
+    "It started at a campfire in {zoneE}, where {aWho} named {name} was sitting.",
+    "A campfire in {zoneE} was where {I} met {name}, {aWho}.",
+}
+
+-- PB.meetAdded (the player wrote them in by hand: "journal" is literal here, once)
+PB.meetAdded = {
+    "{name}, {aWho}, went into the journal that day.",
+    "{I} wrote down the name of {name}, {aWho}, that day.",
+}
+
+-- PB.meetAfterSeen
+PB.meetAfterSeen = {
+    "After seeing {name} about {count} times, {I} finally grouped with {them}.",
+    "{name} had been a familiar face for {span}. That day {they} joined {my} party.",
+    "For {span} {I} had only passed {name} by. That day {pair} grouped at last.",
+}
+
+-- PB.firstRoad (a meeting written on its own day, then the first outing)
+PB.firstRoad = {
+    "{later}, {pair} went out together for the first time.",
+    "The first real outing with {name} came {later}.",
+}
+
+-- PB.origin: started together. The Scourge lines open the player's own book (Dahlia).
+PB.origin = {
+    Scourge = {
+        "{pair} rose from the grave together in Deathknell and walked out into the grey light of Tirisfal.",
+        "It began in Deathknell, where {pair} rose from the grave and took up arms side by side.",
+        "{pair} woke in the crypts of Deathknell and went out into Tirisfal together.",
+    },
+    Human = {"{pair} set out together from Northshire Abbey.", "It began at Northshire Abbey, where {pair} took up arms side by side."},
+    Dwarf = {"{pair} set out together from Coldridge Valley, into the snow.", "It began in Coldridge Valley, where {pair} took up arms side by side."},
+    Gnome = {"{pair} set out together from Coldridge Valley, into the snow.", "It began in Coldridge Valley, where {pair} took up arms side by side."},
+    NightElf = {"{pair} began together in Shadowglen, beneath the World Tree.", "It began in Shadowglen, where {pair} took up arms side by side."},
+    Orc = {"{pair} began together in the Valley of Trials.", "It began in the Valley of Trials, where {pair} were tested side by side."},
+    Troll = {"{pair} began together in the Valley of Trials.", "It began in the Valley of Trials, where {pair} were tested side by side."},
+    Tauren = {"{pair} set out together from Camp Narache, on the plains of Mulgore.", "It began at Camp Narache, where {pair} first walked the plains of Mulgore."},
+    Sky = {"{pair} set out together from Zephras Isle.", "It began on Zephras Isle, where {pair} first rode the winds together."},
+    other = {"{pair} set out together from the very first day.", "{pair} started out together, on the first day of all."},
+}
+
+-- PB.bondLine (origin day only). Say the bond once, plainly. No "then and now", no "this book".
+-- One line on purpose: it is said once per book, and the origin line already says "together".
+PB.bondLine = {
+    "{name} is {bondWord}.",
+}
+
+-- PB.bondOpen: the engine uses it for 30-45% of a bonded companion's openings. Too often:
+-- a novelist does not re-announce "your wife" every chapter (see CRITIQUE 6.1). When it
+-- is used, let the bond word sit inside an ordinary sentence.
+PB.bondOpen = {
+    "That {part} {I} set out with {bondWord}, {name}.",
+    "{Bond} was with {me} that {part}.",
+    "{pair} set out that {part}.",
+}
+
+---------------------------------------------------------------------------
+-- 2. OPENING A DAY: the rhythm of meeting
+-- Tell the rhythm when it changes (second day, a return, a streak, a long
+-- absence). Otherwise open with the action. The engine should greet a daily
+-- companion on one day in four, not three in five (CRITIQUE 6.1). These lines
+-- are short on purpose, so they can sit in front of the day's first real line.
+---------------------------------------------------------------------------
+
+-- PB.second
+PB.second = {
+    "{name} came back {later}.",
+    "{later}, {name} was in the party again.",
+    "{later}, {pair} went out a second time.",
+}
+
+-- PB.early (days three to five)
+PB.early = {
+    "{name} joined {me} {later}.",
+    "{later}, {pair} set out together.",
+    "{name} was back {later}.",
+    "{later}, {name} was in the party again.",
+}
+
+-- PB.daily (a companion met almost every day). 12 lines; with the greeting at 25% that is plenty.
+PB.daily = {
+    "{name} was with {me} that {part}.",
+    "That {part} {pair} set out together.",
+    "{name} fell in beside {me}, as {they} did most days now.",
+    "{Weekday} {part}, and {name} was in the party as usual.",
+    "{name} joined {me} that {weekday}.",
+    "On {weekday}, as on most days, {pair} went out together.",
+    "{name} came along that {part}, as usual.",
+}
+
+-- PB.often (several times a week)
+PB.often = {
+    "{name} joined {me} that {part}.",
+    "{pair} were out on {weekday}.",
+    "{Weekday} brought {name} back to the party.",
+    "{name} was back in the party on {weekday}.",
+    "{name} came along, as {they} did a few times a week.",
+    "{pair} went out that {weekday} {part}.",
+    "{name} turned up that {part}.",
+    "That {part}, {name} was in the party once more.",
+}
+
+-- PB.oftenGap (every few days, gap of two or more)
+PB.oftenGap = {
+    "{later}, {name} was back.",
+    "{name} came back {later}, as {they} usually did.",
+    "{pair} went out together {later}.",
+    "{name} turned up {later}, as {they} did every few days.",
+}
+
+-- PB.weekly
+PB.weekly = {
+    "{name} was back {later}.",
+    "{name} joined {me} that {weekday} {part}.",
+    "It was {weekday}, and {name} was in the party.",
+    "{name} came along, as {they} did most weeks.",
+    "{pair} were out together that {part}.",
+    "{later}, {name} was in the party again.",
+    "After {gap}, {name} joined {me}.",
+}
+
+-- PB.fortnightly
+PB.fortnightly = {
+    "{name} came back after {gap}, about as long as {they} usually stayed away.",
+    "After {gap} apart, {pair} set out together.",
+    "{name} was back {later}.",
+    "It had been {gap}. That {part}, {name} joined {me}.",
+    "{name} turned up after {gap}, as {they} did every couple of weeks.",
+}
+
+-- PB.monthly
+PB.monthly = {
+    "{name} came back after {gap}.",
+    "It had been {gap} since {pair} last went out together.",
+    "After {gap}, {name} was back in the party.",
+    "{name} turned up after {gap}, as {they} did about once a month.",
+    "{gap} had gone by. Then {name} was back.",
+}
+
+-- PB.rare
+PB.rare = {
+    "{name} came back after {gap}.",
+    "It had been {gap} since {pair} last travelled together.",
+    "{name} was in the party for the first time in {gap}.",
+    "{name}, first met in {firstZone}, joined {me} again after {gap}.",
+}
+
+-- PB.pauseClose (a long silence from someone who used to be there all the time)
+PB.pauseClose = {
+    "For {gap} {name} did not join {me}. Then {they} came back.",
+    "{gap} went by without {name}, a long time for someone who had been there {usual}.",
+    "{name} had been gone {gap}. That {part} {they} {was} back in the party.",
+    "After {gap} apart, {pair} set out together.",
+    "After {gap}, {name} was back, and {our} travels together resumed.",
+}
+
+-- PB.pauseFar
+PB.pauseFar = {
+    "{name} came back after {gap}, longer than usual.",
+    "It had been {gap}, longer than {name} usually stayed away.",
+    "After {gap}, {name} was back in the party.",
+}
+
+-- PB.openPart (the hour you set out)
+PB.openPart = {
+    morning = {"{pair} set out in the morning.", "It was still morning when {name} joined {me}.", "{name} joined {me} that morning."},
+    afternoon = {"{pair} set out after noon.", "It was past noon when {name} joined {me}.", "{name} joined {me} that afternoon."},
+    evening = {"It was evening when {pair} set out.", "{name} joined {me} that evening.", "The light was going when {pair} set out."},
+    night = {"It was late when {name} joined {me}.", "Night had fallen by the time {pair} set out.", "{pair} set out late that night."},
+}
+
+-- PB.openPlace (the day opens on the place; the land beat then stays quiet)
+PB.openPlace = {
+    "That {part} {pair} went out into {zoneE}.",
+    "The day took {pairObj} to {zoneD}.",
+    "{pair} headed into {zoneD} that {part}.",
+}
+
+-- PB.streak. Say it at 7, 14, 21 and 30 days, not at 3 and 5 (CRITIQUE 6.9).
+PB.streak = {
+    "That made {count} days in a row.",
+    "It was the {nth} day running.",
+}
+
+---------------------------------------------------------------------------
+-- 3. WHERE YOU STAND (levels)
+---------------------------------------------------------------------------
+
+-- PB.stage.*: DROP THE BEAT. "Two tested blades.", "Blooded now, the two of you.",
+-- "Heroes, by any measure, whose names were starting to travel ahead of them.", "Young
+-- blades, both of you." are verbless labels for a level the player can already see.
+PB.stage.fledgling, PB.stage.young, PB.stage.blooded, PB.stage.seasoned = {}, {}, {}, {}
+PB.stage.veteran, PB.stage.hero, PB.stage.legend = {}, {}, {}
+
+-- PB.mentor / PB.protege / PB.caughtUp: keep; these carry information.
+PB.mentor = {
+    "{Iwas} level {mine}, {name} only {theirs}.",
+    "{Iwas} level {mine} then, while {name} was level {theirs}.",
+    "{name} was level {theirs}, a long way behind {me} at {mine}.",
+}
+PB.protege = {
+    "{name} was level {theirs}, well ahead of {me} at {mine}.",
+    "{name} was level {theirs} then, while {Iwas} level {mine}.",
+}
+PB.caughtUp = {
+    "{name} had caught up with {me} at level {theirs}.",
+    "{pair} were the same level now, {theirs}.",
+}
+
+---------------------------------------------------------------------------
+-- 4. THE LAND
+-- Most lines use the plain name {zoneD}. {zoneE} (the epithet) is in a few.
+-- Set persona.epithet to 0.2 (below) so an epithet shows about one day in five.
+---------------------------------------------------------------------------
+
+-- PB.travel (high traffic)
+PB.travel = {
+    "{pair} spent {length} in {zoneD}.",
+    "{pair} were out in {zoneD} for {length}.",
+    "{Length} went by in {zoneE}.",
+    "{pair} spent {length} together in {zoneE}.",
+    "{zoneD} took up {length} of the day.",
+    "{pair} were together in {zoneD} for {length}.",
+    "{pair} were in {zoneE} for {length}.",
+}
+
+-- PB.travelWork (the place and the quests in one sentence: the default when both exist)
+PB.travelWork = {
+    "{pair} spent {length} in {zoneD} and finished {qcount} quests.",
+    "In {zoneD}, {pair} turned in {qcount} quests in {length}.",
+    "The work that day was in {zoneD}, {qcount} quests in {length}.",
+    "During {length} in {zoneE}, {pair} finished {qcount} quests.",
+    "{Qcount} quests were finished during {our} {length} in {zoneD}.",
+    "{pair} were in {zoneD} for {length} and finished {qcount} quests there.",
+}
+
+-- The quiet day in one flowing sentence. The engine builds {day} from verb
+-- phrases in this order: where and how long (PB.dayGo, or PB.dayGoHere once a
+-- land line named the place), the quests (PB.dayWork: by name when one or two,
+-- a hard or group quest named with its reason), the fire or inn (PB.dayRest),
+-- joined as "A and B" or "A, B, and C". {inZone} is "in Silverpine Forest" or,
+-- two quiet days in five, the zone's own clause ("in Silverpine Forest, where
+-- the worgen howl"). A first fire or inn is folded in, then gets its own note.
+-- All subjects are plural: the assembled {day} can start with "were".
+-- (Engine: a named lead only while the companion is unnamed in the chapter; "On {weekday} ..."
+-- only as the chapter's first sentence; a {part} line is skipped when "that evening" was already said.)
+PB.day = {
+    "{pair} {day}.",
+    "That {part} {pair} {day}.",
+    "{name} and {I} {day}.",
+    "On {weekday} {pair} {day}.",
+    "{pair} {day}.",
+}
+PB.dayGo = {
+    "spent {length} {inZone}",
+    "were {inZone} for {length}",
+    "spent {length} together {inZone}",
+    "were out for {length} {inZone}",
+}
+-- the same, once the place was named this chapter (a land line said it).
+-- Verbs that stand without a place; "there" in one line only ("for over an hour there" was
+-- the new tic, 8.8 per 1,000 words, before this split).
+PB.dayGoHere = {
+    "stayed {length}",
+    "were out for {length}",
+    "spent {length} together",
+    "were together for {length}",
+    "spent {length} there",
+}
+-- A day of no quests, no fights: sightseeing, herbs, a sunset (your own journal says so).
+PB.dayGoQuiet = {
+    "spent {length} {inZone}",
+    "were together {inZone} for {length}",
+    "spent {length} together {inZone}",
+}
+PB.dayGoMany = {
+    "went from {from} to {to}, {length} all told",
+    "made {our} way from {from} to {to}",
+}
+PB.dayWork = {
+    one = {"turned in {quest}", "finished {quest}"},
+    two = {"turned in {quest} and {questB}", "finished {quest} and {questB}"},
+    few = {"turned in {count} quests", "finished {count} quests", "saw {count} quests through"},
+    many = {"worked through {count} quests", "turned in {count} quests"},
+    -- A hard or group quest is the day's work, named, and the chapter's title (engine R2-1b).
+    hard = {"took on {quest}, well above {our} level", "finished {quest}, though it was well above {our} level"},
+    elite = {"saw {quest} through, a quest meant for a group", "finished {quest}, work meant for a full party"},
+}
+PB.dayRest = {
+    fire = {"made camp{inPlace}", "stopped for a fire{inPlace}", "sat by a fire{inPlace} a while"},
+    inn = {"rested at the inn at {place}", "stopped at the inn at {place}"},
+}
+-- The short sentence after a first fire or inn. "Ahead" only when 3+ fires follow
+-- (the engine knows the whole book; hindsight is said only when true).
+-- (Only one line in each opens on "It": "It was ..." had become 11% of all sentence openings.
+-- The note follows a sentence that opens on "You"/"We", so the opening guard steers it away
+-- from "{we} ..." lines: each pool needs a third opening, "That was ...".)
+PB.fireFirstNote = {"{we} had never shared a fire before.", "It was the first fire {we} had shared.", "That was {our} first campfire together."}
+PB.fireFirstAhead = {"There would be many more fires after that one.", "It was the first fire {we} had shared, and far from the last."}
+PB.innFirstNote = {"{we} had not rested under one roof before.", "That was the first inn {we} had shared.", "It was the first inn {we} had stopped at together."}
+
+-- PB.travelMany
+PB.travelMany = {
+    "{pair} went from {from} to {to}, {length} in all.",
+    "The day started in {from} and ended in {to}.",
+    "From {from}, {pair} went on to {to}, {length} all told.",
+}
+
+-- PB.travelLong (three hours and more)
+PB.travelLong = {
+    "It was a long day, {length} from start to finish.",
+    "{pair} were out for {length}.",
+    "The day ran to {length}.",
+    "{pair} put in {length} that day.",
+    "{Length} went by before {pair} stopped.",
+    "It was {length} before {pair} called it a day.",
+}
+
+-- PB.home / homeNostalgic / homeBoth / theirHome
+PB.home = {
+    "{pair} were on {my} home ground, {zoneD}.",
+    "{zoneD} was the homeland of {my} people.",
+}
+PB.homeNostalgic = {
+    "{pair} were in {zoneD}, the homeland of {my} people, above its usual dangers now.",
+    "{zoneD} was the homeland of {my} people, and its common dangers were for younger adventurers.",
+}
+PB.homeBoth = {
+    "{zoneD} was home to both of {us}.",
+    "{pair} were on home ground in {zoneD}, where both of {us} had begun.",
+}
+PB.theirHome = {
+    "{zoneD} was {name}'s home ground.",
+    "{pair} were in {zoneD}, {name}'s homeland.",
+}
+
+-- PB.nostalgic (far above the zone's level)
+PB.nostalgic = {
+    "{pair} travelled through {zoneD}, with more experience than its usual dangers called for.",
+    "{pair} had outgrown the common dangers of {zoneD}.",
+    "{zoneD} was country for younger adventurers than {us}.",
+}
+
+-- PB.perilous (below the zone's level)
+PB.perilous = {
+    "{pair} entered {zoneE}, country for more seasoned adventurers.",
+    "The common dangers of {zoneD} outmatched {our} experience.",
+    "{pair} were in {zoneD} earlier than its dangers advised.",
+    "{zoneD} was hard country for adventurers of {our} experience.",
+}
+
+-- PB.explore (first time in the zone together)
+PB.explore = {
+    "{pair} went into {zoneE} together.",
+    "The day's travels brought {pairObj} to {zoneD}.",
+    "That day, {pair} travelled together through {zoneD}.",
+}
+
+-- PB.zoneReturn (back after months)
+PB.zoneReturn = {
+    "{pair} visited {zoneD} again.",
+    "{pair} were back in {zoneD}.",
+}
+
+
+-- PB.whereItBegan / whereStarted
+PB.whereItBegan = {
+    "{pair} were back in {zoneD}, where {we} had first met.",
+    "{pair} were back in {zoneD}, {since} after meeting there.",
+}
+PB.whereStarted = {
+    "{pair} were back in {zoneD}, where {we} had started out.",
+    "The day led back to {zoneD}, where it had all started.",
+}
+
+-- PB.city / PB.cityRest
+PB.city = {
+    "{pair} passed through {zoneD}.",
+    "{pair} spent some time in {zoneD}.",
+    "{pair} stopped in {zoneD} for a while.",
+}
+PB.cityRest = {
+    "{pair} rested in {place}.",
+    "{pair} took a rest in {place}.",
+    "{pair} rested for a while in {place}.",
+}
+
+---------------------------------------------------------------------------
+-- 5. THE WORK (quests)
+-- Say "finished" or "turned in": the journal records turn-ins, so it is exact.
+-- Never "X: done." Never "seen through" more than once in a book.
+---------------------------------------------------------------------------
+
+-- PB.questsMany (six and more)
+PB.questsMany = {
+    "{we} finished {count} quests.",
+    "{Count} quests were turned in before the day was out.",
+    "{Count} quests were among the day's finished work.",
+    "{we} worked through {count} quests, one after another.",
+    "By the end of the day {we} had turned in {count} quests.",
+    "{Count} quests were finished that day.",
+    "{we} turned in {count} quests in all.",
+    "All told, {count} quests were done.",
+}
+
+-- PB.questsFew (two to five)
+PB.questsFew = {
+    "{we} turned in {count} quests as well.",
+    "There were {count} quests to hand in as well.",
+    "{Count} quests were turned in besides.",
+    "{we} finished {count} quests along the way.",
+    "{we} also saw {count} quests through.",
+}
+
+-- PB.questOne
+PB.questOne = {
+    "{we} also finished {quest}.",
+    "{we} turned in {quest} as well.",
+    "{we} finished {quest} besides.",
+}
+
+-- PB.questHard
+PB.questHard = {
+    "{we} finished {quest}, work usually left to more seasoned adventurers.",
+    "{quest} called for more experience than {we} had, but it was finished.",
+    "The work on {quest} called for a seasoned hand, and {we} saw it through.",
+}
+
+-- PB.questElite
+PB.questElite = {
+    "{quest} was meant for a group, and {we} finished it.",
+    "{we} finished {quest}, a quest meant for a group.",
+    "{quest} called for a full party, and {we} saw it through.",
+}
+
+-- PB.questEasy
+PB.questEasy = {
+    "The day's errands called for less experience than {we} had gained.",
+    "{we} completed work usually left to less seasoned adventurers.",
+}
+
+-- PB.prelude (three or more quests before the first dungeon)
+PB.prelude = {
+    "{pair} turned in {pcount} quests around {zoneD}{extras}.",
+    "{pair} started the {part} with {pcount} quests around {zoneD}{extras}.",
+    "The {part} began around {zoneD}, where {pair} turned in {pcount} quests{extras}.",
+    "First {pair} turned in {pcount} quests around {zoneD}{extras}.",
+}
+-- A long day's quests, named: two of them, or the one done again and again.
+PB.preludeNamed = {"Among them were {questA} and {questB}.", "{questA} and {questB} were among them."}
+PB.preludeRepeat = {"{questA} took {us} back {times}.", "{questA} alone took {us} back {times}."}
+-- On to the dungeon's zone, when it is not where the day's work was ({zoneTo}).
+PB.routeOn = {"Later {pair} made {our} way to {zoneTo}.", "From there {pair} went on to {zoneTo}.", "Then {pair} crossed to {zoneTo}."}
+-- The detour on the way ({via}: the zones crossed, in order).
+PB.routeVia = {"Later {pair} went through {via}, and on to {zoneTo}.", "From there {pair} passed through {via} on the way to {zoneTo}.",
+    "The way to {zoneTo} took {us} through {via}."}
+-- The one quest turned in after the dungeon ({quest}; {zoneTo} where).
+PB.questAfterOne = {"Afterwards, {we} turned in {quest}.", "Then {we} turned in {quest}."}
+-- PB.questsMore. Truth: the engine counts quests after the FIRST dungeon but says it after
+-- the LAST one (Dahlia: "nine more quests after that" were done before Ragefire). CRITIQUE 6.4.
+PB.questsMore = {
+    "{we} finished {count} more quests afterwards.",
+    "There were {count} more quests after that.",
+}
+
+---------------------------------------------------------------------------
+-- 6. DUNGEONS
+-- One description at most: the epithet OR the lore clause, not both. The
+-- engine picks a dungeon epithet 70% of the time; make it 25% (CRITIQUE 6.5).
+---------------------------------------------------------------------------
+
+-- PB.dungeon.fair (high traffic)
+PB.dungeon.fair = {
+    "{pair} went down into {dungeonE}, {lore}.",
+    "That {part} {pair} went into {dungeonE}.",
+    "Then {pair} went down into {dungeonE}.",
+    "{pair} took on {dungeonE}, {lore}.",
+    "{pair} made for {dungeonE}, {lore}.",
+    "{pair} went into {dungeonE}.",
+    "{pair} entered {dungeonE}, {lore}.",
+    "That {part} {pair} headed down into {dungeonE}.",
+    "Before long {pair} were in {dungeonE}, {lore}.",
+}
+
+-- PB.dungeon.daring
+PB.dungeon.daring = {
+    "{pair} entered {dungeonE}, {lore}. Its dangers called for more experienced adventurers.",
+    "{dungeonE} {dungeonWas} a hard venture for {us}. {pair} went inside.",
+    "{pair} went into {dungeonE}, a place meant for stronger adventurers.",
+}
+
+-- PB.dungeon.reckless
+PB.dungeon.reckless = {
+    "{dungeonE} {dungeonWas} meant for far more seasoned adventurers. {pair} went in.",
+    "The dangers inside {dungeonE} far outmatched {our} experience.",
+    "{pair} entered {dungeonE}, {lore}, before {our} strength matched its dangers.",
+}
+
+-- PB.dungeon.easy (four near-duplicates of "made short work of")
+PB.dungeon.easy = {
+    "{dungeonE} gave {us} little trouble.",
+    "{pair} went through {dungeonE} without much trouble.",
+    "{dungeonE} {dungeonWas} well within {our} reach.",
+}
+
+-- PB.dungeon.revisit (ten levels and more above it)
+PB.dungeon.revisit = {
+    "{dungeonE} held nothing that could threaten {us} anymore.",
+    "{pair} walked through {dungeonE}, which had once been dangerous.",
+    "{pair} walked through {dungeonE} like it owed {us} money.",
+}
+
+-- PB.dungeonAgain / PB.dungeonRegular
+PB.dungeonAgain = {
+    "{pair} went back to {dungeonE}.",
+    "{pair} went back into {dungeonE} for the {nth} time.",
+    "{pair} returned to {dungeonE}, a place {we} had seen before.",
+    "Once more {pair} went into {dungeonE}.",
+}
+PB.dungeonRegular = {
+    "{pair} went back to {dungeonE} for the {nth} time.",
+    "{pair} were back in {dungeonE}. By now {we} knew the way.",
+}
+
+-- PB.dungeonFirst
+PB.dungeonFirst = {
+    "It was {our} first dungeon together.",
+    "{we} had never been in a dungeon together before.",
+    "Neither of {us} had gone into a dungeon with the other before.",
+}
+
+-- PB.dungeonLater (a second dungeon the same day)
+PB.dungeonLater = {
+    "Later that {part}, {we} went down into {dungeonE}.",
+    "Later that {part} came {dungeonE}.",
+    "After that, {we} headed into {dungeonE}.",
+    "{dungeonE} came later that {part}.",
+    "Before the {part} was out, {we} were in {dungeonE}.",
+}
+
+-- PB.dungeonClock, for a later dungeon entered near or after midnight.
+-- {clock} = "near midnight" (23:00-23:59) or "after midnight" (00:00-03:59). The engine
+-- prefers it over PB.dungeonLater when the clock is known, and then the hour beat
+-- ("It was past midnight when you stopped") stays quiet.
+PB.dungeonClock = {
+    "It was {clock} when {we} went down into {dungeonE}.",
+    "{clock}, {we} went down into {dungeonE}.",
+    "{dungeonE} came {clock}.",
+}
+
+-- PB.dungeonGrief
+PB.dungeonGrief = {
+    you = {
+        "{pair} went back into {dungeonE}, where {I} had died the time before.",
+        "{pair} were back in {dungeonE}, where {I} had fallen the last time.",
+    },
+    them = {
+        "{pair} went back into {dungeonE}, where {they} had died the time before.",
+        "{name} had died in {dungeonE} the last time. {pair} went back in.",
+    },
+}
+
+-- PB.dungeonBrief. A dungeon with no bosses, deaths or lost fights
+-- (Dahlia's two-minute Shadowfang Keep) should get this, never daring/reckless rhetoric.
+-- PB.dungeonFled. The same empty visit, above your level, and the next thing
+-- recorded was outside it within minutes: {above} "far above" or "above",
+-- {quick} "within a minute" or "a few minutes later". Only what was recorded.
+PB.dungeonFled = {
+    "{pair} looked into {dungeonE}, with dangers {above} {our} experience, and were back out {quick}.",
+    "The demands of {dungeonE} were {above} {our} experience. {pair} went in, and came back out {quick}.",
+    "{pair} tried {dungeonE}, a place {above} {our} experience, and were outside again {quick}.",
+}
+PB.dungeonBrief = {
+    "There was a short visit to {dungeonE} as well.",
+    "{pair} looked in at {dungeonE}, too.",
+}
+
+---------------------------------------------------------------------------
+-- 7. BOSSES
+-- Active voice is allowed and is the vanilla way: completion texts tell the
+-- player plainly that they killed the foe. Kill lines use {we} ("you" / "we"), never {pair}.
+---------------------------------------------------------------------------
+
+-- PB.kill.<kind> (also used as {bossFell})
+PB.kill.undead = {"{we} put {short} back in the grave.", "{short} died a second time.", "{short} was laid to rest, for good this time.", "{short} was destroyed."}
+PB.kill.demon = {"{short} was banished.", "{we} sent {short} back to the Nether.", "{short} was slain and sent back to the Nether."}
+PB.kill.beast = {"{we} brought {short} down.", "{short} was put down.", "{short} was hunted down."}
+PB.kill.dragon = {"{short} was slain.", "{we} slew {short}.", "{short} died, dragon or not."}
+PB.kill.elemental = {"{short} was broken apart.", "{short} was unmade.", "{we} broke {short} apart."}
+PB.kill.giant = {"{short} came down hard.", "{we} brought {short} down."}
+PB.kill.construct = {"{short} was smashed to scrap.", "{we} took {short} apart.", "{short} was broken for good."}
+PB.kill.aberration = {"{short} was destroyed.", "{we} destroyed {short}.", "{short} was unmade."}
+PB.kill.humanoid = {"{we} killed {short}.", "{short} was cut down.", "{short} fought, and lost.", "{short} was slain.", "{short} died there.", "{short} was defeated."}
+
+-- PB.killOne (one earlier boss)
+PB.killOne = {"{we} killed {boss}.", "{boss} went down.", "{boss} barred the way, briefly.", "{boss} fell.", "{we} dealt with {boss}."}
+
+-- PB.killTwo
+PB.killTwo = {"{we} killed {bosses}.", "{bosses} both fell.", "{bosses} fell, one after the other.", "{bosses} were dealt with in turn."}
+
+-- PB.killMany
+PB.killMany = {"{we} killed {bosses}.", "{bosses} all fell.", "One after another, {bosses} went down.", "On the way through, {we} killed {bosses}."}
+
+-- PB.killLast (the lord of the place, after others)
+PB.killLast = {
+    "Last of all, {we} killed {boss}, {bossE}.",
+    "The last of them, {boss}, {bossE}, fell too.",
+    "Deepest in, {we} killed {boss}, {bossE}.",
+    "{we} killed {boss}, {bossE}, last of all.",
+}
+
+-- PB.killLastOnly (the lord, with no other kills that day)
+PB.killLastOnly = {
+    "It came down to {boss}, {bossE}. {bossFell}",
+    "{boss}, {bossE}, was waiting. {bossFell}",
+    "{we} killed {boss}, {bossE}.",
+    "Inside waited {boss}, {bossE}. {bossFell}",
+}
+
+-- PB.killNamed (a named boss that is not the last)
+PB.killNamed = {
+    "{we} killed {boss}, {bossE}.",
+    "{boss} was there too, {bossE}. {bossFell}",
+    "{boss}, {bossE}, stood in the way. {bossFell}",
+}
+
+-- PB.killRoll. A clean run (no deaths, no lost fights) with three or more
+-- kills told in ONE sentence, in order, the lord with its epithet on the first kill only:
+-- {roll} = "Oggleflint, then Taragaman the Hungerer, the felguard who led the Searing Blade,
+-- and after that Jergosh the Invoker and Bazzalan". This is where the 20-word sentences come from.
+PB.killRoll = {
+    "{we} killed {roll}.",
+    "Inside, {we} killed {roll}.",
+}
+
+-- PB.killCostly
+PB.killCostly = {"{short} died all the same.", "{short} still went down, in the end.", "{short} did not live out the fight."}
+
+-- PB.killCraft: DROP. "Taragaman met Dahlia's curses and your hammer" says who did what in
+-- the fight, which the journal does not know. Also empty P.crafts below.
+PB.killCraft = {}
+
+-- PB.killAgain
+PB.killAgain = {"{we} killed {boss} again.", "{boss} fell to {us} once more."}
+
+-- PB.revenge
+PB.revenge = {"{short} had beaten {us} before. Not this time.", "This time {short} stayed down.", "{we} came back for {short}, and this time {we} won."}
+
+-- PB.wipe / PB.wipeThenWin
+PB.wipe = {"{boss} beat {us} that time.", "The fight with {boss} was lost.", "{short} won that fight.", "{boss} was too much for {us}, that time."}
+PB.wipeThenWin = {
+    "{boss} won the first fight, and lost the second.",
+    "{boss} beat {us} once, and fell the second time.",
+    "The first fight with {boss} went against {us}, and the second did not.",
+}
+
+-- PB.aftermath: shrink to one generic line and give the lords their own consequence
+-- (L.bosses[...].after below, NEW engine hook). CRITIQUE 6.6.
+PB.aftermath = {"{dungeonD} would be quieter for a while."}
+
+---------------------------------------------------------------------------
+-- 8. DEATHS AND RESCUES
+-- State the death plainly. Comment only on silly deaths, and dryly.
+---------------------------------------------------------------------------
+
+-- PB.dieHeroic (killed by the lord of the place)
+PB.dieHeroic = {"{killer} killed {me}.", "{I} fell to {killer}.", "{I} died fighting {killer}.", "{I} died fighting {killer}, like many before {me}."}
+
+-- PB.dieBoss
+PB.dieBoss = {"{killer} cut {me} down.", "{I} fell before {killer}.", "{killer} was too much for {me}.", "{killer} killed {me}."}
+
+-- PB.dieBossAvenged
+PB.dieBossAvenged = {"{killer} killed {me}, but it did not save {killerShort}.", "{killer} killed {me}, but did not live out the day."}
+
+-- PB.dieFoe (outside dungeons)
+PB.dieFoe = {"{killer} killed {me} in {place}.", "{Iwas} killed by {killer} in {place}.", "{killer} got the better of {me}.", "{I} fell to {killer}."}
+
+-- PB.dieShameful (killed far below your level: the one place for a joke)
+PB.dieShameful = {
+    "{killer} killed {me}. At {my} level, that takes some doing.",
+    "{killer} killed {me} in {place}. The less said about that, the better.",
+    "Of all things, it was {killer} that killed {me}.",
+    "{I} died to {killer}, at {my} level.",
+}
+
+-- PB.dieEnv
+PB.dieEnv.FALLING = {"{I} fell to {my} death.", "A fall killed {me}.", "{I} misjudged a drop and died.", "{I} fell to {my} death. The drop was further than it looked.",
+    "{I} took the short way down, and died of it."}
+PB.dieEnv.DROWNING = {"{I} drowned.", "{I} drowned in {place}.", "{I} stayed under too long and drowned.", "{I} drowned. The water had looked harmless."}
+-- Named foes everyone has a story about, after they kill you ({I}, {me}).
+PB.infamous = {
+    ["Hogger"] = {"Half of Elwynn had tangled with him at one time or another, and now {I} had too."},
+    ["Stitches"] = {"He came down the road into Darkshire, and {I} had been in his way."},
+    ["Mor'Ladim"] = {"He still walked the graveyard on Raven Hill, as the people of Darkshire said."},
+    -- ("{I} was no luckier" would read "you was" in the "you" voice.)
+    ["Bhag'thera"] = {"She had long eluded Nesingwary's whole party."},
+    ["Old Murk-Eye"] = {"He was older and meaner than any other murloc on that coast."},
+    ["King Bangalash"] = {"He had sent Nesingwary himself back to camp more than once."},
+    ["Sin'Dall"] = {"Nesingwary's camp had tracked her for weeks."},
+    ["Sharptalon"] = {"It had preyed on the peons of Splintertree for a long time."},
+    ["Tethis"] = {"Even Nesingwary had failed to kill it."},
+    ["Mazzranache"] = {"It had been killing on the plains of Mulgore, and the tauren wanted it dead."},
+    ["Gath'Ilzogg"] = {"Lakeshire had a price on his head, and {I} understood why."},
+}
+-- Killed by one of the other side ({killer}: "a human warrior"), and again.
+PB.diePvp = {"{killer} of the other side killed {me}.", "{I} died to {killer} of the other side.", "{killer} of the other side caught {me} and cut {me} down."}
+-- Three or more deaths to the other side in one day: the count ({count}: "three").
+PB.diePvpMany = {"In all, the other side killed {me} {count} times that day.", "The other side kept coming back, and {I} died {count} times before it was over."}
+PB.diePvpAgain = {"When {I} came back for {my} body, they were waiting, and {I} died again.", "{I} died to them again, not long after."}
+-- A death the record knows nothing about.
+PB.diePlain = {"{I} died.", "{I} did not survive it."}
+-- The guards of a town ({place}).
+PB.dieGuard = {"The guards of {place} cut {me} down.", "{I} went too near the guards of {place}, and they made short work of {me}."}
+-- Someone else of your party that day, from your own journal ({others}: "Tarok, a tauren warrior").
+PB.alsoThere = {
+    "{others} came along too.",
+    "{others} went with {pairObj}.",
+    "{others} made one more in the party.",
+    "{others} was in the party as well.",
+}
+PB.alsoTherePlural = {
+    "{others} came along too.",
+    "{others} went with {pairObj}.",
+    "{others} were in the party as well.",
+}
+-- The first of the other side you ever saw, while together ({aFoe}: "an orc shaman", {side}).
+PB.sharedFoeSeen = {
+    "{I} saw one of the {side} for the first time that day, {aFoe}.",
+    "That was the day {I} first saw one of the {side}, {aFoe}.",
+}
+-- The first one you ever brought back from death, while together ({name}, {I}).
+PB.sharedRezOther = {
+    "{I} brought {them} back from death, the first {I} had ever raised.",
+    "{I} raised {them}, the first {I} had ever brought back from death.",
+}
+-- The same end a second time in one day.
+PB.dieEnvAgain = {
+    FALLING = {
+        "{I} fell to {my} death a second time that day.",
+        "Later {I} fell to {my} death again.",
+        "Later that day {I} made the same mistake and fell again.",
+        "The ground got {me} a second time before the day was out.",
+    },
+    DROWNING = {
+        "Later {I} drowned again.",
+        "The water took {me} a second time.",
+        "{I} drowned a second time before the day was out.",
+    },
+}
+PB.dieEnv.FATIGUE = {"{I} swam too far out and died of exhaustion.", "Fatigue killed {me} far from shore."}
+PB.dieEnv.LAVA = {"{I} died in the lava.", "The lava was exactly as dangerous as it looked."}
+PB.dieEnv.FIRE = {"Fire killed {me}.", "{I} burned to death."}
+PB.dieEnv.SLIME = {"{I} died in the slime.", "Slime killed {me}. There are better deaths."}
+
+-- PB.theyDie / PB.theyDieBoss
+PB.theyDie = {"{name} died in {place}.", "{name} was killed in {place}.", "{name} died there."}
+PB.theyDieBoss = {"{boss} killed {name}.", "{name} died fighting {boss}.", "{name} fell to {boss}.", "{name} was cut down by {boss}."}
+
+-- PB.rez. Truth: the engine picks "close" when the tier is close even if nobody was ever
+-- raised before, so "as {they} had before" can be false. Pick "close" only when
+-- history.rez > 0 (CRITIQUE 6.7).
+PB.rez.new = {"{name} raised {me} from death, a stranger's kindness.", "{name}, barely more than a stranger, brought {me} back from death."}
+PB.rez.companion = {"{name} brought {me} back from death.", "{name} raised {me} from death.", "{name} was there to bring {me} back."}
+PB.rez.close = {
+    "{name} brought {me} back, {countTimes} now.",
+    "{name} raised {me} from death, as {they} had before.",
+    "Once more {name} brought {me} back from death.",
+}
+PB.rezClass.PRIEST = {"{name} prayed {me} back from death.", "{name}'s prayers brought {me} back."}
+PB.rezClass.PALADIN = {"{name} called on the Light, and {I} rose.", "The Light answered {name}, and brought {me} back."}
+PB.rezClass.SHAMAN = {"{name} called {my} spirit back.", "The spirits heard {name}, and let {me} go."}
+PB.rezClass.DRUID = {"{name} brought {me} back to life.", "{name} would not let death keep {me}."}
+
+---------------------------------------------------------------------------
+-- 9. LEVELS
+-- No colons, no "grew stronger". A level is a fact; say it once.
+---------------------------------------------------------------------------
+
+-- ("was level N by the end of the day" is wrong once levels are told where they happened.)
+PB.theyLevel = {"{name} reached level {theirs}.", "{name} made level {theirs}.", "{name} climbed to level {theirs}.", "{name} went up to level {theirs}."}
+PB.theyLevelMark = {
+    [10] = {"{name} reached level 10."},
+    [20] = {"{name} reached level 20."},
+    [30] = {"{name} reached level 30, halfway to the top."},
+    [40] = {"{name} reached level 40, the level for a first mount."},
+    [50] = {"{name} reached level 50, with ten levels left to climb."},
+    [60] = {"{name} reached level 60, as high as any adventurer climbs."},
+}
+PB.bothLevel = {"{name} reached level {theirs}, and {I} reached {mine}.", "Both of {us} went up a level, {name} to {theirs} and {me} to {mine}."}
+-- Roles in a dungeon, you and them ("tank+healer": you tanked, they healed).
+PB.rolesPair = {
+    ["tank+healer"] = {"{I} took the blows, and {name} kept {me} standing.", "{I} stood in front while {name} healed."},
+    ["healer+tank"] = {"{name} took the blows, and {I} kept {them} standing.", "{name} stood in front while {I} healed."},
+    ["damage+healer"] = {"{name} kept {us} alive while {I} fought.", "{name} healed, and {I} fought."},
+    ["healer+damage"] = {"{I} kept {name} alive while {they} fought.", "{I} healed, and {name} fought."},
+    ["tank+damage"] = {"{I} held the enemies while {name} cut them down."},
+    ["damage+tank"] = {"{name} held the enemies while {I} cut them down."},
+}
+-- Earned, now and then: yours, or theirs ({boss}, {weapon}, {theirWeapon}).
+PB.boastYou = {
+    damage = {"Most of the blows that brought {boss} down were {yours}.", "{boss} fell mostly to {my} {weapon}."},
+    healer = {"Nobody fell while {I} watched over them."},
+    tank = {"{boss} never got past {me}."},
+}
+PB.boastThem = {
+    damage = {"Most of the blows that brought {boss} down were {name}'s.", "{boss} fell mostly to {name}'s {theirWeapon}."},
+    healer = {"Nobody fell while {name} watched over {us}."},
+    tank = {"{boss} never got past {name}."},
+}
+-- PB.soloBefore: from your own journal, the hours you spent alone that day
+-- before they joined you ({soloSpan} "about two hours" or "a long day",
+-- {soloZone} where). Never on the day you met.
+PB.soloBefore = {
+    "Before that, {I} had spent {soloSpan} alone in {soloZone}.",
+    "{I} had already spent {soloSpan} alone in {soloZone} by then.",
+    "Earlier, {I} had spent {soloSpan} alone in {soloZone}.",
+}
+-- Moments from your own journal while you were together ({pair}, {what}, {to}, {killer}).
+PB.shared = {
+    sunset = {
+        "At {what}, the sun went down while {pair} were together.",
+        "{pair} were at {what} as the sun went down.",
+        "The sun went down at {what} during {our} time together.",
+    },
+    voyage = {
+        zeppelin = {
+            "{pair} took the zeppelin across the sea to {to}.",
+            "{pair} rode the zeppelin over the water to {to}.",
+            "{pair} crossed to {to} by zeppelin.",
+            "{pair} went over the sea to {to} on the zeppelin.",
+        },
+        boat = {
+            "{pair} took the boat across to {to}.",
+            "{pair} sailed for {to}.",
+            "{pair} crossed to {to} by ship.",
+            "{pair} went aboard a ship and crossed the sea to {to}.",
+        },
+    },
+    landmark = {
+        "{pair} came to {what} together.",
+        "{what} was among the places {pair} reached together that day.",
+        "That day brought {pairObj} to {what}.",
+    },
+    -- ("along the way" had become the book's tic; one line keeps it.)
+    gather = {
+        "{I} {work} along the way.",
+        "{I} {work} as {we} went.",
+        "On the way, {I} {work}.",
+        "In between, {I} {work}.",
+    },
+    close = {
+        "{killer} nearly got {me}.",
+        "{I} barely got away from {killer}.",
+        "{killer} nearly killed {me}.",
+        "{killer} came close to killing {me}.",
+        "{I} got away from {killer} with very little life left.",
+    },
+    FALLING = {
+        "{I} nearly fell to {my} death.",
+        "{I} almost took the short way down.",
+        "A fall very nearly killed {me}.",
+        "{I} fell a long way and only just lived.",
+    },
+    DROWNING = {
+        "{I} nearly drowned.",
+        "{I} came up for air just in time.",
+        "{I} stayed under too long, and only just came up in time.",
+        "The water very nearly had {me}.",
+    },
+    -- NEW KEYS (engine hook: the same own-journal events, shared while together;
+    -- tokens as the own journal passes them, plus {pair} {I} {we}).
+    snow = {
+        "{pair} walked through snow in {zoneD}, and {I} had never seen snow before.",
+        "It was the first snow {I} had ever seen, and {pair} left tracks through it.",
+    },
+    fish = {
+        "{pair} spent a while at {place}, and {I} {work}.",
+        "At {place}, {I} put a line in the water and {work}.",
+    },
+    rareBeast = {
+        "{pair} came across {what}, and few ever do.",
+        "{what} crossed {our} path in {zoneD}, and not many people ever see it.",
+    },
+    swim = {
+        "{pair} swam across {place} rather than walk around it.",
+        "{pair} took to the water in {place} and swam a long way.",
+    },
+    nightFlight = {
+        "{pair} flew to {to} after dark.",
+        "It was night when {pair} flew to {to}.",
+    },
+}
+-- PB.bothSame: the same level, reached together.
+PB.bothSame = {"{pair} both reached level {theirs}.", "{pair} reached level {theirs} together."}
+PB.myLevel = {"{I} reached level {mine}.", "{I} made level {mine} along the way.", "{I} climbed to level {mine}."}
+PB.levelThen = {
+    "{They} had been level {thenLevel} in {firstZone}, the day {we} met.",
+    "{They} had been level {thenLevel} when {we} first met.",
+}
+
+---------------------------------------------------------------------------
+-- 10. REST
+-- A fire or an inn is often the right last sentence. Leave it plain.
+-- Never "the day ended at ..." unless the rest is the day's last event (CRITIQUE 6.7).
+---------------------------------------------------------------------------
+
+PB.fire.first = {
+    "{we} made camp in {place} and shared a fire for the first time.",
+    "{we} sat by a fire together in {place} for the first time.",
+    "{we} shared {our} first campfire in {place}.",
+}
+PB.fire.new = {
+    "{we} made camp in {place}.",
+    "{we} rested by a fire in {place}.",
+    "{we} stopped for a fire in {place}.",
+    "There was a fire in {place}, and {we} sat by it a while.",
+}
+PB.fire.close = {
+    "{we} made camp in {place}, as {we} had many times before.",
+    "{we} stopped for a fire in {place}, as {we} often did.",
+    "{we} made another camp in {place}.",
+}
+PB.fireSame = {
+    "{we} made camp in {place} again, where {we} had shared {our} first fire.",
+    "{we} stopped for a fire in {place}, where the first one had been.",
+}
+
+PB.inn = {
+    "{we} rested at the inn at {place}.",
+    "At the inn at {place}, {we} rested a while.",
+    "{place} had an inn, and {we} rested there.",
+}
+PB.innFirst = {"{we} rested at the inn at {place}, the first inn {we} had shared."}
+PB.innClose = {"{we} rested at the inn at {place}, as {we} had before.", "{we} stopped at the inn at {place} again."}
+
+-- PB.lateNight / PB.earlyStart
+PB.lateNight = {"It was past midnight when {we} stopped.", "Midnight came and went before {we} stopped.", "{we} were still out well past midnight."}
+PB.earlyStart = {"{pair} were out before the sun was properly up.", "It was barely dawn when {pair} set out."}
+
+---------------------------------------------------------------------------
+-- 11. TALLIES (one per chapter at most; CRITIQUE 6.9)
+---------------------------------------------------------------------------
+PB.milestoneDays = {
+    [5] = {},
+    [10] = {"It was {our} tenth day out together."},
+    [25] = {"That made twenty-five days together, counting from the first in {firstZone}."},
+    [50] = {"That made fifty days together, counting from the first in {firstZone}."},
+    [100] = {"It was {our} hundredth day together, counting from the first in {firstZone}."},
+}
+PB.anniversary = {
+    [1] = {"It had been a month since the day {I} met {name} in {firstZone}.", "A month had passed since {firstZone}, where {name} first joined {my} party."},
+    [3] = {"It had been three months since the day {I} met {name} in {firstZone}.", "Three months had passed since {firstZone}, where {name} first joined {my} party."},
+    [6] = {"It had been half a year since {firstZone}, where {name} first joined {my} party."},
+    [12] = {"It had been a year since {firstZone}, where {name} first joined {my} party."},
+}
+PB.dungeonCount = {
+    [5] = {"That made five dungeons together."},
+    [10] = {"That made ten dungeons together."},
+    [25] = {"That made twenty-five dungeons together."},
+}
+
+---------------------------------------------------------------------------
+-- 12. CROSSING PATHS ONLY (one sentence is the whole chapter)
+---------------------------------------------------------------------------
+PB.seenFirst = {"{I} crossed paths with {name}, {aWho}, in {place}.", "{I} saw {name}, {aWho}, in {place}.", "{AWho} named {name} passed {me} in {place}."}
+PB.seenAgain = {"{I} saw {name} again in {place}.", "{name} was in {place} as well.", "{pair} crossed paths in {place}.", "{name} was about in {place}, going {their} own way."}
+PB.seenOften = {"{name} was in {place}, as {they} often {was}.", "{I} saw {name} in {place}, the {nth} time now.", "{I} saw {name} in {place}, though the two of {us} had still never grouped."}
+PB.seenLong = {
+    "{I} saw {name} in {place} again.",
+    "In {place}, {I} saw {name} again.",
+}
+PB.seenTimes = {"{Count} times that day, {name} crossed {my} path."}
+PB.seenCompanion = {"No outing together that day, only a glimpse of {name} in {place}.", "{I} saw {name} in {place}, but there was no outing together that day."}
+
+---------------------------------------------------------------------------
+-- 13. CLOSERS
+-- Drop them on ordinary days. A chapter may end on its last fact; vanilla
+-- completions end on a plain statement four times in ten and on a blessing
+-- one time in forty. Keep a few for a won or a lost day, and make the engine
+-- use them on at most one chapter in five (CRITIQUE 6.6).
+---------------------------------------------------------------------------
+PB.close.first, PB.close.new, PB.close.companion, PB.close.close, PB.close.rare, PB.close.forged = {}, {}, {}, {}, {}, {}
+PB.close.grim = {"Not {our} finest day.", "It was not a good day."}
+-- ("Well done." is the most vanilla line of all, but in the diary voice it is self-praise. Give it to
+-- the "you" voice only once the engine can tell the voices apart.)
+PB.close.triumph = {"It had been a good day's work.", "Few days went better than that one."}
+
+-- PB.closeForeshadow. A game master knows how the campaign goes on; the
+-- engine tells the whole book at once, so it knows too. Use a line only when it is true:
+-- later = a later day with this companion exists; longWait = the next day together is 30+
+-- days away. Never on the newest chapter, and never more than one chapter in ten.
+PB.closeForeshadow = {
+    later = {"{name} would be back.", "{pair} would travel together again.", "It would not be the last time {pair} went out together."},
+    longWait = {"It would be a long while before {name} was back.", "{name} would not be back for a long while."},
+}
+
+-- PB.blessing. These are added raw (no tokens), so the diary voice currently gets
+-- "Dark Lady watch over you both." Every line below works in both voices (no "you").
+PB.blessing = {
+    Horde = {"For the Horde.", "Lok'tar."},
+    Alliance = {"For the Alliance.", "Light be praised."},
+    Scourge = {"For the Dark Lady."},
+    Tauren = {"Earthmother be thanked."},
+    Dwarf = {"Aye, a fine day's work."},
+}
+
+---------------------------------------------------------------------------
+-- 14. TITLES (static lists; see CRITIQUE 6.10 for the dynamic ones)
+---------------------------------------------------------------------------
+PB.title = {
+    meet = {"First Meeting", "How It Began", "The First Day"},
+    atLast = {"At Last", "Crossed Paths"},
+    risen = {"Risen Together", "Deathknell", "From the Grave"},
+    origin = {"Where It Began", "The First Day"},
+    pause = {"The Return", "Back Again", "Together Again"},
+    returning = {"A Familiar Face", "Welcome Back"},
+    death = {"A Hard Day", "A Bad Day"},
+    fall = {"A Long Way Down", "A Long Fall"},
+    water = {"Drowned", "Too Deep"},
+    fire = {"By the Fire", "The Campfire"},
+    inn = {"At the Inn", "Under One Roof"},
+    home = {"Home Ground", "Home"},
+    nostalgic = {"Old Ground", "Old Haunts"},
+    seen = {"A Face in the Crowd", "Passing By", "In Passing"},
+}
+-- Rotating returning and fire titles.
+PB.title.returning = {"A Familiar Face", "Welcome Back", "Old Company"}
+PB.title.fire = {"By the Fire", "The Campfire", "Firelight"}
+
+-- Memory, lighter routine days, and warmth that is true ------------------------------
+-- (Pools that extend the tables above: they come after them.)
+PB.dayRest, PB.dayWork = PB.dayRest or {}, PB.dayWork or {}
+PB.bridge = {
+    "{Count} more days together followed, in {bridgeZones}.",
+    "The next {count} outings together went to {bridgeZones}.",
+    "{Count} more days together took {us} to {bridgeZones}.",
+}
+PB.bridgeOne = {
+    "Another day together followed, in {bridgeZones}.",
+    "A day in {bridgeZones} came next.",
+}
+-- the same zone as the day before. {runNth} = "second", "third"...
+-- (Not "again": the callbacks alone pushed "again" to 3.8 per 1,000 words.)
+PB.inZoneAgain = {"back in {zoneD}", "in {zoneD}, where {we} had left off", "in {zoneD} for a second day",
+    "in {zoneD}, where {we} had been the day before"}
+-- ("yet again" read weary three times in the 60-day book; "for a {runNth} straight day" gave "for a
+-- eighth straight day".) The engine says the run on days 3, 5, 7 and 10 only (R3-12).
+PB.inZoneRun = {"in {zoneD}, the {runNth} day running", "in {zoneD} for the {runNth} day in a row", "in {zoneD} for the {runNth} straight day"}
+-- a routine day without the hours (only when the outing ran 90+ minutes).
+-- ("were out there" reads as slang; "spent the night there" says you slept there.)
+PB.dayGoPlain = {"were {inZone}", "spent some time {inZone}"}
+-- on a routine day the count need not be exact every time.
+PB.dayWork.fewVague = {"turned in a few quests", "saw to a handful of quests"}
+PB.dayWork.manyVague = {"turned in a good many quests", "got through a long list of quests"}
+-- PB.dayWork.many: "worked for over two hours ... and worked through eight quests" (the verb twice).
+PB.dayWork.many = {"turned in {count} quests", "cleared {count} quests", "got through {count} quests"}
+-- one routine day in five or so is one short sentence, never two in a row.
+PB.dayShort = {
+    "{pair} spent another day in {zoneD}.",
+    "{pair} kept to {zoneD} that {part}.",
+    "{pair} worked through another day in {zoneD}.",
+}
+PB.dayShortAgain = {
+    "{pair} stayed on in {zoneD}.",
+    "{pair} stayed on in {zoneD} for another day.",
+    "{pair} gave {zoneD} another day.",
+    "Another day went to {zoneD}.",
+    "The next day found {pairObj} still in {zoneD}.",
+}
+-- the chapter's point of entry. {lead} = "In Silverpine Forest" or "In Silverpine
+-- Forest, where the worgen howl" (then {day} no longer names the place). Only as a chapter's first
+-- sentence, one quiet day in four.
+PB.dayLead = {"{lead}, {pair} {day}."}
+-- the deed first, on a day of six quests or more (and no fire or inn folded in).
+PB.dayDeed = {
+    "During {length} together {inZone}, {we} finished {count} quests.",
+    "{pair} spent {length} {inZone} and turned in {count} quests.",
+}
+-- the same inn again (the engine counts visits per inn).
+PB.dayRest.innAgain = {
+    "rested at the inn at {place}, as {we} had before",
+    "went back to the inn at {place}",
+    "stopped at the familiar inn at {place}",
+}
+-- anniversaries for companions who started together (the spouse). The
+-- engine said nothing at a month, three, six or twelve for them before.
+PB.anniversaryOrigin = {
+    [1] = {"It had been a month since {pair} first set out together."},
+    [3] = {"Three months had passed since {pair} first set out together from {firstZone}."},
+    [6] = {"It had been half a year since {pair} started out together, and {name} was still at {my} side."},
+    [12] = {"It had been a year since {pair} started out together, and {name} was still at {my} side."},
+}
+-- PB.dungeonCountBack, the dungeon counts that remember the first dungeon
+-- ({firstDungeon} = the first recorded dungeon visit). The engine prefers it over
+-- PB.dungeonCount ("That made ten dungeons together.") once {firstDungeon} is known.
+PB.dungeonCountBack = {
+    [5] = {"That made five dungeons together, counting from {firstDungeon}."},
+    [10] = {"That made ten dungeons together. The first had been {firstDungeon}."},
+    [25] = {"That made twenty-five dungeons together, counting from {firstDungeon}."},
+}
+-- shared fires, counted.
+PB.fireCount = {
+    [10] = {"It was the tenth fire {we} had shared."},
+    [25] = {"That made twenty-five fires shared."},
+    [50] = {"It was the fiftieth fire {we} had shared."},
+}
+-- These count recorded shared days, not the interval since a previous entry.
+PB.title.days = {[10] = "Ten Days Together", [25] = "Twenty-Five Days Together", [50] = "Fifty Days Together", [100] = "A Hundred Days Together"}
+-- a companion who keeps bringing you back, counted at five and ten.
+PB.rezCount = {
+    [5] = {"{name} brought {me} back from death, the fifth time {they} had done it."},
+    [10] = {"{name} brought {me} back from death for the tenth time."},
+}
+-- the same callback for a companion who started out with you ("the day you
+-- met" is false for a wife who rose from the grave beside you).
+PB.levelThenOrigin = {
+    "{They} had been level {thenLevel} in {firstZone}, on the day {we} started out together.",
+    "{They} had been level {thenLevel} when {we} started out together.",
+}
+
+-- Openings that vary, and quiet days told together ----------------------------------
+-- the day with another subject. The quest, the place, the hours or the count
+--    opens the sentence; the two of you are in it or understood. "Plain" = the hours are not told.
+--    (Only one "kept" per key: the first draft had "kept" in six lines, and the 60-day book went from
+--    4 to 11 uses of the word.)
+--    (A "none" line needs the time of day; the engine skips it once {part} was said.)
+PB.dayAlt = {
+    none = {"{Length} went to {zoneD}.", "{zoneD} took {length} of {our} {part}."},
+    nonePlain = {"The {part} went to {zoneD}."},
+    one = {"During {length} together in {zoneD}, {we} finished {quest}.", "{we} spent {length} in {zoneD}, where {we} also completed {quest}."},
+    onePlain = {"The {part} in {zoneD} included {quest}.", "{we} completed {quest} during {our} time in {zoneD}."},
+    two = {"During {length} in {zoneD}, {we} finished {quest} and {questB}.", "{we} spent {length} together in {zoneD} and completed {quest} and {questB}."},
+    twoPlain = {"The {part} in {zoneD} included {quest} and {questB}.", "{we} finished {quest} and {questB} during {our} time in {zoneD}."},
+    few = {"During {length} together in {zoneD}, {we} completed {count} quests.", "{we} spent {length} in {zoneD} and completed {count} quests there."},
+    fewPlain = {"{we} completed {count} quests in {zoneD} that {part}.", "The {part} in {zoneD} included {count} completed quests.",
+        "{Count} quests were completed during {our} time in {zoneD}."},
+}
+-- the same zone as yesterday, not named again (the title says "Still in ...").
+-- (Only on a day of three or more quests with no fire or inn, so the chapter's title is the run title.)
+PB.dayGoRun = {"kept at it", "carried on"}
+-- two quiet days in one zone, told as one chapter.
+-- (The merged chapter has no greeting of its own, so every line names the two of you.)
+PB.dayTwo = {
+    "{pair} spent {weekdayA} and {weekdayB} in {zoneD} and turned in {count} quests.",
+    "{WeekdayA} and {weekdayB} both took {pairObj} to {zoneD}, {count} quests in all.",
+    "Two days in {zoneD}, {weekdayA} and {weekdayB}, came to {count} quests for {pairObj}.",
+}
+PB.dayTwoAgain = {
+    "{pair} stayed on in {zoneD} through {weekdayA} and {weekdayB} and turned in {count} quests.",
+    "{WeekdayA} and {weekdayB} found {pairObj} still in {zoneD}, {count} quests in all.",
+    "{pair} were in {zoneD} for {weekdayA} and {weekdayB} too, {count} quests in all.",
+}
+PB.dayTwoNone = {"{pair} spent {weekdayA} and {weekdayB} in {zoneD}.", "{WeekdayA} and {weekdayB} both took {pairObj} to {zoneD}."}
+-- the work before a dungeon, with the quests as the subject (only when no fire
+--    or short dungeon visit is folded in: {extras} needs a subject that does things).
+PB.preludeAlt = {"{Pcount} quests around {zoneD} came first.", "The {part} started with {pcount} quests around {zoneD}."}
+
+-- Round 7: the writer pools, new ones and sub-pools set after their tables.
+PB.oncePerBook = {
+    "{I} took the short way down, and died of it.",
+    "{killer} killed {me}. At {my} level, that takes some doing.",
+    "Of all things, it was {killer} that killed {me}.",
+    "{killer} killed {me} in {place}. The less said about that, the better.",
+    "{I} fell to {my} death. The drop was further than it looked.",
+    "{I} drowned. The water had looked harmless.",
+}
+
+-- Round 8: the writer pools.
+PB.fireMeet = {
+    "{we} made camp in {place} before the day was out.",
+    "{we} sat by a fire in {place} a while.",
+    "There was a fire in {place}, and {we} stopped by it.",
+}
+PB.boastYou.damage = {"{I} did more than anyone to bring {boss} down.", "{boss} fell mostly to {my} {weapon}."}
+PB.boastThem.damage = {"{name} did more than anyone to bring {boss} down.", "{boss} fell mostly to {name}'s {theirWeapon}."}
+PB.rolesPair["tank+damage"] = {"{I} held the enemies, and {name} brought them down.", "{I} took the blows while {name} did the killing."}
+PB.rolesPair["damage+tank"] = {"{name} held the enemies, and {I} brought them down.", "{name} took the blows while {I} did the killing."}
+PB.rolesPairClass = {
+    ["healer+tank"] = {
+        PRIEST = {"{name} stood in front, and {I} kept {them} standing with the Light."},
+        PALADIN = {"{name} took the blows, and {I} kept {them} standing with the Light."},
+        DRUID = {"{name} took the blows, and {I} kept {them} alive with the druids' healing."},
+    },
+    ["tank+damage"] = {
+        PALADIN = {"{I} took the blows and called on the Light, and {name} brought the enemies down."},
+        DRUID = {"{I} took the shape of the bear and held the enemies, and {name} brought them down."},
+    },
+    ["damage+tank"] = {
+        HUNTER = {"{name} held the enemies, and {my} arrows did the rest."},
+    },
+}
+PB.sharedRezOtherBy = {
+    PRIEST = {"{I} prayed {them} back from death, the first {I} had ever raised."},
+    PALADIN = {"{I} called on the Light, and {name} rose, the first {I} had ever raised."},
+    SHAMAN = {"{I} called {their} spirit back, the first {I} had ever raised."},
+}
+PB.theyDieBossCostly = {
+    "{boss} killed {name}, and died all the same.",
+    "{boss} killed {name}, but did not live out the fight.",
+}
+PB.killRollAfter = {
+    "After that, {we} killed {roll}.",
+    "{we} went on and killed {roll}.",
+    "From there {we} killed {roll}.",
+}
+PB.wipeThenWinDied = {
+    "{boss} won the first fight and killed {me}, but not the second.",
+    "{boss} killed {me} the first time, and died the second.",
+}
+PB.dungeonFirstEver = {
+    "It was the first dungeon {I} had ever gone into.",
+    "{I} had never been inside a dungeon before.",
+}
+PB.preludeOne = {
+    "In {zoneD}, {pair} turned in {quest} first.",
+    "First {pair} turned in {quest} in {zoneD}.",
+}
+
+-- Round 8 (the writer).
+do
+    local function Extend(pool, list) for _, line in ipairs(list) do pool[#pool + 1] = line end end
+Extend(PB.oncePerBook, {
+    "{others} made one more in the party.",
+})
+end
+
+-- Round 8b (the writer).
+-- PB.rezClass.SHAMAN  ({name} {my} {me} {I}). "The spirits heard Grosh, and let you go." read as "released you".
+PB.rezClass.SHAMAN = {"{name} called {my} spirit back.", "{name} called on the spirits, and {I} came back."}
+
+-- PB.dayWork.hard  ({quest} {our}). "took on Lost in Battle, well above your level": "took on" reads as
+-- "accepted", and the record is a turn-in.
+PB.dayWork.hard = {"finished {quest}, work meant for more seasoned adventurers", "turned in {quest}, despite its difficulty for {us}"}
+
+-- Round 8c (writer).
+-- PB.infamous["Bhag'thera"]  (chapter tokens; {Iwas} is "you were" / "I was"). One sentence of twelve
+-- words in place of a seven-word stub between the death and the rescue.
+PB.infamous["Bhag'thera"] = {"She had long eluded Nesingwary's whole party, and {Iwas} no luckier."}
+
+-- PB.killTwo  ({we} {bosses}). DELETE "{bosses} were dealt with in turn." (a clerk's phrase, flagged in
+-- CRITIQUE6 and still ending Elisabeth I, telling 3).
+PB.killTwo = {"{we} killed {bosses}.", "{bosses} both fell.", "{bosses} fell, one after the other.", "{we} killed {bosses}, one after the other."}
+
+-- Origin is deliberate backstory; the next captured scene may be much later.
+PB.knownBeginning = {
+    "Later travels brought {pairObj} to {zoneD}.",
+    "By then, {pair} were travelling together in {zoneD}.",
+    "In {zoneD}, {pair} were travelling together still.",
+}
+-- Contextual callbacks refer only to an actual earlier scene in this region.
+PB.sceneMemory = {
+    fire = {
+        "Here in {zoneD}, {we} had shared a fire {memoryWhen}.",
+        "An earlier visit to {zoneD} had included a fire together, {memoryWhen}.",
+        "{zoneD} had been a place of shared firelight {memoryWhen}.",
+    },
+    sunset = {
+        "{memoryWhen}, {we} had been together at {memoryPlace} as the sun went down.",
+        "On an earlier visit, {memoryWhen}, the sun had gone down with {us} at {memoryPlace}.",
+    },
+    landmark = {
+        "{memoryWhen}, {pair} had reached {memoryPlace} together in this country.",
+        "An earlier day in this country had brought {pairObj} to {memoryPlace}, {memoryWhen}.",
+    },
+}
+-- A known quest becomes a scene with a problem and an outcome. Lesser jobs
+-- can be counted without taking over the paragraph with three unrelated names.
+PB.dayWork.scene = {
+    "finished {quest} among {count} quests",
+    "completed {count} quests, including {quest}",
+    "turned in {quest} as part of {count} quests",
+}
+PB.dayWork.sceneOne = {"finished {quest}", "completed {quest}", "turned in {quest}"}
+PB.questDepth = {"{we} completed {quest}.", "{we} finished {quest}."}
+PB.questThreadReturn = {
+    "There was more to {threadLabel} after {previousQuest}.",
+    "{our} work on {threadLabel} continued after {previousQuest}.",
+    "{our} earlier work on {threadLabel} included {previousQuest}.",
+}
+PB.sharedNotableSeen = {
+    "While travelling with {name}, {I} saw {notable} in {place}.",
+    "{I} saw {notable} in {place} during {our} travels together.",
+}
+PB.sharedNotableSpoke = {
+    "While travelling with {name}, {I} spoke with {notable} in {place}.",
+    "{I} spoke with {notable} in {place} during {our} time together.",
+}
+PB.sharedGatherQuiet = {
+    "{I} {work} during {our} time there.",
+    "While {we} were together, {I} {work}.",
+    "{I} also {work}.",
+}
+
+-- Dates establish elapsed time, not what happened between recorded outings.
+PB.recordedInterval = {
+    "{gap} later, {pair} travelled together again.",
+    "{gap} later, {name} joined {me} in {zoneD}.",
+}
+PB.recordedIntervalBond = {
+    "{gap} later, {name}, {bondWord}, was beside {me} in {zoneD}.",
+    "{gap} later, {pair} were together again in {zoneD}.",
+}

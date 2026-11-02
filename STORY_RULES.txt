@@ -1,0 +1,124 @@
+COMPANION JOURNAL - WORLD STORY EXPANSION RULES
+
+PURPOSE
+Give every supported starting experience and later region a grounded narrative
+foundation. The quality target is a well-told remembered adventure, with scene,
+context, consequence and continuity. More words alone are not an improvement.
+
+EVIDENCE
+1. Recorded events establish what happened. Configured origins and bonds are
+   explicit backstory. Lore establishes context. Keep these distinct.
+2. Never invent a visit, conversation, class trial, learned spell, victory,
+   route, feeling, motive, spoken dialogue or companion presence.
+3. A completed quest permits only that quest's supported consequence. Shared
+   titles across chain stages must not imply completion of the entire chain.
+4. Preserve new quest IDs, and resolve precise ID context before title fallback.
+   Historical title-only records get conservative context, not a guessed stage.
+5. Prefer project quest/dialogue research and this server's game text. Research
+   gaps from primary sources where possible. Keep Classic/Forever chronology;
+   later expansions and other private servers are not this world's evidence.
+6. Record provenance with authored content. Conflicting or insufficient evidence
+   calls for restrained description, not plausible-sounding invention.
+
+WRITING
+7. Build a scene around a concrete local detail and meaningful recorded work.
+   Let consequence follow action; use transitions when setting or purpose shifts.
+8. Retain formative places, work, discoveries and quiet moments in Highlights.
+   Compress repeated chores; do not let a later dungeon erase the beginning.
+9. Class and cultural identity inform relevant recorded experiences. Being a
+   shaman does not prove a totem trial, ancestral vision or a particular belief.
+10. Write distinct, natural variants with different focus or sentence shape.
+    Avoid synonym churn, repetitive portent, generic grandeur and stock endings.
+11. Context lines shared by personal/companion narrators use past tense and no
+    player pronoun. Do not assign thoughts to the player or the companion.
+    This rule applies to remembered narration, not reference notes: compendium
+    noteSummary prose uses present tense for the Classic-era world and past
+    tense for established earlier events. Author it separately from why/after.
+12. Recall only recorded past events. Respect chronology, current relationship
+    settings and neutral pronouns. Rendering must be deterministic and read-only.
+13. Keep recorded steps of a meaningful chain in chronological order. In a
+    shorter telling, preserve the beginning and significant resolution before
+    routine intermediate referrals. A death does not erase completed work.
+14. Paragraphs follow a change of purpose, place or time, not every sentence.
+    Keep setup, action and supported consequence together. Length is a soft
+    guide for readable passages, not permission to separate a resolution from
+    its cause. Use modest paragraph spacing rather than extra blank lines.
+15. Both reader editions and both narrators preserve supported quest actions,
+    discoveries and consequences without repeatedly announcing "I finished
+    [quest title]" when those facts already explain the work. Retain an honest
+    title fallback when no supported narrative exists. More detail must not
+    mean a longer checklist.
+16. Prefer a named person, visible object and consequence to "the assignment",
+    "service", "proof of work" or a generic official's approval. The original
+    quest can supply humor, grief and cultural detail through its NPCs. Attribute
+    their opinions and wishes; never turn their suspicions into narrator fact,
+    invent gestures, or assign those feelings to the player.
+17. Express the achieved fact without appending an audit disclaimer. A promised
+    report can remain a promise without saying "the report was not delivered".
+    Keep a real unresolved mystery or consequential next question; omit generic
+    assurances that the wider campaign still continued.
+18. Every setup/outcome pairing must make sense by itself. Introduce who a
+    person is and why the object matters in every variant that needs them.
+    Tell the specific history or remembered story instead of saying that
+    "history unfolded" or that a memory gave the work personal meaning.
+19. Place time spent and quest counts outside a scene's cause and consequence.
+    Repeated place names must not suppress the required assignment setup.
+    Distinguish days spent together from elapsed calendar days in headings;
+    use recorded places or work rather than stacking reunion-title suffixes.
+20. An incidental dungeon visit must not relocate later field work. Use the
+    quest's recorded location to anchor its scene without inventing a return
+    journey or reordering events. Vary repeated greetings and ordinary timers
+    while keeping first meetings, quiet days and exceptional durations useful.
+21. Preserve distinct first authored stages rather than losing an actor to a
+    fixed scene limit. Highlights still needs purposeful compression of routine
+    work; retaining everything is an evidence safeguard, not a finished editorial
+    policy. Review dense days as complete passages in both voices and retells.
+
+COMPENDIUM VOICE
+Reference notes stand alone: explain what a subject is, where it belongs and
+why it matters before introducing specific quest details. Retain useful,
+source-supported tidbits as the closing layer, with the people and purpose
+identified so readers need not have played the quest. Do not inflate sparse
+subjects with invented history or discard their distinctive details.
+Use the selected Classic/Forever era as the reference present, never the latest
+retail state. Earlier history remains past tense; ongoing roles and goals use
+present tense. Player-recorded completion does not change global reference facts.
+Title-only quest notes explain shared context, not an assumed chain resolution.
+Exact-stage notes retain the knowledge and outcome boundaries of that stage.
+
+DISCOVERIES AND SPOILERS
+Public lore explains places, cultures, established history and a person's public
+role. Hidden identities, betrayal, mystery solutions and later quest outcomes
+belong to the logged-in reader's discoveries. Do not use level, visiting a zone,
+clicking a reference, another character's journal or a matching quest title as
+proof. Presented descriptions and completed quests establish different facts;
+an exact later quest does not automatically grant unseen prerequisite dialogue.
+Preserve canonical source material separately; player-facing text, related
+links, aliases, headings and source captions must respect the same fact boundary.
+New secret-bearing prose needs an explicit public version and reviewed exact
+discovery conditions. Check every consumer of a fact, including ambient dungeon
+prose and storyteller title fallbacks. Existing unreviewed clusters remain an
+audit backlog, not a claim that the whole compendium is spoiler-safe.
+
+CONTENT PACK CONTRACT
+New modules call A.Lore.RegisterStoryPack(id, pack) after Lore.lua loads.
+pack = {sources={...}, quests={ [exactTitle]={why={...}, after={...}, zone=...,
+  level=..., importance=1..6, thread=..., threadLabel=..., source={...}} },
+  zones={ [exactZone]={sight={...}, stakes={...}} },
+  threads={ [stableKey]=plainNounPhrase },
+  questIDs={ [numericID]={title=exactTitle, why={...}, after={...}, ...} }}
+All fields optional except sources. Use namespaced thread keys. Existing quest
+content is merged by field; zone sight/stakes arrays are appended uniquely.
+Use source references such as corpus filename + quest ID. Packs must not edit
+the raw journal, global UI, another pack, or the core storyteller files.
+Aim for at least two useful setup/outcome alternatives per newly authored quest.
+Prioritize genuine coverage of beginnings, town/capital progression, local
+conflicts, class trials, ordinary work and late-game journeys across both factions.
+
+VALIDATION AND HONEST COVERAGE
+Exercise fresh level-one journals for every supported race and each class's
+recorded milestones, both factions, later regions, solo/companion, full/Highlights,
+multiple retells and sparse old history. Test ambiguity and outcomes negatively.
+Maintain a coverage inventory distinguishing curated quest contexts, generic
+regional coverage and unresolved gaps. Never claim every quest has been authored.
+Read representative generated prose, not only assertion totals.
