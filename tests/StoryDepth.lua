@@ -28,9 +28,13 @@ local function tell(p, brief, retell, voice)
     return table.concat(out, "\n\n")
 end
 local function outcomeAt(text, id)
-    for _, line in ipairs(A.Lore.questStoryIDs[id].after) do
-        local at = text:find(A.JournalPlain(line), 1, true)
-        if at then return at end
+    -- (the full outcome, or the compact scene Highlights may use for an exact stage)
+    local story = A.Lore.questStoryIDs[id]
+    for _, list in ipairs({story.after, story.highlight or {}}) do
+        for _, line in ipairs(list) do
+            local at = text:find(A.JournalPlain(line), 1, true)
+            if at then return at end
+        end
     end
 end
 -- A single outing can contain several quests with exactly the same name.

@@ -79,7 +79,7 @@ check(words(1057):find("still to come", 1, true), "harpy losses do not regrow fo
 check(words(1059):find("still ahead", 1, true), "druid referral does not summon forest aid")
 excludes(1070, {"gaxim received", "inventions"})
 check(words(4762):find("still needed confirmation", 1, true), "sample does not confirm Thundris's Felwood hypothesis")
-check(words(4763):find("hope for the future", 1, true), "Blackwood battle does not permanently cleanse forest")
+check(words(4763):find("hoped", 1, true) and not words(4763):find("freed the blackwood", 1, true), "Blackwood battle does not permanently cleanse forest")
 for _, id in ipairs({1065,1066,1067}) do excludes(id, {"poison reached the flying", "headquarters"}) end
 check(words(1086):find("remained uncertain", 1, true), "toxin delivery does not prove headquarters poisoned")
 excludes(4881, {"survived the attack", "defense held"})

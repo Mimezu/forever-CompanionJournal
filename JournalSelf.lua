@@ -600,6 +600,7 @@ local function CheckSpells()
 end
 A.SelfCheckSpells = CheckSpells
 local restedAt = setmetatable({}, {__mode = "k"})
+local auctionPattern -- (the auction-sold message as a pattern, built on first use)
 events:SetScript("OnEvent", function(_, event, ...)
     if not A.SelfJournalOn() then return end
     if event == "PLAYER_ENTERING_WORLD" or event == "ZONE_CHANGED_NEW_AREA" then
@@ -629,10 +630,12 @@ events:SetScript("OnEvent", function(_, event, ...)
     elseif event == "CHAT_MSG_SYSTEM" then
         local message = ...
         if type(message) ~= "string" or not Public(message) then return end
-        -- ("A buyer has been found for your auction of %s.": the magic characters escaped, then %s caught)
-        local pattern = type(ERR_AUCTION_SOLD_S) == "string"
-            and ("^" .. ERR_AUCTION_SOLD_S:gsub("([%(%)%.%+%-%*%?%[%]%^%$])", "%%%1"):gsub("%%s", "(.+)") .. "$") or nil
-        local item = pattern and message:match(pattern)
+        -- ("A buyer has been found for your auction of %s.": the magic characters escaped, then %s caught; built once)
+        if auctionPattern == nil then
+            auctionPattern = type(ERR_AUCTION_SOLD_S) == "string"
+                and ("^" .. ERR_AUCTION_SOLD_S:gsub("([%(%)%.%+%-%*%?%[%]%^%$])", "%%%1"):gsub("%%s", "(.+)") .. "$") or false
+        end
+        local item = auctionPattern and message:match(auctionPattern)
         if item then First("aucsale", {d = "aucsale", z = item}) end
     elseif event == "PLAYER_TARGET_CHANGED" then
         FoeSeen("target")
@@ -901,9 +904,13 @@ local function Tick()
 end
 A.SelfTick = Tick
 local ticker
+-- Unit events fire for every unit in sight; only your own matter here.
+local PLAYER_ONLY = {UNIT_SPELLCAST_SUCCEEDED = true, UNIT_PET = true}
 function A.UpdateSelfJournalEvents()
     for _, event in ipairs(EVENTS) do
-        if A.SelfJournalOn() then pcall(events.RegisterEvent, events, event) else pcall(events.UnregisterEvent, events, event) end
+        if not A.SelfJournalOn() then pcall(events.UnregisterEvent, events, event)
+        elseif PLAYER_ONLY[event] and events.RegisterUnitEvent then pcall(events.RegisterUnitEvent, events, event, "player")
+        else pcall(events.RegisterEvent, events, event) end
     end
     pcall(closeFrame.UnregisterEvent, closeFrame, "UNIT_HEALTH")
     if ticker and ticker.Cancel then ticker:Cancel() end

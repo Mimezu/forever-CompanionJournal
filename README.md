@@ -4,6 +4,18 @@ The players and NPCs you want to remember, and a journal of what you lived
 through together. It came out of Forever Names 1.10: the People list, the
 journal, the group popup and the campfire now live here, in their own window.
 
+## 1.12.4: review for the live client (build 70707)
+
+- **The open book redraws only for its own journal.** A line written into another
+  journal (a crossed path on a nameplate, a gathering count) no longer lays the whole
+  book out again. Settings changes still redraw everything.
+- **Your own journal listens to your casts only.** Spell and pet events are
+  registered for the player unit, not for every unit in sight.
+- **Lore notes in combat:** the slip no longer calls a protected keyboard function
+  while you fight. Escape may then close the book too; nothing else changes.
+- **The classic page groups a day's quests and bosses by the same evening rule as its
+  chapter headings** (play after midnight stays with the evening before).
+
 ## 1.12.3: the book's pages keep their size
 
 - **Companions and NPCs pages** are no longer magnified at book sizes B and C.

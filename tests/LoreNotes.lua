@@ -386,7 +386,8 @@ for _, pack in pairs(A.Lore.storyPacks) do
 end
 Check(A.OpenLoreNote("place:deathknell", row), "owner found from anchor ancestry")
 for _, entry in ipairs(A.LoreNoteCatalog()) do
-    if entry.kind ~= "Quest" then
+    -- (a note the discovery rules hide until a quest reveals it cannot open blind)
+    if entry.kind ~= "Quest" and A.GetKnownLoreNote(entry.id) then
         Check(A.OpenLoreNote(entry.id, smallBook, {owner = smallBook}), "world note opens: " .. entry.id)
         for _, leaf in ipairs(slip.leaves) do
             slip.body:SetText(leaf)

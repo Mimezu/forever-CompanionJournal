@@ -889,8 +889,9 @@ function A.JournalChapters(person)
         end
         local group = {entry}
         if entry.k == "quest" or entry.k == "boss" then
+            -- (the same evening-day as the chapter: play past midnight stays on its day)
             while entries[i + 1] and entries[i + 1].k == entry.k and entries[i + 1].z == entry.z
-                and (date and date("%Y-%m-%d", entries[i + 1].t or 0) or "?") == day do
+                and (date and date("%Y-%m-%d", A.JournalEvening and A.JournalEvening(entries[i + 1].t or 0) or entries[i + 1].t or 0) or "?") == day do
                 i = i + 1
                 group[#group + 1] = entries[i]
             end

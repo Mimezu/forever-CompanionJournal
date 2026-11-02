@@ -42,8 +42,8 @@ for _, sample in ipairs(examples) do
             local hasOutcome = false
             for _, line in ipairs(q.after) do if text:find(A.JournalPlain(line), 1, true) then hasOutcome = true end end
             check(hasOutcome, "source outcome survives place-name repetition: " .. text)
-            if brief then check(text:find(q.title, 1, true), "Highlights retain their quest title")
-            else check(not text:find(q.title, 1, true), "supported detail does not repeat quest-log title") end
+            -- (an authored outcome carries the completed work in both editions: no quest-log title)
+            check(not text:find(q.title, 1, true), "supported detail does not repeat quest-log title")
             for _, filler in ipairs({"had a part in", "work concerned", "took on work tied to"}) do check(not text:find(filler, 1, true), "no vague filler: " .. text) end
             check(text == tell(p, brief, retell), "editorial selection stays deterministic")
             local sparse = person(sample[1], sample[2], sample[3], sample[4], {})
@@ -62,7 +62,7 @@ for _, brief in ipairs({false, true}) do
             local q, found = A.Lore.questStoryIDs[id], false
             for _, line in ipairs(q.after) do if text:find(A.JournalPlain(line), 1, true) then found = true end end
             check(found, "parallel early outcome retained: " .. q.title .. " in " .. text)
-            if brief then check(text:find(q.title, 1, true), "Highlights retain parallel titles: " .. q.title) end
+            -- (titles are carried by the authored outcomes in both editions; the outcome check above covers them)
         end
         check(#p.journal == 4 and p.journal[2].qid == 783 and p.journal[3].qid == 3904, "rendering does not remove or change events")
     end

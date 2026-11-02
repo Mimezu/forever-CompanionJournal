@@ -3396,11 +3396,23 @@ function A.OpenBookSettings(section)
 end
 function A.BookIsOpen() return book ~= nil and book:IsShown() end
 -- (the journal changed: redraw if it is the one open)
+-- A line written into someone else's journal (a crossed path, a gather count) is
+-- not a reason to lay the open book out again; the pages are the shown journal's.
+-- No person means a setting changed: everything is drawn again.
+local function ShowsJournalOf(person, shown)
+    if not person then return true end
+    if not shown then return false end
+    if person.self or shown.self then return person.self and shown.self and person.charKey == shown.charKey or false end
+    return shown == person or (shown.journal ~= nil and shown.journal == person.journal)
+end
 local baseRefresh = A.RefreshJournal
 function A.RefreshJournal(person, scrollToEnd)
     if baseRefresh then baseRefresh(person, scrollToEnd) end
-    if book and book:IsShown() then A.RefreshBook()
-    elseif reader and reader:IsShown() then DrawReader() end
+    if book and book:IsShown() then
+        if ShowsJournalOf(person, Shown()) then A.RefreshBook() end
+    elseif reader and reader:IsShown() then
+        if ShowsJournalOf(person, Shown()) or ShowsJournalOf(person, reader.subject) then DrawReader() end
+    end
 end
 
 -- The new-chapter notice, when you rest (an inn, a city) and today's chapter is new.

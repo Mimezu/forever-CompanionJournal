@@ -191,11 +191,13 @@ local function Make()
     end)
     -- Prevent the default Escape handler from closing both slip and book.
     -- Older clients without propagation use the public HandleLoreNoteKey hook.
+    -- SetPropagateKeyboardInput is protected in combat: left alone there, every
+    -- key propagates (Escape then closes the book as well, which is harmless).
     if slip.EnableKeyboard and slip.SetPropagateKeyboardInput then
         slip:EnableKeyboard(true); slip:SetPropagateKeyboardInput(true)
         slip:SetScript("OnKeyDown", function(self, key)
             local handled = key == "ESCAPE"
-            self:SetPropagateKeyboardInput(not handled)
+            if not (InCombatLockdown and InCombatLockdown()) then self:SetPropagateKeyboardInput(not handled) end
             if handled then A.CloseLoreNote() end
         end)
     end
@@ -348,7 +350,7 @@ function A.OpenLoreNote(id, anchor, context)
         if target then button.label:SetText((kit and "See also: " or "Read: ") .. A.GetKnownLoreNote(target, knowledge).title); button:Show() else button:Hide() end
     end
     slip.back:SetShown(#trail > 0)
-    if slip.SetPropagateKeyboardInput then slip:SetPropagateKeyboardInput(true) end
+    if slip.SetPropagateKeyboardInput and not (InCombatLockdown and InCombatLockdown()) then slip:SetPropagateKeyboardInput(true) end
     dismiss:Show(); slip:Show()
     return true
 end
