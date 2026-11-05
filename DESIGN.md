@@ -85,9 +85,13 @@ them; `STORY_RULES.txt` in this folder adds the evidence rules of the Codex era.
   thought or felt, food, beds, weather, silence, intent, or unchecked history ("as she had
   before", "the longest").
 - Never narrate the telling. No journal, tale, song, verse, page, book, record, chapter,
-  story in a common pool. "The road" only now and then, at most once a chapter, not every
-  chapter (the user relaxed this on 2026-09-30) [memory: storyteller-writing-standard].
-- Fit the length to the day. Never add a sentence to make a chapter feel complete.
+  story in a common pool. "The road" is allowed as long as it is not overused: at most
+  once a chapter, not every chapter (relaxed 2026-09-30, confirmed 2026-11-05)
+  [memory: storyteller-writing-standard].
+- Fit the length to the day. Length follows the recorded and authored evidence: the
+  longer Codex-era chapters are the accepted length (2026-11-05), not the old 1-2 / 5-8
+  sentence budget. Never add a sentence to make a chapter feel complete, and never cut
+  supported scenes to hit a count.
 
 **Sentences**
 - Full sentences. One verbless fragment per chapter at most, never first.
@@ -335,6 +339,7 @@ testing happens now.
 | 2026-10-13 | Codex's manager sheet never scaled above 1 (grows instead); notes edited in place (no right-click menu) | README 1.12.3 |
 | 2026-10-23 | Live migration: CJ story starts fresh on the live realm; `people` decision pending | memory: live-migration-backup-2026-10-23 |
 | 2026-11-02 | All work in `_forever_`; beta is an archive; repo `Mimezu/forever-CompanionJournal` | memory: forever-live-workspace |
+| 2026-11-05 | Codex-era chapter length accepted: "story is paramount", a fixed sentence budget makes no sense; "the road" allowed as long as it is not overused; prune the 6 beta `people`; keep skins A and B both for now | user, in session |
 
 ### Rejected or reverted
 
@@ -569,25 +574,24 @@ study is synthetic and never reads SavedVariables.
 
 ## 9. Open questions and contradictions
 
-1. **Chapter length.** The 2026-09-29 critic set a budget (quiet day 1-2 sentences, big day
-   5-8). The Codex-era chapters are far longer (many paragraphs, every quest a scene), and
-   `STORY_RULES.txt` says only "more words alone are not an improvement". The user accepted
-   the Codex output. Working assumption: length follows the recorded and authored evidence,
-   not a fixed budget; the voice rules (§3.2) still apply to every sentence. Confirm with
-   the user before cutting or padding.
-2. **Highlights.** Designed as "one entry a day, romanticized truth" (2026-09-29); since
+Settled 2026-11-05 (see the decision log): chapter length follows the Codex era, and
+"the road" is allowed when not overused.
+
+1. **Highlights.** Designed as "one entry a day, romanticized truth" (2026-09-29); since
    2026-10-16 it "retains every recorded stage rather than applying a scene cap", and a
    reviewer noted it is sometimes indistinguishable from Detailed. What Highlights should
    drop is undecided.
-3. **Why the user liked the Codex pass** is recorded only as "good at storyteller/lore".
+2. **Why the user liked the Codex pass** is recorded only as "good at storyteller/lore".
    §4.2 is inferred from the reviews; ask if a change would undo one of those qualities.
-4. **The `score.py` targets** predate the Codex era and were not re-run on its output in the
-   archive. The LEANS list still counts "road" although it is now allowed occasionally.
-5. **The live realm move** (~2026-11-05) changes the CJ character key again; the user wants
-   the story fresh. What to do with beta `people` (6) and NPC cards is pending
+3. **The `score.py` targets** predate the Codex era and were not re-run on its output in the
+   archive. Its LEANS list still counts "road"; that is useful as an overuse check, not a ban.
+4. **The live realm move** (~2026-11-05) changes the CJ character key again; the user wants
+   the story fresh. Beta `people` pruned (2026-11-05): the live save keeps only Dahlia's card;
+   the four acquaintances and the one NPC card (Shari Stilwell) are gone. Backup:
+   `Migration\CompanionJournal.lua.before-people-clear-20261105`
    [memory: live-migration-backup-2026-10-23].
-6. **Where new research artefacts go** now that `_classic_beta_` is read-only: the Codex
+5. **Where new research artefacts go** now that `_classic_beta_` is read-only: the Codex
    workflow wrote to `StorageInvestigation`; the live client has `Migration\` only.
-7. **Skin B default.** Skin A is still the default (`/cj skin b` opts in); the user has not
-   said which wins. Same for layout A vs B (`/cj layout`), bookmarks C is the only variant
+6. **Skin B default.** Skin A is still the default (`/cj skin b` opts in). Keep both skins
+   for now (2026-11-05); no winner yet. Same for layout A vs B (`/cj layout`), bookmarks C is the only variant
    recorded as having won.

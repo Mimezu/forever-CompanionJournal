@@ -127,7 +127,7 @@ The user tests in game; nothing counts as verified until he has. Give him a shor
 - Commit when a change is complete and tested offline; write the message in plain English
   saying what changed for the player. **Push only when the user asks.**
 - Do not commit SavedVariables, screenshots or research dumps here; research artefacts go
-  in an archive folder outside the addon (ask where, see `DESIGN.md` §9.6).
+  in an archive folder outside the addon (ask where, see `DESIGN.md` §9.5).
 - Before committing, check `git status`: another session may have uncommitted work in the
   same files.
 
