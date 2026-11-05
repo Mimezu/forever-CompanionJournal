@@ -154,10 +154,10 @@ History: shipped prose started at 8.3 words per sentence and 2.4 adjectives per 
 after the critic rounds it reached 11-12.8 words and 0.6-0.8 adjectives, colons 0
 [SI: journal-voice/PLAN.md "Writing review"; memory: companion-journal-own-journal].
 
-Run the scorer from the beta root (the corpus lives there):
+Run the scorer from the live client root (its `StorageInvestigation` copy has the corpus):
 
 ```
-cd "C:\games\World of Warcraft\_classic_beta_"
+cd "C:\games\World of Warcraft\_forever_"
 python StorageInvestigation/journal-voice/sim/score.py <samples.txt>      # one or more sim outputs
 python StorageInvestigation/journal-voice/sim/score.py --corpus           # the vanilla baseline
 ```
@@ -542,10 +542,10 @@ A/B/C, card, adding, unread ribbons, portraits when/where/frame, skin), People i
 world, Adding people, Recording. Reading view editions: Original, Your tale, Our story,
 By the fire. Layout A keeps the header switches and Options > Journal > Writing.
 
-### 7.8 Simulators (offline, lua5.1, run from the beta root because they live there)
+### 7.8 Simulators (offline, lua5.1, run from the live client root)
 
 ```
-cd "C:\games\World of Warcraft\_classic_beta_"
+cd "C:\games\World of Warcraft\_forever_"
 lua5.1 StorageInvestigation/journal-voice/sim/run.lua [scenario] [you|we]          # companion scenarios
 lua5.1 StorageInvestigation/journal-voice/sim/lives.lua <batch1|2|3> [life|all] [retell] [you|we] [brief]
 STATS=1 lua5.1 StorageInvestigation/journal-voice/sim/lives.lua batch1 all 0       # words per sentence
@@ -553,16 +553,15 @@ lua5.1 StorageInvestigation/journal-voice/sim/dahlia_print.lua [character]      
 lua5.1 StorageInvestigation/storytelling-thirty-20261013/run.lua <new-folder>      # the 30 frozen journeys (refuses to overwrite)
 ```
 
-Caution: these load `Interface/AddOns/CompanionJournal/...` relative to the current
-directory, so from the beta root they load the **old beta copy** of the addon. To simulate
-the live code, either copy the sim folder beside the live client or give the live client a
-`StorageInvestigation` junction (see CLAUDE.md, open question). The storytelling-thirty
-study is synthetic and never reads SavedVariables.
+These load `Interface/AddOns/CompanionJournal/...` relative to the current directory, so
+run them from `_forever_` (the live code); from the beta root they would load the old beta
+copy. `dahlia_print.lua` reads `WTF/Account/118944884#4/...`, which exists only in the beta;
+the real beta journals are now archived and rendered in
+`Migration\ancestor-journals-20261105\`. The storytelling-thirty study is synthetic and
+never reads SavedVariables.
 
 ## 8. Known limits
 
-- 13 test suites read files under `StorageInvestigation/` (the corpus, `study-lib.lua`,
-  review captures) and fail in the live client, where that folder does not exist (see CLAUDE.md).
 - The README's "Files" section is older than the Lore* and Book* files; the changelog is current.
 - Portraits cover only your own journal; companion portraits need the Looks plan.
 - Holidays, a round-trip boat, Hardcore telling, `W.levelBoth`: not built.
@@ -590,8 +589,8 @@ Settled 2026-11-05 (see the decision log): chapter length follows the Codex era,
    the four acquaintances and the one NPC card (Shari Stilwell) are gone. Backup:
    `Migration\CompanionJournal.lua.before-people-clear-20261105`
    [memory: live-migration-backup-2026-10-23].
-5. **Where new research artefacts go** now that `_classic_beta_` is read-only: the Codex
-   workflow wrote to `StorageInvestigation`; the live client has `Migration\` only.
+5. **Research artefacts** (settled 2026-11-05): `_forever_\StorageInvestigation\`, the live
+   client's own copy of the archive (for example `cj-overnight-20261105\`).
 6. **Skin B default.** Skin A is still the default (`/cj skin b` opts in). Keep both skins
    for now (2026-11-05); no winner yet. Same for layout A vs B (`/cj layout`), bookmarks C is the only variant
    recorded as having won.

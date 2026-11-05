@@ -54,17 +54,11 @@ lua5.1 Interface/AddOns/CompanionJournal/tools/StoryCoverage.lua [full]   # auth
 (a few print a sample chapter as their last line; that is a pass too). A failing one ends
 with a traceback (`[C]: ?`).
 
-**Known: 13 suites fail in the live client** because they read files that exist only in the
-beta archive (`StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt`,
-`StorageInvestigation/storytelling-thirty-20261013/v2/study-lib.lua`,
-`StorageInvestigation/cj-story-ui-checks/*.txt`): AllianceStories, ClassStories,
-HordeStories, LevelingStageDepth, StoryCraftEngine, StoryDepth, StoryEditorialGrammar,
-StoryHighlightsScenes, StoryRecordGaps, StorySceneContinuity, WorldBandDepth,
-WorldIntegration, WorldStories. Fix to agree with the user: a directory junction
-`_forever_\StorageInvestigation` pointing at the beta folder
-(`cmd /c mklink /J "C:\games\World of Warcraft\_forever_\StorageInvestigation" "C:\games\World of Warcraft\_classic_beta_\StorageInvestigation"`),
-or copy the needed files into the live client and change the paths in those tests.
-Until then, run those 13 knowing they will error, and do not report them as regressions.
+Some suites read files under `StorageInvestigation/` (the quest corpus, `study-lib.lua`,
+`cj-story-ui-checks/*.txt`). Since 2026-11-02 the live client has its own copy of that
+folder (`_forever_\StorageInvestigation\`, a real folder, not a link), so all suites pass
+from the `_forever_` root; any traceback is a real failure. New research artefacts go there
+too.
 
 Lint (optional): luacheck under Lua 5.4 with
 `LUA_PATH="C:/Users/miche/AppData/Roaming/luarocks/share/lua/5.4/?.lua;.../?/init.lua;;"`
@@ -76,12 +70,10 @@ known trap (Lua 5.1 drops the backslash).
 
 ## Checking the writing
 
-1. Generate chapters with the simulators (they live in the beta archive and load the addon
-   relative to the current directory; from the beta root they load the old beta copy, so
-   either run them against a junction/copy or temporarily point `root` at the live folder
-   in a scratch copy of the sim script, never by editing the archive):
+1. Generate chapters with the simulators (they load the addon relative to the current
+   directory, so run them from the live root to simulate the live code):
    ```
-   cd "C:\games\World of Warcraft\_classic_beta_"
+   cd "C:\games\World of Warcraft\_forever_"
    lua5.1 StorageInvestigation/journal-voice/sim/run.lua daily you
    lua5.1 StorageInvestigation/journal-voice/sim/lives.lua batch1 all 0 you
    STATS=1 lua5.1 StorageInvestigation/journal-voice/sim/lives.lua batch2 all 0 we brief
