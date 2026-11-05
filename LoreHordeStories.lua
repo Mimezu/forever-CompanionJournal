@@ -94,7 +94,7 @@ Q(780, "The Battleboars", "Mulgore", 4, "horde_narache",
     "The Bristleback quilboar trained battleboars to be vicious, and the beasts were pushing into the tribe's hunting grounds from Brambleblade Ravine. Narache wanted their snouts and flanks for stew.",
     "Battleboars from Brambleblade Ravine were encroaching on Narache's hunting grounds. Their meat could feed the village's young.",
     "The snouts and flanks would make a fine stew for Narache's young, and the dead boars were meant as a lesson to the Bristlebacks.",
-    "The battleboars lost ground near Narache, and their meat went into stew for the village's young.")
+    "Some of the battleboars fell, and their meat went into stew for the village's young.")
 Q(755, "Rites of the Earthmother", "Mulgore", 3, "horde_rites",
     "Chief Hawkwind saw greatness ahead for a young tauren willing to do humble work. First came the three Rites of the Earthmother, beginning with Seer Graytongue in the hills south of Camp Narache.",
     "The Rites of the Earthmother were three, and the Rite of Strength came first. Chief Hawkwind sent the young to Seer Graytongue.",
@@ -128,7 +128,7 @@ Q(771, "Rite of Vision", "Mulgore", 7, "horde_rites",
 Q(772, "Rite of Vision", "Mulgore", 7, "horde_rites",
     "The Water of the Seers was taken beside the tribal fire.",
     "Zarlman's rite called for a vision to be followed from the village fire.",
-    "The vision rose by the fire and was followed to its end. There the Rite of Vision was declared passed, with a word to be not afraid.",
+    "The vision rose by the fire and was followed to its end. There the Rite of Vision was declared passed, with a word not to be afraid.",
     "The Water of the Seers brought a vision by the tribal fire, and following it completed the Rite of Vision.", nil, true)
 Fallback("Rite of Vision", "horde_rites",
     "Zarlman Two-Moons tended the teaching and preparations of the Rite of Vision.",
@@ -199,7 +199,7 @@ Q(764, "The Venture Co.", "Mulgore", 10, "horde_venture",
     "The Venture Company had been refused mining rights in Mulgore and was digging anyway. Morin Cloudstalker wanted a message sent to its mine northeast of the ravaged caravan.",
     "Show a goblin something, the saying went, and the scales could be heard in the background. Morin Cloudstalker meant to show the Venture Company that Mulgore was not for sale.",
     "Morin Cloudstalker doubted the Venture Company could misread the message. The tauren would not let them steal the land's resources without protest.",
-    "The mine's workers learned that the tauren would not be taken lightly, and Morin was satisfied with the signal sent.")
+    "Morin was satisfied with the signal sent to the mine. The Venture Co., he said, would know not to take the tauren lightly.")
 Q(765, "Supervisor Fizsprocket", "Mulgore", 12, "horde_venture",
     "The caravan documents implicated Supervisor Fizsprocket in plans to drive the tauren from their land.",
     "Fizsprocket directed the Venture Company's work from its mine.",
@@ -214,12 +214,12 @@ Q(743, "Dangers of the Windfury", "Mulgore", 8, "horde_narache",
     "Windfury harpies nested along Mulgore's southeastern mountain edges, away from the road. Ruul Eagletalon, warrior and teacher, offered them as a test of strength.",
     "Ruul Eagletalon judged that a young tauren had to prepare before adventuring beyond Mulgore. The Windfury harpies would be a good gauge of skill.",
     "Ruul judged the harpy fight well done and the fighter ready to travel onward, and wished the wind always at their back.",
-    "The Windfury harpies met Ruul Eagletalon's challenge, and Ruul sent the young tauren on with a blessing of the wind.")
+    "The Windfury harpies tested a young tauren's skill, and Ruul Eagletalon sent the hunter on with a blessing of the wind.")
 Q(745, "Sharing the Land", "Mulgore", 8, "horde_mulgoreland",
     "Palemane gnolls had settled south of Bloodhoof Village and slew Mulgore's wildlife without restraint. Baine Bloodhoof said words were no longer the answer.",
     "The gnolls south of Bloodhoof had scorned every attempt to speak with them. Baine Bloodhoof wanted the young to see how much harm even a small threat could do.",
     "Baine was glad the task had been taken seriously. Death and life were a circle, he said, and respect for the land must never be forgotten.",
-    "The Palemane killing of Mulgore's wildlife was checked, and Baine Bloodhoof asked that the lesson of the land never be forgotten.")
+    "The Palemane gnolls were fought south of Bloodhoof, and Baine Bloodhoof asked that the lesson of the land never be forgotten.")
 Q(746, "Dwarven Digging", "Mulgore", 8, "horde_mulgoreland",
     "Dwarves were preparing a dig northwest of Bloodhoof Village, and Baine Bloodhoof feared it would enrage Mulgore's kodos. He wanted their tools taken and smashed at a forge.",
     "The dwarves believed secrets lay in the earth, and Baine Bloodhoof agreed, but hollowing the land was no way to earn its teachings.",
@@ -231,8 +231,8 @@ Q(761, "Swoop Hunting", "Mulgore", 6, "horde_narache",
     "Harken Windtotem knew the quills had not been easy to gather, and said it was good to have such a hunter at Bloodhoof Village.",
     "The swoop quills reached Harken Windtotem, proof of a hunter of merit.")
 Q(766, "Mazzranache", "Mulgore", 8, "horde_narache",
-    "Maur Raincaller's grandfather had told stories of a strider named Mazzranache, with red eyes and a venomous bite. Maur met it on the plains, and the bite left him feverish.",
-    "To clean the infection from Mazzranache's bite, Maur Raincaller needed a wolf heart, a cougar femur, a plainstrider scale and a swoop gizzard before the fever took him.",
+    "Maur Raincaller's grandfather had told stories of a strider named Mazzranache, with red eyes and a venomous bite. Maur met it on the plains, and the bite became infected.",
+    "To clean the infection from Mazzranache's bite, Maur Raincaller needed a wolf heart, a cougar femur, a plainstrider scale and a swoop gizzard. Time was short.",
     "Maur Raincaller could make his remedy and said he owed his life for it. He would never forget Mazzranache's screeching call.",
     "The ingredients arrived in time for Maur to stop the infection's spread. He warned others to be wary on their travels.")
 Q(833, "A Sacred Burial", "Mulgore", 10, "horde_rites",
@@ -334,8 +334,8 @@ Q(813, "Finding the Antidote", "Orgrimmar", 9, "horde_darkspear",
     "Kor'ghan handed over the antidote for Rhinag, with a warning to be careful on the way.",
     "The poison sacs became an antidote in Kor'ghan's hands. Rhinag still had to receive it.")
 Q(812, "Need for a Cure", "Durotar", 9, "horde_darkspear",
-    "A venomtail had stung Rhinag deeply, and he reckoned he had an hour to live. Only Kor'ghan, in the Cleft of Shadow in Orgrimmar, knew the antidote.",
-    "Rhinag was too ashamed to go back to Sen'jin weakened by a scorpid's sting. He needed Kor'ghan's antidote before the poison finished him.",
+    "A venomtail had stung Rhinag deeply, and he reckoned he had an hour to live. Kor'ghan, in the Cleft of Shadow in Orgrimmar, knew the antidote.",
+    "Weakened by a scorpid's sting, Rhinag could not return to Sen'jin, where he expected to be mocked. He needed Kor'ghan's antidote before the poison finished him.",
     "The antidote reached Rhinag in time. He gave away something he would not need soon. Kor'ghan meant to march him through more rituals until he proved himself.",
     "Rhinag lived. He expected more boar hunts and scorpid tails from Kor'ghan before he had proved himself.")
 Q(834, "Winds in the Desert", "Durotar", 9, "horde_roads",
@@ -460,11 +460,11 @@ Q(6395, "Marla's Last Wish", "Tirisfal Glades", 5, "horde_forsaken",
 Q(381, "The Scarlet Crusade", "Tirisfal Glades", 4, "horde_scarlet",
     "Executor Arren's scouts had found a Scarlet Crusade detachment setting up camp southeast of Deathknell. The Crusade would not rest until every undead was destroyed, so Arren meant to strike first.",
     "The Scarlet Crusade made no distinction between the Lich King's Scourge and the free Forsaken. When its zealots camped near Deathknell, Executor Arren ordered an attack before they could make one.",
-    "The camp southeast of Deathknell lost its zealots. Arren joked about sitting them down for reasonable discourse, then called them Light-blinded fools.",
+    "The Scarlet camp southeast of Deathknell was struck. Arren joked about sitting the zealots down for reasonable discourse, then called them Light-blinded fools.",
     "Arren was satisfied with the strike on the Scarlet camp. In his view, the zealots had sent themselves to their own graves.")
 Q(8, "A Rogue's Deal", "Tirisfal Glades", 5, "horde_forsaken",
     "Calvin Montague in Deathknell had a letter for Renee, the innkeeper at Brill. He promised good pay for the delivery and said little about what was in it.",
-    "Calvin Montague wanted a letter carried to Brill's innkeeper. He described her inn as a cozy place where the plague's victims could rest.",
+    "Calvin Montague wanted a letter carried to Brill's innkeeper. He described her inn as a cozy place full of plague victims trying to make their way.",
     "Renee took the letter and claimed it came from her saintly mother in Deathknell. Then she dropped the act and told the courier to get lost until there was coin to spend.",
     "Innkeeper Renee received Calvin's letter in Brill. Who had written it, she said, was nobody's business.", nil, true)
 Q(590, "A Rogue's Deal", "Tirisfal Glades", 5, "horde_forsaken",
@@ -514,7 +514,7 @@ Q(360, "Return to the Magistrate", "Tirisfal Glades", 9, "horde_forsaken",
     "Linnea's report reached Sevren, who called the Lich King's minions ceaseless and said the Forsaken would not give in.")
 Q(356, "Rear Guard Patrol", "Tirisfal Glades", 11, "horde_forsaken",
     "The Bulwark's defenders could hold only one front, and Scourge slipping behind them threatened their supply line. Deathguard Linnea sent a patrol east toward Balnir Farmstead.",
-    "Balnir Farmstead had become a haven for Scourge that slipped past the Bulwark. Linnea wanted the farm and the road around it cleared.",
+    "Balnir Farmstead had become a haven for Scourge that slipped past the Bulwark. Linnea wanted any Scourge to the east slain, the farm most of all.",
     "The patrol thinned the Scourge around Balnir Farmstead. Linnea promised a commendation to her superior, Executor Zygand.",
     "Linnea accepted the report of the patrol east of her station. Fewer Scourge remained behind the Bulwark, and Zygand would hear of it.", nil, true)
 Q(99156, "Rear Guard Patrol", "Tirisfal Glades", 13, "horde_forsaken",
@@ -559,7 +559,7 @@ pack.questIDs[381].highlight = {"Executor Arren ordered a strike on the Scarlet 
 pack.questIDs[590].highlight = {"Calvin Montague tried to fight his way out of paying for the Brill letter. He lost, paid less than promised, and admitted the first offer had been a lie.", "Asked for his promised coin, Calvin Montague chose a fight instead. Beaten, he paid a smaller sum and blamed it on his own lie."}
 pack.questIDs[5481].highlight = {"Gordo the abomination sent his gloom weed to Junior Apothecary Holland in Brill. Holland had wanted doom weed, and complained that Gordo kept picking the wrong plants.", "Gordo's gloom weed reached Holland and was refused. The apothecary needed doom weed, and had given up explaining the difference to his abomination."}
 pack.questIDs[5482].highlight = {"Doom weed from the mass graves north of Brill reached Junior Apothecary Holland. He rubbed his hands over it and called it a fine service, first to himself, then to the Lady.", "Holland finally had the doom weed Gordo could never find. He paid for it and promised it would come in handy."}
-pack.questIDs[358].highlight = {"Rot Hide gnolls had been taking bodies from the Mass Graves for the Scourge. They were cut down, and Magistrate Sevren sent their embalming ichor to the apothecaries.", "The Mass Graves were spared the Rot Hides' digging. Sevren was pleased, and hoped the gnolls' ichor would reveal something to use against the Scourge."}
+pack.questIDs[358].highlight = {"Rot Hide gnolls had been taking bodies from the Mass Graves for the Scourge. They were cut down, and Magistrate Sevren sent their embalming ichor to the apothecaries.", "Sevren said the Scourge would not use the corpses of the Mass Graves. He hoped the gnolls' ichor would reveal something to use against the Scourge."}
 pack.questIDs[407].highlight = {"Apothecary Johaan laced a pumpkin with his latest formula for the Scarlet Zealot in the Gallows' End cellar. The starving prisoner cursed his visitor, then ate it gladly.", "In the cellar of the Gallows' End Tavern, a captured zealot met Johaan's treated pumpkin. He was too hungry to wonder what was in it."}
 pack.questIDs[398].highlight = {"Maggot Eye had been stealing Tirisfal's dead for the Lich King. Executor Zygand accepted the gnoll's paw and thanked the executioner on behalf of Brill.", "Brill's death sentence on the corpse-thief Maggot Eye was carried out near Garren's Haunt. Zygand hoped the execution would serve as a warning."}
 pack.questIDs[99156].highlight = {"An abomination had slipped past the Bulwark toward Venomweb Vale. Its heart reached Deathguard Linnea, who credited the kill to Forsaken cunning.", "Deathguard Linnea kept the abomination near Venomweb Vale quiet until it was dead. Its heart came back as proof, though no one knew how it had passed the Bulwark."}
@@ -571,7 +571,7 @@ pack.questIDs[99156].highlight = {"An abomination had slipped past the Bulwark t
 Q(361, "A Letter Undelivered", "Tirisfal Glades", 7, "horde_forsaken",
     "Among the ruins of Agamand Mills lay a letter from Thurman, eldest son of Gregor Agamand, to Yvette Farthing. It had never reached her.",
     "Thurman Agamand had written to Yvette Farthing before the plague, and the letter had never been delivered. Yvette was now one of the Forsaken in Brill.",
-    "Yvette mourned Thurman, who had stayed at Agamand Mills out of loyalty to his family, and blamed his brother Brand. Then her face grew cold, and she said that life was over.",
+    "Yvette mourned Thurman, who had stayed at Agamand Mills out of loyalty to his family, and said she had known Brand meant him harm. Then her face grew cold, and she said that life was over.",
     "The letter told Yvette what had become of her lost love. She cursed the plague, then set regret aside as something for the weak.")
 Q(362, "The Haunted Mills", "Tirisfal Glades", 10, "horde_forsaken",
     "Coleman Farthing was collecting the remains of the Agamands. Devlin, the weak and sharp-tongued younger son, still chattered madly near the road to the mills.",
@@ -587,17 +587,17 @@ Q(355, "Speak with Sevren", "Tirisfal Glades", 10, "horde_forsaken",
     "Coleman Farthing's revenge was satisfied, but Agamand Mills still threatened all the Forsaken. He had told Magistrate Sevren of the fighting there.",
     "Word of the work at Agamand Mills had reached Magistrate Sevren through Coleman Farthing. The magistrate wanted to meet the one responsible.",
     "Sevren had heard Coleman's praise and had new work for the Forsaken.",
-    "In Brill, Sevren said the Forsaken needed those talents once again.")
+    "In Brill, Magistrate Sevren said the Forsaken needed the same fighting talents once again.")
 Q(426, "The Mills Overrun", "Tirisfal Glades", 8, "horde_forsaken",
     "The Scourge were trying to make a base of Agamand Mills, from which they could stage attacks deeper into Tirisfal. Deathguard Dillinger had orders to destroy them.",
     "Across the bridge west of Brill and north to the windmills, the Scourge were gathering at Agamand Mills. Deathguard Dillinger wanted ribs and skulls from the skeletons and bonecasters there.",
     "Dillinger would not give thanks for necessary work, but said the Deathguards of Tirisfal would remember who had done it.",
-    "Notched ribs and blackened skulls from the mills reached Dillinger. The Scourge gathering at Agamand had lost a good part of its soldiers.")
+    "Notched ribs and blackened skulls from the mills reached Dillinger, proof of Scourge soldiers destroyed at Agamand.")
 Q(408, "The Family Crypt", "Tirisfal Glades", 13, "horde_forsaken",
     "Captain Dargol, a skeleton, commanded the Scourge from the Agamand Family Crypt. With necromancy he had raised the Agamand ancestors to fight the Forsaken.",
     "The Agamand Family Crypt was the Scourge's strongest point at the mills. Magistrate Sevren wanted the raised ancestors put down and Captain Dargol's skull brought back.",
     "Dargol's skull reached Sevren, who called it a telling blow against the Scourge and one their enemies would notice.",
-    "The Agamand crypt lost its captain and its raised ancestors. Sevren believed the Forsaken would one day drive the Lich King himself from Azeroth.")
+    "Captain Dargol and many of the raised ancestors fell in the Agamand crypt. Sevren believed the Forsaken would one day drive the Lich King himself from Azeroth.")
 Q(405, "The Prodigal Lich", "Undercity", 8, "horde_forsaken",
     "Bethor Iceshard, a powerful mage in the Undercity, wanted an agent with proven worth against the Scourge. Magistrate Sevren sent his orders south with one.",
     "Magistrate Sevren knew only that Bethor Iceshard's mission concerned a wayward lich, and that it would be dangerous. His orders were bound for the Magic Quarter.",
@@ -635,8 +635,8 @@ Q(97558, "Hides for the Forsaken", "Tirisfal Glades", 11, "horde_forsaken",
     "Shelene's stock of skins was replenished, ready for the next Forsaken who came to her injured.")
 Q(95314, "That Shadowvale Green Elixir", "Tirisfal Glades", 10, "horde_trade",
     "Before the Scourge came, the reclusive village of Shadowvale had distilled Whispering Elixir from herbs found only in Tyr's Fall. Brill still had buyers for it, ban or no ban.",
-    "Bottles of Whispering Elixir might still lie in the ruins of Shadowvale, deep in the Whispering Forest. Its buyers in Brill offered generous pay.",
-    "The elixirs from Shadowvale were paid for. The buyer had always found the forest folk odd, and repeated the rumor that the Whispering Forest was cursed.",
+    "Bottles of Whispering Elixir might still lie in the ruins of Shadowvale, deep in the Whispering Forest. Carolai Anise in Brill offered generous pay for them.",
+    "The elixirs from Shadowvale were paid for. Carolai Anise called the forest folk an odd lot, and repeated the rumor that the Whispering Forest was cursed.",
     "The bottles of Whispering Elixir reached Brill. Some said the elixir carried the curse of the forest it came from, but the payment was made all the same.")
 Q(86784, "Sticks and Bones", "Tirisfal Glades", 7, "horde_forsaken",
     "Deathguard Bartholomew's associate Eleanor Shackleton camped in the western hills of Tirisfal. She had once told him to gather five times the firewood he thought he needed.",
@@ -657,7 +657,7 @@ Q(96659, "The Adventurer", "Mulgore", 6, "horde_narache",
     "Kaga Wildhoof had once helped Chief Hawkwind and refused any payment. Hawkwind saw a chance to repay her and sent supplies to her camp outside Bloodhoof Village.",
     "Chief Hawkwind owed a debt to the adventurer Kaga Wildhoof, camped just outside Bloodhoof Village. He sent supplies to settle it.",
     "Kaga had told Hawkwind long ago that she needed no payment, but she accepted his supplies. Then she offered to teach camping in the wild.",
-    "Hawkwind's supplies reached Kaga Wildhoof, who observed that the chief had never listened to her. She offered lessons in camping in return.", nil, true)
+    "Hawkwind's supplies reached Kaga Wildhoof, who observed that the chief had not listened to her. She offered lessons in camping in return.", nil, true)
 Q(96638, "The Adventurer", "Zephras Isle", 6, "forever_grove",
     "More and more of Zephras's young were seeking fortune beyond Thendal Grove. An adventurer had made camp outside Shen'dar Village, on the road southwest of the grove.",
     "Aetheen of the Gales sent the newly seasoned to an adventurer camped near Shen'dar Village, to learn what might help their own travels.",
@@ -672,15 +672,15 @@ pack.quests["The Adventurer"].thread = false
 pack.quests["The Adventurer"].threadLabel = false
 for _, id in ipairs({408, 357, 409}) do pack.questIDs[id].importance = 4 end
 pack.questIDs[411].importance = 5
-pack.questIDs[361].highlight = {"Thurman Agamand's last letter finally reached Yvette Farthing in Brill. She mourned him and cursed his brother Brand, then declared that her old life was over.", "From an undelivered letter, Yvette Farthing learned what had become of Thurman Agamand. Regrets were for the weak, she decided, and love was no longer among her goals."}
+pack.questIDs[361].highlight = {"Thurman Agamand's last letter finally reached Yvette Farthing in Brill. She mourned him and cursed the plague and the Scourge, then declared that her old life was over.", "From an undelivered letter, Yvette Farthing learned what had become of Thurman Agamand. Regrets were for the weak, she decided, and love was no longer among her goals."}
 pack.questIDs[362].highlight = {"Devlin Agamand still chattered madly near the road to the mills. His bones went to Coleman Farthing's mantle, a first piece of revenge on the family who had failed him.", "Coleman Farthing wanted every Agamand destroyed. Devlin, the younger son, was the first, and his bones ended up on Coleman's mantle."}
 pack.questIDs[354].highlight = {"The Agamands, whose pride had doomed their workers to undeath, were destroyed at their mills. Coleman Farthing received their remains and hoped they had known fear.", "Coleman Farthing's revenge on the Agamand family was complete. He hoped, foolishly as he admitted, that they had felt fear at the end."}
-pack.questIDs[408].highlight = {"Captain Dargol had raised the Agamand ancestors in their family crypt. His skull reached Magistrate Sevren, who called it a telling blow against the Scourge.", "The Scourge's strongest point at Agamand Mills fell with Captain Dargol. Sevren said the victory would not go unnoticed by the Forsaken or their enemies."}
+pack.questIDs[408].highlight = {"Captain Dargol had raised the Agamand ancestors in their family crypt. His skull reached Magistrate Sevren, who called it a telling blow against the Scourge.", "Captain Dargol, who led the Scourge from their strongest point at Agamand Mills, was slain. Sevren said the victory would not go unnoticed by the Forsaken or their enemies."}
 pack.questIDs[357].highlight = {"A stolen spellbook told Bethor Iceshard that the lich of Brightwater Lake was Gunther Arcanus, his friend and comrade before the plague.", "The spellbook taken from the island in Brightwater Lake named its owner. Gunther Arcanus, Bethor's old comrade, had grown more powerful in death."}
 pack.questIDs[366].highlight = {"Gunther Arcanus got his spellbook back from the same thief who had taken it. Bethor's enchantment on it suggested that his old friend was free of the Lich King.", "Bethor's spellbound message reached Gunther Arcanus on his island. The lich who trusted no undead began to wonder whether Bethor had escaped the Lich King too."}
 pack.questIDs[409].highlight = {"Gunther Arcanus asked for Lillith Nefara's destruction as proof against the Scourge. When she fell, he admitted he had believed himself the only one with free will.", "Lillith Nefara rose at the bloody altar off Gunther's island and was destroyed. Gunther was astonished to learn that others had broken the Lich King's hold."}
 pack.questIDs[411].highlight = {"Gunther Arcanus sent a Nether Gem to Bethor Iceshard. Through it the old friends from Dalaran could speak again, and Gunther agreed to join the Forsaken.", "Bethor received Gunther's Nether Gem in the Undercity. The lich of Brightwater Lake had been won over, and the Dark Lady would hear of it."}
-pack.questIDs[97558].highlight = {"Forsaken skin did not heal, so Shelene Rhobart patched it with hides. Duskbat membranes, darkhound hides and murloc skin restocked her supplies.", "Shelene Rhobart's skins for injured Forsaken were running low. The new hides would serve, she said, from thick darkhound leather to fine membranes for faces and fingers."}
+pack.questIDs[97558].highlight = {"Forsaken skin did not heal, so Shelene Rhobart patched it with hides. Duskbat membranes, darkhound hides and murloc skin restocked her supplies.", "Shelene Rhobart's skins for injured Forsaken were running low. The new hides would serve, she said, from darkhound leather to fine membranes for faces and fingers."}
 pack.questIDs[96656].highlight = {"A stranger on the road to Brill turned out to be Eleanor Shackleton, an adventurer with no ties to the Scarlet Crusade. She offered lessons in camping.", "Sent to check on a stranger near Brill, the newly risen found Eleanor Shackleton passing through, and an offer to learn camping."}
 
 -- Durotar's valley, roads and coast (overnight 2026-11-05). Forever additions
@@ -693,9 +693,9 @@ Q(787, "The New Horde", "Durotar", 1, "horde_trials",
     "Eitrigg's account of the new Horde gave way to Gornek's instructions in the Den.")
 Q(97279, "Wayward Weapons", "Durotar", 2, "horde_trials",
     "New recruits kept arriving at the Den, and the weaponsmith Kzan was running short of training weapons. Failed recruits had left theirs lying around the valley.",
-    "A trainer in the Den wanted to see what a new recruit could do among the boars, and to salvage six abandoned training weapons for Kzan along the way.",
+    "A trainer in the Den wanted to see what a new recruit could do among the boars. Six abandoned training weapons were to be salvaged for Kzan along the way.",
     "Kzan received the six weapons and set to repairing them for the next wave of recruits.",
-    "The abandoned training weapons went back to Kzan, ready for recruits who had not yet arrived.")
+    "The abandoned training weapons were back in the Den, waiting for Kzan's repairs.")
 Q(4402, "Galgar's Cactus Apple Surprise", "Durotar", 3, "horde_trials",
     "Galgar wiped his brow in the heat of the Valley of Trials. With ten cactus apples he could make his famous cactus apple surprise.",
     "Galgar promised a few portions of his cactus apple surprise, and a training manual, for ten cactus apples from around the valley.",
@@ -703,7 +703,7 @@ Q(4402, "Galgar's Cactus Apple Surprise", "Durotar", 3, "horde_trials",
     "The cactus apples became Galgar's famous treat, a few portions of it packed for later travels.")
 Q(96821, "Legging It", "Durotar", 6, "horde_roads",
     "Fewer travelers were coming from Razor Hill. Spiders had begun nesting along the road, on top of the scorpids.",
-    "A troll on the road north wanted the new spider nests thinned, and word sent to Razor Hill that the path was safer.",
+    "A troll wanted the new spider nests along the road thinned, and word sent to Razor Hill that the path was safer.",
     "Razor Hill heard that the road was safer. The peons, afraid to travel south for some time, could go back to work.",
     "With the spiders thinned, Razor Hill could send its peons south to work again.")
 Q(96822, "For Honor", "Durotar", 6, "horde_roads",
@@ -722,10 +722,10 @@ Q(785, "A Strategic Alliance", "Durotar", 8, "horde_darkspear",
     "The help reached Lar Prowltusk where he watched over Sen'jin's western flank.",
     "The pact between orc and troll brought aid to Lar Prowltusk on Sen'jin's western flank.")
 Q(99048, "A Missing Hand", "Durotar", 11, "horde_roads",
-    "Heglan Shadeeye of the Shattered Hand had been watching Tiragarde Keep from a distance, and her reports had stopped. No one believed the humans had caught her.",
+    "Heglan Shadeeye of the Shattered Hand had been watching Tiragarde Keep from a distance, and her reports had stopped. Her commander doubted the humans had caught her.",
     "The Shattered Hand's watcher at Tiragarde Keep had gone silent. Something more dangerous than the human garrison was suspected.",
     "Heglan's body lay cold in the wreckage of her hut. Whatever had killed her did not seem human.",
-    "The search found Heglan Shadeeye dead in her ruined hut, with signs nearby of an attacker that was not human.")
+    "The search found Heglan Shadeeye dead in her ruined hut. Signs of what had happened might lie nearby.")
 Q(99049, "Threat from Below", "Durotar", 11, "horde_roads",
     "Heglan Shadeeye's post had been wrecked in a skirmish, and her attackers had not escaped unhurt. Orgnil Soulscar would want any evidence they had left.",
     "Signs around Heglan's ruined post pointed to her killers. The evidence was bound for Orgnil in Razor Hill.",
@@ -739,7 +739,7 @@ Q(99051, "Threat from Below", "Durotar", 11, "horde_roads",
 Q(99052, "Threat from Below", "Durotar", 12, "horde_roads",
     "A scout reported that a young sea giant had followed the naga down the coast. Young or not, it could rip an orc in half.",
     "The sea giant had to be killed before it caught anyone off guard, and the orders came with advice to bring help.",
-    "The young sea giant was dead. Few, Razor Hill's defenders said, could claim to have survived such a fight.",
+    "The young sea giant was dead. Few, Orgnil said, could claim to have survived such a fight.",
     "The sea giant that had followed the naga south would trouble Durotar's coast no longer.", nil, true)
 Fallback("Threat from Below", false,
     "An enemy had come up out of the sea.",
@@ -759,8 +759,8 @@ pack.questIDs[787].highlight = {"Eitrigg welcomed the recruits to the Valley of 
 pack.questIDs[4402].highlight = {"Ten cactus apples from the Valley of Trials became Galgar's famous cactus apple surprise, with something extra on the side.", "Galgar wanted cactus apples against the valley's heat. In return he made his famous surprise and added a little something extra."}
 pack.questIDs[96822].highlight = {"Weapons of the warriors who fell at Tiragarde Keep were taken back from the reinforced ruins, so that the dead could be honored and remembered.", "The fallen of the Tiragarde assault had left their weapons in the ruins. Recovered, they would be displayed in a place of honor."}
 pack.questIDs[99048].highlight = {"Heglan Shadeeye of the Shattered Hand had stopped reporting from Tiragarde Keep. She was found dead in her wrecked hut, killed by something that did not seem human.", "The search for the Shattered Hand's missing watcher ended at a wrecked hut, where Heglan Shadeeye lay dead."}
-pack.questIDs[99049].highlight = {"The evidence around Heglan's post was naga work. Orgnil Soulscar warned that pressure from the sea and the land together would be too much for Razor Hill.", "A naga banner and a broken blade from Heglan's post reached Orgnil. The naga had come down the coast from the north, and he meant to stop them there."}
-pack.questIDs[99052].highlight = {"A young sea giant had followed the naga down Durotar's coast. It was killed, and Razor Hill's defenders said few could claim to have survived such a fight.", "The sea giant that had followed the naga down the coast was dead. Razor Hill's defenders called it a kill to be proud of."}
+pack.questIDs[99049].highlight = {"The evidence around Heglan's post was naga work. Orgnil Soulscar warned that pressure from both directions would be too much for Razor Hill.", "A naga banner and a broken blade from Heglan's post reached Orgnil. The naga had come down the coast from the north, and he meant to stop them there."}
+pack.questIDs[99052].highlight = {"A young sea giant had followed the naga down Durotar's coast. It was killed, and Orgnil said few could claim to have survived such a fight.", "The sea giant that had followed the naga down the coast was dead. Orgnil called it a kill to be proud of."}
 
 -- Mulgore and Bloodhoof Village (overnight 2026-11-05). The Longwalker, Galak
 -- and shredder stages are Forever additions (98424-98435, 99079-99101); names
@@ -783,7 +783,7 @@ Q(770, "The Demon Scarred Cloak", "Mulgore", 12, "horde_narache",
     "An old hunter in Bloodhoof Village could barely believe Ghost Howl had been defeated. He gave one of his own weapons and hoped the wolf's spirit had found peace.",
     "Word of Ghost Howl reached Bloodhoof Village, where an aging hunter parted with a weapon from his own hunting days.")
 Q(99079, "Longwalker Malah", "Mulgore", 9, HL,
-    "The Longwalkers were the tauren's most trusted scouts, loyal to the High Chieftain alone. Longwalker Malah had gone to watch the eastern borders and was three days overdue.",
+    "The Longwalkers were the tauren's most trusted scouts, loyal to the High Chieftain alone. Longwalker Malah had gone to watch the eastern borders and had not returned after three days.",
     "Brave Wildrunner had to keep Bloodhoof Village safe, so the search for the missing Longwalker Malah fell to others. She would be known by her headband and feathered staff.",
     "Malah had not died naturally. Arrows covered her back and the ground around her.",
     "The search found Longwalker Malah dead, shot with many arrows.")
@@ -799,7 +799,7 @@ Q(99101, "Our Ancient Enemy", "Mulgore", 9, HL,
     "The centaur incursion was in Baine's hands now, and he declared that it would not stand.")
 Q(99080, "Drive Them Out", "Mulgore", 9, HL,
     "Baine would not yield a blade of grass to the centaur. He wanted their camp destroyed before the raiders could rest and ride on Bloodhoof Village, with none left to rally others in the Barrens.",
-    "Baine Bloodhoof ordered an attack on the centaur camp, and wanted the raiding party's leader's head as a warning to others.",
+    "Baine Bloodhoof ordered an attack on the centaur camp, and wanted the head of the raiding party's leader as a warning to others.",
     "Baine said he had heard the moment the last centaur fell. He called it a great victory for the village, and a safety its young needed more than ever.",
     "The centaur raiders were gone from Mulgore. Baine called the centaur blood an honor unlike any other among his people, and gave his deepest thanks.")
 Q(99082, "The High Chieftain", "Thunder Bluff", 9, HL,
@@ -831,7 +831,7 @@ for _, id in ipairs({3376, 770, 99079, 98430, 98427}) do pack.questIDs[id].impor
 for _, id in ipairs({99080, 99082}) do pack.questIDs[id].importance = 5 end
 pack.questIDs[3376].highlight = {"Chief Sharptusk Thornmantle had led the Bristlebacks' war on the tauren. His head reached Brave Windfeather, who called it justice and a warning.", "Others had failed against Sharptusk Thornmantle in Brambleblade Ravine. When his head reached Brave Windfeather, the quilboar had lost their chief."}
 pack.questIDs[770].highlight = {"Ghost Howl, the white wolf scarred in battle with the Burning Legion, was dead. An old hunter in Bloodhoof Village gave a weapon of his own and hoped the wolf's spirit was at peace.", "The demon-scarred hide of Ghost Howl reached Bloodhoof Village, where an aging hunter could barely believe the great wolf had fallen."}
-pack.questIDs[99079].highlight = {"Longwalker Malah was three days overdue from the eastern borders. She was found dead, with arrows in her back and on the ground around her.", "The search for the missing Longwalker Malah ended in the east of Mulgore, where she lay shot with many arrows."}
+pack.questIDs[99079].highlight = {"Longwalker Malah had not returned from the eastern borders after three days. She was found dead, with arrows in her back and on the ground around her.", "The search for the missing Longwalker Malah ended in the east of Mulgore, where she lay shot with many arrows."}
 pack.questIDs[99080].highlight = {"Baine Bloodhoof would not yield a blade of grass to the centaur raiding Mulgore. Their camp was destroyed, and he called it a great victory for the village and its young.", "The centaur raiding party was driven out of Mulgore before it could ride on Bloodhoof Village. Baine gave his deepest thanks."}
 pack.questIDs[99082].highlight = {"Cairne Bloodhoof heard that the Galak had dared enter Mulgore and been driven out. He said the victory had brought pride to the ancestors.", "Baine's report of the defense reached his father atop Thunder Bluff. Cairne honored the victory over the Galak with a gift."}
 pack.questIDs[98430].highlight = {"Longwalker Perith Stormhoof's mission to the gnolls had turned violent. He was brought out alive, and Cairne thanked those who had risked their lives for his most trusted scout.", "Cairne's secret envoy to the gnolls nearly became their feast. Perith Stormhoof escaped, and the High Chieftain was relieved to hear it."}
@@ -934,7 +934,7 @@ local water = {
     {1535, 22, "The Barrens", "A pond below {n:Brine}'s hut held precious water in the dry Barrens.", "The quilboar guarded the small pool that supplied the first sample.", "The first waterskin returned filled from the Barrens pool.", "{n:Brine} received the local water sample for the rite."},
     {1536, 22, "The Barrens", "The well at Tarren Mill remained fresh despite the blighted country around it.", "{n:Brine} wanted water from a spring in the center of the Forsaken town.", "The Tarren Mill sample reached {n:Brine}, with one sample still needed.", "{n:Brine} received the fresh well water from Hillsbrad."},
     {1534, 23, "The Barrens", "A fountain at the Ruins of Stardust held the final water {n:Brine} requested.", "The water rite's last sample lay far to the north in Ashenvale.", "The Ashenvale sample completed the set needed for {n:Brine}'s pure-water vial.", "{n:Brine} could prepare the vial after receiving the fountain water."},
-    {220, 23, "The Barrens", "{n:Brine}'s blessed vial was needed for Islen's next preparations.", "The pure water had another purpose beyond the making of sapta.", "Islen received the vial and prepared to direct the work toward Silverpine.", "The blessed water reached Islen for the next stage of the rite."},
+    {220, 23, "The Barrens", "{n:Brine}'s blessed vial was needed for Islen's next preparations.", "The pure water from Brine was needed for whatever last task Islen had planned.", "Islen received the vial and prepared to direct the work toward Silverpine.", "The blessed water reached Islen for the next stage of the rite."},
     {63, 23, "Silverpine Forest", "A shrine west of the Sepulcher had fallen silent under corruption.", "The water manifestation's bracers and the blessed drops were needed at the brazier.", "The bracers and remaining potion were placed on the brazier for the cleansing ritual.", "The shrine's ritual began with bracers, blessed water and Islen's incantation."},
     {100, 23, "Silverpine Forest", "The completed incantation scattered corruption around the water shrine.", "A pure water spirit could speak after the ritual's light broke the corruption.", "The water spirit acknowledged the cleansing while warning that life still waned.", "The spirit's thanks marked a local cleansing, with the wider blight still present."},
     {96, 23, "The Barrens", "A shard from the water spirit served as proof for Islen.", "The rite's reward awaited evidence of the work in Silverpine.", "Islen granted the water totem after receiving the shard.", "The returned proof completed the water rite and earned its totem."},
@@ -1153,7 +1153,7 @@ Q(92470, "Foul Matriarch", "Zephras Isle", 5, "forever_grove",
     "Urs'anah was dead. Aetheen saw great promise, and said it was time to look beyond Thendal Village.")
 Q(92544, "Al'Aketh Thugs", "Zephras Isle", 5, "forever_cult",
     "Al'Aketh ruffians under Malduko Cloudcrush had camped by the temple ruins southwest of the grove, attacking travelers and pressing people into the cult. Hanaa Nightwind believed Lorthuna had sent them.",
-    "Hanaa Nightwind could not leave the post that warned travelers leaving the grove, so the cultists at the temple ruins and their leader Malduko Cloudcrush were left to others.",
+    "Hanaa Nightwind could not leave the post that warned travelers leaving the grove. The cultists at the temple ruins and their leader Malduko Cloudcrush were left to others.",
     "Hanaa had barely kept from joining the fight, hoped the cultists had got the message, and gave thanks on behalf of the Rangers of Thendal Grove.",
     "Malduko Cloudcrush and his ruffians were dealt with, and the Rangers of Thendal Grove gave their thanks.")
 Q(92472, "The Next Step", "Zephras Isle", 5, "forever_cult",
@@ -1163,8 +1163,8 @@ Q(92472, "The Next Step", "Zephras Isle", 5, "forever_cult",
     "Constable Aonda accepted the aid Aetheen had sent, doubts and all.")
 Q(93746, "A Firm Response", "Zephras Isle", 9, "forever_cult",
     "The High Order had been warned against meddling in Windshaper affairs. Ayessa Dawnsinger wanted Belathaan sent back to them bruised, and he had been seen on the road north toward the Shrine of Akir.",
-    "Ayessa Dawnsinger meant to make an example of Belathaan, the High Order's envoy, and confront him alone on the road north.",
-    "Belathaan was dead. Ayessa learned that the High Order had sent him to talk peace with the Al'Aketh, and blamed its arrogance, not the one who brought the news.",
+    "Ayessa Dawnsinger meant to make an example of Belathaan of the High Order, and wanted him caught alone on the road north.",
+    "Belathaan was dead. Ayessa learned that the High Order had sent him to talk peace with the Al'Aketh, and laid the blame on its arrogance.",
     "The news of Belathaan's death stunned Ayessa. There was no peace with the cult, she said, and Elaadrin should never have sent him to treat with them alone.")
 Q(93090, "What Comes Next", "Zephras Isle", 13, "forever_winds",
     "High Elder Shadowsong gave the Windshapers' expedition his blessing. He hoped whatever solution they found would bring the stability Zephras had lacked for years.",
@@ -1172,7 +1172,7 @@ Q(93090, "What Comes Next", "Zephras Isle", 13, "forever_winds",
     "Ayessa was pleased to have the high elder's blessing. With the cult defeated and preparations made, she judged it time to go.",
     "Muln had worked to make skycutter crossings to Mulgore reliable, and some of the Windshapers were already waiting there. Ayessa declared the expedition ready.")
 Q(95350, "Welcome to Azeroth", "Orgrimmar", 13, "forever_winds",
-    "The Earthen Ring belonged to the Horde, and its allies were the Windshapers' hope of survival. An emissary was to travel from Thunder Bluff to Orgrimmar and meet Warchief Thrall.",
+    "The Earthen Ring belonged to the Horde, and these new allies were the Windshapers' hope of survival. An emissary was to travel from Thunder Bluff to Orgrimmar and meet Warchief Thrall.",
     "The Windshapers needed the Horde's friendship. Their emissary was sent from Mulgore to Thrall in Orgrimmar.",
     "Thrall had been told to expect an emissary of the Windshapers. He had not expected a high elf, but welcomed the guest and granted passage through Horde lands.",
     "Warchief Thrall gave the Windshaper his blessing to travel through Horde lands.")
@@ -1187,7 +1187,7 @@ pack.questIDs[94414].highlight = {"Halaan Hawk-Eye watched the anchor pylons tha
 pack.questIDs[92474].highlight = {"Myriaal Mistwake's game sent the young leaping and floating down to startle Rorian the Dayseeker. Rorian disapproved, then allowed that practice in the village was acceptable.", "Floating down on the skyborne gift to land before Rorian earned a lecture on recklessness, and grudging permission to practice in the village."}
 pack.questIDs[92473].highlight = {"After a young ursera nearly attacked a boy by Thendal's elder tree, Valreaa Valewind had the hungry den culled. Why the beasts had grown so aggressive, no one knew.", "The ursera den southwest of Thendal was culled, and the Rangers of the Grove were in debt for it."}
 pack.questIDs[92470].highlight = {"Aetheen of the Gales tested the young against Urs'anah, matriarch of the ursera in the southern caves. When she fell, Aetheen said the path now led beyond Thendal Village.", "Urs'anah, the ursera matriarch, was put down in the caves south of Thendal. Aetheen saw great promise in the deed."}
-pack.questIDs[92544].highlight = {"Malduko Cloudcrush's cult ruffians had been preying on travelers near the temple ruins. They were dealt with, and Hanaa Nightwind thanked the help for the Rangers of Thendal Grove.", "The Al'Aketh thugs at the temple ruins southwest of the grove lost their leader, Malduko Cloudcrush."}
+pack.questIDs[92544].highlight = {"Malduko Cloudcrush's cult ruffians had camped near the temple ruins, sent, Hanaa Nightwind believed, to prey on travelers. They were dealt with, and Hanaa gave thanks on behalf of the Rangers of Thendal Grove.", "The Al'Aketh thugs at the temple ruins southwest of the grove lost their leader, Malduko Cloudcrush."}
 pack.questIDs[93746].highlight = {"Ayessa Dawnsinger wanted the High Order's envoy Belathaan sent home bruised. Instead he died, having been sent by Elaadrin to talk peace with the cult.", "Ayessa blamed Elaadrin for sending Belathaan of the High Order to treat with the Al'Aketh alone. The envoy was dead."}
 pack.questIDs[93090].highlight = {"High Elder Shadowsong blessed the Windshapers' expedition to Kalimdor. With the cult defeated and skycutters crossing to Mulgore, Ayessa judged it time to go.", "Ayessa Dawnsinger received the high elder's blessing. Some Windshapers were already waiting in Mulgore, and the expedition was ready."}
 pack.questIDs[95350].highlight = {"In Orgrimmar, Warchief Thrall received the Windshapers' emissary. He had not expected a high elf, but welcomed the guest and granted passage through Horde lands.", "The Windshapers' emissary met Thrall in Orgrimmar and left with his blessing to travel through Horde lands."}
@@ -1419,7 +1419,7 @@ pack.threads[HG] = "the bargain with caged Mangletooth"
 Q(5041, "Supplies for the Crossroads", "The Barrens", 14, "horde_roads",
     "A Razormane attack on a caravan had taken supplies the Crossroads badly needed. Thork asked that the lost goods be watched for in the quilboar camps.",
     "The Razormane were growing fat on stolen Crossroads supplies. Thork wanted them recovered from the quilboar camps.",
-    "Thork laughed with relief as the supplies came back, and called their finder a boon to the Crossroads.",
+    "Thork laughed as the supplies came back, and called their finder a boon to the Crossroads.",
     "The supplies came back from the quilboar camps, and Thork offered his help in return.")
 Q(3281, "Stolen Silver", "The Barrens", 18, "horde_roads",
     "The raptor thieves were dead, but the Crossroads guards' silver was still missing. Gazrog suspected it lay in the Raptor Grounds south of Ratchet.",
@@ -1465,7 +1465,7 @@ Q(5052, "Blood Shards of Agamaggan", "The Barrens", 21, HG,
     "Agamaggan's blood had hardened into red stones in the earth, and the Bristlebacks carried them as totems. Mangletooth promised quilboar magic for enough of the shards.",
     "Mangletooth knew the secrets of the blood shards the Bristlebacks dug up. He asked for one to show that his visitor understood.",
     "Mangletooth held a blood shard again after a long time without one. No cage, he said, could stop Agamaggan's power.",
-    "The shards reached Mangletooth, who promised to set his visitor loose on the people who had turned their backs on him.")
+    "A blood shard reached Mangletooth, who promised to set his visitor loose on the people who had turned their backs on him.")
 Q(879, "Betrayal from Within", "The Barrens", 25, HG,
     "Mangletooth named the three Razormane who led the raids on the Horde, Nak, Kuz and Lok Orcbane, far in the southern Barrens. He wanted them dead as they had left him to die.",
     "The Razormane raids on the Crossroads were led by a caster, a tracker and a warrior called Orcbane. Mangletooth promised peace from his tribe if all three were killed.",
@@ -1530,9 +1530,9 @@ Q(1492, "Wharfmaster Dizzywig", "The Barrens", 11, "horde_ratchet",
     "Dizzywig judged the crate small enough and found room for it on the next tide's ship. Then he entered it in his ledger.",
     "The crate went into Dizzywig's ledger, bound for Blackwater Cove on the next tide.")
 Q(887, "Southsea Freebooters", "The Barrens", 14, "horde_ratchet",
-    "Gazlowe was tired of losing ships and goods to pirates while Vice Admiral Grezzlik and the Trade Fleets did nothing. Now the Southsea Freebooters had camped just south of Ratchet.",
+    "Gazlowe was tired of losing ships and goods to pirates while Vice Admiral Grezzlik's Trade Fleets failed to keep the seas safe. Now the Southsea Freebooters had camped just south of Ratchet.",
     "The Southsea Freebooters had set up on Gazlowe's doorstep. If Grezzlik would not deal with them, Gazlowe would pay someone who did.",
-    "Gazlowe hoped the beating would convince the Freebooters to move their operation elsewhere. His stolen goods were still in their camp.",
+    "Gazlowe hoped the beating would convince the Freebooters to move their operation elsewhere. His stolen goods still had to be recovered.",
     "The pirates south of Ratchet were thinned out. Gazlowe called it good work, then turned to the goods they had stolen from him.")
 Q(890, "The Missing Shipment", "The Barrens", 14, "horde_ratchet",
     "Gazlowe wanted the dock records checked before blaming pirates for a late shipment.",
@@ -1691,7 +1691,7 @@ Q(1491, "Smart Drinks", "The Barrens", 18, "horde_ratchet",
     "The essence reached Mebok, who could not wait to try it in his drink. Its effect remained to be seen.")
 Q(843, "Gann's Reclamation", "The Barrens", 23, HV,
     "The dwarves of Bael Modan blasted holes in the land that had once fed Gann Stonespire's tribe. Talks had failed, and Gann wanted the dig driven out and Prospector Khazgorm's notebook brought to him.",
-    "Gann Stonespire wandered the roads alone since the dwarves of Bael Modan drove his tribe from its ancestral home. He meant to take the land back by force.",
+    "Gann Stonespire had wandered the roads alone since the dwarves of Bael Modan drove his tribe from its ancestral home. He meant to take the land back by force.",
     "Khazgorm was dead, and Gann felt no remorse for him. He turned to studying the prospector's notebook.",
     "The prospector's death was a warning, Gann said, to all who threatened the tauren way of life. Khazgorm's notebook was his to read.")
 Q(846, "Revenge of Gann", "The Barrens", 26, HV,
@@ -1746,15 +1746,15 @@ Q(95508, "Unwelcome Guests", "The Barrens", 18, HN2,
     "The men on the ridge were beaten off. The former Kul Tiras sailor said he was in debt for the help.")
 for _, id in ipairs({3924, 843, 873, 95508}) do pack.questIDs[id].importance = 4 end
 pack.questIDs[849].importance = 5
-pack.questIDs[3921].highlight = {"Sputtervalve had boasted to Undermine about the samophlange, then broke it. Wenikee Boltbucket had no idea what it was, but heard the gears inside and wanted to fix it.", "The broken samophlange went to Wenikee Boltbucket near Mor'shan Rampart, who was delighted by a machine she could not name."}
-pack.questIDs[3923].highlight = {"Wenikee's repairs left the samophlange worse, so it went to Rilli Greasygob in Orgrimmar. The former Venture Company man called its bearer very brave or very stupid.", "Rilli Greasygob of Nogg's Machine Shop recognized the samophlange at once, and wondered who had dared take it from the Venture Company."}
+pack.questIDs[3921].highlight = {"Sputtervalve had told colleagues in Undermine about the samophlange, then broke it. Wenikee Boltbucket had no idea what it was, but heard the gears inside and wanted to fix it.", "The broken samophlange went to Wenikee Boltbucket near Mor'shan Rampart, who was delighted by a machine she could not name."}
+pack.questIDs[3923].highlight = {"Wenikee's gauges read the samophlange's integrity at an all-time low, so it went to Rilli Greasygob in Orgrimmar. The former Venture Company man called its bearer very brave or very stupid.", "Rilli Greasygob of Nogg's Machine Shop recognized the samophlange at once, and wondered who had dared take it from the Venture Company."}
 pack.questIDs[3924].highlight = {"Boss Copperplug had hoarded the samophlange manual at the Boulder Lode Mine. Recovered, it went to his old rival Rilli, who promised word if the machine ever worked.", "Rilli Greasygob finally had the samophlange manual his Venture Company rival had kept from him. Sputtervalve sent thanks of his own."}
-pack.questIDs[821].highlight = {"Brewmaster Drohn brewed Chen Stormstout's stormstout again from Barrens ingredients. The batch made him nostalgic, and he said the memories warmed his stomach.", "With lion tusks, plainstrider kidneys and a thunder lizard horn, Drohn made stormstout for the first time in years."}
+pack.questIDs[821].highlight = {"Brewmaster Drohn brewed Chen Stormstout's stormstout again from Barrens ingredients. The batch made him nostalgic, and he said the memories warmed his stomach.", "With lion tusks, plainstrider kidneys and a thunder lizard horn, Drohn made the stormstout he never thought he would brew again."}
 pack.questIDs[843].highlight = {"Prospector Khazgorm, whose dig at Bael Modan had driven Gann Stonespire's tribe from its land, was dead. Gann felt no remorse and turned to the prospector's notebook.", "Gann Stonespire's talks with the dwarves had failed. Khazgorm's death at Bael Modan was his warning to all who threatened the tauren way of life."}
 pack.questIDs[849].highlight = {"Gann Stonespire's charge, made from Khazgorm's own plans, destroyed the dwarves' flying machine at Bael Modan. Gann hoped Thunder Bluff would honor a champion of his lost tribe.", "Bael Modan's flying machine, an insult to the memory of Gann's tribe, was blown apart. Gann called it the work of a defender of sacred tauren lands."}
 pack.questIDs[873].highlight = {"Isha Awak, the Deep Doom who had eaten many on the coast, was killed in the sea. Mahren Skyseer said his spirit now lurked in the hunter's eyes.", "Mahren Skyseer sent the hunter after Isha Awak, honorable prey to her. When his heart was brought to her, she declared the hunter one with him."}
 pack.questIDs[92706].highlight = {"Bruuz, the shark circling Ratchet's dock, was killed. Gazlowe paid the bounty and thought of putting its fin in a soup, just to have the last laugh.", "Gazlowe's crews could go back in the water once Bruuz's fin reached him."}
-pack.questIDs[95508].highlight = {"The hermit tanner above the Dry Hills had left the Kul Tiras navy over the execution of civilians in Durotar. When armed men came up his ridge, he survived, and said he had always known his past would catch up with him.", "Men came up the ridge for the former Kul Tiras sailor. Everyone survived, and the hermit tanner gave what reward he could."}
+pack.questIDs[95508].highlight = {"The hermit tanner above the Dry Hills had served in the Kul Tiras navy and objected to the execution of civilians in Durotar. When men came up his ridge, he survived, and said he had always known his past would catch up with him.", "Men came up the ridge for the former Kul Tiras sailor. Everyone survived, and the hermit tanner gave what reward he could."}
 
 -- Deliveries make the capitals part of everyday life without asserting a flight.
 Q(853, "Apothecary Zamah", "Thunder Bluff", 15, "horde_apothecary",
@@ -1913,7 +1913,7 @@ Q(442, "Assault on Fenris Isle", "Silverpine Forest", 24, HF,
     "Thule Ravenclaw's head reached Hadrec. The master of the Rot Hides was dead, and the Forsaken thought more highly of the one who had killed him.")
 Q(440, "The Engraved Ring", "Tirisfal Glades", 16, HR,
     "Whoever had given Deliah her ring might be traced through Magistrate Sevren in Brill, who kept the names of the recent dead.",
-    "The giver of Deliah's ring was probably dead, or undead and past caring. Still, Magistrate Sevren in Brill might know who she had been.",
+    "Hadrec thought the giver of Deliah's ring was probably dead, or undead and past caring. Still, Magistrate Sevren in Brill might know who she had been.",
     "A Deliah had lived in Brill and been buried in the mass grave, Sevren said. The Rot Hides must have taken her body to Silverpine.",
     "Sevren confirmed the name. Deliah of Brill had been buried in the mass grave, and her body stolen.")
 Q(441, "Raleigh and the Undercity", "Undercity", 16, HR,
@@ -1935,10 +1935,10 @@ Q(460, "Resting in Pieces", "Silverpine Forest", 17, HF,
     "Alaric had been Thule's head servant. Thule's spell had given him an unlife he could not escape. Then Thule beheaded him and gave the head to the Rot Hides as a plaything.",
     "Alaric's head wanted to be taken to his body, buried in an unmarked grave near the stable of Fenris Keep.",
     "The grave by the stable had been dug in haste, but Alaric's body was there. He had feared the gnolls had destroyed it.",
-    "Alaric was glad to find his body whole in its unmarked grave. A resting place inside the keep was still to come.")
+    "Alaric thanked his rescuer at the hasty grave near Fenris Keep's stable. His body had survived the gnolls.")
 Q(461, "The Hidden Niche", "Silverpine Forest", 18, HF,
     "Alaric knew a hidden alcove in the southwestern tower of Fenris Keep, behind a dusty shelf. It held something dear to Thule and his old colleagues.",
-    "Alaric wanted to rest in the hidden niche, inside the keep where he had spent his best days. His boots could stay behind, since they had never fit.",
+    "Alaric wanted to be carried to the hidden niche inside Fenris Keep. His boots could stay behind, since they had never fit.",
     "The alcove opened, and Alaric asked to be left there and shut in tight against the Rot Hides. He gave a reward for the help.",
     "Alaric rested at last within the walls of Fenris Keep, in the niche behind the dusty shelf.")
 Q(491, "Wand to Bethor", "Undercity", 18, HF,
@@ -1973,9 +1973,9 @@ Q(445, "Delivery to Silverpine Forest", "Silverpine Forest", 10, "horde_apotheca
     "Renferrel was glad of Johaan's research, though so much was happening in Silverpine that he had nearly forgotten it. He urged the courier to stay and help.",
     "Johaan's findings reached the Sepulcher, where Renferrel rambled about Silverpine's many new developments before asking the courier to stay on.")
 Q(3221, "Speak with Renferrel", "Silverpine Forest", 12, "horde_silverpine",
-    "Apothecary Renferrel had sent a summons about the worg hearts brought to him earlier.",
+    "Apothecary Renferrel had sent a summons about the wolf hearts brought to him earlier.",
     "While the Deathstalkers were being helped, Renferrel asked to talk again about the hearts he had received.",
-    "Renferrel said a matter concerning the worg hearts demanded attention.",
+    "Renferrel said a matter concerning the wolf hearts demanded attention.",
     "The summons led back to Renferrel at the Sepulcher, who had more to say about the hearts.")
 Q(6321, "Supplying the Sepulcher", "Silverpine Forest", 10, "horde_trade",
     "High Executor Hadrec did not want the Sepulcher's Deathguards short of gear with the Scourge in the woods. Deathguard Podrig found them well stocked except for weapons lost in the field.",
@@ -2051,7 +2051,7 @@ pack.questIDs[98299].highlight = {"Human refugees had gathered at the Greymane W
 -- family. Camping titles repeat across professions, races and zones, so they
 -- stay title contexts with no zone or thread; each names only its own fixture.
 Q(91921, "Return to Quinn (Again)", "Silverpine Forest", 11, HS,
-    "Renferrel had a new potion for Quinn's recovery, made, he said, with love extracted from six whole hearts. He wanted it delivered before more paperwork could be required.",
+    "Renferrel had a new potion for Quinn's recovery, made, he said, with love extracted from six whole hearts.",
     "Quinn Yorick was still waiting at the farm for a remedy. Apothecary Renferrel sent a new potion and asked to be excused from the visitor's company.",
     "Quinn drank the new potion and felt it working. He had begun to come to terms with turning into a ghoul, and now expected to travel soon.",
     "The potion reached Quinn, who thanked the courier for a great favor and expected to be on his feet before long.")
@@ -2228,7 +2228,7 @@ for _, id in ipairs({1086,4966,4770,4904,5088}) do pack.questIDs[id].importance 
 pack.questIDs[757].highlight = {"Bristlebacks from Brambleblade Ravine had ambushed Narache's hunters and stolen from the village. Their belts reached Chief Hawkwind, and the Rite of Strength was passed.", "The first of the Earthmother's rites was won against the Bristleback raiders. Chief Hawkwind said the tribe would be proud."}
 pack.questIDs[772].highlight = {"Zarlman's Water of the Seers brought a vision by the tribal fire. Followed to its end, it completed the Rite of Vision.", "Beside the tribal fire, the Water of the Seers raised a vision to follow. At its end the Rite of Vision was passed."}
 pack.questIDs[760].highlight = {"The last of Mulgore's poisoned wells, Wildmane, ran clean again. Bloodhoof Village was grateful, and Mull Thunderhorn wished the waters of Mulgore would stay clean forever.", "Mull Thunderhorn's third totem cleansed the Wildmane well north of Thunder Bluff. The goblins' poison was gone from all three wells."}
-pack.questIDs[766].highlight = {"Mazzranache, the strider of Maur Raincaller's grandfather's tales, had bitten Maur and left him feverish. The remedy's ingredients arrived in time, and Maur said he owed his life.", "Maur Raincaller had met the strider his grandfather fought, and nearly died of its bite. With a wolf heart, a cougar femur, a scale and a gizzard, he could make his cure."}
+pack.questIDs[766].highlight = {"Mazzranache, the strider of Maur Raincaller's grandfather's tales, had bitten Maur, and the wound was infected. The remedy's ingredients arrived in time, and Maur said he owed his life.", "Maur Raincaller had met the strider his grandfather fought, and its bite left him with a spreading infection. With a wolf heart, a cougar femur, a scale and a gizzard, he could make his cure."}
 pack.questIDs[745].highlight = {"Palemane gnolls had been slaughtering Mulgore's wildlife and scorned every attempt at talk. When they were checked, Baine Bloodhoof spoke of death and life as a circle.", "Baine Bloodhoof sent the young against the Palemane gnolls so they would see how much harm a small threat could do to the land."}
 pack.questIDs[744].highlight = {"Eyahn Eagletalon was making a headdress for his brother's ceremony before Cairne Bloodhoof. The harpy feathers he lacked completed the design.", "Twelve harpy feathers finished the headdress Eyahn Eagletalon was making for his brother's ceremony before Cairne."}
 
@@ -2389,16 +2389,16 @@ Q(3301, "Mura Runetotem", "Silverpine Forest", 15, "horde_oases",
     "The Barrens shell reached Mura at the Sepulcher. She hoped it held a secret that could heal the forest.")
 Q(3513, "The Runed Scroll", "The Barrens", 25, "horde_roads",
     "An official-looking scroll wrapped in silvery ribbon might concern the night elves. The outpost near the Ashenvale border to the north was the place to take it.",
-    "A scroll tied with silver ribbon looked like night elf work. The Horde's watch on the Ashenvale border would want to see it.",
+    "A scroll tied with silver ribbon looked official. If it involved the night elves, the Horde's watch on the Ashenvale border would want to see it.",
     "Kadrak at Mor'shan Rampart took the scroll and wanted to know where it had been found.",
-    "The runed scroll reached the border watch, where Kadrak began to read it.")
+    "The runed scroll reached the Horde's watch on the Ashenvale border, and Kadrak took it.")
 Q(3514, "Horde Presence", "The Barrens", 29, "horde_roads",
     "Kadrak's captured scroll came from Rynthariel, the dryad Keymaster of the Talon Den on Stonetalon Peak. Kadrak wanted her dead and a Horde flag raised in her den.",
     "Rynthariel's outrunners had been crossing Horde ground. Kadrak meant a flag in the Talon Den to warn her people off sending another messenger through the Barrens.",
     "Rynthariel was dead and the Horde flag stood in the Talon Den. Her people would be slow to regroup, Kadrak said, and fewer Alliance runners would cross the Barrens.",
     "With the Keymaster dead and the flag raised, Kadrak expected the Alliance to think again before sending a messenger his way.")
 Q(4737, "In Search of Menara Voidrender", "The Barrens", 31, HMV,
-    "Zevrost in Orgrimmar warned that the hunger for power ended in slavery to what one sought to master. Still, he passed on word that Menara Voidrender in Ratchet would make tools for those she judged ready.",
+    "Zevrost in Orgrimmar warned that the hunger for power ended in slavery to what one sought to master. Still, he passed on word that Menara Voidrender in Ratchet would make tools for those seeking power.",
     "Zevrost in Orgrimmar had little patience for ambition, but not all agreed with him. Menara Voidrender, in a tower above Ratchet, was taking students.",
     "Menara was pleased that Zevrost's word had reached so far. Those of her kind banded together whatever their race, she said, and she offered to help make tools for their craft.",
     "In Strahad Farsan's tower above Ratchet, Menara Voidrender greeted the student Zevrost had sent and offered her help.", nil, true)
@@ -2434,7 +2434,7 @@ Q(768, "Gathering Leather", "Thunder Bluff", 8, "horde_trade",
     "The skins went to Veren Tallstrider's work for Thunder Bluff, and he paid with a piece of his craft.")
 Q(769, "Kodo Hide Bag", "Thunder Bluff", 10, "horde_trade",
     "Veren Tallstrider would teach the making of a Kodo Hide Bag to a leatherworker who brought supplies for his trade. The kodo's strength was much respected among the tauren.",
-    "The kodo beasts of Mulgore were strong and sturdy. Veren Tallstrider shared the bag's pattern only with those who brought him light leather and stitching supplies.",
+    "The kodo beasts of Mulgore were strong and sturdy. Veren Tallstrider shared the bag's pattern only with leatherworkers who brought supplies for his trade.",
     "Veren took the supplies and taught the pattern. His heart swelled, he said, to see the young take up leatherworking.",
     "Veren Tallstrider passed on the Kodo Hide Bag pattern, proud to see youths interested in the craft.")
 Q(7783, "The Lord of Blackrock", "Orgrimmar", 60, HNF,
@@ -2457,4 +2457,9 @@ pack.questIDs[7783].highlight = {"Nefarian's head reached Thrall in Orgrimmar. T
 pack.questIDs[7784].highlight = {"Saurfang mounted Nefarian's head in the Valley of Strength for all of Orgrimmar to see.", "High Overlord Saurfang put the head of Nefarian up in the Valley of Strength."}
 pack.questIDs[857].highlight = {"Feegly the Exiled had the Tear of the Moons back from Twinbraid's keep, and cried that its power was his again.", "Feegly the Exiled took back the relic General Twinbraid had called cursed."}
 
+-- Forever additions outside Zephras carry the Forever label in the compendium
+-- (factcheck lane, 2026-11-05; explicit list, never inferred from the ID range).
+for _, id in ipairs({86784, 91921, 92706, 93739, 94373, 94374, 94375, 94449, 94465, 94466, 94467, 94468, 94495, 94497, 94499, 94500, 94501, 94502, 94503, 94505, 95314, 95349, 95350, 95494, 95495, 95507, 95508, 95981, 96652, 96656, 96659, 96821, 96822, 96825, 96876, 97279, 97558, 98024, 98298, 98299, 98424, 98427, 98430, 98435, 99048, 99049, 99051, 99052, 99079, 99080, 99081, 99082, 99101, 99142, 99156}) do
+    if pack.questIDs[id] then pack.questIDs[id].setting = "Forever" end
+end
 A.Lore.RegisterStoryPack("horde-and-zephras", pack)
