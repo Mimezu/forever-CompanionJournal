@@ -846,6 +846,142 @@ for _, id in ipairs({3100, 3101, 3102, 3103, 3104, 3105, 1639, 1666, 1667, 1698,
     P.questIDs[id].source[2] = "https://classicdb.ch/?quest=" .. id
 end
 
+-- World3 pass 2026-11-05, batch W3-C1: class referrals and trials asked for by the
+-- starters3 lane (Dun Morogh, Ironforge, Thunder Bluff and the Undercity), Furen's
+-- notes to Klockmort, the Alliance warlocks' road to Menara Voidrender (4737/4739
+-- and the shared-title fallback belong to the horde pack), and the druid's
+-- referrals to Moonglade. A referral reaches a trainer; it never claims a lesson,
+-- a form or a spell. 1709 has no captured text and stays out.
+q(4736, "In Search of Menara Voidrender", "WARLOCK", "The Barrens", 31, "horde_menara",
+    "Briarthorn judged that the student had trained well without being corrupted, and deserved a reward. Staying in Strahad Farsan's tower above Ratchet, Menara Voidrender was not friendly but looked after hard workers.",
+    "Word came from Briarthorn of Menara Voidrender, who helped promising students from a tower overlooking Ratchet.",
+    "Menara Voidrender was pleased that Briarthorn's word reached so far. Their kind banded together regardless of race, she said, and she offered to help make tools of their craft.",
+    "Menara greeted Briarthorn's student and offered help in making tools of power.", 3)
+q(4738, "In Search of Menara Voidrender", "WARLOCK", "The Barrens", 31, "horde_menara",
+    "Demisette did not think a novice was ready to help make items of power, but the decision was not hers. She pointed to Menara Voidrender in the tower above Ratchet.",
+    "Demisette disapproved, but others had decided the student should hear of Menara Voidrender in Ratchet.",
+    "Menara Voidrender was pleased that Demisette's word reached so far. Those they dealt with showed no mercy to the careless, she warned, and offered to help make tools.",
+    "Menara greeted the student Demisette had sent and offered help in making tools of power.", 3)
+q(1704, "Klockmort Spannerspan", "WARRIOR", "Ironforge", 28, W,
+    "Furen Longbeard had copied his notes on the new armor techniques for Klockmort Spannerspan, a gnomish blacksmith in Ironforge. He expected Klockmort to pull off his own beard in excitement.",
+    "Furen's notes from making armor were meant for Klockmort Spannerspan in Ironforge.",
+    "Klockmort Spannerspan found the notes stupendous. Furen had made a real breakthrough, and Klockmort could not wait to try it.",
+    "Klockmort was thrilled with Furen's notes and eager to test the new technique.", 3)
+q(1708, "Iron Coral", "WARRIOR", "Ironforge", 29, W,
+    "Klockmort wanted to try Furen's technique on his own armor, and promised the piece to the one who had helped them both. He needed searing coral from the coast south of Menethil Harbor.",
+    "Searing coral grew only south of Menethil Harbor, and Klockmort needed it to finish his armor.",
+    "Klockmort Spannerspan had his searing coral and went off to smelt and hammer it with Furen's technique.",
+    "Klockmort took the coral and began work, sure the armor would be very tough.", 3)
+q(1679, "Muren Stormpike", "WARRIOR", "Ironforge", 10, W,
+    "A young dwarf warrior showed promise but still had tricks to learn, and Muren Stormpike in Ironforge's Hall of Arms was the one to teach them.",
+    "A promising warrior was wanted in the Military Ward of Ironforge, where Muren Stormpike would show what the path meant.",
+    "Muren Stormpike had heard the warriors of Dun Morogh mention the newcomer's name. He hoped not too much time had gone to the breweries.",
+    "Muren greeted the warrior whose name was going around Dun Morogh.", 3)
+q(1681, "Ironband's Compound", "WARRIOR", "Ironforge", 11, W,
+    "Muren's mentor, Sturgy Ironband, had taught blacksmithing at a compound south of Helm's Bed Lake. Soon after a student brought him strange umbral ore, Dark Iron dwarves attacked and killed everyone there.",
+    "His master had to be avenged, Muren said, and he wanted the load of umbral ore that had brought the Dark Irons to Ironband's compound.",
+    "Muren Stormpike had the umbral ore and was eager to learn its properties. He feared the compound would not be the last place the Dark Irons struck.",
+    "Muren took the umbral ore from his master's compound and hoped many Dark Irons had fallen there.", 4)
+q(1718, "The Islander", "WARRIOR", "The Barrens", 30, W,
+    "A warrior's growing renown needed testing against peers. Fray Island, south of Ratchet, was where warriors met and fought, and Klannoc Macleod led them.",
+    "The chief warrior of Fray Island, Klannoc Macleod, would judge whether the newcomer was worthy of the path ahead.",
+    "Klannoc Macleod welcomed the warrior to Fray Island and hoped it would suit.",
+    "Klannoc greeted the arrival on Fray Island.", 3)
+q(1840, "Orm Stonehoof and the Brutal Helm", "WARRIOR", "Thunder Bluff", 30, W,
+    "Orm Stonehoof was greatly respected for his skill and could make the brutal helm. He worked in Thunder Bluff, near the pool by the great central totem.",
+    "Thun'grim sent word to Orm Stonehoof in Thunder Bluff about a helm.",
+    "Orm Stonehoof introduced himself. Thun'grim had told him a helm was wanted.",
+    "Orm greeted the warrior Thun'grim had sent.", 3)
+q(1844, "Chimaeric Horn", "WARRIOR", "Thunder Bluff", 30, W,
+    "Orm would make the helm only for the worthy. A chimaera matriarch in the ashen Charred Vale of Stonetalon was mad with pain, and her galvanized horn would be the proof.",
+    "To earn the brutal helm, Orm wanted the matriarch of the Charred Vale's chimaeras freed from her misery.",
+    "Orm Stonehoof saw the horn as proof of worth and resolve. The helm would be made.",
+    "Orm accepted the galvanized horn and promised the helm.", 4)
+q(1879, "Speak with Bink", "MAGE", "Ironforge", 10, MS,
+    "A gnome mage in Ironforge's Hall of Mysteries, Bink, had a task that only a mage could be trusted with.",
+    "A colleague in Ironforge, Bink, had sent word that she needed a mage.",
+    "Bink saw promise in the young mage, and warned that bad mages were part of the problem. Then she started from the beginning.",
+    "Bink welcomed the new mage and began to explain the task.", 3)
+q(1959, "Report to Anastasia", "MAGE", "Undercity", 15, MS,
+    "The mages of the Undercity had noticed a magical disturbance in the city and called on Horde mages to investigate. More was known by Anastasia Hartwell in the Magic Quarter.",
+    "A disturbance in the Undercity's magic had Anastasia Hartwell gathering mages to look into it.",
+    "Anastasia Hartwell confirmed the disturbance. Whether it was malign or benign was not yet known, and more information was needed.",
+    "Anastasia explained that the origin of the disturbance was unknown, and set out the task.", 3)
+q(27, "A Lesson to Learn", "DRUID", "Moonglade", 16, DW,
+    "A young druid was ready to learn of a form that gave mastery of the water, and Dendrite Starblaze of the Cenarion Circle waited in Nighthaven.",
+    "The next animal aspect concerned water, and Dendrite Starblaze in Moonglade would guide the lesson.",
+    "Dendrite Starblaze explained that the aquatic form had to be earned through two trials. The first would test work under water, the second understanding of the form.",
+    "Dendrite announced two trials before the aquatic form could be earned.", 3)
+q(6126, "Lessons Anew", "DRUID", "Moonglade", 14, DP,
+    "Druids could purge poison with an incantation, but this lesson began with treating poisonings as a layman would, under Dendrite Starblaze.",
+    "The lesson on poison and its cure would begin in Moonglade, with Dendrite Starblaze.",
+    "Dendrite Starblaze explained that there would be no staged trial. Animal poisonings at the Crossroads were real, and the druid was to help.",
+    "Dendrite sent the young druid to the Crossroads, where animals were being poisoned.", 3)
+q(2997, "Tome of Divinity", "PALADIN", "Ironforge", 12, PW,
+    "Younger paladins went to Tiza Battleforge in the Hall of Mysteries when it was time to learn more of the Light.",
+    "One of the most respected paladins of Ironforge, Tiza Battleforge, was ready to see a young paladin from Dun Morogh.",
+    "Tiza Battleforge greeted the paladin and wished that the Light would keep them safe.",
+    "Tiza welcomed the young paladin upstairs in the Hall of Mysteries.", 3)
+q(2999, "Tome of Divinity", "PALADIN", "Ironforge", 12, PW,
+    "When there was time, a young paladin was to go upstairs to Tiza Battleforge, who taught the Light and what it expected.",
+    "Upstairs, Tiza Battleforge was waiting for younger paladins ready to learn more.",
+    "Tiza Battleforge welcomed the paladin and hoped the Light would show the true path.",
+    "Tiza greeted the young paladin in the Hall of Mysteries.", 3)
+q(3000, "Tome of Divinity", "PALADIN", "Ironforge", 12, PW,
+    "A dwarven paladin abroad was called home to Ironforge, to Tiza Battleforge in the Hall of Mysteries.",
+    "It was time to return to Tiza Battleforge, who taught younger dwarven paladins about the Light.",
+    "Tiza Battleforge greeted the returning paladin and bade them welcome.",
+    "Tiza welcomed the dwarven paladin back to Ironforge.", 3)
+q(3681, "Tome of Divinity", "PALADIN", "Stormwind City", 12, PW,
+    "Stormwind had asked paladins to report for training, and Duthorian Rall taught them in the Cathedral of Light.",
+    "Word came that Duthorian Rall wanted paladins near a special time in their training at the Cathedral of Light.",
+    "Duthorian Rall welcomed the paladin to the Cathedral of Light.",
+    "Rall greeted the paladin who had answered Stormwind's call.", 3)
+-- Batch W3-C2: thin classes. The troll and night elf priests' summons home for
+-- their racial rites (the completions only promise the teaching; 5674 has no
+-- captured outcome and stays out), Rall's call to a paladin at forty (1661 stays
+-- under the Nobility fallback, as above), and the Hidden Circle's first job for a
+-- dwarf rogue.
+P.threads.class_priest_rites = "the priest's rites of passage"
+P.threads.class_rogue_circle = "the Hidden Circle's business"
+local PR = "class_priest_rites"
+q(5642, "Shadowguard", "PRIEST", "Orgrimmar", 20, PR,
+    "The messengers who came looking for troll priests were usually casual, but this time they were in a hurry. Something important waited in the Valley of Spirits in Orgrimmar.",
+    "Word came that a troll priest should not linger in Thunder Bluff, and should return to the Valley of Spirits soon.",
+    "Ur'kyo said one of the most important rites of passage for a troll priest had come. The young priest was ready, and he would explain.",
+    "Ur'kyo welcomed the troll priest back to the Valley of Spirits and promised to explain the rite ahead.", 3)
+q(5643, "Shadowguard", "PRIEST", "Orgrimmar", 20, PR,
+    "Every tribe put its priests through rites of passage that taught abilities vital to survival. The time had come to speak with Ur'kyo in Orgrimmar's Valley of Spirits.",
+    "A priest of another people sensed that a troll priest's rite was near, and sent them to Ur'kyo in Orgrimmar.",
+    "Ur'kyo told the troll priest that an important rite of passage had come, and that they were ready to hear of it.",
+    "Ur'kyo greeted the priest and began to explain the rite.", 3)
+q(5673, "Elune's Grace", "PRIEST", "Darnassus", 20, PR,
+    "Some things the trainers could not teach, among them the gifts Elune granted her faithful. It was time to return to the Temple of the Moon and Priestess Alathea.",
+    "A night elf priest was called home to Darnassus, where Priestess Alathea would test the gifts of Elune.",
+    "Priestess Alathea welcomed the priest's swift return. The order took this time seriously, and the next part of the training would follow after rest.",
+    "Alathea blessed the returning priest in Elune's name and promised to discuss the path ahead.", 3)
+q(5675, "Elune's Grace", "PRIEST", "Darnassus", 20, PR,
+    "Word had come from Priestess Alathea for a night elf priest to come home to Darnassus for testing.",
+    "A message from the Temple of the Moon said the priest was ready to be tested, much as those who served the Light were.",
+    "Priestess Alathea thanked the priest for coming quickly. After rest, they would discuss where the training led next.",
+    "Alathea welcomed the night elf priest back to the Temple of the Moon.", 3)
+q(4486, "The Tome of Nobility", "PALADIN", "Stormwind City", 40, PN,
+    "A fellow paladin, admittedly jealous of the deeds done, passed on word from Duthorian Rall. He wanted to see the paladin at the Cathedral of Light, and it sounded important.",
+    "A summons from Duthorian Rall asked a seasoned paladin to come to the Cathedral of Light.",
+    "Duthorian Rall said much had happened. Treacherous enemies were about, and he would seek help from a paladin who proved worthy.",
+    "Rall welcomed the paladin back to the Cathedral and spoke of enemies he needed help to stop.", 3)
+q(2238, "Simple Subterfugin'", "ROGUE", "Dun Morogh", 10, "class_rogue_circle",
+    "The Hidden Circle felt the king should share the riches of his quarry, without the king knowing, and their man Onin MacHammar was hiding among the lepers near Gnomeregan.",
+    "The Hidden Circle wanted a report from Onin MacHammar, who had hidden himself among the lepers by Gnomeregan.",
+    "Onin MacHammar hushed his visitor at once, afraid they would be overheard.",
+    "Onin was found among the lepers, and told the visitor to keep quiet.", 3)
+for _, id in ipairs({5642, 5643, 5673, 5675, 4486, 2238}) do P.questIDs[id].source[2] = "https://classicdb.ch/?quest=" .. id end
+for _, id in ipairs({4736, 4738}) do P.questIDs[id].threadLabel = "Menara Voidrender's students" end
+for _, id in ipairs({4736, 4738, 1704, 1708, 1679, 1681, 1718, 1840, 1844, 1879, 1959, 27, 6126, 2997, 2999, 3000, 3681}) do
+    P.questIDs[id].source[2] = "https://classicdb.ch/?quest=" .. id
+end
+for _, id in ipairs({4736, 4738}) do P.questIDs[id].source[3] = "LoreHordeStories.lua thread horde_menara and title fallback (4737, 4739); starters3 hand-off 2026-11-05" end
+
 -- Shared-title outcomes are never copied from a convenient last stage. Several
 -- Forever titles that look like trials are only referrals, notably 94007.
 local shared = {
@@ -858,6 +994,9 @@ local shared = {
     ["Power over Poison"] = true, ["Child of Nature"] = true, ["Lord Grayson Shadowbreaker"] = true,
     ["Vile Familiars"] = true, -- the horde pack owns this title's fallback (792 is Zureetha's own stage)
     ["Encrypted Letter"] = true, -- the world pack's neutral title context covers 3102 and Alterac's 511
+    ["In Search of Menara Voidrender"] = true, -- the horde pack owns the neutral fallback (4736-4739)
+    ["A Lesson to Learn"] = true, ["Lessons Anew"] = true, -- shared with 26 and 6121; neutral fallbacks below
+    ["Shadowguard"] = true, ["Elune's Grace"] = true,
 }
 for _, e in pairs(P.questIDs) do if not shared[e.title] then P.quests[e.title] = e end end
 local function fallback(title, id, w1, w2, a1, a2)
@@ -867,6 +1006,18 @@ local function fallback(title, id, w1, w2, a1, a2)
         why = {w1, w2}, after = {a1, a2}, source = {"corpus_vanilla_quests.txt: all entries titled " .. title}}
     -- No guessed zone: the same title can span distant cities and factions.
 end
+fallback("Shadowguard", 5642,
+    "A troll priest was called back to the Valley of Spirits in Orgrimmar for a rite of passage.", "Ur'kyo in Orgrimmar was waiting for a troll priest.",
+    "The troll priest reached Ur'kyo in the Valley of Spirits.", "Ur'kyo had a rite of passage to explain.")
+fallback("Elune's Grace", 5673,
+    "A night elf priest was called home to the Temple of the Moon.", "Priestess Alathea in Darnassus was waiting to test a night elf priest.",
+    "The priest returned to Priestess Alathea in Darnassus.", "Alathea had the next part of the training ready.")
+fallback("A Lesson to Learn", 27,
+    "A young druid was called to Moonglade to learn of another animal aspect.", "Dendrite Starblaze of the Cenarion Circle had a lesson waiting in Nighthaven.",
+    "The druid reached Moonglade for the next lesson.", "Dendrite Starblaze had the young druid's next lesson ready.")
+fallback("Lessons Anew", 6126,
+    "A druid's lesson on poison began in Moonglade.", "Dendrite Starblaze in Moonglade had a lesson on poison and its cure.",
+    "The young druid reached Dendrite Starblaze for the lesson on poison.", "The lesson on poison was ready to begin.")
 fallback("The Tome of Divinity", 1642,
     "The paladin's lessons tested service to others as well as strength.", "The study of divinity was tied to practical acts of aid.",
     "Another part of the paladin's assignment was completed.", "The errand advanced the lessons in charitable service.")
@@ -947,4 +1098,9 @@ fallback("The Tome of Valor", 1649,
 -- stages, Rhok'delar and most advanced druid adventures. The 1661 source does not
 -- name its reward; it remains under the safe Nobility fallback. Moonglade entry
 -- quests and shaman trials are authored by their respective regional packs.
+-- Forever additions carry the Forever label in the compendium (fact-check
+-- request 2026-11-05; explicit list, never inferred from the ID range).
+for _, id in ipairs({65597, 65603, 65604, 94006, 94007, 94013, 94050, 94427, 94434, 94435, 94436, 94438, 94440, 94441, 94774, 94792, 94793, 94863, 94864, 94911, 94912, 94978, 94979}) do
+    assert(P.questIDs[id], "Forever label for a missing stage " .. id).setting = "Forever"
+end
 A.Lore.RegisterStoryPack("class-stories", P)

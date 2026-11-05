@@ -34,7 +34,7 @@ for id, entry in pairs(P.questIDs) do
     -- A shared title's audited fallback may live in another pack (Vile Familiars: horde
     -- pack, which this suite does not load; tests/WorldOvernight2.lua checks it loaded).
     if repeats[entry.title] > 1 then
-        local foreign = ({["Vile Familiars"] = "LoreHordeStories.lua", ["Encrypted Letter"] = "LoreWorldStories.lua"})[entry.title]
+        local foreign = ({["Vile Familiars"] = "LoreHordeStories.lua", ["Encrypted Letter"] = "LoreWorldStories.lua", ["In Search of Menara Voidrender"] = "LoreHordeStories.lua"})[entry.title]
         if foreign then
             local f = assert(io.open(root .. foreign, "rb")); local s = f:read("*a"); f:close()
             check(s:find('Fallback("' .. entry.title .. '"', 1, true) or s:find('P.quests["' .. entry.title .. '"] = {', 1, true), "foreign fallback for " .. entry.title)
