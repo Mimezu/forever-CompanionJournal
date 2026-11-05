@@ -91,11 +91,104 @@ local notes = {
     ["faction:night-watch"] = {"Night Watch", "the Night Watch"},
     ["faction:sentinels"] = {"Sentinels", "the Sentinels"},
     ["deity:elune"] = {"Elune"},
+    -- Batch 4: quest givers and places of the 10-35 prose.
+    ["npc:shael-dryn"] = {"Shael'dryn"},
+    ["npc:raene"] = {"Raene Wolfrunner", "Raene"},
+    ["npc:sputtervalve"] = {"Sputtervalve"},
+    ["npc:brine"] = {"Brine"},
+    ["npc:doren"] = {"Lieutenant Doren", "Doren"},
+    ["npc:kurzen"] = {"Colonel Kurzen", "Kurzen"},
+    ["npc:madame-eva"] = {"Madame Eva"},
+    ["npc:zargh"] = {"Zargh"},
+    ["npc:thork"] = {"Thork"},
+    ["npc:devrak"] = {"Devrak"},
+    ["npc:uzzek"] = {"Uzzek"},
+    ["npc:darcy"] = {"Darcy"},
+    ["npc:huldar"] = {"Huldar"},
+    ["deity:earth-mother"] = {"Earth Mother", "the Earthmother", "Earthmother"},
+    ["place:bashal-aran"] = {"Bashal'Aran"},
+    ["place:ameth-aran"] = {"Ameth'Aran"},
+    ["place:althers-mill"] = {"Alther's Mill"},
+    ["place:far-watch-post"] = {"Far Watch Post"},
+    -- Batch 5: the supporting cast named in rendered chapters.
+    ["npc:gryshka"] = {"Innkeeper Gryshka", "Gryshka"},
+    ["npc:mangletooth"] = {"Mangletooth"},
+    ["npc:wizzlecrank"] = {"Wizzlecrank"},
+    ["npc:ziz-fizziks"] = {"Ziz Fizziks"},
+    ["npc:gerenzo"] = {"Gerenzo Wrenchwhistle", "Gerenzo"},
+    ["npc:guard-parker"] = {"Guard Parker"},
+    ["npc:teronis"] = {"Teronis"},
+    ["npc:elreth"] = {"Novice Elreth", "Elreth"},
+    ["npc:marla-fipps"] = {"Marla Fipps"},
+    ["npc:samuel-fipps"] = {"Samuel Fipps"},
+    ["npc:dirania"] = {"Dirania Silvershine", "Dirania"},
+    ["npc:tallonkai"] = {"Tallonkai Swiftroot", "Tallonkai"},
+    ["npc:melenas"] = {"Lord Melenas", "Melenas"},
+    ["npc:rellian"] = {"Rellian Greenspyre", "Rellian"},
+    ["npc:renee"] = {"Innkeeper Renee", "Renee"},
+    ["npc:perrine"] = {"Captain Perrine", "Perrine"},
+    ["npc:karos-razok"] = {"Karos Razok"},
+    ["npc:farley"] = {"Innkeeper Farley", "Farley"},
+    ["npc:william-pestle"] = {"William Pestle"},
+    ["npc:milly-osworth"] = {"Milly Osworth"},
+    ["npc:brother-neals"] = {"Brother Neals"},
+    ["place:lake-al-ameth"] = {"Lake Al'Ameth"},
+    ["place:lake-falathim"] = {"Lake Falathim"},
+    -- Batch 6: world names and the remaining 10-30 quest givers.
+    ["region:lordaeron"] = {"Lordaeron", "Kingdom of Lordaeron"},
+    ["belief:holy-light"] = {"Holy Light", "the Holy Light", "the Light"},
+    ["npc:cenarius"] = {"Cenarius"},
+    ["region:kul-tiras"] = {"Kul Tiras"},
+    ["place:karazhan"] = {"Karazhan"},
+    ["npc:agamaggan"] = {"Agamaggan"},
+    ["npc:calor"] = {"Calor"},
+    ["npc:kadrak"] = {"Kadrak"},
+    ["npc:mull-thunderhorn"] = {"Mull Thunderhorn"},
+    ["npc:morin-cloudstalker"] = {"Morin Cloudstalker"},
+    ["npc:terenthis"] = {"Terenthis"},
+    ["npc:grayson"] = {"Lord Grayson Shadowbreaker", "Grayson Shadowbreaker"},
+    ["npc:allister"] = {"Shadow Priest Allister", "Allister"},
+    ["npc:laird"] = {"Laird"},
+    ["npc:gath-ilzogg"] = {"Gath'Ilzogg"},
+    ["npc:gann-stonespire"] = {"Gann Stonespire"},
+    ["npc:gazrog"] = {"Gazrog"},
+    ["npc:old-murk-eye"] = {"Old Murk-Eye"},
+    ["place:zoram-strand"] = {"Zoram Strand", "the Zoram Strand"},
+    ["place:terrordale"] = {"Terrordale"},
+    ["place:stonewatch"] = {"Stonewatch Keep", "Stonewatch"},
+    -- Batch 7: Zephras Isle, the Skyborne starting land (Forever).
+    ["people:skyborne"] = {"Skyborne", "Shen'dorei"},
+    ["faction:windshapers"] = {"Windshapers", "the Windshapers"},
+    ["faction:high-order"] = {"High Order", "the High Order"},
+    ["group:al-aketh"] = {"Al'Aketh", "the Al'Aketh"},
+    ["place:thendal"] = {"Thendal Village", "Thendal Grove"},
+    ["place:shendar"] = {"Shen'dar Village", "Shen'dar"},
+    ["place:valanaar"] = {"Valanaar"},
+    ["npc:rorian"] = {"Rorian the Dayseeker", "Rorian"},
+    ["npc:ayessa"] = {"Ayessa Dawnsinger", "Ayessa"},
+    ["npc:halaan"] = {"Halaan Hawk-Eye"},
+    ["npc:ventaari"] = {"Ventaari Brightwish"},
+    ["region:skywall"] = {"Skywall"},
+    ["npc:al-akir"] = {"Al'Akir", "Al'Akir the Windlord"},
+    -- Batch 8: Alliance 15-35 names and the capitals.
+    ["npc:volcor"] = {"Volcor"},
+    ["npc:remtravel"] = {"Prospector Remtravel", "Remtravel"},
+    ["npc:baros-alexston"] = {"Baros Alexston"},
+    ["npc:kristoff"] = {"Brother Kristoff"},
+    ["npc:marris"] = {"Marshal Marris", "Marris"},
+    ["npc:sirra"] = {"Sirra Von'Indi"},
+    ["npc:mountaineer-stormpike"] = {"Mountaineer Stormpike", "Gringer Stormpike"},
+    ["place:stormwind-keep"] = {"Stormwind Keep", "the Royal Library"},
+    ["place:lake-everstill"] = {"Lake Everstill"},
+    ["place:caverns-of-time"] = {"Caverns of Time", "the Caverns of Time"},
+    ["place:chillwind"] = {"Chillwind Camp", "Chillwind Point"},
 }
 local forever = {"region:riverglades", "place:sunnyglade", "place:farholde", "place:powderfuse-port", "dungeon:kroldok",
     "region:shendralas", "region:mount-hyjal", "raid:barrow-deeps", "raid:hyjal-summit", "battleground:darkspear-islands",
     "faction:brotherhood-horse", "npc:the-baron", "npc:viktor-vile", "npc:the-abandoned", "npc:bjork",
-    "npc:lordaeron-captain", "npc:faldrim-anvilmar", "npc:magmatus", "npc:plunder"}
+    "npc:lordaeron-captain", "npc:faldrim-anvilmar", "npc:magmatus", "npc:plunder",
+    "people:skyborne", "faction:windshapers", "faction:high-order", "group:al-aketh", "place:thendal",
+    "place:shendar", "place:valanaar", "npc:rorian", "npc:ayessa", "npc:halaan", "npc:ventaari"}
 for _, id in ipairs(forever) do Check(A.GetLoreNote(id).setting == "Forever", "Forever content is labelled: " .. id) end
 
 local total, aliases = 0, 0
@@ -115,8 +208,8 @@ for id, names in pairs(notes) do
     Check(not body:find("{[pqn]:") and not body:find("|H", 1, true), "plain body: " .. id)
     Check(not body:lower():find("%f[%a]you%f[%A]") and not body:lower():find("%f[%a]your%f[%A]"), "no reader address: " .. id)
     Check(not body:find(":", 1, true), "no colon in note prose: " .. id)
-    for _, word in ipairs({"journal", "chronicle", "legend has it", "tale"}) do
-        Check(not body:lower():find(word, 1, true), "no meta words: " .. id .. " / " .. word)
+    for _, word in ipairs({"journal", "chronicle", "legend has it", "tale", "story", "chapter"}) do
+        Check(not body:lower():find("%f[%a]" .. word .. "s?%f[%A]"), "no meta words: " .. id .. " / " .. word)
     end
     Check(note.after == nil and note.qid == nil, "not a quest outcome: " .. id)
     for _, related in ipairs(note.related or {}) do
@@ -145,7 +238,8 @@ Marks("Grull Hawkwind received meat; Chief Hawkwind and Greatmother Hawkwind wai
 Marks("Rezlak wanted Drygulch Ravine cleared for Gazlowe.", "{n:Rezlak} wanted {p:Drygulch Ravine} cleared for {n:Gazlowe}.")
 -- Shared family names, short aliases and ordinary words stay plain.
 Marks("Hawkwind and Grull went to the den by the red rocks.", "Hawkwind and Grull went to the den by the red rocks.")
-Marks("Orgnil and Telf spoke.", "Orgnil and Telf spoke.")
+Marks("Telf and Grull spoke.", "Telf and Grull spoke.")
+Marks("Orgnil and Sevren spoke.", "{n:Orgnil} and {n:Sevren} spoke.")
 Check(A.LoreNoteResolve("p", "Hawkwind") == nil, "family name alone is ambiguous")
 Check(A.LoreNoteResolve("p", "Den") == nil, "generic noun stays unlinked")
 -- Forever names: ordinary words and Rivendare's title never become these foes.
@@ -156,6 +250,22 @@ Marks("Margoz and Hakkar.", "{n:Margoz} and {n:Hakkar}.")
 Marks("Ilthalaine and Tenaron spoke of Elune at Aldrassil; the Night Watch held Darkshire.",
     "{n:Ilthalaine} and {n:Tenaron} spoke of {p:Elune} at {p:Aldrassil}; {p:the Night Watch} held {p:Darkshire}.")
 Marks("Farthing and Coleman waited.", "Farthing and Coleman waited.")
+Marks("Brine waited by the brine pool; Thork had the Earthmother's blessing.", "Brine waited by the brine pool; {n:Thork} had {p:the Earthmother}'s blessing.")
+-- Madame Eva's public note does not name the subject of the Stalvan inquiry.
+Check(not A.GetLoreNote("npc:madame-eva").body:find("Stalvan", 1, true), "Madame Eva note keeps the inquiry's subject unsaid")
+Marks("The Light kept Lordaeron's faithful; the Lighthouse stood. Gath'Ilzogg held Stonewatch.",
+    "The Light kept {p:Lordaeron}'s faithful; the Lighthouse stood. {n:Gath'Ilzogg} held {p:Stonewatch}.")
+Marks("By the Light and the Holy Light.", "By {p:the Light} and {p:the Holy Light}.")
+-- Quest titles and look-alike places that contain a new name stay plain text.
+for _, title in ipairs({"Rites of the Earthmother", "Garments of the Light", "Report to Orgnil", "Elune's Tear",
+    "Beat Bartleby", "Stonewatch Falls", "Raene's Cleansing", "Kurzen's Mystery", "Crest of Lordaeron"}) do
+    Marks("We completed " .. title .. ".", "We completed " .. title .. ".")
+end
+-- Teronis is missing until his fate is learned at the lake or from Raene.
+local teronis = A.GetKnownLoreNote("npc:teronis", {})
+Check(teronis and not teronis.body:find("murlocs", 1, true) and teronis.body:find("not returned", 1, true), "public Teronis note keeps his fate unsaid")
+Check(A.GetKnownLoreNote("npc:teronis", {["teronis.found"] = true}).body:find("cut down by murlocs", 1, true), "Teronis's fate once #991 or #1023 is known")
+Check(not A.GetLoreNote("npc:raene").body:find("murloc", 1, true) and not A.GetLoreNote("npc:raene").body:find("Teronis is dead", 1, true), "Raene's note does not give away Teronis's fate")
 -- The Baron's former identity is a discovery, never public context.
 local baron = A.GetKnownLoreNote("npc:the-baron", {})
 Check(baron and not baron.body:find("Othmar", 1, true) and not baron.body:find("Grand Marshal", 1, true), "public Baron note keeps Othmar hidden")

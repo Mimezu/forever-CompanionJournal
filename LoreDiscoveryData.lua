@@ -1642,3 +1642,17 @@ do
         ["baron.othmar"] = {presented = {97289}, completed = {97289}},
     }, notes = notes})
 end
+
+-- 2026-11-05 overnight notes pass: Teronis's fate is learned at Lake Falathim
+-- (#991 completion) or from Raene's reply (#1023); before that he is missing.
+do
+    local V = "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"
+    A.RegisterLoreDiscovery({facts = {
+        ["teronis.found"] = {presented = {1023}, completed = {991, 1023}},
+    }, notes = {["npc:teronis"] = {public = {
+        body = "Teronis is a longtime friend of Raene Wolfrunner who aids the Sentinels in Ashenvale. He had leads on a rod made by Dartol, a dead and evil wizard, which he thought could slow the furbolg attacks, and went looking for a gem for it at the shrine in Lake Falathim. He has not returned.",
+        sources = {V .. " #991 Raene's Cleansing (description)"}, related = {"npc:raene", "relic:dartols-rod", "place:lake-falathim"}},
+        blocks = {{requires = {"teronis.found"},
+            body = "His body lies on the island in the lake, cut down by murlocs. His notes on the search survived.",
+            sources = {V .. " #991 Raene's Cleansing (completion); #1023 Raene's Cleansing"}}}}}})
+end

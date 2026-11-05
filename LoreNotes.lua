@@ -9,6 +9,33 @@ local knownNames, knownNameOrder, knownNameBuckets = {
     ["The Charge of the Dragonflights"] = {plain = true},
     ["The Scepter of Celebras"] = {plain = true},
     ["Blackhand's Command"] = {plain = true},
+    -- 2026-11-05: quest titles that contain a newly linked name, and two
+    -- places that share a prefix with one. They stay plain text.
+    ["A Study of the Light"] = {plain = true}, ["Agamaggan's Agility"] = {plain = true},
+    ["Agamaggan's Strength"] = {plain = true}, ["Bartleby the Drunk"] = {plain = true},
+    ["Bartleby's Mug"] = {plain = true}, ["Beat Bartleby"] = {plain = true},
+    ["Blood Shards of Agamaggan"] = {plain = true}, ["Bring the Light"] = {plain = true},
+    ["Cenarius' Legacy"] = {plain = true}, ["Crest of Lordaeron"] = {plain = true},
+    ["Denalan's Earth"] = {plain = true}, ["Elune's Blessing"] = {plain = true},
+    ["Elune's Candle"] = {plain = true}, ["Elune's Grace"] = {plain = true},
+    ["Elune's Tear"] = {plain = true}, ["Exorcising Terrordale"] = {plain = true},
+    ["Eyes of the Sentinels"] = {plain = true}, ["Favored of Elune"] = {plain = true},
+    ["Galgar's Cactus Apple Surprise"] = {plain = true}, ["Garments of the Light"] = {plain = true},
+    ["Gerenzo's Orders"] = {plain = true}, ["Holy Bologna: What the Light Won't Tell You"] = {plain = true},
+    ["In Favor of Elune"] = {plain = true}, ["In Favor of the Light"] = {plain = true},
+    ["In the Name of the Light"] = {plain = true}, ["Iverron's Antidote"] = {plain = true},
+    ["Kurzen's Mystery"] = {plain = true}, ["Lordaeron Throne Room"] = {plain = true},
+    ["Naga at the Zoram Strand"] = {plain = true}, ["Prayer to Elune"] = {plain = true},
+    ["Raene's Cleansing"] = {plain = true}, ["Rediscovering the Light"] = {plain = true},
+    ["Report to Doren"] = {plain = true}, ["Report to Kadrak"] = {plain = true},
+    ["Report to Orgnil"] = {plain = true}, ["Retribution of the Light"] = {plain = true},
+    ["Return to Denalan"] = {plain = true}, ["Rites of the Earthmother"] = {plain = true},
+    ["Stars of Elune"] = {plain = true}, ["Tenaron's Summons"] = {plain = true},
+    ["The Branch of Cenarius"] = {plain = true}, ["The Fall of Ameth'Aran"] = {plain = true},
+    ["The Fate of the Den"] = {plain = true}, ["The Sisterhood of Elune"] = {plain = true},
+    ["Ukor's Lost Pack"] = {plain = true}, ["Veteran Uzzek"] = {plain = true},
+    ["WANTED: Gath'Ilzogg"] = {plain = true}, ["Wildkin of Elune"] = {plain = true},
+    ["Wisdom of Agamaggan"] = {plain = true}, ["Stonewatch Falls"] = {plain = true},
 }, nil, nil
 -- Deliberately reviewed one-word identities. Common nouns and short personal
 -- aliases still require explicit markup; "Weaver" must not turn prose into a boss.
@@ -28,7 +55,12 @@ local singleNames = {Thrall=true, Onyxia=true, Nefarian=true, Ragnaros=true, Var
     ["Tsu'zee"]=true, Theldren=true, Thaddius=true, Techbot=true, Stonespine=true,
     Stalagg=true, Revanchion=true, Renataki=true, ["Rath'mael"]=true, Ragglesnout=true,
     Pimgib=true, Ouro=true, Ohgan=true, Mushgog=true, Mijan=true, Maexxna=true,
-    Loatheb=true, Kormok=true, Ironspine=true, Hukku=true, Ilthalaine=true, Tenaron=true}
+    Loatheb=true, Kormok=true, Ironspine=true, Hukku=true, Ilthalaine=true, Tenaron=true,
+    -- Distinctive short forms of reviewed titles, as the quest prose uses them.
+    Sevren=true, Zygand=true, Johaan=true, Hadrec=true, Dughan=true, Orgnil=true,
+    Zarlman=true, Ravenfeather=true, Graytongue=true, Arren=true, Linnea=true,
+    Doren=true, Kurzen=true, Raene=true, Stonewatch=true, Elreth=true, Dirania=true,
+    Tallonkai=true, Rellian=true, Gryshka=true, Gerenzo=true, Remtravel=true, Marris=true}
 local V = "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"
 local Q = "StorageInvestigation/journal-voice/quests_corpus.txt"
 local N = "StorageInvestigation/journal-voice/npc_corpus.txt"
