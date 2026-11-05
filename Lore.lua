@@ -52,6 +52,12 @@ L.zones = {
     ["Deadwind Pass"] = {kind = "dark", e = {"{p:Deadwind Pass}", "{p:Deadwind}", "{p:Deadwind Pass}, below Karazhan"}},
     ["Moonglade"] = {kind = "gentle", e = {"{p:Moonglade}", "the glades of {p:Moonglade}", "{p:Moonglade}, where the druids gather"}},
     ["Zephras Isle"] = {kind = "gentle", e = {"{p:Zephras}", "{p:Zephras Isle}", "{p:Zephras Isle}, adrift on the winds"}},
+    -- Forever 1.60.1 zones (warcraft.wiki.gg Riverglades, Shen'dralas, Mount Hyjal
+    -- (Forever), Darkspear Islands; each name opens its lore note).
+    ["Riverglades"] = {kind = "wild", e = {"{p:the Riverglades}", "the river valleys of {p:the Riverglades}", "{p:the Riverglades}, where the Brotherhood of the Horse holds Farholde"}},
+    ["Shen'dralas"] = {kind = "mountains", e = {"{p:Shen'dralas}", "the crags of {p:Shen'dralas}", "{p:Shen'dralas}, among Highborne ruins south of Desolace"}},
+    ["Mount Hyjal"] = {kind = "forest", e = {"{p:Mount Hyjal}", "the slopes of {p:Hyjal}", "{p:Mount Hyjal}, below the World Tree"}},
+    ["Darkspear Islands"] = {kind = "coast", e = {"the {p:Darkspear Islands}", "the shores of the {p:Darkspear Islands}", "the {p:Darkspear Islands}, ceremonial ground of the Darkspear trolls"}},
     -- Cities
     ["Orgrimmar"] = {kind = "city", e = {"{p:Orgrimmar}", "the streets of {p:Orgrimmar}", "{p:Orgrimmar}, the Warchief's city"}},
     ["Undercity"] = {kind = "city", e = {"{p:the Undercity}", "the halls of {p:the Undercity}", "{p:the Undercity}, beneath the ruins of Lordaeron"}},
@@ -62,6 +68,7 @@ L.zones = {
 }
 -- Other names the game may show for the same places.
 L.zones["Stormwind"] = L.zones["Stormwind City"]
+L.zones["The Riverglades"] = L.zones["Riverglades"]
 L.zones["The Undercity"] = L.zones["Undercity"]
 
 -- Homelands: race (the game's race file) -> the places that are home.
@@ -161,6 +168,14 @@ L.dungeons = {
         lore = {"where the Scourge still roam the old streets", "above the Forsaken's own halls"}},
     ["The Hall of Thanes"] = {e = {"the {p:Hall of Thanes}", "the tombs beneath old Ironforge"},
         lore = {"where the old kings of Ironforge rest, or tried to", "below old Ironforge"}},
+    -- Forever 1.60.1 dungeon and raids (warcraft.wiki.gg Krol'dok Stronghold,
+    -- Mount Hyjal (Forever); LoreForever zone:hyjal for the Druids of the Claw).
+    ["Krol'dok Stronghold"] = {e = {"{p:Krol'dok Stronghold}", "the ogre fortress of {p:Krol'dok}"},
+        lore = {"where the Twilight's Hammer ogres hold the walls", "where the Horde fled after the siege of Farholde failed"}},
+    ["Barrow Deeps"] = {e = {"the {p:Barrow Deeps}", "the barrow dens of the {p:Barrow Deeps}"},
+        lore = {"where the Druids of the Claw slept beneath Hyjal", "deep under Mount Hyjal"}},
+    ["Hyjal Summit"] = {e = {"{p:Hyjal Summit}", "the summit of {p:Hyjal}"},
+        lore = {"beneath Nordrassil, the World Tree", "where Archimonde fell at the roots of the World Tree"}},
 }
 L.dungeons["Sunken Temple"] = L.dungeons["The Temple of Atal'Hakkar"]
 L.dungeons["Deadmines"] = L.dungeons["The Deadmines"]
@@ -453,15 +468,30 @@ Add("undead", {
         after = "The Dark Iron incursion beneath Ironforge had lost its commander."},
 })
 -- Forever's dungeon rosters (warcraft.wiki.gg Ruins of Lordaeron (instance) for the
--- creature type; corpus #95216 for the venom). The other Forever bosses (The Baron,
--- Viktor the Vile, The Abandoned, Bjork, Faldrim Anvilmar, Magmatus, Plunder) wait
--- for lore notes: tests/LoreCatalog.lua requires every boss name to open one.
+-- creature type; corpus #95216 for the venom). Every name here opens a lore note
+-- (LorePeopleHistory.lua; tests/LoreCatalog.lua requires it).
 do
     local RoL = {dungeon = "Ruins of Lordaeron", setting = "Forever", source = "https://warcraft.wiki.gg/wiki/Ruins_of_Lordaeron_(instance)"}
     local function With(base, info) for k, v in pairs(base) do info[k] = info[k] or v end return info end
     Add("undead", {
         ["Witherfang"] = With(RoL, {e = "the spider whose venom ate through undead flesh", kind = "beast",
             source = "StorageInvestigation/journal-voice/quests_corpus.txt #95216 The New Plague; https://warcraft.wiki.gg/wiki/Ruins_of_Lordaeron_(instance)"}),
+        -- The Baron's epithet stays public: whose head it wears is a discovery
+        -- (LoreDiscoveryData.lua, baron.othmar). Keyed "The Baron", so Stratholme's
+        -- "Baron Rivendare" never matches it.
+        ["The Baron"] = With(RoL, {e = "an abomination of the ruins"}),
+        ["Viktor the Vile"] = With(RoL, {e = "a ghoul of the ruins"}),
+        ["The Abandoned"] = With(RoL, {e = "a wraith of the ruins"}),
+        ["Bjork"] = With(RoL, {e = "a wight of the ruins"}),
+        ["Lordaeron Captain"] = With(RoL, {e = "the ghost of one of Lordaeron's officers"}),
+    })
+    -- The Hall of Thanes (warcraft.wiki.gg Hall of Thanes (instance); corpus #96395).
+    local HoT = {dungeon = "The Hall of Thanes", setting = "Forever", source = "https://warcraft.wiki.gg/wiki/Hall_of_Thanes_(instance)"}
+    Add("humanoid", {
+        ["Faldrim Anvilmar"] = With(HoT, {e = "a thane kept from rest by an ancient grudge", kind = "undead",
+            source = "https://warcraft.wiki.gg/wiki/Hall_of_Thanes_(instance); StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #96395 An Ancient Grudge"}),
+        ["Magmatus"] = With(HoT, {e = "a fiery brute of the lower vaults", kind = "elemental"}),
+        ["Plunder"] = With(HoT, {e = "an enchanted golem of the vaults", kind = "construct"}),
     })
 end
 
@@ -474,7 +504,8 @@ local ARTICLE = {["Undercity"] = "the Undercity", ["The Barrens"] = "the Barrens
     ["Scarlet Monastery"] = "the Scarlet Monastery", ["Molten Core"] = "the Molten Core", ["Scholomance"] = "the Scholomance",
     ["The Temple of Atal'Hakkar"] = "the Sunken Temple", ["Ruins of Lordaeron"] = "the Ruins of Lordaeron",
     ["The Hall of Thanes"] = "the Hall of Thanes", ["Ruins of Ahn'Qiraj"] = "the Ruins of Ahn'Qiraj",
-    ["The Crossroads"] = "the Crossroads", ["The Sepulcher"] = "the Sepulcher"}
+    ["The Crossroads"] = "the Crossroads", ["The Sepulcher"] = "the Sepulcher",
+    ["Riverglades"] = "the Riverglades", ["Darkspear Islands"] = "the Darkspear Islands", ["Barrow Deeps"] = "the Barrow Deeps"}
 function L.Display(name)
     if not name then return nil end
     return ARTICLE[name] or (name:gsub("^The ", "the "))
@@ -492,7 +523,8 @@ local SHORT = {["Edwin VanCleef"] = "VanCleef", ["Emperor Dagran Thaurissan"] = 
     ["Darkmaster Gandling"] = "Gandling", ["High Inquisitor Whitemane"] = "Whitemane", ["Scarlet Commander Mograine"] = "Mograine",
     ["Baron Silverlaine"] = "Silverlaine", ["Commander Springvale"] = "Springvale", ["Princess Theradras"] = "Theradras",
     ["Warchief Rend Blackhand"] = "Rend", ["General Drakkisath"] = "Drakkisath", ["Mr. Smite"] = "Smite",
-    ["Crowd Pummeler 9-60"] = "the Pummeler", ["Electrocutioner 6000"] = "the Electrocutioner", ["The Beast"] = "the Beast"}
+    ["Crowd Pummeler 9-60"] = "the Pummeler", ["Electrocutioner 6000"] = "the Electrocutioner", ["The Beast"] = "the Beast",
+    ["The Baron"] = "the Baron", ["The Abandoned"] = "the Abandoned", ["Lordaeron Captain"] = "the captain"}
 function L.Short(name)
     if not name then return nil end
     if SHORT[name] then return SHORT[name] end
@@ -1087,10 +1119,10 @@ function L.ZoneStory(name) return name and L.zoneStory[name] end
 -- quest corpus (#92460, #92472, #92473, #94414). The story packs append more.
 L.zoneStory["Riverglades"] = {setting = "Forever",
     sight = {"Farms and logging camps lay along the rivers of the valley, down to the Forbidding Sea.",
-        "The stone tower of Sunnyglade still stood over the ruins of the town.",
-        "Boats left Powderfuse Port for Steamwheedle Port, across the sea in Tanaris."},
+        "The stone tower of {p:Sunnyglade} still stood over the ruins of the town.",
+        "Boats left {p:Powderfuse Port} for {p:Steamwheedle Port}, across the sea in {p:Tanaris}."},
     stakes = {"The Brotherhood of the Horse held Farholde Keep, and fought to win back land Stormwind had given up in the First War.",
-        "The Twilight's Hammer held the ruins of Sunnyglade, and its ogres held Krol'dok Stronghold.",
+        "The Twilight's Hammer held the ruins of Sunnyglade, and its ogres held {p:Krol'dok Stronghold}.",
         "The Horde kept outposts at Rog'mar and Bolder'ok, where ogres who had left the Twilight's Hammer now fought beside it."}}
 L.zoneStory["The Riverglades"] = L.zoneStory["Riverglades"]
 L.zoneStory["Shen'dralas"] = {setting = "Forever",

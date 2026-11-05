@@ -131,13 +131,13 @@ q(95216, "The New Plague", "Ruins of Lordaeron", 22, "apothecary", 4,
 -- The Baron's head (Horde, 97288 to 97292). Othmar's name is first spoken in
 -- 97289; 97288 keeps it unsaid.
 q(97288, "Unending Torment", "Ruins of Lordaeron", 21, "othmar", 4,
-    "The abomination called the Baron had a head that had been sewn back on many times, each time a little weaker.",
-    "When the Baron fell, its head came loose, and someone in the city below the ruins might know more about so unusual an abomination.",
+    "The abomination called {n:the Baron} had a head that had been sewn back on many times, each time a little weaker.",
+    "When {n:the Baron} fell, its head came loose, and someone in the city below the ruins might know more about so unusual an abomination.",
     "The head was recognized at once, and its new keeper already had a use for it.",
-    "The Baron's head reached the {p:Undercity}, where its old owner was known and its next purpose already planned.",
+    "{n:The Baron}'s head reached the {p:Undercity}, where its old owner was known and its next purpose already planned.",
     true, {"part1_corpus.txt #97288"})
 q(97289, "Unending Torment", "Undercity", 21, "othmar", 4,
-    "The Baron's head had once belonged to Othmar, a Grand Marshal of the Alliance whom the Dark Lady had killed herself.",
+    "{n:The Baron}'s head had once belonged to Othmar, a Grand Marshal of the Alliance whom the Dark Lady had killed herself.",
     "The apothecaries wanted the head set beside a body in the next room, so that Othmar's secrets might be made to talk.",
     "Set beside the body, the head brought it twitching to life, and Othmar relived his final moments.",
     "Othmar's body stirred in a panic once the head lay beside it.",
@@ -162,8 +162,8 @@ q(97292, "Unending Torment", "Undercity", 21, "othmar", 5,
     true, {"part1_corpus.txt #97292 (Hissing Serum)"})
 fallback("Unending Torment", "Undercity", "othmar", "97288 to 97292",
     "The head of an abomination from the ruins had caught the interest of the apothecaries in the {p:Undercity}.",
-    "The apothecaries of the {p:Undercity} had plans for the Baron's head.",
-    "One step of the apothecaries' work on the Baron's head was done.",
+    "The apothecaries of the {p:Undercity} had plans for {n:the Baron}'s head.",
+    "One step of the apothecaries' work on {n:the Baron}'s head was done.",
     "The apothecaries' work on the head from the ruins went on.")
 q(97891, "Prompt Potion Runner", "Undercity", 16, "apothecary", 2,
     "Alessandro's potion would spoil unless it crossed the slime canal quickly, and his knees popped out of joint whenever he ran.",
@@ -1030,8 +1030,557 @@ q(99162, "Treacherous Cold", "Dun Morogh", 8, "gavin", 4,
 P.threads.fv_grizzled = "the wendigos of the Grizzled Den"
 P.threads.fv_gavin = "Father Gavin's hermitage"
 
+---------------------------------------------------------------- Horde-zone additions the horde lane left (coordinator note, 2026-11-05)
+-- Durotar's profession lessons at Thunder Ridge, Orgrimmar's alchemists, a
+-- Mulgore arena, Pal'juh, Leonid's letter, the druid's return and Chol'aruk.
+-- 97277 (Grund and Gozwin) is left out: its zone could not be confirmed.
+q(96873, "A Pain in the Neck", "Durotar", 8, "durotar", 2,
+    "Zalazane bound the minds of the trolls east of the village with pendants wrapped in evil binding spells.",
+    "Stripping the binding magic from Zalazane's pendants made good practice for an enchanter, so long as no one put one on.",
+    "The pendants' binding spells were stripped away. The slain trolls were a shame, but their spirits could rest now.",
+    "With the binding spells removed from the pendants, the spirits of Zalazane's thralls could rest.")
+q(96874, "This Is Spinal Axe", "Durotar", 10, "durotar", 2,
+    "Ug'thok of {p:Orgrimmar} thought the spines of the Thunder Ridge beasts would make the head of a mighty axe, though Saru had laughed at him.",
+    "Ug'thok's smithing lesson called for weathered spines from Thunder Ridge and rough grinding stones to sharpen them.",
+    "The spines were tougher than Ug'thok expected. The axe might not come easily, but he would keep working on it.",
+    "Ug'thok had his spines and grinding stones, and a harder job ahead than he had thought.",
+    false, {"part1_corpus.txt #96874 (Ug'thok in Orgrimmar)"})
+q(96875, "Beasts of Thunder Ridge", "Durotar", 10, "durotar", 2,
+    "Orgrimmar kept growing, and Kamari supplied the peons with lizard hides from Thunder Ridge to line its walls and roofs.",
+    "Kamari wanted rough lizard hides and a few cured light hides, a test of skill with leather.",
+    "The hides went into Orgrimmar's new buildings. Kamari said the city grew with that work.",
+    "Kamari took the hides for the builders, and called it work that helped Orgrimmar grow.",
+    false, {"part1_corpus.txt #96875 (Kamari in Orgrimmar)"})
+q(96877, "Halikor's Hoof", "Durotar", 12, "durotar", 3,
+    "The enormous hoof of Halikor was proof of victory over the mighty lizard of Thunder Ridge.",
+    "Halikor had left behind a hoof big enough to make a fine trophy.",
+    "The hoof drew admiration as a fine trophy, and talk of what a fight it must have been.",
+    "The hoof was handed over and admired.")
+q(97275, "Whuut's the Rush", "Orgrimmar", 15, "durotar", 2,
+    "Whuut was an alchemy prodigy who burned through the rarest reagents without learning the basics, and Yelmak wanted to slow him down.",
+    "Yelmak brewed a potion from common plants by a quick tonic method, meant to show Whuut what careful work could do.",
+    "Whuut was astonished that Yelmak's potion used only speargrass and cattail, and began to think he had skipped too far ahead.",
+    "Whuut took Yelmak's lesson to heart. There might be much he had missed by starting with the rarest flora.")
+q(99108, "Sparring Match", "Mulgore", 6, "durotar", 2,
+    "In the arena of the young, it did not matter who one's mother was or whether one fought with sword or bow.",
+    "The arena's teacher offered a lesson in direct combat to any young one willing to face the novices.",
+    "The teacher was honored by the fight, and saw hope in the new generation.",
+    "The sparring was done, and the teacher handed over something to tend the wounds, for many more battles lay ahead.")
+q(99123, "Lost in the Shadows", "Durotar", 8, "durotar", 3,
+    "Pal'juh had gone scouting the crag alone, run out of magic at the wrong moment, and been stuck hiding ever since.",
+    "A young hunter named Pal'juh was trapped in the crag and needed help to escape.",
+    "Pal'juh got out of the crag. Her teacher hoped she had learned her lesson about going alone.",
+    "She was safe now. A promising hunter, her teacher said, who acted more like a raptor than a tiger.",
+    false, {"part1_corpus.txt #99123"})
+q(98545, "Leonid's Letter", "Tirisfal Glades", 13, "argent", 3,
+    "Leonid Barthalomew had a colorful history with the Dark Lady, and wanted a neutral hand to carry his letter to an old friend in the {p:Undercity}.",
+    "Leonid's letter was for Glix Xizzix, a goblin of the Trade Quarter, who Leonid said would pay for the trouble.",
+    "Glix Xizzix had not seen Leonid since Naxxramas rained hell on their heads. He took the letter, and grudgingly paid with junk from the lost and found.",
+    "The letter reached Glix, who had never agreed to any tip, but offered a pick from the lost and found.",
+    false, {"part1_corpus.txt #98545 (Glix Xizzix in the Undercity)"})
+q(98362, "To Thunder Bluff", "Thunder Bluff", 20, "durotar", 4,
+    "Dendrite Starblaze sent a young druid back to Turak Runetotem in {p:Thunder Bluff}, to learn the shape of the cat.",
+    "The trial of the Great Cat Spirit was done, and the lessons now led back to the druid's teacher.",
+    "Turak Runetotem sensed that the Great Cat Spirit's trial had been passed, and began teaching the shape of the cat.",
+    "Turak was proud. Every druid had to pass the Great Cat Spirit's trial, he said, and now came the cat's shape.",
+    false, {"LoreForever quest:98362 (wiki: World of Warcraft: Forever; Dendrite Starblaze to Turak Runetotem)"})
+q(97003, "Chol'aruk the Ravener", "The Barrens", 21, "durotar", 4,
+    "The Razormane spoke of Chol'aruk the Ravener, a quilboar five times the size of any other, laired in a cave at Thorn Hill.",
+    "Most doubted the tales of Chol'aruk, but the veteran who asked had fought one of its kind, and it had taken six fighters to bring it down.",
+    "The veteran meant to carry Chol'aruk's head to {p:Orgrimmar}, so none would doubt his tales again, and to speak loudly of who had earned it.",
+    "Chol'aruk was dead. The veteran called the head grim proof that such beasts existed.",
+    true, {"part1_corpus.txt #97003"})
+fallback("Chol'aruk the Ravener", "The Barrens", "durotar", "97003, 97005",
+    "The Razormane spoke of Chol'aruk the Ravener, a giant quilboar laired at Thorn Hill.",
+    "Few believed the tales of Chol'aruk, a quilboar far larger than any other.",
+    "The hunt for Chol'aruk moved forward.",
+    "One step against Chol'aruk was done.")
+P.threads.fv_durotar = "lessons and hunts around the Horde's towns"
+
+---------------------------------------------------------------- Starter-zone additions (forever2 lane, 2026-11-05)
+-- Forever stages in the starting zones that no pack told yet. Zones come from
+-- the category in part1_corpus.txt where captured (12 Elwynn, 85 Tirisfal, 130
+-- Silverpine, 77 Anvilmar in Dun Morogh), otherwise from Lore Forever's entry.
+
+-- Dun Morogh: Grund and Gozwin's camp (#97277, cat 77, Anvilmar).
+q(97277, "Grund and Gozwin", "Dun Morogh", 6, "dunmorogh", 3,
+    "A snow leopard had dragged Gozwin away from his camp in the northwestern hills until Grund fired his shotgun over its head. Gozwin's mechanic's log was lost in the scramble.",
+    "Grund's gnome friend Gozwin had come away from a snow leopard with deep scratches. He worried more about the log for his mecha-walker than about himself.",
+    "The log came back to camp. Grund said Gozwin would have one less thing to fret over, and could now put his energy into getting back on his feet.",
+    "The log for Gozwin's mecha-walker came back from the hills. Grund was not surprised that the leopard had been after the boar they were roasting.",
+    false, {"part1_corpus.txt #97277 (cat 77; camp in the northwestern hills)", "LoreForever quest:97277 (wiki: World of Warcraft: Forever; Grund a dwarf, Gozwin a gnome)"})
+P.threads.fv_dunmorogh = "the camps in the hills of Dun Morogh"
+
+-- Elwynn: Crystal Lake's fisherman and Remy "Two Times" (#99127 to #99131).
+-- The giver of 99127-99129 is the fisherman Jason Mathers, per Lore Forever and
+-- 99131; Lee only set the traps.
+q(99127, "A Net Disaster", "Elwynn Forest", 7, "crystallake", 2,
+    "A fisherman at {p:Crystal Lake} had not seen a single minnow in the water, and his hooks kept coming up empty.",
+    "Lee had set traps in {p:Crystal Lake} overnight, and the fisherman who depended on them wanted to know if anything had been caught.",
+    "Every one of Lee's nets had been damaged. The fisherman saw that his new neighbors on the lake were doing more harm than anyone had known.",
+    "Whatever had been at the nets was doing real damage, and the fisherman feared he would go broke unless something was done.",
+    false, {"LoreForever quest:99127 (wiki: World of Warcraft: Forever; Crystal Lake)"})
+q(99128, "Slimy Menace", "Elwynn Forest", 7, "crystallake", 2,
+    "The fisherman blamed the murlocs on the far side of {p:Crystal Lake}, and feared there would soon be no fish left anywhere in it.",
+    "Murlocs across {p:Crystal Lake} had a vicious temper and teeth to match, and the fishing was suffering for it.",
+    "The murlocs across the lake were thinned out. The fisherman could still hear their warbling, and expected their numbers back soon enough.",
+    "That would slow the murlocs down, the fisherman said, though he had no doubt they would make up their numbers quickly.",
+    false, {"LoreForever quest:99128 (wiki: World of Warcraft: Forever; Crystal Lake, Elwynn Forest)"})
+q(99129, "A Man About a Murloc", "Elwynn Forest", 7, "crystallake", 2,
+    "Jason Mathers, the fisherman at {p:Crystal Lake}, hoped Remy in {p:Goldshire} had some idea how to keep the murlocs away from his fish.",
+    "Remy hated murlocs as much as Jason Mathers did, and the fisherman thought he might know how to keep them off the lake.",
+    "Remy had been warning the guards about the murlocs, and they would not listen. He had a few ideas of his own for getting back at them.",
+    "The guards had ignored Remy's warnings, so he meant to deal with the murlocs himself, once he had what he needed.",
+    false, {"LoreForever quest:99129 (wiki: World of Warcraft: Forever; Jason to Remy Two Times)"})
+q(99130, "An Enticing Offer", "Elwynn Forest", 7, "crystallake", 2,
+    "Duskweed grew on the farms near {p:Goldshire}, and in large amounts its petals were toxic to most animals. Remy meant to turn it into murloc bait.",
+    "Remy's plan against the murlocs was bait made from duskweed, which would clear a few farmers' fields in the bargain.",
+    "Remy mixed the bait, simple but safe enough as long as nobody's pet got into it. Jason was to be told not to eat any.",
+    "The duskweed became murloc bait. Remy's only warning was that Jason should not eat it.",
+    false, {"part1_corpus.txt #99130 (cat 12, Elwynn Forest; ingredients for murloc bait)"})
+q(99131, "Baited for Success", "Elwynn Forest", 7, "crystallake", 3,
+    "Jason Mathers could pick up Remy's murloc bait later that day, along with advice on how to use it.",
+    "Remy hoped the bait would let Mathers sell his fish again, and leave fewer murlocs in the world.",
+    "Mathers did not mind poisoned bait, as long as the fish would not eat it. He meant to visit Remy later to collect it.",
+    "Mathers had his answer to the murlocs. As long as the fish left the poison alone, he hoped to sell his catch again.",
+    false, {"LoreForever quest:99131 (wiki: World of Warcraft: Forever; Remy to Jason Mathers)"})
+P.threads.fv_crystallake = "the murlocs of Crystal Lake"
+-- 99143's angler is unnamed; Elwynn per the coordinator's zone check.
+q(99143, "Bottles and Baubles", "Elwynn Forest", 7, "elwynn", 2,
+    "An angler reasoned that murlocs must think like fish, so anything the murlocs liked, the fish would like too.",
+    "The murlocs kept heaps of junk in their camps, and an angler wanted anything in them that might make good bait.",
+    "The angler called the junk an interesting collection, good enough for bait, and gave some older fishing supplies in return.",
+    "The murlocs' baubles would serve as bait, the angler said, and handed over old supplies meant for anyone finding their footing in fishing.",
+    false, {"LoreForever quest:99143 (wiki: World of Warcraft: Forever; an angler and murloc junk)"})
+P.threads.fv_elwynn = "small troubles around Elwynn Forest"
+
+-- Tirisfal: Executor Zygand's Deathguard (#99134, #99141; Lore Forever names
+-- the giver), Bareth Dawnstone of Bandarion Keep (#99144), and the Scourge
+-- beneath Shadowvale (#99152 Hilda the Breaker, #99153 Ephram Barbaro).
+q(99134, "Discipline", "Tirisfal Glades", 6, "zygand", 2,
+    "Executor Zygand in {p:Brill} kept a ledger of Deathguards who had disappointed him, and wanted someone from outside the guard to punish them.",
+    "Zygand preferred an outsider for the work. Anyone who was not of the Deathguard had not yet had a chance to disappoint him.",
+    "Pain was chief among the few delights left to the dead, Zygand said. The punishment pleased him, and so, he said, it pleased the Dark Lady.",
+    "The Deathguards on Zygand's ledger had been punished, and the executor hinted that there might be further use for such work.",
+    false, {"LoreForever quest:99134 (wiki: World of Warcraft: Forever; Executor Zygand)"})
+q(99141, "Patience", "Tirisfal Glades", 6, "zygand", 3,
+    "Reports from several of Executor Zygand's Deathguards were overdue, and his patience had run out.",
+    "Deathguard Dillinger by the graveyard and Deathguard Kristof at the waystation owed Zygand reports. So did Gordo, an abomination who wandered near Stillwater Pond.",
+    "The reports reached Zygand. Gordo's was of no use, and the executor wanted his lapse in trusting an abomination with a pen kept quiet.",
+    "Zygand had his overdue reports at last, and allowed that there might be hope yet.",
+    false, {"part1_corpus.txt #99141 (cat 85; Dillinger, Kristof and Gordo)", "LoreForever quest:99141 (wiki: World of Warcraft: Forever; Executor Zygand)"})
+P.threads.fv_zygand = "Executor Zygand's Deathguard"
+q(99144, "Seeking Refuge", "Tirisfal Glades", 7, "risen", 4,
+    "Bareth Dawnstone, a risen paladin, had been captured on his way from Bandarion Keep to Shari Stilwell in {p:Brill}. His captors wielded the Light with hatred in their hearts.",
+    "Bareth Dawnstone knew some still took issue with risen paladins, but swore their intentions were pure. He needed help to escape the zealots who held him.",
+    "Dawnstone got away. His order was still taking root in Tirisfal, and losing one so promising would have been a heavy blow.",
+    "Bareth Dawnstone was free. His order welcomed any who sought guidance in the Light at Bandarion Keep, on the bluffs northwest of the Solliden Farmstead.",
+    false, {"part1_corpus.txt #99144 (cat 85; help Bareth Dawnstone)", "LoreForever quest:99144 (wiki: World of Warcraft: Forever; captured at Crusader's Outpost)"})
+q(99152, "As Above, So Below", "Tirisfal Glades", 10, "shadowvale", 4,
+    "Hilda the Breaker feared the cellars beneath Shadowvale would fester into a Scourge uprising against Bandarion Keep.",
+    "The Tarnished were trouble enough in Shadowvale, but Hilda wanted bones from the Scourge below the town that still glowed with their first reanimation magic.",
+    "Hilda had her glowing bones, and hoped they would show how the threat beneath Shadowvale had gone unnoticed for so long.",
+    "With bones from the cellars in hand, Hilda meant to study how the Scourge had gathered beneath Shadowvale unseen.",
+    false, {"part1_corpus.txt #99152 (cat 85; 6 bones beneath Shadowvale)", "LoreForever quest:99152 (wiki: World of Warcraft: Forever; Hilda the Breaker at Bandarion Keep)"})
+q(99153, "The One That Got Away", "Tirisfal Glades", 10, "shadowvale", 4,
+    "A cultist had slipped away from the remnants of the battle with Naxxramas, carrying a piece of a focusing crystal that still had power in it.",
+    "Ephram Barbaro believed the crystal fragment was somewhere beneath Shadowvale, either raising the dead or making them stronger.",
+    "The hidden crystal fragment was found beneath Shadowvale, quickly enough to please Ephram Barbaro.",
+    "The fragment came out from beneath Shadowvale before its power could get out of hand.",
+    false, {"part1_corpus.txt #99153 (cat 85; Hidden Crystal Fragment beneath Shadowvale)", "LoreForever quest:99153 (wiki: World of Warcraft: Forever; Ephram Barbaro)"})
+P.threads.fv_shadowvale = "the Scourge beneath Shadowvale"
+
+-- Silverpine: the offering stone at Beren's Peril (#95884, #95883, #95885, in
+-- that order). Object quests: nobody gives them, and the ritual's purpose is
+-- never told, so the lines keep it unknown.
+q(95884, "The Offering Stone", "Silverpine Forest", 23, "berens", 3,
+    "A scrap of note, mostly illegible, spoke of preparations for an offering and a ritual at an offering stone.",
+    "Someone had been preparing a ritual in Beren's Peril, and a worn note pointed to an offering stone close by.",
+    "The offering stone was found nearby, its rough surface littered with strange implements.",
+    "The stone named in the note was found, strange items scattered across it.",
+    false, {"part1_corpus.txt #95884 (cat 130; the Offering Stone in Beren's Peril)"})
+q(95883, "The Tortured Soul", "Silverpine Forest", 23, "berens", 3,
+    "The ritual on the offering stone had been hastily assembled. By the note's account it lacked only an offering of blood and a tortured soul.",
+    "The undead around Beren's Peril looked tortured enough to supply the soul the ritual still needed.",
+    "Brought to the offering stone, the tortured soul gave off a foul energy, and the ritual drew closer to its end.",
+    "The tortured soul reached the offering stone, and a foul energy stirred in its presence.",
+    false, {"part1_corpus.txt #95883 (cat 130)"})
+q(95885, "The Offering of Blood", "Silverpine Forest", 23, "berens", 4,
+    "All the ritual still needed was an offering of blood. The note called it a willing sacrifice.",
+    "The last step at the offering stone in Beren's Peril was blood, freely given, by the note's account.",
+    "The ritual drained the offering stone of its power. To what end was unknown, but the stone cracked and crumbled, and something glittered in the rubble.",
+    "The offering stone lay inert, its power spent, and the rough rock fell apart.",
+    false, {"part1_corpus.txt #95885 (cat 130)"}).highlight = {
+    "The ritual at Beren's Peril drained the offering stone, and it crumbled to rubble.",
+    "Whatever the ritual had been for, the offering stone was spent and broken."}
+P.threads.fv_berens = "the offering stone at Beren's Peril"
+
+-- Elwynn: Brother Paxton's stolen library (#91741, #92124, #91743, #91745,
+-- #91752, #91758, #91772, #91775, #91777; cat 12 in part1_corpus.txt). The
+-- kobolds carry the books from Northshire to Fargodeep and Jasperlode. Givers
+-- not named in the quest text come from Lore Forever (Kelsey Fargo for 91752,
+-- Marshal Dughan for 91775); unnamed ones stay unnamed.
+q(91741, "Nibbled-On Book", "Elwynn Forest", 2, "paxton", 2,
+    "A kobold had dropped a volume that looked half eaten. It seemed to belong to the small library Brother Paxton kept in {p:Northshire Abbey}.",
+    "The nibbled volume bore the look of Brother Paxton's library, kept inside {p:Northshire Abbey}.",
+    "Brother Paxton recognized his volume and feared the kobolds were stealing his collection again, to eat it.",
+    "One volume was back on Paxton's shelf. The rest of his collection was still missing.",
+    false, {"part1_corpus.txt #91741 (cat 12; return the book to Brother Paxton)"})
+q(92124, "Book Inventory", "Elwynn Forest", 2, "paxton", 2,
+    "Brother Paxton needed to know how many books were missing, and sent word to Daniel, an assistant more interested in Elwynn's trade professions than in his duties.",
+    "Paxton's assistant Daniel could count the shelves quickly, if he could be kept from talking about tradeskills.",
+    "Daniel had warned Paxton three times about kobolds tunneling under the abbey. Whole bookshelves stood empty.",
+    "The count was grim, with whole shelves emptied. Daniel had seen it coming, and still wanted to talk about tradeskills.",
+    false, {"LoreForever quest:92124 (wiki: World of Warcraft: Forever; Brother Paxton and Daniel)"})
+q(91743, "Rascally Rodents", "Elwynn Forest", 2, "paxton", 2,
+    "The kobolds were carrying off Brother Paxton's books, and he feared they would devour his whole library.",
+    "Brother Paxton wanted his books taken back from the kobolds of {p:Northshire} before nothing was left of his library.",
+    "Eight books came back, and Paxton gave away a how-to manual he did not need. The kobolds were not eating the rest, he noticed, and he wondered why they wanted them.",
+    "Some of Paxton's books were rescued, but many more were missing. Whatever the kobolds wanted them for, it was not food.",
+    false, {"part1_corpus.txt #91743 (cat 12; retrieve 8 books)"})
+q(91745, "Mining Consultant", "Elwynn Forest", 3, "paxton", 2,
+    "Kelsey Fargo, a new mining apprentice, worked just outside the tunnels and had probably seen what the kobolds were doing with the books.",
+    "The mining apprentice Kelsey Fargo kept watch outside the kobolds' tunnels, and might teach a little mining besides.",
+    "Kelsey had seen kobolds running back and forth with books and yelling at each other. She thought they were stealing from the library in the abbey.",
+    "Kelsey Fargo confirmed it. Kobolds were hauling books out of the abbey's library.",
+    false, {"LoreForever quest:91745 (wiki: World of Warcraft: Forever; Kelsey Fargo at Echo Ridge Mine)"})
+q(91752, "The Big Picture", "Elwynn Forest", 3, "paxton", 3,
+    "Now and then a kobold came out of the tunnels yelling about pictures for Narf. Kelsey Fargo guessed Narf was a leader deep inside, with a whole sack of books.",
+    "Narf's sack of stolen books lay at the back of the tunnels, among kobolds a good deal meaner than those outside.",
+    "Marshal McBride took the stolen books and promised to get them back to Brother Paxton at once.",
+    "The stolen books from the back of the tunnels reached Marshal McBride, bound for Brother Paxton's shelves.",
+    false, {"part1_corpus.txt #91752 (cat 12; type 1)", "LoreForever quest:91752 (wiki: World of Warcraft: Forever; Shinyfinder Narf, Marshal McBride)"})
+q(91758, "Follow That Kobold!", "Elwynn Forest", 4, "paxton", 2,
+    "Another kobold had left the tunnels with a large sack of books, Kelsey reported, and Marshal McBride wanted it tracked down.",
+    "Tordrin Sternblade, a hunter trainer newly arrived from {p:Ironforge}, kept to the stable behind the abbey. McBride thought he could help track the kobold thief.",
+    "Tordrin agreed to help track the thief, and set about making something for the hunt.",
+    "Tordrin Sternblade was ready to whip up something to follow the kobold's trail.")
+q(91772, "Shhh! We're Hunting Kobolds", "Elwynn Forest", 4, "paxton", 3,
+    "Tordrin's tracking kit could follow the kobold that worried Marshal McBride. Tordrin suspected the thieves were up to something outside {p:Northshire}.",
+    "The kobold tracks led out of {p:Northshire}, and Tordrin wanted whatever they showed taken to Marshal Dughan in {p:Goldshire}.",
+    "Dughan was unimpressed. Of course the kobolds were headed for the {p:Fargodeep Mine}, he said, and someone would have to deal with that.",
+    "The tracks led toward the {p:Fargodeep Mine}, which Dughan called infested with kobolds.",
+    false, {"part1_corpus.txt #91772 (cat 12; follow the tracks and report to Marshal Dughan)"})
+q(91775, "Book Return", "Elwynn Forest", 6, "paxton", 3,
+    "Brother Paxton's books had gone to the {p:Fargodeep Mine}. He worried most about one called Fun with Elementals, which he thought even a kobold could use to summon a servant.",
+    "Marshal Dughan sent a bag for the books down into the {p:Fargodeep Mine}, where the kobolds had taken more of Paxton's library.",
+    "By Paxton's list, most of the missing books were found. The rest had likely gone to the {p:Jasperlode Mine}.",
+    "Most of Paxton's books came out of Fargodeep. Only the last few were still unaccounted for, probably in Jasperlode.",
+    false, {"part1_corpus.txt #91775 (cat 12; type 1)", "LoreForever quest:91775 (wiki: World of Warcraft: Forever; Marshal Dughan)"})
+q(91777, "Rare Books", "Elwynn Forest", 7, "paxton", 4,
+    "Two books were still missing from Brother Paxton's list, one on geomancy and one explaining arcane magic in simple words. The kobolds had likely taken them to the {p:Jasperlode Mine}.",
+    "If an apprentice kobold could summon an elemental from one of Paxton's books, there was no telling what its master at the {p:Jasperlode Mine} could do.",
+    "Brother Paxton had his library back. He gave away one of the weapons meant for the militia in thanks.",
+    "The last two books came home to {p:Northshire Abbey}, and Paxton said his library was saved.",
+    false, {"part1_corpus.txt #91777 (cat 12; type 1)"}).highlight = {
+    "Brother Paxton's last stolen books came back from the {p:Jasperlode Mine}, and his library was whole again.",
+    "The kobolds' thefts from the abbey ended with Paxton's library restored."}
+P.threads.fv_paxton = "Brother Paxton's stolen books"
+
+-- Elwynn at level 7-10: the enchanters' lesson, Eastvale's carters and smith,
+-- and two trophies. Givers from Lore Forever (Kitta Firewind, Ormin Pelford,
+-- Hagar Lowe); the watch and the trophy buyer stay unnamed.
+q(91753, "An Enchanting Lesson", "Elwynn Forest", 7, "elwynn", 2,
+    "Kitta Firewind held that theory alone did not make an enchanter. Kobolds had no schooling, yet bound simple enchantments into wax effigies.",
+    "The kobolds' wax effigies held crude enchantments, and taking them apart was the practical half of an enchanter's lesson.",
+    "Once the kobolds' charms were unpicked, Kitta said that theory and practice were two sides of a coin.",
+    "The enchantments in the kobolds' effigies were laid bare, and Kitta's lesson was learned.",
+    false, {"part1_corpus.txt #91753 (cat 12)", "LoreForever quest:91753 (wiki: World of Warcraft: Forever; Kitta Firewind at the Tower of Azora)"})
+q(91733, "Downstream", "Elwynn Forest", 10, "elwynn", 2,
+    "A wagon from the trading post had tipped over, and its supplies had washed downstream before anyone could catch them.",
+    "Murlocs and wolves roamed the riverbank where the lost supplies had come to rest, and their owner could not face them alone.",
+    "The supplies were pulled out of the river, and their owner apologized for the soaking.",
+    "The lost shipment came back from downstream, damp but whole.",
+    false, {"part1_corpus.txt #91733 (cat 12)", "LoreForever quest:91733 (wiki: World of Warcraft: Forever; Ormin Pelford near Eastvale)"})
+q(91732, "Good Steel", "Elwynn Forest", 10, "elwynn", 2,
+    "Good steel had been scarce since the war, and the tools around {p:Eastvale} had suffered for it. Miners had once used fine picks in the {p:Jasperlode Mine}, and some might still lie in its depths.",
+    "Hagar Lowe hoped to reuse the steel from the picks the miners had left in the depths of the {p:Jasperlode Mine}.",
+    "The old Jasperlode picks still shone. Hagar Lowe said they did not make them like that anymore.",
+    "Fine steel from the abandoned picks went to Hagar Lowe, to be made into new tools.",
+    false, {"LoreForever quest:91732 (wiki: World of Warcraft: Forever; Hagar Lowe at Eastvale Logging Camp)"})
+q(91740, "Croaky's Head", "Elwynn Forest", 10, "elwynn", 3,
+    "Croaky, a murloc who had terrorized the local roads, was dead, and the watch would want to know.",
+    "Croaky's head was proof that the murloc on Elwynn's roads would trouble no one again.",
+    "The watch had lost two of its members to the murlocs the week before. With their leader dead, the guards hoped to start pushing the murlocs out of Elwynn.",
+    "Croaky's head reached the watch, who hoped to drive the leaderless murlocs out of Elwynn.",
+    false, {"part1_corpus.txt #91740 (cat 12)"})
+q(91746, "Elmpaw's Head", "Elwynn Forest", 10, "elwynn", 2,
+    "Elmpaw's head made an impressive trophy, and a local hunter or skinner might want to hear how it was won.",
+    "Elmpaw was dead, and its head was worth something to the right buyer.",
+    "The buyer was impressed, and knew a few collectors who would pay well to hang Elmpaw's head over their mantles.",
+    "Elmpaw's head went to be prepared for some collector's mantle.",
+    false, {"part1_corpus.txt #91746 (cat 12)"})
+
+-- Teldrassil and Darnassus (cat 141 and 1657 where captured). Givers from Lore
+-- Forever where the text leaves them out: Tarindrella (#97977), Byancie in
+-- Dolanaar (#99050), Lynessa Duskblossom (#99053), Arynia Cloudsbreak (#98392).
+-- Eralya Leafshadow's fate is never told: #99073 ends with her at peace, not
+-- saved. 98391 (The Sisterhood of Elune) is a class referral and is left out.
+q(97979, "The Goddess Provides", "Teldrassil", 1, "teldrassil", 3,
+    "The Long Vigil that followed the defense of {p:Mount Hyjal} had ended, and the kaldorei had joined an Alliance of other peoples. In the boughs of {p:Teldrassil}, their young learned the gifts of Mother Moon.",
+    "Elune's grace could help a kaldorei strike true, or hide one as the moon may eclipse the sun. Every child of the stars was taught to know those gifts.",
+    "The gifts of Elune had been shown, with a promise that the goddess would never forsake those who used them well.",
+    "The lesson in Elune's gifts was done. Use them well, the teaching went, and Mother Moon would never forsake her children.",
+    false, {"LoreForever quest:97979 (wiki: World of Warcraft: Forever; a rite for young night elves)"})
+q(97977, "Nature's Call", "Teldrassil", 3, "gnarlpine", 4,
+    "The Gnarlpine furbolg had been allies of the night elves for ages, and Tarindrella would not believe they had turned so readily. Their abandoned camps on the western edge of {p:Shadowglen} might hold the answer.",
+    "Totems left in the Gnarlpine's abandoned homes bore engravings that might tell what had happened to the furbolg.",
+    "The engravings told of nightmares. The Gnarlpine had dreamed of being wiped out by a great shadow, and their fear had turned to rage against their old elven friends.",
+    "It was worse than Tarindrella had feared. A dread of some great shadow had driven the Gnarlpine mad, and that madness had turned on the kaldorei.",
+    false, {"LoreForever quest:97977 (wiki: World of Warcraft: Forever; Tarindrella in Shadowglen)"}).highlight = {
+    "The Gnarlpine's own totems told how nightmares of a great shadow had turned the furbolg against the night elves.",
+    "Engraved totems showed that the Gnarlpine had gone mad with fear before they turned on their allies."}
+P.threads.fv_gnarlpine = "the madness of the Gnarlpine"
+q(97236, "Fang of Githyiss", "Teldrassil", 5, "teldrassil", 2,
+    "Githyiss was a spider of great size, and a fresh fang from such a beast was quite a find. Someone in {p:Aldrassil} who studied spiders would want it.",
+    "The fang of Githyiss was a rare specimen, and a scholar of spiders in {p:Aldrassil} might put it to use.",
+    "The spider scholar in {p:Aldrassil} loved surprises, and said the fang would surely further the work.",
+    "Githyiss's fang went to {p:Aldrassil}, where it would help the study of the forest's spiders.")
+q(87288, "Soft Saber Pelts", "Teldrassil", 7, "teldrassil", 2,
+    "A trader in {p:Dolanaar} needed nightsaber pelts. The cats were beautiful, he said, but the local ones were aggressive.",
+    "The nightsabers near {p:Dolanaar} had grown aggressive enough to threaten the roads, and a local trader had use for their pelts.",
+    "The trader thought it a shame to fight such majestic animals, but the roads were safer, and the pelts would make blankets and shawls.",
+    "The pelts went to the trader in {p:Dolanaar}, for blankets and shawls, and the roads were a little safer.")
+P.threads.fv_teldrassil = "small tasks in the boughs of Teldrassil"
+
+-- The Oracle Tree's runners (#99046, #99047, #99050, #99073, in order) and the
+-- sentinel lost in Ban'ethil (#99053).
+q(99046, "The Lost Runner", "Teldrassil", 9, "oracle", 4,
+    "Sentinels ran the Oracle Tree's messages to the elders in {p:Darnassus}. The latest runner was long overdue, and it would have been Eralya Leafshadow's turn, though she was still in training.",
+    "The Oracle Tree's messages came at odd intervals, but none had been this late. Someone needed to find the runner on the road west to the {p:Oracle Glade}.",
+    "Eralya Leafshadow was found, gravely hurt, calling on Elune's grace.",
+    "The missing runner, Eralya, was alive but gravely wounded.",
+    false, {"LoreForever quest:99046 (wiki: World of Warcraft: Forever; the Oracle Tree's courier)"})
+q(99047, "Not Dead Yet", "Teldrassil", 9, "oracle", 5,
+    "Eralya and her sisters had been sent to the Oracle Tree for a message, and harpies had been everywhere. She begged for word to reach Byancie in {p:Dolanaar}.",
+    "Eralya, the wounded runner from the Oracle Tree, was coughing up blood. No one else was coming, and her only hope was Byancie in {p:Dolanaar}.",
+    "Byancie knew the foulness spreading through the forest had touched the harpies, and Eralya with them. She did not think the sentinel had long.",
+    "Word of Eralya reached {p:Dolanaar}. Byancie blamed the same foulness that had taken hold of the harpies, and meant to hurry.",
+    false, {"LoreForever quest:99047 (wiki: World of Warcraft: Forever; Eralya to Byancie in Dolanaar)"})
+q(99050, "The Great Tree Provides", "Teldrassil", 10, "oracle", 3,
+    "Byancie hoped a salve could hold Eralya's affliction back long enough for her to reach {p:Dolanaar}. Its core was the fronds of dewy lashers, found around {p:Lake Al'Ameth} and {p:Wellspring Lake}.",
+    "Teldrassil was a living home and would provide, Byancie said. Lasher fronds, an empty vial and some spring water were all the salve needed.",
+    "Byancie had her ingredients and set about making the salve. It would take only a moment.",
+    "The lasher fronds, vial and spring water reached Byancie, who began the salve at once.",
+    false, {"part1_corpus.txt #99050 (cat 141; 6 dewy lasher fronds)"})
+q(99073, "Easing Suffering", "Teldrassil", 10, "oracle", 5,
+    "Byancie's salve was ready. She did not know if it would cure Eralya, for the rot festered quickly, but it would at least ease her suffering.",
+    "The rot in Eralya grew stronger as it spread. Byancie's salve might not save her, but it could still ease her pain.",
+    "Eralya took the salve, and her breathing calmed. She might not survive, but she was at peace.",
+    "The salve reached Eralya in time to ease her. Whether she would live, no one could say.",
+    false, {"part1_corpus.txt #99073 (cat 141; take the salve to Eralya)"}).highlight = {
+    "Byancie's salve reached Eralya Leafshadow and eased her, though no one knew if she would survive.",
+    "The wounded runner from the Oracle Tree was at peace, if not saved."}
+q(99053, "Escaping Ban'ethil", "Teldrassil", 9, "oracle", 4,
+    "Lynessa Duskblossom had carried a message from the Oracle Tree to the sleeping druids, and found {p:Ban'ethil Barrow Den} overrun by furbolg. They had dragged her underground.",
+    "The Gnarlpine held a sentinel beneath {p:Ban'ethil Barrow Den}, and she feared she would be their next meal.",
+    "Lynessa escaped the Gnarlpine. She was one of the best sentinels, said a friend who gave thanks for her safety.",
+    "Lynessa Duskblossom was out of the barrow den and spared a dark fate.",
+    false, {"part1_corpus.txt #99053 (cat 141)", "LoreForever quest:99053 (wiki: World of Warcraft: Forever; Sentinel Lynessa Duskblossom)"})
+q(98392, "Darkness in the Glade", "Teldrassil", 12, "oracle", 5,
+    "The leather of the harpy belts from the {p:Oracle Glade} had a taint running through its fibers. Arynia Cloudsbreak suspected its source, but needed proof.",
+    "If the harpy leaders' necklaces carried the same darkness as their belts, Arynia Cloudsbreak would have her answer.",
+    "Foul green swirls ran through the gems of the harpies' amulets. It was fel moss corruption, and Arynia went to tell her superiors at once.",
+    "The harpy amulets confirmed it. Fel moss corruption was turning Teldrassil's own creatures against it, as reports from {p:Shadowglen} had warned.",
+    false, {"LoreForever quest:98392 (wiki: World of Warcraft: Forever; Sentinel Arynia Cloudsbreak)"})
+q(98398, "The Oracle Tree", "Teldrassil", 12, "oracle", 4,
+    "The Oracle Tree had shed a piece of its bark, and that usually meant it had a task it wished done.",
+    "Fallen bark from the Oracle Tree was a summons, and the sentinel at the glade thought greater tasks lay ahead.",
+    "A calm voice spoke from the fallen bark of the Oracle Tree.",
+    "The Oracle Tree's bark carried its message, gentle as a breeze through the leaves.")
+P.threads.fv_oracle = "the Oracle Tree and its sentinels"
+q(98067, "Eyes of the Sentinels", "Darnassus", 11, "teldrassil", 3,
+    "General Feathermoon made sure every sentinel had time to pray to Elune. Something was amiss in Teldrassil, and sentinel owls were to watch the city in the meantime.",
+    "Sentinel owls were needed at the tunnels below Cenarion Hold, the bank, the inn on the Craftsman's Terrace and the city gates of {p:Darnassus}.",
+    "The owls were in place around {p:Darnassus}. The sentinel found peace in the daily rituals, but was glad of a moment to reflect.",
+    "The city's watch was set, owl by owl, and the sentinel had a rare moment to pray.",
+    false, {"part1_corpus.txt #98067 (cat 1657; Sentinel Owls)", "LoreForever quest:98067 (wiki: World of Warcraft: Forever; Sentinel Dalia Sunblade)"})
+
+-- Darkshore and the new ship to Stormwind (#97894, #97914, #97926), Auberdine's
+-- bounty (#98025) and the guardian of Mathystra (#98028). Givers from Lore
+-- Forever: Borgus Steelhand, Elder Thundris Windweaver. "The recent tragedy"
+-- in Auberdine is never explained in the text, so it stays unexplained.
+q(97894, "Business in Auberdine", "Darkshore", 17, "auberdine", 2,
+    "Borgus Steelhand's brother Gorbold had joined a merchant stall in {p:Auberdine} weeks before, and Borgus had not heard from him since.",
+    "A new ship sailed from {p:Stormwind} to {p:Auberdine}, and Borgus Steelhand wanted someone aboard to check on his brother.",
+    "Gorbold Steelhand was glad his brother was looking out for him. Business in {p:Auberdine} had all but stopped since a recent tragedy, and he could use the help.",
+    "Gorbold was found at his stall in {p:Auberdine}, where trade had nearly stopped since a recent tragedy.",
+    false, {"LoreForever quest:97894 (wiki: World of Warcraft: Forever; Borgus Steelhand in Stormwind)"})
+q(97914, "Expanding Horizons", "Stormwind City", 17, "auberdine", 3,
+    "No one in {p:Darnassus} spoke of {p:Auberdine}, only of the cities the Sundering had taken. Its elder wanted the village's work known, and wrote to a man in {p:Stormwind} named Baros Alexston.",
+    "A new vessel linked {p:Auberdine} to {p:Stormwind}, bringing supplies to its shores, and the village elder sent a letter on its next voyage.",
+    "Baros Alexston opened the elder's letter with a smile, and it faded as he read.",
+    "The letter from {p:Auberdine} reached Baros Alexston in {p:Stormwind}, and his good humor did not last the reading.",
+    false, {"LoreForever quest:97914 (wiki: World of Warcraft: Forever; Thundris Windweaver)"})
+q(97926, "Making Do", "Darkshore", 17, "auberdine", 4,
+    "Baros Alexston wished he could help {p:Auberdine}, but {p:Stormwind}'s coffers were not what they had been, and what remained was spread thin. His reply went back across the sea.",
+    "Many in the Alliance went without, Baros said. His answer to the elder of {p:Auberdine} was not what the village hoped for, but it was all he could offer.",
+    "The elder took the news sadly. With neither {p:Stormwind} nor {p:Darnassus} coming to help, he said, {p:Auberdine}'s fate was its own to decide.",
+    "No aid would come to {p:Auberdine}. Its elder resolved that the village would decide its fate alone.",
+    false, {"part1_corpus.txt #97926 (cat 148)", "LoreForever quest:97926 (wiki: World of Warcraft: Forever; Elder Thundris Windweaver)"}).highlight = {
+    "Stormwind's answer reached Auberdine. No aid was coming, and the elder said the village's fate was its own.",
+    "Auberdine learned that neither Stormwind nor Darnassus would help it."}
+P.threads.fv_auberdine = "Auberdine's plea across the sea"
+q(98025, "WANTED: Jai'vhanel", "Darkshore", 13, "darkshore", 3,
+    "The village council of {p:Auberdine} offered a bounty on Jai'vhanel, an owl called Swordfeather, who had gone mad and attacked travelers on the road.",
+    "Jai'vhanel had last been seen north of the ruins of Ameth'Aran, and Sentinel Glynda Nal'Shea would pay for one of her jet black feathers.",
+    "Glynda Nal'Shea was sad there had been no other way. Jai'vhanel had long been a guardian of the area, and no one knew what had driven her mad.",
+    "The roads to {p:Auberdine} were safe again. Glynda grieved a little for the owl, who had once guarded them.",
+    false, {"LoreForever quest:98025 (wiki: World of Warcraft: Forever; Sentinel Glynda Nal'Shea)"})
+q(98028, "Baron Marinous", "Darkshore", 21, "darkshore", 5,
+    "All that remained of Baron Marinous, the elemental guardian of the ruins, was a globe of water, clouded by something that seemed to resist being seen.",
+    "Whatever had happened to the elemental and the ruins it guarded was still at work, and only Onu, the Ancient of Lore at the Grove of the Ancients, might know more.",
+    "Onu was as surprised as an ancient could be to hear of stairs leading down in Mathystra. He meant to confer with the others, and was glad it had been found before the naga or their cult allies.",
+    "The clouded globe reached Onu, who would take word of Mathystra's hidden stairs to the other ancients.",
+    false, {"part1_corpus.txt #98028 (cat 148; bring the globe to Onu)"})
+P.threads.fv_darkshore = "the troubles along the Darkshore coast"
+
+-- Redridge (cat 44). Givers from Lore Forever: Foreman Oslow, Marshal Marris,
+-- Deputy Feldon; the bounty names Magistrate Solomon itself.
+q(98407, "Show of Force", "Redridge Mountains", 17, "redridge", 2,
+    "The gnolls were camping close to the humans of {p:Redridge}, and seemed to respect strength above all else.",
+    "Slaying the worst of the gnolls, their thrashers, might remind the pack to stay in the hills where it belonged.",
+    "The thrashers' collars came back by the armful. It did not solve the gnoll problem, but they would think twice about pushing further.",
+    "The gnolls had been discouraged from pushing closer to {p:Lakeshire}, though they were not gone.",
+    false, {"part1_corpus.txt #98407 (cat 44; 5 collars)", "LoreForever quest:98407 (wiki: World of Warcraft: Forever; Deputy Feldon)"})
+q(98386, "Alther's Mill", "Redridge Mountains", 21, "redridge", 2,
+    "Orcs, gnolls and murlocs had already delayed the bridge at {p:Lakeshire}, and now tarantulas infested the lumber mill it depended on.",
+    "Foreman Oslow could not safely send his workers to Alther's Mill while spiders were snatching them up.",
+    "The mill was worse than Oslow had thought, but its tarantulas had been cleared.",
+    "Alther's Mill was clear of spiders, and lumber for the bridge could move again.",
+    false, {"part1_corpus.txt #98386 (cat 44; slay 12)", "LoreForever quest:98386 (wiki: World of Warcraft: Forever; Foreman Oslow)"})
+q(98387, "Blackrock Blockade", "Redridge Mountains", 21, "redridge", 4,
+    "The Blackrock orcs had pushed into Alliance land and now lived off the mountains. Marshal Marris called it a war of attrition, and meant to starve them.",
+    "The orc camps south of Stonewatch Keep held food and weapons, most of it taken from {p:Lakeshire} in the first place.",
+    "The Blackrock camps lost their axes and supplies. Cut off from their allies in the Burning Steppes, Marris said, the orcs could not hold their foothold for long.",
+    "The supplies taken from the Blackrock camps went back to {p:Lakeshire}, and the orcs were left hungrier and worse armed.",
+    false, {"part1_corpus.txt #98387 (cat 44; Battleworn Axes)", "LoreForever quest:98387 (wiki: World of Warcraft: Forever; Marshal Marris)"})
+q(95999, "WANTED: Incinerator Gar'im", "Redridge Mountains", 25, "redridge", 5,
+    "Incinerator Gar'im led an orc incursion in Render's Valley and was said to work with the Blackrock of Stonewatch Keep. Magistrate Solomon offered a reward for proof of his death.",
+    "Gar'im and his Shadowcasters were extremely dangerous, the bounty warned, and they held Render's Valley.",
+    "Gar'im had been preparing to strengthen the defenses of Stonewatch Keep. With him dead, Magistrate Solomon thought the keep might yet be retaken.",
+    "Incinerator Gar'im was dead, and {p:Lakeshire} began to hope of reclaiming Stonewatch Keep.",
+    false, {"part1_corpus.txt #95999 (cat 44; type 1)"}).highlight = {
+    "Incinerator Gar'im fell in Render's Valley, and Magistrate Solomon hoped to retake Stonewatch Keep.",
+    "The orc who was to fortify Stonewatch Keep was dead."}
+P.threads.fv_redridge = "the defense of Lakeshire"
+
+-- The Wetlands and the ships from Auberdine. Valstag Ironjaw gives #98197 (Lore
+-- Forever); #98461 leaves Tarrel's missing wife to the vanilla chain.
+q(98197, "Spoils of War", "Wetlands", 22, "menethil", 3,
+    "By Valstag Ironjaw's account, the Old Horde had first built {p:Menethil Harbor} to launch its fleet against Hillsbrad, with timber and iron stolen from Khaz Modan. Much of it still lay under the water.",
+    "With the Dragonmaw on the move, Valstag Ironjaw wanted the Old Horde's sunken materials raised to shore up the town's defenses.",
+    "The timber and iron came up a bit damp. Valstag was glad not to rely only on shipments from Theramore or {p:Auberdine} for once.",
+    "The Old Horde's sunken spoils went into {p:Menethil}'s defenses.",
+    false, {"LoreForever quest:98197 (wiki: World of Warcraft: Forever; Valstag Ironjaw in Menethil Harbor)"})
+q(98459, "A Lack of Virtue", "Wetlands", 21, "menethil", 2,
+    "Tom Half-fish called Bart Tidewater a cheapskate and a cheat at poker, no real captain but an actor who had won the Maiden's Virtue at cards. He sent a parcel to {p:Menethil Harbor}.",
+    "Old Half-fish had a gift for Bart Tidewater, captain of the Maiden's Virtue in {p:Menethil Harbor}, and wanted him told who it was from.",
+    "Bart unwrapped the gift and swore. Half-fish was the cheat, he said, thrown out of their poker circle. Then he apologized and welcomed the courier to {p:Menethil Harbor}.",
+    "Half-fish's gift reached Bart Tidewater, who answered the insult with one of his own before welcoming the messenger aboard the finest ship in the Great Sea.",
+    false, {"LoreForever quest:98459 (wiki: World of Warcraft: Forever; Tom Half-fish to Bart Tidewater)"})
+q(98461, "Unrequited Love", "Wetlands", 21, "menethil", 3,
+    "Hollee in {p:Auberdine} had studied with Tarrel Rockweaver, who went on to the Wetlands after they finished school. She wanted to know he was all right, and sent him a note.",
+    "Hollee had a note for her old classmate Tarrel, somewhere near {p:Menethil Harbor}. She mentioned his wife, Merrin, only as an afterthought.",
+    "Tarrel read Hollee's note with pity. He was happily married, and would not reply. His wife was missing, and he had more pressing worries.",
+    "Tarrel decided not to answer Hollee's note. He did not know how to let her down, and his wife Merrin was missing.",
+    false, {"LoreForever quest:98461 (wiki: World of Warcraft: Forever; Hollee to Tarrel Rockweaver)"})
+P.threads.fv_menethil = "the harbor at Menethil"
+
+-- Loch Modan (cat 38).
+q(86585, "Banner of the Fallen", "Loch Modan", 17, "lochmodan", 4,
+    "A mountaineer lay dead in trogg country, killed by a blow to the head, and the standard of Ironforge she carried had been trampled.",
+    "The trogg that killed the mountaineer was likely still near, and raising her banner of Ironforge might call it out.",
+    "The fallen mountaineer was Ylva. She had gone looking for a patrol that never came back, set on showing the troggs that Ironforge would never fall. Her banner would be cleaned and displayed.",
+    "Ylva's fate was known at last. Her banner went back to be cleaned and hung, and her weapon was passed on to fight the troggs.",
+    false, {"part1_corpus.txt #86585 (cat 38; raise the standard, call out the trogg)"})
+q(86614, "Silver of the Waves", "Loch Modan", 20, "lochmodan", 2,
+    "Among the rusty hooks and broken spools in some fishing debris lay an ornate silver hair clip marked K.D.",
+    "A silver hair clip, corroded but finely made, had turned up in the fishing debris, and someone had surely missed it.",
+    "The owner of the hair clip had thought it lost for good, and was sure it would shine again with a little work.",
+    "The silver clip went back to its owner, who was busy with chores but glad of it.",
+    false, {"part1_corpus.txt #86614 (cat 38)"})
+q(86667, "Snowbound", "Loch Modan", 20, "lochmodan", 3,
+    "Grenhild's old mentor Norric had sent a minor elemental asking for a jar of snow. She was busy learning the local elementals, and South Gate Pass had snow all year.",
+    "Norric needed snow for his shamanic workings, and his student Grenhild had learned long ago not to question his ways.",
+    "Norric was delighted that Grenhild had sent his snow, though he had hoped she might come herself.",
+    "The jar of snow reached Norric. He wished his old student had brought it in person.",
+    false, {"part1_corpus.txt #86667 (cat 38)", "LoreForever quest:86667 (wiki: World of Warcraft: Forever; Grenhild and Norric Lochthane)"})
+P.threads.fv_lochmodan = "small troubles around Loch Modan"
+
+-- Stormwind (cat 1519): Roy Lewells's reading club and the library (#97234,
+-- #97237), and old Gray at the harbor (#95065, Gilbert Gray per Lore Forever).
+q(97234, "Reading Room", "Stormwind City", 18, "stormwind", 2,
+    "Roy Lewells's reading club was trading some of its less popular works to the {p:Stormwind} library for more modern writing.",
+    "The reading club had a wrapped parcel and a list of titles for the librarian, with refreshments promised for the courier.",
+    "The librarian recognized Roy's way of wrapping. The club always returned what it borrowed in good condition, however provoking the words.",
+    "The librarian took the parcel and agreed to the exchange.",
+    false, {"part1_corpus.txt #97234 (cat 1519; Roy Lewells)"})
+q(97237, "Shelf Picked", "Stormwind City", 18, "stormwind", 2,
+    "Every title on Roy Lewells's list was in the library, but the librarian would not fetch them. They had to be found on the shelves.",
+    "The library had all of the reading club's selections, and a courier could carry them back to Roy on the club's account.",
+    "Roy was delighted with the new titles, some of which smelled exotic, and looked forward to lively talk about them in the cellar after hours.",
+    "The reading club had its new material, and Roy kept his promise of refreshments on the house.",
+    false, {"part1_corpus.txt #97237 (cat 1519)"})
+q(95065, "Fishin' Time", "Stormwind City", 12, "stormwind", 2,
+    "Old Gray was fishing in {p:Stormwind} and the fish were biting, but he was down to his last bait. Catherine Leland sold fishing goods along the canals.",
+    "Old Gray, fishing the harbor, wanted supplies from Catherine Leland's shop, west of the Trade District.",
+    "Gray had caught a big one with his last bait, and shared a few fish for keeping him in business.",
+    "The fresh bait reached old Gray in time, and he handed over a few fish for the road.",
+    false, {"LoreForever quest:95065 (wiki: World of Warcraft: Forever; Gilbert Gray)"})
+P.threads.fv_stormwind = "errands around Stormwind"
+
+-- More Horde starter-zone stages (cat 14 Durotar, 85 Tirisfal, 130 Silverpine,
+-- 1638 Thunder Bluff) and the Alliance half of Chol'aruk (#97005, cat 17; the
+-- veteran is Bainham per Lore Forever). Rezlak's orb is never shown charged,
+-- so the outcome stops at his hope.
+q(97005, "Chol'aruk the Ravener", "The Barrens", 21, "durotar", 4,
+    "The Razormane spoke of Chol'aruk the Ravener, a beast in a cave on Thorn Hill said to swallow an orc whole. An Alliance veteran believed the tales, because he had fought one like it.",
+    "It had taken six fighters to bring down a beast like Chol'aruk, and all but two had died. Far from Alliance lands, the veteran still meant to honor his fallen brothers.",
+    "Chol'aruk's head reached the veteran. His dead men would rest easier, he said, with one less of these monsters in the world.",
+    "Chol'aruk was dead. For the men he had lost, the Alliance veteran said, there was one less monster in the world.",
+    true, {"part1_corpus.txt #97005 (cat 17; type 1)", "LoreForever quest:97005 (wiki: World of Warcraft: Forever; Bainham)"})
+q(97281, "A Simmering Storm", "Durotar", 11, "durotar", 2,
+    "A harpy had been carrying a dull orb with a dark mist swirling inside it, and small sparks of lightning ran through it.",
+    "The harpy's orb hummed with a faint current, and Rezlak the goblin might want to know what it was.",
+    "Rezlak loved the orb, and it reminded him of something his old boss Gazlowe used to say.",
+    "The stormy orb went to Rezlak, who was delighted with it.",
+    false, {"part1_corpus.txt #97281 (cat 14; the Dull Stormy Orb to Rezlak)", "LoreForever quest:97281 (wiki: World of Warcraft: Forever; Dustwind harpies of Drygulch Ravine)"})
+q(97282, "Stormy Potential", "Durotar", 11, "durotar", 3,
+    "Rezlak thought the harpies' orb was only drained, and that the charged organs of the thunder lizards in the gorge to the west could fill it again.",
+    "Gazlowe had taught Rezlak to seize an opportunity when it came knocking. The goblin meant to recharge the orb, if someone brought him thunder lizard organs.",
+    "Rezlak had his organs and hoped to charge the orb with them. He bet it would make the harpies think twice about attacking his caravan.",
+    "The thunder lizard organs reached Rezlak. Whether the orb would charge, he could only hope.",
+    false, {"part1_corpus.txt #97282 (cat 14; 5 organs)"})
+q(95328, "Whispering Horror Residue", "Tirisfal Glades", 10, "tirisfal", 2,
+    "The remains of a creature from beneath the Whispering Forest were still squirming. Someone in the {p:Undercity} might have a use for them.",
+    "A beast from under the Whispering Forest had left a residue behind, and the {p:Undercity} studied stranger things.",
+    "The residue went to a scholar in the {p:Undercity} who knew the Whispering Forest was touched by the void, and welcomed the chance to explore the mysteries of shadow.",
+    "The squirming remains became a specimen in the {p:Undercity}, paid for gladly.",
+    false, {"part1_corpus.txt #95328 (cat 85)", "LoreForever quest:95328 (wiki: World of Warcraft: Forever; Father Lankester)"})
+P.threads.fv_tirisfal = "strange finds around Tirisfal"
+q(91920, "Wild Eyes", "Silverpine Forest", 11, "silverpine", 2,
+    "A Deathstalker had taken Apothecary Renferrel's potion and felt no better, and wondered if murloc eyes from Lake Lordamere might work where hearts had not.",
+    "Renferrel was obsessed with hearts lately, and an ailing Deathstalker risked his temper by suggesting murloc eyes instead.",
+    "His potion had failed, Renferrel said, because it had been brewed with too few hearts. Still, he took the eyes, and offered some of his own hearts to restore the Deathstalker's strength.",
+    "The murloc eyes reached Renferrel, who had not thought of using murloc parts until then.",
+    false, {"part1_corpus.txt #91920 (cat 130; 3 eyes)"})
+P.threads.fv_silverpine = "the Sepulcher's ailing Deathstalker"
+q(97485, "Traditions of the Bluff", "Thunder Bluff", 10, "bluff", 3,
+    "The tauren had a tradition of scattering incense to the winds. Its makings, herbs, cedar, sinew thread and ceremonial flint, came from the traders of {p:Thunder Bluff}.",
+    "Incense was scattered off the south cliff of Hunter's Rise for many reasons, to ask the Earthmother's watch over someone or to bless a hunt.",
+    "The incense was crafted and spread from the cliffs of Hunter's Rise, in the old way of the tauren.",
+    "The incense went to the winds off Hunter's Rise. Its makings could always be bought again, for any other day worth giving thanks.",
+    false, {"part1_corpus.txt #97485 (cat 1638; Nida, Nata, Mahu and Naal)"})
+P.threads.fv_bluff = "the traditions of Thunder Bluff"
+
 -- Alliance-side stages (the rest are Horde or both); the test renders them as such.
-P.alliance = {92415, 95161, 95189, 95195, 96408, 96392, 96390, 96391, 96393, 96394, 96403, 93461, 92596, 94413, 92701, 92699, 92834, 92840, 92741, 94493, 98021, 92742, 92744, 92745, 92747, 92748, 92749, 92750, 92751, 92752, 92753, 92819, 92909, 92910, 92911, 96139, 96138, 98447, 98190, 98191, 98322, 98319, 98323, 98321, 98326, 99158, 99159, 99160, 99161, 99162}
+P.alliance = {92415, 95161, 95189, 95195, 96408, 96392, 96390, 96391, 96393, 96394, 96403, 93461, 92596, 94413, 92701, 92699, 92834, 92840, 92741, 94493, 98021, 92742, 92744, 92745, 92747, 92748, 92749, 92750, 92751, 92752, 92753, 92819, 92909, 92910, 92911, 96139, 96138, 98447, 98190, 98191, 98322, 98319, 98323, 98321, 98326, 99158, 99159, 99160, 99161, 99162,
+    97277, 99127, 99128, 99129, 99130, 99131, 99143,
+    91741, 92124, 91743, 91745, 91752, 91758, 91772, 91775, 91777, 91753, 91733, 91732, 91740, 91746,
+    97979, 97977, 97236, 87288, 99046, 99047, 99050, 99073, 99053, 98392, 98398, 98067,
+    97894, 97914, 97926, 98025, 98028, 98407, 98386, 98387, 95999, 98197, 98459, 98461, 86585, 86614, 86667, 97234, 97237, 95065,
+    97005}
 
 ---------------------------------------------------------------- registration
 -- Drop any stage or title another pack already owns (it loads earlier and

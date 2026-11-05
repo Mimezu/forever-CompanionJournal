@@ -45,7 +45,8 @@ local function prose(lines, label, single)
         check(plain:match("[%.!]$") ~= nil, label .. " incomplete sentence: " .. line)
         check(not plain:find(":", 1, true) and not plain:find("?", 1, true), label .. " colon or question: " .. line)
         check(not line:find("<", 1, true) and not line:find("$", 1, true), label .. " raw quest markup: " .. line)
-        for word in plain:lower():gmatch("%a+") do
+        -- (a marked place such as {p:Fargodeep Mine} is a name, not a pronoun)
+        for word in line:gsub("{p:[^}]*}", ""):gsub("{%a:([^}]*)}", "%1"):lower():gmatch("%a+") do
             check(not pronouns[word], label .. " player/narrator pronoun '" .. word .. "': " .. line)
         end
         for _, word in ipairs(META) do

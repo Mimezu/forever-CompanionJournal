@@ -61,7 +61,9 @@ for _, journey in ipairs(journeys) do
                 for _, line in ipairs(q[kind] or {}) do
                     local low = " " .. line:lower()
                     for _, word in ipairs(BANNED) do check(not has(low, word), id .. " uses '" .. word .. "': " .. line) end
-                    check(not line:find(":", 1, true) or line:find("{p:", 1, true) or line:find("SI:7", 1, true), "colon in " .. id)
+                    -- (markup such as {p:Stormwind} or {n:Bishop Farthing} is not a colon in the prose)
+                    local plain = line:gsub("{%a:([^}]*)}", "%1")
+                    check(not plain:find(":", 1, true) or plain:find("SI:7", 1, true), "colon in " .. id)
                     check(not line:find("?", 1, true), "question in " .. id)
                     check(not line:find("%f[%a][Yy]ou%f[%A]") and not line:find("%f[%a][Ww]e%f[%A]")
                         and not line:find("%f[%a]I%f[%A]") and not line:find("%f[%a][Oo]ur%f[%A]"), "player pronoun in " .. id .. ": " .. line)

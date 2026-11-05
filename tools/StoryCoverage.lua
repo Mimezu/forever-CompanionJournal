@@ -1,6 +1,6 @@
 -- Run from the client root; optional argument "full" lists every precise stage.
 local root, A = "Interface/AddOns/CompanionJournal/", {}
-for _, file in ipairs({"LoreData.lua", "Lore.lua", "LoreHordeStories.lua", "LoreAllianceStories.lua", "LoreWorldStories.lua", "LoreClassStories.lua", "LoreNotes.lua"}) do
+for _, file in ipairs({"LoreData.lua", "Lore.lua", "LoreHordeStories.lua", "LoreAllianceStories.lua", "LoreWorldStories.lua", "LoreClassStories.lua", "LoreForeverStories.lua", "LoreNotes.lua"}) do
     assert(loadfile(root .. file))("CompanionJournal", A)
 end
 local function count(t) local n=0; for _ in pairs(t or {}) do n=n+1 end; return n end
