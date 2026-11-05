@@ -556,6 +556,19 @@ function A.JournalAlive()
     local holder = sessions[offer.key] and Holder(offer.key)
     if holder then A.JournalAdd(holder, {k = "rez", w = "them"}) end
 end
+-- Bringing a companion back from death (only with "Record more moments" on):
+-- your resurrection spell landing on someone you travel with. Their journal
+-- keeps it as a rez by you ("rez", w = "you"); theirs of you stay as before.
+local REZ_SPELLS = {["Resurrection"] = true, ["Redemption"] = true, ["Ancestral Spirit"] = true, ["Rebirth"] = true}
+function A.JournalRaised(spellID)
+    if not A.JournalOn() or not next(sessions) or not (A.MoreMomentsOn and A.MoreMomentsOn()) then return end
+    local spellName = (C_Spell and C_Spell.GetSpellName and Text(Ask(C_Spell.GetSpellName, spellID)))
+        or (GetSpellInfo and Text(Ask(GetSpellInfo, spellID)))
+    if not spellName or not REZ_SPELLS[spellName] then return end
+    local key = A.PersonKey and A.PersonKey(Text(Ask(UnitName, "target")))
+    local holder = key and sessions[key] and Holder(key)
+    if holder then A.JournalAdd(holder, {k = "rez", w = "you"}) end
+end
 function A.JournalEncounterStart(name)
     encounter, encounterFallen = Text(name), false
 end
@@ -760,6 +773,9 @@ events:SetScript("OnEvent", function(_, event, ...)
         if Public(level) and type(level) == "number" then A.JournalMyLevel(level) end
     elseif event == "RESURRECT_REQUEST" then
         A.JournalResurrectOffer((...))
+    elseif event == "UNIT_SPELLCAST_SUCCEEDED" then
+        local unit, _, spellID = ...
+        if unit == "player" and Public(spellID) then A.JournalRaised(spellID) end
     elseif event == "PLAYER_ALIVE" or event == "PLAYER_UNGHOST" then
         A.JournalAlive()
     elseif event == "PLAYER_UPDATE_RESTING" then
@@ -790,10 +806,14 @@ end)
 function A.UpdateJournalEvents()
     if A.JournalOn() then
         for _, event in ipairs(EVENTS) do pcall(events.RegisterEvent, events, event) end
+        -- (your own casts only; the handler asks for "Record more moments" itself)
+        if events.RegisterUnitEvent then pcall(events.RegisterUnitEvent, events, "UNIT_SPELLCAST_SUCCEEDED", "player")
+        else pcall(events.RegisterEvent, events, "UNIT_SPELLCAST_SUCCEEDED") end
         PruneQuestRecords(Now())
         A.JournalGroupChanged()
     else
         for _, event in ipairs(EVENTS) do pcall(events.UnregisterEvent, events, event) end
+        pcall(events.UnregisterEvent, events, "UNIT_SPELLCAST_SUCCEEDED")
         local now = Now()
         for key, entry in pairs(sessions) do CloseSession(key, entry, now) end
         sessions = {}

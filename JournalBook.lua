@@ -515,6 +515,8 @@ function A.JournalEventText(name, event, v)
     elseif k == "wipe" then
         return "The fight against " .. P(event.d or "the foe") .. " was lost."
     elseif k == "rez" then
+        -- (w = "you": your spell brought them back)
+        if event.w == "you" then return v.You .. " brought " .. N(name) .. " back from death." end
         return N(event.by or name) .. " brought " .. v.Ime .. " back from death."
     elseif k == "rest" then
         return v.You .. (v.You == "I" and " rested at " or " rested together at ") .. P(event.d or event.z or "an inn") .. "."

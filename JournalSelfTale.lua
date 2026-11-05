@@ -747,7 +747,7 @@ function ST.Tell(person, days, brief, retell)
             local startWith = {}
             local companionsReopen = {} -- (new people among those you set out with: introduced in the stretch)
             -- The first zone beyond home (where your people begin, and their capital): once a book.
-            local function LeftHome(zone)
+            local function LeftHome(zone, crossed)
                 if history.leftHome or not W.leaveHomeFirst or not W.leaveHomeFirst[race] or (person.startLevel or 99) > 10 then return end
                 local start = L and L.starts and L.starts[race]
                 if not start or zone == start or CITY_ZONE[zone] or (CITY_ZONE[zone] == nil and false) then return end
@@ -756,7 +756,26 @@ function ST.Tell(person, days, brief, retell)
                 -- Durotar at level six never "left Mulgore behind")
                 if not history.zones[start] and not history.originSaid then return end
                 history.leftHome = true
-                Say(teller:Say("leaveHomeFirst", Fresh(W.leaveHomeFirst[race]), {}), true)
+                -- (a crossing the same day: the sea lies between)
+                local pool = (crossed and W.leaveHomeFirstSea and W.leaveHomeFirstSea[race]) or Fresh(W.leaveHomeFirst[race])
+                Say(teller:Say("leaveHomeFirst", pool, {}), true)
+            end
+            -- A first visit, told by what the record holds: who came with you, your level against the
+            -- country's, where you came from. The shapes that apply take turns with the plain line
+            -- (a counter, not a draw). Returns the shape, or nil for the plain line.
+            local function FirstVisitShape(s, withNames, fromZone)
+                local shapes = {}
+                if withNames then shapes[#shapes + 1] = "with" end
+                local range = L and L.ZoneLevels and L.ZoneLevels(s.zone)
+                local danger = Danger(s.level, range and range[1], range and range[2])
+                if danger == "daring" or danger == "reckless" then shapes[#shapes + 1] = "young"
+                elseif danger == "easy" or danger == "revisit" then shapes[#shapes + 1] = "late" end
+                if fromZone then shapes[#shapes + 1] = "from" end
+                history.firstVisitN = (history.firstVisitN or 0) + 1
+                if #shapes == 0 then return nil end
+                local pick = history.firstVisitN % (#shapes + 1)
+                if pick == 0 then return nil end
+                return shapes[pick]
             end
             -- (one person new to the book, there from the start: the opening can say who they are)
             local openNew, openNewSaid
@@ -915,7 +934,25 @@ function ST.Tell(person, days, brief, retell)
                 local late = (person.startLevel or 1) >= 10 and W.openFirstLate
                 if late then
                     tokens.level = tostring(first.level or person.startLevel)
-                    Say(teller:Say("openFirstLate", (atHome and W.openFirstLate.home) or W.openFirstLate[race] or W.openFirstLate.other, tokens), true, "open")
+                    -- (by what the record holds: who was there from the start, a city, the top of the climb)
+                    local key, pool = "openFirstLate", (atHome and W.openFirstLate.home) or W.openFirstLate[race] or W.openFirstLate.other
+                    local bondInfo = bondAllDay and Companion(bondAllDay.key)
+                    if bondInfo and W.openFirstLateBond then
+                        tokens.names = N(bondAllDay.name)
+                        tokens.bond = BOND_WORDS[bondInfo.bond] and BOND_WORDS[bondInfo.bond][bondInfo.pronouns or "they"] or "my friend"
+                        key, pool = "openFirstLateBond", W.openFirstLateBond
+                        history.companions[bondAllDay.name] = true
+                        history.introduced = history.introduced or {}
+                        history.introduced[N(bondAllDay.name)] = index
+                    elseif #startWith > 0 and W.openFirstLateWith then
+                        tokens.names = List(startWith)
+                        key, pool = "openFirstLateWith", W.openFirstLateWith
+                    elseif (first.level or person.startLevel or 0) >= 60 and W.openFirstLateSixty then
+                        key, pool = "openFirstLateSixty", W.openFirstLateSixty
+                    elseif CITY_ZONE[first.zone] and not atHome and W.openFirstLateCity then
+                        key, pool = "openFirstLateCity", W.openFirstLateCity
+                    end
+                    Say(teller:Say(key, pool, tokens), true, "open")
                 else
                     Say(teller:Say("openFirst", firstLines, tokens), true, "open")
                 end
@@ -933,8 +970,25 @@ function ST.Tell(person, days, brief, retell)
                     Say(teller:Say(key, key == "openStill" and Bare(pool) or pool, tokens), false, "open")
                 end
             elseif firstVisit then
-                Say(SayOpen("openNew", W.openNew), true, "open")
-                LeftHome(first.zone)
+                local names = (#startWith > 0 and List(startWith)) or openNew or nil
+                local shape = FirstVisitShape(first, names, nil)
+                if shape == "with" and W.openNewWith then
+                    -- ("Brannoc, a dwarf warrior, and I": an introduction closes its comma before "and")
+                    tokens.names = names:find(", ", 1, true) and (names .. ",") or names
+                    local line = SayOpen("openNewWith", W.openNewWith)
+                    if line then line = line:gsub(",,", ","):gsub(",%.", ".") end
+                    Say(line, true, "open")
+                    if names == openNew then openNewSaid = true end
+                elseif (shape == "young" and W.openNewYoung) or (shape == "late" and W.openNewLate) then
+                    tokens.level = tostring(first.level or person.startLevel or "")
+                    if shape == "young" then history.perils[first.zone] = true end
+                    Say(SayOpen(shape == "young" and "openNewYoung" or "openNewLate", shape == "young" and W.openNewYoung or W.openNewLate), true, "open")
+                else
+                    Say(SayOpen("openNew", W.openNew), true, "open")
+                end
+                local crossed = crossing ~= nil
+                for _, e in ipairs(first.events) do if e.k == "voyage" and e.d ~= "hearth" and e.d ~= "portal" then crossed = true end end
+                LeftHome(first.zone, crossed)
                 DescribeZone(Say, first.zone, firstTowns, f.dungeons > 0)
                 Title(35, Clean(first.zone))
             elseif lastSeen and dayNumber - lastSeen >= 14 and not (gap and gap >= 28) then
@@ -977,6 +1031,18 @@ function ST.Tell(person, days, brief, retell)
                 -- journey. Establish where the captured adventure picks up.
                 sceneAt = 1
                 Say(teller:Say("originBridge", W.originBridge, {zoneD = Place(first.zone), We = together0 and "We" or "I", we = together0 and "we" or "I", were = together0 and "were" or "was"}), true, "open")
+            end
+            -- A character who plays mostly with one companion (ST.Profile, emphasis only): a day on
+            -- their own right after days together is news, now and then.
+            if profile.paired and W.aloneDay and (index - (history.aloneSaid or -99)) >= 8 and history.companionLast[profile.paired]
+                and dayNumber - history.companionLast[profile.paired] <= 3 and (first.e - first.t) >= 3600 then
+                local anyWith = false
+                for _, s2 in ipairs(stretches) do if #s2.with > 0 then anyWith = true end end
+                if not anyWith then
+                    history.aloneSaid = index
+                    tokens.names = N(profile.paired)
+                    Say(teller:Say("aloneDay", W.aloneDay, tokens), false, "open")
+                end
             end
             -- Back after weeks where a foe killed you, when the opening did not say so (once a zone).
             do
@@ -1158,9 +1224,35 @@ function ST.Tell(person, days, brief, retell)
                         DescribeZone(Say, s.zone, nil, f.dungeons > 0)
                     elseif visitFirst then
                         st.zoneLore = ZoneLore(s.zone)
-                        -- (the plain line: the zone's own words follow)
-                        Say(teller:Say("firstZone", Fresh(W.firstZone), st), true, "first")
-                        LeftHome(s.zone)
+                        -- (the company that came in with you, when the book knows them already)
+                        local withNames, allKnown = {}, true
+                        for _, w in ipairs(s.with) do
+                            if w.seconds >= (s.e - s.t) * 0.5 then
+                                if history.companions[w.name] then withNames[#withNames + 1] = N(w.name) else allKnown = false end
+                            end
+                        end
+                        local names = (allKnown and #withNames > 0) and List(withNames) or nil
+                        local shape = FirstVisitShape(s, names, previous and previous.zone ~= s.zone and previous.zone or nil)
+                        if shape == "with" and W.firstZoneWith then
+                            st.names, st.were = names, #withNames > 1 and "were" or "was"
+                            Say(teller:Say("firstZoneWith", W.firstZoneWith, st), true, "first")
+                            for _, n3 in ipairs(withNames) do companionsSaid[n3] = true end
+                        elseif (shape == "young" and W.firstZoneYoung) or (shape == "late" and W.firstZoneLate) then
+                            st.level = tostring(s.level or "")
+                            if shape == "young" then history.perils[s.zone] = true end
+                            Say(teller:Say(shape == "young" and "firstZoneYoung" or "firstZoneLate", shape == "young" and W.firstZoneYoung or W.firstZoneLate, st), true, "first")
+                        elseif shape == "from" and W.firstZoneFrom then
+                            st.from = Place(previous.zone)
+                            Say(teller:Say("firstZoneFrom", W.firstZoneFrom, st), true, "first")
+                        else
+                            -- (the plain line: the zone's own words follow)
+                            Say(teller:Say("firstZone", Fresh(W.firstZone), st), true, "first")
+                        end
+                        local crossed = false
+                        for _, list in ipairs({s.events, previous and previous.events or {}}) do
+                            for _, e in ipairs(list) do if e.k == "voyage" and e.d ~= "hearth" and e.d ~= "portal" then crossed = true end end
+                        end
+                        LeftHome(s.zone, crossed)
                         -- (not the town this stretch comes to: its own line names it)
                         local towns = {}
                         for _, x in ipairs(s.events) do if x.k == "town" and x.d then towns[#towns + 1] = (Clean(x.d):gsub(" City$", "")) end end
@@ -2356,6 +2448,13 @@ function ST.Tell(person, days, brief, retell)
                     -- The record places this work outside the just-narrated
                     -- dungeon. Establish that fact, without inventing a return.
                     local line = out[start + 1]
+                    -- (a line that opens on its own place, "At Aerie Peak, ...", takes no second place in front:
+                    -- the arrival is said first, then the line as written)
+                    if A.JournalTale and A.JournalTale.PlaceLed and A.JournalTale.PlaceLed(line) then
+                        out[start + 1] = ((st and st.We) or "I") .. " had come to " .. Place(zone) .. " by then. " .. line
+                        questPlaces[dungeon] = zone
+                        return
+                    end
                     local lowerLead = {The = "the", A = "a", An = "an", We = "we", Our = "our", It = "it", Other = "other", Reports = "reports", Four = "four", Seeking = "seeking", Beyond = "beyond",
                         There = "there", This = "this", That = "that", They = "they", Their = "their",
                         At = "at", In = "in", Before = "before", After = "after", With = "with", From = "from"}

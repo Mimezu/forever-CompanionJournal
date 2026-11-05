@@ -2468,6 +2468,50 @@ for race, lines in pairs(late) do
     Extend(W.openFirstLate[race], lines)
 end
 
+-- First visits told by what the record holds (editor2, 2026-11-05): who came with you, your
+-- level against the country's, and where you came from. The engine turns through the shapes
+-- that apply (a counter, not a draw), the plain line taking its turn among them.
+W.openNewWith = {"{When}, {names} and I came to {zoneD}, my first time there.", "{When}, I came to {zoneD} for the first time, with {names}."}
+W.openNewWithBare = {"{names} and I came to {zoneD}, my first time there.", "I came to {zoneD} for the first time, with {names}."}
+W.openNewYoung = {"{When}, I came to {zoneD} at level {level}, young for the place.", "{When}, I came to {zoneD} early, at level {level}."}
+W.openNewYoungBare = {"I came to {zoneD} at level {level}, young for the place.", "I came to {zoneD} early, at level {level}."}
+W.openNewLate = {"{When}, I came late to {zoneD}, at level {level}, with its dangers below me.",
+    "{When}, at level {level}, I saw {zoneD} for the first time, long after it could have troubled me."}
+W.openNewLateBare = {"I came late to {zoneD}, at level {level}, with its dangers below me.",
+    "At level {level}, I saw {zoneD} for the first time, long after it could have troubled me."}
+W.firstZoneWith = {"{names} and I came into {zoneD}, where I had never been.", "It was my first time in {zoneD}, and {names} {were} with me."}
+W.firstZoneYoung = {"I came into {zoneD} at level {level}, young for the place.", "{zoneD} was new to me, and at level {level} I was early for it."}
+W.firstZoneLate = {"I came late to {zoneD}, at level {level}, with its dangers below me.",
+    "At level {level}, I saw {zoneD} for the first time, long after it could have troubled me."}
+W.firstZoneFrom = {"After {from} came {zoneD}, new to me.", "{from} gave way to {zoneD}, where I had never been."}
+-- The home left behind, when the sea lies between (a crossing the same day).
+W.leaveHomeFirstSea = {
+    Scourge = {"The sea lay between me and Tirisfal now."},
+    Human = {"Elwynn was across the sea now."},
+    Orc = {"The sea lay between me and Durotar now."},
+    Troll = {"Durotar and the huts of Sen'jin were across the sea now."},
+    Tauren = {"Mulgore was across the sea now."},
+    Dwarf = {"The snows of Dun Morogh were across the sea now."},
+    Gnome = {"The snows of Dun Morogh were across the sea now."},
+    NightElf = {"Teldrassil was across the water now."},
+}
+Extend(W.leaveHomeFirst.Scourge, {"Tirisfal and its graves were behind me now."})
+Extend(W.leaveHomeFirst.Human, {"The farms of Elwynn were behind me now."})
+Extend(W.leaveHomeFirst.Orc, {"The red rocks of Durotar were behind me now."})
+Extend(W.leaveHomeFirst.Troll, {"Sen'jin and its shore were behind me now."})
+Extend(W.leaveHomeFirst.Tauren, {"The plains of Mulgore were behind me now."})
+Extend(W.leaveHomeFirst.Dwarf, {"Dun Morogh and its snows were behind me now."})
+Extend(W.leaveHomeFirst.Gnome, {"Dun Morogh and its snows were behind me now."})
+Extend(W.leaveHomeFirst.NightElf, {"The great tree was behind me now."})
+-- A book that begins in the middle of a life: with whom, where, and how high.
+W.openFirstLateBond = {"{names}, {bond}, was with me when I set out from {zoneE} at level {level}.",
+    "I was level {level}, with {names}, {bond}, at my side, when I set out from {zoneE}."}
+W.openFirstLateWith = {"I was level {level} when {names} and I set out from {zoneE}.", "{names} and I set out from {zoneE}, I at level {level}."}
+W.openFirstLateCity = {"I was level {level}, and in {zoneD}, when I set out.", "At level {level}, {zoneD} was where I set out from."}
+W.openFirstLateSixty = {"I was level sixty when I set out from {zoneE}, with nothing left to climb.", "At level sixty, I set out from {zoneE}."}
+-- A character who plays mostly with one companion: a day on their own, now and then, is news ({names}, {part}).
+W.aloneDay = {"I was on my own that {part}.", "For once, I was out alone.", "{names} was not with me that day."}
+
 -- W.killMany -- EXTEND (st + {bosses}). "...fell, one after the other." is in eleven of the fifteen books,
 -- twenty-six times. Two more shapes.
 Extend(W.killMany, {"{We} put an end to {bosses}.", "{bosses} went down in turn."})

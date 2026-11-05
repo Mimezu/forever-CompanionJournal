@@ -367,6 +367,30 @@ local function Teller(person, voice, player)
     function teller:Say(key, list, rng, tokens)
         if not list or #list == 0 then return nil end
         self.sayKey = key
+        -- The two voices have lines of their own for many moments (PB.voice.we: the
+        -- diary one of the two keeps, "Dahlia and I", "between us", our firsts;
+        -- PB.voice.you: a game master's recap, "your party", "the pair of you").
+        -- They sit behind the common lines and are preferred every other time
+        -- (a counter, not a draw: the stream stays where it was).
+        local voicedSet, voicedAll
+        do
+            local own = PB.voice and PB.voice[we and "we" or "you"]
+            local extra = own and own[key]
+            if type(extra) == "table" and #extra > 0 then
+                self.merged = self.merged or {}
+                local m = self.merged[key]
+                if not m or m.base ~= list then
+                    m = {base = list, list = {}, set = {}}
+                    for _, line in ipairs(list) do m.list[#m.list + 1] = line end
+                    for _, line in ipairs(extra) do m.list[#m.list + 1] = line; m.set[line] = true end
+                    self.merged[key] = m
+                end
+                list = m.list
+                voicedAll = m.set
+                self.voiceN = (self.voiceN or 0) + 1
+                if self.voiceN % 2 == 1 then voicedSet = m.set end
+            end
+        end
         -- Tokens set to false must not be said here (an epithet already given,
         -- lore on a return visit); the diary never says "you"; and a sentence
         -- does not open with the word the one before it opened with.
@@ -390,6 +414,15 @@ local function Teller(person, voice, player)
                 or line:find("started the {part}", 1, true)) then hard = true end
             local first = self:First(line, tokens)
             local soft = (lastFirst ~= nil and first == lastFirst) or (self.avoidAlso ~= nil and first == self.avoidAlso)
+            -- (this time the voice's own lines come first; the common ones wait)
+            if voicedSet and not voicedSet[line] then soft = true end
+            -- (a voice's own line names the companion only before the chapter has; "the two of us",
+            -- "the pair of you" and "your party" once a chapter: after that, the common lines)
+            if voicedAll and voicedAll[line] then
+                if self.named and line:find("{name}", 1, true) then hard = true end
+                if self.twoSaid and (line:find("the two of ", 1, true) or line:find("the pair of ", 1, true)) then hard = true end
+                if self.partySaid and line:find("{my} party", 1, true) then hard = true end
+            end
             -- the chapter's first sentence does not open like either of the last two chapters.
             if not self.started and self.openTwo then
                 local two = self:FirstTwo(line, tokens)
@@ -465,9 +498,13 @@ local function Teller(person, voice, player)
                 return before
             end)
         end
-        text = text:gsub(",,", ","):gsub(" ,", ",")
+        text = text:gsub(",,", ","):gsub(" ,", ","):gsub(",%s*%.", ".")
         -- places are marked as said when the line is written (Add).
-        text = Cap(text):gsub("([%.!%?]%s+)(%l)", function(stop, letter) return stop .. letter:upper() end)
+        -- (a sentence start is capitalized; a title's own "... and Bugs" is not)
+        local spans = {}
+        text = Cap(text):gsub("{[pqn]:[^}]*}", function(span) spans[#spans + 1] = span; return "\1" .. #spans .. "\2" end)
+        text = text:gsub("([%.!%?]%s+)(%l)", function(stop, letter) return stop .. letter:upper() end)
+        text = text:gsub("\1(%d+)\2", function(i) return spans[tonumber(i)] end)
         local lastSentence = text:match("([^%.!%?]+[%.!%?]?)%s*$") or text
         self.lastFirst = Plain(text):match("^([%a']+)")
         self.lastFirst = self.lastFirst and self.lastFirst:lower()
@@ -534,7 +571,8 @@ local function DayFacts(day)
                 if d then d.events[#d.events + 1] = {k = "wipe", t = entry.t or 0, d = entry.d}
                 else f.wipes[#f.wipes + 1] = entry end
             elseif k == "rez" then
-                f.rez = f.rez + 1
+                -- (w = "you": you brought them back; otherwise they brought you back)
+                if entry.w == "you" then f.rezGiven = (f.rezGiven or 0) + 1 else f.rez = f.rez + 1 end
             elseif k == "level" then
                 f.levels[#f.levels + 1] = tonumber(entry.d)
                 f.levelT = entry.t
@@ -572,6 +610,16 @@ local function DayFacts(day)
     return f
 end
 local function Together(f) return f.outings > 0 or #f.fires > 0 or #f.rests > 0 end
+
+-- A line that opens on its own place ("At Aerie Peak, ...", "Back at the
+-- Sepulcher, ...", "Inside the keep, ..."): no second place goes in front of it.
+local PLACE_LEADS = {At = true, In = true, On = true, Back = true, Inside = true, Outside = true, Beneath = true, Beyond = true, Near = true,
+    Along = true, Across = true, Within = true, Under = true, Over = true, From = true, Up = true, Down = true, Out = true, Deep = true,
+    Far = true, Below = true, Above = true, Aboard = true, Among = true, Atop = true}
+function T.PlaceLed(text)
+    local word = type(text) == "string" and text:match("^(%a+) ")
+    return word ~= nil and PLACE_LEADS[word] == true
+end
 
 -- A chapter has scenes, not one unbroken roll of sentences. Keep a fight and
 -- its immediate rescue together; give the setting and aftermath their own
@@ -696,6 +744,17 @@ function T.Tell(person, days, voice, player, brief)
             if Together(DayFacts(days[i])) then following = DayNumber(days[i].t) end
         end
     end
+    -- the last recorded stage of each quest chain in the whole book (Highlights keeps
+    -- it: a chain's resolution, or how far it got).
+    local threadLast = {}
+    if brief and L.QuestStory then
+        for _, d in ipairs(days) do
+            for _, quest in ipairs(DayFacts(d).quests) do
+                local story = L.QuestStory(quest.title, quest.qid)
+                if story and story.thread then threadLast[story.thread] = quest.qid or quest.title end
+            end
+        end
+    end
     -- how many fires lie ahead of each day (hindsight is only said when true).
     local firesAhead = {}
     do
@@ -706,6 +765,7 @@ function T.Tell(person, days, voice, player, brief)
         teller.day, teller.named, teller.roads, teller.ownCount, teller.lastPair = index, false, 0, 0, nil
         teller.started, teller.pendingTokens = false, nil
         teller.bothSaid, teller.saidPlaces = false, {}
+        teller.twoSaid, teller.partySaid = false, false
         teller.fewDays = history.days < 5
         -- (someone else of your list was in the party today: not "the two of you")
         teller.crowd = false
@@ -747,11 +807,28 @@ function T.Tell(person, days, voice, player, brief)
         -- or the companion whom you brought back from death.
         local sceneLimit = quietDay and f.together >= 3600 and 3 or 2
         local candidates = {}
-        local firstRanks = {notable = 8, rezother = 7, landmark = 6, sunset = 6, snow = 5, rarebeast = 5, foeseen = 5}
+        -- (your own firsts that fell on a day together: a first zone or continent, a first mount,
+        -- raid, epic or honorable kill; caves and battlegrounds entered together)
+        local firstRanks = {notable = 8, rezother = 7, landmark = 6, sunset = 6, snow = 5, rarebeast = 5, foeseen = 5,
+            zone = 6, continent = 7, mount = 6, raid = 7, epic = 4, pvp = 4}
+        local SURE_FIRSTS = {zone = true, continent = true, mount = true, raid = true, epic = true, pvp = true}
         local companionShort = Clean(person.name or ""):gsub("%-.*$", "")
         local exploreRanked = false
         for i, e in ipairs(moments) do
-            local rank = e.k == "first" and firstRanks[e.d] or ({voyage = 5, close = 4, swim = 3, nightflight = 3, gather = 1})[e.k]
+            local rank = e.k == "first" and firstRanks[e.d] or ({voyage = 5, close = 4, swim = 3, nightflight = 3, gather = 1, cave = 3, bg = 6})[e.k]
+            -- (a first the book cannot be sure of, begun late, is not claimed)
+            if e.k == "first" and SURE_FIRSTS[e.d] and e.u then rank = nil end
+            -- (a first zone or continent only where the record places it)
+            if e.k == "first" and (e.d == "zone" or e.d == "continent") and not e.z then rank = nil end
+            -- (no first continent where an earlier stretch of your own book already stood, and
+            -- none by hearthstone, which only ever takes you home)
+            if rank and e.k == "first" and e.d == "continent" then
+                local map = A.SelfTale and A.SelfTale.ZoneContinent or {}
+                for _, x in ipairs(ownJournal) do
+                    if x.k == "play" and x.z and (x.t or 0) < (e.t or 0) and map[x.z] == e.z then rank = nil; break end
+                    if x.k == "voyage" and x.d == "hearth" and math.abs((x.t or 0) - (e.t or 0)) <= 120 then rank = nil; break end
+                end
+            end
             -- (more moments: a duel with this very companion ranks with a rescue)
             if e.k == "duel" and e.d then rank = Clean(e.d) == companionShort and 7 or 3
             elseif e.k == "rarekill" then rank = 6
@@ -767,12 +844,21 @@ function T.Tell(person, days, voice, player, brief)
         local selected, gatherChosen = {}, false
         for _, candidate in ipairs(candidates) do
             if #selected >= sceneLimit then break end
-            if candidate.entry.k ~= "gather" or not gatherChosen then
+            -- (Highlights: the moments that turn a day, a first, a rescue, a rare; not the herbs)
+            if (candidate.entry.k ~= "gather" or not gatherChosen) and not (brief and not quietDay and candidate.rank < 5) then
                 selected[#selected + 1] = candidate
                 if candidate.entry.k == "gather" then gatherChosen = true end
             end
         end
         table.sort(selected, function(a, b) return a.ordinal < b.ordinal end)
+        -- (a first continent says the crossing itself: the voyage line gives way to it)
+        do
+            local continent = false
+            for _, c in ipairs(selected) do if c.entry.k == "first" and c.entry.d == "continent" then continent = true end end
+            if continent then
+                for i = #selected, 1, -1 do if selected[i].entry.k == "voyage" then table.remove(selected, i) end end
+            end
+        end
         local sceneMoments = {}
         for _, candidate in ipairs(selected) do sceneMoments[#sceneMoments + 1] = candidate.entry end
         local out = {}
@@ -820,10 +906,14 @@ function T.Tell(person, days, voice, player, brief)
         -- The short telling (Highlights) greets only when it is news: a first
         -- meeting, a return after weeks, a long silence.
         local majorOpen = false
+        -- (Highlights: a fire or an inn only when it is the first shared, or a counted one)
+        local restNews = (#f.fires > 0 and (history.fires == 0 or (PB.fireCount and PB.fireCount[history.fires + #f.fires] ~= nil)))
+            or (#f.rests > 0 and history.rests == 0)
         local function Add(text)
             if not text then return end
             if brief and (not KEEP[beat] and not (beat == "land" and discovery)
-                or (beat == "open" and not majorOpen and not formative)) then
+                or (beat == "open" and not majorOpen and not formative)
+                or (beat == "rest" and not restNews)) then
                 local pt = teller.pendingTokens -- a dropped line bans nothing
                 if pt then pt.partUsed, pt.weekdayUsed = nil, nil end
                 teller.pendingTokens = nil
@@ -845,6 +935,8 @@ function T.Tell(person, days, voice, player, brief)
             -- Named once it is written (a line the short telling drops names nobody).
             local bondWord = teller.base.bondWord
             if text:find(teller.base.name, 1, true) or (bondWord and text:lower():find(bondWord, 1, true)) then teller.named = true end
+            if text:find("the two of ", 1, true) or text:find("the pair of ", 1, true) then teller.twoSaid = true end
+            if text:lower():find("your party", 1, true) or text:lower():find("my party", 1, true) then teller.partySaid = true end
         end
         local today = DayNumber(day.t)
         local together = Together(f)
@@ -1352,6 +1444,7 @@ function T.Tell(person, days, voice, player, brief)
                 local workPool = notableKind == "scene" and n == 1 and PB.dayWork.sceneOne or PB.dayWork[notableKind]
                 local work = Fill(teller:Pick("dayWork" .. notableKind, workPool, rng))
                 preds[#preds + 1] = work
+                f.notableWork = notableKind
                 if notableKind == "hard" then history.hardSaid = index elseif notableKind == "elite" then history.eliteSaid = index end
                 if notableKind == "scene" then
                     -- Keep the original anchor until its supported outcome has
@@ -1726,6 +1819,7 @@ function T.Tell(person, days, voice, player, brief)
             end
             return choice
         end
+        local pendingLord -- (the lord of the place, killed before the final kill: told in the roll, not split off)
         local function Flush(required)
             if #pending == 0 then return end
             local was = beat
@@ -1733,6 +1827,41 @@ function T.Tell(person, days, voice, player, brief)
             local names = {}
             for _, boss in ipairs(pending) do names[#names + 1] = Place(boss) end
             tokens.bosses = List(names)
+            if pendingLord then
+                -- The lord fell with the others, not last: one sentence, the lord with
+                -- its epithet in its place ("Taragaman the Hungerer, the felguard who led
+                -- the Searing Blade, and after that Jergosh the Invoker and Bazzalan").
+                local lord = pendingLord
+                pendingLord = nil
+                local lo = L.Boss and L.Boss(lord)
+                local epithet = lo and lo.e and not history.bosses[lord] and Fresh(lo.e) and lo.e
+                local lordAt
+                for i, b in ipairs(pending) do if b == lord then lordAt = i end end
+                local function Names(a, b) local t = {} for i = a, b do t[#t + 1] = Place(pending[i]) end return List(t) end
+                beat = "climax"
+                if #pending == 1 then
+                    tokens.boss, tokens.short, tokens.bossE = Place(lord), Short(lord), epithet or false
+                    if epithet then Add(teller:Say("killNamed", PB.killNamed, rng, tokens))
+                    else Add(teller:Say("killOne", PB.killOne, rng, tokens)) end
+                else
+                    local lordText = Place(lord) .. (epithet and (", " .. epithet) or "")
+                    local roll
+                    if lordAt == #pending then roll = Names(1, #pending - 1) .. (#pending == 2 and ", and then " or ", and last of all ") .. lordText
+                    elseif lordAt == 1 then roll = lordText .. ", and after that " .. Names(2, #pending)
+                    else roll = Names(1, lordAt - 1) .. ", then " .. lordText .. ", and after that " .. Names(lordAt + 1, #pending) end
+                    tokens.roll = roll
+                    Add(teller:Say("killRoll", PB.killRoll, rng, tokens))
+                end
+                BossTitle(80, lord)
+                mood.triumph = true
+                if not history.bosses[lord] then
+                    blessOccasion = true
+                    if lo and lo.after then Add(After(lo)); flourish = flourish + 1 end
+                end
+                pending = {}
+                beat = was
+                return
+            end
             if #pending == 1 then
                 local lore = L.Boss and L.Boss(pending[1])
                 local kind = lore and lore.kind or "humanoid"
@@ -1764,6 +1893,27 @@ function T.Tell(person, days, voice, player, brief)
                 elseif byClass and rng() < 0.45 then Add(teller:Say("rezClass", byClass, rng, tokens))
                 else Add(teller:Say("rez" .. key, PB.rez[key], rng, tokens)) end
                 mood.warm = true
+        end
+        -- You brought them back (said right after their death). Your own book's first-ever
+        -- raise of this companion says it on that day instead.
+        local rezGivenSaid = false
+        for _, e in ipairs(sceneMoments) do
+            if e.k == "first" and e.d == "rezother" and not e.u and e.n
+                and Clean(e.n):lower() == (Clean(person.name or ""):gsub("%-.*$", "")):lower() then rezGivenSaid = true end
+        end
+        local function RezGivenLine()
+            if rezGivenSaid or not (f.rezGiven and f.rezGiven > 0) or not PB.rezGiven then return end
+            rezGivenSaid = true
+            local was = beat
+            beat = "rez"
+            local byClass = PB.rezGivenClass and PB.rezGivenClass[player.class or ""]
+            if player.class == "PRIEST" and not ({Human = true, Dwarf = true, Gnome = true})[player.race or ""] then byClass = nil end
+            -- (the class's own words every other time: a counter, not a draw)
+            history.rezGiven = (history.rezGiven or 0) + 1
+            if byClass and history.rezGiven % 2 == 0 then Add(teller:Say("rezGivenClass", byClass, rng, tokens))
+            else Add(teller:Say("rezGiven", PB.rezGiven, rng, tokens)) end
+            mood.warm = true
+            beat = was
         end
         -- one quest turned in before the first dungeon: said first, where it was
         if #f.dungeons > 0 and PB.preludeOne and history.preludeSaid ~= index then
@@ -1880,8 +2030,9 @@ function T.Tell(person, days, voice, player, brief)
                 tokens.quick = d.outAfter <= 60 and "within a minute" or "a few minutes later"
                 Add(teller:Say("dungeonFled", PB.dungeonFled, rng, tokens))
             elseif #d.events == 0 and PB.dungeonBrief and not d.briefTold and name ~= mainZone then
-                -- a visit with nothing in it gets one plain clause.
-                Add(teller:Say("dungeonBrief", PB.dungeonBrief, rng, tokens))
+                -- a visit with nothing in it gets one plain clause (not in Highlights; the draw is made in both).
+                local line = teller:Say("dungeonBrief", PB.dungeonBrief, rng, tokens)
+                if not brief then Add(line) end
             elseif d.briefTold then
                 d.briefTold = true
             elseif di > 1 and #out > 0 then
@@ -2042,7 +2193,8 @@ function T.Tell(person, days, voice, player, brief)
                 if ev.k == "boss" then
                     local lore = L.Boss and L.Boss(ev.d)
                     local kind = lore and lore.kind or "humanoid"
-                    local named = d.lostThenWon == ev.d or history.beaten[ev.d] or ev.cost or ev.d == lastBoss
+                    -- (a lord that is not the final kill stays in the roll with the others: no split before it)
+                    local named = d.lostThenWon == ev.d or history.beaten[ev.d] or ev.cost or (ev.d == lastBoss and climax)
                     if named then Flush() end
                     tokens.boss, tokens.short = Place(ev.d), Short(ev.d)
                     tokens.bossE = (lore and lore.e and not history.bosses[ev.d] and Fresh(lore.e)) and lore.e or false
@@ -2086,6 +2238,9 @@ function T.Tell(person, days, voice, player, brief)
                         if climax then mood.triumph = true; blessOccasion = true end
                         if climax and lore and lore.after then Add(After(lore)); flourish = flourish + 1 end
                         BossTitle(80, ev.d)
+                    elseif ev.d == lastBoss and not climax then
+                        pending[#pending + 1] = ev.d
+                        pendingLord = ev.d
                     elseif ev.d == lastBoss then
                         Flush()
                         if climax then mood.triumph = true end
@@ -2142,7 +2297,9 @@ function T.Tell(person, days, voice, player, brief)
                     elseif e.w == "you" then
                         d.afterDeath = true
                         local foe = e.boss or e.d
-                        tokens.killer, tokens.killerShort = foe and Place(foe) or "something in the dark", foe and Short(foe) or "it"
+                        -- (a common foe inside keeps its article too: "a Searing Blade Cultist")
+                        tokens.killer = (foe and not e.boss and e.a) and Foe(foe, true) or (foe and Place(foe)) or "something in the dark"
+                        tokens.killerShort = foe and Short(foe) or "it"
                         local avenged = foe and killedAt[foe] and killedAt[foe] > ev.t
                         if e.env and PB.dieEnv[e.env] then
                             -- (no "the water had looked harmless" in a dungeon's black water)
@@ -2171,6 +2328,7 @@ function T.Tell(person, days, voice, player, brief)
                         elseif e.boss then tokens.boss = Place(e.boss); Add(teller:Say("theyDieBoss", PB.theyDieBoss, rng, tokens))
                         else Add(teller:Say("theyDie", PB.theyDie, rng, tokens)) end
                         d.theyDied = true
+                        RezGivenLine()
                     end
                     mood.grim = true
                     TitleFrom(65, "death")
@@ -2268,9 +2426,10 @@ function T.Tell(person, days, voice, player, brief)
                             tokens.theirWeapon = L.Weapon and L.Weapon(person.class) or "strikes"
                             local you, them = ev.me or {}, ev.them or {}
                             local line
-                            if you.d == 1 and (you.ds or 0) >= 30 and mine ~= "healer" then line = teller:Say("boastYouD", PB.boastYou.damage, rng, tokens)
+                            -- (the diary never praises its writer: the companion's part only)
+                            if you.d == 1 and (you.ds or 0) >= 30 and mine ~= "healer" and voice ~= "we" then line = teller:Say("boastYouD", PB.boastYou.damage, rng, tokens)
                             elseif them.d == 1 and (them.ds or 0) >= 30 and theirs ~= "healer" then line = teller:Say("boastThemD", PB.boastThem.damage, rng, tokens)
-                            elseif mine == "tank" and you.t == 1 then line = teller:Say("boastYouT", PB.boastYou.tank, rng, tokens)
+                            elseif mine == "tank" and you.t == 1 and voice ~= "we" then line = teller:Say("boastYouT", PB.boastYou.tank, rng, tokens)
                             elseif theirs == "tank" and them.t == 1 then line = teller:Say("boastThemT", PB.boastThem.tank, rng, tokens) end
                             if line then AddBeforeConsequence(line); history.boastDay = index end
                         end
@@ -2386,9 +2545,12 @@ function T.Tell(person, days, voice, player, brief)
                 Add(teller:Say("theyDie", PB.theyDie, rng, tokens))
                 mood.grim = true
             end
+            if e.w ~= "you" then RezGivenLine() end
             if #out > beforeDeath then deathAnchors[#deathAnchors + 1] = {first = beforeDeath + 1, last = #out, t = e.t or 0} end
         end
         if f.rez > 0 and not rezSaid then RezLine() end
+        -- (their death went unrecorded, the raise did not: said with the day's deaths)
+        if (f.rezGiven or 0) > 0 and not rezGivenSaid then RezGivenLine() end
         -- what killed you, killed in turn for a quest of its name ("Mor'Ladim", 'WANTED: "Hogger"')
         if PB.questRevenge then
             local avenged
@@ -2512,6 +2674,28 @@ function T.Tell(person, days, voice, player, brief)
                 for _, death in ipairs(deathAnchors) do anchors[#anchors + 1] = death end
                 table.sort(anchors, function(a, b) return a.t < b.t end)
             end
+            -- Highlights keeps the turning points of the day's work: every exact
+            -- stage (the Codex line: an exact record keeps its reviewed scene, compact
+            -- where one is authored), a title-only stage that matters (importance four
+            -- and up), the first stage of a chain this book meets, and where a chain
+            -- got to. Lesser title-only errands stay in Everything; the day they
+            -- filled is bridged. (The draws are made for a dropped scene too, and it
+            -- counts as told: both editions read the same stream and plan the same
+            -- later days.)
+            local keep = {}
+            if brief then
+                local begun = {}
+                for _, chosen in ipairs(plan) do
+                    local quest, qs = chosen.quest, chosen.story
+                    local importance = qs.importance or 1
+                    local beginning = qs.thread and not history.questThreads[qs.thread] and not begun[qs.thread]
+                    if qs.thread then begun[qs.thread] = true end
+                    local exact = quest.qid and A.Lore.questStoryIDs and A.Lore.questStoryIDs[tonumber(quest.qid)] ~= nil
+                    -- (where a chain got to: its last recorded stage in this book is kept, resolved or not)
+                    local resolution = qs.thread and threadLast[qs.thread] == (quest.qid or quest.title)
+                    if exact or importance >= 4 or beginning or resolution then keep[chosen] = true end
+                end
+            end
             local anchor, previousTitle, previousScene, previousStory
             for _, chosen in ipairs(plan) do
                 local quest, qs = chosen.quest, chosen.story
@@ -2549,7 +2733,7 @@ function T.Tell(person, days, voice, player, brief)
                             if needsName or quest.title ~= previousTitle or changedPlace then
                                 tokens.quest = Q(quest.title)
                                 local completion = teller:Say("questDepth", PB.questDepth, rng, tokens)
-                                if changedPlace and quest.scene.zone then
+                                if changedPlace and quest.scene.zone and not T.PlaceLed(completion) then
                                     completion = "In " .. Place(quest.scene.zone) .. ", " .. completion:gsub("^%u", string.lower)
                                 end
                                 if changedPlace and quest.scene.zone then
@@ -2572,11 +2756,20 @@ function T.Tell(person, days, voice, player, brief)
                             -- a name keeps its capital after the comma, an article does not)
                             local articled = outcome:match("^The ") or outcome:match("^An? ") or outcome:match("^Another ") or outcome:match("^No ")
                                 or outcome:match("^One ") or outcome:match("^Fewer ") or outcome:match("^More ") or outcome:match("^Word ")
-                            if articled then outcome = Cap(teller.base.we) .. " had come to " .. Place(passage.outcomePlace) .. " by then. " .. outcome
+                            -- (an outcome that opens on its own place, "At Aerie Peak, ...", takes no "In the Hinterlands," in front)
+                            local placed = T.PlaceLed(outcome)
+                            if articled or placed then outcome = Cap(teller.base.we) .. " had come to " .. Place(passage.outcomePlace) .. " by then. " .. outcome
                             else outcome = "In " .. Place(passage.outcomePlace) .. ", " .. outcome end
                         end
                         passage[#passage + 1] = outcome
-                        history.questLore[quest.qid or quest.title] = true
+                        if brief and not keep[chosen] then
+                            -- (dropped from Highlights: the day line keeps "finished X"; the next scene goes where this one would have)
+                            anchor, previousTitle, previousScene, previousStory = at, quest.title, quest.scene, qs
+                            passage = {}
+                            history.questLore[quest.qid or quest.title] = "dropped"
+                        else
+                            history.questLore[quest.qid or quest.title] = true
+                        end
                         for pi, line in ipairs(passage) do
                             at = at + 1
                             table.insert(out, at, line)
@@ -2587,7 +2780,7 @@ function T.Tell(person, days, voice, player, brief)
                             end
                         end
                         anchor, previousTitle, previousScene, previousStory = at, quest.title, quest.scene, qs
-                        questLoreToday = true
+                        if #passage > 0 then questLoreToday = true end
                     end
                 end
             end
@@ -2598,9 +2791,13 @@ function T.Tell(person, days, voice, player, brief)
             -- their exact title announcements, retaining the rest of each sentence.
             -- Uncatalogued work keeps its original wording in either edition.
             for _, cut in ipairs(f.questCompletionCuts or {}) do
-                if history.questLore[cut.quest.qid or cut.quest.title] and cut.fragment then
+                local told = history.questLore[cut.quest.qid or cut.quest.title]
+                -- (a scene Highlights dropped: its separate "We completed X." goes, the work folded
+                -- into the day's sentence stays)
+                if (told == true or told == "dropped") and cut.fragment then
                     for n2 = #out, 1, -1 do
                         local at = out[n2]:find(cut.fragment, 1, true)
+                        if at and told == "dropped" and (cut.predicate ~= nil or out[n2] ~= cut.fragment) then at = nil end
                         if at then
                             if out[n2] == cut.fragment then
                                 table.remove(out, n2); table.remove(outBeat, n2)
@@ -2784,6 +2981,34 @@ function T.Tell(person, days, voice, player, brief)
                 elseif e.k == "read" and e.d and PB.shared.read then
                     tokens.what = Q(e.d)
                     line = teller:Say("sharedRead", PB.shared.read, rng, tokens)
+                elseif e.k == "first" and e.d == "zone" and e.z and not e.u and PB.shared.zoneFirst then
+                    -- (your own first time ever in this country fell on a day with them)
+                    tokens.zoneD = Place(e.z)
+                    line = teller:Say("sharedZoneFirst", PB.shared.zoneFirst, rng, tokens)
+                elseif e.k == "first" and e.d == "continent" and e.z and not e.u and PB.shared.continent then
+                    local how
+                    for _, x in ipairs(moments) do if x.k == "voyage" and x.d and math.abs((x.t or 0) - (e.t or 0)) <= 120 then how = x.d end end
+                    tokens.to = Place(e.z)
+                    local pool = (how and PB.shared.continentBy and PB.shared.continentBy[how]) or PB.shared.continent
+                    line = teller:Say("sharedContinent" .. (how or ""), pool, rng, tokens)
+                    if line then Title(60, Place(e.z), "shared") end
+                elseif e.k == "cave" and e.d and PB.shared.cave then
+                    tokens.what = Place(e.d)
+                    line = teller:Say("sharedCave", PB.shared.cave, rng, tokens)
+                elseif e.k == "bg" and e.d and PB.shared.bg then
+                    tokens.what = Place(e.d)
+                    line = teller:Say("sharedBg", PB.shared.bg, rng, tokens)
+                    if line then Title(56, Place(e.d), "shared") end
+                elseif e.k == "first" and e.d == "mount" and not e.u and PB.shared.mount then
+                    line = teller:Say("sharedMount", PB.shared.mount, rng, tokens)
+                    if line then Title(58, "A First Mount", "shared") end
+                elseif e.k == "first" and e.d == "raid" and not e.u and PB.shared.raid then
+                    line = teller:Say("sharedRaid", PB.shared.raid, rng, tokens)
+                elseif e.k == "first" and e.d == "epic" and e.z and not e.u and PB.shared.epic then
+                    tokens.what = Q(e.z)
+                    line = teller:Say("sharedEpic", PB.shared.epic, rng, tokens)
+                elseif e.k == "first" and e.d == "pvp" and not e.u and PB.shared.pvp then
+                    line = teller:Say("sharedPvp", PB.shared.pvp, rng, tokens)
                 elseif e.k == "close" and not closeSaid then
                     closeSaid = true
                     if e.d then
@@ -3078,7 +3303,8 @@ function T.Tell(person, days, voice, player, brief)
                     if (ba == "death" or ba == "climax") and a:sub(-1) == "." and not a:find(" and ", 1, true) and not a:find("%. ") and not b:find("%. ")
                         and not b:find(" and ", 1, true) and Count(a) + Count(b) <= 24 then
                         if bb == "rez" then
-                            local rest = b:match("^The ") and ("the " .. b:sub(5)) or b
+                            -- ("..., and it was Dahlia who raised you": the joined clause loses its capital, a name or "I" keeps it)
+                            local rest = (b:match("^I ") or b:match("^{")) and b or (b:sub(1, 1):lower() .. b:sub(2))
                             out[k] = a:sub(1, -2) .. ", and " .. rest
                             table.remove(out, k + 1); table.remove(outBeat, k + 1)
                         elseif bb == "rest" and ba == "death" and (b:match("^You ") or b:match("^We ") or b:match("^I ")) then
@@ -3137,10 +3363,16 @@ function T.Tell(person, days, voice, player, brief)
         end
         -- the short telling skips a routine day and bridges the gap.
         if brief and together and #out > 0 and history.days > 0 and not majorOpen then
-            local routine = not tokens.questFolded
+            -- (a day whose work was told as a scene, or named as hard or group work, is kept;
+            -- a day of plain hours, errands and an ordinary rest is bridged)
+            local routine = not questLoreToday and f.notableWork ~= "hard" and f.notableWork ~= "elite"
                 and not ((#f.fires > 0 and history.fires == 0) or (#f.rests > 0 and history.rests == 0))
-            for i = 1, #out do if outBeat[i] ~= "day" and outBeat[i] ~= "open" and outBeat[i] ~= "rest" then routine = false end end
-            if routine and not formative and not discovery and not quietDay then
+            local plain = {day = true, open = true, rest = true, questKey = true, quests = true, travel = true}
+            for i = 1, #out do if not plain[outBeat[i]] then routine = false end end
+            -- (a greeting with nothing after it, a city day's in the short telling: not a chapter)
+            local onlyOpen = true
+            for i = 1, #out do if outBeat[i] ~= "open" then onlyOpen = false end end
+            if (routine and not formative and not discovery and not quietDay) or onlyOpen then
                 history.skipped = history.skipped or {n = 0, zones = {}, seen = {}}
                 local sk = history.skipped
                 sk.n = sk.n + 1

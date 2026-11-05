@@ -1382,3 +1382,223 @@ PB.shared.read = {
     "Along the way {I} stopped to read {what}.",
     "{I} read {what} while {we} were there.",
 }
+
+-- Shared moments from your own journal that fell on a day together (2026-11-05,
+-- editor2): your own first time in a country or on a continent, a first mount,
+-- raid, epic or honorable kill; a cave or a battleground entered together.
+-- Tokens: {I} {me} {my} {we} {our} {pair} {name} and the moment's own.
+PB.shared.zoneFirst = {
+    "{I} had never set foot in {zoneD} before that day.",
+    "For {me}, it was the first time in {zoneD}.",
+    "{zoneD} was new ground to {me}, and {name} was there for it.",
+}
+PB.shared.continent = {
+    "It was the first time {I} had stood on {to}, and {name} was there for it.",
+    "{to} was new to {me}, and {name} had come across with {me}.",
+}
+PB.shared.continentBy = {
+    zeppelin = {"{pair} took the zeppelin to {to}, where {I} had never set foot.", "The zeppelin carried {pairObj} to {to}, {my} first time there."},
+    boat = {"{pair} took the boat to {to}, where {I} had never set foot.", "The ship carried {pairObj} to {to}, {my} first time there."},
+    portal = {"A portal took {pairObj} to {to}, where {I} had never set foot."},
+    hearth = {"{my} hearthstone took {me} to {to}, where {I} had never set foot."},
+}
+PB.shared.cave = {
+    "{pair} went down into {what} together.",
+    "{what} took {pairObj} underground for a while.",
+}
+PB.shared.bg = {
+    "{pair} went into {what} together.",
+    "{pair} were in {what} together that day.",
+}
+PB.shared.mount = {
+    "{I} rode {my} first mount that day, with {name} along.",
+    "That was the day {I} first rode a mount of {my} own.",
+}
+PB.shared.raid = {
+    "It was the first raid {I} had ever been in, and {name} was there.",
+    "{I} had never been in a raid before that day.",
+}
+PB.shared.epic = {
+    "{what} came to {me} that day, the first epic {I} had ever held.",
+    "{I} came away with {what}, {my} first epic.",
+}
+PB.shared.pvp = {
+    "{I} took {my} first honorable kill that day, with {name} in the party.",
+    "That was the day of {my} first honorable kill, with {name} there.",
+}
+-- You brought them back from death (recorded with "Record more moments" on).
+PB.rezGiven = {
+    "{I} brought {name} back from death.",
+    "{I} raised {name}.",
+    "{I} brought {them} back.",
+}
+PB.rezGivenClass = {
+    PRIEST = {"{I} prayed {name} back from death.", "{my} prayers brought {name} back."},
+    PALADIN = {"{I} called on the Light, and {name} rose.", "The Light answered {me}, and {name} came back."},
+    SHAMAN = {"{I} called {name}'s spirit back.", "{I} called on the spirits, and {name} came back."},
+    DRUID = {"{I} brought {name} back to life.", "{I} would not let death keep {name}."},
+}
+
+---------------------------------------------------------------------------
+-- 15. TWO VOICES (2026-11-05, editor2)
+-- The diary ("we") is one of the two writing down what both lived through:
+-- "Dahlia and I", "the two of us", "between us", our firsts, our returns, who
+-- carried whom. The game master ("you") recaps a campaign: "your party", "the
+-- pair of you", what the run came to. The engine (teller:Say) merges these
+-- behind the common lines by Say key and prefers them every other time.
+-- Facts only: nothing here says who struck, what was said or felt. The diary
+-- lines never say "you"; the game master's never praise the writer either.
+---------------------------------------------------------------------------
+PB.voice = {we = {}, you = {}}
+do
+    local we, you = PB.voice.we, PB.voice.you
+    -- Openings: the rhythm of meeting.
+    we.daily = {"{name} and I were out again that {part}.", "That {part}, {name} and I went out again.", "{name} and I went out together, as we did most days."}
+    you.daily = {"{name} was at {my} side again that {part}.", "{my} party that {part} was the usual one, {me} and {name}.", "{I} and {name} set out together again that {part}."}
+    we.often = {"{name} and I were out together again that {part}.", "That {weekday}, {name} and I set out together."}
+    you.often = {"{name} was back in {my} party that {weekday}.", "That {part} {my} party was {me} and {name} again."}
+    we.oftenGap = {"{later}, {name} and I were out together again.", "{name} and I took up {our} travels again {later}."}
+    you.oftenGap = {"{later}, {name} was back in {my} party.", "{my} party was whole again {later}, {name} and {me}."}
+    we.returnInterval = {"{name} and I set out together again that {weekday}.", "That {weekday}, {name} and I went out again."}
+    you.returnInterval = {"{name} was back in {my} party that {weekday}.", "That {weekday} {my} party was {me} and {name} again."}
+    we.fortnightly = {"After {gap}, {name} and I were out together again."}
+    you.fortnightly = {"After {gap}, {name} was back in {my} party."}
+    we.monthly = {"After {gap}, {name} and I set out together again.", "It had been {gap}. {name} and I were out together again."}
+    you.monthly = {"{gap} had passed. {name} was back in {my} party.", "After {gap}, {my} party was {me} and {name} once more."}
+    we.rare = {"After {gap}, {name} and I were out together again."}
+    you.rare = {"{name} was back in {my} party after {gap}."}
+    we.second = {"{later}, {name} and I went out together again."}
+    you.second = {"{later}, {name} was in {my} party a second time."}
+    we.early = {"{later}, {name} and I were out together again."}
+    you.early = {"{later}, {name} was back in {my} party."}
+    we.bondOpen = {"{bondWord} and I set out that {part}.", "That {part} {bondWord} and I were out together."}
+    you.bondOpen = {"{Bond} was with {me} again that {part}.", "{name}, {bondWord}, was in {my} party that {part}."}
+    we.recordedInterval = {"{gap} later, {name} and I were out together again, in {zoneD}.", "After {gap}, {name} and I took to {zoneD}."}
+    you.recordedInterval = {"{gap} later, {name} was back in {my} party, in {zoneD}.", "{gap} on, {my} party was {me} and {name} again, in {zoneD}."}
+    we.reunionBond = {"After {gap}, {bondWord} was at my side again.", "{gap} had passed before {name} and I were out together again."}
+    you.reunionBond = {"After {gap}, {bondWord} was back at {my} side.", "{gap} had passed. Then {name}, {bondWord}, was in {my} party again."}
+    we.openPlace = {"{name} and I went out into {zoneD} that {part}.", "That {part} took {name} and me to {zoneD}."}
+    you.openPlace = {"That {part} {my} party went into {zoneD}.", "{zoneD} was where the {part} took {me} and {name}."}
+    -- The land, and returns.
+    we.explore = {"{name} and I went into {zoneD} together for the first time.", "It was the first time {pair} had been in {zoneD} together."}
+    we.zoneReturn = {"{name} and I were back in {zoneD}."}
+    you.zoneReturn = {"{my} party was back in {zoneD}.", "The pair of {us} returned to {zoneD}."}
+    we.whereStarted = {"{name} and I were back in {zoneD}, where we had begun together."}
+    you.whereStarted = {"{zoneD} again, where the pair of {us} had begun."}
+    we.whereItBegan = {"{name} and I were back in {zoneD}, where we had first met."}
+    you.whereItBegan = {"{zoneD} again, where {name} had first joined {my} party."}
+    we.travel = {"{name} and I spent {length} in {zoneD}."}
+    you.travel = {"{my} party spent {length} in {zoneD}.", "The pair of {us} were in {zoneD} for {length}."}
+    we.travelWork = {"{name} and I spent {length} in {zoneD} and finished {qcount} quests between us."}
+    you.travelWork = {"{my} party spent {length} in {zoneD} and turned in {qcount} quests."}
+    we.travelLong = {"{name} and I were out for {length} that day."}
+    you.travelLong = {"{my} party was out for {length} that day.", "The pair of {us} put in {length} before stopping."}
+    we.travelMany = {"{name} and I went from {from} to {to}, {length} in all."}
+    you.travelMany = {"{my} party went from {from} to {to}, {length} in all."}
+    you.day = {"The pair of {us} {day}."}
+    -- Dungeons.
+    we.dungeonfair = {"{name} and I went down into {dungeonE}.", "Down into {dungeonE} {pair} went, {lore}."}
+    you.dungeonfair = {"{my} party went down into {dungeonE}.", "The pair of {us} went into {dungeonE}, {lore}."}
+    we.dungeondaring = {"{dungeonE} {dungeonWas} a hard venture for two of {our} experience, and {name} and I went in."}
+    you.dungeondaring = {"{dungeonE} {dungeonWas} a hard venture for a party of {our} experience. {pair} went in."}
+    we.dungeonreckless = {"{dungeonE} {dungeonWas} meant for far stronger adventurers than {name} and me. {we} went in."}
+    you.dungeonreckless = {"{dungeonE} {dungeonWas} meant for a far stronger party than {me} and {name}. {we} went in."}
+    we.dungeonAgain = {"{name} and I went back into {dungeonE}.", "The two of us went back to {dungeonE}."}
+    you.dungeonAgain = {"{my} party went back into {dungeonE}.", "The pair of {us} returned to {dungeonE}."}
+    we.dungeonRegular = {"{name} and I were back in {dungeonE}, for the {nth} time."}
+    you.dungeonRegular = {"{my} party was back in {dungeonE} for the {nth} time."}
+    we.dungeonFirst = {"It was the first dungeon {name} and I had been in together.", "That was {our} first dungeon together, {name}'s and mine."}
+    you.dungeonFirst = {"It was the first dungeon {my} party had run together.", "{name} and {I} had never been in a dungeon together before that."}
+    we.dungeonLater = {"Later that {part}, {name} and I went down into {dungeonE}."}
+    you.dungeonLater = {"Later that {part}, {my} party went down into {dungeonE}."}
+    -- Bosses.
+    we.killRoll = {"Between {us}, {pair} killed {roll}.", "{name} and I killed {roll}."}
+    you.killRoll = {"{my} party killed {roll}.", "The pair of {us} killed {roll}."}
+    we.killOne = {"{name} and I killed {boss}.", "{boss} fell to the two of us."}
+    you.killOne = {"{my} party killed {boss}.", "{boss} fell to the pair of {us}."}
+    we.killTwo = {"{name} and I killed {bosses}.", "{bosses} fell to the two of us."}
+    you.killTwo = {"{my} party killed {bosses}.", "{bosses} fell to the pair of {us}."}
+    we.killMany = {"{name} and I killed {bosses}.", "Between {us}, {pair} killed {bosses}."}
+    you.killMany = {"{my} party killed {bosses}.", "{bosses} fell to the pair of {us}."}
+    we.killLast = {"Last of all, {name} and I killed {boss}, {bossE}."}
+    you.killLast = {"Last of all, {my} party killed {boss}, {bossE}."}
+    we.killLastOnly = {"{name} and I killed {boss}, {bossE}.", "It came down to {boss}, {bossE}, and the two of us. {bossFell}"}
+    you.killLastOnly = {"{my} party killed {boss}, {bossE}.", "It came down to {boss}, {bossE}, and the pair of {us}. {bossFell}"}
+    we.killNamed = {"{name} and I killed {boss}, {bossE}."}
+    you.killNamed = {"{my} party killed {boss}, {bossE}."}
+    we.revenge = {"{short} had beaten {name} and me before. This time {we} won."}
+    you.revenge = {"{short} had beaten {my} party before. This time {we} won."}
+    we.wipe = {"{boss} beat the two of us that time."}
+    you.wipe = {"{boss} beat {my} party that time."}
+    -- Deaths, and who carried whom.
+    we.dieBoss = {"{killer} cut me down, with {name} there.", "{killer} cut me down."}
+    you.dieBoss = {"{killer} cut {me} down, with {name} there.", "{killer} got {me}."}
+    we.dieHeroic = {"{killer} killed me, as {killerShort} had killed many before.", "I died fighting {killer}, with {name} there."}
+    you.dieHeroic = {"{killer} killed {me}. Many have gone the same way.", "{I} fell to {killer}, with {name} there."}
+    we.dieFoe = {"{killer} killed me in {place}, with {name} there.", "{killer} got the better of me in {place}."}
+    you.dieFoe = {"{killer} killed {me} in {place}, with {name} there.", "{killer} got the better of {me} in {place}."}
+    we.theyDie = {"{name} died in {place} while {pair} were out.", "In {place}, {name} died."}
+    you.theyDie = {"{my} party lost {name} in {place}.", "In {place}, {name} died."}
+    we.theyDieBoss = {"{boss} killed {name}, with me there.", "{boss} took {name} down, with me there."}
+    you.theyDieBoss = {"{boss} killed {name}, with {me} there.", "{my} party lost {name} to {boss}."}
+    we.theyDieTimes = {"{name} was killed {count} that day, with me there."}
+    you.theyDieTimes = {"{my} party lost {name} {count} that day."}
+    we.theyDieBossCostly = {"{boss} killed {name}, and died all the same."}
+    you.theyDieBossCostly = {"{boss} killed {name} before it fell to {my} party."}
+    we.rezcompanion = {"It was {name} who brought me back.", "{name} had me on my feet again."}
+    you.rezcompanion = {"{name} had {me} back on {my} feet.", "It was {name} who raised {me}.", "{name} brought {me} back, and the party was whole again."}
+    we.rezclose = {"{name} brought me back, as {they} had so often before.", "Once again it was {name} who raised me."}
+    you.rezclose = {"{name} brought {me} back, as {they} had so often before.", "Once again {name} had {me} back on {my} feet."}
+    we.rezGiven = {"This time I was the one who brought {name} back.", "I had {name} on {their} feet again."}
+    you.rezGiven = {"This time it was {I} who raised {name}.", "{I} had {name} back on {their} feet."}
+    we.sharedZoneFirst = {"It was my first time in {zoneD}, and {name} was with me for it."}
+    you.sharedZoneFirst = {"{I} had never seen {zoneD} before, and {name} was with {me} for the first look at it."}
+    we.sharedCave = {"{name} and I went down into {what}."}
+    you.sharedCave = {"{my} party went down into {what}."}
+    we.sharedBg = {"{name} and I went into {what} together."}
+    you.sharedBg = {"{my} party went into {what}."}
+    -- Rest.
+    we.firenew = {"{name} and I made camp in {place}.", "The two of us sat by a fire in {place} a while."}
+    you.firenew = {"{my} party made camp in {place}.", "The pair of {us} sat by a fire in {place} a while."}
+    we.fireclose = {"{name} and I made camp in {place}, as we had many times.", "Another fire for the two of us, in {place}."}
+    you.fireclose = {"{my} party made camp in {place}, as it had many times.", "Another fire for the pair of {us}, in {place}."}
+    we.firefirst = {"{name} and I shared {our} first fire, in {place}."}
+    you.firefirst = {"{my} party shared its first fire, in {place}."}
+    we.inn = {"{name} and I rested at the inn at {place}.", "The two of us stopped at the inn at {place}."}
+    you.inn = {"{my} party rested at the inn at {place}.", "The pair of {us} stopped at the inn at {place}."}
+    we.innClose = {"{name} and I rested at the inn at {place} again."}
+    you.innClose = {"{my} party rested at the inn at {place} again."}
+    we.cityRest = {"{name} and I rested in {place}."}
+    you.cityRest = {"{my} party rested in {place}."}
+    -- Levels.
+    we.theyLevel = {"{name} went up to level {theirs} while {pair} were out.", "{name} made level {theirs} at my side."}
+    you.theyLevel = {"{name} made level {theirs} while in {my} party.", "{name} went up to level {theirs} at {my} side."}
+    we.bothLevel = {"{name} went up to level {theirs} and I to {mine}, the same day."}
+    you.bothLevel = {"{name} went up to level {theirs} and {I} to {mine}, the same day."}
+    we.bothSame = {"{name} and I both made level {theirs} that day."}
+    you.bothSame = {"The pair of {us} made level {theirs} the same day."}
+    we.myLevel = {"I made level {mine} with {name} beside me."}
+    you.myLevel = {"{I} made level {mine} with {name} in {my} party."}
+    -- Moments shared.
+    we.sharedSunset = {"{name} and I were at {what} as the sun went down."}
+    you.sharedSunset = {"The sun went down at {what} with {name} and {me} there to see it."}
+    we.sharedLandmark = {"{name} and I came to {what} together."}
+    you.sharedLandmark = {"{my} party reached {what} that day."}
+    we.sharedSnow = {"{name} and I walked through snow in {zoneD}, the first I had ever seen."}
+    you.sharedSnow = {"In {zoneD}, {name} and {I} walked through snow, the first {I} had ever seen."}
+    we.sharedVoyagezeppelin = {"{name} and I took the zeppelin across the sea to {to}."}
+    you.sharedVoyagezeppelin = {"{my} party took the zeppelin across the sea to {to}."}
+    we.sharedVoyageboat = {"{name} and I took the boat across to {to}."}
+    you.sharedVoyageboat = {"{my} party took the boat across to {to}."}
+    -- Milestones.
+    -- (lines a reader remembers: once in a book)
+    for _, line in ipairs({"{my} party that {part} was the usual one, {me} and {name}.", "{my} party was whole again {later}, {name} and {me}.",
+        "{name} and I went out together, as we did most days.", "It came down to {boss}, {bossE}, and the two of us. {bossFell}",
+        "It came down to {boss}, {bossE}, and the pair of {us}. {bossFell}"}) do
+        PB.oncePerBook[#PB.oncePerBook + 1] = line
+    end
+    we.days10 = {"That was the tenth day {name} and I had been out together."}
+    you.days10 = {"That made ten days in the field for {my} party, {me} and {name}."}
+    we.fires10 = {"It was the tenth fire {name} and I had shared."}
+    you.fires10 = {"It was the tenth fire {my} party had shared."}
+end
