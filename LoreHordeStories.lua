@@ -18,6 +18,10 @@ local _, A = ...
 -- Stonetalon's spirits/toxin route and Thousand Needles' camps, escorts and
 -- Arikara extend the early Kalimdor coverage. Region-by-region review:
 -- StorageInvestigation/cj-leveling-stage-research-20261012.txt.
+-- Starters3 (2026-11-05, tests/Starters3.lua): 15 more classic stages in Horde
+-- regions (Mankrik, Feegly, Kadrak, Menara, Falla, Veren, Nefarian's head) and
+-- 22 first-batch outcomes rewritten around their people (Rhinag, Tonga, Gazlowe,
+-- Fenris Isle, Deliah) with facts unchanged.
 local V = "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"
 local F = "StorageInvestigation/journal-voice/part1_corpus.txt"
 local pack = {sources = {V, F}, quests = {}, questIDs = {}, zones = {}, threads = {
@@ -325,15 +329,15 @@ Q(817, "Practical Prey", "Durotar", 8, "horde_darkspear",
     "The tiger furs meant Sen'jin's people would not go cold as the seasons changed.",
     "Fresh hides replenished the village's stores for clothing and shelter.")
 Q(813, "Finding the Antidote", "Orgrimmar", 9, "horde_darkspear",
-    "Kor'ghan needed venomtail poison sacs to make an antidote for Rhinag.",
-    "The scorpids near Orgrimmar carried the substance needed to counter their own venom.",
-    "Kor'ghan prepared the antidote, which still needed delivery to Rhinag.",
-    "The remedy was ready for the poisoned hunter.")
+    "Rhinag had hunted venomtails without carrying the antidote, and one had stung him. Kor'ghan in the Cleft of Shadow would not scold him now. He needed venomtail poison sacs to make the cure.",
+    "The venomtails near the gate of Orgrimmar carried the poison sacs Kor'ghan needed. One of his own was dying of their sting.",
+    "Kor'ghan handed over the antidote for Rhinag, with a warning to be careful on the way.",
+    "The poison sacs became an antidote in Kor'ghan's hands. Rhinag still had to receive it.")
 Q(812, "Need for a Cure", "Durotar", 9, "horde_darkspear",
-    "A venomtail sting was weakening Rhinag outside Orgrimmar.",
-    "Rhinag's survival depended on Kor'ghan's antidote reaching him in time.",
-    "The antidote saved Rhinag's life.",
-    "Rhinag survived the venom and faced more training under Kor'ghan.")
+    "A venomtail had stung Rhinag deeply, and he reckoned he had an hour to live. Only Kor'ghan, in the Cleft of Shadow in Orgrimmar, knew the antidote.",
+    "Rhinag was too ashamed to go back to Sen'jin weakened by a scorpid's sting. He needed Kor'ghan's antidote before the poison finished him.",
+    "The antidote reached Rhinag in time. He gave away something he would not need soon. Kor'ghan meant to march him through more rituals until he proved himself.",
+    "Rhinag lived. He expected more boar hunts and scorpid tails from Kor'ghan before he had proved himself.")
 Q(834, "Winds in the Desert", "Durotar", 9, "horde_roads",
     "Rezlak, one of Gazlowe's goblins, had been sent to help the orcs of Durotar. The Dustwind harpies of Razorwind Canyon had snatched his last shipment.",
     "Stolen caravan sacks lay in the canyons while construction waited.",
@@ -858,7 +862,7 @@ Fallback("A Recipe For Death", "horde_apothecary",
     "Renferrel and Faranell pursued the ingredients and records of plague research.",
     "The apothecaries' work connected Silverpine with the laboratories of the Undercity.",
     "Renferrel and Faranell had more to work with in their search for a plague.",
-    "Another sample or record reached the Royal Apothecary Society's plague research.", {V .. " #447, #450, #451"})
+    "Berard's notes kept the apothecaries gathering specimens for their plague research.", {V .. " #447, #450, #451"})
 
 -- Shaman trials. The title is shared across ingredients, introductions,
 -- manifestations and rewards, including Forever's other racial routes.
@@ -1362,20 +1366,20 @@ Q(886, "The Barrens Oases", "The Barrens", 10, "horde_oases",
     "Tonga received the promised assistance for his inquiry into the oases.",
     "The druids' referral reached Tonga, while the source of the power remained a mystery.")
 Q(870, "The Forgotten Pools", "The Barrens", 13, "horde_oases",
-    "New oases had begun to stir with life in a country long left dry by catastrophe.",
-    "Tonga's search for the returning power began beneath the Forgotten Pools.",
-    "A fissure leaking gas beneath the water supplied the first clue.",
-    "Tonga learned of the bubbling fissure, though its meaning was not yet clear.")
+    "The Barrens had once been lush, until war and cataclysm burned it dry. Now new oases were forming, and Tonga Runetotem's druids sensed a power leaking up from below.",
+    "Tonga Runetotem wanted the waters of the Forgotten Pools, northwest of the Crossroads, searched for the power the druids sensed.",
+    "A fissure in the earth beneath the Forgotten Pools was bubbling gas. Tonga could not yet say it was the answer, but it was a clue.",
+    "Tonga was grateful for the bubbling fissure found under the water, the first clue to the power in the oases.")
 Q(877, "The Stagnant Oasis", "The Barrens", 16, "horde_oases",
     "Dead seeds offered a test of the power rising through the oasis fissures.",
     "Tonga wanted dried, infertile seeds placed beneath the Stagnant Oasis's waters.",
     "The seeds revived, showing that the power below the oasis could restore life.",
     "Tonga received evidence that the dead seeds had responded to the fissure's power.")
 Q(880, "Altered Beings", "The Barrens", 16, "horde_oases",
-    "Tonga wanted to know how the oasis waters affected the creatures drinking from them.",
-    "Snapjaw shells from the Lushwater and Stagnant Oases offered another way to study the change.",
-    "The shells reached Tonga for examination.",
-    "Tonga had specimens from the oasis beasts, though his study still lay ahead.")
+    "Tonga thought the oases' strange properties came from outside, or from deep inside the earth. He wanted to know how the fissures affected the beasts that drank there.",
+    "The snapjaws of the Lushwater and Stagnant Oases drank the changed water every day. Tonga wanted their shells to study.",
+    "The snapjaw shells reached Tonga. Studying an area's beasts told much about the area itself, he said. He gave away coins he had no need for.",
+    "Tonga had shells from both oases to examine, and waited to see what they would show.")
 Q(903, "Prowlers of the Barrens", "The Barrens", 15, "horde_hunts",
     "Prowlers hunted in the tall grasses southwest of the Crossroads.",
     "Sergra's next lesson concerned predators capable of turning on their hunters.",
@@ -1521,15 +1525,15 @@ pack.questIDs[897].highlight = {"The insect-like creature killed in the Barrens 
 
 -- Ratchet's harbor joins modest cargoes, damaged machines and coastal danger.
 Q(1492, "Wharfmaster Dizzywig", "The Barrens", 11, "horde_ratchet",
-    "The last caravan had gone, leaving a crate of potions and reagents to reach Ratchet by other means.",
-    "Dizzywig could book the crate onto a ship bound for Blackwater Cove.",
-    "Dizzywig entered the crate in his ledger for the next tide's sailing.",
-    "The cargo reached the wharfmaster, who found room for it aboard the ship.")
+    "A crate of potions and reagents was bound for associates in the Old World. The last caravan to Ratchet had already left. Wharfmaster Dizzywig could put it on the next boat to Blackwater Cove.",
+    "A crate of alchemy goods for the Old World had missed the last caravan to Ratchet. Wharfmaster Dizzywig could still see it aboard.",
+    "Dizzywig judged the crate small enough and found room for it on the next tide's ship. Then he entered it in his ledger.",
+    "The crate went into Dizzywig's ledger, bound for Blackwater Cove on the next tide.")
 Q(887, "Southsea Freebooters", "The Barrens", 14, "horde_ratchet",
-    "The Freebooters had set up camp south of Ratchet after raiding Gazlowe's ships.",
-    "The Trade Fleets had failed to keep Gazlowe's goods safe from coastal pirates.",
-    "The strike against the pirates eased Gazlowe's immediate trouble, but his stolen goods remained missing.",
-    "Gazlowe rewarded the attack on the Freebooters and turned attention to recovering his cargo.")
+    "Gazlowe was tired of losing ships and goods to pirates while Vice Admiral Grezzlik and the Trade Fleets did nothing. Now the Southsea Freebooters had camped just south of Ratchet.",
+    "The Southsea Freebooters had set up on Gazlowe's doorstep. If Grezzlik would not deal with them, Gazlowe would pay someone who did.",
+    "Gazlowe hoped the beating would convince the Freebooters to move their operation elsewhere. His stolen goods were still in their camp.",
+    "The pirates south of Ratchet were thinned out. Gazlowe called it good work, then turned to the goods they had stolen from him.")
 Q(890, "The Missing Shipment", "The Barrens", 14, "horde_ratchet",
     "Gazlowe wanted the dock records checked before blaming pirates for a late shipment.",
     "His ledger needed comparing with Dizzywig's logs at the waterfront.",
@@ -1546,20 +1550,20 @@ Fallback("The Missing Shipment", "horde_ratchet",
     "The inquiry into the overdue goods had moved forward.",
     "Another report about the missing cargo had been delivered.", {V .. " #890, #892"})
 Q(888, "Stolen Booty", "The Barrens", 16, "horde_ratchet",
-    "Gazlowe's observatory lacked its smaller lens, and his shipment of boots had also disappeared.",
-    "The pirate camp held two cargoes Gazlowe particularly wanted returned.",
-    "The lens and boots were returned to Gazlowe.",
-    "Gazlowe recovered the observatory lens and the missing boot shipment, then offered future work.")
+    "Gazlowe's observatory was ready except for its smaller lens, which had been coming by ship and never arrived. His boot shipment from Drizzlik in Booty Bay was missing too.",
+    "Gazlowe knew he would not see all his stolen goods again. The pirates' camp still held two he could not do without, an observatory lens and a shipment of boots.",
+    "Gazlowe had his lens and his boots back. He offered work to anyone who could do that, and reminded them how well he paid.",
+    "The observatory lens and Drizzlik's boots came back to Gazlowe, who was relieved to have them.")
 Q(895, "WANTED: Baron Longshore", "The Barrens", 16, "horde_ratchet",
     "Gazlowe's notice named Baron Longshore, captain of the Heedless, as wanted for piracy.",
     "The bounty demanded identifiable remains of the Freebooter captain.",
     "Gazlowe accepted proof of Longshore's death and paid the bounty.",
     "The captain of the Heedless would no longer lead raids on Gazlowe's shipping.")
 Q(891, "The Guns of Northwatch", "The Barrens", 20, "horde_ratchet",
-    "Northwatch's guns had sunk another vessel sailing the Merchant Coast.",
-    "Captain Fairmount and her cannoneers were firing on ships from the hold.",
-    "The targeted guns were silenced, and the soldiers' medals supplied proof of the attack.",
-    "Fairmount and the cannoneers were defeated; the fleet's dead still needed recovery.")
+    "Northwatch Hold's guns had sunk another ship of Captain Thalo'thas Brightsun's fleet. He wanted Captain Fairmount and her cannoneers dead, and her soldiers' medals as proof.",
+    "Captain Fairmount and her cannoneers at Northwatch Hold shot at anything in sight, Thalo'thas Brightsun said. His fallen privateers needed avenging.",
+    "The Alliance guns at Northwatch were silent. Brightsun paid for the medals, then turned to the grim work of recovering his dead.",
+    "Fairmount and her cannoneers would sink no more of Brightsun's ships. The bodies of his privateers still had to be recovered.")
 Q(898, "Free From the Hold", "The Barrens", 20, "horde_ratchet",
     "Firebough had survived a sunken moonshine transport only to be imprisoned at Northwatch.",
     "The captured deckhand wanted help getting back to Ratchet from the hold.",
@@ -1839,8 +1843,8 @@ Q(98298, "Arugal's Folly", "Silverpine Forest", 16, HA,
     "The examination discredited Arugal's remedy in Dalar's eyes; it did not cure the worgen.", nil, true)
 Fallback("Arugal's Folly", HA,
     "Dalar's research concerned Arugal's spells and the worgen troubling Silverpine.",
-    "The Forsaken's efforts in the forest included an inquiry into the wizard's enchantments.",
-    "Dalar's work concerning Arugal received further help.",
+    "At the Sepulcher, Dalar Dawnweaver was studying Arugal's shackles and spells to learn what bound the worgen.",
+    "Dalar Dawnweaver had more to go on in his study of Arugal's magic at the Sepulcher.",
     "Dalar Dawnweaver had more evidence for his inquiry into the worgen of Silverpine.", {V .. " #422, #423, #424, #99, #98298"})
 Q(428, "Lost Deathstalkers", "Silverpine Forest", 12, HS,
     "Rane and Quinn Yorick had failed to return from reconnaissance in northern Silverpine.",
@@ -1868,80 +1872,80 @@ Q(435, "Escorting Erland", "Silverpine Forest", 11, HS,
     "Erland reached Rane with assistance, and she thanked the escort.",
     "The safe arrival put Rane's uncertainty about Erland's fate to rest.")
 Q(437, "The Dead Fields", "Silverpine Forest", 14, HF,
-    "The banshee Nightlash had repeatedly driven the Forsaken's assaults away from the Rot Hide base.",
-    "The old farm called the Dead Fields remained protected by Nightlash's magic.",
-    "Nightlash's essence supplied proof of her destruction at the Dead Fields.",
-    "The banshee's dust confirmed the loss of a defender who had thwarted earlier assaults.")
+    "The Rot Hide gnolls held an old farm north of the Sepulcher, the Dead Fields. Every small assault there had been routed by the banshee Nightlash and her magic.",
+    "High Executor Hadrec wanted Nightlash destroyed. If she did not show herself, killing enough Rot Hides at the Dead Fields would bring her out.",
+    "Nightlash's essence had turned to dust, and the dust reached Hadrec as proof. The Scourge had lost ground that day, he said.",
+    "With Nightlash gone, the Rot Hides at the Dead Fields had lost the banshee who broke every assault. Hadrec counted it ground taken from the Scourge.")
 Q(438, "The Decrepit Ferry", "Silverpine Forest", 16, HF,
-    "Scourge patrols surrounded the Decrepit Ferry east of the Sepulcher.",
-    "Hadrec wanted to know why the Rot Hides and other undead had occupied the ferry.",
-    "The boat held wrapped corpses, with the opposite dock on Fenris Isle visible across the lake.",
-    "The investigation found a cargo of bodies and a route toward Fenris Isle.")
+    "Rot Hides and other undead patrolled the Decrepit Ferry east of the Sepulcher. Hadrec wanted to know why the Scourge had made it a hive.",
+    "The Scourge had a reason for guarding an old ferry on Lordamere Lake, and Hadrec meant to learn it.",
+    "The ferry's boat was heaped with wrapped corpses. Across Lordamere Lake stood a dock on Fenris Isle, where the bodies had to be going.",
+    "Wrapped corpses filled the boat at the Decrepit Ferry, and the dock opposite on Fenris Isle showed where they were bound.")
 Q(439, "Rot Hide Clues", "Silverpine Forest", 16, HF,
-    "A ring on one of the ferry's corpses bore an engraving naming Deliah.",
-    "The dead woman's ring offered evidence to carry back from the corpse-filled boat.",
-    "Hadrec concluded that the Rot Hides were carrying bodies from Tirisfal's mass graves to Fenris Isle.",
-    "The ring and the report pointed Hadrec toward stolen bodies as the ferry's cargo.")
+    "Among the wrapped corpses a woman's hand lay bare, marked by plague but fairly fresh. Her ring was engraved For Deliah.",
+    "A ring engraved For Deliah came off a dead woman's hand on the ferry, a clue to carry back to Hadrec.",
+    "A fresh body could only have come from the mass graves in Tirisfal, Hadrec reasoned. The Rot Hides were carrying those corpses to Fenris Isle.",
+    "Deliah's ring told Hadrec where the Rot Hides found their dead, in the mass graves of Tirisfal.")
 Q(443, "Rot Hide Ichor", "Silverpine Forest", 17, HF,
-    "The apothecaries hoped the fluid in the Rot Hide gnolls would reveal who had made them.",
-    "An assault on Fenris Isle first required samples of the gnolls' strange ichor.",
-    "Renferrel received the ichor for study, with the gnolls' nature and weaknesses still uncertain.",
-    "The samples reached the apothecary; identifying their maker was work still to come.")
+    "The apothecaries believed the strange fluid in the Rot Hides' bodies would show who was behind the gnolls. An assault on Fenris Isle had to wait for that answer.",
+    "Apothecary Renferrel, outside the Sepulcher, wanted ichor from the gnolls on Fenris Isle to learn who had made them.",
+    "Renferrel took the ichor. It would show the nature of the Rot Hides, he said, and perhaps a weakness, if they had one.",
+    "The ichor reached Renferrel, who hoped it would reveal a weakness in the gnolls.")
 Q(444, "Rot Hide Origins", "Undercity", 17, HF,
-    "Renferrel found warlock and necromantic magic in the ichor but could not draw a firm conclusion.",
-    "Bethor Iceshard's magical knowledge offered another way to examine the Rot Hide samples.",
-    "Bethor recognized old, powerful spells in the substance and began a divination.",
-    "The sample reached Bethor, whose examination had not yet yielded its maker's name.")
+    "Renferrel had broken the ichor into its parts and found warlock and necromantic magic in it, but nothing certain. Bethor Iceshard, a mage of the Magic Quarter, might know more.",
+    "Bethor Iceshard was no apothecary, but Renferrel hoped his knowledge of magic could unravel how the Rot Hides were made.",
+    "Bethor found the substance laced with spells he had not seen in a long time, and stopped to cast a divination.",
+    "In the Magic Quarter, Bethor Iceshard recognized old and powerful spells in the sample and began a divination.")
 Q(446, "Thule Ravenclaw", "Silverpine Forest", 16, HF,
-    "Bethor identified the ichor as Thule Ravenclaw's work and supplied incantations to counter his spells.",
-    "A former colleague's knowledge could help Renferrel prepare for an assault on Thule's stronghold.",
-    "Renferrel received the magical scroll needed for a potion against Thule.",
-    "The counterspells reached the apothecary; the confrontation on Fenris Isle still lay ahead.")
+    "Bethor knew the ichor's maker, his old colleague Thule Ravenclaw. Thule had been a promising young mage before he betrayed his brethren and joined the Scourge.",
+    "Bethor Iceshard had not known that his old colleague Thule Ravenclaw still lived, let alone led the Rot Hides. He wrote out the incantations for a potion against Thule's spells, for Renferrel.",
+    "Renferrel had never used such forces in a potion. The mixture would be powerful, he said, and useful against Thule in his stronghold on Fenris Isle.",
+    "Bethor's scroll reached Renferrel, who began a potion to counter Thule Ravenclaw's spells.")
 Q(448, "Report to Hadrec", "Silverpine Forest", 16, HF,
-    "The plans for an assault on Fenris Isle needed to reach High Executor Hadrec.",
-    "Hadrec could provide equipment before the attempt to confront Thule Ravenclaw.",
-    "Hadrec accepted the report and offered aid from the Sepulcher's arsenal.",
-    "The executor was briefed on Thule, leaving the actual assault still to be carried out.")
+    "Before any assault on Fenris Isle, Hadrec wanted a report. He might have information or equipment to give.",
+    "The news of Thule Ravenclaw had to reach High Executor Hadrec before anyone crossed to Fenris Isle.",
+    "If Bethor was right, Hadrec said, Thule Ravenclaw had to be dealt with soon. He opened the Sepulcher's arsenal for the task.",
+    "Hadrec offered a pick from the Sepulcher's arsenal for the fight against Thule.")
 Q(442, "Assault on Fenris Isle", "Silverpine Forest", 24, HF,
-    "Hadrec ordered a strike against Thule Ravenclaw in the Scourge stronghold on Fenris Isle.",
-    "The inquiry into the Rot Hides had reached the necromancer behind them.",
-    "Thule's death was confirmed, and Renferrel reported sensing the released energies from the Sepulcher.",
-    "The assault killed Thule Ravenclaw, a blow Hadrec recognized as significant to the Forsaken.")
+    "The time had come to strike the Scourge's stronghold in Silverpine. Hadrec wanted Thule Ravenclaw's head from Fenris Isle.",
+    "Hadrec called the assault on Fenris Isle as dangerous as it was vital. Thule Ravenclaw had to die.",
+    "Thule's death was no small event. Renferrel had felt the energies it released even at the Sepulcher, and Hadrec said the deed rang through the Forsaken's ranks.",
+    "Thule Ravenclaw's head reached Hadrec. The master of the Rot Hides was dead, and the Forsaken thought more highly of the one who had killed him.")
 Q(440, "The Engraved Ring", "Tirisfal Glades", 16, HR,
-    "The ring from the ferry might be traced through Magistrate Sevren's death records in Brill.",
-    "Deliah's name offered a way to learn whose body the Rot Hides had taken.",
-    "Sevren confirmed that a Deliah had lived in Brill and been buried in the mass grave.",
-    "Brill's records gave the name a history, supporting the report that a buried body had been stolen.")
+    "Whoever had given Deliah her ring might be traced through Magistrate Sevren in Brill, who kept the names of the recent dead.",
+    "The giver of Deliah's ring was probably dead, or undead and past caring. Still, Magistrate Sevren in Brill might know who she had been.",
+    "A Deliah had lived in Brill and been buried in the mass grave, Sevren said. The Rot Hides must have taken her body to Silverpine.",
+    "Sevren confirmed the name. Deliah of Brill had been buried in the mass grave, and her body stolen.")
 Q(441, "Raleigh and the Undercity", "Undercity", 16, HR,
-    "Sevren directed the ring toward Raleigh, the husband of the Deliah recorded in Brill.",
-    "Raleigh in the Trade Quarter could establish whether the ring belonged to his wife.",
-    "Raleigh recognized Deliah's ring and spoke of his desire for revenge.",
-    "The ring reached Deliah's husband, confirming its identity without settling his grievance.")
+    "Deliah's husband Raleigh now dwelt in the Undercity's Trade Quarter. If the ring was hers, he would know it.",
+    "Sevren sent the ring on to Raleigh, the husband of the Deliah who had lived in Brill.",
+    "Raleigh knew the ring as his wife's. He felt nothing for her death or the theft of her body, he said. Revenge still burned in his dead heart.",
+    "The ring was Deliah's. Her husband felt no grief, only a desire for revenge.")
 Q(530, "A Husband's Revenge", "Silverpine Forest", 20, HR,
-    "Raleigh named his former friend Valdred as Deliah's murderer and wanted his hands as proof.",
-    "Valdred had last been reported near the Greymane Wall, trying to escape into Gilneas.",
-    "Valdred's hands reached Raleigh, who paid for his revenge and relinquished Deliah's ring.",
-    "Raleigh accepted the proof of Valdred's death and kept the hands as a reminder of the betrayal.")
+    "Raleigh named his old friend Valdred as Deliah's murderer, and wanted his hands. Valdred had last been seen at the Greymane Wall, trying to flee into Gilneas.",
+    "Raleigh could not grieve, but he could want revenge. Valdred, the friend who had killed Deliah, was somewhere near the Greymane Wall in southern Silverpine.",
+    "Valdred's hands reached Raleigh, who gave back Deliah's ring as a bauble he no longer cared for. He kept the hands to remember his friend's betrayal.",
+    "Raleigh had his revenge for Deliah's murder. The ring went back to the one who had found it, and the hands stayed with him.")
 Q(264, "Until Death Do Us Part", "Silverpine Forest", 15, "horde_forsaken",
     "A Forsaken widow wanted a pendant left on the grave of the husband whose crusade had taken him from his family.",
     "The abandoned keepsake was bound for a neglected tomb at the Sepulcher.",
     "The pendant was placed on the grave, its gemstone appearing to lose its sheen.",
     "The keepsake lay on the coffin's carved hands, completing the widow's request.")
 Q(460, "Resting in Pieces", "Silverpine Forest", 17, HF,
-    "Thule's former servant Alaric survived as a severed head left to the Rot Hides as a plaything.",
-    "Alaric believed his body lay in an unmarked grave near Fenris Keep's stable.",
-    "Alaric's head reached the grave, where he found that his body had not been destroyed.",
-    "The search reunited Alaric with his buried body; a resting place inside the keep was still to come.")
+    "Alaric had been Thule's head servant. Thule's spell had given him an unlife he could not escape. Then Thule beheaded him and gave the head to the Rot Hides as a plaything.",
+    "Alaric's head wanted to be taken to his body, buried in an unmarked grave near the stable of Fenris Keep.",
+    "The grave by the stable had been dug in haste, but Alaric's body was there. He had feared the gnolls had destroyed it.",
+    "Alaric was glad to find his body whole in its unmarked grave. A resting place inside the keep was still to come.")
 Q(461, "The Hidden Niche", "Silverpine Forest", 18, HF,
-    "Alaric knew a concealed alcove in Fenris Keep that held something dear to Thule.",
-    "A dusty shelf in the southwestern tower hid a place where Alaric wanted to be carried.",
-    "Alaric opened the alcove and asked to be left there beyond the Rot Hides' reach.",
-    "The hidden niche gave Alaric the resting place he requested, and he offered a reward.")
+    "Alaric knew a hidden alcove in the southwestern tower of Fenris Keep, behind a dusty shelf. It held something dear to Thule and his old colleagues.",
+    "Alaric wanted to rest in the hidden niche, inside the keep where he had spent his best days. His boots could stay behind, since they had never fit.",
+    "The alcove opened, and Alaric asked to be left there and shut in tight against the Rot Hides. He gave a reward for the help.",
+    "Alaric rested at last within the walls of Fenris Keep, in the niche behind the dusty shelf.")
 Q(491, "Wand to Bethor", "Undercity", 18, HF,
-    "Thule had hidden a wand woven from the apprentice wands of three former friends.",
-    "Alaric wanted the old token of friendship returned to Bethor Iceshard.",
-    "Bethor recognized the Woven Wand and thanked its recovery after believing it lost.",
-    "The wand returned to one of its makers, who said Thule had never invoked its power.")
+    "Thule and two friends had once woven a wand from their apprentice wands. Thule came to despise it but could not part with it, so he hid it in Fenris Keep.",
+    "Alaric gave up the Woven Wand for Bethor Iceshard, one of the friends who had made it.",
+    "Bethor had thought the Woven Wand lost when Thule sided with the Lich King. Thule had never invoked its power, he said, or he would have sensed it.",
+    "The Woven Wand came back to Bethor Iceshard, who called it a marvelous find.")
 Q(452, "Pyrewood Ambush", "Silverpine Forest", 15, HA,
     "A Forsaken operative hoped killing the Pyrewood Council would weaken Arugal's hold over the town.",
     "The council was expected back while Arugal attended to other business in the keep.",
@@ -2347,5 +2351,110 @@ pack.quests["Burning Shadows"].source = {"StorageInvestigation/journal-voice/rev
 -- Complete short scenes: exact recorded stages only; see editorial-20261016 author packet.
 pack.questIDs[1061].highlight = {"The shaman Seereth Stonebreak welcomed help at her camp: goblin logging had left Stonetalon's spirits crying out.", "Stonetalon's wounded spirits had brought Seereth Stonebreak into the mountains. At her camp, the shaman welcomed help against the goblin loggers."}
 pack.questIDs[1062].highlight = {"The strike against the Venture Company's workers earned Seereth's praise. Calming the spirits, she thought, might take the wisdom of the tauren elders.", "Seereth welcomed the losses inflicted on the Venture Company, but looked to the tauren elders for a way to calm Stonetalon's suffering spirits."}
+
+-- Uncovered classic stages in Horde regions (starters3 lane, 2026-11-05):
+-- Mankrik's wife (4921; Forever's 95774 continues it in LoreForeverStories.lua),
+-- Feegly and the Tear, Tatternack's ore, the oasis shell for Mura, Kadrak's
+-- scroll and the Talon Den, Menara Voidrender's Horde referrals (4737, 4739;
+-- the Alliance referrals 4736/4738 are left to the class lane), Melor's summons,
+-- Falla's Nightmare Shard, Zinge's hearts, Veren Tallstrider's leather and
+-- Nefarian's head in Orgrimmar. Givers not named in the quest text (Feegly,
+-- Tatternack, Tonga, Kadrak, Jorn, Falla, Veren) come from LoreForever
+-- Z_barrens/Z_thunderbluff/Z_undercity entries. Feegly's fate after the Tear
+-- is never told: the completion stops at his cry of triumph.
+local HMK, HBM, HMV, HNF = "horde_mankrik", "horde_baelmodan", "horde_menara", "horde_blackrock"
+pack.threads[HMK] = "Mankrik's search for his wife"
+pack.threads[HBM] = "the dwarves' dig at Bael Modan"
+pack.threads[HMV] = "Menara Voidrender's students"
+pack.threads[HNF] = "the fall of Nefarian"
+Q(4921, "Lost in Battle", "The Barrens", 20, HMK,
+    "Mankrik and his wife had fought the Bristlebacks at a small tauren camp until they were separated. She held off three of them alone before more came, and Mankrik went down to their numbers.",
+    "A tauren druid had found Mankrik fallen on the Gold Road and tended his wounds. He asked for any sign of his wife.",
+    "Mankrik heard what had been found of his wife. The pain in his chest had already told him the worst, and he gave his thanks.",
+    "The search for Mankrik's wife ended with the news he had feared, and he understood.")
+Q(857, "The Tear of the Moons", "The Barrens", 30, HBM,
+    "Feegly the Exiled had once held the Tear of the Moons, the first great find of the dig at Bael Modan. General Twinbraid called it cursed, locked it in the keep and drove Feegly off.",
+    "Twinbraid had taken the Tear of the Moons from Feegly and banished him from Bael Modan. The exile raved that the relic should have been his, and wanted it stolen back.",
+    "Feegly had the Tear of the Moons in his hands again, and cried that its power was his once more.",
+    "The Tear left Twinbraid's keep and went back to the exile who craved it.")
+Q(1153, "A New Ore Sample", "The Barrens", 29, "horde_roads",
+    "Travelers from Thousand Needles had killed a kobold carrying an unusual ore, and would not sell Tatternack Steelforge a sample. He wanted one to examine for the warchief's sake.",
+    "The warchief was pleased with Tatternack's work at Camp Taurajo. Before he praised his helper to Thrall, the smith wanted the strange ore of the Thousand Needles kobolds.",
+    "Tatternack called it a good sample. The travelers could no longer lord their find over him. If the ore proved strong, a weapon made from it would go to the warchief.",
+    "The ore reached Tatternack, who set to work on it at once and promised not to forget the help.")
+Q(3301, "Mura Runetotem", "Silverpine Forest", 15, "horde_oases",
+    "Tonga Runetotem's clanmate Mura had gone to Silverpine to bring life back to the Forsaken's dying forest. Tonga thought the strange life of the Barrens might help her, and sent her a shell.",
+    "A shell from the altered beasts of the Barrens oases was bound for Mura Runetotem at the Sepulcher.",
+    "Mura found an inner glow in the shell, as if it still pulsed with life. She meant to study it for a way to aid Silverpine.",
+    "The Barrens shell reached Mura at the Sepulcher. She hoped it held a secret that could heal the forest.")
+Q(3513, "The Runed Scroll", "The Barrens", 25, "horde_roads",
+    "An official-looking scroll wrapped in silvery ribbon might concern the night elves. The outpost near the Ashenvale border to the north was the place to take it.",
+    "A scroll tied with silver ribbon looked like night elf work. The Horde's watch on the Ashenvale border would want to see it.",
+    "Kadrak at Mor'shan Rampart took the scroll and wanted to know where it had been found.",
+    "The runed scroll reached the border watch, where Kadrak began to read it.")
+Q(3514, "Horde Presence", "The Barrens", 29, "horde_roads",
+    "Kadrak's captured scroll came from Rynthariel, the dryad Keymaster of the Talon Den on Stonetalon Peak. Kadrak wanted her dead and a Horde flag raised in her den.",
+    "Rynthariel's outrunners had been crossing Horde ground. Kadrak meant a flag in the Talon Den to warn her people off sending another messenger through the Barrens.",
+    "Rynthariel was dead and the Horde flag stood in the Talon Den. Her people would be slow to regroup, Kadrak said, and fewer Alliance runners would cross the Barrens.",
+    "With the Keymaster dead and the flag raised, Kadrak expected the Alliance to think again before sending a messenger his way.")
+Q(4737, "In Search of Menara Voidrender", "The Barrens", 31, HMV,
+    "Zevrost in Orgrimmar warned that the hunger for power ended in slavery to what one sought to master. Still, he passed on word that Menara Voidrender in Ratchet would make tools for those she judged ready.",
+    "Zevrost in Orgrimmar had little patience for ambition, but not all agreed with him. Menara Voidrender, in a tower above Ratchet, was taking students.",
+    "Menara was pleased that Zevrost's word had reached so far. Those of her kind banded together whatever their race, she said, and she offered to help make tools for their craft.",
+    "In Strahad Farsan's tower above Ratchet, Menara Voidrender greeted the student Zevrost had sent and offered her help.", nil, true)
+Q(4739, "In Search of Menara Voidrender", "The Barrens", 31, HMV,
+    "Kaal Soulreaper in the Undercity saw a new confidence in a student. Menara Voidrender tutored younger students in Strahad's tower above Ratchet, and gave gifts to those who passed her tests.",
+    "Kaal Soulreaper judged a student ready, and sent word of Menara Voidrender, who taught the arcane in a tower above Ratchet.",
+    "Menara was pleased that Kaal's word had reached so far. Her kind had to band together whatever their race, she said. The beings they dealt with showed no mercy to those who failed to control them.",
+    "Menara Voidrender greeted Kaal's student in the tower above Ratchet and offered help in making tools of power.", nil, true)
+Fallback("In Search of Menara Voidrender", HMV,
+    "Menara Voidrender, in Strahad Farsan's tower above Ratchet, was said to teach students who were ready.",
+    "Word came of Menara Voidrender, who made tools of power for students who passed her tests.",
+    "Menara Voidrender received another student in her tower above Ratchet.",
+    "In the tower above Ratchet, Menara Voidrender offered to help make tools of power.", {V .. " #4736, #4737, #4738, #4739"})
+Q(1130, "Melor Sends Word", "Thunder Bluff", 30, "horde_hunts",
+    "Melor Stonehoof had heard of deeds done in the Barrens, Jorn Skyseer said. He had set a path for whoever had done them. Melor waited on Hunter's Rise in Thunder Bluff.",
+    "Melor Stonehoof of Hunter's Rise had a path in mind for those who proved themselves, and Jorn Skyseer sent the summons on.",
+    "Melor asked whether the one he had summoned was ready to journey through distant lands.",
+    "Melor Stonehoof had distant lands in mind, and began to explain what lay ahead.")
+Q(3369, "In Nightmares", "Thunder Bluff", 25, "horde_oases",
+    "Falla Sagewind saw the pure essence of the Emerald Dream in a shard, and in it a vision more like a nightmare. She would say no more, and wanted it in a wise druid's hands soon.",
+    "Falla Sagewind sent the troubling shard to Hamuul Runetotem on Elder Rise in Thunder Bluff. She would not say what she had seen in it.",
+    "Hamuul peered into the shard and faltered. Things in the Emerald Dream were not as the druids had thought, he said. Such matters were not to be spoken of.",
+    "The shard reached Hamuul Runetotem, who advised against talking about what it held.", nil, true)
+Q(1359, "Zinge's Delivery", "Undercity", 15, "horde_apothecary",
+    "Renferrel had found a toxin in the wolf hearts that should have killed the wolves themselves. He kept samples for his colleague, Apothecary Zinge in the Undercity.",
+    "The wolf hearts from Silverpine held a poison unlike any in similar beasts. Renferrel wanted the Royal Apothecary Society to study it.",
+    "Zinge took the heart samples eagerly. New toxins were always of interest to the Royal Apothecary Society.",
+    "Renferrel's heart samples reached Apothecary Zinge, who was eager to experiment with them.")
+Q(768, "Gathering Leather", "Thunder Bluff", 8, "horde_trade",
+    "Veren Tallstrider made clothes and armor from beast skins for the people of Thunder Bluff. He traded his work for hides from the hunt.",
+    "The leatherworker Veren Tallstrider would fashion something in trade for skins from the plains.",
+    "Veren judged the skins very nice pieces that would make fine leather goods, and gave something of his own in trade.",
+    "The skins went to Veren Tallstrider's work for Thunder Bluff, and he paid with a piece of his craft.")
+Q(769, "Kodo Hide Bag", "Thunder Bluff", 10, "horde_trade",
+    "Veren Tallstrider would teach the making of a Kodo Hide Bag to a leatherworker who brought supplies for his trade. The kodo's strength was much respected among the tauren.",
+    "The kodo beasts of Mulgore were strong and sturdy. Veren Tallstrider shared the bag's pattern only with those who brought him light leather and stitching supplies.",
+    "Veren took the supplies and taught the pattern. His heart swelled, he said, to see the young take up leatherworking.",
+    "Veren Tallstrider passed on the Kodo Hide Bag pattern, proud to see youths interested in the craft.")
+Q(7783, "The Lord of Blackrock", "Orgrimmar", 60, HNF,
+    "The battle-scarred head of Nefarian was a prize for the warchief in Orgrimmar.",
+    "Nefarian's head was to go to Thrall, who wished he could have seen the beast's face at the killing blow.",
+    "Thrall said the Horde had been honored once more. The son of Deathwing lay dead, and surely the evil one stirred.",
+    "Nefarian's head reached Thrall, who took the death of Deathwing's son as both honor and warning.", nil, true)
+Q(7784, "The Lord of Blackrock", "Orgrimmar", 60, HNF,
+    "Thrall sent the bearers of Nefarian's head to High Overlord Saurfang in the Valley of Strength.",
+    "In the Valley of Strength, High Overlord Saurfang waited to mount the dragon's head.",
+    "Saurfang offered a reward and mounted Nefarian's head for all of Orgrimmar to see.",
+    "The head of the beast went up in the Valley of Strength, where all could see it.", nil, true)
+for _, id in ipairs({4921, 3514, 3369}) do pack.questIDs[id].importance = 4 end
+for _, id in ipairs({7783, 7784}) do pack.questIDs[id].importance = 6 end
+pack.questIDs[857].importance = 4
+pack.questIDs[4921].highlight = {"Mankrik's wife had held off three Bristlebacks alone before she was overwhelmed. The search for her ended with the news he had feared.", "Mankrik had asked for any sign of his wife after the Bristleback attack. He understood what was found, and gave his thanks."}
+pack.questIDs[3514].highlight = {"Rynthariel, the dryad Keymaster of the Talon Den, was dead, and a Horde flag stood in her den. Kadrak expected fewer Alliance runners in the Barrens.", "Kadrak's flag went up in the Talon Den over the dead Keymaster, a warning to the Alliance's messengers."}
+pack.questIDs[3369].highlight = {"Hamuul Runetotem looked into Falla Sagewind's shard and faltered. Things in the Emerald Dream were not as the druids had thought.", "Falla Sagewind's shard reached Hamuul Runetotem on Elder Rise, who advised keeping quiet about what it held."}
+pack.questIDs[7783].highlight = {"Nefarian's head reached Thrall in Orgrimmar. The son of Deathwing lay dead, and Thrall said the Horde had been honored once more.", "Thrall received the head of Nefarian, and warned that the evil one surely stirred."}
+pack.questIDs[7784].highlight = {"Saurfang mounted Nefarian's head in the Valley of Strength for all of Orgrimmar to see.", "High Overlord Saurfang put the head of Nefarian up in the Valley of Strength."}
+pack.questIDs[857].highlight = {"Feegly the Exiled had the Tear of the Moons back from Twinbraid's keep, and cried that its power was his again.", "Feegly the Exiled took back the relic General Twinbraid had called cursed."}
 
 A.Lore.RegisterStoryPack("horde-and-zephras", pack)

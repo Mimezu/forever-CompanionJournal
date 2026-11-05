@@ -35,6 +35,10 @@ local _, A = ...
 -- Stonetalon referrals extend the early routes. Class quests and most later
 -- journeys belong to other packs; the regional checklist is in
 -- StorageInvestigation/cj-leveling-stage-research-20261012.txt.
+-- Starters3 (2026-11-05, tests/Starters3.lua): 32 more stages, the missing
+-- diplomat from Stormwind to Menethil, Nefarian's head, Ironforge's gnome
+-- craftsmen, Velinde, the Nightmare Shard, the Kor gem and the beached sea
+-- creatures of Darkshore.
 local P = {sources = {"StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt (quest, progress and completion text; IDs on each entry)"},
     quests = {}, questIDs = {}, zones = {}, threads = {
         alliance_northshire = "Northshire's safety and supplies",
@@ -157,7 +161,7 @@ q(9, "The Killing Fields", W, 15, H,
 q(36, "Westfall Stew", W, 10, H,
     "Verna Furlbrow was preparing to leave a farm made unsafe by thieves.",
     "A broken wagon delayed the Furlbrows' departure, leaving time to pass on a stew recipe.",
-    "Verna's recipe reached Salma Saldean, preserving a small connection between neighboring farms.",
+    "Salma Saldean took Verna's recipe and said Verna was a city girl at heart, who would do fine in Stormwind. Now Salma could make her stew.",
     "Salma received the recipe; making the stew was work still to come.")
 q(38, "Westfall Stew", W, 13, H,
     "Salma's stew called for vulture meat, goretusk snouts, murloc eyes and okra.",
@@ -168,11 +172,11 @@ q(12, "The People's Militia", W, 12, H,
     "Defias trappers and smugglers threatened the farms and the area near Jangolode Mine.",
     "Westfall's militia needed help against the Defias operating near its northern farms.",
     "The work against trappers and smugglers earned the militia's approval.",
-    "The militia's scout confirmed the fighting; further service still lay ahead.")
+    "Gryan Stoutmantle's scout had watched the trappers and smugglers fall, and Stoutmantle judged the recruit was proving well so far.")
 q(13, "The People's Militia", W, 14, H,
     "Defias pillagers and looters were reported around the quarry, Moonbrook and Alexston Farmstead.",
     "The militia's next effort targeted the Defias plundering Westfall's settlements.",
-    "The fighting against pillagers and looters proved useful to the People's Militia.",
+    "Gryan Stoutmantle counted the pillagers and looters of the Gold Coast Quarry and Moonbrook as proof of a recruit's worth to the People's Militia.",
     "The militia had help against the looters around its farms, though other Defias bands remained.")
 q(14, "The People's Militia", W, 17, H,
     "Defias had withdrawn into the Dagger Hills after plundering southern Westfall.",
@@ -573,7 +577,7 @@ q(151, "Poor Old Blanchy", W, 14, H,
 q(65, "The Defias Brotherhood", R, 18, DF,
     "Stoutmantle needed a name and a hiding place behind the raids that had emptied Westfall's farms.",
     "Wiley in Lakeshire owed Stoutmantle a favor and might know something about the Defias.",
-    "The inquiry reached Wiley, who acknowledged his debt to Stoutmantle.",
+    "Wiley, a rogue at the Lakeshire inn, heard that Stoutmantle had sent someone, and admitted he owed him.",
     "Wiley recognized the request from Westfall; the investigation had found its first contact.", 4)
 q(132, "The Defias Brotherhood", W, 18, DF,
     "Wiley's note described Defias dealings with gnolls, kobolds and goblins.",
@@ -2334,6 +2338,209 @@ q(468, "Report to Mountaineer Rockgar", "Loch Modan", 21, KD,
     "At Dun Algaz, Rockgar said the scouting had become a messier business.")
 P.questIDs[2520].highlight = {"Lady Sathrah's spinnerets were laid in the Temple of the Moon's fountain. The holy water there would cleanse the corruption that had maddened her.", "Sathrah's sacrifice went into the temple's waters, and A'moora hoped Elune would accept it."}
 
+-- Starters3 lane, 2026-11-05: Bishop DeLavey's missing diplomat through every
+-- stage told in Stormwind, Duskwood and Menethil (1274, 1241-1250). The
+-- Theramore stages (1264-1266) are Dustwallow work for the world lane. No
+-- stage before 1250 knows the diplomat is the king; 1250 tells only what Slim
+-- confesses (the Defias' unnamed partner stays unnamed). Also Count
+-- Ridgewell's tiara, Argos's call for his brother, and Nefarian's head in
+-- Stormwind. Ridgewell, Thyn'tel, Thundris, Gwennyth and Laris are named from
+-- LoreForever Z_stormwind/Z_darnassus/Z_darkshore/Z_ironforge entries.
+-- The diplomat stages share the world pack's thread with its Dustwallow stages.
+P.threads.world_diplomat = "the missing diplomat"
+P.threads.alliance_relics = "relics for Stormwind's collectors"
+P.threads.alliance_nefarian = "the fall of Nefarian"
+local MD = "world_diplomat"
+q(1274, "The Missing Diplomat", SW, 28, MD,
+    "Thomas had been asked to find adventurers for Bishop DeLavey, quietly. The bishop had a delicate matter in Stormwind Keep and wanted it kept out of common talk.",
+    "A discreet visit to Bishop DeLavey in Stormwind Keep was all Thomas would say about it. The matter was of some importance.",
+    "Bishop DeLavey said he had no time to explain much and would be blunt. Above all, he wanted the matter kept from becoming common knowledge.",
+    "In Stormwind Keep, Bishop DeLavey took on the help Thomas had found for him, and asked for discretion.")
+q(1241, "The Missing Diplomat", SW, 28, MD,
+    "A diplomat sent to meet Jaina Proudmoore in Theramore had never arrived. Bishop DeLavey suspected the Defias, and wrote to his old friend Jorgen in the Valley of Heroes.",
+    "The king's agents were already searching the city, but DeLavey wanted his own contacts on the diplomat's trail. The first was Jorgen, who fished in the Valley of Heroes.",
+    "Jorgen squinted at the note and agreed to help, out of obligation rather than wish. He wanted every finding kept secret and nothing said in the taverns.",
+    "Jorgen grumbled at being taken from his fishing, but DeLavey's note bound him to help.", 4)
+q(1242, "The Missing Diplomat", SW, 28, MD,
+    "Jorgen sent a note to Elling Trias at his cheese shop in the Trade District. The courier was to say nothing else and wait for the reply.",
+    "Jorgen's note was for Elling Trias, who sold cheddar and Darnassian bleu in the Trade District.",
+    "Elling Trias was surprised to get a letter that was not a crate or a barrel. He opened it and looked up at the one who had brought it.",
+    "Elling Trias read Jorgen's note in his shop in the Trade District.")
+q(1243, "The Missing Diplomat", D, 28, MD,
+    "Elling Trias would use his own contacts, but others would do the footwork and save him coin. He sent word to Watcher Backus, who patrolled the north road outside Darkshire.",
+    "Trias wanted to know of any Defias activity in Duskwood. Watcher Backus, on the north road out of Darkshire, would help if told who was asking.",
+    "Backus was surprised to hear that Trias had sent someone, and asked what his friend needed on so gloomy a day.",
+    "On the north road outside Darkshire, Watcher Backus heard that Trias was looking into the Defias.")
+q(1244, "The Missing Diplomat", D, 30, MD,
+    "A couple of weeks earlier, Defias agents had gathered at Addle's Stead, and Backus guessed something big had happened there. He wanted anything they had left behind.",
+    "The Night Watch kept an eye on the Defias even when they kept to themselves. Their recent gathering at Addle's Stead had seemed odd to Backus.",
+    "Backus looked over the papers from Addle's Stead. They looked official for Defias documents, though he warned they could be a ruse.",
+    "The papers from Addle's Stead reached Backus, who could not yet say whether they were real or a decoy.")
+q(1245, "The Missing Diplomat", SW, 30, MD,
+    "The Defias papers were too complex to be a ruse, Backus decided, and too big for him. He sent them to Trias and asked that no one learn he had seen them.",
+    "Backus feared his superiors would hang him for keeping the Defias papers to himself. Trias, he said, would make sense of them.",
+    "Trias found the papers an interesting read. The Defias had worked hard on their plan, and one name caught his eye, Fist.",
+    "Elling Trias read the Defias plan and was glad Jorgen and DeLavey had brought him in. A familiar name stood out among the papers.")
+q(1246, "The Missing Diplomat", SW, 31, MD,
+    "Fist was Dashel Stonefist, a brawler usually found in the middle of Old Town. Trias expected him to talk only under some persuasion.",
+    "If Dashel Stonefist was as deep in the plan as the papers suggested, Trias said, he would give nothing up willingly.",
+    "Dashel Stonefist took the questions badly, angry that anyone would come into his alley asking about his business.",
+    "In Old Town, Dashel met the questions about his business with open hostility.")
+q(1247, "The Missing Diplomat", SW, 31, MD,
+    "Dashel admitted to the meeting at Addle's Stead, though he said his part ended when plan A failed. The man on the inside for plan B had come out of Menethil, a man called Slim.",
+    "Dashel gave up a name at last. The Defias had a backup plan, and their man for it was Slim, from Menethil.",
+    "Trias had read more of the plan. The Defias had failed once to capture the diplomat and then turned to plan B. Slim in Menethil was a place to start.",
+    "Trias was glad to see Dashel's questioner alive, and took Slim's name as the next lead.")
+q(1248, "The Missing Diplomat", V, 33, MD,
+    "A retired contact of Trias's tended bar in Menethil Harbor, a man named Mikhail. He would help on Trias's word, and might find Slim.",
+    "The Defias docket said nothing of where the diplomat had been taken. Trias sent word to Mikhail in Menethil to find Slim and learn more.",
+    "Mikhail welcomed the newcomer with ale and mutton. At the name Trias, he lowered his voice and said this was not for the whole tavern to hear.",
+    "In Menethil's tavern, Mikhail heard Trias's name and asked for quiet.")
+q(1249, "The Missing Diplomat", V, 33, MD,
+    "Mikhail did not know the name Slim. He did notice a man by the door listening too closely, and thought him worth stopping before he ran.",
+    "A stranger near the tavern's exit was listening a little too intently, Mikhail warned.",
+    "The listener by the door was Slim after all. Mikhail admitted he missed the old underground excitement, and asked that Elling not hear of it.",
+    "Slim was caught in Mikhail's tavern. Mikhail was surprised, and glad to have been of some service.")
+q(1250, "The Missing Diplomat", V, 33, MD,
+    "Slim said the Defias did not pay him enough to die for them. They had taken the king of Stormwind on his way to meet Jaina Proudmoore. Slim's part was to get their man Hendel aboard the king's ship.",
+    "The missing diplomat was the king himself, Slim confessed. The Defias were working with someone else, and their man aboard the royal ship was called Hendel.",
+    "Mikhail had not even heard the king was missing. He sent word to Elling at once, and thought he could help find Hendel.",
+    "Mikhail could not believe Jahn had sold out Stormwind for a few coins. Finding Hendel came next, and Mikhail thought he could help.", 6)
+P.questIDs[1250].highlight = {"In Menethil, Slim confessed that the missing diplomat was the king of Stormwind, taken by the Defias. Their man aboard the royal ship was named Hendel.",
+    "Bishop DeLavey's quiet inquiry reached a Menethil tavern, where Slim admitted the Defias had taken the king. Mikhail sent word to Elling Trias at once."}
+P.questIDs[1241].highlight = {"Bishop DeLavey suspected the Defias when a diplomat bound for Theramore never arrived. His old friend Jorgen agreed to help, out of obligation.",
+    "Bishop DeLavey's search for a missing diplomat began with Jorgen, fishing in the Valley of Heroes."}
+q(543, "The Perenolde Tiara", SW, 40, "alliance_relics",
+    "The Perenolde Tiara had belonged to the ruling family of Alterac before the kingdom fell. Rumor said the ogre mage Grel'borg the Miser had found it in the Ruins of Alterac.",
+    "Count Remington Ridgewell wanted the Perenolde Tiara for his collection. Master jewelers of Ironforge had set it with emeralds, and it was lost when Alterac fell.",
+    "Count Ridgewell called the tiara splendid. It would need cleaning, and then it would take its place in his collection.",
+    "The Perenolde Tiara reached Count Ridgewell, who had it prepared for display and promised gratitude as grand as his collection.")
+q(3765, "The Corruption Abroad", "Darkshore", 24, J,
+    "A night elf had come all the way to Stormwind looking for help. His brother Gershala, in the seaside town of Auberdine, needed it.",
+    "Argos Nightwhisper sought a seasoned adventurer in Stormwind's streets for his brother Gershala in Darkshore. The journey, he warned, was a long one.",
+    "Gershala Nightwhisper heard that his brother Argos had sent help. There was much to talk about, he said, after so long a journey.",
+    "In Auberdine, Gershala welcomed the one his brother had found in Stormwind.")
+q(7781, "The Lord of Blackrock", SW, 60, "alliance_nefarian",
+    "The battle-scarred head of Nefarian was to go to Highlord Bolvar Fordragon in Stormwind.",
+    "Nefarian's head belonged before the Highlord in Stormwind Keep, who called the news inconceivable.",
+    "Bolvar said the day would be remembered in the annals of history. The Alliance had not known such a victory in years, if ever.",
+    "Nefarian's head reached Bolvar Fordragon, who called it a victory like no other in the Alliance's memory.", 6)
+q(7782, "The Lord of Blackrock", SW, 60, "alliance_nefarian",
+    "Bolvar sent the bearers of Nefarian's head to Field Marshal Afrasiabi in the Valley of Heroes.",
+    "In the Valley of Heroes, Field Marshal Afrasiabi waited with rewards for the fall of Nefarian.",
+    "Afrasiabi bowed, offered a reward and called for the celebration to begin.",
+    "The celebration of Nefarian's fall began, with rewards from Field Marshal Afrasiabi.", 5)
+P.questIDs[7781].highlight = {"Nefarian's head reached Highlord Bolvar Fordragon, who called it a victory the Alliance had not known in years, if ever.",
+    "Bolvar Fordragon received the head of Nefarian, lord of Blackrock, and said the day would be remembered."}
+P.questIDs[7782].highlight = {"Field Marshal Afrasiabi bowed and called for the celebration of Nefarian's fall to begin.",
+    "In the Valley of Heroes, the celebration of Nefarian's fall began."}
+
+-- Starters3 lane, 2026-11-05: Ironforge's gnome craftsmen and scholars
+-- (Talvash's ring, Laris's ooze samples; Laris works in Ironforge per
+-- https://warcraft.wiki.gg/wiki/Laris_Geardawdle), the search for Velinde
+-- Starsong to Ratchet, the Alliance Nightmare Shard, the Kor gem in Auberdine,
+-- and the beached sea creatures of Darkshore. The beached stages each keep
+-- their own finding; none solves why the creatures come ashore.
+P.threads.alliance_gnomecraft = "the gnome craftsmen of Ironforge"
+P.threads.alliance_velinde = "the search for Velinde Starsong"
+P.threads.alliance_dream = "the shard from the Emerald Dream"
+P.threads.alliance_stilwell = "the Kor gem for Jordan Stilwell"
+P.threads.alliance_beached = "the sea creatures beached on Darkshore"
+local GC, VL, BC = "alliance_gnomecraft", "alliance_velinde", "alliance_beached"
+q(2948, "Gnome Improvement", IF, 35, GC,
+    "Talvash del Kissel had made the ring long ago to a simple design, and was sure he could do better now. He was out of stock and asked for a silver bar and a moss agate.",
+    "Talvash del Kissel, a gnome jeweler in Ironforge, was down on his luck. He offered to add a silver and agate lattice to a ring he had made long ago, if someone brought the materials.",
+    "Talvash set the silver and agate into a new lattice. One day, he said, he would make the finest trinkets in all of Azeroth.",
+    "The ring came back with a silver and agate lattice. Talvash said he usually charged ten times as much for such quality.")
+q(4512, "A Little Slime Goes a Long Way", IF, 52, GC,
+    "Laris Geardawdle studied oozes. He had seen the Royal Apothecary Society collecting them and wanted to know why. There were more in Felwood, he had heard.",
+    "Laris suspected oozes were tied to the making of the world itself, a theory few liked. He wanted samples from the oozes of Felwood to test it.",
+    "The Felwood samples were perfect, Laris said. If he was right, he could become one of the Explorers' League's greatest scientists. It would show the dwarves that taking in the gnomes had been no mistake.",
+    "Laris had his Felwood ooze samples and could not wait to start testing them.")
+q(4513, "A Little Slime Goes a Long Way", IF, 54, GC,
+    "The Felwood samples were corrupt like the forest. Laris realized that oozes took on the nature of the place they lived. He needed pure samples, and did not know where to find them.",
+    "Laris needed ooze samples untouched by pollution to compare with the corrupt ones, and handed out containers in case any turned up.",
+    "Laris was overjoyed with the pure samples. He went back to his work and said he would likely need help again.",
+    "Pure ooze samples reached Laris Geardawdle, who called the help magnificent.")
+q(1038, "Velinde's Effects", "Darnassus", 30, VL,
+    "The Tome of Mel'Thandris had pointed to Velinde Starsong, a priestess who had left her post. Thyn'tel Bladeweaver gave a key to the chest of her belongings in the Sentinels' bunkhouse.",
+    "The Sentinels believed Velinde had her own reasons for leaving and could return at any time. The notes she kept of her duties, locked in a chest in their bunkhouse, were the place to look.",
+    "Velinde's notes made her disappearance look more troubling. Thyn'tel still could not believe she had come to a bad end, and wanted to make contact with her.",
+    "Velinde's belongings showed her leaving was no simple matter. Thyn'tel asked for help in reaching her.", 4)
+q(1039, "The Barrens Port", "The Barrens", 30, VL,
+    "Ratchet was the only port in the Barrens. Velinde had most likely found a trading ship there bound for Blackwater Cove. The goblin master of the dock would know who had sailed.",
+    "Thyn'tel sent the search for Velinde south through Ashenvale and Horde lands to Ratchet, where the wharfmaster kept track of passengers.",
+    "Wharfmaster Dizzywig did not see many of the seeker's kind, and began searching his ledgers for Velinde.",
+    "In Ratchet, Dizzywig agreed to look through his ledgers for the missing priestess.")
+q(3370, "In Nightmares", "Darnassus", 25, "alliance_dream",
+    "Falla Sagewind saw the pure essence of the Emerald Dream in a shard, and a nightmare in it. She wanted it in the hands of Mathrengyl Bearwalker of the Cenarion Circle in Darnassus.",
+    "A shard from the Emerald Dream troubled Falla Sagewind. She would say only that a wise druid had to have it soon.",
+    "Mathrengyl peered into the shard and faltered. Things in the Emerald Dream were not as the druids had thought, he said. Such matters were for the Cenarion druids alone.",
+    "The shard reached Mathrengyl Bearwalker, who advised leaving such matters to the Cenarion druids.", 4)
+P.questIDs[3370].highlight = {"Mathrengyl Bearwalker looked into Falla Sagewind's shard and faltered. Things in the Emerald Dream were not as the druids had thought.",
+    "Falla Sagewind's shard reached Mathrengyl Bearwalker of the Cenarion Circle, who kept what he saw in it for the druids alone."}
+q(1442, "Seeking the Kor Gem", "Darkshore", 22, "alliance_stilwell",
+    "Thundris Windweaver remembered Jordan Stilwell, a blacksmith from long ago, and trusted that his wish for a Kor gem was noble. The naga who still used the gems were deep in Blackfathom Deeps.",
+    "Jordan Stilwell needed a Kor gem. Thundris Windweaver in Auberdine sent the seeker to the ruins of Blackfathom Deeps in northwestern Ashenvale, and warned against going alone.",
+    "Thundris confirmed the gem was the one Stilwell wanted, then purified it of the naga's corruption. Its power was intact for Stilwell's ritual.",
+    "The Kor gem from Blackfathom Deeps was cleansed in Auberdine, ready to carry back to Stilwell.")
+q(4722, "Beached Sea Turtle", "Darkshore", 13, BC,
+    "A sea turtle had beached itself on the Darkshore coast some time ago, and murlocs had camped around its remains. Enough was left for a sample.",
+    "Gwennyth Bly'Leggonde in Auberdine studied the creatures that washed up on Darkshore, and a murloc-scavenged sea turtle still held usable remains.",
+    "Gwennyth sent the turtle remains on to Darnassus to be studied properly, and paid a small honorarium.",
+    "Another beached turtle went into Gwennyth's research, bound for Darnassus.")
+q(4723, "Beached Sea Creature", "Darkshore", 13, BC,
+    "A giant thresher lay beached at the Mist's Edge, far larger than any thresher of Darkshore. The murlocs feasting on it were much too weak to have brought it down.",
+    "A great thresher had come ashore at the Mist's Edge, and no one knew how. Enough of it remained for a sample for Gwennyth Bly'Leggonde.",
+    "Gwennyth took the thresher sample for study in Darnassus. One day, she hoped, they might find a way to keep these creatures from dying on the coast.",
+    "The thresher's remains went into the Temple of the Moon's research, and Gwennyth paid for the find.")
+q(4725, "Beached Sea Turtle", "Darkshore", 15, BC,
+    "This sea turtle had an abandoned carriage strapped to its shell, as if something had driven it ashore. Greymist murlocs fed on it, and in the carriage lay a box with strange markings.",
+    "A box with strange markings sat in a carriage on a beached turtle's shell. Gwennyth Bly'Leggonde might make sense of it.",
+    "Gwennyth knew such carriages. The naga used them in battle and to bring supplies ashore. The markings were naga too, which explained their presence in far-northern Darkshore.",
+    "The marked box was naga work, Gwennyth said, and it went to Darnassus with the other finds.", 4)
+P.questIDs[4725].highlight = {"Gwennyth Bly'Leggonde read naga markings on a box from a beached turtle's carriage. It explained the naga in far-northern Darkshore.",
+    "Gwennyth Bly'Leggonde of Auberdine sent the naga box from a beached turtle's carriage on to Darnassus."}
+q(4727, "Beached Sea Turtle", "Darkshore", 15, BC,
+    "The bones of a sea turtle lay on the northern beaches with no murlocs near them, whether unfound or avoided.",
+    "A turtle skeleton on the northern beaches still had enough left for the Temple of the Moon to study.",
+    "Gwennyth noted that no murlocs had been at this site. She paid on the temple's behalf.",
+    "The turtle's bones went to the Temple of the Moon's study, with the odd absence of murlocs noted.")
+q(4728, "Beached Sea Creature", "Darkshore", 14, BC,
+    "A giant sea mammal lay half gutted on the beach. A wheelbarrow and tools lay beside it, as if someone had begun to study it.",
+    "Murlocs had scavenged the beached beast and chased off whoever had left tools beside it, but a sample remained.",
+    "Gwennyth recognized the site. The Explorers' League had been studying that creature until the murlocs drove them off.",
+    "Where the Explorers' League and Gwennyth had both failed, the sample came back. She paid an honorarium from the Temple of the Moon.")
+q(4730, "Beached Sea Creature", "Darkshore", 16, BC,
+    "A half-devoured sea mammal lay on the beach, ringed by murlocs stronger than those near Auberdine.",
+    "Bones from a beached sea mammal could go to Gwennyth Bly'Leggonde, if the murlocs around it allowed.",
+    "The bones came from gentle sea mammals that lived around the base of Teldrassil. They had never been known to beach themselves, and Gwennyth wondered why they did now.",
+    "Gwennyth hoped the gentle mammal's bones would show why such creatures were coming ashore.")
+q(4731, "Beached Sea Turtle", "Darkshore", 19, BC,
+    "Another beached sea turtle had a carriage half buckled to its shell. Powerful Greymist murlocs had made the carcass their home.",
+    "A second marked box lay in a carriage on a beached turtle, more evidence for Gwennyth Bly'Leggonde.",
+    "The box was naga again. Gwennyth wondered whether the turtle had been killed while heading south, perhaps toward Ashenvale.",
+    "Gwennyth took the second naga box for Darnassus and guessed the turtle had been bound south.")
+q(4732, "Beached Sea Turtle", "Darkshore", 19, BC,
+    "Greymist murlocs had picked another beached sea turtle nearly clean, but samples remained.",
+    "One more sea turtle had beached itself on the Darkshore coast, and the murlocs camped around it had left a little behind.",
+    "Sea turtles had once played along the base of Nordrassil, Gwennyth said. Since Teldrassil grew, they had become fewer, and some came here to die.",
+    "The turtle samples went to Gwennyth, who hoped they might unlock the mystery of the beachings.")
+q(4733, "Beached Sea Creature", "Darkshore", 19, BC,
+    "A giant thresher had washed ashore on the rocky inlet of the Twilight Shore, several times larger than any thresher seen there.",
+    "A great thresher on the Twilight Shore was not native to Darkshore. Gwennyth Bly'Leggonde would want a sample.",
+    "Even the eldest threshers of the region grew to a fraction of that size. Larger ones had lived near Teldrassil, and Gwennyth wondered if their decline was tied to the beachings.",
+    "The thresher's size astonished Gwennyth, who began to suspect a link between the beachings and the dwindling threshers near Teldrassil.", 4)
+P.questIDs[4733].highlight = {"Gwennyth Bly'Leggonde heard of a thresher several times larger than any in Darkshore. She wondered if the beachings were tied to the dwindling threshers near Teldrassil.",
+    "Gwennyth Bly'Leggonde wondered about the threshers vanishing from Teldrassil's waters once the giant from the Twilight Shore was found."}
+-- Tormus Deepforge (named from LoreForever quest:1578) sends smiths' work to
+-- his colleague Thorvald on the Loch Modan front.
+q(1578, "Supplying the Front", "Loch Modan", 12, KD,
+    "The mountaineers of Loch Modan were fighting troggs and wore through their gear. Tormus Deepforge in Ironforge wanted copper axes and chain belts made for them.",
+    "Thorvald kept the mountaineers in good gear from Loch Modan's southern guard tower. Tormus Deepforge thought a smith's copper work would oblige him.",
+    "Thorvald had no time to chat until he saw the axes and belts. They would be a big help to the troops, and he shared plans for armor.",
+    "The copper axes and chain belts went to the mountaineers' front. Thorvald paid with armor plans of his own.")
+
 -- Only unambiguous titles may reuse exact-ID consequences. All chain titles
 -- receive explicitly conservative fallback prose below, including Forever steps.
 local ambiguous = {
@@ -2353,6 +2560,9 @@ local ambiguous = {
     ["The Thandol Span"] = true, ["A King's Tribute"] = true,
     ["The Absent Minded Prospector"] = true, ["The Tower of Althalaxx"] = true,
     ["A Lost Master"] = true, ["A Noble Brew"] = true,
+    ["The Missing Diplomat"] = true, ["The Lord of Blackrock"] = true, ["In Nightmares"] = true,
+    ["Beached Sea Turtle"] = true, ["Beached Sea Creature"] = true, ["A Little Slime Goes a Long Way"] = true,
+    ["Seeking the Kor Gem"] = true,
 }
 for _, entry in pairs(P.questIDs) do
     if not ambiguous[entry.title] then P.quests[entry.title] = entry end
@@ -2393,6 +2603,47 @@ chain("The Defias Brotherhood", 65,
     "The militia's search for the Brotherhood's leadership depended on witnesses, messages and evidence.",
     "One part of the militia's work concerning the Defias was finished.",
     "The completed assignment belonged to the wider effort against the Brotherhood.")
+-- Starters3 shared titles: a title-only record names no stage's finding.
+local function neutral(title, zone, thread, ids, w1, w2, a1, a2)
+    P.quests[title] = {zone = zone, thread = thread, threadLabel = P.threads[thread], importance = 3,
+        why = {w1, w2}, after = {a1, a2}, source = {"corpus_vanilla_quests.txt: quests " .. ids}}
+end
+neutral("The Missing Diplomat", SW, MD, "1274, 1241-1250, 1264-1266",
+    "A diplomat sent to Theramore had never arrived, and Bishop DeLavey wanted the matter looked into quietly.",
+    "Bishop DeLavey's contacts were following a quiet trail after a diplomat who never reached Theramore.",
+    "The quiet inquiry into the missing diplomat went on.",
+    "Another of DeLavey's contacts had been reached on the diplomat's trail.")
+neutral("The Lord of Blackrock", nil, "alliance_nefarian", "7781-7784",
+    "The battle-scarred head of Nefarian was carried home as proof of his fall.",
+    "Nefarian's head, the lord of Blackrock's, was a trophy for a capital's leaders.",
+    "Word of Nefarian's death reached those who had waited for it.",
+    "The head of Nefarian was brought before a capital's leaders.")
+neutral("In Nightmares", nil, "alliance_dream", "3369, 3370",
+    "A shard holding a vision from the Emerald Dream was meant for a wise druid.",
+    "Falla Sagewind had seen something in a shard that she would not speak of.",
+    "The shard reached a druid who advised against speaking of what it held.",
+    "Falla's shard was in a druid's hands, and its vision stayed unspoken.")
+neutral("Beached Sea Turtle", "Darkshore", BC, "4722, 4725, 4727, 4731, 4732",
+    "Sea turtles had been washing up dead on the Darkshore coast.",
+    "Gwennyth Bly'Leggonde in Auberdine wanted samples from the turtles beached on Darkshore.",
+    "Gwennyth Bly'Leggonde had one more sample from a beached turtle.",
+    "Another beached turtle went into the Temple of the Moon's research.")
+neutral("Beached Sea Creature", "Darkshore", BC, "4723, 4728, 4730, 4733",
+    "Great sea creatures had been coming ashore on Darkshore to die.",
+    "Gwennyth Bly'Leggonde in Auberdine wanted samples from the creatures beached on Darkshore.",
+    "Gwennyth Bly'Leggonde had one more sample from a beached sea creature.",
+    "Another beached creature went into the Temple of the Moon's research.")
+-- (no thread: the Forsaken stage 95042 in the Forever pack must keep its own label)
+neutral("Seeking the Kor Gem", nil, nil, "1442, 95042",
+    "A Kor gem was wanted, and the naga who still used them were deep in Blackfathom Deeps.",
+    "Kor gems could empower holy weapons, and the naga of Blackfathom Deeps carried them.",
+    "A Kor gem came out of Blackfathom Deeps, corrupted by the naga.",
+    "The search for a Kor gem led out of Blackfathom Deeps.")
+neutral("A Little Slime Goes a Long Way", IF, GC, "4512, 4513",
+    "Laris Geardawdle in Ironforge studied oozes and wanted samples.",
+    "The gnome scholar Laris Geardawdle had a theory about oozes and needed samples to test it.",
+    "Laris Geardawdle had more ooze samples for his study.",
+    "More ooze samples reached Laris Geardawdle.")
 -- Also names an unrelated Barrens escort: historical titles cannot choose a plot.
 P.quests["The Escape"] = {importance = 3,
     why = {"Getting out of danger required practical help.", "An escape depended on assistance before the immediate difficulty could be left behind."},
@@ -2529,7 +2780,7 @@ chain("A Noble Brew", 335,
 q(66, "The Legend of Stalvan", D, 28, "alliance_stalvan",
     "Madame Eva feared for her granddaughter Alyssa, and her search for an answer had brought her the name Stalvan.",
     "Eva's cards had shown Death; the name Stalvan was her only lead.",
-    "The inquiry reached the clerk in Darkshire's town hall.",
+    "Madame Eva's question about Stalvan reached the clerk in Darkshire's town hall, who knew at once who had sent it.",
     "The town hall clerk received Eva's inquiry about Stalvan.", 4)
 q(98, "The Legend of Stalvan", D, 35, "alliance_stalvan",
     "The investigation had led Darkshire's defenders to order Stalvan's execution.",

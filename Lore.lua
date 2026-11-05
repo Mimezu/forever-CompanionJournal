@@ -1350,8 +1350,9 @@ L.questStory = {
     },
     ["The Missing Diplomat"] = { -- 1274, 1241 to 1250, 1264 to 1266, 1324
         why = {"A diplomat sent from {p:Stormwind} to meet Jaina Proudmoore in {p:Theramore} had never arrived, and Bishop DeLavey wanted it kept quiet."},
-        after = {"The trail ran from a cheese shop in {p:Stormwind} to a tavern in {p:Menethil Harbor}, and the missing diplomat turned out to be the king himself.",
-            "Private Hendel had helped the Defias get a man aboard the king's ship, and Jaina's soldiers took him to {p:Theramore} for questioning."},
+        -- A title-only record names no stage: who the diplomat was belongs to
+        -- exact stage 1250 (LoreAllianceStories.lua), Hendel's arrest to later ones.
+        after = {"Bishop DeLavey's quiet inquiry into the missing diplomat went on, from a cheese shop in {p:Stormwind} outward."},
         zone = "Stormwind City",
         level = 28,
     },

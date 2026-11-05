@@ -33,7 +33,12 @@ local P = {setting = "Forever",
 -- thread; the labels below are only used if that pack ever drops them.
 local SHARED_THREADS = {forever_grove = "the needs of Thendal Grove", forever_cult = "the Al'Aketh threat",
     forever_winds = "the fading magic of Zephras"}
+-- Forever stages that continue a chain told in LoreHordeStories.lua join its
+-- thread under the same label (starters3 lane, 2026-11-05).
+local HORDE_THREADS = {horde_vrang = "Vrang and the hermit tanner", horde_ratchet = "Ratchet's harbor and workshops",
+    horde_mankrik = "Mankrik's search for his wife"}
 local function Thread(key)
+    if HORDE_THREADS[key] then P.threads[key] = HORDE_THREADS[key]; return key end
     if SHARED_THREADS[key] then
         if not L.storyThreads[key] then P.threads[key] = SHARED_THREADS[key] end
         return key
@@ -1574,13 +1579,147 @@ q(97485, "Traditions of the Bluff", "Thunder Bluff", 10, "bluff", 3,
     false, {"part1_corpus.txt #97485 (cat 1638; Nida, Nata, Mahu and Naal)"})
 P.threads.fv_bluff = "the traditions of Thunder Bluff"
 
+---------------------------------------------------------------- Remaining starter-zone stages (starters3 lane, 2026-11-05)
+-- Orgrimmar (cat 1637): Yelmak's shop before Whuut's the Rush (#97275), and
+-- Migi's lunches and games behind Grommash Hold. Kor'geld, Thatog and Thra
+-- are named from Lore Forever; the rest is the quest text.
+q(97242, "Yelmak's Medley", "Orgrimmar", 15, "durotar", 2,
+    "Yelmak's apprentice Whuut kept breaking the shop's equipment and was too proud to ask for help. Kor'geld wanted cattail and speargrass from the Valley of Honor for one of Yelmak's home brews.",
+    "Kor'geld could not leave Yelmak's shop without Whuut guessing that everyone was humoring his mood. The cuttings for the medley grew by the water in the Valley of Honor.",
+    "Kor'geld said that cattail and speargrass like these grew only in {p:Orgrimmar}, fed by mountain springs and the city's red dust. Yelmak would use them to win back Whuut's ear with a lesson at the bench.",
+    "The cuttings went to Yelmak, who hoped a lesson with his own hands would reach his proud apprentice.",
+    false, {"part1_corpus.txt #97242 (cat 1637)", "LoreForever quest:97242 (wiki: in-game quest text; Kor'geld and Whuut)"})
+q(97246, "Meal Appeal", "Orgrimmar", 15, "migi", 2,
+    "Thatog's son Migi played behind Grommash Hold all day. He almost never stopped for the lunch his father had arranged at Borstan's. The boy came home starving, and Thatog's duties kept him at his post.",
+    "Thatog could not watch over every meal his son Migi skipped. He asked that Borstan be told, at his firepit, that someone had come for Migi's lunch.",
+    "Borstan knew the arrangement well. Migi was meant to collect a bagged lunch every day, and some weeks he hardly came at all.",
+    "At the firepit, Borstan admitted that Migi often left his lunch behind. He wondered where the boy found the energy to play all day.",
+    false, {"part1_corpus.txt #97246 (cat 1637)", "LoreForever quest:97246 (wiki: in-game quest text; Thatog)"})
+q(97249, "Favorite Food", "Orgrimmar", 15, "migi", 3,
+    "Migi's parents had made Borstan promise to vary the boy's lunches. Migi never missed lunch when sweetglazed hog belly came out of the smoker. So Borstan began crumbling the glazed bits over any meal.",
+    "Borstan had a plan to bring Migi in for lunch. Crispy sweetglaze crumbs could go on any dish. Migi was behind Grommash Hold with his friends.",
+    "Migi smelled the lunch and said it tasted like his favorite, only better. If it was this good every day, his friends would stop their game to eat with him.",
+    "Borstan's lunch reached Migi behind Grommash Hold. The boy liked the strong crumbs and decided the game could wait while everyone ate.",
+    false, {"part1_corpus.txt #97249 (cat 1637)", "LoreForever quest:97249 (wiki: in-game quest text; Borstan's Meats)"}).highlight = {
+    "Borstan's sweetglaze crumbs won Migi over. The boy decided his friends could stop their game behind Grommash Hold to eat lunch.",
+    "Migi took Borstan's lunch behind Grommash Hold and called it his favorite."}
+q(97326, "Rocks to Rests", "Orgrimmar", 15, "migi", 2,
+    "Behind Grommash Hold, Thra and the other children set up their figures in a clear patch of dirt. They had no rocks to use as chairs or tables.",
+    "Thra wanted smooth, medium-sized rocks for the children's game behind Grommash Hold, flat enough to sit on when they needed a rest.",
+    "Thra marveled that anyone could carry so many boulders. Most had a flat side, and the children could push them through the dirt wherever they wanted.",
+    "Eight smooth rocks reached the clearing behind Grommash Hold, and the children no longer had to sit in the dirt.",
+    false, {"part1_corpus.txt #97326 (cat 1637; 8 rocks)", "LoreForever quest:97326 (wiki: in-game quest text; Thra)"})
+P.threads.fv_migi = "the children behind Grommash Hold"
+
+-- The Barrens (cat 17). #95621 comes before the Horde pack's Unwelcome Guests
+-- (#95508): the tanner learns here that the soldiers want a deserter, and tells
+-- his navy past there. Walton and Wrenix are named from Lore Forever. #95774
+-- follows Mankrik's Lost in Battle (#4921, Horde pack). Stepping Stones
+-- (#79192) is the world lane's.
+q(95621, "Trouble in the Valley", "The Barrens", 18, "horde_vrang", 4,
+    "The hermit tanner Walton had watched human soldiers search the valley below his ridge. He had used his rifle's scope. They wore the livery of Kul Tiras.",
+    "Walton, the hermit tanner, called the last of Daelin Proudmoore's fleet as rotten as the admiral had been. Its soldiers had camped by a wrecked caravan to the south, and he wanted to know why.",
+    "The soldiers by the wrecked caravan had been looking for a deserter. The hermit tanner said his past had finally caught up with him.",
+    "The Kul Tiran camp was broken, and its purpose came out. They were hunting a deserter, and the tanner knew it was him.",
+    false, {"part1_corpus.txt #95621 (cat 17)", "LoreForever quest:95621 (wiki: in-game quest text; Walton)"}).highlight = {
+    "Kul Tiran soldiers in the valley had come looking for a deserter. The hermit tanner on the ridge knew his past had caught up with him.",
+    "Walton, the hermit tanner, learned that the soldiers by the wrecked caravan wanted a deserter. He took it as his own past come back."}
+q(95774, "Her Name Is Olgra", "The Barrens", 20, "horde_mankrik", 4,
+    "Mankrik's wife Olgra had died fighting, and the healer who saved him could not save her. Her jewels of polished bone were gone from her body.",
+    "Mankrik was building a memorial so that he would never forget Olgra. He wanted back the bone adornments she had worn, taken by the Razormane raiders near where she fell.",
+    "Olgra's bone adornments went to the memorial Mankrik was raising for her. His blood still ran hot for revenge.",
+    "Mankrik placed his wife's jewels with her memorial, so that he would never forget her.",
+    false, {"part1_corpus.txt #95774 (cat 17)", "LoreForever quest:95774 (wiki: in-game quest text; Mankrik)"}).highlight = {
+    "Olgra's jewels of polished bone came back from the Razormane. Mankrik laid them with the memorial he was building for his wife.",
+    "Mankrik had his wife's adornments for her memorial. He would never forget Olgra, he said, and his blood still ran hot for revenge."}
+q(97250, "Wrongly Blamed, Justly Corrected", "The Barrens", 23, "eastcoast", 4,
+    "Human soldiers had dug in at the border of Dustwallow Marsh and were toppling the landmarks left by tauren pathfinders. A favored tavern there had burned, and the Alliance blamed the Horde.",
+    "A tavern near Dustwallow Marsh had burned, and the Alliance blamed the Horde. True or not, Alliance soldiers on Horde land could not stand, and the order was to strike first.",
+    "The rumors had been true. Tensions along the eastern coast had been rising for some time, and the soldiers at the marsh border were beaten.",
+    "The soldiers at the border fell, a stern warning to the Alliance. Who had burned the tavern was still in doubt, for too many Horde travelers needed that road.",
+    false, {"part1_corpus.txt #97250 (cat 17)", "LoreForever quest:97250 (wiki: in-game quest text)"})
+P.threads.fv_eastcoast = "the trouble on the eastern coast"
+q(97253, "Parts and Pieces", "The Barrens", 14, "horde_ratchet", 2,
+    "Five or six fighters Wrenix had sent against the pirates south of {p:Ratchet} had never come back. So he sent a machine, and the pirates took it apart with their scimitars.",
+    "Pieces of Wrenix's machine lay scattered across the pirate camp south of {p:Ratchet}. Picking them up, he reckoned, was far safer work than fighting.",
+    "Wrenix had his parts back and could start on his next prototype. It also spared him another of Gagsprocket's lectures on the cost of metal.",
+    "The scattered parts came back to Wrenix, who had planned no reward and offered a box instead.",
+    false, {"part1_corpus.txt #97253 (cat 17)", "LoreForever quest:97253 (wiki: in-game quest text; Wrenix the Wretched)"})
+q(98093, "Field to Clear", "The Barrens", 23, "taurajo", 2,
+    "A walker from {p:Camp Taurajo} had gone down the golden road on a fine morning and ended up in a tree. Hyenas circled below, and Stormhide lizards blocked the way home.",
+    "A walker from {p:Camp Taurajo} was stuck up a tree. Too many Hecklefang stalkers and Stormhide lizards prowled the fields to risk the run home.",
+    "The fields below the tree were clear. The walker promised to tell {p:Camp Taurajo} of the rescue, and began the careful climb down.",
+    "With the hyenas and lizards gone, the walker could climb down. It beat being stuck in the tree all day.",
+    false, {"part1_corpus.txt #98093 (cat 17)"})
+P.threads.fv_taurajo = "the fields around Camp Taurajo"
+
+-- Dun Morogh (cat 1). Jemma Quikswitch, Amberstill Ranch and Quarrymaster
+-- Thesten are named from Lore Forever. #98423 starts from a tablet in a vault;
+-- Magni names his ancestor Madoran in the completion text.
+q(95041, "Data Hoarders", "Dun Morogh", 10, "gnomes", 2,
+    "Before fleeing Gnomeregan, Jemma Quikswitch had copied her family's archives onto punch cards. A hole in her pack had lost several of them in the snow outside the city.",
+    "The Quikswitch archives held arcanotechnical field equations, submarine hull designs from the Second War and Grandma Quikswitch's chili recipe. Without the lost cards, the rest was too scrambled to read.",
+    "The punch cards were a bit damp, but Jemma thought she could work with them.",
+    "Jemma had her lost cards back, damp but usable, and her family's archives could be pieced together.",
+    false, {"part1_corpus.txt #95041 (cat 1)", "LoreForever quest:95041 (wiki: in-game quest text; Jemma Quikswitch)"})
+P.threads.fv_gnomes = "the gnomes who fled Gnomeregan"
+q(95212, "Never Saddle on Quality", "Dun Morogh", 10, "morogh", 2,
+    "A team of rams was to reinforce the Alliance expedition in Alterac. {p:Amberstill Ranch} had run out of material for their saddles.",
+    "A ram handler was outfitting rams for the cold of Alterac. Only pelts from the largest leopards to the east would do for their saddles.",
+    "The leopard pelts would make fine saddles for the rams bound for Alterac.",
+    "The ranch had its pelts, and the rams for the north could be saddled.",
+    false, {"part1_corpus.txt #95212 (cat 1)", "LoreForever quest:95212 (wiki: in-game quest text; Amberstill Ranch)"})
+q(95214, "Stolen Blasting Powder", "Dun Morogh", 10, "morogh", 3,
+    "Troggs had stolen a keg of blasting powder from the Gol'Bolar Quarry. Quarrymaster Thesten said it held enough to turn King Magni's throne room into an open-air courtyard.",
+    "Thesten wanted his quarry's powder back from the troggs before they worked out how to light it.",
+    "All the stolen powder was back. Thesten paid for it and asked that the little incident not be mentioned to anyone.",
+    "The troggs no longer had the quarry's powder, and Thesten hoped no one else would hear of its loss.",
+    false, {"part1_corpus.txt #95214 (cat 1)", "LoreForever quest:95214 (wiki: in-game quest text; Quarrymaster Thesten)"})
+P.threads.fv_morogh = "work for the dwarves of Dun Morogh"
+q(98423, "The Treaty of Understanding", "Ironforge", 16, "tombs", 5,
+    "In a vault lay a tablet with the terms of a peace between the Bronzebeard and Wildhammer clans. It dated from just after the War of the Three Hammers. The king of {p:Ironforge} would want it.",
+    "The old tablet was a piece of dwarven history. Two of the three clans that had fought over the mountain had made peace on it.",
+    "King Magni knew the treaty. His ancestor Madoran, the first Bronzebeard king of {p:Ironforge}, had drafted it after the civil war. The Wildhammers had signed it, and the Dark Irons had not.",
+    "The tablet reached King Magni. Only the Bronzebeards and Wildhammers had signed it, he pointed out, and never the Dark Irons.",
+    false, {"part1_corpus.txt #98423 (cat 1)", "LoreForever quest:98423 (wiki: in-game quest text; Madoran Bronzebeard)"}).highlight = {
+    "King Magni received a treaty tablet from a vault. His ancestor Madoran had drafted it after the War of the Three Hammers, and the Dark Irons had never signed.",
+    "King Magni recognized the tablet as the peace his ancestor Madoran had made with the Wildhammers. The Dark Iron clan's mark was missing from it."}
+
+-- Mulgore. Three tests by one teacher who hoped to find talent for the
+-- subtle arts. The giver is not named in the captured text, so neither is
+-- here, and no class is inferred.
+q(76156, "Stalk With The Earthmother", "Mulgore", 10, "earthmother", 2,
+    "A teacher in Mulgore sensed a hidden talent for the subtle arts. The test was to wear a mask into the {p:Venture Co. Mine} and steal its supplies.",
+    "A teacher in Mulgore handed over a mask for slipping into the {p:Venture Co. Mine}. It hardly looked convincing, but a skilled rogue needed only a winning smile and a distraction, the teacher said.",
+    "The teacher had heard the approach the moment it reached the mesa. Disguises, perhaps, were not the strength after all.",
+    "The stolen supplies came back, but the teacher judged that disguises were not the hidden talent.",
+    true)
+q(76160, "Stalk With The Earthmother", "Mulgore", 11, "earthmother", 2,
+    "Perhaps the talent lay in poisons. Harpies to the north nested in a tree whose fallen cones could be crushed into a searing salve for blades.",
+    "The Mulgore teacher's second test was a venomous salve from the cones beneath the harpies' nesting tree. Even a touch of it on skin would hurt.",
+    "What came back was pine nut butter. The teacher thought it better spread on spice bread than on a dagger.",
+    "The salve turned out to be pine nut butter, formidable only against a foe with a nut allergy, the teacher said.",
+    true)
+q(76240, "Stalk With The Earthmother", "Mulgore", 11, "earthmother", 3,
+    "The teacher had one last, less direct idea. A raw Brilliant Smallfish was to be cleaned and filleted with the teacher's daggers, without thinking too hard.",
+    "There was still hidden talent to coax out, the teacher believed. This time the test was a fish and a pair of daggers.",
+    "The filleting showed no rogue's precision, but an impressive ambidexterity. The teacher gave up on training a rogue and offered to teach one thing instead.",
+    "The daggers worked in both hands at once. The teacher would find someone else to train in the subtle arts, and said the Horde would need heroes like this.",
+    true)
+fallback("Stalk With The Earthmother", "Mulgore", "earthmother", "76156, 76160, 76240",
+    "A teacher in Mulgore was looking for hidden talent in the subtle arts.",
+    "The teacher's tests were meant to find a gift for stealth, poison or the blade.",
+    "Another of the teacher's tests was done.",
+    "The teacher learned a little more about where the talent lay.")
+P.threads.fv_earthmother = "a teacher's search for hidden talent"
+
 -- Alliance-side stages (the rest are Horde or both); the test renders them as such.
 P.alliance = {92415, 95161, 95189, 95195, 96408, 96392, 96390, 96391, 96393, 96394, 96403, 93461, 92596, 94413, 92701, 92699, 92834, 92840, 92741, 94493, 98021, 92742, 92744, 92745, 92747, 92748, 92749, 92750, 92751, 92752, 92753, 92819, 92909, 92910, 92911, 96139, 96138, 98447, 98190, 98191, 98322, 98319, 98323, 98321, 98326, 99158, 99159, 99160, 99161, 99162,
     97277, 99127, 99128, 99129, 99130, 99131, 99143,
     91741, 92124, 91743, 91745, 91752, 91758, 91772, 91775, 91777, 91753, 91733, 91732, 91740, 91746,
     97979, 97977, 97236, 87288, 99046, 99047, 99050, 99073, 99053, 98392, 98398, 98067,
     97894, 97914, 97926, 98025, 98028, 98407, 98386, 98387, 95999, 98197, 98459, 98461, 86585, 86614, 86667, 97234, 97237, 95065,
-    97005}
+    97005, 95041, 95212, 95214, 98423}
 
 ---------------------------------------------------------------- registration
 -- Drop any stage or title another pack already owns (it loads earlier and
