@@ -1656,3 +1656,161 @@ do
             body = "His body lies on the island in the lake, cut down by murlocs. His notes on the search survived.",
             sources = {V .. " #991 Raene's Cleansing (completion); #1023 Raene's Cleansing"}}}}}})
 end
+
+-- 2026-11-05 overnight notes pass (Forever): two missing scouts. Their deaths
+-- are learned when the searcher finds them; their killers from the follow-up.
+do
+    local V = "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"
+    A.RegisterLoreDiscovery({facts = {
+        ["heglan.found"] = {presented = {99049}, completed = {99048, 99049}},
+        ["heglan.naga"] = {completed = {99049}},
+        ["malah.found"] = {presented = {99081}, completed = {99079, 99081}},
+    }, notes = {
+        ["npc:heglan"] = {public = {
+            body = "Heglan Shadeeye is a scout of the Shattered Hand, the Horde's group of more subtle fighters. She was set to watch Tiragarde Keep in Durotar from a distance until her reports stopped coming in.",
+            sources = {V .. " #99048 A Missing Hand (Forever, description)"}, related = {"place:tiragarde", "place:razor-hill"}},
+            blocks = {{requires = {"heglan.found"}, unless = {"heglan.naga"},
+                body = "Her body lies in the wreckage of her hut. Whatever killed her was not human.",
+                sources = {V .. " #99048 A Missing Hand (completion)"}},
+                {requires = {"heglan.naga"},
+                body = "Her body lies in the wreckage of her hut. Naga, come down the coast from the north, killed her, and the banner and blade they left behind went to Orgnil Soulscar at Razor Hill.",
+                sources = {V .. " #99049 Threat from Below"}, related = {"npc:orgnil"}}}},
+        ["npc:malah"] = {public = {
+            body = "Longwalker Malah is one of the Longwalkers, the most trusted scouts of the tauren, loyal to the High Chieftain alone though Baine Bloodhoof sometimes asks for their help. She wears the headband and feathered staff of her order. She was sent to watch the eastern borders of Mulgore and has not come back.",
+            sources = {V .. " #99079 Longwalker Malah (Forever, description)"}, related = {"npc:baine", "place:bloodhoof"}},
+            blocks = {{requires = {"malah.found"},
+                body = "She lies dead with arrows in her back, shot from a new centaur camp. A small raiding party has come into Mulgore.",
+                sources = {V .. " #99079 completion; #99081 Grim Tidings"}}}},
+    }})
+end
+
+-- notes2 2026-11-05: the Tower of Althalaxx. That Athrikus Narassin still lives
+-- is first said by the spirit freed in #957 (completion text); that he leads the
+-- Cult of the Dark Strand is first said in #1140's description (Ilkrud's
+-- writings), and again in #1167, #1143 and #981. Public notes keep to the tower,
+-- its watchers and the Highborne past.
+do
+    local V = "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"
+    local LFT = "LoreForever subzone:tower-of-althalaxx (wiki: https://warcraft.wiki.gg/wiki/Tower_of_Althalaxx)"
+    local alive = {requires = {"althalaxx.jailor"}, unless = {"althalaxx.master"},
+        body = "The spirit freed at Bashal'Aran names Athrikus as the master who sealed it in its prison, and senses that he still lives.",
+        sources = {V .. " #957 Bashal'Aran (completion)"}, related = {"place:bashal-aran"}}
+    local master = {requires = {"althalaxx.master"},
+        body = "Athrikus still lives. He leads the Cult of the Dark Strand from the top of the Tower of Althalaxx, among warlocks far more dangerous than those outside. Ilkrud Magthrull's writings show that he keeps two soulgems among the satyrs at Night Run and Satyrnaar, and Delgren the Purifier expects their loss to weaken him greatly.",
+        sources = {V .. " #1140 The Tower of Althalaxx; #1143 The Tower of Althalaxx"}, related = {"group:dark-strand", "place:satyrnaar"}}
+    local notes = {}
+    notes["npc:athrikus"] = {public = {
+        body = "Athrikus Narassin was a sorcerer of the ancient Highborne. Queen Azshara gave him authority over the Highborne of Ameth'Aran and Bashal'Aran, and in time he withdrew from their affairs to the Tower of Althalaxx on the northern coast of Darkshore. That was ten thousand years ago, before the Great Sundering.",
+        sources = {"https://warcraft.wiki.gg/wiki/Athrikus_Narassin", LFT}, related = {"place:tower-of-althalaxx", "place:ameth-aran", "place:bashal-aran"}},
+        blocks = {alive, master}}
+    notes["place:tower-of-althalaxx"] = {public = {
+        body = "The Tower of Althalaxx is an ancient Highborne tower on the northern coast of Darkshore, northeast of Auberdine. Warlocks of the Cult of the Dark Strand have moved into it and camp around its base, and those inside are far more powerful than the ones outside. Sentinel Elissa Starbreeze sent Balthule Shadowstrike to watch them, and he reports to his teacher, Delgren the Purifier, at Maestra's Post in Ashenvale.",
+        sources = {V .. " #965 The Tower of Althalaxx; #966 The Tower of Althalaxx", LFT}, related = {"group:dark-strand", "npc:balthule", "npc:elissa-starbreeze"}},
+        blocks = {{requires = {"althalaxx.master"},
+            body = "Athrikus Narassin, the Highborne sorcerer who withdrew to the tower ten thousand years ago, still lives and rules the cult from its top floor.",
+            sources = {V .. " #1140 The Tower of Althalaxx; #1143 The Tower of Althalaxx"}, related = {"npc:athrikus"}}}}
+    notes["group:dark-strand"] = {public = {
+        body = "The Cult of the Dark Strand is a band of warlocks and cultists in northern Darkshore and Ashenvale. They have gathered in and around the Tower of Althalaxx, and more of them work at Ordil'Aran, northeast of Maestra's Post, where one of their number carries a soul gem that holds a secret of the cult's power. Balthule Shadowstrike learned the cult's name from scraps of parchment its members carry, and had never heard of it before. Delgren the Purifier calls the cult a thorn in his side.",
+        sources = {V .. " #966 The Tower of Althalaxx; #970 The Tower of Althalaxx", LFT}, related = {"place:tower-of-althalaxx", "npc:balthule", "npc:delgren"}},
+        blocks = {{requires = {"althalaxx.master"},
+            body = "Its master is Athrikus Narassin, an ancient Highborne sorcerer who keeps to the top of the tower.",
+            sources = {V .. " #1140 The Tower of Althalaxx"}, related = {"npc:athrikus"}}}}
+    A.RegisterLoreDiscovery({facts = {
+        ["althalaxx.jailor"] = {completed = {957}},
+        ["althalaxx.master"] = {presented = {1140, 1167, 1143, 981}, completed = {1140, 1167, 1143, 981}},
+    }, notes = notes})
+end
+
+-- notes2 2026-11-05: the Marris case (world lane request). For Alliance readers,
+-- Nathanos Marris is the Blightcaller only from #6186's description on (the
+-- dying agent's two words in #6183 are a clue, not the answer). Horde readers meet
+-- Nathanos Blightcaller openly at the Marris Stead from #5961, which does not name
+-- his human past. The two stage notes that state the identity get public versions.
+do
+    local V = "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"
+    local LFM = "LoreForever subzone:marris-stead (wiki: https://warcraft.wiki.gg/wiki/Marris_Stead)"
+    local holder = "Nathanos Blightcaller, champion of the Banshee Queen, holds it now. He keeps his hounds there and ranges out across the ruined countryside against the Scourge and the Alliance, and the Forsaken agents sent to him find it a harsh posting."
+    local notes, quests = {}, {}
+    notes["npc:nathanos-marris"] = {public = {
+        body = "Nathanos Marris was the first and last of the human ranger lords, a disciple of Sylvanas Windrunner before she became the Banshee Queen. He was thought killed defending Lordaeron five years ago, though his body was never found. His family's farm is the Marris Stead in the Eastern Plaguelands.",
+        sources = {V .. " #6182 The First and the Last (description)"}, related = {"place:marris-stead", "npc:sylvanas", "faction:si7"}},
+        blocks = {{requires = {"nathanos.revealed"},
+            body = "He did not die. He is Nathanos Blightcaller, champion of the Banshee Queen and an agent of the Forsaken. The Stormwind agents who went to look into Forsaken activity in the Plaguelands were killed. Highlord Bolvar Fordragon remembers him as a tactical genius behind a decade of Alliance victories, and has ordered him destroyed.",
+            sources = {V .. " #6183 Honor the Dead; #6186 The Blightcaller Cometh; #6187 Order Must Be Restored"}, related = {"npc:nathanos"}}}}
+    notes["place:marris-stead"] = {public = {
+        body = "The Marris Stead is a farmstead in the southwestern Eastern Plaguelands, the old home of the Marris family. The Forsaken hold it now, and neither the Scourge nor the Alliance is welcome there.",
+        sources = {V .. " #6182 The First and the Last", LFM}, related = {"region:4561737465726e20506c616775656c616e6473", "npc:nathanos-marris"}},
+        blocks = {
+            {requires = {"nathanos.champion"}, body = holder,
+                sources = {V .. " #5961 The Champion of the Banshee Queen; #6022 To Kill With Purpose"}, related = {"npc:nathanos"}},
+            {requires = {"nathanos.revealed"}, unless = {"nathanos.champion"}, body = holder,
+                sources = {V .. " #6186 The Blightcaller Cometh"}, related = {"npc:nathanos"}}}}
+    quests["The Blightcaller Cometh"] = {canonicalRequires = {"nathanos.revealed"}, public = {
+        body = "Flint Shadowmore's findings about the Blightcaller and the dead Stormwind agents have to reach Highlord Bolvar Fordragon in Stormwind.",
+        sources = {V .. " #6186 The Blightcaller Cometh"}, related = {"npc:bolvar", "faction:si7"}}}
+    quests["Order Must Be Restored"] = {canonicalRequires = {"nathanos.revealed"}, public = {
+        body = "Highlord Bolvar Fordragon wants an army sent to the Plaguelands to destroy the Blightcaller.",
+        sources = {V .. " #6187 Order Must Be Restored"}, related = {"npc:bolvar", "region:4561737465726e20506c616775656c616e6473"}}}
+    A.RegisterLoreDiscovery({facts = {
+        ["nathanos.revealed"] = {presented = {6186, 6187}, completed = {6186, 6187}},
+        ["nathanos.champion"] = {presented = {5961, 6133, 6022, 6042, 6135, 6136, 6144, 6145, 6146, 6147, 6148},
+            completed = {5961, 6133, 6022, 6042, 6135, 6136, 6144, 6145, 6146, 6147, 6148}},
+    }, notes = notes, quests = quests})
+end
+
+-- notes2 2026-11-05: Lord Gregor Lescovar. Mathias Shaw names the assassin's
+-- employer on completing #393; #350, #2745, #2746 and #434 repeat it. Before that the
+-- assassin is only "Maelik", a visitor of Bazil Thredd (#392).
+do
+    local V = "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"
+    local notes = {}
+    notes["npc:lescovar"] = {canonicalRequires = {"lescovar.employer"}, public = {
+        body = "Lord Gregor Lescovar is one of the nobles of Stormwind City.",
+        sources = {"https://warcraft.wiki.gg/wiki/Gregor_Lescovar"}, related = {"group:stormwind-nobles", "region:53746f726d77696e642043697479"}}}
+    notes["npc:marzon"] = {canonicalRequires = {"lescovar.employer"}, public = {title = "Maelik",
+        body = "Maelik is the name on the papers of a quiet man who visited the imprisoned Defias lieutenant Bazil Thredd in the Stockade once or twice a week. Warden Thelwater had his suspicions, but the papers checked out, and he doubts the man will come again.",
+        sources = {V .. " #392 The Curious Visitor"}, related = {"npc:bazil-thredd", "dungeon:stockade"}}}
+    notes["npc:tyrion"] = {canonicalRequires = {"lescovar.employer"}, public = {
+        body = "Tyrion is a gnome in Stormwind City and an old friend of Elling Trias. He works with a helper he calls Spybot, and keeps his gear in a silk bag a tailor friend made for him. He is short-tempered when startled and anxious not to be noticed by the guards of Stormwind Keep.",
+        sources = {V .. " #2745 Infiltrating the Castle (completion); #2746 Items of Some Consequence (completion)"}, related = {"npc:elling", "place:stormwind-keep"}}}
+    A.RegisterLoreDiscovery({facts = {
+        ["lescovar.employer"] = {presented = {350, 2745, 2746, 434}, completed = {393, 350, 2745, 2746, 434}},
+    }, notes = notes})
+end
+
+-- notes2 2026-11-05: High Priestess Lorthuna (Forever, Zephras Isle). Her name and
+-- role are public from the first cult quests (#92544). The cult's plan against
+-- Shen'dar and the watchtower is learned at Falaath Village (#92528 completion);
+-- her flight to the Rohashi Spires is the premise of #92646 / #93835.
+do
+    local P1 = "StorageInvestigation/journal-voice/part1_corpus.txt"
+    local LFQ = "LoreForever quest:92544 (wiki: https://warcraft.wiki.gg/wiki/World_of_Warcraft:_Forever)"
+    A.RegisterLoreDiscovery({facts = {
+        ["lorthuna.plans"] = {presented = {92640, 92646, 93835}, completed = {92528, 92640}},
+        ["lorthuna.spires"] = {presented = {92646, 93835}, completed = {92646, 93835}},
+    }, notes = {["npc:lorthuna"] = {canonicalRequires = {"lorthuna.plans", "lorthuna.spires"}, public = {
+        body = "High Priestess Lorthuna leads the Al'Aketh, the cult of Al'Akir on Zephras Isle, from the Shrine of Akir. Her orders send cult thugs to harass travelers and press recruits into the faith.",
+        sources = {LFQ}, related = {"group:al-aketh", "npc:al-akir", "region:5a6570687261732049736c65"}},
+        blocks = {
+            {requires = {"lorthuna.plans"},
+                body = "The cult's leaders at Falaath Village in the Shen'dar Highlands have been heard planning moves on Shen'dar Village and the western watchtower, and Valennia Stormfist of the peacekeepers has long prepared a strike at the shrine to stop her.",
+                sources = {P1 .. " #92528 Among the Faithful (completion); #92640 Desperate Times"}, related = {"npc:valennia"}},
+            {requires = {"lorthuna.spires"},
+                body = "Pursued there, she fled through a portal to the Rohashi Spires above it.",
+                sources = {P1 .. " #92646 Confront Lorthuna"}}}}}})
+end
+
+-- notes2 2026-11-05: Raschal of Feathermoon. Missing in public; found alive in a
+-- silithid pod only from #4265's description (the pod itself is #4135's completion).
+do
+    local V = "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"
+    A.RegisterLoreDiscovery({facts = {
+        ["raschal.wreck"] = {completed = {4125, 4127, 4129}, presented = {4127, 4129, 4130}},
+        ["raschal.found"] = {presented = {4265, 4267}, completed = {4265, 4267}},
+    }, notes = {["npc:raschal"] = {canonicalRequires = {"raschal.found"}, public = {
+        body = "Raschal is a courier of Feathermoon Stronghold who has served there since General Feathermoon led the expedition to Feralas, and he knows the land well. He set out for Thalanaar meaning to row down the coast and cross southern Feralas away from the Horde camp, and has been missing for about a week. Ginro Hearthkindle searches for him every day.",
+        sources = {V .. " #4124 The Missing Courier; #4125 The Missing Courier"}, related = {"place:feathermoon", "npc:ginro", "region:466572616c6173"}},
+        blocks = {{requires = {"raschal.wreck"},
+            body = "His boat has been found wrecked, with his knife in the mud beside it.",
+            sources = {V .. " #4125 The Missing Courier (completion); #4127 Boat Wreckage"}}}}}})
+end

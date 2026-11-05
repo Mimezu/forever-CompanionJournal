@@ -182,6 +182,22 @@ local notes = {
     ["place:lake-everstill"] = {"Lake Everstill"},
     ["place:caverns-of-time"] = {"Caverns of Time", "the Caverns of Time"},
     ["place:chillwind"] = {"Chillwind Camp", "Chillwind Point"},
+    -- Batch 9: people the horde lane's new scenes name.
+    ["group:agamand-family"] = {"Agamand family", "the Agamands", "Agamands"},
+    ["npc:yvette-farthing"] = {"Yvette Farthing", "Yvette"},
+    ["npc:lillith-nefara"] = {"Lillith Nefara"},
+    ["npc:holland"] = {"Junior Apothecary Holland", "Holland"},
+    ["npc:gordo"] = {"Gordo"},
+    ["npc:heglan"] = {"Heglan Shadeeye", "Heglan"},
+    ["npc:zureetha"] = {"Zureetha Fargaze"},
+    ["npc:jorn-skyseer"] = {"Jorn Skyseer"},
+    ["npc:mahren-skyseer"] = {"Mahren Skyseer"},
+    ["npc:wenikee"] = {"Wenikee Boltbucket"},
+    ["npc:rilli"] = {"Rilli Greasygob", "Rilli"},
+    ["npc:malah"] = {"Longwalker Malah", "Malah"},
+    ["npc:perith"] = {"Perith Stormhoof"},
+    ["npc:ataeric"] = {"Archmage Ataeric", "Ataeric"},
+    ["npc:aetheen"] = {"Aetheen of the Gales", "Aetheen"},
 }
 local forever = {"region:riverglades", "place:sunnyglade", "place:farholde", "place:powderfuse-port", "dungeon:kroldok",
     "region:shendralas", "region:mount-hyjal", "raid:barrow-deeps", "raid:hyjal-summit", "battleground:darkspear-islands",
@@ -266,6 +282,14 @@ local teronis = A.GetKnownLoreNote("npc:teronis", {})
 Check(teronis and not teronis.body:find("murlocs", 1, true) and teronis.body:find("not returned", 1, true), "public Teronis note keeps his fate unsaid")
 Check(A.GetKnownLoreNote("npc:teronis", {["teronis.found"] = true}).body:find("cut down by murlocs", 1, true), "Teronis's fate once #991 or #1023 is known")
 Check(not A.GetLoreNote("npc:raene").body:find("murloc", 1, true) and not A.GetLoreNote("npc:raene").body:find("Teronis is dead", 1, true), "Raene's note does not give away Teronis's fate")
+-- Missing scouts stay missing until the searcher finds them.
+for _, item in ipairs({{"npc:heglan", "heglan.found", "not human"}, {"npc:malah", "malah.found", "arrows"}}) do
+    local public = A.GetKnownLoreNote(item[1], {})
+    Check(public and not public.body:find("body lies", 1, true) and not public.body:find("lies dead", 1, true), "public note keeps the scout's fate unsaid: " .. item[1])
+    Check(A.GetKnownLoreNote(item[1], {[item[2]] = true}).body:find(item[3], 1, true), "fate told once found: " .. item[1])
+end
+local naga = A.GetKnownLoreNote("npc:heglan", {["heglan.found"] = true, ["heglan.naga"] = true}).body
+Check(naga:find("Naga", 1, true) and not naga:find("not human", 1, true), "Heglan's killers named only after #99049")
 -- The Baron's former identity is a discovery, never public context.
 local baron = A.GetKnownLoreNote("npc:the-baron", {})
 Check(baron and not baron.body:find("Othmar", 1, true) and not baron.body:find("Grand Marshal", 1, true), "public Baron note keeps Othmar hidden")

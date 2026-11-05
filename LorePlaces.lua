@@ -786,3 +786,81 @@ A.RegisterLoreNotes({
         {V .. " #8286 What Tomorrow Brings", "https://warcraft.wiki.gg/wiki/Caverns_of_Time", LF("subzone:caverns-of-time", "Caverns_of_Time")},
         {"the Caverns of Time"}, {"npc:nozdormu", "region:54616e61726973", "npc:anachronos"}),
 })
+
+-- Second overnight notes lane (notes2), 2026-11-05. Places the story prose still
+-- names without a note. Facts from the vanilla quest corpus; Lore Forever (CC BY-SA,
+-- adapted from warcraft.wiki.gg) only confirms or locates. The wording is ours.
+-- notes2 batch 1: Darkshore and Teldrassil. The tower's master is a discovery
+-- (LoreDiscoveryData.lua, "althalaxx"); its public note does not name him.
+A.RegisterLoreNotes({
+    Place("place:tower-of-althalaxx", "Tower of Althalaxx",
+        "The Tower of Althalaxx is an ancient Highborne tower on the northern coast of Darkshore, northeast of Auberdine. Warlocks of the Cult of the Dark Strand have moved into it and camp around its base, and those inside are far more powerful than the ones outside. Sentinel Elissa Starbreeze sent Balthule Shadowstrike to watch them, and he reports to his teacher, Delgren the Purifier, at Maestra's Post in Ashenvale.\n\nAthrikus Narassin, the Highborne sorcerer who withdrew to the tower ten thousand years ago, still lives and rules the cult from its top floor.",
+        {V .. " #965 The Tower of Althalaxx; #966 The Tower of Althalaxx; #1143 The Tower of Althalaxx", LF("subzone:tower-of-althalaxx", "Tower_of_Althalaxx")},
+        {"the Tower of Althalaxx", "Althalaxx"}, {"group:dark-strand", "npc:balthule", "npc:athrikus"}),
+    Place("place:masters-glaive", "Master's Glaive",
+        "The Master's Glaive is a site in southwestern Darkshore where an enormous blade pierces a petrified skull. Onu, the Ancient of Lore at Auberdine, says that one of the old lords of the earth fell there. It is long dead, but slivers of its power may remain. Cultists of the Twilight's Hammer, who worship those old lords, have come to the site in numbers, and a wanderer named Therylune has had to hide from them there.",
+        {V .. " #944 The Master's Glaive; #945 Therylune's Escape; #949 The Twilight Camp", LF("subzone:master-s-glaive", "Master%27s_Glaive")},
+        {"the Master's Glaive"}, {"npc:onu", "group:twilights-hammer", "region:4461726b73686f7265"}),
+    Place("place:shadowthread-cave", "Shadowthread Cave",
+        "Shadowthread Cave lies north of Shadowglen on Teldrassil. Webwood spiders live in and around it and keep their nest deep inside. The scholar Gilshalan Windwalker studies them, believing that the new World Tree has made them giants of a much smaller kind of spider.",
+        {V .. " #916 Webwood Venom; #917 Webwood Egg", LF("subzone:shadowthread-cave", "Shadowthread_Cave")},
+        {"the Shadowthread Cave"}, {"place:shadowglen", "npc:gilshalan", "region:54656c6472617373696c"}),
+    Place("place:blackwood-den", "Blackwood Den",
+        "Blackwood Den is a cave in southern Darkshore, near the border with Ashenvale, held by the corrupted Blackwood furbolgs. The night elf Volcor lies wounded and trapped inside, and his bear Grimclaw waits by the road for someone to lead to him.",
+        {V .. " #993 A Lost Master; #994 Escape Through Force", LF("subzone:blackwood-den", "Blackwood_Den")},
+        {"the Blackwood Den"}, {"npc:volcor", "npc:grimclaw", "region:4461726b73686f7265"}),
+})
+
+-- notes2 batch 2: the Eastern Kingdoms places left over from the first lane. Who
+-- holds the Marris Stead is a discovery for Alliance readers (LoreDiscoveryData.lua).
+A.RegisterLoreNotes({
+    Place("place:marris-stead", "Marris Stead",
+        "The Marris Stead is a farmstead in the southwestern Eastern Plaguelands, the old home of the Marris family. Nathanos Blightcaller, champion of the Banshee Queen, holds it now. He keeps his hounds there and ranges out across the ruined countryside against the Scourge and the Alliance, and the Forsaken agents sent to him find it a harsh posting.",
+        {V .. " #5961 The Champion of the Banshee Queen; #6022 To Kill With Purpose; #6182 The First and the Last", LF("subzone:marris-stead", "Marris_Stead")},
+        {"the Marris Stead"}, {"npc:nathanos", "region:4561737465726e20506c616775656c616e6473", "npc:nathanos-marris"}),
+    {id = "group:stormwind-army", title = "Stormwind Army", kind = "Group", setting = "Classic / Forever",
+        body = "The Stormwind Army defends the human kingdom of Stormwind. Its command sits in Stormwind Keep, and its marshals and guards hold Northshire, Goldshire, Westfall's borders and Lakeshire. It is stretched thin. With the army busy against the Blackrock orcs, Redridge waits for reinforcements that need the king's approval, and its people feel left to face the gnolls alone. The army pays bounties on gnolls, murlocs and Defias, and buys cloth and leather armor from local tailors.",
+        sources = {V .. " #11 Riverpaw Gnoll Bounty; #46 Bounty on Murlocs; #59 Cloth and Leather Armor; #120 Messenger to Stormwind; #126 Howling in the Hills", LF("topic:stormwind-army", "Stormwind_Army")},
+        names = {"the Stormwind Army"}, related = {"faction:stormwind", "place:stormwind-keep", "npc:marcus-jonathan"}},
+})
+
+-- notes2 batch 3: two Kalimdor places the Horde and world prose name.
+A.RegisterLoreNotes({
+    Place("place:wyrmbog", "Wyrmbog",
+        "The Wyrmbog is the black dragons' ground in the south of Dustwallow Marsh. Onyxia keeps her lair there, and her eggs lie scattered around it; Draz'Zilb of the Stonemaul ogres wants them destroyed, since the clan can never reclaim Stonemaul Village while the bog breeds whelps. The ancient drake Emberstrife, an old gatekeeper of Nefarian who tests dragonspawn for Onyxia's guard, has his den there too.",
+        {V .. " #1172 The Brood of Onyxia; #6570 Emberstrife", LF("subzone:wyrmbog", "Wyrmbog")},
+        {"the Wyrmbog"}, {"npc:onyxia", "faction:stonemaul", "region:4475737477616c6c6f77204d61727368"}),
+    Place("place:mor-shan-rampart", "Mor'shan Rampart",
+        "Mor'shan Rampart is the Horde's fortified gate at the northern end of the Barrens, where the road enters Ashenvale. Warsong fighters keep its timber walls and watchtowers against night elf scouts and stage raids into the forest from it. The tinkerer Wenikee Boltbucket lives just to the south.",
+        {V .. " #3921 Wenikee Boltbucket", LF("subzone:mor-shan-rampart", "Mor%27shan_Rampart")},
+        {"the Mor'shan Rampart"}, {"region:5468652042617272656e73", "region:417368656e76616c65", "npc:wenikee"}),
+})
+
+-- notes2 batch 4: Winterspring's cursed lake (world lane request).
+A.RegisterLoreNotes({
+    Place("place:kel-theril", "Lake Kel'Theril",
+        "Lake Kel'Theril lies frozen in Winterspring, with the ruins of Kel'Theril, an outpost of the ancient Highborne, rising through its ice. Highborne there once stole a sacred relic, the Crystal of Zin-Malor, meaning to siphon its power, and it shattered in a great explosion that drove its pieces under the ice. Their spirits are cursed to the place, still searching for the fragments. On the ridge above stands what may be an altar of Elune.",
+        {V .. " #5244 The Ruins of Kel'Theril; #5245 Troubled Spirits of Kel'Theril; #4901 Guardians of the Altar", LF("subzone:lake-kel-theril", "Lake_Kel%27Theril"), LF("subzone:ruins-of-kel-theril", "Ruins_of_Kel%27Theril")},
+        {"Kel'Theril", "the Ruins of Kel'Theril", "Ruins of Kel'Theril"}, {"artifact:crystal-zin-malor", "npc:aurora-skycaller", "region:57696e746572737072696e67"}),
+})
+
+-- notes2 batch 6: the rises of Thunder Bluff and Mulgore's gnoll cave, the thin
+-- tauren starting coverage the first lane reported.
+A.RegisterLoreNotes({
+    Place("place:spirit-rise", "Spirit Rise",
+        "Spirit Rise is the northwestern mesa of Thunder Bluff, where shaman come to commune with the elements and the spirits of the ancestors. A well-hidden path on the bluff leads down into the Pools of Vision, the cave beneath the shamans where the Forsaken emissary Apothecary Zamah keeps her alchemical stores.",
+        {V .. " #853 Apothecary Zamah; #1064 Forsaken Aid", LF("subzone:spirit-rise", "Spirit_Rise")},
+        {"the Spirit Rise"}, {"region:5468756e64657220426c756666", "place:pools-vision", "npc:zamah"}),
+    Place("place:hunter-rise", "Hunter Rise",
+        "Hunter Rise is the southern mesa of Thunder Bluff, where tauren hunters and warriors train and the young learn spear, bow and the working of hides. Melor Stonehoof waits there for those who would follow the ways of the hunter, for whom hunting is a tauren's greatest honor.",
+        {V .. " #861 The Hunter's Way; #1130 Melor Sends Word", LF("subzone:hunter-rise", "Hunter_Rise")},
+        {"Hunter's Rise", "the Hunter's Rise"}, {"region:5468756e64657220426c756666", "npc:melor-stonehoof"}),
+    Place("place:elder-rise", "Elder Rise",
+        "Elder Rise is the northeastern bluff of Thunder Bluff, home to its spiritual guides and elders. Arch Druid Hamuul Runetotem leads the Cenarion Circle's work in the city from there, and the ancient shaman Magatha Grimtotem, the elder crone of the Grimtotem, lives on the rise as well.",
+        {V .. " #1063 The Elder Crone; #936 Assisting Arch Druid Runetotem", LF("subzone:elder-rise", "Elder_Rise")},
+        nil, {"region:5468756e64657220426c756666", "npc:hamuul", "npc:magatha"}),
+    Place("place:palemane-rock", "Palemane Rock",
+        "Palemane Rock is a cave in the mountains on Mulgore's western rim, held by the Palemane gnolls. They have settled there and south of Bloodhoof Village, and they disrespect the tauren's attempts to share the land.",
+        {V .. " #745 Sharing the Land", LF("subzone:palemane-rock", "Palemane_Rock")},
+        nil, {"place:bloodhoof", "region:4d756c676f7265"}),
+})

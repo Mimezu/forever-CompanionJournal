@@ -36,6 +36,59 @@ local knownNames, knownNameOrder, knownNameBuckets = {
     ["Ukor's Lost Pack"] = {plain = true}, ["Veteran Uzzek"] = {plain = true},
     ["WANTED: Gath'Ilzogg"] = {plain = true}, ["Wildkin of Elune"] = {plain = true},
     ["Wisdom of Agamaggan"] = {plain = true}, ["Stonewatch Falls"] = {plain = true},
+    ["Gordo's Task"] = {plain = true}, ["Mountaineer Stormpike's Task"] = {plain = true},
+    ["Valanaar Vintages"] = {plain = true}, ["Welcome to Shen'dar Village"] = {plain = true},
+    ["Return to Valanaar"] = {plain = true}, ["To Valanaar"] = {plain = true},
+    -- notes2 2026-11-05: quest titles that contain a newly linked name.
+    ["Tharnariun's Hope"] = {plain = true}, ["The Tower of Althalaxx"] = {plain = true},
+    ["The Master's Glaive"] = {plain = true},
+    ["Solomon's Law"] = {plain = true}, ["Onu is Meditating"] = {plain = true},
+    ["Return to Onu"] = {plain = true}, ["Wand to Bethor"] = {plain = true},
+    ["Gann's Reclamation"] = {plain = true}, ["Revenge of Gann"] = {plain = true},
+    ["Overlord Mok'Morokk's Concern"] = {plain = true}, ["Wait for Sirra to Finish"] = {plain = true},
+    ["Speak with Renferrel"] = {plain = true}, ["Leonid's Letter"] = {plain = true},
+    ["Cairne's Hoofprint"] = {plain = true}, ["Noggle's Last Hope"] = {plain = true},
+    ["Noggle's Lost Satchel"] = {plain = true}, ["Agent of Hydraxis"] = {plain = true},
+    ["Return to Rorian"] = {plain = true}, ["Find Myranda"] = {plain = true},
+    ["Malin's Request"] = {plain = true}, ["Arugal Must Die"] = {plain = true},
+    ["Arugal's Folly"] = {plain = true}, ["Return to Quinn"] = {plain = true},
+    ["Milly's Harvest"] = {plain = true}, ["Return to Kristoff"] = {plain = true},
+    ["Little Pamela"] = {plain = true}, ["Pamela's Doll"] = {plain = true},
+    ["Sister Pamela"] = {plain = true}, ["Delivery to Archmage Xylem"] = {plain = true},
+    ["Xylem's Payment to Jediga"] = {plain = true}, ["Brother Carlin"] = {plain = true},
+    ["Uncle Carlin"] = {plain = true}, ["Melor Sends Word"] = {plain = true},
+    ["Reception from Tyrande"] = {plain = true}, ["Tyrande and Remulos"] = {plain = true},
+    ["Vyletongue Corruption"] = {plain = true}, ["Marla's Last Wish"] = {plain = true},
+    -- The SI:7 case title would otherwise link "The Blightcaller" before the reader
+    -- has learned who he is.
+    ["The Blightcaller Cometh"] = {plain = true},
+    ["The Green Hills of Stranglethorn"] = {plain = true},
+    -- Longer names that would otherwise link a short form to the wrong subject:
+    -- a Forever fort, a Zephras region, two places and two leaders with no note yet.
+    ["Skybreaker Bulwark"] = {plain = true}, ["Shen'dar Highlands"] = {plain = true},
+    ["Stonemaul Ruins"] = {plain = true}, ["Winterfall Village"] = {plain = true},
+    ["Gordunni Outpost"] = {plain = true}, ["High Chief Winterfall"] = {plain = true},
+    ["Krueg Skullsplitter"] = {plain = true},
+    ["Grimand's Armor"] = {plain = true}, ["Grimand's Finest Work"] = {plain = true},
+    ["The Work of Grimand Elmore"] = {plain = true}, ["Return to Verner"] = {plain = true},
+    ["Return to Milton"] = {plain = true}, ["Sully Balloo's Letter"] = {plain = true},
+    ["Confront Lorthuna"] = {plain = true},
+    ["Kalimdor Hold 'Em"] = {plain = true}, ["Kalimdor Hold 'em"] = {plain = true},
+    ["Jonespyre's Request"] = {plain = true}, ["When Smokey Sings, I Get Violent"] = {plain = true},
+    ["The Ruins of Kel'Theril"] = {plain = true}, ["Troubled Spirits of Kel'Theril"] = {plain = true},
+    ["Sven's Revenge"] = {plain = true}, ["Sven's Camp"] = {plain = true},
+    ["Return to Sven"] = {plain = true}, ["Deliveries to Sven"] = {plain = true},
+    ["Trelane's Defenses"] = {plain = true}, ["Vimes's Report"] = {plain = true},
+    ["Kim'jael Indeed!"] = {plain = true}, ["The Bait for Lar'korwi"] = {plain = true},
+    ["The Fare of Lar'korwi"] = {plain = true}, ["The Scent of Lar'korwi"] = {plain = true},
+    ["Senir's Observations"] = {plain = true}, ["Return to Bellowfiz"] = {plain = true},
+    ["Rejold's New Brew"] = {plain = true}, ["Tundra MacGrann's Stolen Stash"] = {plain = true},
+    ["Return to Brock"] = {plain = true},
+    ["Delivery to Magatha"] = {plain = true}, ["Magatha's Payment to Jediga"] = {plain = true},
+    ["The Karnitol Shipwreck"] = {plain = true}, ["Helcular's Revenge"] = {plain = true},
+    ["Farren's Proof"] = {plain = true}, ["Jarl Needs Eyes"] = {plain = true},
+    ["Jarl Needs a Blade"] = {plain = true}, ["The Crown of Will"] = {plain = true},
+    ["Dalar's Analysis"] = {plain = true},
 }, nil, nil
 -- Deliberately reviewed one-word identities. Common nouns and short personal
 -- aliases still require explicit markup; "Weaver" must not turn prose into a boss.
@@ -60,7 +113,63 @@ local singleNames = {Thrall=true, Onyxia=true, Nefarian=true, Ragnaros=true, Var
     Sevren=true, Zygand=true, Johaan=true, Hadrec=true, Dughan=true, Orgnil=true,
     Zarlman=true, Ravenfeather=true, Graytongue=true, Arren=true, Linnea=true,
     Doren=true, Kurzen=true, Raene=true, Stonewatch=true, Elreth=true, Dirania=true,
-    Tallonkai=true, Rellian=true, Gryshka=true, Gerenzo=true, Remtravel=true, Marris=true}
+    Tallonkai=true, Rellian=true, Gryshka=true, Gerenzo=true, Remtravel=true, Marris=true,
+    -- notes2 2026-11-05: short forms the new prose uses, each checked for a
+    -- second bearer in the catalogue and the corpus. Athrikus has a discovery policy.
+    -- Common given names a player or companion could carry (Sven, Pamela, Quinn, Aurora,
+    -- Holt, Brock, Milly, Janice, Kristoff...) stay out: the book owner's own name is never in A.bookLinks, so
+    -- it would link to the NPC in that person's own book.
+    Balthule=true, Delgren=true, Hollee=true, Greywhisker=true, Tharnariun=true,
+    Gilshalan=true, Athridas=true, Gaerolas=true, Athrikus=true,
+    -- Short forms of existing notes that the packs use unlinked most often. Left
+    -- out on purpose: Maxwell (Marshal Maxwell and Lord Maxwell Tyrosus), Maur (Grimtotem
+    -- and Raincaller), Natalia and Mar'alith, Coleman, Brine, Telf, Joseph, Parker, Hemet,
+    -- Stormpike, Alterac, Arathi and Grimtotem (several bearers each), species names,
+    -- and Baine (tests/LoreNameDepth.lua keeps it plain).
+    Volcor=true, Solomon=true, Bolvar=true, Windsor=true, Onu=true, Allister=true, Torwa=true,
+    Bethor=true, Gann=true, ["Mok'Morokk"]=true, Gunther=true, Sirra=true, VanCleef=true,
+    Magni=true, Ayessa=true, Renferrel=true,
+    Cairne=true, Stoutmantle=true, Aetheen=true, Noggle=true, Thredd=true,
+    Jorn=true, Wenikee=true, Hydraxis=true, Betina=true, Rorian=true, Danitha=true, Rilli=true,
+    McBride=true, Faranell=true, Sarvis=true, Myranda=true, Beetix=true, Eridan=true,
+    Malah=true, Malin=true, Morin=true, Arugal=true, Heglan=true,
+    Helendis=true, Farley=true, Tirion=true,
+    Shandris=true, Renfray=true, Donova=true, Xylem=true, Neeru=true, Carlin=true,
+    Taelan=true, Celebras=true, Melor=true, Zamah=true, Berard=true, Dizzywig=true,
+    Spraggle=true, Thule=true, Thundris=true, Senani=true, Doan=true, Hendel=true,
+    Larksbane=true, Tyrande=true, Bazzalan=true, Grimson=true, ["Jammal'an"]=true,
+    Jergosh=true, Mordo=true, Noxxion=true, Theradras=true, Vyletongue=true, Dargol=true,
+    Zureetha=true, Halaan=true, Mahren=true,
+    Keeshan=true, Brann=true, Witherfang=true, Melenas=true, Ataeric=true, 
+    Razorflank=true,
+    ["Shen'dar"]=true, Tirisfal=true, Sepulcher=true, Razormane=true, Barrens=true,
+    ["Un'Goro"]=true, Elwynn=true, Bulwark=true, Crossroads=true, Zephras=true, Deadmines=true,
+    Narache=true, ["Al'Aketh"]=true, Windshapers=true, Silverpine=true, Stonemaul=true,
+    Feathermoon=true, Redridge=true, Thendal=true, Bristleback=true, ["Sen'jin"]=true,
+    Shadowhide=true, Galak=true, Agamands=true, Darkspear=true, Hillsbrad=true, Woodpaw=true,
+    Highborne=true, Apothecarium=true, ["Ban'ethil"]=true, Firegut=true, Gordunni=true,
+    Stockade=true, Hyjal=true, Frostmane=true, Deadwood=true, Bloodscalp=true, Pyrewood=true,
+    Stranglethorn=true, Winterfall=true, Syndicate=true, Stonesplinter=true, Gelkis=true,
+    Magram=true, ["Grom'gol"]=true, Skullsplitter=true, Smolderthorn=true, Waterlords=true,
+    Stonetalon=true, Blackwing=true, ["Eldre'Thalas"]=true, Stormwind=true,
+    -- notes2 batch 2. Lescovar and Maelik notes carry a discovery policy.
+    Lescovar=true, Maelik=true, Grimand=true, Glorin=true, Verner=true,
+    -- notes2 batch 3 (Lorthuna has a discovery policy; "Sprite" stays out, see Sprite Darter).
+    Lorthuna=true, Valennia=true, Aonda=true, Illaya=true, Hanaa=true, Elegael=true,
+    Aamelia=true, Aramis=true, Drohn=true,
+    -- notes2 batch 4 (Raschal has a discovery policy).
+    Pestlezugg=true, Fizzledowser=true, Zilzibin=true, Gracina=true, Ginro=true,
+    Jonespyre=true, ["Kel'Theril"]=true, Trelane=true, Loramus=true, Paxton=true,
+    Vimes=true,
+    -- notes2 batch 5: Dun Morogh and Ironforge.
+    Grelin=true, Senir=true, Redstone=true, Maxan=true, Bellowfiz=true,
+    Rejold=true, Beldin=true, MacGrann=true, Golnir=true,
+    -- notes2 batch 6: Thunder Bluff and Bloodhoof ("Ruul" stays out: two Ruuls).
+    Magatha=true, Turak=true, Harken=true,
+    -- notes2 batch 7.
+    Maurin=true, Lydon=true,
+    -- Short forms added to existing notes in the last pass.
+    Dalar=true, Sergra=true, Fandral=true, Trias=true}
 local V = "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"
 local Q = "StorageInvestigation/journal-voice/quests_corpus.txt"
 local N = "StorageInvestigation/journal-voice/npc_corpus.txt"
@@ -165,7 +274,7 @@ Curated("npc:sylvanas",
     "Person",
     "Sylvanas Windrunner, the Banshee Queen, leads the Forsaken from the Undercity beneath Lordaeron's ruined capital. In life she was the ranger-general of Silvermoon and defended Quel'Thalas against Arthas's Scourge. Her resistance earned a cruel punishment: Arthas killed her and raised her as a banshee, forcing her to serve the army that had destroyed her people.\n\nWhen the Lich King's hold weakened, Sylvanas recovered her free will and gathered other undead who had escaped his control. Their struggle for Lordaeron gave the Forsaken a homeland and a ruler of their own. Their alliance with Thrall's Horde offers support in a world where the living often see little difference between them and the Scourge.\n\nHer vengeance remains directed at Arthas. Under her orders, the Royal Apothecary Society seeks a new plague powerful enough to ruin his army. For the Forsaken, freedom from one master's will has become a struggle to survive under the Dark Lady's command, against both the Scourge and the humans who hunt them.",
     {"https://warcraft.wiki.gg/wiki/Lady_Sylvanas_Windrunner", "https://warcraft.wiki.gg/wiki/Undercity_%28original%29", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt (quests 363, 1049: Rude Awakening; Compendium of the Fallen)", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt (quests 367, 363: A New Plague; Rude Awakening)"},
-    {"Sylvanas", "Sylvanas Windrunner", "Lady Sylvanas", "The Dark Lady", "The Banshee Queen"},
+    {"Sylvanas", "Sylvanas Windrunner", "Lady Sylvanas", "The Dark Lady", "The Banshee Queen", "the Dark Lady", "the Banshee Queen"},
     {"place:undercity", "faction:forsaken", "npc:arthas"},
     "Classic / Forever")
 Curated("npc:sarvis", "Shadow Priest Sarvis", "Person",
@@ -200,7 +309,7 @@ Curated("npc:arugal",
     "Classic / Forever")
 Curated("npc:dalar", "Dalar Dawnweaver", "Person",
     "Dalar Dawnweaver worked at the Sepulcher. He sought to understand Arugal's enchantments and called for help against the Moonrage worgen.",
-    {V .. " #421 Prove Your Worth; #422 Arugal's Folly"}, nil, {"place:sepulcher"})
+    {V .. " #421 Prove Your Worth; #422 Arugal's Folly"}, {"Dalar"}, {"place:sepulcher"})
 Curated("place:bandarion", "Bandarion Keep", "Place",
     "A new order of risen paladins gathered at Bandarion Keep in Tirisfal. Their shared faith and service to the Forsaken shaped a community still seeking its place among its own people.",
     {Q .. " #91282 A Second Home", N .. " Danitha Morr and Leonid Barthalomew dialogue"}, nil,
@@ -3144,7 +3253,7 @@ Curated("npc:elling",
     "Person",
     "Elling Trias sells cheese in Stormwind's Trade District, but his contacts make him a valuable investigator when a diplomat vanishes on the way to Theramore. A note from Jorgen draws him into Bishop DeLavey's inquiry. Beneath his shopkeeper's welcome, Elling knows people who can trace the Defias Brotherhood's movements beyond the city.\n\nHe sends an investigator to Watcher Backus in Darkshire, studies the recovered plans and recognizes the name of Dashel Stonefist. The trail then leads to a man called Slim in Menethil Harbor. Elling directs the search to Mikhail, a former associate who retired there to become a bartender. At this stage even Elling does not know the captive's identity or destination: his task is to make those scattered contacts yield an answer.",
     {"StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt (quests 1242, 1243, 1245, 1246, 1247, 1248)", "https://warcraft.wiki.gg/wiki/Trias%27_Cheese"},
-    {},
+    {"Trias"},
     {"region:53746f726d77696e642043697479", "npc:jorgen", "group:defias"},
     "Classic / Forever")
 
@@ -4167,7 +4276,7 @@ Curated("npc:jonathan-carevin",
     "Person",
     "Jonathan Carevin heads a human household of monster hunters in Darkshire. His family and their supporters fight the demons, undead and other horrors of Duskwood. He greets strangers with suspicion, but accepts aid from those willing to confront the forest's evils.\n\nAn inquiry into Velinde Starsong and the Scythe of Elune brings his struggle with the worgen into focus. Jonathan directs the investigation to the southern mine where the creatures were first reported, Roland's Doom. His household lacks the influence to end the wider threat, so he makes containment its immediate aim and instructs Calor to give the worgen his highest priority.",
     {"https://warcraft.wiki.gg/wiki/Jonathan_Carevin", "https://warcraft.wiki.gg/wiki/Carevin", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #1042 The Carevin Family; #1043 The Scythe of Elune"},
-    {},
+    {"Master Carevin"},
     {"place:darkshire", "region:4475736b776f6f64", "npc:thyntel-bladeweaver"},
     "Classic / Forever",
     true)
@@ -5580,7 +5689,7 @@ Curated("npc:sergra-darkthorn",
     "Person",
     "Sergra Darkthorn is an orc shaman in charge of the Crossroads, the Horde settlement at the meeting of the Barrens' roads. Recruits sent into the region report to her. She expects them to earn their place through useful work, and insists that women in the Horde receive the same respect as men.\n\nSergra also guides newcomers along the hunter's path. Her lessons move from the common beasts of the plains to more dangerous quarry, testing courage and resourcefulness as well as the ability to kill. The work serves the settlement: plainstriders have been harassing its food supplies, and controlling them helps keep those supplies moving.\n\nAmong her early tasks is a zhevra hunt. She asks for hooves as proof, warning that even these comparatively mild beasts have a powerful kick.",
     {"StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #842 Crossroads Conscription, L7665", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #860 Sergra Darkthorn, L7845", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #844 Plainstrider Menace, L7691", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #845 The Zhevra, L7700", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #903 Prowlers of the Barrens, L8284", "https://warcraft.wiki.gg/wiki/Sergra_Darkthorn (identity only; original Crossroads Conscription reference)", "https://classicdb.ch/?quest=842", "https://classicdb.ch/?quest=845"},
-    {},
+    {"Sergra"},
     {"place:crossroads", "region:5468652042617272656e73"},
     "Classic / Forever",
     true)
