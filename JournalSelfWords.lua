@@ -177,6 +177,56 @@ W.openWith = {
     "{When}, I was in {zoneE} with {names}.",
     "{When}, I set out with {names} in {zoneE}.",
 }
+-- The same openings without the time phrase (2026-11-05). The chapter header
+-- carries the date; after a chapter that opened on the day, the next one opens
+-- on the place or the company. {part}: morning, afternoon, evening, night.
+W.openBare = {
+    "I was out in {zoneE}.",
+    "I went out into {zoneE}.",
+    "I spent the {part} in {zoneD}.",
+    "{ZoneD} had me for the {part}.",
+    "I took myself out to {zoneE}.",
+}
+W.openStillBare = {
+    "I was still in {zoneD}.",
+    "I had not finished with {zoneD}.",
+    "{ZoneD} still had work for me.",
+    "I stayed on in {zoneD}.",
+    "I spent the {part} in {zoneD} as well.",
+}
+W.openStillWorkBare = {
+    "There was more work for me in {zoneD}.",
+    "I went back to work in {zoneD}.",
+    "{ZoneD} still had work for me, and I took it up again.",
+}
+W.openSameBare = {
+    "I went back to {zoneD}, where I had left off.",
+    "I was back in {zoneD}.",
+    "{ZoneD} again, and I took up where I had left off.",
+}
+W.openNewBare = {
+    "I came to {zoneD} for the first time.",
+    "For the first time, I saw {zoneLore}.",
+    "{ZoneD} was new to me.",
+}
+W.openBackBare = {
+    "I was back in {zoneD}.",
+    "I returned to {zoneD}.",
+}
+W.openWithBare = {
+    "{names} and I set out in {zoneE}.",
+    "I was in {zoneE} with {names}.",
+    "{names} and I took to {zoneE}.",
+}
+W.openPerilBare = {
+    "I was in {zoneD}, dangerous country for someone of my experience.",
+    "My way took me into {zoneD}, where the dangers outmatched me.",
+}
+W.openDungeonBare = {
+    "I made for {dungeonD}.",
+    "The {part}'s work lay in {dungeonD}.",
+    "I set out for {dungeonD}.",
+}
 
 -- Company -------------------------------------------------------------------------
 W.joined = {
@@ -762,7 +812,7 @@ W.lookBack = {
     "I had begun in {origin}, {since} earlier.",
     "{since} before, I had been in {origin}.",
     "I had started from {origin}, {since} earlier.",
-    "It had been {since} since these pages began in {origin}.",
+    "It had been {since} since I set out from {origin}.",
 }
 W.lookBackPeople = {"{names} had been with me for much of it.", "I had not done it alone. {names} had been there for much of the way."}
 
@@ -1230,9 +1280,9 @@ W.snowFirst = {
 }
 -- A rare creature seen ({what}, {zoneD}).
 W.rareBeast = {
-    "In {zoneD}, I came across {what}, and few ever do.",
+    "In {zoneD}, I came across {what}, a beast most people only hear of.",
     "{what} crossed my path in {zoneD}. Not many people ever see it.",
-    "There I came across {what}, and few ever do.",
+    "There I crossed paths with {what}, and not many can say that.",
     "I saw {what} in {zoneD}, which not many people can say.",
     "{what} was about that day, and our paths crossed.", -- (no first)
 }
@@ -2259,7 +2309,7 @@ L.dungeonStory["Scarlet Monastery"].whyRace = {
 -- Tokens {what} {zoneD}. "King Mosh was about that day, and our paths crossed. It was King Mosh that
 -- killed me." (Bram 3).
 W.rareBeastKilled = {
-    "I came across {what}, and few ever do, and it killed me.",
+    "I came across {what}, which few ever see, and it killed me.",
     "{what} was about that day, and it killed me.",
 }
 -- (engine hook: an unsure class first for a class past its level, a hunter's tame at 50; told without
@@ -2444,7 +2494,7 @@ end
 W.read = {
     "I stopped to read {what}.",
     "I read {what}.",
-    "There was {what}, and I read it.",
+    "I came across {what} and read it.",
     "I found {what} and read it through.",
 }
 W.readMany = {
@@ -2455,7 +2505,7 @@ W.readMany = {
 W.readStone = {
     "I read the words cut into {what}.",
     "I stopped at {what} and read what was written on it.",
-    "{What} stood there, and I read the inscription.",
+    "I read the inscription on {what}.",
 }
 W.readAgain = {
     "I read {what} again.",
@@ -2523,13 +2573,13 @@ W.skill = {
     [75] = {"My {trade} had come as far as an apprentice's can.", "I had learned all an apprentice could of {trade}."},
     [150] = {"I could call myself a journeyman at {trade} by then.", "My {trade} had reached a journeyman's."},
     [225] = {"I was an expert at {trade} by then, as the trainers reckon it.", "My {trade} had reached an expert's."},
-    [300] = {"There was nothing more anyone could teach me of {trade}.", "I had mastered {trade}, as far as any trainer could tell."},
+    [300] = {"There was nothing more anyone could teach me of {trade}.", "No trainer had anything left to teach me of {trade}."},
 }
 -- ({count} {side} {zoneD})
 W.hk = {"{Count} of the {side} fell to me in {zoneD}.", "I killed {count} of the {side} that day.", "{Count} of the {side} died by my hand there."}
 W.hkOne = {"One of the {side} fell to me in {zoneD}.", "I killed one of the {side} there.", "One of the {side} died by my hand in {zoneD}."}
 W.hkAfterFirst = {"{Count} of them fell to me before the day was out.", "By the end of the day, {count} of them had died by my hand."}
-W.rareKilled = {"I killed {what}, a creature few ever see.", "{What} crossed my path, and I killed it.", "I brought down {what}, and not many ever do."}
+W.rareKilled = {"I killed {what}, a creature few ever see.", "{What} crossed my path, and I killed it.", "I brought down {what}, and not many can say that."}
 W.titles.read = {"{what}"}
 W.titles.explore = {"New Ground", "Unmapped Ground"}
 W.titles.duel = {"A Duel", "A Challenge"}
@@ -2558,14 +2608,14 @@ W.bossRevengeLater = {
 }
 -- ({When} {zoneD} {foe} {ago}: back where a foe killed you)
 W.openBackMemory = {
-    "{When}, I was back in {zoneD}, where {foe} had killed me {ago}.",
-    "{When}, I returned to {zoneD}. {Foe} had killed me there {ago}.",
+    "{When}, I was back in {zoneD}, where {foe} had killed me {ago} before.",
+    "{When}, I returned to {zoneD}. {Foe} had killed me there {ago} earlier.",
 }
 -- ({foe} {ago}: the same, said after an opening of its own)
 W.backMemory = {
-    "{Foe} had killed me there {ago}.",
-    "It was there that {foe} had killed me, {ago}.",
-    "The last time, {ago}, {foe} had killed me there.",
+    "{Foe} had killed me there {ago} before.",
+    "It was there that {foe} had killed me, {ago} earlier.",
+    "The last time, {ago} before, {foe} had killed me there.",
 }
 -- ({span}: the time since the last death)
 W.deathAfterLong = {

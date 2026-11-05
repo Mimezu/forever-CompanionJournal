@@ -580,7 +580,7 @@ function T.Paragraphs(lines, beats)
     local paragraphs, current, words, previous = {}, {}, 0, nil
     local function Phase(beat)
         if beat == "prologue" then return "prologue" end
-        if beat == "dungeon" or beat == "kills" or beat == "climax" or beat == "death" or beat == "rez" or beat == "deathLore" then return "conflict" end
+        if beat == "dungeon" or beat == "kills" or beat == "climax" or beat == "roles" or beat == "death" or beat == "rez" or beat == "deathLore" then return "conflict" end
         if beat == "rest" or beat == "milestone" or beat == "close" or beat == "consequence" then return "aftermath" end
         return "setting"
     end
@@ -1006,7 +1006,20 @@ function T.Tell(person, days, voice, player, brief)
             -- the pair. Dates remain on the chapters; the next scene can lead.
             -- A brief dungeon visit elsewhere cannot supply the field scene's
             -- location: keep that interval's place anchor on mixed days.
-            if not (sceneLed and placeCanLead and history.intervalOpen == index - 1) then
+            -- A gap that is simply this pair's rhythm (a weekly companion, a week on)
+            -- is said once; the chapter after it opens on the land or the work, and
+            -- every third such chapter greets in the rhythm's own words instead
+            -- ("Mira came along, as she did most weeks"). The dates stay on the chapters.
+            -- (a monthly guest's return is news every time; only a regular's week is routine)
+            local usualGap = (cadence == "weekly" and gap >= 6 and gap <= 8) or (cadence == "fortnightly" and gap >= 12 and gap <= 16)
+            local rhythm = usualGap and placeCanLead and history.intervalOpen == index - 1
+            if rhythm then
+                history.rhythmSkips = (history.rhythmSkips or 0) + 1
+                if history.rhythmSkips % 3 == 0 and PB[cadence] then
+                    Add(teller:Say(cadence == "weekly" and "returnInterval" or cadence, PB[cadence], rng, tokens))
+                end
+                history.intervalOpen = index -- (the rhythm holds: a deviation from it is the next news)
+            elseif not (sceneLed and placeCanLead and history.intervalOpen == index - 1) then
                 if interval and tokens.zoneD and interval:find(tokens.zoneD, 1, true) then placeSaid = true end
                 Add(interval)
                 history.intervalOpen = index
@@ -1265,6 +1278,8 @@ function T.Tell(person, days, voice, player, brief)
             if multiQuestPlan and #f.zones >= 2 and PB.dayGoPlain then
                 -- The individual passages establish the places in order.
                 preds[#preds + 1] = Fill(teller:Pick("dayGoPlain", PB.dayGoPlain, rng))
+                -- ("You were there, finished X": the place already named leaves an empty verb)
+                if preds[#preds] == "were there" then preds[#preds] = "spent some time there" end
                 plainGo = true
             elseif #f.zones >= 2 and PB.dayGoMany then
                 ext.from, ext.to = Place(f.zones[1]), Place(f.zones[#f.zones])
@@ -1279,6 +1294,8 @@ function T.Tell(person, days, voice, player, brief)
                 or (PB.milestoneDays[history.days + 1] and #PB.milestoneDays[history.days + 1] > 0)) and rng() < 0.55 then
                 -- The hours are not news every day.
                 preds[#preds + 1] = Fill(teller:Pick("dayGoPlain", PB.dayGoPlain, rng))
+                -- ("You were there, finished X": the place already named leaves an empty verb)
+                if preds[#preds] == "were there" then preds[#preds] = "spent some time there" end
                 plainGo = true
             elseif quietDay and PB.dayGoQuiet and not zoneSaid then
                 preds[#preds + 1] = Fill(teller:Pick("dayGoQuiet", PB.dayGoQuiet, rng))
@@ -1296,8 +1313,10 @@ function T.Tell(person, days, voice, player, brief)
                 local lore = L.Quest and L.Quest(quest.title)
                 local ql, kind = quest.level or (lore and lore.level), quest.kind or (lore and lore.kind)
                 local pl = quest.pl or level
-                if ql and pl and ql - pl >= 3 then notableQuest, notableKind = quest, "hard"
-                elseif not notableQuest and (kind == 1 or kind == 81 or kind == 62) then notableQuest, notableKind = quest, "elite" end
+                -- ("work meant for more seasoned adventurers" is said once in a book, for a quest
+                -- four levels or more above you; "work meant for a full party" one chapter in four)
+                if ql and pl and ql - pl >= 4 and not history.hardSaid then notableQuest, notableKind = quest, "hard"
+                elseif not notableQuest and (kind == 1 or kind == 81 or kind == 62) and (index - (history.eliteSaid or -99)) >= 4 then notableQuest, notableKind = quest, "elite" end
             end
             -- A documented purpose makes a better scene than a level comparison.
             -- Keep difficulty/group phrasing as the fallback for uncatalogued work.
@@ -1333,6 +1352,7 @@ function T.Tell(person, days, voice, player, brief)
                 local workPool = notableKind == "scene" and n == 1 and PB.dayWork.sceneOne or PB.dayWork[notableKind]
                 local work = Fill(teller:Pick("dayWork" .. notableKind, workPool, rng))
                 preds[#preds + 1] = work
+                if notableKind == "hard" then history.hardSaid = index elseif notableKind == "elite" then history.eliteSaid = index end
                 if notableKind == "scene" then
                     -- Keep the original anchor until its supported outcome has
                     -- been placed. Then the title announcement can leave the prose
@@ -1584,7 +1604,8 @@ function T.Tell(person, days, voice, player, brief)
                     Add(teller:Say("theyLevel", PB.theyLevel, rng, tokens))
                 end
             end
-            if mine and (mine == 60 or rng() < (recorded and 0.75 or 0.4)) then Add(teller:Say("myLevel", PB.myLevel, rng, tokens)) end
+            if mine and history.myLevelTold and mine <= history.myLevelTold then mine = nil end -- (a level told already is no news)
+            if mine and (mine == 60 or rng() < (recorded and 0.75 or 0.4)) then Add(teller:Say("myLevel", PB.myLevel, rng, tokens)); history.myLevelTold = mine end
         end
 
         end
@@ -1858,7 +1879,7 @@ function T.Tell(person, days, voice, player, brief)
                 tokens.above = danger == "reckless" and "far above" or "above"
                 tokens.quick = d.outAfter <= 60 and "within a minute" or "a few minutes later"
                 Add(teller:Say("dungeonFled", PB.dungeonFled, rng, tokens))
-            elseif #d.events == 0 and PB.dungeonBrief and not d.briefTold then
+            elseif #d.events == 0 and PB.dungeonBrief and not d.briefTold and name ~= mainZone then
                 -- a visit with nothing in it gets one plain clause.
                 Add(teller:Say("dungeonBrief", PB.dungeonBrief, rng, tokens))
             elseif d.briefTold then
@@ -1949,6 +1970,16 @@ function T.Tell(person, days, voice, player, brief)
             -- conflict anchors so its whole quest passage stays on the right
             -- side of each recorded kill, death or wipe.
             local questConflicts = multiQuestPlan and #d.events > 0
+            -- A kill is flushed on its own only when a turn-in really falls between it and
+            -- the next recorded event; otherwise the kills stay one sentence, as the own
+            -- journal tells them, and the anchor of the later event carries them.
+            local function TurnInBefore(evIndex)
+                local ev, nextEv = d.events[evIndex], d.events[evIndex + 1]
+                if not nextEv then return true end
+                local a, b = ev.t or 0, nextEv.t or 0
+                for _, quest in ipairs(f.quests) do if quest.t and quest.t > a and quest.t < b then return true end end
+                return false
+            end
             if questConflicts and #out > beforeDungeon then temporalAnchors[#temporalAnchors + 1] = {
                 first = beforeDungeon + 1, last = #out, t = d.t or 0} end
             -- a clean run (no deaths, no lost fights) with three or more kills is one sentence.
@@ -1962,7 +1993,11 @@ function T.Tell(person, days, voice, player, brief)
             local hasLord = false
             for _, b in ipairs(kills) do local lo = L.Boss and L.Boss(b); if lo and lo.last then hasLord = true end end
             local rolled = false
-            if not questConflicts and clean and (#kills >= 3 or (#kills == 2 and hasLord)) and PB.killRoll and #PB.killRoll > 0 then
+            -- (a hand-in among the kills splits them; none among them leaves the roll whole)
+            local splitNeeded = false
+            for i = 1, #d.events - 1 do if TurnInBefore(i) then splitNeeded = true end end
+            local rollStart = #out
+            if not (questConflicts and splitNeeded) and clean and (#kills >= 3 or (#kills == 2 and hasLord)) and PB.killRoll and #PB.killRoll > 0 then
                 local lordAt
                 for i, b in ipairs(kills) do
                     local lo = L.Boss and L.Boss(b)
@@ -1994,9 +2029,15 @@ function T.Tell(person, days, voice, player, brief)
                 mood.triumph = true
                 d.killed = true
                 rolled = true
+                -- (the whole roll stands at the last kill's moment for the hand-ins told around it)
+                if questConflicts and #out > rollStart then
+                    local lastT = 0
+                    for _, ev in ipairs(d.events) do lastT = math.max(lastT, ev.t or 0) end
+                    temporalAnchors[#temporalAnchors + 1] = {first = rollStart + 1, last = #out, t = lastT}
+                end
             end
             local lastKiller
-            if not rolled then for _, ev in ipairs(d.events) do
+            if not rolled then for evIndex, ev in ipairs(d.events) do
                 local eventStart = #out
                 if ev.k == "boss" then
                     local lore = L.Boss and L.Boss(ev.d)
@@ -2156,7 +2197,7 @@ function T.Tell(person, days, voice, player, brief)
                         mood.grim = true
                     end
                 end
-                if questConflicts then
+                if questConflicts and (ev.k ~= "boss" or TurnInBefore(evIndex)) then
                     Flush(true)
                     if #out > eventStart then temporalAnchors[#temporalAnchors + 1] = {
                         first = eventStart + 1, last = #out, t = ev.t or 0} end
@@ -2167,6 +2208,23 @@ function T.Tell(person, days, voice, player, brief)
             local afterConflicts = #out
             -- What it was like inside (a first visit), how you split the work, and
             -- now and then a deed worth saying.
+            -- (what the lord's fall meant stays last even when hand-ins anchor the kills:
+            -- your part and any deed go in front of it, and the anchor keeps covering it)
+            local aftersNow = {}
+            for _, ev in ipairs(d.events) do
+                local lo = ev.k == "boss" and L.Boss and L.Boss(ev.d)
+                if lo and lo.after then aftersNow[lo.after] = true; for _, more in ipairs(lo.afterMore or {}) do aftersNow[more] = true end end
+            end
+            local function AddBeforeConsequence(line)
+                if not line then return end
+                local last = out[#out]
+                Add(line)
+                if questConflicts and last and aftersNow[last] and #out >= 2 then
+                    out[#out], out[#out - 1] = out[#out - 1], out[#out]
+                    outBeat[#out], outBeat[#out - 1] = outBeat[#out - 1], outBeat[#out]
+                    for _, anchor in ipairs(temporalAnchors) do if anchor.last == #out - 1 then anchor.last = #out end end
+                end
+            end
             if #d.events > 0 and PB.rolesPair then
                 local firstBoss
                 for _, ev in ipairs(d.events) do if ev.k == "boss" and not firstBoss then firstBoss = ev end end
@@ -2185,7 +2243,21 @@ function T.Tell(person, days, voice, player, brief)
                     end
                     pair = #kept > 0 and kept or nil
                 end
-                if pair and rng() < 0.6 then Add(teller:Say("roles", pair, rng, tokens)) end
+                if pair then
+                    -- (a line the book has said already is left out; all said, none: the reader knows your parts)
+                    history.roleLines = history.roleLines or {}
+                    local kept = {}
+                    for _, line in ipairs(pair) do if not history.roleLines[line] then kept[#kept + 1] = line end end
+                    pair = #kept > 0 and kept or nil
+                end
+                if pair and rng() < 0.6 then
+                    local was = beat
+                    beat = "roles" -- (its own beat: a role line never takes the day's level)
+                    local line = teller:Say("roles", pair, rng, tokens)
+                    AddBeforeConsequence(line)
+                    if line and teller.sayLine then history.roleLines[teller.sayLine] = true end
+                    beat = was
+                end
                 if not history.boastDay or history.boastDay ~= index then
                     local lastKill
                     for _, ev in ipairs(d.events) do if ev.k == "boss" then lastKill = ev end end
@@ -2200,7 +2272,7 @@ function T.Tell(person, days, voice, player, brief)
                             elseif them.d == 1 and (them.ds or 0) >= 30 and theirs ~= "healer" then line = teller:Say("boastThemD", PB.boastThem.damage, rng, tokens)
                             elseif mine == "tank" and you.t == 1 then line = teller:Say("boastYouT", PB.boastYou.tank, rng, tokens)
                             elseif theirs == "tank" and them.t == 1 then line = teller:Say("boastThemT", PB.boastThem.tank, rng, tokens) end
-                            if line then Add(line); history.boastDay = index end
+                            if line then AddBeforeConsequence(line); history.boastDay = index end
                         end
                     end
                 end
@@ -2383,12 +2455,15 @@ function T.Tell(person, days, voice, player, brief)
             end
             local notable = false
             if tokens.questFolded or multiQuestPlan then notable = true
-            elseif hardest and hardestDiff >= 3 then
+            elseif hardest and hardestDiff >= 4 and not history.hardSaid then
+                -- (once a book: the reader knows this character takes on work above their level)
                 tokens.quest = Q(hardest.title)
                 Add(teller:Say("questHard", PB.questHard, rng, tokens)); notable = true
-            elseif elite and #f.dungeons == 0 then
+                history.hardSaid = index
+            elseif elite and #f.dungeons == 0 and (index - (history.eliteSaid or -99)) >= 4 then
                 tokens.quest = Q(elite.title)
                 Add(teller:Say("questElite", PB.questElite, rng, tokens)); notable = true
+                history.eliteSaid = index
             elseif easy >= #f.quests and #f.quests > 1 and rng() < 0.6 then
                 Add(teller:Say("questEasy", PB.questEasy, rng, tokens)); notable = true
             end
@@ -2492,7 +2567,13 @@ function T.Tell(person, days, voice, player, brief)
                             passage = {outcomePlace = place}
                         end
                         if passage.outcomePlace then
-                            outcome = Cap(teller.base.we) .. " were in " .. Place(passage.outcomePlace) .. ". " .. outcome
+                            -- (the hand-in's recorded place, on the outcome itself: "In Orgrimmar, Taragaman's heart
+                            -- was taken", not a bare "You were in Orgrimmar." between the setup and what came of it;
+                            -- a name keeps its capital after the comma, an article does not)
+                            local articled = outcome:match("^The ") or outcome:match("^An? ") or outcome:match("^Another ") or outcome:match("^No ")
+                                or outcome:match("^One ") or outcome:match("^Fewer ") or outcome:match("^More ") or outcome:match("^Word ")
+                            if articled then outcome = Cap(teller.base.we) .. " had come to " .. Place(passage.outcomePlace) .. " by then. " .. outcome
+                            else outcome = "In " .. Place(passage.outcomePlace) .. ", " .. outcome end
                         end
                         passage[#passage + 1] = outcome
                         history.questLore[quest.qid or quest.title] = true
@@ -2534,6 +2615,18 @@ function T.Tell(person, days, voice, player, brief)
                                 -- A quest title's ! or ? may have supplied the only
                                 -- terminator. Its replacement must finish the sentence.
                                 if cut.predicate and not out[n2]:find("[.!?]$") then out[n2] = out[n2] .. "." end
+                                -- (what is left is only "You were in the Barrens.": a place the chapter has
+                                -- named already, standing between a scene's setup and its outcome, goes too)
+                                local bare = out[n2]:gsub("{%a:([^}]*)}", "%1")
+                                local placeOnly = bare:match("^%u[%w' ]* were in ([%w' ]+)%.$") or bare:match("^%u[%w' ]* was in ([%w' ]+)%.$")
+                                    or (bare:match("^%u[%w' ]* were there%.$") and "there")
+                                if placeOnly and not bare:find(",", 1, true) then
+                                    local before2 = table.concat(out, " ", 1, n2 - 1):gsub("{%a:([^}]*)}", "%1")
+                                    local placeName = placeOnly ~= "there" and placeOnly:gsub("^the ", "") or nil
+                                    if placeOnly == "there" or (placeName and before2:find(placeName, 1, true)) then
+                                        table.remove(out, n2); table.remove(outBeat, n2)
+                                    end
+                                end
                             end
                             break
                         end
@@ -3115,14 +3208,16 @@ function T.Tell(person, days, voice, player, brief)
             history.openTwo = {two and two:lower():gsub("[,.]", ""), (history.openTwo or {})[1]}
         end
         history.lastBossTitle, history.pendingBossTitle = history.pendingBossTitle, nil
-        stories[day.key] = {text = T.Paragraphs(out, outBeat), quotes = f.quotes, chapter = chapter, two = tellsTwo or nil,
-            title = title or (mainZone and (
+        local chapterTitle = title or (mainZone and (
                 (zoneRun == 2 and (Place(mainZone):gsub("{p:the ", "{p:The ") .. ", Again"))
                 or (zoneRun == 3 and ("Still in " .. Place(mainZone)))
                 or (zoneRun >= 4 and zoneRun <= 12 and (Place(mainZone):gsub("{p:the ", "{p:The ") .. ", " .. Cap(Ordinal(zoneRun)) .. " Day"))
                 or (zoneRun > 12 and ("Still in " .. Place(mainZone)))
                 or (Recent("zone:" .. mainZone, 0) and ("Back in " .. Place(mainZone)))
-                or Place(mainZone):gsub("{p:the ", "{p:The "))) or nil}
+                or Place(mainZone):gsub("{p:the ", "{p:The "))) or nil
+        -- (a title begins with a capital: "The Hillsbrad Foothills", not "the Hillsbrad Foothills")
+        if chapterTitle then chapterTitle = chapterTitle:gsub("^the ", "The "):gsub("^{p:the ", "{p:The ") end
+        stories[day.key] = {text = T.Paragraphs(out, outBeat), quotes = f.quotes, chapter = chapter, two = tellsTwo or nil, title = chapterTitle}
 
         -- remember the last three kinds of title.
         if title then

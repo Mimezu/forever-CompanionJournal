@@ -626,7 +626,7 @@ PB.dungeonBrief = {
 
 -- PB.kill.<kind> (also used as {bossFell})
 PB.kill.undead = {"{we} put {short} back in the grave.", "{short} died a second time.", "{short} was laid to rest, for good this time.", "{short} was destroyed."}
-PB.kill.demon = {"{short} was banished.", "{we} sent {short} back to the Nether.", "{short} was slain and sent back to the Nether."}
+PB.kill.demon = {"{short} died, and went back to the Nether.", "{we} sent {short} back to the Nether.", "{short} was slain and sent back to the Nether."}
 PB.kill.beast = {"{we} brought {short} down.", "{short} was put down.", "{short} was hunted down."}
 PB.kill.dragon = {"{short} was slain.", "{we} slew {short}.", "{short} died, dragon or not."}
 PB.kill.elemental = {"{short} was broken apart.", "{short} was unmade.", "{we} broke {short} apart."}
@@ -923,7 +923,7 @@ PB.shared = {
         "At {place}, {I} put a line in the water and {work}.",
     },
     rareBeast = {
-        "{pair} came across {what}, and few ever do.",
+        "{pair} came across {what}, a beast most people only hear of.",
         "{what} crossed {our} path in {zoneD}, and not many people ever see it.",
     },
     swim = {
@@ -1340,10 +1340,16 @@ PB.sharedGatherQuiet = {
 PB.recordedInterval = {
     "{gap} later, {pair} travelled together again.",
     "{gap} later, {name} joined {me} in {zoneD}.",
+    "{name} was back after {gap}, and {we} set out in {zoneD}.",
+    "{pair} next went out {later}, in {zoneD}.",
+    "{gap} on, {pair} were out together, in {zoneD}.",
 }
 PB.recordedIntervalBond = {
     "{gap} later, {name}, {bondWord}, was beside {me} in {zoneD}.",
     "{gap} later, {pair} were together again in {zoneD}.",
+    "{name}, {bondWord}, was back at {my} side {later}, in {zoneD}.",
+    "{later}, {pair} took to {zoneD}.",
+    "{gap} on, {pair} were out together, in {zoneD}.",
 }
 
 -- More moments shared with a companion (your own journal saw them while you

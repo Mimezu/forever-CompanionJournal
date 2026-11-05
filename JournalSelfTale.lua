@@ -79,7 +79,8 @@ local ARTICLE = {["Eastern Kingdoms"] = true, ["Arathi Highlands"] = true, ["Eas
     ["Badlands"] = true, ["Blasted Lands"] = true, ["Burning Steppes"] = true, ["Searing Gorge"] = true, ["Wetlands"] = true,
     ["Redridge Mountains"] = true, ["Stonetalon Mountains"] = true, ["Swamp of Sorrows"] = true, ["Alterac Mountains"] = true,
     ["Hillsbrad Foothills"] = true, ["Undercity"] = true, ["Valley of Trials"] = true, ["Savage Coast"] = true, ["Echo Isles"] = true,
-    ["Molten Core"] = true, ["Scarlet Monastery"] = true, ["Wailing Caverns"] = true, ["Bay of Storms"] = true, ["Ruins of Lordaeron"] = true}
+    ["Molten Core"] = true, ["Scarlet Monastery"] = true, ["Wailing Caverns"] = true, ["Bay of Storms"] = true, ["Ruins of Lordaeron"] = true,
+    ["Riverglades"] = true, ["Darkspear Islands"] = true, ["Barrow Deeps"] = true}
 local function Place(name)
     name = Clean(name)
     local rest = name:match("^The (.+)$")
@@ -503,6 +504,7 @@ function ST.Tell(person, days, brief, retell)
                 and person.startLevel and person.startLevel <= 5
         end
         local out, majors = {}, {}
+        local chapterWhen -- (the day phrase this chapter was given, if any)
         -- Keep the scene attached to its prose. Importance alone cannot tell
         -- whether a sentence supplies the place, work, or quiet end of a scene.
         local scenes, sceneAt = {}, 1
@@ -608,13 +610,16 @@ function ST.Tell(person, days, brief, retell)
             for _, line in ipairs(list) do if not line:find("^There") then kept[#kept + 1] = line end end
             return #kept > 0 and kept or list
         end
-        -- A role line the book has not said yet (all of them said: any)
+        -- A role line the book has not said yet. When every line is used, none:
+        -- the reader knows your part by then. Never in two chapters running (2026-11-05).
         local function RoleLine(role, list, st)
             history.roleLines = history.roleLines or {}
+            if history.roleChapter and index - history.roleChapter < 2 then return nil end
             local kept = {}
             for _, line in ipairs(list or {}) do if not history.roleLines[line] then kept[#kept + 1] = line end end
-            local line = teller:Say("role" .. role, #kept > 0 and kept or list, st)
-            if line then history.roleLines[line] = true end
+            if #kept == 0 then return nil end
+            local line = teller:Say("role" .. role, kept, st)
+            if line then history.roleLines[line] = true; history.roleChapter = index end
             return line
         end
         local function Unnamed(list, said)
@@ -680,6 +685,7 @@ function ST.Tell(person, days, brief, retell)
             elseif gap < 14 then When = teller:Pick("when3", {Cap(Words(gap)) .. " days later", "On " .. weekday})
             elseif gap < 28 then When = teller:Pick("when4", {Cap(Words(gap)) .. " days later", "On " .. weekday})
             else When = Cap(gap >= 60 and (Words(math.floor(gap / 30 + 0.5)) .. " months") or (Words(math.floor(gap / 7 + 0.5)) .. " weeks")) .. " later" end -- elapsed time, never evidence of inactivity
+            chapterWhen = When
             local function ZoneE(zone)
                 local lore = L and L.Zone and L.Zone(zone)
                 if lore and lore.e and teller.rng() < 0.3 then
@@ -707,7 +713,24 @@ function ST.Tell(person, days, brief, retell)
                 return (phrase:gsub("^%u", string.lower))
             end
             local tokens = {zoneE = ZoneE(first.zone), zoneD = Place(first.zone), zoneLore = ZoneLore(first.zone), when = Lower(When) or "the day",
-                When = When, WhenBare = When and (When:gsub("^On ", ""))}
+                When = When, WhenBare = When and (When:gsub("^On ", "")), part = part}
+            -- The chapter header carries the date. After a chapter that opened on
+            -- the day ("On Thursday, I..."), a chapter a week or less later opens on
+            -- the place or the company instead; every fourth such chapter keeps the
+            -- day, so the two shapes do not simply alternate. (Deterministic.)
+            local plainOpen = When ~= nil and gap ~= nil and gap >= 1 and gap <= 7 and history.whenLedAt == index - 1
+                and (history.plainOpens or 0) % 4 ~= 3
+            if plainOpen then history.plainOpens = (history.plainOpens or 0) + 1 end
+            local function OpenPool(key, pool)
+                if plainOpen and W[key .. "Bare"] then return key .. "Bare", W[key .. "Bare"] end
+                return key, pool
+            end
+            -- (the opening line from a pool, or its bare twin: both values of OpenPool, which a call in
+            -- argument position would truncate to the first)
+            local function SayOpen(key, pool)
+                local k, list = OpenPool(key, pool)
+                return teller:Say(k, list, tokens)
+            end
             local function Bare(list)
                 if not When or not (When:find("^On ") or When:find("later$") or When:find("^After")) then return list end
                 local kept = {}
@@ -729,6 +752,9 @@ function ST.Tell(person, days, brief, retell)
                 local start = L and L.starts and L.starts[race]
                 if not start or zone == start or CITY_ZONE[zone] or (CITY_ZONE[zone] == nil and false) then return end
                 for city, around in pairs(CITY_ZONE) do if city == zone and around == start then return end end
+                -- (only a home the book has stood in, or opened from: a tauren whose record begins in
+                -- Durotar at level six never "left Mulgore behind")
+                if not history.zones[start] and not history.originSaid then return end
                 history.leftHome = true
                 Say(teller:Say("leaveHomeFirst", Fresh(W.leaveHomeFirst[race]), {}), true)
             end
@@ -812,6 +838,7 @@ function ST.Tell(person, days, brief, retell)
                 tokens.bond = BOND_WORDS[info.bond] and BOND_WORDS[info.bond][info.pronouns or "they"] or "my friend"
                 local togetherLine = teller:Say("originTogether", together0, tokens)
                 Say(togetherLine, true, "origin")
+                history.originSaid = true
                 history.companions[beganWith.w.name] = true
                 history.introduced = history.introduced or {}
                 history.introduced[N(beganWith.w.name)] = index
@@ -819,6 +846,7 @@ function ST.Tell(person, days, brief, retell)
                 Title(40, teller:Pick("tOrigin", W.titles.origin))
             elseif origin then
                 Say(teller:Say("origin", origin, tokens), true, "origin")
+                history.originSaid = true
                 history.originTown = W.originTowns and W.originTowns[race]
                 Title(40, teller:Pick("tOrigin", W.titles.origin))
             elseif reunion and When and W.reunion then
@@ -843,7 +871,7 @@ function ST.Tell(person, days, brief, retell)
                 prefix = When .. ", in " .. Place(first.zone)
             elseif dungeonOpen and not crossing and raidOpen then
                 -- (the first raid's own line opens the day)
-                prefix = When
+                prefix = not plainOpen and When or nil
             elseif dungeonOpen and not crossing and W.openDungeon then
                 tokens.dungeonD = Place(first.zone)
                 local inWith = {}
@@ -852,16 +880,21 @@ function ST.Tell(person, days, brief, retell)
                     -- ("The next day, Kesh, Ula and I went back into the Scarlet Monastery.")
                     tokens.names = table.concat(inWith, ", ") -- ("Kesh, Ula and I")
                     local again = history.dungeonVisits[first.zone] and W.openDungeonWithAgain
-                    Say(teller:Say(again and "openDungeonWithAgain" or "openDungeonWith", again or W.openDungeonWith, tokens), true)
+                    local line = teller:Say(again and "openDungeonWithAgain" or "openDungeonWith", again or W.openDungeonWith, tokens)
+                    -- (a plain opening: the same line without its day)
+                    if plainOpen and line and When then line = Cap((line:gsub("^" .. When:gsub("%p", "%%%0") .. ", ", ""))) end
+                    Say(line, true)
                     history.introduced = history.introduced or {}
                     for _, name in ipairs(inWith) do history.introduced[name] = index end
                 else
-                    Say(teller:Say(When and "openDungeon" or "openDungeonFirst", When and W.openDungeon or W.openDungeonFirst, tokens), true)
+                    local key, pool = "openDungeon", W.openDungeon
+                    if not When then key, pool = "openDungeonFirst", W.openDungeonFirst else key, pool = OpenPool(key, pool) end
+                    Say(teller:Say(key, pool, tokens), true)
                 end
                 dungeonOpen.introduced = true
             elseif (townOpen or bgOpen) and not crossing and (When or (person.startLevel or 1) < 10) then
                 -- (the town's line, told in the first stretch, takes the "when"; a first chapter starts with it)
-                prefix = When
+                prefix = not plainOpen and When or nil
             elseif crossing and When then
                 tokens.to = crossing.to and Place(crossing.to) or "the other shore"
                 Say(teller:Say("voyageOpen" .. crossing.d, W.voyageOpen[crossing.d], tokens), true)
@@ -890,14 +923,17 @@ function ST.Tell(person, days, brief, retell)
                 if firstVisit then DescribeZone(Say, first.zone, firstTowns, f.dungeons > 0) end
             elseif bondAllDay and #startWith > 0 and W.openWith and teller.rng() < 0.75 then
                 tokens.names = List(startWith)
-                Say(teller:Say("openWith", W.openWith, tokens), false, "open")
+                Say(SayOpen("openWith", W.openWith), false, "open")
             elseif first.zone == history.lastZone then
                 -- (still there: a gap of three days or less; with work to do, the work)
-                if gap and gap > 3 and W.openSame then Say(teller:Say("openSame", W.openSame, tokens), false, "open")
-                elseif first.questCount > 0 and f.quests >= 2 and W.openStillWork and teller.rng() < 0.5 then Say(teller:Say("openStillWork", W.openStillWork, tokens), false, "open")
-                else Say(teller:Say("openStill", Bare(W.openStill), tokens), false, "open") end
+                if gap and gap > 3 and W.openSame then Say(SayOpen("openSame", W.openSame), false, "open")
+                elseif first.questCount > 0 and f.quests >= 2 and W.openStillWork and teller.rng() < 0.5 then Say(SayOpen("openStillWork", W.openStillWork), false, "open")
+                else
+                    local key, pool = OpenPool("openStill", W.openStill)
+                    Say(teller:Say(key, key == "openStill" and Bare(pool) or pool, tokens), false, "open")
+                end
             elseif firstVisit then
-                Say(teller:Say("openNew", W.openNew, tokens), true, "open")
+                Say(SayOpen("openNew", W.openNew), true, "open")
                 LeftHome(first.zone)
                 DescribeZone(Say, first.zone, firstTowns, f.dungeons > 0)
                 Title(35, Clean(first.zone))
@@ -914,7 +950,7 @@ function ST.Tell(person, days, brief, retell)
                     tokens.ago = Ago(dayNumber - memory.day)
                     Say(teller:Say("openBackMemory", W.openBackMemory, tokens), true, "open")
                 else
-                    Say(teller:Say("openBack", W.openBack, tokens), true, "open")
+                    Say(SayOpen("openBack", W.openBack), true, "open")
                 end
             elseif #startWith == 0 and openNew and W.openWithNew then
                 tokens.names = openNew
@@ -922,7 +958,7 @@ function ST.Tell(person, days, brief, retell)
                 openNewSaid = true
             elseif #startWith > 0 then
                 tokens.names = List(startWith)
-                Say(teller:Say("openWith", W.openWith, tokens), false, "open")
+                Say(SayOpen("openWith", W.openWith), false, "open")
                 -- (someone new among them is introduced in the stretch, below)
                 for _, w in ipairs(first.with) do if not history.companions[w.name] and Companion(w.key) then companionsReopen[N(w.name)] = true end end
             else
@@ -930,9 +966,10 @@ function ST.Tell(person, days, brief, retell)
                 local danger = Danger(first.level, range and range[1], range and range[2])
                 if (danger == "daring" or danger == "reckless") and not history.perils[first.zone] and teller.rng() < 0.7 then
                     history.perils[first.zone] = true
-                    Say(teller:Say("openPeril", W.openPeril, tokens), false, "open")
+                    Say(SayOpen("openPeril", W.openPeril), false, "open")
                 else
-                    Say(teller:Say("open", Bare(W.open), tokens), false, "open")
+                    local key, pool = OpenPool("open", W.open)
+                    Say(teller:Say(key, key == "open" and Bare(pool) or pool, tokens), false, "open")
                 end
             end
             if originGap then
@@ -1252,34 +1289,42 @@ function ST.Tell(person, days, brief, retell)
                             if (s.gather[kind] or 0) > most and (s.gatherNames or {})[kind] then mostKind, most = kind, s.gather[kind] end
                         end
                         for _, name in ipairs(mostKind and s.gatherNames[mostKind] or {}) do if #names < 2 then names[#names + 1] = Q(name) end end
-                        st.names = #names > 0 and List(names) or nil
+                        -- (two herbs are not "Peacebloom for the most part": names from five on)
+                        st.names = #names > 0 and most >= 5 and List(names) or nil
                         local fishingOnly = s.gather.fishing and not s.gather.herbs and not s.gather.mining and not s.gather.skinning
                         local dock = s.gatherPlace.fishing
                         if dock and not (Town(dock) or dock:find("Harbor") or dock:find("Dock") or dock:find("Pier") or dock:find("Port") or dock:find("Bay")) then dock = nil end
+                        -- What the short telling keeps of the day's gathering: a quiet or honest
+                        -- day's, this character's kind of work (the picture: a gatherer's herbs
+                        -- and ore, a fisher's catch), or a big haul. Everything keeps it all.
+                        local haul = 0
+                        for _, n in pairs(s.gather) do haul = haul + n end
+                        local gatherMajor = honest or quiet or profile.gatherer or haul >= 20
+                        local fishMajor = honest or quiet or profile.fisher or (s.gather.fishing or 0) >= 15
                         if fishingOnly and dock and W.fishAt and teller.rng() < 0.7 then
                             wandered = true
                             st.place = Place(dock)
                             -- (the dock named in the sentence before: "there")
                             local before = (out[#out] or ""):gsub("{%a:([^}]*)}", "%1")
-                            if W.fishAtHere and before:find(Clean(dock), 1, true) then Say(teller:Say("fishAtHere", W.fishAtHere, st), quiet)
-                            else Say(teller:Say("fishAt", W.fishAt, st), quiet) end
+                            if W.fishAtHere and before:find(Clean(dock), 1, true) then Say(teller:Say("fishAtHere", W.fishAtHere, st), fishMajor, "gather")
+                            else Say(teller:Say("fishAt", W.fishAt, st), fishMajor, "gather") end
                         elseif quiet and not wandered and fishingOnly and W.quietFish then
                             wandered = true
-                            Say(teller:Say("quietFish", W.quietFish, st), true)
+                            Say(teller:Say("quietFish", W.quietFish, st), true, "gather")
                             -- the fish by name ("Raw Longjaw Mud Snapper": the fish, not the raw)
                             local fish = {}
                             for _, name in ipairs((s.gatherNames or {}).fishing or {}) do
                                 if #fish < 2 then fish[#fish + 1] = Q((Clean(name):gsub("^Raw ", ""))) end
                             end
-                            if #fish > 0 and W.fishNames and teller.rng() < 0.8 then Say(teller:Say("fishNames", W.fishNames, {names = List(fish)}), true) end
+                            if #fish > 0 and W.fishNames and teller.rng() < 0.8 then Say(teller:Say("fishNames", W.fishNames, {names = List(fish)}), profile.fisher or false, "gather") end
                         elseif quiet and not wandered and W.quietWander then
                             wandered = true
-                            Say(teller:Say("quietWander", W.quietWander, st), true)
+                            Say(teller:Say("quietWander", W.quietWander, st), true, "gather")
                             -- (hides are what a skinner takes, not the beasts: "most of it Thick Leather")
                             local namesPool = (mostKind == "skinning" and W.gatherNamesHides) or W.gatherNames
-                            if st.names and namesPool and teller.rng() < 0.8 then Say(teller:Say("gatherNames", namesPool, st), true, "lore") end
+                            if st.names and namesPool and teller.rng() < 0.8 then Say(teller:Say("gatherNames", namesPool, st), profile.gatherer or false, "lore") end
                         elseif st.names and W.gatherNamed and teller.rng() < (profile.gatherer and 0.85 or 0.6) then
-                            Say(teller:Say("gatherNamed", (mostKind == "skinning" and W.gatherNamedHides) or W.gatherNamed, st), honest or quiet)
+                            Say(teller:Say("gatherNamed", (mostKind == "skinning" and W.gatherNamedHides) or W.gatherNamed, st), gatherMajor, "gather")
                         else
                             -- ("There," only after the town or the zone was said)
                             local lead = W.gatherLead
@@ -1288,7 +1333,7 @@ function ST.Tell(person, days, brief, retell)
                                 lead = {}
                                 for _, line in ipairs(W.gatherLead) do if not line:find("^There") then lead[#lead + 1] = line end end
                             end
-                            Say(teller:Say("gather", lead, st), honest or quiet or profile.gatherer)
+                            Say(teller:Say("gather", lead, st), fishingOnly and fishMajor or gatherMajor, "gather")
                         end
                     end
                 end
@@ -1669,7 +1714,7 @@ function ST.Tell(person, days, brief, retell)
                             Say(teller:Say("duel", pool, dt), true, "first")
                         end
                         record.w, record.l = record.w + wins, record.l + (#same - wins)
-                        if record.w + record.l >= 3 and W.duelRecord and (index - (history.duelRecordSaid or -99)) >= 5 then
+                        if record.w + record.l >= 3 and W.duelRecord and (index - (history.duelRecordSaid or -99)) >= (profile.duelist and 3 or 5) then
                             history.duelRecordSaid = index
                             dt.wins, dt.losses = Words(record.w), Words(record.l)
                             Say(teller:Say("duelRecord", W.duelRecord, dt), false, "first")
@@ -1690,9 +1735,9 @@ function ST.Tell(person, days, brief, retell)
                         local ht = {count = Words(n), side = faction == "Horde" and "Alliance" or "Horde", zoneD = Place(s.zone)}
                         ht.Count, ht.Side = Cap(ht.count), ht.side
                         if firstPvp then
-                            if n >= 2 then st.hkLine = {teller:Say("hkAfterFirst", W.hkAfterFirst, ht), n >= 3} end
+                            if n >= 2 then st.hkLine = {teller:Say("hkAfterFirst", W.hkAfterFirst, ht), n >= 3 or profile.fighter or false} end
                         else
-                            st.hkLine = {teller:Say(n == 1 and "hkOne" or "hk", n == 1 and W.hkOne or W.hk, ht), n >= 3}
+                            st.hkLine = {teller:Say(n == 1 and "hkOne" or "hk", n == 1 and W.hkOne or W.hk, ht), n >= 3 or (profile.fighter and n >= 2) or false}
                         end
                         history.honorKills = (history.honorKills or 0) + n
                         if n >= 3 then Title(50, ((teller:Pick("tHk", W.titles.hk) or ""):gsub("{Side}", ht.side))) end
@@ -2131,6 +2176,9 @@ function ST.Tell(person, days, brief, retell)
                     elseif e.k == "death" and not e.counted then
                         history.deaths = history.deaths + 1
                     elseif e.k == "rez" and e.by and (function()
+                        -- (a spirit healer or an unnamed "someone" is not a stranger named so: the walk back says it)
+                        local by = Clean(e.by)
+                        if by:lower():find("spirit healer", 1, true) or by:match("^%l") then return false end
                         for _, x in ipairs(s.events) do if x.k == "death" and (x.t or 0) <= (e.t or 0) then return true end end
                     end)() then
                         st.by = N(e.by)
@@ -2629,15 +2677,17 @@ function ST.Tell(person, days, brief, retell)
                     local made = {}
                     for _, m in ipairs(line.made or {}) do made[#made + 1] = Q(m) end
                     st.trade, st.count, st.made = trade == "crafting" and "trade" or trade:lower(), Words(line.count or 0), List(made)
+                    -- (the short telling keeps a crafter's work, an honest day's, or a big batch)
+                    local craftMajor = honest or profile.crafter or (line.count or 0) >= 10
                     if trade == "Mining" and W.smelt then
                         local metals = {}
                         for _, m in ipairs(line.made or {}) do metals[#metals + 1] = (Clean(m):gsub(" Bar$", ""):lower()) end
                         st.made = #metals > 0 and List(metals) or "metal"
-                        Say(teller:Say("smelt", W.smelt, st), honest)
-                    elseif (line.count or 0) == 1 and #made == 1 then Say(teller:Say("craftOne", W.craftOne, st), honest)
-                    elseif #made > 0 and W.craftBy and W.craftBy[trade] then Say(teller:Say("craftBy" .. trade, W.craftBy[trade], st), honest)
-                    elseif #made > 0 then Say(teller:Say("craftMade", W.craftMade, st), honest)
-                    elseif (line.count or 0) > 0 then Say(teller:Say("craftPlain", W.craftPlain, st), honest) end
+                        Say(teller:Say("smelt", W.smelt, st), craftMajor, "craft")
+                    elseif (line.count or 0) == 1 and #made == 1 then Say(teller:Say("craftOne", W.craftOne, st), craftMajor, "craft")
+                    elseif #made > 0 and W.craftBy and W.craftBy[trade] then Say(teller:Say("craftBy" .. trade, W.craftBy[trade], st), craftMajor, "craft")
+                    elseif #made > 0 then Say(teller:Say("craftMade", W.craftMade, st), craftMajor, "craft")
+                    elseif (line.count or 0) > 0 then Say(teller:Say("craftPlain", W.craftPlain, st), craftMajor, "craft") end
                 end
                 for _, line in ipairs(st.afterCraft or {}) do Say(line, true, "first") end
                 st.afterCraft = nil
@@ -2726,8 +2776,11 @@ function ST.Tell(person, days, brief, retell)
                 -- 3. Levels, at the end of the day.
                 table.sort(f.levels)
             sayTime = f.levelT
+                -- (a level the book has told already, or a lower one from a stale entry, is no news)
+                if #f.levels > 0 and history.levelTold and f.levels[#f.levels] <= history.levelTold then f.levels = {} end
                 if #f.levels > 0 then
                     local top = f.levels[#f.levels]
+                    history.levelTold = top
                     local lt = {level = top, from = math.min(f.levels[1] - 1, first.level or 99)}
                     local mark
                     for _, level in ipairs(f.levels) do if W.milestone and W.milestone[level] then mark = level end end
@@ -2951,7 +3004,11 @@ function ST.Tell(person, days, brief, retell)
         end
         -- (only pairs that belong together; never a "first" line)
         local PAIRS = {["open>quests"] = true, ["move>quests"] = true, ["town>quests"] = true, ["quests>level"] = true, ["quests>rest"] = true,
-            ["open>town"] = true, ["move>town"] = true, ["town>rest"] = true, ["open>level"] = true, ["town>level"] = true}
+            ["open>town"] = true, ["move>town"] = true, ["town>rest"] = true, ["open>level"] = true, ["town>level"] = true,
+            -- (the day's gathering and crafting join the place or the work before and after them, as they did untagged)
+            ["open>gather"] = true, ["move>gather"] = true, ["town>gather"] = true, ["quests>gather"] = true, ["gather>quests"] = true,
+            ["gather>level"] = true, ["gather>rest"] = true, ["gather>craft"] = true, ["craft>level"] = true, ["craft>rest"] = true,
+            ["town>craft"] = true, ["open>craft"] = true, ["quests>craft"] = true}
         local function Belongs(at)
             local a, b = kinds[at] or "", kinds[at + 1] or ""
             if PAIRS[a .. ">" .. b] then return true end
@@ -2991,9 +3048,10 @@ function ST.Tell(person, days, brief, retell)
                 joinedOut[#joinedOut + 1] = a:gsub("%.$", "") .. ", " .. LEVEL_ING[verb] .. b:sub(#verb + 3)
                 joinedMajors[#joinedOut] = majors[i] or majors[i + 1]
                 i = i + 2
-            elseif b and (kinds[i] == "kill" or kinds[i] == "role") and kinds[i + 1] == "level" and a:match("%.$") and not a:find("%. ")
+            elseif b and kinds[i] == "kill" and kinds[i + 1] == "level" and a:match("%.$") and not a:find("%. ") and not a:find(",", 1, true)
                 and not a:find(" and ", 1, true) and b:match("^I ") and not b:find(",", 1, true) and wa + wb <= 22 then
-                -- ("VanCleef never got past me, and I went up to level 18.")
+                -- ("VanCleef never got past me, and I went up to level 18." A role line never takes the level:
+                -- "My place was behind the others, keeping them alive, and I reached level forty" is accounting.)
                 joinedOut[#joinedOut + 1] = a:gsub("%.$", "") .. ", and " .. b
                 joinedMajors[#joinedOut] = majors[i] or majors[i + 1]
                 i = i + 2
@@ -3085,6 +3143,8 @@ function ST.Tell(person, days, brief, retell)
             end
         end
         if title then history.titles[title] = true end
+        -- (did the day lead this chapter? the next one, a week or less on, opens on the place or the company)
+        if chapterWhen and out[1] and out[1]:find(chapterWhen, 1, true) == 1 then history.whenLedAt = index end
         if text ~= "" or #f.quotes > 0 then
             history.chapter = history.chapter + 1
             stories[day.key] = {text = text, title = title and title:gsub("^%l", string.upper) or nil, chapter = history.chapter, quotes = f.quotes}
