@@ -97,8 +97,8 @@ q(1197, "The Sacred Flame", "Thousand Needles", 29, "flame", 4,
     "The Cloven Hoof reached Rau for study, its strange energy still unexplained.",
     "The relic was recovered from the Galak stronghold and its examination could begin.", true)
 fallback("The Sacred Flame", "Thousand Needles", "flame", "1195,1196,1197",
-    "The search for a centaur relic linked Ashenvale moonwell water with the Galak of Thousand Needles.",
-    "Rau's investigation concerned the protection surrounding the Cloven Hoof.",
+    "A relic of the Galak centaur in Thousand Needles could only be reached with moonwell water from Ashenvale.",
+    "Rau Cliffrunner at Freewind Post wanted the relic the Galak kept at Splithoof Crag.",
     "Rau Cliffrunner's effort to reach the Cloven Hoof moved forward.",
     "Rau's plan for the centaur relic behind its eternal flame went on.")
 q(1367, "Magram Alliance", "Desolace", 33, "centaur", 3,
@@ -142,10 +142,10 @@ q(1324, "The Missing Diplomat", "Dustwallow Marsh", 38, "diplomat", 4,
     "Hendel was secured for questioning in Theramore; the search for the king remained open.",
     "The intervention kept Hendel available for questioning; a meeting with Proudmoore was the next invitation.", true)
 fallback("The Missing Diplomat", "Dustwallow Marsh", "diplomat", "1241-1250,1264-1266,1274,1324",
-    "The diplomat's disappearance had left an investigation spread across several settlements.",
-    "Messages, witnesses and suspects formed the scattered leads in the missing diplomat's case.",
-    "One more witness or clue in the missing diplomat's case had been run down.",
-    "The search for the missing diplomat had another answer, and still no diplomat.")
+    "A diplomat bound for Theramore had vanished, and the matter was being kept quiet.",
+    "Bishop DeLavey's quiet inquiry into the missing diplomat followed leads from Stormwind to Theramore.",
+    "One more step in the missing diplomat's case was taken.",
+    "The search for the missing diplomat turned up another answer, though the diplomat himself was still not found.")
 q(1321, "The Black Shield", "Dustwallow Marsh", 35, "shield", 2,
     "The shield recovered in the inn investigation needed a blacksmith's examination.",
     "Do'gol's craft offered a possible way to learn more from the heavy black shield.",
@@ -164,8 +164,8 @@ q(2258, "Badlands Reagent Run", "Badlands", 39, "reagents", 2,
 fallback("Badlands Reagent Run", "Badlands", "reagents", "2258,2500",
     "Badlands alchemy depended on supplies gathered from the surrounding creatures and elementals.",
     "An alchemist's work called for ingredients found in the Badlands.",
-    "Buzzard gizzards, coyote fangs and rock elemental shards went into an alchemist's empty stores.",
-    "The Badlands' creatures and elementals restocked an alchemist's shelves.")
+    "Buzzard gizzards, crag coyote fangs and rock elemental shards replenished an alchemist's stocks.",
+    "Reagents taken from Badlands creatures and elementals would last the alchemist for a little while.")
 q(1423, "The Lost Supplies", "Swamp of Sorrows", 40, "nethergarde", 2,
     "A wax-sealed barrel bore the name of Quartermaster Lungertz at Nethergarde Keep.",
     "Supplies went missing along the route from Darkshire to Nethergarde, and a marked barrel offered a chance to recover some.",
@@ -244,7 +244,7 @@ q(3378, "Prayer to Elune", "Azshara", 50, "elune", 4,
 fallback("Prayer to Elune", "Azshara", "elune", "3377,3378",
     "A captive's appeal centered on a lost prayer to Elune.",
     "The prayer concerned a penitent whose past could not simply be undone.",
-    "The search for the lost prayer to Elune went on for the penitent who needed it.",
+    "The captive's hope that the prayer to Elune would be heard moved forward.",
     "The captive's appeal to Elune had one more piece in place.")
 q(3381, "A Meeting with the Master", "Azshara", 48, "azshara", 2,
     "Sanath required hippogryph feathers before permitting an audience with his master.",
@@ -307,10 +307,10 @@ q(5228, "The Scourge Cauldrons", "Western Plaguelands", 53, "andorhal", 3,
     "At the Bulwark, Vandis explained how she hoped to make the cauldrons' plague harmful to the Scourge.",
     "Vandis laid out a plan to reach the four western cauldrons and change the plague they spread.", true)
 fallback("The Scourge Cauldrons", "Western Plaguelands", "andorhal", "5215,5228",
-    "The Scourge's plague cauldrons called for an indirect countermeasure.",
+    "The Scourge's plague cauldrons were too strong to be shut down outright.",
     "The proposed operation sought to turn the cauldrons' output against their makers.",
     "The plan to turn the plague cauldrons against the Scourge had been laid out.",
-    "The work had reached its initial briefing, without yet securing the cauldrons.")
+    "The cauldron sabotage was explained, and the four western cauldrons still lay ahead.")
 q(5142, "Little Pamela", "Eastern Plaguelands", 55, "darrowshire", 3,
     "When the battle of Darrowshire began, Marlene Redpath hid her niece Pamela. Now a wandering spirit, Marlene still did not know what had become of the child.",
     "Marlene Redpath's spirit longed for news of Pamela, the niece she had hidden during Darrowshire's battle. She asked for a search among the ruins to the east.",
@@ -352,7 +352,7 @@ q(5163, "Are We There, Yeti?", "Winterspring", 58, "yeti", 3,
     "Legacki, Sprinkle and Quixxil had each met Umi's surprise, and the mechanical yeti was returned to her.",
     "With all three friends startled and her yeti back, Umi had the answer she wanted for their teasing.", true)
 fallback("Are We There, Yeti?", "Winterspring", "yeti", "3783,977,5163",
-    "A mechanical yeti project mixed practical construction with a planned surprise for friends.",
+    "An inventor in Everlook planned a mechanical yeti to startle and then impress some friends.",
     "The inventor's scheme required materials and, eventually, a demonstration.",
     "The mechanical yeti project in Everlook moved forward.",
     "Work on the mechanical yeti and its planned surprise went on.")
@@ -394,13 +394,13 @@ q(7487, "Attunement to the Core", "Blackrock Mountain", 60, "blackrock", 5,
 fallback("Attunement to the Core", "Blackrock Mountain", "blackrock", "7487,7848",
     "A fragment from Blackrock Depths was needed for attunement to the Core's portal.",
     "Lothos offered access through the rift after the recovery of a core fragment.",
-    "Lothos Riftwaker took the core fragment as the price of passage through his rift.",
-    "Access through the portal was established; the dangers within remained a separate undertaking.")
+    "Lothos Riftwaker used a core fragment to attune a traveler to his rift into the Molten Core.",
+    "Attunement was complete, and Lothos could now send a traveler into the Molten Core on request.")
 q(7761, "Blackhand's Command", "Blackrock Spire", 60, "blackrock", 5,
     "Blackhand's letter revealed that the orb required the Mark of Drakkisath.",
     "The protection on the route into Blackwing depended on a brand guarded by Drakkisath.",
     "Drakkisath's smoldering brand left the Mark of Drakkisath on its bearer's hand, the sign Blackhand's orb demanded for passage into Blackwing.",
-    "The Mark of Drakkisath satisfied the orb's ward, opening the way into Blackwing.")
+    "The brand was pressed into flesh without a flinch. Its bearer now held the Mark of Drakkisath.")
 q(4742, "Seal of Ascension", "Blackrock Spire", 60, "blackrock", 4,
     "Three gemstones from the lower citadel's leadership were needed to fill an unadorned seal.",
     "The seal's empty sockets made the search among Blackrock's commanders a necessary first stage.",
@@ -413,7 +413,7 @@ q(4743, "Seal of Ascension", "Dustwallow Marsh", 60, "blackrock", 5,
     "The Seal of Ascension was finished, carrying the protective wards added by Vaelan.", true)
 fallback("Seal of Ascension", "Blackrock Spire", "blackrock", "4742,4743",
     "The Seal of Ascension required gemstones and a final forging in dragon flame.",
-    "The work on the seal connected Blackrock's commanders with the power of dragonfire.",
+    "Vaelan's seal needed gems from Blackrock's generals and the flame of a black dragon.",
     "Work on the Seal of Ascension went forward.",
     "Vaelan's plan for the Seal of Ascension came a step closer.")
 q(9251, "Atiesh, the Befouled Greatstaff", "Tanaris", 60, "atiesh", 6,
@@ -440,7 +440,7 @@ fallback("Moonglade", "Moonglade", "bear", "5921,5922,94913,94914",
     "Nighthaven was a place of druidic teaching within the sacred lands of Moonglade.",
     "The journey to Moonglade led toward instruction among the druids.",
     "The journey to Nighthaven in Moonglade was made.",
-    "The visit established the next step in druidic instruction.")
+    "Dendrite Starblaze in Nighthaven spoke of the path ahead for a young druid.")
 q(5929, "Great Bear Spirit", "Moonglade", 10, "bear", 3,
     "The Great Bear Spirit taught in northwestern Moonglade before the next lesson with Dendrite.",
     "Dendrite required the spirit's instruction as preparation for understanding the bear.",
@@ -456,7 +456,7 @@ fallback("Great Bear Spirit", "Moonglade", "bear", "5929,5930",
     "The Great Bear Spirit's instruction was a required part of the druidic lesson.",
     "Dendrite sent students to the spirit before continuing the path of the bear.",
     "The Great Bear Spirit had given its teaching, and the path led back to Dendrite.",
-    "The return to Dendrite followed the lesson without yet establishing a learned transformation.")
+    "Dendrite learned how the lesson with the Great Bear Spirit had gone.")
 q(5846, "Of Love and Family", "Western Plaguelands", 58, "tirion", 4,
     "Tirion remembered a family portrait painted by Renfray during an excursion to Caer Darrow.",
     "The ruined island might still hold the painting or the artist who had known the Fordrings.",
@@ -468,7 +468,7 @@ q(5848, "Of Love and Family", "Stratholme", 60, "tirion", 5,
     "The uncovered portrait was returned to Tirion, who recognized the preserved image of his family.",
     "The recovered painting brought Tirion the image of the family he had lost.", true)
 fallback("Of Love and Family", "Western Plaguelands", "tirion", "5846,5848",
-    "Tirion's search concerned a family portrait painted before the losses that divided the Fordrings.",
+    "Tirion sought a portrait Renfray had painted of him with his wife and son at Caer Darrow.",
     "Renfray's painting preserved an earlier moment in the Fordring family's life.",
     "Tirion's wish for Renfray's painting of his family moved closer.",
     "The search for the Fordring portrait went on.")
@@ -493,13 +493,13 @@ q(7044, "Legends of Maraudon", "Desolace", 49, "maraudon", 5,
 q(94913, "Moonglade", "Moonglade", 10, "bear", 3,
     "Keeper Remulos watched over the refuge where Dendrite offered druidic guidance.",
     "The introduction directed a druid to Dendrite Starblaze in Nighthaven.",
-    "Dendrite acknowledged existing mastery of the bear form and welcomed further instruction.",
-    "Dendrite welcomed a druid who had already mastered the bear form and acknowledged that progress.", true)
+    "Dendrite acknowledged existing mastery of the bear form and said the young druid was well on the way.",
+    "Dendrite saw that the bear form was already mastered and said the druid was well on the way.", true)
 q(94914, "Moonglade", "Moonglade", 10, "bear", 3,
     "Nighthaven offered instruction under Moonglade's protection.",
-    "Dendrite Starblaze awaited the introduction in the druids' refuge.",
-    "Dendrite recognized bear training already accomplished before this meeting.",
-    "The welcome in Nighthaven acknowledged an existing form and pointed toward further learning.", true)
+    "A druid was sent to Dendrite Starblaze in Nighthaven to speak about the path ahead.",
+    "Dendrite saw that bear training was already accomplished before the druid arrived.",
+    "In Nighthaven, Dendrite praised the bear form already mastered and said much progress lay ahead.", true)
 
 -- Connected journeys. Quest/Progress/Completion in the cited local record are
 -- the evidence; uncertain explanations remain attributed to their investigators.
@@ -568,7 +568,7 @@ fallback("Raene's Cleansing", "Ashenvale", "raene", "991,1023,1024,1026,1027,102
     "Raene's work concerned the furbolg attacks and Teronis's search for Dartol's rod.",
     "The search for a strange rod offered one approach to Ashenvale's furbolg troubles.",
     "Raene Wolfrunner's work against Ashenvale's troubles had one more piece in place.",
-    "The task advanced the effort connected with Teronis's search, without establishing its final result.")
+    "The work begun by Teronis was carried further in Ashenvale.")
 
 q(1068, "Shredding Machines", "Stonetalon Mountains", 23, "stonetalon", 4,
     "A shaman's account of the suffering tree spirits singled out the shredders XT:4 and XT:9.",
@@ -627,7 +627,7 @@ q(651, "Stones of Binding", "Arathi Highlands", 38, "myzrael", 3,
     "Through the opened stones, Myzrael announced that her shackles were loosening and called her helper a rescuer.",
     "The Stones of Binding opened. Myzrael's voice came through them with thanks, for she could feel her restraints loosen.")
 q(652, "Breaking the Keystone", "Arathi Highlands", 42, "myzrael", 4,
-    "Fozruk carried the Rod of Order needed to open the Keystone's remaining lock.",
+    "Fozruk carried the Rod of Order, the key to the Keystone that still held Myzrael chained.",
     "Myzrael's promised release depended on a stone watcher's key and the charged Keystone.",
     "The Rod of Order was placed in the Keystone, and a shudder passed through the ground.",
     "Fozruk's Rod of Order fitted the Keystone. The ground beneath it shuddered.")
@@ -650,7 +650,7 @@ q(655, "Hammerfall", "Arathi Highlands", 34, "gormul", 3,
     "Gor'mul remained haunted by Doomhammer's death during the liberation of the internment camp.",
     "Hammerfall's return to orc hands had not restored the former captive's hope.",
     "Gor'mul's history was explained. He had been left behind and wandered until the Horde returned to Hammerfall.",
-    "The inquiry revealed a survivor still living with the loss of Doomhammer, rather than a wound the reclaimed camp had healed.")
+    "Gor'mul had been a captive at Hammerfall and never recovered from Doomhammer's death, even after the Horde came back.")
 q(672, "Raising Spirits", "Arathi Highlands", 34, "gormul", 3,
     "Tor'gan hoped an amulet bearing raptor strength might reach Gor'mul where stories of Thrall had failed.",
     "Raptor eyes were needed for a small shamanic gift to the dispirited veteran.",
@@ -667,10 +667,10 @@ q(675, "Raising Spirits", "Arathi Highlands", 34, "gormul", 3,
     "Tor'gan learned that the amulet had failed and still hoped a stronger demonstration might help.",
     "The report brought Tor'gan no good news. Gor'mul had rejected the amulet.", true)
 fallback("Raising Spirits", "Arathi Highlands", "gormul", "672,674,675",
-    "Tor'gan sought a way to help Gor'mul through the loss that still shadowed his life at Hammerfall.",
+    "Tor'gan sought a way to lift the spirits of Gor'mul, an old warrior at Hammerfall.",
     "The shaman's small amulet was part of an attempt to reach a dispirited veteran.",
     "Tor'gan's attempt to comfort Gor'mul went on.",
-    "The errand served Tor'gan's effort to reach the veteran through a shaman's gift.")
+    "Tor'gan still hoped the power of the shamans would rouse Gor'mul.")
 
 q(203, "The Second Rebellion", "Stranglethorn Vale", 33, "kurzen", 3,
     "The rebels opposing Kurzen faced a tactician whose troops vastly outnumbered their camp.",
@@ -686,14 +686,14 @@ q(200, "Bookie Herod", "Stranglethorn Vale", 35, "kurzen", 3,
     "Thorsen's exposed secret raised the possibility of a spy among the rebels.",
     "Bookie Herod's upstairs office held the logistics records that might explain the leak.",
     "Herod's records were found, including supply lists, Kurzen's requests and correspondence.",
-    "Herod's upstairs office gave up his supply lists and Kurzen's own correspondence.")
+    "Herod's upstairs office gave up his supply lists, Kurzen's material requests and a bundle of letters.")
 q(574, "Special Forces", "Stranglethorn Vale", 38, "kurzen", 4,
     "Sergeant Yohwa knew Kurzen's elite troops personally, and knew them to be skilled, loyal and cruel. They hunted the rebels, then withdrew to the Stockpile cave behind the compound.",
     "Kurzen's commandos and headshrinkers sheltered deep in the Stockpile. Yohwa sent the attack against soldiers whose skill and cruelty she knew well.",
     "Doren welcomed the news of their defeat. He had feared his rebels stood alone against Kurzen's brilliance; now he could hope they might survive.",
     "The losses among Kurzen's elite gave Doren hope. Yohwa had trusted the help sent against them, and her commander trusted her judgment.")
 q(206, "Mai'Zoth", "Stranglethorn Vale", 46, "kurzen", 5,
-    "Nimetz believed the ogre mage Mai'Zoth had corrupted Kurzen. He feared the Mind's Eye could bend another mind to the same evil, and called for its recovery.",
+    "Nimetz believed the ogre mage Mai'Zoth had corrupted Kurzen. He feared the ogre's evil would spread to others, and wanted him slain and his Mind's Eye brought back.",
     "The inquiry pointed Nimetz toward Mai'Zoth in Stranglethorn's eastern mountains. Convinced that the ogre's magic had ruined Kurzen, he sought the Mind's Eye.",
     "Mai'Zoth was slain and the Mind's Eye reached Nimetz. He would study whether it could serve a good purpose; otherwise, he meant to destroy it.",
     "Nimetz received the Mind's Eye after Mai'Zoth's death. His study would decide whether it could serve good or must be destroyed.")
@@ -721,7 +721,7 @@ q(1323, "The Black Shield", "Dustwallow Marsh", 37, "shield", 3,
 fallback("The Black Shield", "Dustwallow Marsh", "shield", "1251,1253,1276,1319-1323",
     "A burned shield offered a physical clue in the investigation of the ruined inn.",
     "Blacksmiths' knowledge could help make sense of the blackened shield.",
-    "The shield investigation advanced without settling who had burned the inn.",
+    "The burned shield passed through more hands, but who had burned the inn stayed unknown.",
     "The blackened shield was examined further, and it still named no culprit.")
 q(2863, "Alpha Strike", "Feralas", 43, "woodpaw", 3,
     "Hadoken wanted the Woodpaw alphas struck in quick succession to disrupt their attacks on Camp Mojache.",
@@ -750,7 +750,7 @@ q(82, "Noxious Lair Investigation", "Tanaris", 47, "silithid", 3,
     "Pestlezugg began examining the Centipaar parts. He had seen no insects like them and already suspected an outside influence; an emergency with Fizzledowser called for an immediate return.",
     "The specimens baffled Pestlezugg, for these insects were unlike any he knew. He suspected something might be controlling them, then sent word of Fizzledowser's urgent need for help.")
 q(110, "Insect Part Analysis", "Tanaris", 48, "silithid", 4,
-    "Fizzledowser stayed with Scrimshank's gear and personal effects while asking for news from Pestlezugg. He feared the young surveyor would not be the insects' last victim.",
+    "Fizzledowser stayed with Scrimshank's gear and personal effects while asking for news from Pestlezugg. He feared the surveyor would not be the insects' last victim.",
     "Pestlezugg had been studying the insect parts. Fizzledowser needed the results while he examined Scrimshank's equipment and put the dead surveyor's belongings in order.",
     "Pestlezugg had the results ready, and they troubled him. He believed the insects had been changed into ravagers by a powerful, malignant force whose identity he did not know.",
     "The alchemist's results strengthened his suspicion of outside control. To Pestlezugg, the insects looked like creatures remade for destruction by an unknown and malignant power.", true)
@@ -760,7 +760,7 @@ q(113, "Insect Part Analysis", "Tanaris", 48, "silithid", 4,
     "Fizzledowser paid for the report's delivery and agreed to make a copy. He disliked giving away information that could earn good coin, but trusted Pestlezugg's judgment enough to do it.",
     "The warning reached Fizzledowser. Years of knowing Pestlezugg outweighed his reluctance to surrender valuable information for nothing; he agreed to copy the report for others to read.", true)
 fallback("Insect Part Analysis", "Tanaris", "silithid", "110,113",
-    "The insect specimens had become the subject of an urgent report for the Gadgetzan Water Company.",
+    "The Gadgetzan Water Company had sent insect parts to Alchemist Pestlezugg for study.",
     "Pestlezugg's work sought an explanation for the unfamiliar desert insects.",
     "Pestlezugg's work brought a warning of possible outside control into the Water Company's investigation.",
     "The insect investigation yielded a warning from Pestlezugg, who suspected a dangerous power behind the creatures.")
@@ -983,7 +983,7 @@ P.threads.world_harborage = "the survivors of the swamp"
 P.threads.world_hivecode = "the messages of the hives"
 P.threads.world_lethlor = "the prisoners of Lethlor"
 P.threads.world_letweb = "Lethtendris's dangerous web"
-P.threads.world_linken = "Linken's missing memory"
+P.threads.world_linken = "the wrecked raft in Un'Goro"
 P.threads.world_natalia = "the search for Natalia"
 P.threads.world_naxxramas = "the road into Naxxramas"
 P.threads.world_perenolde = "the Warchief's missing pendant"
@@ -1088,7 +1088,7 @@ q(1106, "Martek the Exiled", "Badlands", 35, "racecar", 3,
     "Fizzle's failed pistons led him to seek the expertise of Martek, an exiled smith in the Badlands.",
     "A letter carried a racing engineer's problem across the sea. The engine needed metal that could endure greater stress.",
     "Martek agreed to help Fizzle after reading the letter, but suitable piston material still had to be found.",
-    "The referral reached a willing smith, turning the rocket car's engineering problem into a Badlands investigation.")
+    "Martek gladly helped anyone sent by Fizzle, and guessed the new car would be a volcano on wheels.")
 
 q(1108, "Indurium", "Badlands", 39, "racecar", 3,
     "Martek proposed testing indurium, a metal rumored to withstand intense heat and stress.",
@@ -1183,8 +1183,8 @@ q(1204, "Mudrock Soup and Bugs", "Dustwallow Marsh", 38, "dustwallow", 2,
 q(1261, "Marg Speaks", "Dustwallow Marsh", 40, "dustwallow", 3,
     "Marg's spirit described stealing a jeweled pendant from an Alliance soldier before a muckshell killed him.",
     "The dead scout's unfinished mission centered on recovering a pendant too rich for an ordinary soldier.",
-    "The pendant explained Marg's last mission but opened a new question about the soldier who had worn it.",
-    "News of Marg's death came with an unexplained jewel, leaving its larger significance unresolved.")
+    "The pendant revealed how Marg had died, but it raised a new question about the Stormwind soldier who had worn it.",
+    "Marg's death was explained, but a Stormwind soldier's pendant became a mystery of its own.")
 
 q(1389, "Draenethyst Crystals", "Swamp of Sorrows", 35, "harborage", 3,
     "The Harborage's draenei sought sacred crystals stolen by their former brethren in Fallow Sanctuary.",
@@ -1238,10 +1238,10 @@ q(2978, "The Gordunni Scroll", "Feralas", 43, "gordunni", 3,
     "A soiled scroll from the Gordunni Outpost seemed to depict a gathering or ceremony. Rok Orhan at Camp Mojache might know what it meant to the ogres.",
     "The markings on a dirty Gordunni scroll suggested some kind of ceremony. The question of its meaning led to Rok Orhan in Camp Mojache.",
     "Rok Orhan received the scroll and asked whether it had come from the Gordunni Outpost.",
-    "The scroll reached Rok Orhan, whose first question was whether it had come from the Gordunni Outpost.")
+    "Rok Orhan studied the soiled scroll and wanted to know if it was found among the ogres' huts.")
 
 q(3002, "The Gordunni Orb", "Orgrimmar", 47, "gordunni", 3,
-    "The Gordunni orb required a mage's judgment beyond the knowledge of the warrior who had recovered it.",
+    "Rok Orhan knew his enemy well, but he was a warrior, and the Gordunni orb needed a mage's judgment.",
     "The investigation carried the orb to Orgrimmar for a better understanding of its magic.",
     "The mage recognized the orb as powerful and dangerous.",
     "The recovered orb drew a mage's warning about the danger bound up in its power.")
@@ -1695,23 +1695,23 @@ fallback("A Sign of Hope", "Badlands", "uldaman", "720,721",
     "The missing Hammertoe had left a lead pointing toward Uldaman.", "Ryedol sought news of the prospector lost near the excavations.",
     "Ryedol's search for Hammertoe Grez had one more lead.", "The search for the missing prospector advanced a step.")
 fallback("Tremors of the Earth", "Badlands", "lethlor", "717,732",
-    "An agent of Krasus was dealing with the danger around Lethlor Ravine.", "The Kirin Tor's concern in Lethlor depended on old binding magic.",
+    "An agent of Krasus was dealing with the danger around Lethlor Ravine.", "The Kirin Tor wanted the trouble in Lethlor Ravine put to an end.",
     "Krasus's agent had help with the danger at Lethlor Ravine.", "The work for Krasus's agent advanced another step.")
 fallback("The Ogres of Feralas", "Feralas", "gordunni", "2975,2980",
-    "The Gordunni presence was damaging ground around its settlements in Feralas.", "Camp Mojache wanted the ogres' expansion checked.",
-    "The Gordunni lost ground near Camp Mojache.", "Camp Mojache's fight against the Gordunni went on.")
+    "The Gordunni ogres were scarring the land of Feralas as they spread.", "Camp Mojache wanted the ogres' expansion checked.",
+    "The Gordunni ogres in Feralas had fewer warriors after the fighting.", "Camp Mojache's fight against the Gordunni went on.")
 fallback("The Torch of Retribution", "Searing Gorge", "retribution", "3453,3454",
-    "The gathered components were to become a torch for the planned tower strike.", "The enchanted torch still required preparation before its use against the watch posts.",
-    "The Torch of Retribution came closer to being ready for the towers.", "The work on the torch advanced before the strike on the towers.")
+    "The gathered pieces were to be combined and enchanted into a single torch.", "The torch still needed its final enchantments before it could be used.",
+    "The Torch of Retribution came closer to being ready.", "The work on the enchanted torch moved another step along.")
 fallback("Timbermaw Ally", "Felwood", "timbermaw", "6131,8460",
     "The Timbermaw mistrusted outsiders who failed to distinguish them from corrupted tribes.", "Help against the Deadwood offered a way to earn the Timbermaw's confidence.",
     "The Timbermaw had one more reason to trust an outsider.", "Help given against the Deadwood counted with the Timbermaw.")
 fallback("The Name of the Beast", "Azshara", "defiler", "3509,3510,3511",
-    "A weapon against the demon lord required his true name and a suitable temper.", "The search for the demon's name brought Loramus's work into Arkkoroc's concerns.",
-    "The weapon against the demon lord came a step closer.", "The work toward a weapon against the demon lord advanced a step.")
+    "A weapon against the demon lord could only harm him if it bore his true name.", "Loramus needed the demon's true name, and Lord Arkkoroc in Azshara would give it for a price.",
+    "Loramus's plan to forge a weapon against the demon lord moved forward.", "Loramus's plan to strike at the demon lord moved on.")
 fallback("It's a Secret to Everybody", false, "linken", "3844,3845,3908",
-    "A ruined raft and scattered belongings opened a mystery around a traveler in Un'Goro.", "The inquiry followed personal possessions whose full story remained uncertain.",
-    "The traveler's lost belongings yielded one more clue.", "The errand advanced the inquiry without settling the whole mystery.")
+    "A ruined raft on the shore of a small pond opened a mystery in Un'Goro.", "Belongings found in a pond in Un'Goro held clues about their owner.",
+    "The traveler's lost belongings yielded one more clue.", "The matter of the lost pack and its owner moved one step further.")
 fallback("Dark Iron Legacy", false, "forgewright", "3801,3802",
     "Franclorn Forgewright offered access to his city in return for assistance.", "The architect's legacy concerned a hidden key and the return of his hammer.",
     "Franclorn Forgewright's ghost had one more task done in his name.", "The work concerning the architect's legacy advanced a step.")
@@ -2002,8 +2002,8 @@ P.questIDs[5211].highlight = {"Some fallen defenders of Darrowshire were freed f
 P.questIDs[588].highlight = {"Nezzliok named Zanzil as Yenniku's captor. Kin'weelay feared the witchdoctor's power, but held to a tiny hope of saving the boy.", "The cauldron's answer pointed to Zanzil's hold over Yenniku. To Kin'weelay, the hope of breaking it was faint, but still hope."}
 P.questIDs[589].highlight = {"The basilisk shards for Yenniku's rescue reached Kin'weelay. He heard them sing and had learned where the Mind's Eye lay, and who guarded it.", "Kin'weelay welcomed the blue shards for the Mind's Eye ritual. The jungle spirits had meanwhile revealed the jewel's hiding place and guardian."}
 P.questIDs[592].highlight = {"The Soul Gem reached Nimboya with Yenniku freed from Zanzil's will. The rescue he had feared impossible was accomplished.", "Nimboya received the Soul Gem and confirmed Yenniku's freedom from Zanzil. He promised that the tribe would remember the rescue in song and stone."}
-P.questIDs[652].highlight = {"Fozruk's Rod of Order opened the Keystone that held Myzrael. The ground shuddered beneath it.", "Fozruk's Rod of Order, the key Myzrael sought, was placed in the Keystone. A shudder passed through the earth."}
-P.questIDs[688].highlight = {"Myzrael sent word to Zaruk in Hammerfall. He welcomed the visit and was ready to discuss summoning her to the surface.", "Myzrael had told Zaruk to expect the visit in Hammerfall. He was ready to discuss her summoning to the surface."}
+P.questIDs[652].highlight = {"Taken from the stone watcher Fozruk, the Rod of Order went into the Keystone that held Myzrael. The ground shuddered beneath it.", "Fozruk's Rod of Order, the key Myzrael sought, was placed in the Keystone. A shudder passed through the earth."}
+P.questIDs[688].highlight = {"Myzrael sent word to Zaruk in Hammerfall. He welcomed the visit and was ready to discuss summoning her to the surface.", "In Hammerfall, Zaruk already knew of the visit from the Lady, and the talk turned to bringing Myzrael to the surface."}
 P.questIDs[642].highlight = {"Motes taken from the Drywhiskers awakened Myzrael's crystal shards. The imprisoned voice welcomed their strength, still pleading for freedom.", "Myzrael spoke through the newly powered Drywhisker shards. The motes had strengthened her, she said, though freedom was still distant."}
 P.questIDs[651].highlight = {"The Stones of Binding opened. Through them Myzrael announced that her shackles were loosening, and thanked her rescuer.", "Opening Arathi's binding stones brought Myzrael's grateful voice through the stone. She could feel her restraints loosen."}
 P.questIDs[656].highlight = {"Myzrael was defeated and bound again with her Eldritch Shackles. A wail rose from below, and the once-comforting shards pulsed with menace.", "The summoning ended with Myzrael defeated and shackled beneath Arathi again. Her shards answered with a roar from below and open menace."}
@@ -2015,21 +2015,21 @@ P.questIDs[4492].highlight = {"Spraggle's missing friend Ringo was found alive a
 P.questIDs[4491].highlight = {"Despite the heat exhaustion, Ringo reached Marshal's Refuge with help. Spraggle was glad to have her friend back alive.", "Ringo was brought back to Spraggle at Marshal's Refuge, still suffering from the heat but alive."}
 P.questIDs[1195].highlight = {"Moonwell water was collected for the Galak relic expedition. The filled phial was ready to carry to Rau in Thousand Needles.", "The filled moonwell phial was prepared for Rau, who had requested it for the search for a Galak centaur relic."}
 P.questIDs[1196].highlight = {"Rau received the moonwell water at Freewind Post. He explained how dryads' kinship with centaurs would let it breach the relic's protective flame.", "The phial reached Rau, who explained that through the dryads' shared ancestry with centaurs, moonwell water could pierce the relic's eternal flame."}
-P.questIDs[7761].highlight = {"Blackhand's letter exposed the orb's safeguard. Drakkisath's brand gave the Mark of Drakkisath, opening the way into Blackwing.", "The Mark of Drakkisath satisfied the Blackwing orb's ward, just as Blackhand's captured letter had described."}
+P.questIDs[7761].highlight = {"Blackhand's letter named the orb's safeguard. Drakkisath's brand left its mark on the hand, the sign the orb demanded before it would carry anyone into Blackwing.", "The Mark of Drakkisath, which Blackhand's captured letter said the orb required, was burned into its bearer's hand."}
 P.questIDs[4788].highlight = {"The last Mosh'aru tablets were recovered from Blackrock Spire's Smolderthorn. Their reader feared what the earlier passages foretold.", "The fifth and sixth Mosh'aru tablets reached the scholar, whose reading of the earlier pair had already raised fears of what was coming."}
 P.questIDs[7848].highlight = {"With a core fragment from Blackrock Depths, Lothos completed the attunement and offered passage into Molten Core.", "Lothos received the core fragment and attuned the traveler to the hidden portal. He could now offer transport to Molten Core."}
-P.questIDs[583].highlight = {"At Nesingwary's expedition, Hemet set three tests before the great hunt, with his raptors, Ajeck's tigers and Sir Erlgadin's panthers.", "Barnil's introduction led to Hemet's hunting challenge, three hunts with three different hunters."}
+P.questIDs[583].highlight = {"At Nesingwary's camp, Hemet set three trials before the great hunt, raptors under his own eye, tigers under Ajeck and panthers under Sir Erlgadin.", "Barnil's introduction led to Hemet's hunting challenge, three hunts with three different hunters."}
 P.questIDs[581].highlight = {"Nimboya sought Yenniku, the Darkspear chief's son once given to the Gurubashi. Bloodscalp tusks convinced him the hunt for the missing boy could go further.", "Bloodscalp tusks reached Nimboya in the search for Yenniku, the Darkspear chief's missing son. Nimboya took the trophies as grounds for a harder hunt."}
 P.questIDs[582].highlight = {"Bloodscalp shrunken heads reached Nimboya for inspection. He feared that one might belong to the missing Yenniku.", "Nimboya received the headhunters' trophies and prepared to look for Yenniku among them, hoping the boy had escaped their axes."}
 P.questIDs[584].highlight = {"Seeking Yenniku's fate, Nimboya called for Gan'zulah and Nezzliok's heads. Both were placed in the green broth of his cauldron, ready for questioning.", "Gan'zulah's and Nezzliok's severed heads lay in the bubbling cauldron. Nimboya intended to question them about Yenniku."}
 P.questIDs[596].highlight = {"Kin'weelay accepted Bloodscalp bone necklaces, planning to render them into paste. He claimed this would weaken their owners' spirits.", "The Bloodscalp trophies reached Kin'weelay. He meant to boil the necklaces into paste, a rite he claimed would weaken the enemy's spirits."}
-P.questIDs[2978].highlight = {"A gathering or ceremony seemed to mark a soiled Gordunni scroll. Rok Orhan received it and asked whether it came from the Gordunni Outpost.", "Rok Orhan received the Gordunni scroll, whose markings might show a ceremony. His first question was whether it had come from the outpost."}
+P.questIDs[2978].highlight = {"A soiled Gordunni scroll seemed to show a meeting or ceremony. Rok Orhan received it and asked whether it came from the Gordunni Outpost.", "Rok Orhan received the Gordunni scroll, whose markings might show a ceremony. His first question was whether it had come from the outpost."}
 P.questIDs[89].highlight = {"With Lakeshire's iron spent on arms and a replacement caravan stolen, Oslow welcomed pikes and rivets for Everstill Bridge. He expected to shore up the crossing soon.", "Pikes and rivets reached Oslow's bridge effort after war and a stolen shipment had emptied Lakeshire's stores. He expected the crossing's repairs to move quickly."}
 P.questIDs[205].highlight = {"Skullsplitter fetishes reached Brother Nimetz, who hoped their magic might explain Kurzen's descent into evil.", "Brother Nimetz received the troll fetishes for study, seeking an answer to Kurzen's downfall in Skullsplitter magic."}
 P.questIDs[494].highlight = {"Lesh's raven message reached Darthalia in Tarren Mill. She read it as the signal to attack Hillsbrad, and expected Varimathras's approval.", "Darthalia understood the cryptic word from Lesh's reconnaissance. Hillsbrad was ready for attack. She thought Varimathras would be pleased."}
 P.questIDs[5093].highlight = {"Gorlach's call against the Scourge led to Derrington at the Bulwark. He welcomed the response and warned of the dangerous frontier beyond.", "Derrington welcomed the answer to Gorlach's summons at the Bulwark, with the Scourge to the east and work waiting along the frontier."}
 P.questIDs[5096].highlight = {"The Scarlet command tent was burned and a Scourge banner planted beside it. Derrington had sent a scout to watch the response and judged Andorhal worth the risk.", "Derrington's false-flag raid left a burned Scarlet tent and a Scourge banner. He sent a scout to see whether the deception worked, while considering Andorhal."}
-P.questIDs[574].highlight = {"Yohwa's strike against Kurzen's elite brought Doren hope for the rebels. He had feared they were alone against the Colonel's brilliance.", "Kurzen's commandos and headshrinkers were defeated in the Stockpile. Doren took hope from the report, trusting Yohwa's judgment of the help she had found."}
+P.questIDs[574].highlight = {"Kurzen's elite fell in the strike Sergeant Yohwa had sent, and Doren found hope for the rebels. He had feared they stood alone against the Colonel's brilliance.", "Kurzen's commandos and headshrinkers were defeated in the Stockpile. Doren took hope from the report, trusting Yohwa's judgment of the help she had found."}
 P.questIDs[202].highlight = {"Kurzen and his leaders fell in the Stockpile. Doren welcomed proof that the rebels were free of the commander whose cunning he had feared.", "Proof of Kurzen's defeat reached Doren. The rebels' former commander was dead, and Doren said they could breathe more easily."}
 P.questIDs[207].highlight = {"Four troll tablets were transcribed for Nimetz, who hoped their legends might explain how the once-noble Kurzen had fallen into evil.", "The copied legends from Stranglethorn's ruins reached Nimetz for study. He suspected troll magic behind Kurzen's downfall."}
 P.questIDs[206].highlight = {"Mai'Zoth was slain and the Mind's Eye reached Nimetz. He would study whether it could serve good; if not, he meant to destroy it.", "Nimetz received the Mind's Eye after Mai'Zoth's defeat. He believed the ogre had corrupted Kurzen and would judge whether the artifact must be destroyed."}
@@ -2054,7 +2054,7 @@ q(4362, "The Fate of the Kingdom", "Blackrock Depths", 59, "royal_rescue", 5,
     "Thaurissan was killed, but Moira wept over his loss. Her only question was why.",
     "The emperor's death brought Moira to tears. The daughter Magni had sent help to rescue mourned Thaurissan and demanded to know why he had been killed.", true)
 q(4004, "The Princess Saved?", "Orgrimmar", 60, "royal_rescue", 5,
-    "Moira called the slain emperor her husband and said their unborn child would rule Ironforge. She sent word back to Thrall, threatening vengeance for the child's father.",
+    "Moira called the slain emperor her husband and said their unborn child would rule Ironforge. She swore the killers would be hunted, and said Thrall would want to hear of his meddling.",
     "Moira's explanation turned the rescue into an accusation. Thaurissan had been her husband, and their unborn child would inherit Ironforge. Thrall was to hear what his intervention had done.",
     "The news startled Thrall. He saw a future Dark Iron ruler of Ironforge as a new threat, rewarded the completed mission, and dismissed the messenger so he could consult Sylvanas and Cairne.",
     "Thrall was taken aback by Moira's news. He feared what her unborn child's claim to Ironforge would mean, paid the promised reward, and said he must consult Sylvanas and Cairne.", true)
@@ -2092,7 +2092,7 @@ local function hl(id, h1, h2) P.questIDs[id].highlight = {h1, h2} end
 P.threads.world_raschal = "the search for Feathermoon's missing courier"
 P.threads.world_gahzridian = "the hydra ornaments of Tanaris"
 q(32, "Rise of the Silithid", "Orgrimmar", 48, "silithid", 4,
-    "Fizzledowser wanted his insect report read by Zilzibin Drumlore, a troll historian who had long studied creatures unique to Azeroth. Zil lived on the upper tier of the Drag in Orgrimmar.",
+    "Fizzledowser wanted his insect report read by Zilzibin Drumlore, a troll historian who had long studied creatures unique to Azeroth. Zil lived on the second tier of the Drag in Orgrimmar.",
     "The Gadgetzan report needed a scholar's judgment. Fizzledowser sent it to Zilzibin Drumlore in Orgrimmar, hoping the troll could say what the insects were and how to stop them.",
     "Zilzibin had dealt with these creatures before. He named them silithid, tools of a threat to Horde and Alliance alike, and warned that they would consume Tanaris quickly.",
     "The report reached Zilzibin. He gave the insects a name, silithid, and called them one of the greatest menaces the world would face.", true)
@@ -2110,7 +2110,7 @@ fallback("Rise of the Silithid", "Tanaris", "silithid", "32,162,4267",
     "Reports of strange insects in southern Kalimdor were carried to a scholar who knew such creatures.",
     "An insect report needed a historian's judgment before anyone could say what the creatures were.",
     "The scholar who received the report named the insects silithid and warned of the danger they posed.",
-    "A historian read the insect report and gave the creatures their name, silithid.")
+    "A historian recognized the creatures in the report as the silithid, tools of a great threat.")
 q(4493, "March of the Silithid", "Tanaris", 53, "silithid", 4,
     "Gracina believed the silithid existed to devour everything outside their own ecology, and that their strength came from Un'Goro Crater. She sent her theory to Alchemist Pestlezugg in Gadgetzan.",
     "What had been seen so far, Gracina thought, was only the first stage. She suspected the hives drew their strength from Un'Goro Crater and wanted Pestlezugg in Gadgetzan to hear it.",
@@ -2125,11 +2125,11 @@ fallback("March of the Silithid", "Tanaris", "silithid", "4493,4494",
     "A scholar suspected that the silithid drew their strength from Un'Goro Crater.",
     "The theory that the hives were rooted in Un'Goro Crater was sent to Alchemist Pestlezugg in Gadgetzan.",
     "Pestlezugg heard the theory about Un'Goro Crater.",
-    "The message about the silithid and Un'Goro reached Pestlezugg in Gadgetzan.")
+    "Pestlezugg allowed that Un'Goro might be the silithid's heart and a step toward understanding them.")
 q(4496, "Bungle in the Jungle", "Tanaris", 53, "silithid", 4,
     "Pestlezugg's research suggested that the silithid behaved like bees, and that a dead queen would throw her hive into disarray. His lure needed an undamaged scent gland from the Un'Goro hive and samples of the crater's soil.",
     "To draw a silithid queen into the open, Pestlezugg meant to brew a lure. He needed a scent gland from one of the crater's insects, intact, and some of Un'Goro's native soil.",
-    "The gland's membrane was intact and the soil would serve. He began grinding both into the lure he hoped would stop the silithid before they overran Gadgetzan.",
+    "The gland's membrane was intact and the soil would serve. Pestlezugg began grinding both into the lure he hoped would stop the silithid before they overran Gadgetzan.",
     "Pestlezugg had his reagents. With a few additions of his own, the gland and the Un'Goro soil would become a lure for the hive's queen.")
 q(4507, "Pawn Captures Queen", "Tanaris", 54, "silithid", 5,
     "Pestlezugg's lure was meant for a crystal in the hive's hatcheries, which he believed the silithid used to attune the whole hive. It should draw out the queen, and he wanted her brain for study.",
@@ -2140,21 +2140,21 @@ q(4508, "Calm Before the Storm", "Darnassus", 54, "silithid", 4,
     "Pestlezugg sent his latest report to Gracina Spiritmight. She had friends among the Alliance's leaders, and Gadgetzan could not fight the silithid alone.",
     "The findings from the Un'Goro hive needed hands that could act on them. Pestlezugg hoped Gracina, in Darnassus, could bring powerful friends into the fight.",
     "Gracina doubted the report would change much. The Alliance looked only for threats from the Horde, she said, and Fandral Staghelm denied that the silithid were the ancient danger she believed them to be.",
-    "Gracina accepted Pestlezugg's report with little hope. She blamed leaders who could see no enemy but the Horde, Fandral Staghelm among them, and urged that the fight against the silithid go on.", true)
+    "Gracina accepted Pestlezugg's report with little hope. She blamed an Alliance blind to all but the Horde, scorned Fandral Staghelm's doubts, and urged that the fight against the silithid go on.", true)
 q(4509, "Calm Before the Storm", "Orgrimmar", 54, "silithid", 4,
     "Pestlezugg sent his latest report to Zilzibin Drumlore. The troll had friends high in the Horde, and Gadgetzan could not fight the silithid alone.",
     "The findings from the Un'Goro hive needed hands that could act on them. Pestlezugg hoped Zilzibin, on the Drag in Orgrimmar, could bring powerful friends into the fight.",
     "Zilzibin doubted the report would do much good. The Horde looked for no enemy but the Alliance, he said; Thrall might act on the facts, but conflicting advice surrounded him.",
     "Zilzibin received Pestlezugg's findings with frustration. He believed Thrall would listen if the facts reached him, and blamed advisers who saw every danger as a chance to strike at the Alliance.", true)
 fallback("Calm Before the Storm", "Tanaris", "silithid", "4508,4509",
-    "Pestlezugg's findings on the silithid were sent to a scholar with friends among the leaders of a faction.",
+    "Findings on the silithid passed from Gadgetzan to scholars with friends among the leaders of their faction.",
     "Gadgetzan could not fight the silithid alone, so Pestlezugg's report went to a scholar who might reach the powerful.",
-    "The scholar received Pestlezugg's report, doubtful that the faction's leaders would heed it.",
-    "Pestlezugg's report reached the scholar, who urged that the fight against the silithid continue.")
+    "The work against the silithid between Gadgetzan and the faction capitals moved a step further.",
+    "Another step in the struggle against the silithid was done.")
 hl(4507, "The silithid queen's brain reached Pestlezugg for study. He called it a victory, then said the resolution seemed too clean to be the end of the hives.",
     "Pestlezugg received the queen's brain from the Un'Goro hive. He doubted one queen was the full extent of the silithid.")
 hl(4508, "Pestlezugg's report reached Gracina. She doubted it would move leaders who feared only the Horde, and blamed Fandral Staghelm's arrogance.",
-    "Gracina took Pestlezugg's findings, unsure they would help. Fandral Staghelm, she said, refused to see the silithid as the ancient danger she knew them to be.")
+    "Gracina took Pestlezugg's findings, unsure they would help. Fandral Staghelm, she said, refused to see the silithid as the ancient danger she believed them to be.")
 hl(4509, "Pestlezugg's report reached Zilzibin. He doubted it would move a Horde that watched only the Alliance, though Thrall might act if the facts reached him.",
     "Zilzibin took Pestlezugg's findings with frustration. Thrall might listen, he said, but conflicting advice surrounded the Warchief.")
 q(3161, "Gahz'ridian", "Tanaris", 48, "gahzridian", 2,
@@ -2202,7 +2202,7 @@ q(4135, "The Writhing Deep", "Feralas", 46, "raschal", 4,
     "Raschal's backpacks held a parcel for Thalanaar and a hurried note. He had found insect creatures in the Writhing Deep, south of the gnoll camps, and gone to investigate them himself.",
     "A note signed by Raschal of Feathermoon described bug-like creatures in a place called the Writhing Deep. He believed they threatened all of Feralas.",
     "Inside the Writhing Deep stood a pod as tall as a person, slick and studded with hardened growths. A faint humanoid shape showed through its skin.",
-    "Raschal's trail ended at a pod in the Writhing Deep. Through its skin, the shape of someone sealed inside could just be seen.")
+    "Raschal's trail led into the Writhing Deep. There, through the skin of a strange pod, the shape of someone sealed inside could just be seen.")
 q(4265, "Freed from the Hive", "Feralas", 46, "raschal", 5,
     "The pod split open and released Raschal, alive and stunned. The insects had overwhelmed him, and he had woken paralyzed inside it.",
     "Raschal, the missing courier, came out of the pod alive and thanked Elune. He asked whether the Stronghold had sent help.",
@@ -2213,7 +2213,7 @@ q(4266, "A Hero's Welcome", "Feralas", 46, "raschal", 4,
     "Ginro sent word that Shandris Feathermoon was waiting in the main compound. The reports of the Zukk'ash had frightened the Stronghold.",
     "Shandris gave her thanks for Raschal's rescue and a reward on behalf of the whole Stronghold. With a Zukk'ash hive now found in Feralas, she asked for help once more.",
     "The general offered the Stronghold's thanks and a reward. She already had another task in mind, one that concerned the Zukk'ash hive.")
-hl(4135, "Raschal's backpacks held a note about insect creatures in the Writhing Deep. His trail ended there, at a pod with a humanoid shape inside.",
+hl(4135, "Raschal's backpacks held a note about insect creatures in the Writhing Deep. Inside that place stood a pod with an unknown humanoid shape within.",
     "Following Raschal's note into the Writhing Deep led to a pod as tall as a person, with someone sealed inside it.")
 hl(4265, "Raschal was freed from the pod alive and made his way back to Feathermoon. Ginro said the courier would have died without the rescue.",
     "The missing courier came out of the Writhing Deep alive. At the Stronghold, Ginro called the rescue a hero's deed and promised his friendship.")
@@ -2231,7 +2231,7 @@ P.threads.world_windsor = "the search for Marshal Windsor"
 P.threads.world_onyxia_key = "the key to the Wyrmbog lair"
 P.threads.world_goretooth = "Warlord Goretooth's orders"
 q(4183, "The True Masters", "Redridge Mountains", 54, "truemasters", 3,
-    "At Morgan's Vigil, Helendis Riverhorn had learned that the Blackrock orcs answered to the black dragonflight, which fed their rage. She sealed the finding in a letter for Magistrate Solomon of Lakeshire.",
+    "At Morgan's Vigil, Helendis Riverhorn had learned that the Blackrock orcs answered to the black dragonflight, which she suspected fed their rage. She sealed the finding in a letter for Magistrate Solomon of Lakeshire.",
     "The Blackrock were not simply savage, Helendis Riverhorn believed. The black dragonflight controlled them, and Magistrate Solomon in Lakeshire needed to know.",
     "Magistrate Solomon broke the seal on Helendis's letter and began to read. It concerned Lakeshire's old enemy and the power behind it.",
     "Helendis's sealed letter reached Solomon, and the magistrate opened it at once.", true)
@@ -2242,7 +2242,7 @@ q(4184, "The True Masters", "Stormwind City", 54, "truemasters", 4,
     "The news from Lakeshire reached Bolvar Fordragon, who dismissed the idea of dragons out of hand.", true)
 q(4185, "The True Masters", "Stormwind City", 54, "truemasters", 3,
     "Bolvar would not send his thinly spread troops to Lakeshire on speculation. He wanted proof, and sent the question to Lady Prestor, a learned woman who knew much of dragons.",
-    "Before acting on Solomon's claims, Highlord Bolvar wanted the opinion of Lady Prestor, whom the court regarded as learned in dragons and dragonkin.",
+    "Before acting on Solomon's claims, Highlord Bolvar wanted the opinion of Lady Prestor, whom he called learned in dragons and dragonkin.",
     "Bolvar weighed the matter after the visit to Lady Prestor. He respected her stance, he said, but believed another solution might settle everyone's concerns.",
     "The Highlord listened, chin in hand. Lady Prestor had given her view, and Bolvar said he had a solution of his own in mind.", true)
 q(4186, "The True Masters", "Redridge Mountains", 54, "truemasters", 3,
@@ -2251,20 +2251,20 @@ q(4186, "The True Masters", "Redridge Mountains", 54, "truemasters", 3,
     "Solomon read Bolvar's decree and said it could have been worse. Then he judged that Lakeshire's fate rested on the new deputy's shoulders, and his eyes filled with tears.",
     "Bolvar's decree reached Lakeshire. Solomon blinked rapidly as he read it and admitted that the town's fate now rested on one deputy.", true)
 q(4223, "The True Masters", "Burning Steppes", 54, "truemasters", 3,
-    "As a deputy of Stormwind, the next report was owed to Marshal Maxwell at Morgan's Vigil. Solomon sighed and wished good luck.",
+    "Solomon sighed and wished good luck. Stormwind's new deputy now had to report to Marshal Maxwell at Morgan's Vigil.",
     "Solomon's last instruction sent Stormwind's new deputy back to the Burning Steppes, to report to Marshal Maxwell.",
     "Marshal Maxwell laughed when Stormwind's new deputy reported to him.",
     "At Morgan's Vigil, Marshal Maxwell greeted Bolvar's deputy with a laugh.", true)
 q(4224, "The True Masters", "Burning Steppes", 54, "truemasters", 3,
     "Maxwell had seen Stormwind's deputies before, and lost soldiers waiting for the kingdom to act. Marshal Windsor had vanished with all their intelligence on the Blackrock; Ragged John had been with him when a raiding party struck.",
     "The Vigil's evidence against the Blackrock had gone missing with its commander, Marshal Windsor. Maxwell sent the search to Ragged John, last seen in a cave to the north.",
-    "Ragged John had been found and heard out in his cave. Maxwell laughed that he might have warned about the man and had chosen not to.",
+    "Ragged John had been found and heard out in his cave. Maxwell joked that he might have warned about the man and had chosen not to.",
     "The visit to Ragged John was done. Maxwell admitted he could have given a warning first, but thought that would have spoiled the fun.", true)
 fallback("The True Masters", "Burning Steppes", "truemasters", "4183,4184,4185,4186,4223,4224",
-    "Morgan's Vigil had evidence that the Blackrock orcs were driven by the black dragonflight.",
-    "Lakeshire's fear of the Blackrock and the black dragonflight passed between Morgan's Vigil, Lakeshire and Stormwind.",
+    "The defenders at Morgan's Vigil believed the black dragonflight was driving the Blackrock orcs.",
+    "Word that the black dragonflight drove the Blackrock orcs was carried between the Burning Steppes, Lakeshire and Stormwind.",
     "Another part of Lakeshire's appeal to Stormwind was complete.",
-    "The report about the Blackrock's true masters moved one step along its road.")
+    "The warning about the Blackrock's true masters was carried one step further.")
 q(4241, "Marshal Windsor", "Blackrock Depths", 54, "windsor", 4,
     "Ragged John claimed that Marshal Windsor was alive. Maxwell sent his deputy into Blackrock Depths to bring Windsor back, or proof of his death.",
     "If Windsor lived, Maxwell wanted him brought home from the Dark Iron prison. If he was dead, Maxwell wanted proof.",
@@ -2339,13 +2339,13 @@ q(6569, "Oculus Illusions", "Western Plaguelands", 60, "onyxia_key", 3,
 q(6570, "Emberstrife", "Dustwallow Marsh", 60, "onyxia_key", 4,
     "Myranda's medallion would hold its illusion inside the den of Emberstrife, an ancient drake of the Wyrmbog who tested dragonspawn seeking to guard Onyxia.",
     "Emberstrife, an old gatekeeper of Nefarian, judged those who would rise to Onyxia's elite guard. Myranda's illusion was made to pass his inspection.",
-    "Emberstrife took the disguise for a whelp sent by Nefarian. He sneered and promised his tests would never be passed.",
+    "Emberstrife took the disguise for a whelp sent by Nefarian. He said a broodling would never pass his tests.",
     "The disguise held. Emberstrife saw only a broodling and complained that Nefarian must be short of soldiers.")
 q(6601, "Ascension...", "Desolace", 60, "onyxia_key", 4,
     "Emberstrife gave up a medallion shaped from the skulls of enemies. General Drakkisath was to place its final enchantment, marking ascension to the brood mother's guard.",
     "The medallion of the brood mother's guardians was unfinished. Emberstrife ordered it carried to Drakkisath in the Spire.",
     "Rexxar dismissed Emberstrife's speech as dragon-talk, more hot air than substance.",
-    "Rexxar heard about the drake's medallion and laughed off the pompous words as the way of dragons.")
+    "Rexxar heard about the drake's medallion and said such pompous talk was to be expected from dragons.")
 q(6602, "Blood of the Black Dragon Champion", "Desolace", 60, "onyxia_key", 5,
     "Rexxar had no intention of attending Drakkisath's ceremony as one of the black flight. The amulet needed only the General's blood, so Drakkisath had to die.",
     "A black flight ceremony meant bloodletting, Rexxar said. Drakkisath's blood would wake the latent amulet, and he wanted it brought back from the Spire.",
@@ -2356,10 +2356,10 @@ hl(4282, "Angerforge and Argelmach were dead, and Windsor had his two tablets ba
 hl(4322, "Windsor escaped Blackrock Depths with his evidence. Maxwell said he had gone on to Stormwind to confront Bolvar and Lady Prestor.",
     "The jail break freed Windsor. He stormed through Morgan's Vigil and set out for Stormwind with his evidence.")
 hl(6403, "In Stormwind Keep, Onyxia's spell over Bolvar broke. The Highlord credited Windsor's sacrifice and held the shattered medallion that had controlled him.",
-    "Windsor's sacrifice freed Bolvar from Onyxia's spell. The shattered medallion in the Highlord's hand still held glimpses of her secrets.")
+    "Windsor's sacrifice freed Bolvar from Onyxia's spell. Through the shattered medallion, the Highlord had glimpsed some of her secrets.")
 hl(6502, "Haleh used Drakkisath's blood to turn the medallion fragment into the Drakefire Amulet, the key past Onyxia's wards.",
     "Drakkisath's blood mended the fragment. Haleh gave it back as the Drakefire Amulet, with the Blue Flight's wish for luck.")
-hl(4974, "Rend Blackhand's head reached Thrall. The Blackrock were thrown into chaos, and Thrall rewarded all of Kalimdor for the deed.",
+hl(4974, "Rend Blackhand's head reached Thrall. With their Warchief slain, the Blackrock were thrown into chaos, and Thrall promised all of Kalimdor a reward.",
     "Thrall took Rend's head as a crippling blow to the Blackrock legion and declared a reward for the people of Kalimdor.")
 hl(6602, "Drakkisath's blood activated the Drakefire Amulet. Rexxar called it the key to Onyxia's lair and urged a conquest for the Horde.",
     "Rexxar woke the amulet with Drakkisath's blood and grinned. The way into Onyxia's lair was open.")
@@ -2403,11 +2403,11 @@ q(6042, "Un-Life's Little Annoyances", "Eastern Plaguelands", 58, "marris_stead"
 q(6144, "The Call to Command", "Undercity", 60, "marris_stead", 4,
     "Varimathras wanted Nathanos's most capable agents in the Undercity for a sensitive operation. Nathanos said those had died three years ago, and sent the agent he had with a cold warning not to embarrass him.",
     "Orders came down from Varimathras, and Nathanos sent his agent back to the Undercity to report.",
-    "Varimathras said the Grand Crusader sat safe in the Scarlet Bastion while his forces murdered the Forsaken. Sylvanas had ordered Nathanos to deal with him, and Varimathras named the newcomer the instrument of that reckoning.",
-    "Varimathras laid out the Dark Lady's command. Nathanos was to strike at the Grand Crusader, whose forces poured into Forsaken lands from the safety of Stratholme.")
+    "Varimathras said the Grand Crusader sat safe in the Scarlet Bastion while his forces murdered the Forsaken. Sylvanas had ordered Varimathras to deal with him, and he named the newcomer the instrument of that reckoning.",
+    "Varimathras laid out the Dark Lady's command. He was to strike at the Grand Crusader, whose forces poured into Forsaken lands from the safety of the Scarlet Bastion.")
 q(6145, "The Crimson Courier", "Eastern Plaguelands", 60, "marris_stead", 4,
-    "The Scarlet command in Stratholme was too well defended to attack directly. Nathanos's deathstalkers had learned that a courier carried a daily report from there to Tyr's Hand, and he wanted it.",
-    "Cut the body out from under the head, Nathanos said. The Crimson Courier's report from Stratholme to Tyr's Hand was the key to his plan.",
+    "The Scarlet command in Stratholme was too well defended to attack directly. Varimathras's deathstalkers had learned that a courier carried a daily report from there to Tyr's Hand, and he wanted it taken to Nathanos.",
+    "Cut the body out from under the head, Varimathras said. The Crimson Courier's report from Stratholme to Tyr's Hand was the key, and it was to go to Nathanos.",
     "Nathanos laughed over the courier's report. At last he had a chance to destroy the Scarlet Oracle.",
     "The intercepted report delighted Nathanos. It gave him an opening against the Scarlet Oracle.")
 q(6146, "Nathanos' Ruse", "Eastern Plaguelands", 60, "marris_stead", 4,
@@ -2419,7 +2419,7 @@ q(6147, "Return to Nathanos", "Eastern Plaguelands", 60, "marris_stead", 3,
     "Valdelmar found the Grand Crusader's request unusual but meant to obey. He sent word that the Oracle would soon be on her way to Stratholme, guarded with every precaution.",
     "The Crusader Lord had swallowed the ruse. His reply promised that the Oracle would travel to Stratholme under heavy protection.",
     "Nathanos exulted that his deception had gone unnoticed and called for a strike with cold cunning.",
-    "Valdelmar's answer reached Nathanos, who laughed at the fools of Tyr's Hand and prepared to strike.")
+    "Valdelmar's answer reached Nathanos, who called the men of Tyr's Hand fools and prepared to strike.")
 q(6148, "The Scarlet Oracle, Demetria", "Eastern Plaguelands", 60, "marris_stead", 5,
     "Demetria, the Grand Crusader's chief adviser, was called the Oracle for her otherworldly senses. The ruse had drawn her out of Tyr's Hand, and Nathanos wanted her killed on the road.",
     "The Scarlet Oracle had helped the Crusade to several victories over the Scourge. Now she was moving out of Tyr's Hand, perhaps expecting trouble, and Nathanos meant to supply it.",
@@ -2444,7 +2444,7 @@ q(6184, "Flint Shadowmore", "Western Plaguelands", 60, "marris_case", 3,
     "Flint gave the first assignment plainly. It was reconnaissance, in and out.",
     "At Chillwind Point, Flint Shadowmore took over the case and called the first mission simple reconnaissance.")
 q(6185, "The Eastern Plagues", "Western Plaguelands", 60, "marris_case", 4,
-    "Flint wanted clues about the Blightcaller and the missing operatives, whom he assumed were dead. Every SI:7 agent carried an insignia, and he swallowed hard as he asked for any that could be found.",
+    "Flint wanted clues about the Blightcaller and the missing operatives, who he assumed were dead. Every SI:7 agent carried an insignia, and he swallowed hard as he asked for any that could be found.",
     "SI:7's missing agents would have left bodies somewhere in the Eastern Plaguelands. Flint showed his own insignia so that theirs could be recognized.",
     "Flint clutched the recovered insignias and named his dead, Rutger, Fredo and Turyen. He asked where they had been found and what more was known of the Blightcaller.",
     "The insignias came back to Chillwind Point. Rutger, Fredo and Turyen were all dead, and Flint wanted to know everything that had been learned of their killer.")
@@ -2469,17 +2469,17 @@ q(5243, "Houses of the Holy", "Eastern Plaguelands", 60, "lights_hope", 3,
     "Leonid received the holy water. Tolerance of others, he said, need not soften the will to destroy Kel'Thuzad's minions.",
     "The holy water came back to Light's Hope, and Leonid praised a dedication that stopped at nothing against the Scourge.")
 q(5212, "The Flesh Does Not Lie", "Eastern Plaguelands", 60, "lights_hope", 3,
-    "Betina Bigglezink had studied the plague for years and found it growing stronger, not weaker. She wanted samples of the most recently infected flesh from Stratholme.",
+    "Betina Bigglezink had studied the plague for years and was startled to find its strength growing. She wanted samples of the most recently infected flesh from Stratholme.",
     "The plague's potency was rising, Betina believed, and the freshest tainted flesh in Stratholme would show her how.",
     "Betina found that something had changed in the chemistry of the plague's active agents. She needed more data.",
-    "The samples confirmed Betina's fear of a change in the plague. One test was not enough, and she asked for more.")
+    "The samples showed Betina a change in the plague's chemistry. More data was needed, she said, and she asked for further tests.")
 q(5213, "The Active Agent", "Eastern Plaguelands", 60, "lights_hope", 4,
     "The Scourge drew great power from the ziggurats beyond Stratholme's first gates. Betina wanted them searched for anything that might explain the plague's new active agent.",
     "Betina believed she was on the verge of identifying the plague's new agent. The answer, she hoped, lay in the ziggurats of Stratholme.",
     "Betina called the findings astonishing and months of work to analyze. The Argent Dawn thanked the searcher with a Seal or Rune of the Dawn.",
     "The ziggurat data reached Betina, who expected months of analysis. She offered the Dawn's seal or rune in thanks.")
 q(5281, "The Restless Souls", "Eastern Plaguelands", 60, "restless", 3,
-    "Many of Stratholme's people had thrown themselves into the burning city rather than join the Scourge. Caretaker Alen wanted their restless spirits helped, and sent word to Egan, who studied ghosts near the city.",
+    "Many of Stratholme's people had thrown themselves into the burning city rather than join the Scourge. Caretaker Alen wanted their restless spirits helped, and pointed the way to Egan, who studied ghosts near the city.",
     "Alen believed the spirits of Stratholme's dead could still be aided. His associate Egan was testing his inventions in the Eastern Plaguelands.",
     "Egan was glad that Alen had finally found someone brave enough to help.",
     "Egan received Alen's helper with relief. His work on Stratholme's ghosts could go forward.", true)
@@ -2495,10 +2495,10 @@ q(6026, "That's Asking A Lot", "Eastern Plaguelands", 58, "smokey", 3,
     "The components reached Smokey. He paid half the commission at once and promised the rest after the demolition.")
 q(6041, "When Smokey Sings, I Get Violent", "Eastern Plaguelands", 58, "smokey", 3,
     "Smokey's people had marked the Scourge buildings in Plaguewood. Ten sticks of his special compound were to be planted inside them.",
-    "The demolition plan was simple, Smokey said. Plant the compound in the marked structures, and the Argent Dawn's job was done.",
-    "The marked Scourge buildings were gone. Smokey laughed at the charred look of his partner, paid out the cut and added something for the burns.",
+    "The demolition plan was simple, Smokey said. The compound would go into the marked structures, and the Argent Dawn's job would be done.",
+    "The compound was planted in the marked Scourge buildings. Smokey laughed at the charred look of his partner, paid out the cut and added something for the burns.",
     "Smokey paid the rest of the Argent Dawn's commission, with a little extra to soothe the burns.")
-hl(6041, "Smokey's compound brought down the marked Scourge buildings in Plaguewood. He paid out the commission and added something for the burns.",
+hl(6041, "Smokey's compound was planted in the marked Scourge buildings of Plaguewood. He paid out the commission and added something for the burns.",
     "The Plaguewood demolition was done. Smokey laughed, paid the second half and threw in a salve's worth for the burns.")
 for _, id in ipairs({6133, 6135, 6136, 6022, 6042, 6144, 6145, 6146, 6147, 6148, 6182, 6183, 6184, 6185, 6186, 6187,
     5243, 5212, 5213, 5281, 5214, 6026, 6041}) do src(id) end
@@ -2511,7 +2511,7 @@ P.threads.world_wildkin = "Erelas Ambersky's wildkin inquiry"
 P.threads.world_felstone = "Janice Felstone's undelivered package"
 q(5249, "To Winterspring!", "Winterspring", 56, "starfall", 2,
     "Ivy Leafrunner had too much work in Felwood to visit the elven ruins of Winterspring herself. She suggested a visit to Wynd Nightchaser at Starfall Village, who knew the area well.",
-    "Winterspring was harsh country full of old elven ruins. Ivy Leafrunner sent her friends north to Wynd Nightchaser of Starfall Village.",
+    "Winterspring was harsh country full of old elven ruins. Ivy Leafrunner sent a friend north to Wynd Nightchaser of Starfall Village.",
     "Wynd Nightchaser welcomed a friend of Ivy Leafrunner to Starfall.",
     "Wynd Nightchaser greeted the newcomer Ivy had sent north.")
 q(5250, "Starfall", "Winterspring", 56, "starfall", 2,
@@ -2532,7 +2532,7 @@ q(5245, "Troubled Spirits of Kel'Theril", "Eastern Plaguelands", 56, "zinmalor",
 q(5246, "Fragments of the Past", "Eastern Plaguelands", 56, "zinmalor", 4,
     "Aurora relented and examined the fragments. She believed they were the Crystal of Zin-Malor, which could contain great arcane forces, shattered by the evil intentions of its thieves. The sacred writings she needed lay in the Temple of Zin-Malor in Azshara.",
     "The fragments were the Crystal of Zin-Malor, Aurora thought. Only the sacred writings from the Temple of Zin-Malor in Azshara could tell her whether it might be mended.",
-    "The pages from Azshara reached Aurora, untouched for many years.",
+    "The sacred writings from Azshara reached Aurora, untouched for many years.",
     "Aurora received the old writings from Azshara. No one had turned those pages in a very long time.", true)
 q(5247, "Fragments of the Past", "Eastern Plaguelands", 57, "zinmalor", 4,
     "To fuse the fragments, Aurora needed an enchanted thorium bar, five crystal restores and a vial of water from the dire pool along Eldreth Row in Dire Maul.",
@@ -2540,7 +2540,7 @@ q(5247, "Fragments of the Past", "Eastern Plaguelands", 57, "zinmalor", 4,
     "Aurora had her materials and began fusing the fragments, hoping to restore the crystal to what it had been.",
     "The thorium, restores and dire pool water reached Aurora, and she set to joining the shards.", true)
 fallback("Fragments of the Past", "Eastern Plaguelands", "zinmalor", "5246,5247",
-    "Aurora Skycaller studied the shards recovered from beneath the ice of Lake Kel'Theril.",
+    "Aurora Skycaller studied the shards recovered from Kel'Theril.",
     "The fragments from Kel'Theril needed a high elf's knowledge before anything could be done with them.",
     "Aurora's work on the Kel'Theril fragments went a step further.",
     "Another step toward mending the shattered relic was complete.")
@@ -2557,7 +2557,7 @@ q(5252, "Remorseful Highborne", "Eastern Plaguelands", 58, "zinmalor", 4,
 q(5253, "The Crystal of Zin-Malor", "Darnassus", 58, "zinmalor", 5,
     "The Temple of Zin-Malor lay in ruin, so the crystal could not go back there. Aurora wanted it in the hands of Arch Druid Fandral Staghelm, where its power would not be abused.",
     "Only a handful of the strongest mages could control the Crystal of Zin-Malor. Aurora sent it to Fandral Staghelm in Darnassus for safekeeping.",
-    "Fandral knew of the crystal and its power over arcane forces. He said he was impressed that its bearer had not tried to use it, promised the Cenarion Circle would keep it safe, and hoped the cursed spirits would rest.",
+    "Fandral knew of the crystal and its power over arcane forces. Impressed that its bearer had not tried to use it, he promised to keep it safe and hoped the cursed spirits would rest.",
     "The Crystal of Zin-Malor reached Fandral Staghelm. The Circle would guard it, he said, and he hoped the spirits that once guarded its shards could finally be at peace.")
 hl(5253, "The restored Crystal of Zin-Malor reached Fandral Staghelm for safekeeping. He hoped Kel'Theril's cursed spirits would finally rest.",
     "Fandral Staghelm took charge of the Crystal of Zin-Malor, mended from the shards beneath Kel'Theril's ice.")
@@ -2568,7 +2568,7 @@ q(979, "Find Ranshalla", "Winterspring", 57, "wildkin", 3,
     "Ranshalla welcomed help from someone Erelas had sent, and prepared to go up to the caves.")
 q(4901, "Guardians of the Altar", "Teldrassil", 59, "wildkin", 4,
     "Ranshalla believed an altar of Elune stood at the top of the ridge. Five torches in each cave had to be lit while she recited incantations copied from the ruins of Kel'Theril.",
-    "The way to the altar lay through caves of wildkin. Ranshalla would speak the incantations from Kel'Theril while the torches were lit one by one.",
+    "The way to the altar lay through the caves along the ridge. Ranshalla would speak the incantations from Kel'Theril while the torches were lit one by one.",
     "The torches were lit and Ranshalla's incantations spoken. Back in Rut'theran, Erelas asked first whether Ranshalla had been found.",
     "Ranshalla reached the altar of Elune at the top of the ridge, and her findings went back to Erelas Ambersky.")
 q(4902, "Wildkin of Elune", "Darnassus", 57, "wildkin", 3,
@@ -2579,7 +2579,7 @@ q(4902, "Wildkin of Elune", "Darnassus", 57, "wildkin", 3,
 q(5251, "The Archivist", "Eastern Plaguelands", 60, "lights_hope", 4,
     "The Argent Dawn counted the Scarlet Crusade's zealotry as one more dangerous extreme. Archivist Galford guarded the Crusade's most valued documents in Stratholme, and the Dawn wanted him killed and his archives burned.",
     "How many innocents had the Crusade destroyed in the name of the Light, the Argent Dawn asked. Archivist Galford's archives in Stratholme held its intelligence.",
-    "Galford was dead and his archives burned. Years of Scarlet intelligence were lost, and the Crusade would feel the blow for weeks to come.",
+    "Galford was dead and his archives burned. Years of Scarlet intelligence were lost, and the Argent Dawn expected the Crusade to feel the blow for weeks.",
     "The Scarlet archives in Stratholme went up in flames. The Argent Dawn called it an outstanding blow against the Crusade.")
 
 q(5021, "Better Late Than Never", "Western Plaguelands", 52, "felstone", 3,
@@ -2591,19 +2591,19 @@ q(5022, "Better Late Than Never", "Stormwind City", 52, "felstone", 3,
     "Janice's package was addressed in a hurried hand to Emma Felstone of Stormwind, dated more than four years earlier. The Royal Factors of the Stormwind Census might know whether she still lived.",
     "The package from the Felstone farm bore the name of Emma Felstone of Stormwind. Stormwind's census office was the place to look for her.",
     "The census showed an Emma Felstone in Stormwind five years before. The factor wondered aloud whether the package could be meant for Ol' Emma.",
-    "Stormwind's census held a record of Emma Felstone from before the plague. The factor began to suspect she was the woman called Ol' Emma.", true)
+    "Stormwind's census listed an Emma Felstone five years earlier. The factor began to suspect she was the woman called Ol' Emma.", true)
 q(5023, "Better Late Than Never", "Undercity", 52, "felstone", 3,
     "Janice's package was addressed in a hurried hand to Jeremiah Felstone of Lordaeron, dated more than four years earlier. The Undercity's census overseers might know what had become of him.",
     "The package from the Felstone farm bore the name of Jeremiah Felstone of Lordaeron. The Undercity kept a census of its people, living and former.",
-    "Jeremiah Felstone had lived in the city before the plague, the overseer found. As one of the Forsaken he now went by Jeremiah Payson, and he sold cockroaches.",
+    "Jeremiah Felstone had lived in the city before the plague, the overseer found. As one of the Forsaken he now went by Jeremiah Payson, whom the overseer took for the cockroach vendor.",
     "The Undercity census traced Jeremiah Felstone to a new name, Jeremiah Payson. The overseer realized he was the cockroach vendor.", true)
 fallback("Better Late Than Never", "Western Plaguelands", "felstone", "5021,5022,5023",
-    "Janice Felstone's ghost still waited at her farm for a package that had never been delivered.",
-    "A package left at the Felstone farm for more than four years was meant for Janice's family.",
+    "Janice Felstone's ghost still haunted her farmhouse, desperate for her package to be delivered at last.",
+    "A package had waited at the Felstone farm for more than four years without being delivered.",
     "The search for the package's recipient moved forward.",
-    "Janice Felstone's package was one step closer to its owner.")
+    "Janice Felstone's package was one step closer to the person it was addressed to.")
 q(5048, "Good Natured Emma", "Stormwind City", 52, "felstone", 3,
-    "Ol' Emma wandered Stormwind talking to herself, ornery but harmless. The census records suggested she was Emma Felstone.",
+    "Ol' Emma wandered Stormwind talking to herself, ornery but harmless. The census suggested she was Emma Felstone.",
     "The factor believed Ol' Emma was Emma Felstone. Asking her last name was the simplest test.",
     "Emma confirmed her name, the first time in years anyone had used it. She expected her sister to be dead and took the visitor for a grave-robber, until she heard there was a package from Janice.",
     "Ol' Emma admitted she was Emma Felstone. She had lost most of her family to the plague, and was startled to learn her sister had sent her something.")
@@ -2613,15 +2613,15 @@ q(5049, "The Jeremiah Blues", "Undercity", 52, "felstone", 3,
     "Jeremiah admitted to the old name and called the messenger a vulture for claiming to have spoken to a sister four years dead. Then he heard there was a package.",
     "Jeremiah Payson had once been Jeremiah Felstone. He was ready to take offense, until he learned his dead sister had sent him a package.")
 q(5050, "Good Luck Charm", "Western Plaguelands", 52, "felstone", 4,
-    "The package held Janice's personal effects, even the deed to the Felstone farm. Her sibling apologized for the earlier suspicion and sent back half of a good luck charm, hoping it would let her rest. Her husband John had carried the other half.",
+    "The package held Janice's personal effects, even the deed to the Felstone farm. Her sibling apologized for the earlier suspicion and sent back half of a good luck charm, hoping it would let her rest. John, her husband, had carried the other half.",
     "Janice's sibling kept the farm deed for another day and returned half of her good luck charm, in the hope that her spirit might rest.",
-    "Janice's ghost took the half-charm and asked for John's half. They could not be together without both, she said, and she could not see him.",
+    "Janice's ghost took the half-charm and asked for John's half. They could not be together without both, she said, and she asked whether he could see her.",
     "The half-charm reached Janice, who called for her husband and asked where he had put the other half.")
 q(5051, "Two Halves Become One", "Western Plaguelands", 54, "felstone", 5,
     "Janice's ghost kept calling for John and his half of the charm, begging him to hurry before the plague changed them both. The other half had to be found and the charm made whole.",
     "Janice could not see John, but she felt him near. Only the whole good luck charm, both halves joined, would answer what her spirit sought.",
-    "Janice took the reassembled charm and her form shimmered. With clear, sad eyes she said she was free, and gave the charm away for the solace it had given her.",
-    "The two halves of the charm came together in Janice Felstone's hands. Her spirit was freed, and she no longer needed it.")
+    "Janice took the reassembled charm and her form shimmered. With clear, sad eyes she said she was free, and gave the charm away in the hope it would bring the same solace.",
+    "The reassembled charm came to rest in Janice Felstone's hands. Her spirit was freed, and she no longer needed it.")
 hl(5051, "Both halves of the good luck charm reached Janice Felstone's ghost. She was freed at last, and gave the charm away.",
     "The reassembled charm released Janice Felstone. She looked on with clear, sad eyes and said she no longer needed it.")
 for _, id in ipairs({5249, 5250, 5244, 5245, 5246, 5247, 5248, 5252, 5253, 979, 4901, 4902, 5251,
@@ -2658,19 +2658,19 @@ q(3942, "Linken's Memory", "Felwood", 54, "linken", 4,
     "Eridan Bluewind greeted the traveler and asked what help was needed.",
     "The trail of Linken's memory reached Eridan Bluewind in Felwood, who offered to help.")
 q(4084, "Silver Heart", "Felwood", 54, "linken", 4,
-    "Eridan did not know Linken, but knew what he had sought. Blazerunner, an elemental at the heart of Un'Goro, was protected by an aura that only great power could dispel, and she would teach of it in return for Felwood's silvery claws and an irontree heart.",
+    "Eridan did not know Linken, but knew what he had sought. Blazerunner, an elemental in Un'Goro, had an aura only great power could dispel. Eridan offered to teach that power in return for Felwood's silvery claws and an irontree heart.",
     "Eridan Bluewind offered knowledge to defeat the evil elemental Blazerunner. First she wanted eleven silvery claws and an irontree heart from Felwood's creatures.",
     "Eridan accepted the claws and the irontree heart as proof that the helper was serious about aiding a friend.",
     "The silvery claws and irontree heart reached Eridan, who judged the commitment to Linken sincere.")
 q(4005, "Aquementas", "Un'Goro Crater", 54, "linken", 4,
     "Eridan sent a bag of supplies to a circle of stones on the eastmost peninsula of Lost Rigger Cove in Tanaris. Read from the tome of Aquor inside the circle, the words would summon Aquementas, who could transform the items into a totem against Blazerunner.",
     "Aquementas would not be pleased to be woken, Eridan warned, but only he could make the totem, and only for someone who stayed inside the circle.",
-    "The finished totem was examined in Un'Goro. Blazerunner was known there, an elemental in the charred heart of the crater whose aura no one had penetrated, and many had been thrown from the rocky paths trying.",
+    "The finished totem was examined in Un'Goro. A strong elemental called Blazerunner lived in the charred heart of the crater, and none had pierced his aura.",
     "Back in the crater, the new totem drew a knowing answer. Everyone kept their distance from Blazerunner, protected by an aura none had broken.")
 q(4289, "The Apes of Un'Goro", "Un'Goro Crater", 55, "torwa", 3,
     "To Torwa Pathfinder, Un'Goro's creatures were nobler versions of those found elsewhere, and the crater cried of the Earth Mother. The great apes to the north were a test for any mortal's strength.",
     "Torwa paid homage to the Earth Mother with every hunt across the crater. He asked for the pelts of the great apes as proof of strength.",
-    "Torwa accepted the pelts as clothing for his tribe and gave thanks to the Earth Mother and to the spirits of the apes, so they would know their deaths were not wasted.",
+    "Torwa accepted the pelts as clothing for his tribe. Then he gave praise to the Earth Mother and thanked the spirits of the slain apes.",
     "The ape pelts reached Torwa, who counted the hunt a small challenge beside Lar'korwi and still praised it.")
 q(4301, "The Mighty U'cha", "Un'Goro Crater", 55, "torwa", 4,
     "Among the gorillas to the north, Torwa had seen a huge red ape he called U'cha, one of the Earth Mother's greatest sons. He wanted its pelt.",
@@ -2693,7 +2693,7 @@ q(4292, "The Bait for Lar'korwi", "Un'Goro Crater", 56, "torwa", 5,
     "Lar'korwi was dead. Torwa praised the Earth Mother and said only the greatest of his ancestors could have done such a thing.",
     "Torwa bowed to the hunter who had killed Lar'korwi, calling the deed worthy of his greatest ancestors.")
 q(4243, "Chasing A-Me 01", "Un'Goro Crater", 53, "karna", 3,
-    "Karna Remtravel had built a mechanical ape with scrying gems for eyes, to watch the apes of Un'Goro. Contact was lost at Fungal Rock, just as an alpha male rushed up to her.",
+    "Karna Remtravel had built a mechanical ape with scrying gems for eyes, to watch the apes of Un'Goro. Contact was lost at Fungal Rock, just as an alpha male rushed up to the machine.",
     "Karna Remtravel's mechanical ape had vanished at the apes' lair east of Marshal's Refuge, and the gnome wanted it found.",
     "The mechanical ape lay inert at Fungal Rock, with one large dent in its shoulder and another in its head.",
     "Karna's mechanical ape was found at Fungal Rock, badly dented and without power.", true)
@@ -2714,11 +2714,11 @@ fallback("Chasing A-Me 01", "Un'Goro Crater", "karna", "4243,4244,4245",
     "The search for Karna's ape moved forward.")
 q(3884, "Williden's Journal", "Un'Goro Crater", 50, "ungoro", 2,
     "A mangled notebook belonged to Williden Marshal. He and his companions had fled to higher ground in the north of the crater when their base camps were overrun.",
-    "The torn pages named their owner, Williden Marshal, and suggested he could be found in the northern crater.",
-    "Williden was glad to have his notebook back, one of the few things the expedition had not lost.",
+    "The torn notebook named its owner, Williden Marshal, and suggested he could be found in the northern crater.",
+    "Williden was glad to have his notebook back and thanked its finder kindly.",
     "Williden had given the notebook up for lost, like almost everything else the expedition brought into Un'Goro, and was glad to see it again.")
 hl(4292, "Lar'korwi was lured out with his own kill and his mates' scent, and killed. Torwa praised the Earth Mother and the hunter's courage.",
-    "The great raptor Lar'korwi was dead. Torwa called it a deed for his greatest ancestors.")
+    "The great raptor Lar'korwi was dead. Torwa said only the greatest of his ancestors could have matched the deed.")
 hl(3914, "The grave in Tanaris transformed Linken's sword. He was delighted to have it back, though he could not remember why he needed it.",
     "Linken took back his finished sword and paid for the work, still unsure what it was for.")
 for _, id in ipairs({3912, 3913, 3914, 3941, 3942, 4084, 4005, 4289, 4301, 4290, 4291, 4292, 4243, 4244, 4245, 3884}) do src(id) end
@@ -2732,8 +2732,8 @@ P.threads.world_bronzebeard = "the Bronzebeard camp's research"
 q(8286, "What Tomorrow Brings", "Tanaris", 60, "bronze", 4,
     "Baristolth of the Shifting Sands had been bound as a Watcher when a great being breathed upon his maimed body. Now he believed a second war was upon the desert, and wanted to know whether his master had returned to the Caverns of Time.",
     "The Watcher of Cenarion Hold could not act until he knew that the resting place of the bronze dragons was no longer empty.",
-    "The great one had risen in the Caverns of Time. With that news, the Watcher's long watch came to an end.",
-    "Anachronos had returned. The Watcher who had waited for him declared his own watch over.")
+    "Word from the Caverns of Time was as it should be. The great one had risen, and a long watch came to an end.",
+    "In the Caverns of Time, the great one had risen, and a long watch was declared over.")
 q(8288, "Only One May Rise", "Tanaris", 60, "bronze", 5,
     "A champion was needed to become an ally of the bronze Brood. The test was the Broodlord Lashlayer, who guarded the Halls of Strife before Nefarian's inner sanctum, and his head was the proof.",
     "Only one from an army of would-be champions could take up the burden. It began in Blackwing Lair, with the head of Broodlord Lashlayer.",
@@ -2748,7 +2748,7 @@ q(8302, "The Hand of the Righteous", "Tanaris", 60, "bronze", 3,
     "More carapace fragments were needed, and each full load would earn the right to name another deputy.",
     "The Brood wanted still more silithid carapace, and promised a new deputy for every delivery.",
     "Another Agent of Nozdormu could now be deputized.",
-    "The fragments earned the right to choose one more deputy, and perhaps one day all of Cenarion Hold would serve under the champion's command.")
+    "The fragments earned the right to choose one more deputy, and the dragon mused that all of Cenarion Hold might one day serve under the champion.")
 q(8303, "Anachronos", "Tanaris", 60, "bronze", 5,
     "The time had come, and the secrets kept out of fear of hidden enemies could be shared. A tome held the knowledge needed to seek out the bronze dragons' master.",
     "The one who handed over the tome apologized for keeping so much secret, with enemies so close. Its knowledge would lead to the master of the Brood.",
@@ -2759,7 +2759,7 @@ q(8305, "Long Forgotten Memories", "Silithus", 60, "bronze", 5,
     "Anachronos sent the champion to the tear by the scarab wall, to look into the memory of the ancient war.",
     "A great sorrow surrounded the crystal, so strong it felt as though it could kill.",
     "The tear by the barrier held the grief of the War of the Shifting Sands, overwhelming to anyone who looked into it.")
-hl(8288, "Broodlord Lashlayer fell in Blackwing Lair. The bronze dragons wondered whether a mortal had earned their favor for the first time in a thousand years.",
+hl(8288, "Broodlord Lashlayer fell in Blackwing Lair. The bronze dragon who wanted his head wondered whether a mortal could be the first in a thousand years to win the Brood's favor.",
     "Lashlayer's head went to the Brood of Nozdormu, the first step toward becoming their champion.")
 hl(8305, "At the crystalline tear by the scarab wall, the sorrow of the War of the Shifting Sands was almost too much to bear.",
     "The tear in southern Silithus held the ancient war's grief, powerful enough to feel deadly.")
@@ -2781,28 +2781,28 @@ q(8283, "Wanted - Deathclasp, Terror of the Sands", "Silithus", 59, "noggle", 4,
 q(8308, "Brann Bronzebeard's Lost Letter", "Silithus", 60, "bronzebeard", 4,
     "Brann Bronzebeard's letter said most of his crew was dead. He had found word of a battle between a Titan and an Old God, and an ancient tunnel leading to Ahn'Qiraj, and he had taken it.",
     "The letter from Brann asked to be carried to his old camp, with instructions that his monkey get food, water and hugs. A postscript warned of a night elf who worshipped an Old God.",
-    "At Bronzebeard's camp, the letter explained a lot. If anyone found a way into Ahn'Qiraj, they asked that Brann be looked for, helpless as he was without his monkey.",
+    "At Bronzebeard's camp, the letter explained a lot. Anyone who found a way into Ahn'Qiraj was asked to look out for Brann, whom the camp feared powerless without his monkey.",
     "The letter reached Bronzebeard's camp. Brann had gone into Ahn'Qiraj, and his people hoped someone would find him there.")
 q(8309, "Glyph Chasing", "Silithus", 60, "bronzebeard", 4,
     "The three silithid hives had been spewing out insects, and Rutgar Glyphshaper wondered whether the glyphs on their strange crystals explained it. He wanted rubbings from crystals in all three hives.",
     "Since the first foray into the hives and Natalia Mar'alith's madness, the swarms had grown. Rutgar hoped the glyphs on the hive crystals held the reason.",
     "Rutgar could make nothing of the glyphs. He had never seen their like and hoped Frankal's research would help.",
-    "The rubbings from the three hives baffled Rutgar Glyphshaper, who passed his hopes on to Frankal.")
+    "The rubbings from the three hives left Rutgar Glyphshaper baffled, so the glyphs waited on Frankal's research.")
 q(8310, "Breaking the Code", "Silithus", 60, "bronzebeard", 4,
-    "Frankal Stonebridge thought he could brew an elixir to help decipher the language of the silithid and qiraji. He needed a brain from each type of silithid in the hives.",
+    "Frankal Stonebridge thought he could brew an elixir to help decipher the language of the silithid and Qiraji. He needed a brain from each type of silithid in the hives.",
     "So that Rutgar Glyphshaper's work would not be for nothing, Frankal Stonebridge wanted brains, one from every kind of silithid.",
     "Frankal called the brains outstanding and told his helper not to wander off, since more work might follow.",
-    "The silithid brains reached Frankal Stonebridge, who set to work on his deciphering elixir.")
+    "The silithid brains reached Frankal Stonebridge, who warned that another task or two might follow.")
 q(8321, "Vyral the Vile", "Silithus", 60, "twilight", 5,
     "The Twilight's Hammer had another base, a cave called Twilight's Run in the northeast of Silithus. Its leader, Vyral the Vile, wore a signet ring that would prove his death.",
     "Twilight's Run, a cave full of horrors, sheltered the cult's local leader, Vyral the Vile.",
-    "Vyral was dead and his ring delivered. Cenarion Hold judged the blow one the cult's Silithus operations would not easily recover from, though some cultists remained.",
+    "Vyral was dead and his ring delivered. Cenarion Hold judged the blow one the cult's Silithus operations would not easily recover from, though a few cultists might still lurk.",
     "The death of Vyral the Vile meant doom for the Twilight's Hammer in Silithus, as Cenarion Hold saw it.")
 q(8323, "True Believers", "Silithus", 59, "twilight", 3,
     "With the Twilight Lexicon in his hands, the former cultist wanted the cult's monthly encoded bulletin, the True Believer. It would say whether they still hunted him.",
-    "The Twilight's Hammer circulated a secret bulletin among its members. Its pages might hold news of the search for its deserter, and other useful things.",
+    "The Twilight's Hammer circulated a secret bulletin among its members. Each issue might hold news of the search for its deserter, and other useful things.",
     "The former cultist took the encoded texts and promised to share anything of interest he decoded.",
-    "The cult's bulletins reached their deserter, who began decoding them at once.")
+    "The cult's bulletins reached their deserter, who promised to decode them as soon as he could.")
 hl(8321, "Vyral the Vile died in Twilight's Run. Cenarion Hold called it a blow the cult in Silithus would not easily recover from.",
     "The Twilight's Hammer lost its Silithus leader, Vyral the Vile.")
 for _, id in ipairs({8286, 8288, 8301, 8302, 8303, 8305, 8278, 8282, 8283, 8308, 8309, 8310, 8321, 8323}) do src(id) end
@@ -2815,10 +2815,10 @@ P.threads.world_kef = "the Kargath Expeditionary Force"
 P.threads.world_kimjael = "Kim'jael's business in Azshara"
 P.threads.world_machines = "Theodora's rogue machines"
 q(3510, "The Name of the Beast", "Azshara", 58, "defiler", 3,
-    "Lord Arkkoroc wanted Hetaera dead, the naga who called herself ruler of the oceans and killed his children. All her heads were the price of the demon lord's name.",
+    "Lord Arkkoroc wanted Hetaera dead, the beast who called herself ruler of the oceans and killed his children. All her heads were the price of the demon lord's name.",
     "Arkkoroc called Hetaera a false god. He pointed southwest toward her clutch and promised the name, and something more, for her heads.",
     "Arkkoroc received Hetaera's heads and declared their bearer worthy of his wisdom at last.",
-    "Hetaera was dead. Lord Arkkoroc bent to inspect the heads and judged the deed worthy.", true)
+    "Hetaera was dead. Lord Arkkoroc bent down to look over her slayer and found that slayer worthy.", true)
 q(3511, "The Name of the Beast", "Azshara", 58, "defiler", 4,
     "Arkkoroc revealed the demon lord's name, Razelikh the Defiler, and squeezed the blood from Hetaera's heads to make a temper for the weapon. The temper and the true name, Rakh'likh, were for Loramus.",
     "The weapon against the Defiler needed a temper. Arkkoroc drained Hetaera's heads between his fists and sent the blood to Loramus with the beast's true name.",
@@ -2835,7 +2835,7 @@ q(3621, "The Formation of Felbane", "Stranglethorn Vale", 58, "defiler", 4,
     "Galvan had not heard the name Loramus in many years. He marveled that anyone had brought back such materials from Azshara alive, let alone after facing demigods and giants.",
     "The materials reached Galvan the Ancient, who could only imagine what it had taken to gather them.")
 q(3625, "Enchanted Azsharite Fel Weaponry", "Stranglethorn Vale", 58, "defiler", 4,
-    "Galvan warned that the Felcurse in the new weapon could be used only once every three minutes, and that its weakening of Razelikh and his minions might not last.",
+    "Galvan warned that the Felcurse in the new weapon could be used only once every three minutes, and that its weakening of Razelikh and his minions might vary in length.",
     "Each weapon took time to forge, Galvan said, and the forging must not be interrupted.",
     "Galvan wiped the sweat from his brow. A finer demon slayer had never existed, he said.",
     "The Azsharite weapon was finished, and Galvan called it the finest demon slayer ever made.")
@@ -2843,7 +2843,7 @@ q(3626, "Return to the Blasted Lands", "Blasted Lands", 58, "defiler", 3,
     "With the new weaponry, it was time to return to the Fallen Hero of the Horde for the final objective.",
     "The hour of redemption was near. The Fallen Hero waited for the weapons from Galvan's forge.",
     "The Fallen Hero asked whether the bearer of the weapons was ready to face Razelikh and his minions.",
-    "The weapons were back with the Fallen Hero, who saw the marks of battle and asked if the time had come to face Razelikh.")
+    "The Fallen Hero judged the new arrival battle hardened and asked if the time had come to face Razelikh.")
 q(2621, "The Disgraced One", "Swamp of Sorrows", 50, "fallenhero", 3,
     "The Fallen Hero of the Horde blamed himself for a regiment's ruin. If only he had waited for his orders, they might have warned of what waited in those cursed lands. Dispatch Commander Ruag in Stonard would know what became of them.",
     "Regret was all the spirit had left. He stood waiting for orders that never came, and wanted to know why.",
@@ -2851,30 +2851,30 @@ q(2621, "The Disgraced One", "Swamp of Sorrows", 50, "fallenhero", 3,
     "The dispatch commander in Stonard shook his head over the fate of the regiment called Thrall's Grasp.")
 q(2622, "The Missing Orders", "Swamp of Sorrows", 50, "fallenhero", 3,
     "Ruag bristled at the question. He had relayed the orders, but the soldiers carrying them were ambushed by murlocs, and only Bengor survived, unable to walk and fed through a tube.",
-    "The orders had been sent, Ruag insisted, with a warning about sticking noses where they might be bitten. Bengor, the lone survivor of the murloc ambush, might say more.",
+    "Ruag insisted the orders had been sent, and warned against sticking a nose where it might be bitten off. Bengor, the lone survivor of the murloc ambush, might say more.",
     "Bengor could only stammer two words, Swamp Talker.",
     "The broken survivor managed a few halting syllables, naming the Swamp Talker.")
 q(2623, "The Swamp Talker", "Blasted Lands", 55, "fallenhero", 4,
     "Bengor remembered the ambush on the way to the Blasted Lands. A murloc called Swamp Talker took the orders from his hands as a spear struck his skull, and went east to a cave.",
-    "The Swamp Talker had the orders that never reached the Fallen Hero's regiment. Bengor pointed east before passing out.",
+    "The Swamp Talker had the orders that never reached the Fallen Hero's regiment. Bengor managed the words east and cave before passing out.",
     "The orders reached the Fallen Hero at last, and they were worse than he had imagined. Nineteen of his men might have been spared; powerless himself, he asked for help for them.",
     "The recovered orders confirmed the Fallen Hero's fear. His haste had cost nineteen soldiers needless agony, and he begged that they be helped.")
 hl(2623, "The orders taken by the Swamp Talker reached the Fallen Hero. Nineteen of his soldiers could have been spared, he said, and he asked for help for them.",
-    "The lost orders came home to the Fallen Hero, proof that his haste had doomed nineteen men.")
+    "Once the lost orders finally reached him, the Fallen Hero blamed his own rashness for his men's agony.")
 q(6804, "Poisoned Water", "Azshara", 56, "waterlords", 3,
     "Water elemental scouts sent to the Eastern Plaguelands had been twisted by the plague. A vial holding an aspect of Neptulon would cure them, though their inner conflict would drive them into a surging madness.",
     "Hydraxis could not allow plagued water elementals to stain the Waterlords' purity. Their bracers of binding would prove they had been cured and defeated.",
     "Hydraxis approved. The corrupted elementals had been an outrage to all water, and purity was the Waterlords' strength in their war.",
     "The bracers of binding reached Hydraxis, who counted the cure a service to the purity of his kind.")
 q(6805, "Stormers and Rumblers", "Azshara", 57, "waterlords", 3,
-    "The water elementals warred against the lesser elements. Hydraxis wanted the air and earth servants of Silithus's Crystal Vale defeated, whatever they guarded.",
+    "Hydraxis said the water elementals warred against the lesser elements. He wanted the air and earth servants of Silithus's Crystal Vale defeated, whatever they guarded.",
     "To prove conviction as an ally of the Waterlords, Hydraxis asked for an attack on the stormers and rumblers in the Crystal Vale.",
     "Hydraxis declared bravery proven, and hinted at tasks more fitting for a valued ally.",
     "The Crystal Vale's elementals were beaten. Hydraxis judged the newcomer worthy of greater tasks.")
 q(5534, "Kim'jael's \"Missing\" Equipment", "Azshara", 53, "kimjael", 2,
     "Kim'jael wanted a rune the blood elves had been seeking, now held by the naga in the Ruins of Eldarath. A valuable employee, he said, would be paid adequately in time.",
     "Kim'jael haggled over pay and then offered more of it for a rune from the Ruins of Eldarath, one the blood elves had wanted.",
-    "Kim'jael gloated over the rune and meant to learn why Magus Rimtori, who had hired him, wanted it. He paid up and went off to plot.",
+    "Kim'jael gloated over the rune and meant to learn why Magus Rimtori, who had hired him, wanted it. He paid up and sent his helper off, since he had things to figure out.",
     "The rune reached Kim'jael, who saw a chance to turn the tables on the blood elves who had hired him.")
 q(3824, "Gor'tesh the Brute Lord", "Burning Steppes", 53, "blackrock", 4,
     "Oralius wanted the next strike against the Firegut to be decisive. Gor'tesh the Brute Lord ruled from a Blackrock building west of Dreadmaul Rock, and his head was needed for the third phase of the attack.",
@@ -2893,7 +2893,7 @@ q(4122, "Grark Lorkrub", "Burning Steppes", 58, "kef", 4,
     "Grark Lorkrub was captured, unrepentant and full of praise for the Blackrock legion.")
 q(4121, "Precarious Predicament", "Badlands", 58, "kef", 5,
     "Grark sneered that no one could break into a Blackrock fortress, take him, and reach the rendezvous unnoticed. The escort had to prove him wrong.",
-    "Leading the captured traitor out through Blackrock Mountain meant fighting off his would-be rescuers.",
+    "Leading the captured traitor out through Blackrock Mountain meant ignoring his threats that the escort would be destroyed.",
     "The traitor was handed over at the rendezvous. The deed earned a tribute, and the Warlord was ready to discuss the final mission.",
     "Grark Lorkrub was delivered into Horde custody, and the K.E.F. promised that the escort would not go unrecognized.")
 q(4132, "Operation: Death to Angerforge", "Badlands", 58, "kef", 5,
@@ -2932,12 +2932,12 @@ q(1166, "Overlord Mok'Morokk's Concern", "Dustwallow Marsh", 43, "stonemaul", 2,
     "The overlord's grog, snuff and strongbox were back in Brackenwall, and Mok'Morokk was pleased.")
 q(1168, "Army of the Black Dragon", "Dustwallow Marsh", 43, "stonemaul", 3,
     "Tharg wanted revenge. Black dragons had killed many ogres and his wife, and Mok'Morokk had told the clan to run. Ogres should fight, Tharg said, and he wanted to go home to the Stonemaul Ruins.",
-    "To Tharg, Mok'Morokk cared only for himself. He asked for help fighting the black dragon army that held the clan's old home.",
+    "To Tharg, Mok'Morokk cared only for himself. Tharg asked for help fighting the black dragon army that held the clan's old home.",
     "Many of the black dragon army were dead, and Tharg was glad.",
     "Tharg praised the bravery shown against the black dragon army in the south.")
 q(1169, "Identifying the Brood", "Dustwallow Marsh", 43, "stonemaul", 3,
-    "Draz'Zilb, an ogre who spoke with unexpected polish, was the only one trying to learn who had attacked the old village. Hearts and tongues from the black whelps and hatchlings would let him trace the source.",
-    "While Mok'Morokk wallowed in power and Tharg grieved, Draz'Zilb wanted to know which dragon had brought her spawn to Stonemaul Village.",
+    "Draz'Zilb, an ogre who spoke with unexpected polish, believed he was the only one trying to learn who had attacked the old village. Hearts and tongues from the black whelps and hatchlings would let him trace the source.",
+    "Draz'Zilb scorned Mok'Morokk for wallowing in power while Tharg grieved, and wanted to know which dragon had brought her spawn to Stonemaul Village.",
     "Draz'Zilb called the collection a perilous affair and began delving into the arcane to trace the black menace.",
     "The whelps' hearts and tongues reached Draz'Zilb, who set to work tracing the dragons' origin.")
 q(1170, "The Brood of Onyxia", "Dustwallow Marsh", 43, "stonemaul", 4,
@@ -2949,10 +2949,10 @@ q(1171, "The Brood of Onyxia", "Dustwallow Marsh", 43, "stonemaul", 3,
     "Mok'Morokk sent word back to Draz'Zilb that the clan would stay where it was, away from the black dragons.",
     "The overlord's answer to the dragon threat was to stay put. Draz'Zilb had to hear it.",
     "Draz'Zilb called Mok'Morokk a lazy coward. The overlord had been strong while Rexxar led, he said, but power had changed him, and something had to be done.",
-    "Draz'Zilb decided the overlord who demanded service instead of serving could not be left in charge.", true)
+    "Draz'Zilb said the overlord demanded service instead of serving, and that something had to be done.", true)
 q(1172, "The Brood of Onyxia", "Dustwallow Marsh", 45, "stonemaul", 4,
     "Onyxia's brood was scattered across the Dragonmurk. Draz'Zilb wanted her eggs in the Wyrmbog destroyed before more whelps hatched, or Stonemaul Village could never be reclaimed.",
-    "The Wyrmbog was surely Onyxia's lair. Draz'Zilb asked that her eggs be found and smashed, and hinted at other plans for Mok'Morokk.",
+    "Draz'Zilb was sure the Wyrmbog held Onyxia's lair. He asked that her eggs be found and smashed, and hinted at other plans for Mok'Morokk.",
     "Draz'Zilb said it would be some time before Onyxia could produce more eggs. Then he asked for one last service, to drive Mok'Morokk out by force so the clan could choose a new leader.",
     "Onyxia's eggs were destroyed. Draz'Zilb gave thanks on behalf of his people and named Tharg as a worthy leader, if not for his age and injuries.", true)
 fallback("The Brood of Onyxia", "Dustwallow Marsh", "stonemaul", "1170,1171,1172",
@@ -2962,13 +2962,13 @@ fallback("The Brood of Onyxia", "Dustwallow Marsh", "stonemaul", "1170,1171,1172
     "The Stonemaul's struggle with the black dragons went on.")
 q(1173, "Challenge Overlord Mok'Morokk", "Dustwallow Marsh", 45, "stonemaul", 5,
     "Mok'Morokk laughed at the challenge and promised a good beating whenever his challenger was ready.",
-    "The overlord accepted the duel with a roar, sure of crushing the one who dared face him.",
+    "The overlord scoffed at the challenge, sure he would crush the one who dared face him.",
     "Mok'Morokk fled like a frightened child. Draz'Zilb said the Stonemaul could now choose a leader to take them home.",
     "The cowardly overlord was driven out of Brackenwall, and the Stonemaul were free to appoint someone new.")
 hl(1172, "Onyxia's eggs in the Wyrmbog were destroyed. Draz'Zilb gave thanks for his people, then asked that Mok'Morokk be driven out.",
     "Draz'Zilb said Onyxia would need time to lay more eggs, and turned to removing the clan's coward of an overlord.")
 hl(1173, "Mok'Morokk fled from the challenge. Draz'Zilb said the Stonemaul could at last choose a leader to take them home.",
-    "The overlord ran, and the Stonemaul were free to pick a new leader.")
+    "Overlord Mok'Morokk ran, and the Stonemaul Clan was free to pick a new leader.")
 q(693, "Wand over Fist", "Arathi Highlands", 39, "trelane", 3,
     "Skuerto had traced the first of Trelane's items. Kor'gresh had the wand in Boulderfist Hall and was learning to use it, blasting his own kin with ice to keep them in line.",
     "The wand belonged to Trelane, and the ogre Kor'gresh was close to mastering it. Skuerto wanted it taken back from Boulderfist Hall.",
@@ -2977,7 +2977,7 @@ q(693, "Wand over Fist", "Arathi Highlands", 39, "trelane", 3,
 q(694, "Trelane's Defenses", "Arathi Highlands", 39, "trelane", 3,
     "Ogres surrounded the Tower of Arathor in Stromgarde. Its defenses could be woken with gems the Boulderfist shaman had stolen, once Kryten enchanted one as a key.",
     "Skuerto's plan needed an azure agate from the Boulderfist shaman. Kryten knew the spell to turn it into a key for the tower's defenses.",
-    "Kryten marveled at the agate and set about enchanting it.",
+    "Kryten praised the find and set about enchanting the agate.",
     "The azure agate reached Kryten, who began casting the spell to make it a key.")
 q(695, "An Apprentice's Enchantment", "Arathi Highlands", 39, "trelane", 3,
     "Kryten's enchanted gem would wake the tower's defenses when pressed against a pedestal at its base. He sent it with instructions to hear the rest from Skuerto.",
@@ -3035,14 +3035,14 @@ q(967, "The Tower of Althalaxx", "Ashenvale", 18, "althalaxx", 3,
     "Balthule's master was Delgren the Purifier, a paladin helping the Sentinels defend the forests against demons and the undead. Delgren had to know about the cult's operations at once, and he was at Maestra's Post in Ashenvale.",
     "Balthule feared the Dark Strand grew more dangerous by the hour. His letter was for Delgren the Purifier at Maestra's Post.",
     "Delgren read Balthule's letter and called the news disturbing. He helped the Sentinels destroy demons and undead wherever they were found, and had come to respect the night elves as allies.",
-    "At Maestra's Post, Delgren the Purifier remarked that the messenger looked well equipped for the job, then read Balthule's warning with concern.", true)
+    "At Maestra's Post, Delgren the Purifier remarked that the courier seemed rather well armed for a messenger, then read Balthule's warning with concern.", true)
 q(970, "The Tower of Althalaxx", "Ashenvale", 21, "althalaxx", 3,
     "Delgren had been fighting the Dark Strand at Ordil'Aran, northeast of Maestra's Post. One of the cultists there carried a soul gem he believed held the secret of the cult's power.",
     "The Cult of the Dark Strand was a thorn in Delgren's side. A soul gem from Ordil'Aran might let him decipher its secrets.",
     "Delgren found dark magic in the soulstone and set about learning what was trapped inside.",
     "The soul gem from Ordil'Aran reached Delgren, who began to draw out the secret it held.", true)
 q(973, "The Tower of Althalaxx", "Ashenvale", 24, "althalaxx", 4,
-    "The soul gem pointed to Ilkrud Magthrull, a powerful orc warlock at the Fire Scar Shrine in southwestern Ashenvale. Delgren had thought him only an annoyance until now.",
+    "Delgren knew of Ilkrud Magthrull, a powerful orc warlock at the Fire Scar Shrine in southwestern Ashenvale. He had thought him only an annoyance until now.",
     "Ilkrud Magthrull's time had come, Delgren decided. The warlock lived at the Fire Scar Shrine, a place of great evil.",
     "Ilkrud Magthrull was dead. Delgren praised the deed and turned to the warlock's writings.",
     "Delgren called facing down a warlock of Ilkrud's power a grand thing, and began reading what Ilkrud had left behind.", true)
@@ -3081,10 +3081,10 @@ q(496, "Elixir of Suffering", "Hillsbrad Foothills", 22, "lydon", 2,
     "The tongues and ichor were perfect specimens. Lydon admitted they had brought him a hint of joy on another miserable day.",
     "Lydon had his bear tongues and creeper ichor, and gave his thanks in his gloomy way.", true)
 q(499, "Elixir of Suffering", "Hillsbrad Foothills", 22, "lydon", 2,
-    "Lydon mixed the tongues and ichor into what he named the Elixir of Suffering. Umpi, the frog he kept in his workshop, was to have the first taste.",
+    "Lydon mixed the tongues and ichor into what he named the Elixir of Suffering. The first taste was for Umpi, the frog he kept in his workshop.",
     "The new elixir needed a test before the Dark Lady used it on humans and Scourge. Lydon chose Umpi, his frog assistant.",
     "A taste of the Elixir of Suffering went to Umpi, who answered with a croak.",
-    "The first dose of Lydon's elixir went to Umpi the frog, who croaked.", true)
+    "Umpi tasted the Elixir of Suffering first. The frog gave only a croak.", true)
 fallback("Elixir of Suffering", "Hillsbrad Foothills", "lydon", "496,499",
     "Apothecary Lydon of Tarren Mill was brewing poisons for the Forsaken's new plague.",
     "Lydon's Elixir of Suffering began with reagents gathered around Tarren Mill.",
@@ -3129,7 +3129,7 @@ q(524, "Elixir of Agony", "Hillsbrad Foothills", 30, "lydon", 4,
     "The Deathguards held captured farmers next door to Lydon. Darthalia had suspected a Stormwind strategist among them, but he was found dead in the Plaguelands, so she left the prisoners to Lydon.",
     "Lydon tainted the stolen stout with his elixir and meant the keg for the room where the Deathguards kept their captured farmers.",
     "The tainted keg was set on the dusty rug in the prisoners' room.",
-    "The plagued stout was set down on the rug where the captured farmers were held.", true)
+    "The plagued keg now rested in the farmers' room, as Lydon had asked.", true)
 fallback("Elixir of Agony", "Hillsbrad Foothills", "lydon", "509,513,515,517,524",
     "Apothecary Lydon was preparing an Elixir of Agony for the Dark Lady.",
     "The Elixir of Agony passed between Lydon in Tarren Mill and the apothecaries of the Undercity.",
@@ -3140,22 +3140,22 @@ hl(524, "Lydon's Elixir of Agony went into a keg of stolen dwarven stout. The ke
 
 q(495, "The Crown of Will", "Hillsbrad Foothills", 39, "crown", 3,
     "Mug'Thol and his ogres had been sent to Alterac for the Crown of Will, on Lady Sylvanas's behalf. Instead he put it on, and it let him resist the possession that bound him to her.",
-    "Sharlindra said the Dark Lady wanted an example made of Mug'Thol. Her lieutenant Melisara waited in Tarren Mill.",
+    "Sharlindra said the Dark Lady wanted an example made of Mug'Thol. The report was to go to Melisara, Sharlindra's lieutenant in Tarren Mill.",
     "Melisara wasted no time on chatter. Mug'Thol was an irritant, she said, and would be dealt with quickly.",
     "Melisara of Tarren Mill took up the matter of Mug'Thol and promised a thorough end to him.", true)
 q(518, "The Crown of Will", "Hillsbrad Foothills", 39, "crown", 3,
-    "Mug'Thol's Crushridge ogres had overrun the ruins of Alterac. Melisara, Sharlindra's lieutenant in Tarren Mill, wanted their numbers thinned before any punishment fell on him.",
+    "Mug'Thol's Crushridge ogres had overrun the ruins of Alterac. Melisara of Tarren Mill wanted their numbers thinned before Mug'Thol himself could be punished.",
     "In Tarren Mill, Melisara's plan against Mug'Thol began by softening up the Crushridge in the Ruins of Alterac.",
     "The snow ran red with ogre blood, but Melisara wanted the Crushridge's spirit crushed along with their numbers.",
     "The Crushridge lost many ogres, and Melisara meant to keep pressing them.", true)
 q(519, "The Crown of Will", "Hillsbrad Foothills", 41, "crown", 3,
     "Targ, Muckrake and Glommus were Mug'Thol's lieutenants and loyal to him. Melisara wanted their heads before the ogre lord's own.",
-    "Melisara of Tarren Mill asked for the heads of Mug'Thol's three lieutenants. Only then would she send anyone after the ogre who had stolen the Crown of Will.",
+    "Melisara of Tarren Mill asked for the heads of Mug'Thol's three lieutenants. After that, only Mug'Thol's own head, crown and all, would remain.",
     "Three heads reached Melisara, who planned to mount them on pikes above Alterac, with Mug'Thol's to join them.",
     "Targ, Muckrake and Glommus were dead, and only Mug'Thol remained.", true)
 q(520, "The Crown of Will", "Hillsbrad Foothills", 43, "crown", 4,
     "With his lieutenants dead, Mug'Thol was likely expecting trouble. Melisara wanted his head and the Crown of Will.",
-    "Killing Mug'Thol would end the Crushridge resistance. Melisara expected him to be reluctant to give up the crown.",
+    "Melisara said killing Mug'Thol would end the Crushridge resistance. She expected him to be reluctant to give up the crown.",
     "Mug'Thol was dead. Melisara said his head would adorn the highest peak of Alterac's ruins, and the Deathguard would sweep away the rest of the Crushridge.",
     "Mug'Thol's head and the Crown of Will reached Melisara, who called the duty well done.", true)
 q(521, "The Crown of Will", "Undercity", 43, "crown", 4,
@@ -3168,7 +3168,7 @@ fallback("The Crown of Will", "Hillsbrad Foothills", "crown", "495,518,519,520,5
     "Melisara in Tarren Mill led the Forsaken effort against Mug'Thol and his Crushridge ogres.",
     "The Forsaken campaign against Mug'Thol moved forward.",
     "Melisara's work against the Crushridge went on.")
-hl(520, "Mug'Thol was killed and the Crown of Will taken from him. Melisara meant to set his head on the highest peak of Alterac.",
+hl(520, "Mug'Thol was killed and the Crown of Will taken from him. Melisara meant to set his head on the highest peak of the ruins of Alterac.",
     "Mug'Thol died in the ruins of Alterac, and his head and crown went to Melisara.")
 hl(521, "Sharlindra received the Crown of Will for Lady Sylvanas. She marveled that so simple a relic had let an ogre defy the Dark Lady.",
     "Sharlindra in the Undercity took the Crown of Will, bound for the Dark Lady.")
@@ -3179,8 +3179,8 @@ q(498, "The Rescue", "Hillsbrad Foothills", 22, "perenolde", 3,
     "Drull and Tog'thar were free. Krusk learned that the humans had meant to make slaves of them, and that Gol'dir, their leader, had been taken elsewhere.",
     "The two captives were rescued from Durnholde. Gol'dir was still missing, and Krusk had no lead yet.")
 q(533, "Infiltration", "Hillsbrad Foothills", 34, "perenolde", 3,
-    "Rumor at last pointed to Gol'dir's whereabouts. Humans had been moving the captured orc leader, and Krusk turned to the large Syndicate camp north of Tarren Mill.",
-    "In Tarren Mill, Krusk wanted any papers the Syndicate camp to the north could give up. Gol'dir, his captured leader, was worse off by the day.",
+    "Rumor at last pointed to Gol'dir's whereabouts. Humans had been moving the captured orc, and Krusk turned to the large Syndicate camp north of Tarren Mill.",
+    "In Tarren Mill, Krusk wanted any papers the Syndicate camp to the north could give up. He feared Gol'dir's prospects grew worse by the day.",
     "The papers showed where Gol'dir was held. Krusk hoped the Syndicate would be less prepared this time.",
     "The documents from the camp gave Krusk the place where Gol'dir was held.")
 q(503, "Gol'dir", "Alterac Mountains", 36, "perenolde", 4,
@@ -3190,7 +3190,7 @@ q(503, "Gol'dir", "Alterac Mountains", 36, "perenolde", 4,
     "Gol'dir was freed in Strahnbrad. He brushed off his suffering and said he had news for whoever now led his warriors.")
 q(506, "Blackmoore's Legacy", "Hillsbrad Foothills", 36, "perenolde", 4,
     "Aliden Perenolde, the Syndicate's leader, had visited Gol'dir and boasted of enslaving the orcs who opposed him, as his father and Blackmoore had planned. His mistress Elysa wore the pendant the Warchief wanted.",
-    "Gol'dir had news for Krusk. Perenolde wanted orcs in chains again, and the pendant Thrall sought hung around the neck of his mistress, Elysa.",
+    "Gol'dir had news for Krusk. Perenolde wanted orcs in chains again, and his mistress Elysa wore the pendant Thrall sought.",
     "Krusk swore that the orcs would never submit to the humans. Stopping Perenolde became his mission, along with recovering the Warchief's trinket.",
     "The news reached Krusk in Tarren Mill. Perenolde and the pendant were now a single target.")
 hl(506, "Gol'dir's news reached Krusk. Aliden Perenolde wanted orcs enslaved as Blackmoore had, and his mistress Elysa wore the Warchief's pendant.",
@@ -3212,7 +3212,7 @@ q(560, "Farren's Proof", "Hillsbrad Foothills", 32, "farren", 2,
     "Redpath took the heads and guessed whose errand it was. He thanked the helper, since Southshore needed hard workers to stay safe.",
     "Marshal Redpath received the murloc heads and counted the work toward Southshore's protection.", true)
 q(561, "Farren's Proof", "Hillsbrad Foothills", 32, "farren", 2,
-    "Redpath had new orders for Lieutenant Orinelle. Lieutenant Farren Orinelle was to turn to the naga on the Eastern Strand and report in person when he had results.",
+    "Redpath had new orders for Lieutenant Farren Orinelle. The naga on the Eastern Strand were his next task, and he was to report in person once he had results.",
     "Marshal Redpath sent word back to Farren. The naga on the Eastern Strand were next.",
     "Farren laughed at the orders. Redpath must have heard the same news he had, and Farren swore the marshal would get no promotion from his toil.",
     "Farren heard Redpath's orders about the naga and had plans of his own for them.", true)
@@ -3220,7 +3220,7 @@ fallback("Farren's Proof", "Hillsbrad Foothills", "farren", "559,560,561",
     "Lieutenant Farren Orinelle owed Marshal Redpath proof of his work against Southshore's murlocs.",
     "Farren's proof for Redpath passed through other hands.",
     "Word between Farren and Redpath moved on.",
-    "The matter of Farren's proof was settled for the moment.")
+    "Another message passed between Farren and Marshal Redpath.")
 q(562, "Stormwind Ho!", "Hillsbrad Foothills", 32, "farren", 3,
     "Lieutenant Farren Orinelle's old mentor in the Stormwind guard wrote that High Command worried about the naga. Proving useful against them might win a transfer, but Farren could not handle naga himself.",
     "Farren Orinelle hated his post in Southshore and saw a way back to Stormwind in the naga threat. He needed someone else to fight them.",
@@ -3232,7 +3232,7 @@ q(563, "Reassignment", "Stormwind City", 32, "farren", 3,
     "Samuelson was pleased that his pupil had applied himself to the naga. He would weigh the report when he next reviewed assignments.",
     "Major Samuelson read Farren's report and promised to consider it at the next review.")
 hl(563, "Farren's report on the naga reached Major Samuelson, who promised to weigh it when he reviewed assignments.",
-    "Major Samuelson received his old pupil's report and would consider a transfer the next month.")
+    "Major Samuelson received Farren Orinelle's report on the naga and would weigh a transfer at the next month's review.")
 
 q(659, "Hints of a New Plague?", "Arathi Highlands", 33, "goshek", 3,
     "Phin Odelic led a band of adventurers in Southshore. His cousin had put down a dog named Stanley after it grew huge and turned savage, and Phin blamed the undead.",
@@ -3246,7 +3246,7 @@ q(658, "Hints of a New Plague?", "Arathi Highlands", 36, "goshek", 3,
     "The courier's papers were in Quae's hands at last.", true)
 q(657, "Hints of a New Plague?", "Arathi Highlands", 36, "goshek", 3,
     "The folder showed that Apothecary Jorell was running deadly experiments at Go'Shek. Quae was hurt from a clash with orcs, so Kinelory needed protection to steal the research not yet sent to Tarren Mill.",
-    "Quae could not tell what Apothecary Jorell's experiments at the farm had to do with Hillsbrad, but she would not let them go on. Hurt in a clash with orcs, she could not go with Kinelory to the farm.",
+    "Quae could not tell what Apothecary Jorell's experiments had to do with Hillsbrad, but Phin would not want them to go on. Hurt in a clash with orcs, she could not go with Kinelory to the farm.",
     "Kinelory said she would destroy every Forsaken herself if it brought Phin peace. Phin had done much for them since the plague.",
     "Kinelory agreed to go down to the farm and would start when her escort was ready.", true)
 q(660, "Hints of a New Plague?", "Arathi Highlands", 37, "goshek", 4,
@@ -3265,7 +3265,7 @@ fallback("Hints of a New Plague?", "Arathi Highlands", "goshek", "657,658,659,66
     "The watch on the Go'Shek Farm moved forward.",
     "Phin Odelic's investigation went on.")
 hl(661, "Phin Odelic heard that Quae and Kinelory were alive, with items from Jorell's farm. He hoped to learn what the Forsaken were up to.",
-    "Word of the Go'Shek raid reached Phin in Southshore, and he thanked the whole group.")
+    "Word of the Go'Shek raid reached Phin in Southshore, and he gave a reward along with his group's thanks.")
 for _, id in ipairs({496, 499, 501, 502, 509, 513, 515, 517, 524, 495, 518, 519, 520, 521, 536, 559, 560, 561, 562, 563, 659, 658, 657, 660, 661}) do src(id) end
 src(498, "LoreForever npc:krusk (wiki: Krusk)")
 src(533, "LoreForever npc:krusk (wiki: Krusk)")
@@ -3287,7 +3287,7 @@ P.threads.world_hammerfall = "the defense of Hammerfall"
 P.threads.alliance_dunmodr = "the fighting around Dun Modr"
 P.threads.alliance_darkshore = "Darkshore's settlements"
 q(510, "Foreboding Plans", "Hillsbrad Foothills", 34, "syndicate", 3,
-    "Syndicate papers in Alterac listed supplies that were needed soon. Beside food and weapons they asked for masks, oil and poison, for an important mission against Southshore.",
+    "Syndicate papers in Alterac listed supplies that were needed soon. Besides food and weapons they asked for masks, oil and poison, for an important mission against Southshore.",
     "A Syndicate supply list spoke of an urgent mission against Southshore. Magistrate Henry Maleb needed to see it.",
     "Maleb read the documents and judged that the Syndicate had waged war on Southshore.",
     "The supply list reached Magistrate Maleb, who now assumed the Syndicate meant war on his town.")
@@ -3299,7 +3299,7 @@ q(511, "Encrypted Letter", "Hillsbrad Foothills", 34, "syndicate", 3,
 -- 511 shares its title with the Northshire rogue's letter (3102), so the title
 -- context names neither Alterac nor a class.
 P.quests["Encrypted Letter"] = {zone = false, thread = false, importance = 2,
-    why = {"A sealed letter needed a reader who could make sense of it.", "The letter's seal and writing pointed to someone who could explain it."},
+    why = {"A sealed letter needed a reader who could make sense of it.", "The letter's writing pointed to someone who might explain it."},
     after = {"The letter was handed to someone who could judge it.", "The sealed letter changed hands."},
     source = {"corpus_vanilla_quests.txt quests 511,3102"}}
 q(514, "Letter to Stormpike", "Ironforge", 34, "syndicate", 3,
@@ -3309,22 +3309,22 @@ q(514, "Letter to Stormpike", "Ironforge", 34, "syndicate", 3,
     "Stormpike welcomed the encrypted letter and set to work on it.")
 q(551, "The Ensorcelled Parchment", "Hillsbrad Foothills", 40, "syndicate", 3,
     "A spell hid the writing on a parchment found in Alterac. Only one word at its top could be read, Nagaz.",
-    "The parchment carried a spell that made it indecipherable, except for the name Nagaz. Loremaster Dibbs in Southshore was the nearest scholar.",
-    "Dibbs sighed at more encrypted notes from Alterac. He wished he could decipher them, but lacked the knowledge.",
+    "The parchment carried a spell that made it unreadable, except for the name Nagaz. Loremaster Dibbs in Southshore was asked to look at it.",
+    "Dibbs recognized more encrypted notes from Alterac. He wished he could decipher them, but lacked the knowledge.",
     "Dibbs could not read the ensorcelled parchment.")
 q(554, "Stormpike's Deciphering", "Ironforge", 40, "syndicate", 3,
     "Dibbs sent the parchment to Prospector Stormpike in Ironforge, whom he called a master of decryption. He had been sending Stormpike a lot of business lately.",
-    "Only Prospector Stormpike, at the Prospectors' headquarters in Ironforge, had a chance of reading the spell-bound parchment.",
+    "With luck, Prospector Stormpike at the Prospectors' headquarters in Ironforge could make sense of the spell-bound parchment.",
     "Stormpike found an intricate spell woven through the parchment. Untangling it would take time, so he bought it and promised to send word if its contents proved interesting.",
-    "Prospector Stormpike purchased the parchment to study at his leisure, and promised to send for its finder.")
+    "Prospector Stormpike bought the parchment to study at his leisure, and promised to send for its finder if it proved interesting.")
 q(522, "Assassin's Contract", "Hillsbrad Foothills", 38, "syndicate", 3,
     "A contract for the murder of Magistrate Henry Maleb had been sealed in red wax with a distinctive signet ring.",
-    "A shadowy assassin carried a contract with Magistrate Maleb's name on it. Its seal bore the mark of a signet ring.",
+    "Someone had paid for Magistrate Maleb's death, and the contract said so. Its seal bore the mark of a signet ring.",
     "Maleb read the contract and understood the latest attack on Southshore. The Syndicate was after him, as it had been after the last magistrate.",
     "The contract reached Maleb, who saw that the Syndicate meant to kill him as it had meant to kill his predecessor.")
 q(523, "Baron's Demise", "Alterac Mountains", 40, "syndicate", 4,
     "The contract was signed by Baron Vardus, a noble of old Alterac known for a cold heart and brutal ways. Maleb wanted him found among the Syndicate's haunts, at Strahnbrad or in the valley beyond.",
-    "Magistrate Maleb wanted Baron Vardus brought to justice for sending his thugs against Southshore. The baron hid in the Syndicate's haunts north of the town.",
+    "Magistrate Maleb wanted Baron Vardus brought to justice for sending his thugs against Southshore. He guessed the baron was among the Syndicate's haunts north of the town.",
     "Baron Vardus was dead. Maleb said his head rested easier knowing the villain had lost his.",
     "Vardus's head reached Magistrate Maleb, who could rest a little easier.")
 hl(523, "Baron Vardus, who had signed the contract on Maleb's life, was killed. The magistrate said his own head rested easier.",
@@ -3341,7 +3341,7 @@ q(566, "WANTED: Baron Vardus", "Alterac Mountains", 40, "syndicate", 4,
     "Baron Vardus was dead, and Darthalia counted one less Syndicate leader.")
 
 q(546, "Souvenirs of Death", "Hillsbrad Foothills", 25, "tarrenmill", 2,
-    "Deathguard Samsa envied anyone sent to fight the humans of Hillsbrad while the Deathguard stood guard in Tarren Mill. Human skulls were Samsa's collection, and thirty would do.",
+    "Deathguard Samsa envied anyone sent to fight the humans of Hillsbrad while Samsa stood guard in Tarren Mill. Human skulls were Samsa's collection, and thirty would do.",
     "Stuck on guard duty in Tarren Mill, Deathguard Samsa asked for human skulls from the long fighting in Hillsbrad.",
     "Samsa called the skulls precious and beautiful, and paid as promised.",
     "Thirty human skulls reached Deathguard Samsa, who was delighted.")
@@ -3357,17 +3357,17 @@ q(567, "Dangerous!", "Hillsbrad Foothills", 28, "tarrenmill", 3,
     "The four wanted humans were dead, and the bounty was paid in Tarren Mill.")
 q(552, "Helcular's Revenge", "Hillsbrad Foothills", 33, "helcular", 3,
     "Helcular had nearly become a lich when a human mob found his ritual lair, killed him and buried him in Southshore's cemetery. Novice Thaivand, his apprentice, wanted vengeance, and first needed his rod back from the yeti who had taken the lair.",
-    "Novice Thaivand meant to bring vengeance on Southshore for the death of Helcular, a wizard the town's people had killed. The rod at the heart of the plan was with the yeti.",
+    "Novice Thaivand meant to bring vengeance on Southshore, where a human mob had buried the slain wizard Helcular. The rod at the heart of the plan was with the yeti.",
     "Helcular's rod was recovered from the yeti, and Thaivand was delighted.",
     "Thaivand had the Rod of Helcular back.", true)
 q(553, "Helcular's Revenge", "Hillsbrad Foothills", 33, "helcular", 4,
-    "Helcular had built three pyres for his greatest spell. Charged at the flames of Azel and Veraz in the Foothill Caverns and Uzel in a cave above, the rod was to be driven into his grave in Southshore.",
+    "Helcular had built three pyres for his greatest spell. His rod had to be charged at the flames of Azel, Veraz and Uzel, then driven into his grave in Southshore.",
     "Thaivand handed over Helcular's rod with instructions. Three flames would charge it, and Helcular's grave in guarded Southshore would receive it.",
     "The charged rod went into Helcular's grave, and a great rumbling rose from the ground.",
     "Helcular's grave took the rod, and the earth of the Southshore cemetery rumbled.", true)
 fallback("Helcular's Revenge", "Hillsbrad Foothills", "helcular", "552,553",
     "Novice Thaivand sought revenge on Southshore for the death of Helcular, the novice's master.",
-    "Helcular's apprentice planned a ritual against the town that had killed the wizard.",
+    "Helcular's apprentice planned a ritual against Southshore, where the slain wizard lay buried.",
     "Thaivand's plan for Helcular's revenge moved forward.",
     "Another part of the apprentice's ritual was done.")
 hl(553, "Helcular's grave in Southshore took the Rod of Helcular, charged at three flames, and the ground rumbled.",
@@ -3394,14 +3394,14 @@ q(7321, "Soothing Turtle Bisque", "Hillsbrad Foothills", 31, "bisque", 2,
     "Turtle meat and spices reached Christoph Jeffcoat, and the bisque could be made.", true)
 fallback("Soothing Turtle Bisque", "Hillsbrad Foothills", "bisque", "555,7321",
     "A cook in the foothills needed snapjaw meat from Lake Lordamere and soothing spices for turtle bisque.",
-    "Turtle bisque was a favorite in the foothills, and the snapjaws of Lake Lordamere were hard to reach.",
+    "Turtle bisque had gone unmade because its cook could no longer hunt Lake Lordamere's snapjaws.",
     "The cook had the ingredients for turtle bisque.",
     "The turtle meat and spices were delivered.")
 q(564, "Costly Menace", "Hillsbrad Foothills", 34, "southshore", 2,
     "Darren Malvew of Southshore had lost horses to the undead, the Syndicate and other scoundrels. Worst of all were the mountain lions that came down from Alterac.",
     "Southshore's horses kept falling to mountain lions from the hills. Darren Malvew dared any would-be hero to do something about it.",
     "The news delighted Darren, who wished a war hero had turned up from day one to deal with the beasts.",
-    "The Alterac lions were thinned, and Darren Malvew's horses were safer.")
+    "Many Alterac mountain lions were killed, and Darren Malvew called it great news.")
 q(500, "Crushridge Bounty", "Alterac Mountains", 36, "southshore", 3,
     "Crushridge ogres had dug a mound near ruined Alterac and taken the ruins. Marshal Redpath of Southshore feared they would move into the foothills next.",
     "Marshal Redpath offered a bounty on the Crushridge ogres of Alterac, paid for their dirty knucklebones.",
@@ -3420,7 +3420,7 @@ q(676, "The Hammer May Fall", "Arathi Highlands", 32, "hammerfall", 3,
 
 q(634, "Plea To The Alliance", "Arathi Highlands", 31, "dunmodr", 3,
     "Dun Modr's defenders still waited for reserves from Ironforge. Rhag Garmason asked Captain Nials at Refuge Pointe whether the Alliance could spare soldiers to retake Dun Modr and the Thandol Span.",
-    "Rhag Garmason had heard of an Alliance camp at Refuge Pointe in Arathi. He sent a plea to its leader, Captain Nials, for soldiers.",
+    "Roggo knew of an Alliance camp at Refuge Pointe in Arathi. Rhag Garmason sent a plea to its leader, Captain Nials, for soldiers.",
     "Nials grieved for Longbraid's soldiers, but Stromgarde had fallen too. Refuge Pointe would not leave the Highlands until Stromgarde was retaken, so Longbraid would be on his own.",
     "Captain Nials could spare no one, and would send word to Longbraid that Dun Modr stood alone.")
 hl(634, "Captain Nials at Refuge Pointe could spare no soldiers for Dun Modr. Stromgarde had fallen, and his people would not leave Arathi until it was retaken.",
@@ -3431,7 +3431,7 @@ q(647, "MacKreel's Moonshine", "Hillsbrad Foothills", 30, "dunmodr", 2,
     "Bilger had expected the little debtor to be late again. He welcomed the moonshine to warm a brisk day.",
     "Foggy's moonshine reached Brewmeister Bilger in Southshore in time, and Bilger was pleased.")
 q(5321, "The Sleeper Has Awakened", "Ashenvale", 20, "darkshore", 3,
-    "Kerlonian Evershade, a druid of the Claw newly woken from the Emerald Dream, kept falling asleep on his way to Maestra's Post. His Horn of Awakening could rouse him.",
+    "Kerlonian Evershade, newly woken from the Emerald Dream, kept falling asleep on his way to Maestra's Post. His horn, left in a nearby chest, could rouse him.",
     "Kerlonian Evershade had stopped in Darkshore for a nap on his way to meet Liladris Moonriver. Sleep kept overtaking him, and the road south was long.",
     "Kerlonian reached Maestra's Post. Liladris Moonriver was glad he had made it, and expected to find him asleep somewhere nearby.",
     "Kerlonian was shown the way to Maestra's Post, and Liladris Moonriver gave thanks.")
@@ -3456,13 +3456,13 @@ P.threads.world_malem = "the missing Malems of Darnassus"
 P.threads.world_reclaimers = "the Reclaimers' salvage in Desolace"
 q(1480, "The Corrupter", "Desolace", 33, "burningblade", 3,
     "A flayed demon skin was marked in red with some strange script, and a symbol at its bottom looked like a signature. Maurin Bonesplitter at Ghost Walker Post might read it.",
-    "The rotten, pliable skin carried red markings and what seemed a signature. Maurin Bonesplitter, the Forsaken scholar who watched the Burning Blade, was the one to ask.",
+    "The rotten, pliable skin carried red markings and what seemed a signature. Maurin Bonesplitter, the Forsaken warlock at Ghost Walker Post, was the one to ask.",
     "The runes were an old language, Maurin said, remotely like Eredun. It was a contract signed by a demon named Lord Azrethoc.",
     "The skin was a demonic contract, Maurin said, bearing the signature of Lord Azrethoc.", true)
 q(1481, "The Corrupter", "Desolace", 33, "burningblade", 3,
     "Maurin believed he could scry for Lord Azrethoc with the right reagents. Breaking the demon's wards against scrying came first, and that needed the scalp of a Hatefury shadowstalker.",
     "Breaking a demon lord's wards was dangerous work. Maurin needed a scalp from a Hatefury shadowstalker in the northeastern ruins, and warned that the wrong one could kill them both.",
-    "That the shadowstalkers had failed impressed Maurin. The scalp would serve, and he had gathered most of the other reagents himself.",
+    "That the shadowstalkers had not prevailed impressed Maurin. The scalp would serve, and he had already gathered some of the other reagents himself.",
     "The Hatefury scalp reached Maurin, who now needed only a focus for his spell.", true)
 q(1482, "The Corrupter", "Desolace", 35, "burningblade", 3,
     "Maurin's spell needed an oracle crystal, crafted by the naga for their oracles. Slitherblade naga kept them on the coral reef northwest of Ghost Walker Post.",
@@ -3471,7 +3471,7 @@ q(1482, "The Corrupter", "Desolace", 35, "burningblade", 3,
     "The oracle crystal reached Maurin, and the spell to find Lord Azrethoc began.", true)
 q(1484, "The Corrupter", "Desolace", 33, "burningblade", 3,
     "Azrethoc proved more dangerous than Maurin had expected. Maurin worried that Takata Steelblade would doubt him, and wanted the swordsman told without being pressed.",
-    "The scrying had shown a demon lord too strong for Maurin alone. It had to reach Takata Steelblade, who led the Horde's fight against the Burning Blade.",
+    "The scrying had shown a demon lord far more dangerous than Maurin expected. Word had to reach Takata Steelblade, or his honor would be insulted.",
     "Takata had watched the demon's apparition and judged it stronger than Maurin. His duties kept him at Ghost Walker Post, so he could not hunt it himself.",
     "Takata Steelblade doubted Maurin could defeat Azrethoc, and was bound by his duties to stay.", true)
 q(1488, "The Corrupter", "Desolace", 40, "burningblade", 5,
@@ -3480,8 +3480,8 @@ q(1488, "The Corrupter", "Desolace", 40, "burningblade", 5,
     "Takata called it a mighty victory. The Burning Blade would fail, he said, and one day his people might have a safe home again.",
     "Lord Azrethoc was dead, and Takata's hope for the Horde in Desolace returned.", true)
 fallback("The Corrupter", "Desolace", "burningblade", "1480,1481,1482,1484,1488",
-    "A demon's contract found in Desolace worried the Horde at Ghost Walker Post.",
-    "Maurin Bonesplitter and Takata Steelblade sought the demon behind a Burning Blade contract.",
+    "A torn skin covered in red markings turned up among the Horde at Ghost Walker Post.",
+    "Maurin and Takata at Ghost Walker Post stood against the Burning Blade in Desolace.",
     "The hunt for the demon behind the Burning Blade moved forward.",
     "Another step against the Corrupter was taken.")
 hl(1488, "Lord Azrethoc and his warlock servant were killed. Takata Steelblade called it a mighty victory and began to hope for a safe home.",
@@ -3495,12 +3495,12 @@ q(1437, "Vahlarriel's Search", "Desolace", 33, "malem", 3,
 q(1465, "Vahlarriel's Search", "Desolace", 33, "malem", 3,
     "In the wagon lay a pendant, and footprints led south toward a fort where smoke rose from a kept fire. The Malems might have been taken there alive.",
     "The wreck held a pendant and tracks heading south. Word of them had to reach Vahlarriel at Nijel's Point.",
-    "Vahlarriel was furious that the two had come despite warnings. The fort was full of the Burning Blade, orcs devoted to demons, and it was the best lead.",
+    "Vahlarriel was furious that the two had come despite warnings. Locals said the fort was full of the Burning Blade, orcs devoted to demons, and she called it the best lead.",
     "Vahlarriel took the pendant and the news of the tracks, and pointed the search at the Burning Blade's fortress.", true)
 q(1438, "Vahlarriel's Search", "Desolace", 33, "malem", 4,
     "Vahlarriel wanted both Malems found, starting at the fortress. Darnassus cared most that Dalinda came home safe, while Tyranis's motives worried Vahlarriel's superiors.",
     "The search for the Malems led into the Burning Blade's fortress. Meanwhile Vahlarriel would tell Darnassus how things stood.",
-    "Dalinda Malem was alive in the fortress. The Burning Blade had captured her and Tyranis and meant to sacrifice her, and her brother had lately craved arcane knowledge against her people's wishes.",
+    "Dalinda Malem was alive in the fortress, a captive of the Burning Blade with Tyranis. She feared they meant to sacrifice her, and said her brother had lately craved arcane knowledge.",
     "Dalinda was found a captive of the Burning Blade, afraid for her brother Tyranis.", true)
 fallback("Vahlarriel's Search", "Desolace", "malem", "1437,1438,1465",
     "Vahlarriel Demonslayer was searching Desolace for two missing nobles of House Malem.",
@@ -3508,7 +3508,7 @@ fallback("Vahlarriel's Search", "Desolace", "malem", "1437,1438,1465",
     "The search for the Malems moved forward.",
     "Vahlarriel's search for the missing nobles went on.")
 q(1439, "Search for Tyranis", "Desolace", 33, "malem", 4,
-    "The orcs had slaughtered the Malems' guards and servants. Dalinda's brother Tyranis had tried to impress the captors with his arcane knowledge. She would not leave until she knew his fate.",
+    "The orcs had slaughtered the Malems' guards and servants. Tyranis had tried to speak with the captors, hoping to impress them, Dalinda thought. She would not leave until she knew his fate.",
     "Dalinda Malem feared her brother Tyranis would try to join the Burning Blade. She wanted his fate known before she would think of escape.",
     "Tyranis was dead. Dalinda called it terrible but necessary, since her own people would have done it otherwise, and she was ready to escape.",
     "Dalinda learned her brother's fate. She asked forgiveness if her thanks seemed insincere, and prepared to leave the fortress.")
@@ -3529,7 +3529,7 @@ q(1455, "The Karnitol Shipwreck", "Desolace", 39, "reclaimers", 2,
     "Long, deep scratches marked the chest's sides and lid, made by something other than a man or a giant. Inside, it was empty.",
     "Karnitol's chest held nothing. Only strange slashes along its sides hinted at who had opened it.",
     "Kreldig was dismayed that an empty chest would not pay, and wanted to hear more about the slashes.",
-    "Back at Nijel's Point, Kreldig heard the chest was empty and grew curious about the claw marks.", true)
+    "Back at Nijel's Point, Kreldig heard the chest was empty and grew curious about the slashes.", true)
 q(1456, "The Karnitol Shipwreck", "Desolace", 39, "reclaimers", 3,
     "Kreldig suspected the Slitherblade naga, who lived in sunken elven ruins near Ranazjar Isle. Their tidehunters and sea witches were the likeliest thieves.",
     "The slashes on Karnitol's chest pointed Kreldig Ungor to the naga. Karnitol's belongings might be with the strongest of the Slitherblade.",
@@ -3587,7 +3587,7 @@ q(1375, "Khan Shaka", "Desolace", 37, "centaur", 4,
     "Khan Shaka was dead. Warug would keep his head on a pike so Shaka could see the strength of the Magram.",
     "Shaka's head reached Warug, who was overjoyed.")
 q(1380, "Khan Hratha", "Desolace", 42, "centaur", 4,
-    "Uthek turned the Gelkis against the Maraudine. Their khan, Hratha, would answer the war horn atop a bluff in the Valley of Spears, once a mouthpiece was taken from a trusted Maraudine.",
+    "Uthek wanted the Maraudine beaten next. Their khan, Hratha, would answer the war horn atop a bluff in the Valley of Spears, once a mouthpiece was taken from a trusted Maraudine.",
     "Khan Hratha of the Maraudine carried a fragment of a key, and Uthek the Wise wanted it. Blowing the Maraudine war horn would draw him out.",
     "Khan Hratha was dead and the key fragment was Uthek's. She promised the Gelkis would remember the deed when they ruled.",
     "Hratha fell in the Valley of Spears, and his piece of the key went to Uthek the Wise.", true)
@@ -3632,7 +3632,7 @@ q(1387, "Centaur Bounty", "Desolace", 31, "centaur", 2,
     "The centaur ears reached Corporal Melkins, who praised the service to the Alliance.", true)
 fallback("Centaur Bounty", "Desolace", "centaur", "1366,1387",
     "A bounty in Desolace was paid for centaur ears.",
-    "The centaur clans of Desolace threatened the outposts of both factions.",
+    "Both factions wanted the centaur clans of Desolace weakened, one ear at a time.",
     "The bounty on the centaur was paid.",
     "Centaur ears were turned in for the bounty.")
 for _, id in ipairs({1480, 1481, 1482, 1484, 1488, 1437, 1465, 1438, 1439, 1440, 1454, 1455, 1456, 1457,
@@ -3670,7 +3670,7 @@ q(1268, "Suspicious Hoofprints", "Dustwallow Marsh", 35, "shield", 2,
 fallback("Suspicious Hoofprints", "Dustwallow Marsh", "shield", "1268,1284",
     "Hoofprints led away from the burned Shady Rest Inn.",
     "The ruins of the Shady Rest Inn held tracks worth following.",
-    "The hoofprints were reported, and a tracker was sent after them.",
+    "The hoofprints were reported, and a tracker was to be sent after them.",
     "Word of the tracks by the burned inn was passed on.")
 q(1252, "Lieutenant Paval Reethe", "Dustwallow Marsh", 40, "shield", 3,
     "Under the rubble of the inn lay a Theramore guard badge, a gold anchor on white. The name embossed beneath it was Lieutenant Paval Reethe.",
@@ -3689,7 +3689,7 @@ q(1269, "Lieutenant Paval Reethe", "Dustwallow Marsh", 37, "shield", 3,
     "Krog called Reethe a pathetic deserter and had already sent Ogron to track him down.", true)
 fallback("Lieutenant Paval Reethe", "Dustwallow Marsh", "shield", "1252,1259,1269",
     "A Theramore guard badge found at the burned Shady Rest Inn bore the name of Lieutenant Paval Reethe.",
-    "The name Paval Reethe was the clearest clue from the ruined inn.",
+    "A Theramore insignia in the inn's rubble raised the question of who Paval Reethe was.",
     "The question of Paval Reethe was passed along.",
     "Reethe's name entered the inquiry into the burned inn.")
 q(1253, "The Black Shield", "Dustwallow Marsh", 35, "shield", 2,
@@ -3726,7 +3726,7 @@ q(1287, "The Deserters", "Dustwallow Marsh", 38, "shield", 3,
     "Jacken called Reethe a coward. The deserters had thrown him out for raiding the ogres' supplies at Brackenwall, a fight they were too few to risk, and Jacken wanted the meeting forgotten.",
     "Balos Jacken gave up what he knew about Reethe, then asked to be left alone.",
     "Vimes would send Lieutenant Caldwell to deal with the deserters at Lost Point and to find Reethe in the marsh.",
-    "Captain Vimes heard Jacken's account and ordered Lieutenant Caldwell after both the deserters and Reethe.", true)
+    "Captain Vimes heard Jacken's account. Lieutenant Caldwell, he said, would hunt down both the deserters and Reethe.", true)
 fallback("The Deserters", "Dustwallow Marsh", "shield", "1286,1287",
     "Theramore deserters had taken an old watchtower at Lost Point.",
     "The deserters at Lost Point might know something about the burned inn.",
@@ -3737,7 +3737,7 @@ q(1288, "Vimes's Report", "Dustwallow Marsh", 38, "shield", 3,
     "Captain Vimes sent his report on the inn, Reethe and the deserters to Lady Jaina Proudmoore.",
     "Vimes's report reached Lady Jaina Proudmoore in Theramore.",
     "Lady Proudmoore received the report on the deserters and the burned inn.")
-hl(1287, "Jacken said the deserters had cast Reethe out for raiding the ogres. Vimes sent Lieutenant Caldwell after both the deserters and Reethe.",
+hl(1287, "Jacken said the deserters had cast Reethe out for raiding the ogres. Vimes meant to send Lieutenant Caldwell after both the deserters and Reethe.",
     "The deserters at Lost Point gave up Reethe, and Vimes ordered him found.")
 hl(1273, "Reethe was found hiding in the marsh, but died of a small arrow wound before he could explain the fire.",
     "Paval Reethe died under questioning, and Krog's search for the inn's burners had to look elsewhere.")
@@ -3755,12 +3755,12 @@ q(1202, "The Theramore Docks", "Dustwallow Marsh", 35, "spies", 3,
 q(1219, "The Orc Report", "Dustwallow Marsh", 35, "spies", 2,
     "Loose dirt in the marsh hid a severed orc hand, clutching a bone tube with a parchment in orcish inside.",
     "An orcish document in a dead hand looked important enough to carry to a Theramore officer.",
-    "The Theramore lieutenant could barely read orcish, but saw that it was a report written by an orc spy.",
+    "The Theramore officer could barely read orcish, but saw that it was a report written by an orc spy.",
     "A lieutenant of Theramore recognized the parchment as an orc spy's report.")
 q(1220, "Captain Vimes", "Dustwallow Marsh", 35, "spies", 2,
     "Captain Vimes knew orcish better than most, and he needed to know there were Horde spies near Theramore.",
     "The orc spy's report went to Captain Vimes in the barracks of Theramore Isle.",
-    "Vimes was alarmed by a report from an orc spy and set to reading it.",
+    "Vimes was surprised by a report from an orc spy and set to reading it.",
     "Vimes took the orc report from the marsh and began to read.")
 q(1238, "The Lost Report", "Dustwallow Marsh", 35, "marg", 3,
     "Loose dirt in the marsh hid a severed orc hand clutching a bone tube. Inside was a report from weeks of spying on Theramore, meant for the spymaster at Brackenwall.",
@@ -3771,9 +3771,9 @@ q(1239, "The Severed Head", "Dustwallow Marsh", 35, "marg", 3,
     "Digging turned up an orc's head, raggedly severed, its lips frozen in a snarl.",
     "The marsh gave up a severed orc head, its eyes still defiant.",
     "Nazeer knew the head as Marg Nighteye's. He could not tell whether a weapon or a beast had made the ragged wound, and wanted to know if the Alliance had killed him.",
-    "Marg Nighteye was dead, and Nazeer meant to learn who had killed him.")
+    "Marg Nighteye was dead, and Nazeer meant to learn whether the Alliance or a beast had killed him.")
 q(1240, "The Troll Witchdoctor", "Stranglethorn Vale", 35, "marg", 3,
-    "Only troll witch-magic could reveal how Marg died. Nazeer sent his head to Kin'weelay, the most powerful Darkspear witchdoctor, at Grom'gol Base Camp.",
+    "Nazeer said only troll witch-magic could reveal how Marg died, and sent his head to Kin'weelay, the most powerful Darkspear witchdoctor, at Grom'gol Base Camp.",
     "Nazeer wanted Marg's spirit questioned. Kin'weelay at Grom'gol in Stranglethorn could speak with the dead.",
     "An angry spirit clung to the head, bound to the world by unfinished work. Kin'weelay prepared to speak with it.",
     "Marg's head reached Kin'weelay, who found the orc's spirit boiling with rage.")
@@ -3799,7 +3799,7 @@ q(1258, "... and Bugs", "Dustwallow Marsh", 40, "stern", 2,
 q(1222, "Stinky's Escape", "Dustwallow Marsh", 37, "stern", 3,
     "Stinky Ignatz had been sent by Morgan Stern to gather bogbean leaves in the marsh, and found himself surrounded by its creatures.",
     "Morgan Stern's bogbean gatherer, Stinky, was trapped in the marsh and wanted an escort while he searched.",
-    "With the leaves delivered, Morgan promised that his uncle would treat Stinky's rescuer to a feast at the Blue Recluse.",
+    "With the leaves delivered, Morgan promised to ask his uncle to treat Stinky's rescuer to a feast at the Blue Recluse.",
     "Word that Stinky had been helped out of trouble reached Morgan Stern, who gave thanks.", true)
 q(1270, "Stinky's Escape", "The Barrens", 37, "dustwallow", 3,
     "Stinky Ignatz had taken a goblin's money to gather bogbean leaves in the marsh for Mebok Mizzyrix of Ratchet, and had got himself surrounded.",
@@ -3872,9 +3872,9 @@ q(608, "The Bloodsail Buccaneers", "Stranglethorn Vale", 45, "bloodsail", 5,
     "Seahorn called it a great day for the Blackwater Raiders and raised three cheers.",
     "The Bloodsail leadership was killed at Firallon's landing spot, and Seahorn rejoiced.", true)
 fallback("The Bloodsail Buccaneers", "Stranglethorn Vale", "bloodsail", "595,597,599,604,608",
-    "The Bloodsail Buccaneers were plotting against Booty Bay and its Blackwater Raiders.",
+    "Bloodsail Buccaneers had been spotted across southern Stranglethorn, near Booty Bay and its Blackwater Raiders.",
     "The Blackwater Raiders needed to know what their Bloodsail rivals were planning.",
-    "The Blackwater Raiders learned more of the Bloodsail plot.",
+    "The Blackwater Raiders gained ground against the Bloodsail Buccaneers.",
     "The rivalry between the Blackwater Raiders and the Bloodsail went on.")
 hl(604, "Fleet Master Seahorn read the Bloodsail charts and orders from the Wild Shore and knew their plan. Their ships lay at anchor off the cape.",
     "Seahorn read the stolen Bloodsail orders and knew where they meant to strike.")
@@ -3899,18 +3899,18 @@ q(626, "Cortello's Riddle", "The Hinterlands", 51, "cortello", 3,
 fallback("Cortello's Riddle", false, "cortello", "624,625,626",
     "A riddle bearing Cortello's name promised a hidden treasure.",
     "Cortello's riddle led from clue to clue across two continents.",
-    "Another of Cortello's clues was found.",
-    "The trail of Cortello's riddle went on.")
+    "The next spot named in Cortello's riddle was searched.",
+    "One more part of Cortello's riddle was solved.")
 
 q(570, "Mok'thardin's Enchantment", "Stranglethorn Vale", 38, "mokthardin", 2,
     "Far Seer Mok'thardin at Grom'gol meant to harness the jungle's magic for the Horde. His enchantment began with Shadowmaw Panther claws and a pristine tigress fang.",
     "Mok'thardin promised a powerful enchanted item. First he needed panther claws and a tigress fang without a flaw.",
-    "The claws and fang were perfect. Mok'thardin thanked the spirits for the beasts' sacrifice to the Horde's cause.",
+    "The claws and fang were perfect. Mok'thardin promised to thank the spirits for the beasts' sacrifice to the Horde's cause.",
     "Shadowmaw claws and a pristine fang reached the far seer.", true)
 q(572, "Mok'thardin's Enchantment", "Stranglethorn Vale", 41, "mokthardin", 2,
     "The feline trinkets were only the start. Mok'thardin next wanted Jungle Stalker feathers, worn on the raptors' armbands south of Grom'gol.",
     "Jungle Stalker raptors near the great arena wore feathers on their armbands. Mok'thardin needed them for his ritual.",
-    "Excellent, said Mok'thardin, and he began preparing the feathers at once.",
+    "Excellent, said Mok'thardin, and he promised to prepare the feathers at once.",
     "The Jungle Stalker feathers went to Mok'thardin for preparation.", true)
 q(571, "Mok'thardin's Enchantment", "Stranglethorn Vale", 41, "mokthardin", 2,
     "To hold the feathers, claws and fang together, Mok'thardin needed a magical tether. Only a perfect aged sinew from an Elder Mistvale Gorilla, east of Booty Bay, would serve.",
@@ -3924,7 +3924,7 @@ q(573, "Mok'thardin's Enchantment", "Stranglethorn Vale", 44, "mokthardin", 4,
     "The ceremonial choker was finished, a gift from the far seer for the Warchief's cause.", true)
 fallback("Mok'thardin's Enchantment", "Stranglethorn Vale", "mokthardin", "570,571,572,573",
     "Far Seer Mok'thardin at Grom'gol was preparing an enchantment from jungle reagents.",
-    "Mok'thardin's enchantment needed parts of Stranglethorn's beasts.",
+    "Mok'thardin's enchantment needed rare reagents gathered across Stranglethorn.",
     "Another reagent for Mok'thardin's enchantment was gathered.",
     "The far seer's enchantment moved closer to completion.")
 hl(573, "Mok'thardin finished his enchantment with water from the Holy Spring, and gave the ceremonial choker for the Horde.",
@@ -3935,21 +3935,21 @@ q(568, "The Defense of Grom'gol", "Stranglethorn Vale", 36, "gromgol", 2,
     "The commander declared the duty honorably done.",
     "The raptors around Grom'gol were thinned, and the commander was satisfied.", true)
 q(569, "The Defense of Grom'gol", "Stranglethorn Vale", 37, "gromgol", 3,
-    "The Horde had not come to make war on the jungle's tribes, but ogres in the Mizjah Ruins kept ambushing the supply caravans. Aggro'gosh wanted them driven out.",
+    "The Horde had come to the jungle to supply Stonard, and ogres in the Mizjah Ruins kept ambushing its caravans. Aggro'gosh wanted them driven out.",
     "Despite warnings, ogres from the Mizjah Ruins still raided Grom'gol's caravans. Commander Aggro'gosh wanted a firm message sent.",
     "The work had served the Warchief with honor, said Aggro'gosh.",
-    "The Mizjah ogres were driven back, and Grom'gol's caravans had some respite.", true)
+    "The Mizjah ogres were attacked in their ruins, and the commander was pleased.", true)
 fallback("The Defense of Grom'gol", "Stranglethorn Vale", "gromgol", "568,569",
     "Commander Aggro'gosh was protecting Grom'gol's supply line to Stonard.",
     "Grom'gol's caravans faced threats from the jungle.",
-    "Grom'gol's defenses were strengthened.",
+    "Some of the threats to Grom'gol's supply caravans were dealt with.",
     "Aggro'gosh's work protecting the base camp went on.")
 
 q(185, "Tiger Mastery", "Stranglethorn Vale", 31, "nesingwary", 2,
     "Ajeck Rouack had learned tiger hunting from her father as a girl. At Nesingwary's camp she started new hunters easy, on the young tigers nearby.",
-    "To join Hemet Nesingwary's hunt, a newcomer first had to prove a tracker's skill on young tigers near the camp.",
-    "Ajeck Rouack, who ran the tiger trials, judged the first tigers nicely done and moved on to harder prey.",
-    "The young tigers were taken, and Ajeck was ready to raise the stakes.", true)
+    "Every would-be tiger hunter started with Ajeck Rouack on the young cats near the camp, to test their tracking first.",
+    "Ajeck Rouack, who ran the tiger trials, called the first hunt nicely done and judged the hunter ready to move on.",
+    "The young tigers near the camp were taken, and Ajeck allowed the training to continue.", true)
 q(187, "Tiger Mastery", "Stranglethorn Vale", 35, "nesingwary", 2,
     "Ajeck Rouack raised the stakes with ten Elder Stranglethorn Tigers, the hardest to find and the fiercest to fight.",
     "Elder Stranglethorn Tigers stood between the hunt and Ajeck's final challenge.",
@@ -3962,14 +3962,14 @@ q(188, "Tiger Mastery", "Stranglethorn Vale", 37, "nesingwary", 3,
     "Sin'Dall was dead, and Ajeck declared a new Master Tiger Hunter.", true)
 fallback("Tiger Mastery", "Stranglethorn Vale", "nesingwary", "185,186,187,188",
     "Ajeck Rouack tested hunters on Stranglethorn's tigers.",
-    "Tiger Mastery was one of the trials of Nesingwary's hunting camp.",
-    "Ajeck's tiger hunt moved on to a harder stage.",
+    "Nesingwary's hunting camp set hard trials on Stranglethorn's tigers.",
+    "Ajeck judged another tiger trial complete.",
     "Another tiger hunt for Ajeck was finished.")
 q(190, "Panther Mastery", "Stranglethorn Vale", 31, "nesingwary", 2,
     "Sir S. J. Erlgadin said anyone hoping to join Hemet's hunting party had to prove an able panther hunter. Ten young panthers were the start.",
     "Sir S. J. Erlgadin started new hunters easy, with young panthers that were half the challenge just to track.",
     "It was a good start, said Erlgadin.",
-    "Sir Erlgadin approved of the ten young panthers.", true)
+    "The ten young panthers fell, and Sir Erlgadin approved.", true)
 q(191, "Panther Mastery", "Stranglethorn Vale", 33, "nesingwary", 2,
     "Grown panthers were tougher than the young ones. Erlgadin wanted ten of them before a hunter could mix with the camp's big game hunters.",
     "Sir S. J. Erlgadin's second test called for ten full-grown panthers.",
@@ -3988,12 +3988,12 @@ q(193, "Panther Mastery", "Stranglethorn Vale", 40, "nesingwary", 3,
 fallback("Panther Mastery", "Stranglethorn Vale", "nesingwary", "190,191,192,193",
     "Sir S. J. Erlgadin tested hunters on Stranglethorn's panthers.",
     "Panther Mastery was one of the trials of Nesingwary's hunting camp.",
-    "Erlgadin's panther hunt moved on to a harder stage.",
+    "Erlgadin praised the work of a hunter set on mastering the panthers.",
     "Another panther hunt for Erlgadin was finished.")
 q(194, "Raptor Mastery", "Stranglethorn Vale", 34, "nesingwary", 2,
     "Hemet Nesingwary put hunting skills to the test with ten Stranglethorn Raptors, and would not say where to find them.",
     "Finding the beasts was half the challenge, Hemet said. His first raptor test was ten Stranglethorn Raptors.",
-    "Pleased with the first raptors, Hemet promised harder ones.",
+    "Nicely done, Hemet said of the first raptor hunt.",
     "Ten Stranglethorn Raptors were taken to Hemet's satisfaction.", true)
 q(195, "Raptor Mastery", "Stranglethorn Vale", 36, "nesingwary", 2,
     "Lashtail Raptors were Hemet Nesingwary's next challenge, ten of them.",
@@ -4003,7 +4003,7 @@ q(195, "Raptor Mastery", "Stranglethorn Vale", 36, "nesingwary", 2,
 q(196, "Raptor Mastery", "Stranglethorn Vale", 41, "nesingwary", 2,
     "Jungle Stalkers were a cagey breed of raptor, harder to track and kill than the rest. Hemet promised a tip on the best hunting yet for ten of them.",
     "Hemet's next test was the Jungle Stalkers, the cagiest raptors in the jungle.",
-    "A true raptor slayer, Hemet declared, and he was ready with his tip.",
+    "A true raptor slayer, Hemet declared, and he called the hunt nicely done.",
     "Ten Jungle Stalkers were down, and Hemet was delighted.", true)
 q(197, "Raptor Mastery", "Stranglethorn Vale", 43, "nesingwary", 3,
     "Even Hemet had failed to kill a wily raptor that Ajeck called Tethis. Bringing back his talon would be a feat no other big game hunter had managed.",
@@ -4013,15 +4013,15 @@ q(197, "Raptor Mastery", "Stranglethorn Vale", 43, "nesingwary", 3,
 fallback("Raptor Mastery", "Stranglethorn Vale", "nesingwary", "194,195,196,197",
     "Hemet Nesingwary tested hunters on Stranglethorn's raptors.",
     "Raptor Mastery was one of the trials of Nesingwary's hunting camp.",
-    "Hemet's raptor hunt moved on to a harder stage.",
+    "Hemet cheered the hunter's work against the jungle's raptors.",
     "Another raptor hunt for Hemet was finished.")
 q(208, "Big Game Hunter", "Stranglethorn Vale", 43, "nesingwary", 4,
     "Hemet had one beast in mind above the rest, King Bangalash. The white tiger was the reason he had come to Stranglethorn.",
     "Hemet Nesingwary had his sights on King Bangalash, a white tiger. Killing it, he said, would prove hunting skill second to none.",
     "King Bangalash was dead. Hemet welcomed a comrade to his hunting party, one whose skill no one would doubt.",
-    "Cheers went up from Hemet for the death of King Bangalash, where others had failed.")
+    "Hemet cheered the death of King Bangalash, a beast others had failed to kill.")
 hl(208, "King Bangalash, the white tiger Hemet Nesingwary had come for, was killed. Hemet raised cheers and welcomed a comrade to his hunting party.",
-    "Nesingwary's camp cheered when the white tiger King Bangalash fell.")
+    "Hemet Nesingwary cheered when the white tiger King Bangalash fell.")
 hl(188, "Sin'Dall the tigress was killed, and Ajeck Rouack named a new Master Tiger Hunter.",
     "Ajeck's tiger trials ended with the paw of Sin'Dall.")
 hl(193, "Sir Erlgadin gave his respect once the great panther Bhag'thera was killed.",
@@ -4070,7 +4070,7 @@ q(1486, "Deviate Hides", "The Barrens", 17, "wailing", 2,
 q(1487, "Deviate Eradication", "The Barrens", 21, "wailing", 3,
     "Naralex had tried to enter the Emerald Dream and regrow the Barrens into forest, but his dream became a nightmare. His disciple Ebru cared less about waking him than about ridding the caverns of the deviate beasts.",
     "Ebru, a Disciple of Naralex, begged for war on the deviate creatures spawned in the Wailing Caverns.",
-    "The bravery won Ebru's praise as the first step toward a restored Barrens.",
+    "The work in the caverns was the first step toward a restored Barrens, Ebru said, praising the bravery shown there.",
     "The deviate beasts were thinned, and Ebru gave the thanks of the Disciples of Naralex.")
 q(1094, "Further Instructions", "The Barrens", 21, "stonetalon", 3,
     "Ziz Fizziks had been booted out of the Venture Company with an envelope of their internal documents, manuals and the Super Reaper 6000 blueprints. Sputtervalve, a little green fellow, had taken up residence in Ratchet.",
@@ -4078,10 +4078,10 @@ q(1094, "Further Instructions", "The Barrens", 21, "stonetalon", 3,
     "Distrustful of Fizziks, Sputtervalve still judged the information good enough. He wanted the Venture Company gone, though he admitted their machines had their uses.",
     "The envelope reached Sputtervalve in Ratchet, who accepted Fizziks's information despite his doubts.", true)
 q(79192, "Stepping Stones", "The Barrens", 24, "steppingstones", 2,
-    "A note spoke of two deaths during deliveries for the New Plague, dismissed as simple apothecary accidents. Its writer offered a safe place to talk, a cozy spot in the mountains between the Barrens and Desolace.",
-    "Whoever wrote the note doubted that two deaths tied to the New Plague were accidents, and named a hidden camp in the mountains toward Desolace.",
+    "A note spoke of two people making deliveries for the New Plague and of simple apothecary accidents. Its writer offered a safe place to talk, a cozy spot in the mountains between the Barrens and Desolace.",
+    "The note's writer called the New Plague delivery mishaps simple apothecary accidents, yet still offered a safe place to talk in the mountains toward Desolace.",
     "At the camp in the mountains, the corner of another note was flapping in the breeze.",
-    "Another note waited at the hidden camp between the Barrens and Desolace.")
+    "Another note waited at the backcountry camp between the Barrens and Desolace.")
 P.threads.world_steppingstones = "the notes about the New Plague deliveries"
 P.questIDs[79192].thread = "world_steppingstones"
 for _, id in ipairs({1489, 1490, 914, 962, 1486, 1487, 1094}) do src(id) end
@@ -4101,18 +4101,18 @@ P.threads.world_freewind = "the requests of Freewind Post"
 P.threads.world_swarm = "the insects beneath the Needles"
 q(1394, "Final Passage", "Thousand Needles", 36, "dorn", 4,
     "Parqual Fintallas judged the tests passed, his own and those before it. Dorn Plainstalker in Thousand Needles would sense the change and see the effort rewarded.",
-    "The last of the tests was done. Parqual Fintallas sent word back to Dorn Plainstalker, who had set the first leap.",
+    "The last of the tests was done. Parqual Fintallas sent the seeker back to Dorn Plainstalker, who had set the first leap.",
     "Many moons seemed to have passed since the first leap, said Dorn. He saw more strength and more understanding now, and gave a reward for seeing his tests to the end.",
     "Back in Thousand Needles, Dorn welcomed the return and rewarded the completed tests.")
 q(1176, "Load Lightening", "Thousand Needles", 30, "racecar", 2,
-    "Every bit counted in racing, Pozzik said. The goblin team built its racers' frames with vulture bones, light and strong, and the salt flats were littered with vultures.",
+    "Every bit counted in racing, Pozzik said. The goblin team used vulture bones, light and strong, for small tweaks to its racers, and the salt flats were littered with vultures.",
     "Pozzik of the goblin racing team paid a good price for vulture bones from the Shimmering Flats.",
-    "Straight away, the bones went to Pozzik's crew for work on the racers.",
-    "Pleased with the vulture bones, Pozzik set his crew to work.")
+    "Straight away, Pozzik meant to send the vulture bones to his crew for small tweaks to the racers.",
+    "Pleased with the vulture bones, Pozzik said his crew could start on them right away.")
 q(1178, "Goblin Sponsorship", "The Barrens", 37, "racecar", 2,
     "Gazlowe of Ratchet tracked down parts for the goblin racing team, and had promised Pozzik a prototype fuel regulator weeks ago. It had not come, and the gnomes were gaining.",
     "Pozzik's new fuel regulator was overdue. Gazlowe in Ratchet had promised it, and was usually prompt.",
-    "Pozzik, Gazlowe said, had been one of the most respected tinkerers in Undermine before he retired to build racers and designed the two-engine model.",
+    "Pozzik, Gazlowe said, had been one of the most respected tinkerers in Undermine. After retiring to the racers, he had designed the two-engine model.",
     "Pozzik's messenger found a welcome in Ratchet, where Gazlowe praised the old tinkerer.", true)
 q(1180, "Goblin Sponsorship", "Stranglethorn Vale", 37, "racecar", 2,
     "Gazlowe had never received the regulator himself. Baron Revilgaz in Booty Bay was meant to ship it, so Wharfmaster Lozgil's cargo logs would show whether it had left.",
@@ -4127,22 +4127,22 @@ q(1181, "Goblin Sponsorship", "Stranglethorn Vale", 37, "racecar", 2,
 q(1182, "Goblin Sponsorship", "Stranglethorn Vale", 37, "racecar", 3,
     "The Venture Company's shredders at Lake Nazferiti carried a new model of fuel regulator. Their foreman Cozzle kept the blueprints locked in his house, and had outwitted the Baron's men.",
     "Revilgaz hoped Pozzik could use the Venture Company's new regulator design, if the blueprints were taken from Cozzle's house at Lake Nazferiti.",
-    "Once he had copied the blueprints for his own notes, Revilgaz sent the originals on to Pozzik, so no one would think a sponsor had abandoned him.",
+    "Once he had copied the blueprints for his own notes, Revilgaz sent the originals on, so Pozzik would not think a sponsor had abandoned him.",
     "With his own copy made, the Baron sent the blueprints on for Pozzik.", true)
 q(1183, "Goblin Sponsorship", "Thousand Needles", 37, "racecar", 3,
     "Baron Revilgaz sent his regards to Pozzik with the blueprints, and hoped to hear of a track record soon.",
     "The fuel regulator blueprints from Lake Nazferiti were bound for Pozzik on the Shimmering Flats.",
     "Pozzik had hoped for an assembled regulator, but saw a chance to improve the design from the ground up and have it installed soon.",
-    "Pozzik took the blueprints and began sketching improved schematics.", true)
+    "Pozzik took the blueprints and planned to sketch improved schematics of his own.", true)
 fallback("Goblin Sponsorship", "Thousand Needles", "racecar", "1178,1180,1181,1182,1183",
     "Pozzik's goblin racing team was waiting on a new fuel regulator.",
     "The search for the racing team's fuel regulator passed between Ratchet and Booty Bay.",
     "The search for the fuel regulator moved on.",
-    "Another of the racing team's sponsors was consulted.")
+    "Pozzik's racing team was one step closer to a new fuel regulator.")
 hl(1183, "Pozzik had the Venture Company's regulator blueprints on the Shimmering Flats, and meant to build a better one from scratch.",
     "Pozzik had his fuel regulator blueprints at last.")
 q(1186, "The Eighteenth Pilot", "Thousand Needles", 37, "racecar", 2,
-    "Pozzik would be busy fitting the new regulator. Razzeric, the team's eighteenth pilot, liked to add modifications of his own and was a little off his rocker.",
+    "Pozzik would be busy fitting the new regulator. Razzeric, the team's eighteenth pilot, liked to add his own modifications, and Pozzik warned he was a little off his rocker.",
     "Pozzik sent help to Razzeric, the goblin team's pilot, warning not to look surprised at him.",
     "Once, Razzeric said, he too had run around the pits helping the mechanics. Now he was the goblin racing team's pilot extraordinaire.",
     "The eighteenth pilot welcomed Pozzik's helper and boasted of his position.")
@@ -4152,7 +4152,7 @@ q(1187, "Razzeric's Tweaking", "Thousand Needles", 41, "racecar", 3,
     "Fifteen pounds of solid seaforium delighted Razzeric, who expected to beat the gnomes twice.",
     "The booster reached Razzeric, eager to strap it to his racer.")
 q(1188, "Safety First", "Tanaris", 41, "racecar", 2,
-    "Shreev had left a safety lock on the booster, limiting its power. Razzeric wanted it off, and only Shreev at the Gadgetzan Gizmorium could remove it.",
+    "Razzeric blamed Shreev for leaving a safety on the booster that limited its power. He had asked for it off, and wanted the Gizmorium in Gadgetzan to remove it.",
     "Razzeric sent the booster back to Shreev in Gadgetzan to have the safety removed.",
     "Shreev grumbled that only Razzeric would call it a safety lock. The booster was almost all explosives already, but Razzeric always wanted more.",
     "At the Gizmorium, Shreev agreed to change the booster, complaining about Razzeric.", true)
@@ -4165,7 +4165,7 @@ fallback("Safety First", "Thousand Needles", "racecar", "1188,1189",
     "Razzeric wanted more power from his seaforium booster.",
     "The goblin pilot's booster passed between the Shimmering Flats and Gadgetzan.",
     "The work on Razzeric's booster moved on.",
-    "Shreev and Razzeric settled the matter of the booster.")
+    "Shreev handled the booster that Razzeric wanted to run without its safety.")
 q(1190, "Keeping Pace", "Thousand Needles", 41, "racecar", 3,
     "The gnomes' cars had grown faster, though their designs looked the same. Pozzik suspected a new material, and Rizzle Brassbolts was always poring over its plans, so Zamek would make a diversion while the plans were taken.",
     "Pozzik wanted to know what had made the Brassbolts brothers' cars faster. Rizzle's plans would tell.",
@@ -4176,8 +4176,8 @@ q(1194, "Rizzle's Schematics", "Thousand Needles", 41, "racecar", 3,
     "The stolen schematics, and the lump of indurium ore used as their paperweight, were for Pozzik.",
     "Heat-resistant indurium would explain the gnomes' speed, Pozzik said. He would test the sample, but needed more to make use of it.",
     "Pozzik took the indurium sample for testing and wanted more.")
-hl(1194, "Rizzle's schematics showed that the gnomes' new speed came from indurium ore out of Uldaman. Pozzik took the sample to test.",
-    "Pozzik learned the gnomes' secret was heat-resistant indurium.")
+hl(1194, "Rizzle's schematics described refining indurium ore from Uldaman. Pozzik thought its heat resistance might explain the gnomes' new speed.",
+    "Pozzik suspected heat-resistant indurium lay behind the gnomes' speed, and wanted more of it.")
 q(1179, "The Brassbolts Brothers", "Thousand Needles", 30, "racecar", 2,
     "Pilot Longbeard's gnome friends on the Shimmering Flats had a rocket car so fast its pilots kept crashing and giving themselves concussions. He had siege engine helmets for them, but could not make the trip.",
     "Pilot Longbeard sent siege engine helmets to the Brassbolts brothers, whose rocket car kept knocking out its pilots.",
@@ -4187,7 +4187,7 @@ fallback("The Brassbolts Brothers", "Thousand Needles", "racecar", "1179,2769",
     "The Brassbolts brothers raced a gnomish rocket car on the Shimmering Flats.",
     "The gnome racers of the Shimmering Flats needed supplies from far away.",
     "The Brassbolts brothers' racing effort moved forward.",
-    "A delivery for the gnome racers was made.")
+    "The gnome racers found new help for their rocket car.")
 q(1175, "A Bump in the Road", "Thousand Needles", 33, "racecar", 2,
     "After the goblins' Red Thunder racer crashed into a basilisk, Kronkrider hired Trackmaster Zherin to keep the track clear. The basilisks on the flats had grown big and had to be thinned.",
     "Trackmaster Zherin paid to keep basilisks from wandering onto the Shimmering Flats track.",
@@ -4206,13 +4206,13 @@ q(1112, "Parts for Kravel", "Thousand Needles", 36, "racecar", 2,
     "Kravel was pleased, then took one small item out of the package before it went on.",
     "Kravel took the package and helped himself to a small piece.")
 q(1114, "Delivery to the Gnomes", "Thousand Needles", 36, "racecar", 2,
-    "Kravel sent the parts on to Fizzle Brassbolts, sure the gnome would not miss the small, worthless piece he had removed.",
+    "Kravel sent the parts on to Fizzle Brassbolts, sure the gnome would not miss the piece he had removed, which he called small and worthless.",
     "The rest of the gnomes' order was for Fizzle Brassbolts on the Shimmering Flats.",
     "Fizzle was thrilled with his hydro ratchets and repeater bolts.",
     "Fizzle Brassbolts had waited a long time for those parts.")
 
 q(4767, "Wind Rider", "Thousand Needles", 29, "freewind", 2,
-    "Elu of Freewind Post recruited wyverns for the master wind riders and hoped to become one. The demand was greater than they could train, so he wanted eggs from Highperch.",
+    "Elu of Freewind Post recruited wyverns for the master wind riders and hoped to become one. They could not train enough wyverns to meet the demand, so he wanted eggs from Highperch.",
     "Wyvern eggs from Highperch could help Elu keep up with the wind riders' need. The wyverns guarded them fiercely.",
     "With the eggs, Elu hoped to take the next step toward becoming a wind rider, and gave a token of thanks.",
     "Elu took the Highperch eggs and gave a token of appreciation.")
@@ -4223,8 +4223,8 @@ q(4821, "Alien Egg", "Thousand Needles", 26, "freewind", 3,
     "One look at the mysterious egg alarmed Hagar Lightninghoof.")
 q(4865, "Serpent Wild", "Thousand Needles", 26, "freewind", 3,
     "Hagar had seen something he would not have believed, and cried that vengeance had come to Thousand Needles. Motega Firemane at Whitereach Post would know what to do.",
-    "What came of the alien egg sent Hagar running for help. Motega Firemane waited at Whitereach Post, northwest of Freewind.",
-    "What Hagar had seen proved the old warning of Arikara true, Motega declared, and it had to be dealt with at once.",
+    "What came of the alien egg left Hagar shaken, and he sent for help. Motega Firemane waited at Whitereach Post, northwest of Freewind.",
+    "What Hagar had seen proved that Arikara was real, Motega declared, and it had to be dealt with at once.",
     "Whitereach Post heard the news, and Motega Firemane named Arikara as the danger.")
 q(5147, "Wanted - Arnak Grimtotem", "Thousand Needles", 29, "freewind", 3,
     "Arnak Grimtotem, an outcast, was wanted for murder and kidnapping. He had last been seen on the cliffs near Darkcloud Pinnacle.",
@@ -4240,22 +4240,22 @@ q(1147, "The Swarm Grows", "Thousand Needles", 35, "swarm", 3,
     "Belgrom wanted the insect creatures at the dig site pushed back into the depths. Moktar Krin's war party was half dead after fighting the Explorers' League's dwarves and could not do it alone.",
     "Moktar Krin's battered war party needed help against the insect creatures swarming from the dig site to the south.",
     "Laughing, Moktar said the ichor-covered helper reeked enough to start a kodo stampede. The smell alone proved the work against the insects.",
-    "The insects at the dig site were pushed back, and Moktar gave his thanks.", true)
+    "Thanks came from Moktar for the fight against the dig site insects.", true)
 fallback("The Swarm Grows", "Thousand Needles", "swarm", "1145,1146,1147",
-    "Insect creatures were swarming from the ground in Thousand Needles.",
-    "The Horde wanted the insect swarm pushed back into the depths.",
-    "The insect swarm was pushed back for a time.",
+    "Strange insect creatures were proving a bigger threat than the Horde had first thought.",
+    "Korran of the Crossroads warned that the insect creatures were a growing danger to the Horde.",
+    "The Horde's answer to the insect threat moved forward.",
     "The fight against the swarm went on.")
 -- The horde pack's 1492 entry stands in for this title; a neutral context
 -- covers both its crate (1492) and Kravel's parts order (1111).
 P.quests["Wharfmaster Dizzywig"] = {zone = "The Barrens", thread = false, importance = 2,
-    why = {"Wharfmaster Dizzywig handled the cargo on the Ratchet docks.", "A shipment waited with Wharfmaster Dizzywig in Ratchet."},
+    why = {"Wharfmaster Dizzywig handled the cargo on the Ratchet docks.", "Cargo had to pass through Wharfmaster Dizzywig at the Ratchet docks."},
     after = {"Wharfmaster Dizzywig dealt with the cargo.", "The business at the Ratchet docks was settled."},
     source = {"corpus_vanilla_quests.txt quests 1111,1492"}}
 q(1148, "Parts of the Swarm", "The Barrens", 35, "swarm", 3,
     "The insects' carapaces were strong and their bodies highly evolved. Korran might learn from them what the creatures were and where they came from.",
-    "A cracked carapace from the dig site seemed worth showing to Korran, who studied the insects.",
-    "Word from Moktar pleased Korran. With the carapaces and the eggs from the Field of Giants, he could start to learn what the insects were and what they wanted.",
+    "A carapace from the dig site seemed worth showing to Korran, who might learn what the creatures were.",
+    "Hearing that Moktar had been seen pleased Korran. With the carapaces and the eggs from the Field of Giants, he could start to learn what the insects were and what they wanted.",
     "The specimens reached Korran, who began his study of the creatures.", true)
 q(1184, "Parts of the Swarm", "Orgrimmar", 35, "swarm", 3,
     "Korran sent word to Belgrom in Orgrimmar that Moktar was doing his bidding well and the study was going forward.",
@@ -4263,8 +4263,8 @@ q(1184, "Parts of the Swarm", "Orgrimmar", 35, "swarm", 3,
     "The Warchief would hear of the effort, Belgrom promised, and he wanted to know as soon as Korran learned more about the threat.",
     "Pleased with the report, Belgrom asked for news of Korran's findings.", true)
 fallback("Parts of the Swarm", "Thousand Needles", "swarm", "1148,1184",
-    "Strange insects had swarmed from a dig site in Thousand Needles.",
-    "Korran was studying the insect creatures that troubled Moktar's war party.",
+    "Strange insect creatures with powerful carapaces had turned up in Thousand Needles.",
+    "Korran wanted to learn what the insect creatures were and where they came from.",
     "The study of the insect swarm moved forward.",
     "Word of the insect creatures passed along the Horde's chain of command.")
 for _, id in ipairs({1394, 1176, 1178, 1180, 1181, 1182, 1183, 1186, 1187, 1188, 1189, 1190, 1194, 1179, 1175,
@@ -4279,7 +4279,7 @@ src(1394, "Test of Faith/Endurance/Strength/Lore (1149-1159, 6627, 6628) have no
 P.threads.world_stonard = "the watch on the Stonard coast"
 P.threads.world_biggs = "Watcher Biggs's lost caravan"
 P.threads.world_kargath = "the runners between Stonard and Kargath"
-P.threads.world_eranikus = "the redemption of Eranikus"
+P.threads.world_eranikus = "the fate of Eranikus"
 q(698, "Lack of Surplus", "Swamp of Sorrows", 40, "stonard", 2,
     "Dar in Stonard was gathering supplies for the outpost on the beach, where Tok'Kar had little time between guard shifts and cooking. His soldiers liked sawtooth meat, from the older crocolisks only.",
     "Tok'Kar's beach outpost was short of sawtooth meat. Dar in Stonard wanted a shipment taken out to the soldiers.",
@@ -4288,33 +4288,33 @@ q(698, "Lack of Surplus", "Swamp of Sorrows", 40, "stonard", 2,
 q(699, "Lack of Surplus", "Swamp of Sorrows", 42, "stonard", 2,
     "Tok'Kar's soldiers watched the coast for murlocs threatening Stonard. Sawtooth snapper claws made fine weapons, and he offered one in return for some.",
     "Tok'Kar needed sawtooth snapper claws for weapons, and promised one as thanks.",
-    "With the claws in hand, Tok'Kar set to work on a weapon, quick from long practice.",
+    "The claws went to the outpost's arsenal, and Tok'Kar said long practice would make the weapon quick work.",
     "The snapper claws reached the beach outpost, and a weapon was promised.", true)
 fallback("Lack of Surplus", "Swamp of Sorrows", "stonard", "698,699",
     "Stonard's beach outpost needed supplies from the swamp's sawtooth crocolisks.",
-    "The soldiers on the Stonard coast were short of meat and weapons.",
+    "The soldiers on the Stonard coast wanted sawtooth meat for the fire and claws for weapons.",
     "The beach outpost was better supplied.",
     "Supplies from the swamp reached Stonard's coast watch.")
 q(1422, "Threat From the Sea", "Swamp of Sorrows", 45, "stonard", 2,
-    "While Tok'Kar worked on the weapon, Katar needed help patrolling the beach. Tok'Kar preferred sharp wits to getting drunk with the camp's other louses.",
+    "While Tok'Kar worked on the weapon, he sent the helper to Katar for beach patrols. He would rather see wits kept sharp than spent drinking with the camp's louses.",
     "Katar, on Stonard's beach, wanted help with patrols against the murlocs.",
     "Over the roar of the sea, Katar pointed out the gurgles of the fish men.",
     "On the beach, Katar heard the murlocs and called for silence.", true)
 q(1426, "Threat From the Sea", "Swamp of Sorrows", 43, "stonard", 3,
-    "Katar had no love for the sea or anything that came out of it, and enjoyed watching the fish men die at Horde hands. Even their most powerful kind were to be tested.",
+    "Katar had no love for the sea or anything that came out of it, and enjoyed watching the fish men die at Horde hands. He dared his helpers to face even their most powerful kind.",
     "On the Stonard coast, Katar wanted to see how many murlocs could be slain, and the strongest among them.",
     "The sea, Katar said, had been stained with the blood of its own spawn. Now the murlocs would have to rebuild their ranks, and he would smile at every scream.",
     "Many murlocs were dead along the beach, and Katar offered more reward for more.", true)
 q(1427, "Threat From the Sea", "Swamp of Sorrows", 43, "stonard", 2,
     "Katar sent word that Tok'Kar had finished a few weapons, and would offer one for the help on the beach.",
-    "Before resting, Katar advised, Tok'Kar should be seen about the weapons he had finished.",
+    "Katar advised a visit to Tok'Kar before any rest, since the smith had finished a few weapons.",
     "For the sawtooth meat and for a smile on Katar's face, Tok'Kar offered one of his new weapons.",
     "A weapon from Tok'Kar's forge was the reward for the beach patrols.", true)
 fallback("Threat From the Sea", "Swamp of Sorrows", "stonard", "1422,1426,1427",
-    "Murlocs threatened Stonard's watch on the swamp's coast.",
+    "Murlocs from the sea threatened the Horde on the coast of the Swamp of Sorrows.",
     "Katar and Tok'Kar held the beach against the fish men.",
     "The fight against the murlocs on the beach went on.",
-    "Stonard's coast watch had help against the fish men.")
+    "The Horde's watch on the coast had help against the fish men.")
 q(1428, "Continued Threat", "Swamp of Sorrows", 45, "stonard", 2,
     "Katar wanted more fish men found along the beach, and promised a reward for diligence.",
     "More murlocs crawled up the Stonard coast. Katar asked for them slain.",
@@ -4326,8 +4326,8 @@ q(1430, "Fresh Meat", "Swamp of Sorrows", 44, "stonard", 2,
     "Dar could not wait to taste the legs cooked over an open fire, and offered a sample.",
     "The crawler legs reached Dar, who called them perfect.")
 q(1429, "The Atal'ai Exile", "The Hinterlands", 44, "atalai", 3,
-    "Fel'zerul's scout had found a scroll written in blood on dried flesh, a sentence against an Atal'ai priest. The priest had been exiled to the Witherbark trolls of the Hinterlands, and Fel'zerul wanted the artifacts' true use learned from him.",
-    "The Atal'ai exile lived among the Witherbark in the Hinterlands. Fel'zerul in Stonard sent him a bundle of artifacts to explain.",
+    "Fel'Zerul's scout had found a scroll written in blood on dried flesh, a sentence against an Atal'ai priest. The priest had been exiled to the Witherbark of the Hinterlands, and Fel'Zerul wanted the artifacts' true use learned from him.",
+    "The Atal'ai exile lived among the Witherbark in the Hinterlands. Fel'Zerul in Stonard sent him a bundle of artifacts to explain.",
     "Recognizing the summoning artifacts, the exile saw that Jammal'an the Prophet was leading his disciples toward their chosen fate, and wondered whether Hakkar had returned to the temple.",
     "Among the Witherbark, the Atal'ai exile examined the artifacts and spoke of Jammal'an the Prophet.")
 
@@ -4335,17 +4335,17 @@ q(1396, "Encroaching Wildlife", "Swamp of Sorrows", 37, "biggs", 2,
     "Watcher Biggs's caravan had been bound for the eastern coast when Lost Ones attacked it. He alone had survived, sworn to guard the supplies, and beasts were closing in on his camp.",
     "Watcher Biggs, last survivor of an attacked caravan, needed the swamp's beasts kept away from his camp.",
     "The animal sounds grew faint and distant, and Biggs hoped they would not return.",
-    "Biggs's camp was clear of beasts, for now.")
+    "Biggs heard the beasts' cries fade into the distance, at least for now.")
 q(1421, "The Lost Caravan", "Swamp of Sorrows", 35, "biggs", 3,
     "Before he blacked out, Biggs had seen a wagon dragged to Fallow Sanctuary, the Lost Ones' village to the north. Its chest held reagents vital to the wizards of Nethergarde Keep.",
     "A caravan chest of reagents for Nethergarde had been taken to the Lost Ones' Fallow Sanctuary. Watcher Biggs wanted it back.",
     "With the reagents back, Nethergarde's wizards could go on with their work. Biggs did not know what it was, only that it concerned the Dark Portal and the Alliance's security.",
-    "The reagents were recovered from Fallow Sanctuary, and Biggs was relieved.")
+    "The reagents were taken back from Fallow Sanctuary and returned to Biggs.")
 q(1398, "Driftwood", "Swamp of Sorrows", 42, "biggs", 2,
     "Biggs had to fix his wagon to reach Nethergarde, and the swamp's spongy wood would not serve. Sun-dried driftwood from the coast would.",
     "Watcher Biggs asked for sun-dried driftwood from the eastern coast to mend his wagon.",
     "Light but tough, the driftwood would work nicely, Biggs said.",
-    "The driftwood reached Biggs, who began mending the wagon.")
+    "The driftwood reached Biggs, who judged it right for mending the wagon.")
 q(1425, "Deliver the Shipment", "Blasted Lands", 42, "biggs", 3,
     "While he fixed the wagon, Biggs packed the most vital supplies saved from the attacks for Nethergarde Keep, watching over the Dark Portal in the Blasted Lands.",
     "Watcher Biggs sent his caravan's surviving supplies on to Nethergarde Keep.",
@@ -4363,7 +4363,7 @@ q(1419, "Coyote Thieves", "Badlands", 40, "kargath", 2,
     "Crag coyotes were bold enough to creep into Kargath and steal its food. Neeka wanted their jawbones, as proof of knowing the Badlands.",
     "Neeka Bloodscar wanted the coyotes stealing Kargath's food hunted down.",
     "A fine collection of jawbones, Neeka said. The deed suggested its doer might survive in the Badlands.",
-    "The coyotes would not tear through Kargath's supplies any more.")
+    "The coyotes, Neeka said, would no longer tear through Kargath's supplies.")
 q(1420, "Report to Helgrum", "Swamp of Sorrows", 40, "kargath", 3,
     "Neeka wrote a fresh report for Helgrum in Stonard, and warned its runner not to get lost or fall to an enemy.",
     "Neeka Bloodscar's fresh report had to reach Helgrum the Swift in Stonard.",
@@ -4377,13 +4377,13 @@ q(3374, "The Essence of Eranikus", "Swamp of Sorrows", 55, "eranikus", 4,
     "With the essence of Eranikus in his keeping, Itharius began the work of redemption.", true)
 fallback("The Essence of Eranikus", "Swamp of Sorrows", "eranikus", "3373,3374",
     "Eranikus of the Green Dragonflight had left part of his essence in a gem.",
-    "The gem holding Eranikus's essence called for a choice about his fate.",
+    "Part of Eranikus's essence lay in a gem that had to be carried onward for his sake.",
     "A choice was made about the essence of Eranikus.",
-    "The gem of Eranikus left the hands that had carried it.")
+    "The gem holding Eranikus's essence was given up.")
 q(3512, "In Eranikus' Own Words", "Winterspring", 55, "eranikus", 4,
     "Eranikus lay between sleep and death, twisted in nightmares. To speak with him through the gem, Itharius sent for Umbranse the Spiritspeaker, a human medium in eastern Winterspring.",
     "Itharius needed a way to reach Eranikus through the tainted essence. Umbranse the Spiritspeaker, who spoke for the dead, might help.",
-    "His death-speaking was at Itharius's service, Umbranse said, but his most potent augury device had been taken from him, and without it he could not help Eranikus.",
+    "Death-speaking was Umbranse's skill, and he offered it. His most potent augury device had been taken, though, and without it he could not help Eranikus.",
     "Help would come from the Spiritspeaker once his stolen augury device was recovered.")
 hl(3512, "Umbranse the Spiritspeaker would help Itharius reach Eranikus, once his stolen augury device came back.",
     "Umbranse, the medium, agreed to speak with Eranikus, but his augury device was missing.")
@@ -4399,7 +4399,7 @@ P.threads.world_lotwil = "Lotwil Veriatus's elemental shackles"
 P.threads.world_cyrus = "Cyrus Therepentous's taste of flame"
 P.threads.world_badlands = "the camps of the Badlands"
 q(719, "A Dwarf and His Tools", "Badlands", 35, "uldaman", 2,
-    "Shadowforge Dark Irons had attacked the excavation site north of Prospector Ryedol's camp and killed nearly everyone, his boss Hammertoe among them. One of the Dark Irons had Ryedol's lucky pick.",
+    "Shadowforge Dark Irons had attacked the excavation site north of Prospector Ryedol's camp and, he said, killed nearly everyone, his boss Hammertoe among them. One of them had his lucky pick.",
     "Prospector Ryedol had barely escaped the Shadowforge attack on the dig. He wanted his supplies back, and above all his lucky pick.",
     "Ryedol called his helper a savior, glad someone had taught the Shadowforge a lesson.",
     "Back went the lucky pick to Ryedol, who gave his thanks.")
@@ -4410,9 +4410,9 @@ q(723, "Prospect of Faith", "Badlands", 40, "uldaman", 4,
     "Ryedol took the amulet and swore his friend would not die for nothing.", true)
 q(724, "Prospect of Faith", "Ironforge", 40, "uldaman", 3,
     "Ryedol knew who could help, Historian Karnik in Ironforge. Karnik and Hammertoe had worked together to find the lost artifacts of Uldaman.",
-    "The Shadowforge must have learned how much Hammertoe and Historian Karnik knew. Ryedol sent the amulet to Karnik.",
+    "Ryedol guessed the Shadowforge had learned how much Hammertoe and Historian Karnik knew. He sent the amulet to Karnik.",
     "Grief for Hammertoe would have to wait, Karnik said. He began to show why the amulet was so valuable.",
-    "Historian Karnik took Hammertoe's amulet and understood what was at stake.", true)
+    "Historian Karnik took Hammertoe's amulet and said its sender had understood what was at stake.", true)
 fallback("Prospect of Faith", "Badlands", "uldaman", "723,724",
     "Hammertoe Grez's amulet held the work of his life.",
     "Hammertoe's amulet had to reach someone who could carry on his search.",
@@ -4427,12 +4427,12 @@ q(726, "Passing Word of a Threat", "Ironforge", 40, "uldaman", 4,
     "Belgrum's eyes widened at the end of the note. On the king's authority, Karnik was to halt the Shadowforge's work in the Badlands, swiftly.",
     "Advisor Belgrum called the news evil tidings and sent word back to Karnik to act at once, in the king's name.",
     "Karnik knew how to bring the Shadowforge down. Their work in Uldaman could be slowed by striking their base, Angor Fortress.",
-    "Historian Karnik turned the king's authority against Angor Fortress.", true)
+    "With the king's authority behind him, Historian Karnik named Angor Fortress as the place to strike.", true)
 fallback("Passing Word of a Threat", "Ironforge", "uldaman", "725,726",
     "Word of the Shadowforge's work in the Badlands passed between Ironforge's historians and advisors.",
     "Historian Karnik and Advisor Belgrum weighed the threat from the Shadowforge.",
     "The warning about the Shadowforge moved on.",
-    "Ironforge prepared to answer the Shadowforge.")
+    "Karnik and Belgrum each learned more of the Shadowforge threat.")
 q(762, "An Ambassador of Evil", "Ironforge", 44, "uldaman", 5,
     "Ragnaros himself had sent Ambassador Infernus to Angor Fortress to oversee the Shadowforge's search for artifacts in Uldaman. Karnik wanted the ambassador destroyed before the artifacts could be used against Ironforge.",
     "Ambassador Infernus, sent by Ragnaros, commanded the Shadowforge at Angor Fortress. Proof of his death was for Advisor Belgrum.",
@@ -4457,7 +4457,7 @@ q(711, "Study of the Elements: Rock", "Badlands", 39, "lotwil", 2,
     "Amazed, Lotwil said he would have expected it to take half a dozen tauren to carry so many slabs.",
     "The stone slabs reached Lotwil, who called the work simply amazing.", true)
 q(712, "Study of the Elements: Rock", "Badlands", 42, "lotwil", 3,
-    "Bracers of rock binding from the greater elementals would let Lotwil gauge the strength of his shackles. He wanted five, since his robot Servo misplaced things.",
+    "Bracers of rock binding from the greater elementals would let Lotwil gauge the strength of his shackles. He wanted five, since Servo often misplaced his reagents.",
     "Lotwil Veriatus needed bracers of rock binding from the greater rock elementals southwest of his camp.",
     "A career as a research assistant, Lotwil suggested, would suit such intelligence, curiosity and strength.",
     "The bracers reached Lotwil, who wondered aloud how he would manage without such help.", true)
@@ -4475,12 +4475,12 @@ q(714, "Gyro... What?", "Badlands", 37, "lotwil", 2,
     "Lotwil was distracted by his work, offered a job if they ever met in Kharanos, and needed one last small part, a gyrochronatom.",
     "Lotwil Veriatus needed a gyrochronatom to finish his contraption.",
     "Grabbing the gyrochronatom, Lotwil declared himself almost done, then allowed it might take a lot longer.",
-    "The gyrochronatom went into Lotwil's contraption, which was nearly finished, he said, perhaps.")
+    "The gyrochronatom was about to go into Lotwil's contraption, which he claimed was nearly finished.")
 q(734, "This Is Going to Be Hard", "Badlands", 42, "lotwil", 2,
     "Lotwil needed a cog number five, and Lucien Tosselwrench had it.",
     "Lucien Tosselwrench was to hand over a cog number five for Lotwil's shackles.",
-    "Parting with cog number five, Lucien said, was not going to end well.",
-    "With a grim look, the engineer fetched cog number five.", true)
+    "Told that Lotwil wanted cog number five, Lucien said this was not going to be good.",
+    "Cog number five, Lucien Tosselwrench said, meant trouble.", true)
 q(777, "This Is Going to Be Hard", "Badlands", 42, "lotwil", 2,
     "Lucien handed over the cog and went to wait behind cover.",
     "Lucien Tosselwrench gave up cog number five for Lotwil, then took cover.",
@@ -4495,14 +4495,14 @@ fallback("This Is Going to Be Hard", "Badlands", "lotwil", "734,777,778",
     "Lotwil Veriatus's shackles of elemental binding neared completion.",
     "Lotwil and Lucien Tosselwrench prepared for a dangerous summoning.",
     "Lotwil's work on the shackles went on.",
-    "The summoning at Lotwil's camp drew closer.")
-hl(778, "Lotwil's shackles failed when the elemental came, and his magic sent it home. He gave a token for the ordeal.",
+    "The work at Lotwil's camp moved on to its next step.")
+hl(778, "Lotwil's summoning went wrong in a way he could not explain, and his magic sent the elemental home. He gave a token for the ordeal.",
     "Lotwil Veriatus's great summoning went wrong, and the creature was banished.")
 q(703, "Barbecued Buzzard Wings", "Badlands", 40, "badlands", 2,
     "Rigglefuzz had everything for his barbecued buzzard wings except the wings. Enough of them might win the recipe.",
-    "Rigglefuzz's barbecued buzzard wings brought the hungry from miles away, he said, once he had the wings.",
-    "Already tasting them, Rigglefuzz started on the wings and shared his recipe.",
-    "The buzzard wings went on the fire, and the recipe was Rigglefuzz's thanks.")
+    "The smell of Rigglefuzz's barbecued buzzard wings brought the hungry from miles away, he said, but he had no wings.",
+    "Rigglefuzz could almost taste the wings already, and he handed over his recipe.",
+    "Rigglefuzz meant to start on the buzzard wings right away, and shared the recipe as thanks.")
 q(705, "Pearl Diving", "Badlands", 37, "badlands", 2,
     "Rigglefuzz scared off Badlands wildlife with flash bombs, and was low on crushed blue pearl. The pearls came from the clams of the Vile Reef in Stranglethorn.",
     "A small goblin had to be tricky to survive in the Badlands. Rigglefuzz needed blue pearls from Stranglethorn for his flash bombs.",
@@ -4511,7 +4511,7 @@ q(705, "Pearl Diving", "Badlands", 37, "badlands", 2,
 
 q(4022, "A Taste of Flame", "Burning Steppes", 54, "cyrus", 3,
     "Cyrus Therepentous in the Burning Steppes said the Flight knew of the work done in the Searing Gorge. He demanded to see the molt.",
-    "Cyrus Therepentous asked to see the molt from the Searing Gorge, sharp with insults.",
+    "With sharp insults, Cyrus Therepentous demanded to see the molt from the Searing Gorge.",
     "Examining the molt, Cyrus granted that its bearer was not entirely useless.",
     "The molt satisfied Cyrus Therepentous, after a fashion.", true)
 q(4023, "A Taste of Flame", "Burning Steppes", 54, "cyrus", 3,
@@ -4526,7 +4526,7 @@ q(4024, "A Taste of Flame", "Burning Steppes", 58, "cyrus", 4,
     "With the inner flame in hand, Cyrus paid and sent its bearer away.", true)
 fallback("A Taste of Flame", "Burning Steppes", "cyrus", "4022,4023,4024",
     "Cyrus Therepentous of the Burning Steppes tested those who sought the Flight.",
-    "A molt was Cyrus Therepentous's proof of worth.",
+    "Cyrus Therepentous of the Burning Steppes made hard demands of the mortals who came to him.",
     "Cyrus Therepentous judged what was brought to him.",
     "The trial set by Cyrus Therepentous moved forward.")
 hl(4024, "Bael'Gar was slain in Blackrock Depths, and his inner flame went to Cyrus Therepentous, who seized it in triumph.",
@@ -4555,7 +4555,7 @@ q(1450, "Gryphon Master Talonaxe", "The Hinterlands", 43, "atalai", 2,
     "Falstad had no time for Explorers' League errands, and sent all questions about flight assignments to Gryphon Master Talonaxe.",
     "The aviary's flight records were Gryphon Master Talonaxe's business, Falstad said.",
     "Talonaxe remembered lending Brohann his best rider, Rhapsody Shindigger. His own father had helped excavate Uldaman, and he had a soft spot for the League.",
-    "Gryphon Master Talonaxe recalled the rider sent with Brohann, Rhapsody Shindigger, and how things had gone downhill.")
+    "Gryphon Master Talonaxe recalled the rider he had sent with Brohann, a fine gryphon jockey named Rhapsody Shindigger.")
 q(1451, "Rhapsody Shindigger", "The Hinterlands", 43, "atalai", 2,
     "No one flew like Rhapsody Shindigger, but he took to drink after the flight with Brohann, and Talonaxe had to let him go. He had set up a brew camp east of the aerie.",
     "Talonaxe's old rider Rhapsody had become a drunk and left the aviary. He kept a brew camp to the east.",
@@ -4563,7 +4563,7 @@ q(1451, "Rhapsody Shindigger", "The Hinterlands", 43, "atalai", 2,
     "At his brew camp, Rhapsody Shindigger was very drunk.")
 q(1452, "Rhapsody's Kalimdor Kocktail", "The Hinterlands", 43, "atalai", 2,
     "Rhapsody would only tell what happened over the swamp with a stiff drink in him. His Kalimdor Kocktail needed roc gizzards from Tanaris and groddoc and ironfur livers from Feralas.",
-    "Rhapsody Shindigger wanted a Kalimdor Kocktail before reliving that flight, made from livers and gizzards from far-off Kalimdor.",
+    "Before reliving that flight, Rhapsody Shindigger wanted a Kalimdor Kocktail, brewed from livers and gizzards from far-off Kalimdor.",
     "Shivering at the memory of the swamp, Rhapsody set about distilling his drink.",
     "With his gizzards and livers, Rhapsody could brew his fierce drink at last.")
 q(1469, "Rhapsody's Tale", "Stormwind City", 43, "atalai", 4,
@@ -4582,7 +4582,7 @@ q(2988, "Witherbark Cages", "The Hinterlands", 45, "sharpbeak", 3,
 q(2989, "The Altar of Zul", "The Hinterlands", 48, "sharpbeak", 3,
     "With Sharpbeak not among the Witherbark, the Vilebranch might have him. Talonaxe wanted the Altar of Zul searched.",
     "The Vilebranch trolls' Altar of Zul, on the western edge of their land, was the next place to look for Sharpbeak.",
-    "Relief came over Talonaxe, since the Vilebranch made sacrifices at the altar. A greater task was still ahead.",
+    "It was bad news and good news at once, Talonaxe said, since the Vilebranch performed sacrifices at that altar. A greater task still lay ahead.",
     "Sharpbeak was not at the Altar of Zul, which Talonaxe took as good news too.")
 q(2990, "Thadius Grimshade", "Blasted Lands", 47, "sharpbeak", 3,
     "Thadius Grimshade, a diviner, had left Aerie Peak for darker knowledge, but Talonaxe thought him a Wildhammer at heart. A feather from Sharpbeak's nest might let him find the gryphon.",
@@ -4610,7 +4610,7 @@ hl(2994, "Sharpbeak was freed from Jintha'Alor and returned to his parents, Swif
 -- 3130 (Against the Hatecrest) stays unwritten by an earlier editorial decision:
 -- tests/StoryEditorialFollowup.lua keeps the referral and its shared title without context.
 q(2870, "Against Lord Shalzaru", "Feralas", 45, "solarsal", 4,
-    "Royalty commanded the naga, and scouts had named one of the crueler, Lord Shalzaru. He had dug up an odd relic in a cave on the Isle of Dread.",
+    "Royalty commanded the naga, and scouts had named one of the crueler royals, Lord Shalzaru. He had dug up an odd relic in a cave on the Isle of Dread.",
     "Latronicus wanted Lord Shalzaru dead and his strange relic brought back for study.",
     "Shalzaru's death would throw the naga into disarray, Latronicus said. He paid from the stronghold's treasury and had one more favor to ask.",
     "Lord Shalzaru was dead, and Latronicus called the naga threat more under control than ever.")
@@ -4625,22 +4625,22 @@ q(2982, "The High Wilderness", "Feralas", 44, "troyas", 2,
     "Angelas Moonbreeze worried about Troyas, who kept going alone to the ruins of the High Wilderness. Gordunni ogres held them.",
     "Angelas wanted the ogres in the High Wilderness thinned, to make the ruins safer for Troyas.",
     "Grateful, Angelas asked that Troyas not hear a word of it.",
-    "The ogres were thinned, and Angelas kept it a secret from Troyas.")
+    "Fewer ogres now roamed the High Wilderness, and Angelas wanted the deed hidden from Troyas.")
 q(2939, "In Search of Knowledge", "Darnassus", 47, "troyas", 2,
     "Troyas Moonbreeze had found a stave in the ruins of Feralas that seemed more than ordinary. His colleague Daryn Lightwind in Darnassus might know what it was.",
     "Troyas sent questions about his strange stave to Daryn Lightwind, a historian in Darnassus.",
-    "Daryn muttered that Troyas always thought he had found something important. Anything of value had probably been hoarded by ogres or harpies long ago, but she let the visitor look.",
+    "Daryn muttered that Troyas always thought he had found something important. In her view, ogres or harpies had long since hoarded anything of value, but she let the visitor look.",
     "Daryn Lightwind doubted Troyas's find and offered only the run of her shelves.")
 q(2940, "Feralas: A History", "Darnassus", 47, "troyas", 2,
     "A worn, yellowed history of Feralas looked like what Troyas needed. It had to be borrowed from Daryn properly.",
     "Daryn Lightwind's shelves held an old history of Feralas that might explain the stave.",
     "Lending it, Daryn decided, would cost a favor first.",
-    "Lending the history, Daryn said, came with a price.")
+    "The old history of Feralas could be borrowed, Daryn agreed, but only once a task was done for her.")
 q(2941, "The Borrower", "Tanaris", 48, "troyas", 2,
     "Daryn's latest fascination was the snapjaws of the Hinterlands, and above all a giant one named Gammerita. Curgle Cranklehop in Tanaris had made her a device to capture a picture.",
     "Daryn Lightwind wanted a picture of Gammerita, and sent a letter to the inventor Curgle Cranklehop in Tanaris.",
     "Taking the visitor for another of Daryn's interns, Curgle praised the historian and fetched the Super Snapper FX.",
-    "Her new invention went to Daryn's helper, handed over by Curgle Cranklehop.")
+    "The Super Snapper FX, Curgle's newest invention, went to the one she took for Daryn's intern.")
 q(2944, "The Super Snapper FX", "Darnassus", 48, "troyas", 2,
     "Curgle's Super Snapper FX took a picture at the push of a button. Gammerita was somewhere on the Hinterlands beaches.",
     "With Curgle's device, a snapshot of the giant snapjaw Gammerita could be taken for Daryn.",
@@ -4659,7 +4659,7 @@ q(2879, "The Stave of Equinex", "Feralas", 50, "troyas", 4,
 q(2942, "The Morrow Stone", "Feralas", 50, "troyas", 4,
     "As the artifact left the monolith, the stave's power began to fade.",
     "The artifact from the Equinex Monolith was for Troyas Moonbreeze to study.",
-    "Troyas named it the Morrow Stone. He did not yet know its purpose, but anything hidden away like that had to be significant.",
+    "Troyas had read that it was called the Morrow Stone. He did not yet know its purpose, but he was sure anything hidden away like that was significant.",
     "Troyas Moonbreeze identified the Morrow Stone and went on with his studies.")
 for _, id in ipairs({1448, 1449, 1450, 1451, 1452, 1469, 2988, 2989, 2990, 2992, 2993, 2994, 2870, 2871,
     2982, 2939, 2940, 2941, 2944, 2943, 2879, 2942}) do src(id) end
@@ -4684,32 +4684,32 @@ P.threads.world_excelsior = "Drizzlik's Excelsior boots"
 q(198, "Supplies to Private Thorsen", "Stranglethorn Vale", 32, "kurzen", 3,
     "Krazek in Booty Bay had a shipment for Lieutenant Doren's camp in the north. Troll attacks had stopped the usual deliveries, and Private Thorsen was to receive it.",
     "Doren's rebels were waiting on their supplies from Booty Bay. Krazek hired a courier and warned that a lost crate would be owed back to him.",
-    "Private Thorsen opened the shipment to find the land mines he expected. He said they would help the camp hold out against Kurzen and his men.",
-    "Thorsen was relieved the crate had not been touched. Its land mines would help the rebels defend themselves from Colonel Kurzen.")
+    "Private Thorsen took the shipment of land mines. He said they would help the camp hold out against Kurzen and his men.",
+    "Thorsen was relieved the crate had not been touched, since its land mines would help the rebels defend themselves from Colonel Kurzen.")
 q(215, "Jungle Secrets", "Stranglethorn Vale", 33, "kurzen", 4,
     "Private Thorsen had been saved from an ambush, and he knew how it looked. He said Lieutenant Doren had ordered him to rejoin Kurzen's men as a spy.",
-    "Thorsen's attempt to get inside Kurzen's Compound had gone wrong. His mission was secret, and only Lieutenant Doren could explain it.",
+    "Thorsen's attempt to get inside Kurzen's Compound had gone wrong, and only Lieutenant Doren could explain his secret mission.",
     "Doren confirmed Thorsen's orders and asked for discretion. Only Yohwa, Thorsen and he had known of the mission, so someone else had betrayed it.",
     "Doren feared for Thorsen's life if word got out. The rebels had once been loyal to Kurzen, and now Doren suspected a traitor among them.")
 q(328, "The Hidden Key", "Stranglethorn Vale", 37, "kurzen", 3,
     "Herod's records said nothing of Thorsen, but a small brass key was hidden in a ledger's binding. His notes mentioned a secure strongbox in the Stockpile.",
-    "A brass key from Bookie Herod's ledger might open the strongbox his papers described. It lay in the caverns behind Kurzen's Compound.",
+    "A brass key from Bookie Herod's ledger might open the strongbox his papers described, in the caverns behind Kurzen's Compound.",
     "Herod's bronze-bound strongbox opened to the key. Inside he kept his more valuable coins and belongings.",
     "Bookie Herod's strongbox was found in the Stockpile, and the brass key fit its lock.")
 q(329, "The Spy Revealed!", "Stranglethorn Vale", 37, "kurzen", 4,
-    "Among Herod's valuables was a muddy note tracking Thorsen's patrols, contacts and habits. It was signed with a single letter, M.",
+    "Among Herod's valuables was a muddy note tracking Thorsen's patrols, contacts and habits, signed with a single letter, M.",
     "The note in Herod's strongbox could only have been written by someone close to Thorsen. Its writer was the traitor in the rebel camp.",
     "Lieutenant Doren took the note as the clue the rebels needed to find their traitor.",
-    "Doren gave his thanks for the note signed M. With it, he meant to root out the spy.")
+    "Doren gave his thanks for the note signed M, and meant to use it to root out the spy.")
 q(330, "Patrol Schedules", "Stranglethorn Vale", 37, "kurzen", 3,
     "Doren could not place the M, but its writer had shared Thorsen's patrol the week before, and Corporal Sethman kept the schedules.",
-    "Whoever had walked patrol with Thorsen last week had written the note. Doren sent the question to Corporal Sethman.",
+    "Whoever had walked patrol with Thorsen last week had written the note, so Doren sent the question to Corporal Sethman.",
     "Sethman checked his schedule. Private Merle had shared every patrol with Thorsen the week before.",
-    "Sethman found the name in his records. Private Merle had kept the same patrol times as Thorsen all week.")
+    "Sethman found the name in his records, where Private Merle had kept the same patrol times as Thorsen all week.")
 q(331, "Report to Doren", "Stranglethorn Vale", 37, "kurzen", 4,
     "Sethman's answer pointed to Private Merle, and Lieutenant Doren was waiting to hear it.",
-    "The patrol records named Merle. That name had to reach Doren before the traitor could do more harm.",
-    "Lieutenant Doren was pained to learn that Merle had betrayed them. He had thought him a brave soldier, and was relieved the spy was found before Kurzen could use him.",
+    "The patrol records named Merle, and Doren had wanted that information brought back to him.",
+    "Lieutenant Doren was pained to learn that Merle had betrayed them. He had thought him a brave soldier, and was relieved the spy was found at last.",
     "Doren had believed Merle's heart was true. Finding him out was still a relief, he said, for with such a spy the rebels would not last long.")
 q(210, "Krazek's Cookery", "Stranglethorn Vale", 37, "crockpot", 2,
     "Corporal Kaleb did most of the cooking at the rebel camp. His mechanical pot from Booty Bay had saved him hours until it broke, and he wanted it taken back to Krazek.",
@@ -4717,7 +4717,7 @@ q(210, "Krazek's Cookery", "Stranglethorn Vale", 37, "crockpot", 2,
     "Krazek found the steam charger rusted and the fobulator missing teeth. Of course he could fix it, he said, but there was always a price.",
     "Krazek recognized his own crock pot and agreed to repair it, for a price.")
 q(627, "Favor for Krazek", "Stranglethorn Vale", 37, "crockpot", 2,
-    "Krazek's price for fixing Kaleb's pot was bloodstone ore. A cave in Drywhisker Gorge, far north in the Arathi Highlands, held a low grade of it that he still valued.",
+    "While he fixed Kaleb's pot, Krazek wanted bloodstone ore. A cave in Drywhisker Gorge, far north in the Arathi Highlands, held a low grade of it that he still valued.",
     "While he worked on the crock pot, Krazek wanted samples of bloodstone from the Arathi Highlands. Even poor bloodstone was valuable to those who knew its uses.",
     "Krazek called the bloodstone a big favor and paid for it.",
     "Krazek had his bloodstone from Drywhisker Gorge, and paid as promised.")
@@ -4725,7 +4725,7 @@ q(622, "Return to Corporal Kaleb", "Stranglethorn Vale", 37, "crockpot", 2,
     "Krazek had fixed the pot and added a steam whistle and a chopper for leg bones. He was sure its owner would be pleased.",
     "The repaired crock pot was ready to go back to Corporal Kaleb, with a few improvements of Krazek's own.",
     "Corporal Kaleb was delighted to have his pot back and could start dinner. He had heard that Booty Bay's goblins sometimes dragged drunk sailors onto slave boats.",
-    "Kaleb thanked the courier and set about dinner. He hoped Booty Bay had not been too rough on them.")
+    "Kaleb thanked the courier and set about dinner, hoping Booty Bay had not been too rough on them.")
 q(616, "The Haunted Isle", "Stranglethorn Vale", 37, "tides", 3,
     "Krazek gathered rumors for Baron Revilgaz. Sailors in the tavern spoke of a haunted island off the coast, with water elementals and a raving goblin ghost.",
     "Krazek put little stock in ghost stories, but this one about an island off the coast was worth passing to Baron Revilgaz.",
@@ -4735,53 +4735,53 @@ q(578, "The Stone of the Tides", "Stranglethorn Vale", 37, "tides", 4,
     "Revilgaz suspected that Gazban, a goblin mage, had found the Stone of the Tides. He wanted the haunted island located, and gave a scrip for the Stormwind Library, where the old account of the Stone could be read.",
     "If water elementals and a goblin mage haunted the island, the baron thought the Stone of the Tides could be his. Someone had to find the island first.",
     "Baron Revilgaz was thrilled that the stories were true. To take the Stone, its curse would have to be broken, and that needed a wizard.",
-    "Revilgaz now knew the island and its elementals were real. A mage would have to help him overcome the Stone's curse.")
+    "Revilgaz now knew the island and its elementals were real, but a mage would have to help him overcome the Stone's curse.")
 q(601, "Water Elementals", "Stranglethorn Vale", 37, "tides", 3,
     "The Stone of the Tides made its bearer fade in and out of existence. A mage of Dalaran, Revilgaz hoped, could study the magic left on the water elementals' bracers.",
-    "Gazban had summoned the island's water elementals. Their bracers carried magical residue that might show how to counter the curse.",
+    "Revilgaz believed Gazban had summoned the island's water elementals. Their bracers carried magical residue that might show how to counter the curse.",
     "Revilgaz could not judge the bracers himself and would not leave Booty Bay to chat with old mages. They were to go to Dalaran.",
-    "Baron Revilgaz had his bracers and was sure at least one would help. A mage in Dalaran would have to examine them.")
+    "Baron Revilgaz had his bracers and was sure at least one would help, though a mage in Dalaran would have to examine them.")
 q(602, "Magical Analysis", "Alterac Mountains", 37, "tides", 3,
-    "Revilgaz named Archmage Ansirem Runeweaver, whose knowledge he trusted. The mages of Dalaran were busy rebuilding their city, but few could resist a magical puzzle.",
+    "Revilgaz named Archmage Ansirem Runeweaver, whose knowledge he trusted. The mages of Dalaran were busy rebuilding their city, but Revilgaz was sure none could resist a magical puzzle.",
     "The bag of water elemental bracers went to the ruins of Dalaran. Revilgaz had dealt with Ansirem Runeweaver before.",
     "Archmage Ansirem had once written a tome on the legends of the Gurubashi Empire. He knew the Stone well, and found residue on one bracer to analyze.",
-    "Ansirem Runeweaver took an interest at once. At least one of the bracers held magic he could study.")
+    "Ansirem Runeweaver took an interest at once, since at least one of the bracers held magic he could study.")
 q(603, "Ansirem's Key", "Stranglethorn Vale", 37, "tides", 3,
     "Ansirem found that the Stone's power was amplified through an altar. An ancient troll dagger could overpower it, but he had given the blade to his daughter Catelyn, who ran off to Booty Bay to be a pirate.",
     "The altar could be broken with a troll dagger Ansirem had found in Stranglethorn. It now belonged to his daughter, Catelyn the Blade of Booty Bay.",
     "Catelyn the Blade no longer had the dagger. She had lost a knife fight to a Bloodsail Buccaneer, and he had taken the blade as spoils.",
     "Catelyn took the request badly. Once the best knife fighter in Booty Bay, she had lost her blade to one of the Bloodsail.")
 q(610, "\"Pretty Boy\" Duncan", "Stranglethorn Vale", 39, "tides", 3,
-    "Catelyn was surprised her father had not given up on her. Her dagger was with Pretty Boy Duncan of the Bloodsail Buccaneers.",
+    "Surprised that her father had not given up on her, Catelyn said her dagger was with Pretty Boy Duncan of the Bloodsail Buccaneers.",
     "Duncan had knocked Catelyn out with a blow to the head and taken her knife. She wanted it back from him by force.",
     "Catelyn had her dagger back from Duncan. She joked that she would not be challenging her helper to a fight any time soon.",
-    "Catelyn the Blade had her knife again. Beating Duncan, she admitted, showed more experience than she had first guessed.")
+    "Catelyn the Blade had her knife again, and admitted that beating Duncan showed more experience than she had first guessed.")
 q(611, "The Curse of the Tides", "Stranglethorn Vale", 40, "tides", 5,
     "Catelyn lent her dagger and wanted it back afterward. She had heard of a sunken troll city near the haunted island, where the altar might lie.",
     "With Catelyn's knife, the altar that strengthened the Stone could be broken. She pointed the search to a sunken troll city off the coast.",
     "Baron Revilgaz had cleared a place and bought a stand for the Stone of the Tides. He admired how a tide seemed trapped within its surface.",
-    "Revilgaz received the Stone of the Tides at last. It would have a place of prominence among his troll artifacts.")
+    "Revilgaz received the Stone of the Tides at last, and it would have a place of prominence among his troll artifacts.")
 q(575, "Supply and Demand", "Stranglethorn Vale", 31, "excelsior", 2,
     "Drizzlik, a leatherworker in Booty Bay, had an order from Director Riddlevox of the Tinkers' Union for a dozen Excelsior boots. Their basic shape needed river crocolisk skins.",
     "Drizzlik called himself the finest leathercrafter of the South Seas. Riddlevox's order for Excelsior boots began with crocolisk skins from the northern rivers.",
-    "Drizzlik accepted the skins for the boots' inner layer. If they were too stiff, tiger blood would soften them.",
+    "Drizzlik accepted the skins for the boots' inner layer, and if they were too stiff, tiger blood would soften them.",
     "Drizzlik had his skins. Their quality mattered little inside the boots, as long as they were comfortable.")
 q(577, "Some Assembly Required", "Stranglethorn Vale", 36, "excelsior", 2,
     "Drizzlik's boots needed more filling than the first skins gave. The thicker, cheaper hides of the crocolisks around Lake Nazferiti would do, Drizzlik decided.",
     "Nobody would see the inner layers, Drizzlik reasoned, so cheaper skins from Lake Nazferiti would do.",
-    "Drizzlik compared his boots to sausages. It was safer, he said, not to ask too carefully what was inside.",
+    "Drizzlik compared his boots to sausages, since it was safer, he said, not to ask too carefully what was inside.",
     "Drizzlik filled out the boots and promised only the finest ingredients, so long as no one looked closely.")
 q(628, "Excelsior", "Stranglethorn Vale", 38, "excelsior", 3,
-    "Only the skin of an elder saltwater crocolisk would do for the outer layer. The elders came out only to defend the other crocolisks.",
+    "Only the skin of an elder saltwater crocolisk would do for the outer layer, and the elders came out only to defend the other crocolisks.",
     "An elder saltwater crocolisk's hide would be the canvas for Drizzlik's Excelsior designs.",
     "Drizzlik could ship Riddlevox's order to Undermine on the next boat, ahead of schedule. He gave a pair of the extras as thanks.",
-    "Riddlevox's boots were finished early. Drizzlik handed over a spare pair, on the house.")
+    "With the elder crocolisk skin, Drizzlik could fill Riddlevox's order early. He handed over a spare pair, on the house.")
 hl(215, "Private Thorsen had been spying on Kurzen at Doren's order. Doren confirmed it and saw that someone else must have betrayed the secret.",
-    "Lieutenant Doren confirmed Thorsen's secret mission. Only three had known of it, so the rebels had a traitor.")
+    "Lieutenant Doren confirmed Thorsen's secret mission, and since only three had known of it, the rebels had a traitor.")
 hl(331, "Lieutenant Doren learned that Private Merle was the traitor. He grieved for a soldier he had trusted, and was relieved the spy was found.",
-    "Doren was pained that Merle had betrayed the rebels, and relieved to have found him out before Kurzen could use him.")
+    "Doren was pained that Merle had betrayed the rebels. Finding him out was a relief, since such a spy would have doomed them against Kurzen.")
 hl(578, "Baron Revilgaz learned that the haunted island was real. The Stone of the Tides was there, behind a curse only a wizard could help with.",
-    "Revilgaz was thrilled that the island's stories were true, and began looking for a mage to break the Stone's curse.")
+    "Revilgaz was thrilled that the stories of the haunted island were true, though breaking the Stone's curse would need a mage.")
 hl(611, "Baron Revilgaz received the Stone of the Tides, freed from its altar with Catelyn's dagger. It would have a place of honor among his troll artifacts.",
     "The Stone of the Tides reached Revilgaz, who had already bought a stand for it. A tide seemed trapped within its surface.")
 for _, id in ipairs({198, 215, 328, 329, 330, 331, 210, 627, 622, 616, 578, 601, 602, 603, 610, 611, 575, 577, 628}) do src(id, "LoreForever quest:" .. id .. " (facts only)") end
@@ -4798,88 +4798,88 @@ q(1264, "The Missing Diplomat", "Dustwallow Marsh", 33, MD3, 4,
     "Mikhail knew the Kul Tiras marines who came to his tavern on payday, and thought Hendel was among them. If Elling's name was dropped, Commander Samaul in Theramore could find him.",
     "Hendel was likely one of Theramore's marines. Mikhail sent the search to Commander Samaul, who was loyal to Proudmoore but would help discreetly for Elling.",
     "Commander Samaul led Lady Proudmoore's forces in Theramore. He was busy, but offered to answer questions, and warned of the black dragons in the south of the swamp.",
-    "Samaul introduced himself and agreed to help, briefly. Beyond the city, he warned, ogres, orcs, murlocs and black dragons waited in the marsh.", true)
+    "Samaul introduced himself and agreed to help, briefly, warning that ogres, orcs, murlocs and black dragons waited in the marsh beyond the city.", true)
 q(1265, "The Missing Diplomat", "Dustwallow Marsh", 35, MD3, 4,
     "Samaul knew Hendel, and did not like that Elling had sent someone to him. He had a duty to protect the land, but said Hendel was posted at the first tower outside Theramore.",
     "Commander Samaul guessed that Elling's business was troubling. He pointed the way to the first tower outside the city, where Hendel had been stationed.",
     "Hendel was not at the tower. Lady Proudmoore had already learned of the matter from other sources, and offered help to find him and bring him to justice.",
-    "Lady Proudmoore's people already knew why Hendel was wanted. They offered to say where he was, so he could face justice.", true)
+    "Lady Proudmoore's people already knew why Hendel was wanted, and offered to say where he was so he could face justice.", true)
 q(1266, "The Missing Diplomat", "Dustwallow Marsh", 36, MD3, 4,
     "Private Hendel was west of the tower, guarding Theramore's infiltrators while they rested. They had been watching the Horde at Brackenwall.",
-    "Hendel was on guard among the tents along the road, west of the city. Samaul promised to catch up soon.",
+    "Hendel was on guard among the tents along the road, west of the tower. Archmage Tervosh promised to catch up soon.",
     "Private Hendel greeted the visitor as a wandering citizen. He warned of ogres and spoke of the slow search for a Horde base in the swamp.",
-    "Hendel was found at the infiltrators' tents. He told the visitor to keep the questions short and watch for ogres.", true)
+    "Hendel was found at the infiltrators' tents, and told the visitor to keep the questions short and watch for ogres.", true)
 q(1362, "The Kolkar of Desolace", "Desolace", 32, "centaur", 3,
     "The Kolkar centaur had spread from Desolace into the Barrens, but their strength lay in Desolace. Regthar had sent Felgur Twocuts to Ghost Walker Post to learn how to deal with them.",
-    "Regthar Deathgate wanted the Kolkar threat ended at its source. His agent Felgur Twocuts was gathering intelligence in Desolace.",
+    "Regthar Deathgate wanted the Kolkar threat ended at its source, and his agent Felgur Twocuts was gathering intelligence in Desolace.",
     "Felgur Twocuts welcomed someone sent by Regthar. He did not know how the campaign against the centaur would end, only that it would be long.",
-    "Felgur said the struggle with the centaur would be long. He offered a seat and began to explain.")
+    "Felgur said the struggle with the centaur would be long, then offered a seat and began to explain.")
 q(1453, "Reclaimers' Business in Desolace", "Desolace", 33, "reclaimers", 2,
     "Reclaimers Inc. had work in Desolace. Its man, Kreldig Ungor, was holed up at Nijel's Point, a small camp hidden in the northern mountains.",
     "Kreldig Ungor needed hands at Nijel's Point. The Reclaimers had sent word that there was a good week's honest work for anyone who went.",
     "Kreldig Ungor was glad to see that the Reclaimers had both work and willing helpers. Everyone had lost something, he said, and for the right price they could find it.",
-    "Kreldig welcomed the new hand. The Reclaimers, as he put it, found what people had lost, for the right price.")
+    "Kreldig Ungor welcomed the new hand at Nijel's Point and called helping the Reclaimers a smart move.")
 q(5821, "Bodyguard for Hire", "Desolace", 35, "gizelton", 3,
     "Cork Gizelton and Rigger stopped their kodo caravan whenever they heard the Kolkar war drums. This time Cork offered pay for an escort past the Kolkar village.",
     "The Gizelton caravan needed a guard past the Kolkar centaur. Dead traders made no profit, Cork said, and the reward waited with Smeed Scrabblescrew.",
     "Smeed Scrabblescrew paid for the caravan's safe passage, grumbling at the cost. If he were taller, he said, he would ride shotgun himself.",
-    "Smeed paid the guard and grumbled about the price. He would have shown the centaur himself, he claimed, with a bigger gun.")
+    "Smeed paid the guard and grumbled about the price. Were he a bit taller, he claimed, he would ride along with a big gun and show the centaur himself.")
 q(5943, "Gizelton Caravan", "Desolace", 38, "gizelton", 3,
     "Rigger Gizelton and Cork had started the caravan to make a fortune. The demons of Mannoroc Coven usually ignored them, but this time the kodos were spooked.",
-    "Rigger needed his caravan guarded past Mannoroc Coven. Once it was through, Smeed at Scrabblescrew's Camp would pay.",
-    "Smeed paid again for the Gizelton Caravan's protection. As long as the brothers kept paying for his kodos, he cared little how they ran their business.",
-    "Smeed Scrabblescrew paid the escort's wage. Cork and Rigger, he noted, made only a gold piece a week.")
+    "Rigger needed his caravan guarded past Mannoroc Coven, and once it was through, Smeed at Scrabblescrew's Camp would pay.",
+    "Smeed paid again for the Gizelton Caravan's protection. As long as Cork and Rigger kept paying for his kodos, he cared little how they ran their business.",
+    "Smeed Scrabblescrew paid the escort's wage and noted that Cork and Rigger made only a gold piece a week.")
 q(1458, "Reagents for Reclaimers Inc.", "Desolace", 33, "reclaimers", 2,
-    "Kreldig was collecting reagents for Leftwitch, a gnome mage in Kharanos, though Roetten had left him short-handed. The list began with Hatefury satyr horns and claws.",
+    "Kreldig was collecting reagents for Leftwitch, a gnome mage in Kharanos, though Roetten ignored how short-handed the crew was. The list began with Hatefury satyr horns and claws.",
     "Leftwitch's reagent list had come to Desolace with the Reclaimers, and Kreldig started with the satyr to the east.",
-    "Kreldig was not sure the horns and claws were the quality Leftwitch wanted. The mage, he said, should have specified.",
+    "Kreldig was not sure the horns and claws were the quality Leftwitch wanted, and said the mage should have specified.",
     "Kreldig took the satyr horns and claws and turned to the next item on Leftwitch's list.", true)
 q(1459, "Reagents for Reclaimers Inc.", "Desolace", 35, "reclaimers", 2,
     "Leftwitch was particular. The venom had to come from scorpashi, and the hide from an aged kodo rather than a dying or ancient one.",
-    "Next on Leftwitch's list were scorpashi venom and aged kodo hide. Mages, in Kreldig's view, wanted strange things.",
+    "Next on Leftwitch's list were scorpashi venom and aged kodo hide, the strange things mages wanted, in Kreldig's view.",
     "Kreldig said the help was halving his time in Desolace. Once he was home in Ironforge, he would buy an ale.",
     "Kreldig welcomed the venom and hides. He was already thinking of warming his feet in Ironforge.", true)
 q(1466, "Reagents for Reclaimers Inc.", "Desolace", 40, "reclaimers", 3,
     "The last of Leftwitch's reagents came from the demons of Mannoroc Coven. He wanted brains from mana eaters, wings from nether maidens and blood from doomwarders.",
     "Kreldig warned that the final list would take longer, since it meant fighting demons. He would understand anyone who passed on it.",
-    "Kreldig could hardly believe the demon reagents had been gathered. He meant to tell Roetten about it in Ironforge.",
+    "Kreldig could hardly believe the demon reagents had been gathered, and meant to tell Roetten about it in Ironforge.",
     "Kreldig praised anyone who could take on demons for a mage's experiments and come back whole.", true)
 q(1467, "Reagents for Reclaimers Inc.", "Ironforge", 40, "reclaimers", 2,
     "Payment for Leftwitch's reagents waited with Roetten in Ironforge. Kreldig sent the package there and promised a good word.",
     "Roetten Stonehammer would pay for the package from Desolace. Kreldig expected to follow home soon.",
     "Roetten received Leftwitch's package and paid. Reclaimers Inc. always paid well for a hard week's work, he said.",
-    "Roetten was glad to have the package off his hands. He paid the promised wage for the week's work.", true)
+    "Roetten was glad to have the package off his hands and paid the promised wage for the week's work.", true)
 fallback("Reagents for Reclaimers Inc.", "Desolace", "reclaimers", "1458,1459,1466,1467",
     "Kreldig Ungor was gathering reagents in Desolace for Leftwitch, a gnome mage in Kharanos.",
     "Leftwitch's reagent list kept the Reclaimers busy in Desolace.",
-    "Kreldig had more of Leftwitch's reagents.",
+    "The Reclaimers' work on Leftwitch's order moved forward.",
     "Another part of Leftwitch's list was done.")
 q(6141, "Brother Anton", "Desolace", 39, "scarletpath", 3,
     "Brother Crowley's brother in arms, Anton, had heard of undead in Desolace and sailed there at once. He wanted brave helpers at Nijel's Point.",
-    "Brother Anton of the Scarlet Crusade was hunting undead in distant Desolace. Crowley in Stormwind sent help his way.",
+    "In distant Desolace, Brother Anton of the Scarlet Crusade was hunting undead, and Crowley in Stormwind sent help his way.",
     "Brother Anton had heard that aid was coming from the east. He asked whether the newcomer had come to help the Crusade, and began to explain.",
     "Anton welcomed the help from the east and began to explain what the Crusade needed.")
 q(261, "Down the Scarlet Path", "Desolace", 39, "scarletpath", 3,
     "Brother Anton saw the Scourge as an evil that had to be stopped. To prove allegiance to the Scarlet Crusade, he asked for the undead ravagers of the Valley of Bones to be destroyed.",
-    "The Crusade would embrace those who fought the Scourge, Anton said. His test lay in the Valley of Bones to the south.",
+    "The Crusade would embrace those who fought the Scourge, Anton said, and his test lay in the Valley of Bones to the south.",
     "Brother Anton commended the resolve shown against the ravagers. Perhaps, he suggested, the newcomer's path lay with the Crusade.",
     "Anton said the Scarlet Crusade commended the work in the Valley of Bones.", true)
 q(1052, "Down the Scarlet Path", "Hillsbrad Foothills", 40, "scarletpath", 3,
-    "Anton was proud of the Crusade's strongholds from Hearthglen to Tirisfal. The true threat lay in Lordaeron, and he sent a sealed commendation to Raleigh the Devout in Southshore.",
+    "Anton was proud of the Crusade's strongholds from Hearthglen to Tirisfal. The true threat lay in Lordaeron, he said, and he sent a sealed commendation to Raleigh the Devout in Southshore.",
     "Brother Anton's letter would earn a place of honor at the Scarlet Monastery, he said. The letter was for Raleigh the Devout in Southshore.",
-    "Raleigh the Devout read the letter with dismay. Brother Anton, he said, was still spreading the word of the Scarlet Crusade.",
-    "Raleigh was startled to hear of Brother Anton. He seemed far less pleased with the Crusade than Anton was.", true)
+    "Raleigh the Devout read the letter with dismay, saying Brother Anton was still spreading the word of the Scarlet Crusade.",
+    "In Southshore, Raleigh took the sealed letter and murmured that Brother Anton was still preaching for the Crusade.", true)
 fallback("Down the Scarlet Path", "Desolace", "scarletpath", "261,1052",
     "Brother Anton of the Scarlet Crusade was recruiting in Desolace.",
     "Anton's recruitment for the Scarlet Crusade began with the undead of Desolace.",
     "Brother Anton's recruitment moved a step further.",
-    "The matter of Anton's Scarlet Crusade went on.")
-hl(1266, "Private Hendel was found at the infiltrators' camp west of Theramore. He took the visitor for a wandering citizen.",
+    "The path Brother Anton laid toward the Scarlet Crusade went on.")
+hl(1266, "Private Hendel was found at the infiltrators' camp west of Theramore, and took the visitor for a wandering citizen.",
     "The search for Hendel reached a camp of Theramore infiltrators, where the private stood guard.")
 hl(1466, "Kreldig Ungor could hardly believe Leftwitch's demon reagents had been gathered from Mannoroc Coven. He meant to praise the work to Roetten.",
     "The last of Leftwitch's list came from the demons of Mannoroc Coven. Kreldig promised a good word in Ironforge.")
 hl(1052, "Brother Anton's commendation reached Raleigh the Devout in Southshore, who was dismayed to hear Anton still spoke for the Crusade.",
-    "Raleigh the Devout read Anton's sealed letter in Southshore. He did not share Anton's pride in the Scarlet Crusade.")
+    "Raleigh the Devout read Anton's sealed letter in Southshore, surprised that Anton still preached for the Crusade.")
 for _, id in ipairs({1264, 1265, 1266, 1362, 1453, 5821, 5943, 1458, 1459, 1466, 1467, 6141, 261, 1052}) do src(id, "LoreForever quest:" .. id .. " (facts only)") end
 for _, id in ipairs({1264, 1265, 1266}) do P.questIDs[id].source[4] = "starters3 hand-off 2026-11-05: Theramore stages after Slim's confession (1250)" end
 
@@ -4894,24 +4894,24 @@ P.threads.world_suntara = "the Suntara Stones"
 P.threads.world_thoriumpoint = "the Thorium Brotherhood's postings in the Gorge"
 P.threads.world_margol = "Margol's horn and the Searing Gorge gate"
 q(4449, "Caught!", "Searing Gorge", 45, "locheed", 2,
-    "A dwarf named Locheed had hidden in an outhouse from the Dark Iron geologists, and they had locked him in. He wanted them taught a lesson, and some silk cloth.",
-    "Locked in a Dark Iron outhouse, Locheed asked for revenge on the geologists. He also wanted silk cloth, for reasons he would not explain.",
+    "Locheed had hidden in an outhouse from the Dark Iron geologists, and they had locked him in. He wanted them taught a lesson, and some silk cloth.",
+    "Locked in a Dark Iron outhouse, Locheed asked for revenge on the geologists, and for silk cloth, for reasons he would not explain.",
     "Locheed liked the feel of the silk. Then he remembered the geologists, and said the help gave him time to finish up in there.",
     "Locheed was delighted with the silk cloth. The beaten geologists seemed to come second.")
 q(4450, "Ledger from Tanaris", "Tanaris", 46, "locheed", 2,
     "Locheed had taken a job in Tanaris for Krinkle Goodsteel, who wanted materials from the Searing Gorge and elsewhere. He slid Krinkle's ledger under the outhouse door.",
-    "Krinkle Goodsteel's ledger came from under Locheed's door. The goods on its list had to be gathered and carried to Gadgetzan.",
+    "The goods on Krinkle Goodsteel's ledger, which came from under Locheed's door, had to be gathered and carried to Gadgetzan.",
     "Krinkle Goodsteel had expected to be asked to craft something. Instead every item on the list had been brought, and Krinkle offered a reward.",
     "Krinkle checked the goods against the ledger and found everything there, then paid despite a busy day.")
 q(4451, "The Key to Freedom", "Searing Gorge", 47, "locheed", 3,
-    "A small brass key turned up, marked Dark Iron Outhouse and warning against copies. Where it belonged was not yet clear.",
+    "A small brass key turned up, marked Dark Iron Outhouse and warning against copies, though where it belonged was not yet clear.",
     "The words scratched on the brass key named a Dark Iron outhouse.",
     "Locheed knew the Dark Irons had hidden the key after locking him in. He asked for the key to be turned so he could get out.",
     "Locheed could hardly believe the key had been found. Freedom was a turn of the lock away.")
 q(3181, "The Horn of the Beast", "Loch Modan", 48, "margol", 3,
     "Margol's giant horn held a broken axe head marked as the property of Mountaineer Pebblebitty. It shattered when pulled free.",
-    "The horn bore Pebblebitty's name on the axe head lodged in it. That mountaineer guarded the gate between Loch Modan and the Searing Gorge.",
-    "Pebblebitty called the horn a fake. He had faced Margol, he said, and her horn was eight times larger.",
+    "The horn bore Pebblebitty's name on the axe head lodged in it, and that mountaineer guarded the gate between Loch Modan and the Searing Gorge.",
+    "Pebblebitty called the horn a fake, since he had faced Margol, he said, and her horn was eight times larger.",
     "Mountaineer Pebblebitty was not fooled, or thought he was not. The horn, he decided, came from some Barrens stormsnout.")
 q(3367, "Suntara Stones", "Searing Gorge", 48, "suntara", 3,
     "Dorius Stonetender lay badly hurt in the Searing Gorge, bleeding inside. He begged for help getting back to Ironforge.",
@@ -4921,16 +4921,16 @@ q(3367, "Suntara Stones", "Searing Gorge", 48, "suntara", 3,
 q(3368, "Suntara Stones", "Ironforge", 48, "suntara", 4,
     "Dorius's letter was meant for his brother. It said the Dark Irons held the Suntara Stones, and that their leader, Lathoric the Black, used them to enslave his excavation team.",
     "The singed letter called itself a dead man's final wish. Dorius's team had been taken to the Cauldron to build something called Obsidion.",
-    "Curator Thorius wept over his brother's letter. Then he vowed, in the name of the Light, that Dorius would have his wish.",
+    "Curator Thorius wept over his brother's letter, then vowed in the name of the Light that Dorius would have his wish.",
     "Thorius read the letter and dried his face. His brother's last wish would be honored, he swore.", true)
 fallback("Suntara Stones", "Searing Gorge", "suntara", "3367,3368",
     "Dorius Stonetender's excavation in the Searing Gorge concerned the Suntara Stones.",
-    "The Suntara Stones and Dorius Stonetender's excavation team were in Dark Iron hands.",
+    "Dorius Stonetender's search for the Suntara Stones had gone badly in the Searing Gorge.",
     "Word of Dorius Stonetender's excavation went on toward Ironforge.",
     "The matter of the Suntara Stones moved on.")
 q(3372, "Release Them", "Searing Gorge", 52, "suntara", 3,
     "A dying archaeologist said the Suntara's power kept the workers at their tasks even after their bodies gave out. Its altar needed a relic guarded by the Twilight's Hammer.",
-    "The altar of Suntara was the key to freeing the workers. Its relic lay with the Twilight's Hammer in the hills above the cave.",
+    "Freeing the workers depended on the altar of Suntara, and its relic lay with the Twilight's Hammer in the hills above the cave.",
     "The mysterious artifact was set on the altar of Suntara.",
     "Placing the relic on the altar answered the archaeologist's plea.")
 q(3566, "Rise, Obsidion!", "Ironforge", 52, "suntara", 5,
@@ -4944,18 +4944,18 @@ q(3441, "Divine Retribution", "Searing Gorge", 48, "retribution", 3,
     "Kalaran Windblade finished his account and asked if his listener was ready to act.",
     "Kalaran had told of his loss and asked for help with his revenge.")
 q(7728, "STOLEN: Smithing Tuyere and Lookout's Spyglass", "Searing Gorge", 48, "thoriumpoint", 2,
-    "The Thorium Brotherhood had lost a smithing tuyere and a lookout's spyglass. They blamed jealous Dark Iron dwarves.",
+    "The Thorium Brotherhood had lost a smithing tuyere and a lookout's spyglass, and blamed jealous Dark Iron dwarves.",
     "A posting asked for the stolen tuyere and spyglass to be returned to Scrange. The tuyere could not be replaced.",
     "Taskmaster Scrange paid the reward for the tuyere and spyglass.",
     "Scrange had the stolen tools back and paid the promised reward.")
 q(7729, "JOB OPPORTUNITY: Culling the Competition", "Searing Gorge", 48, "thoriumpoint", 2,
     "Taskmaster Scrange wanted the Dark Iron taskmasters and slavers of the Gorge cut down. His notice said to come back when the clothes were bloody enough.",
     "Scrange's posting called it culling the competition. His targets were the Dark Iron slavers and taskmasters.",
-    "Scrange weighed the bloodied clothes at fifteen point nine pounds and called it a possible record.",
+    "Scrange found fifteen point nine pounds of blood and gut on the clothes and called it a possible record.",
     "Scrange congratulated the new hire on a possible record for blood and gut weight.")
 q(7723, "Curse These Fat Fingers", "Searing Gorge", 49, "thoriumpoint", 2,
     "Hansel Heavyhands claimed the climate had swollen his fingers like blood sausages. Someone else would have to pound the heavy war golems of the Gorge.",
-    "With his fingers too fat to fight, Hansel handed out his orders. First were the Gorge's heavy war golems.",
+    "With his fingers too fat to fight, Hansel handed out his orders, starting with the Gorge's heavy war golems.",
     "Hansel was pleased and gave a little present for the trouble.",
     "Hansel was pleased with the work against the golems and handed over a gift.")
 q(7724, "Fiery Menace!", "Searing Gorge", 49, "thoriumpoint", 2,
@@ -4967,10 +4967,10 @@ q(7727, "Incendosaurs? Whateverosaur is More Like It", "Searing Gorge", 49, "tho
     "Scrange and Burninate wanted the incendosaurs of the Slag Pit cleared so teams could explore its lava pools. His bunions, Hansel said, kept him from doing it himself.",
     "Expeditions into the Slag Pit's lava pools could not start until the incendosaurs were dealt with. With bunions like his, the job went to someone else.",
     "Hansel rubbed his aching feet. Since no luffa had been found, he did not push the matter.",
-    "Hansel Heavyhands complained about his feet when the incendosaurs were cleared.")
+    "Hansel Heavyhands complained about his aching feet when the incendosaur hunt was done.")
 q(7701, "WANTED: Overseer Maltorius", "Searing Gorge", 50, "thoriumpoint", 4,
-    "Overseer Oilfist wanted Maltorius dead. He was a rogue Thorium Brotherhood agent and now commanded the Dark Iron crew of the Slag Pit.",
-    "A bounty in the Cauldron named Overseer Maltorius a traitor to the Thorium Brotherhood. His head would earn the reward from Lookout Captain Lolo Longstriker.",
+    "Maltorius, a rogue Thorium Brotherhood agent, now commanded the Dark Iron crew of the Slag Pit. Overseer Oilfist wanted him dead.",
+    "A bounty branded Overseer Maltorius of the Cauldron's Slag Pit crew a traitor to the Thorium Brotherhood. His head would earn the reward from Lookout Captain Lolo Longstriker.",
     "Lolo Longstriker, quite drunk, said Maltorius looked better without the rest of him, and paid the bounty.",
     "Captain Lolo had never thought to see that ugly face again, and paid between hiccups.")
 hl(3368, "Curator Thorius read his brother Dorius's letter about the Suntara Stones and his enslaved team, then vowed to honor the dead man's wish.",
@@ -4978,7 +4978,7 @@ hl(3368, "Curator Thorius read his brother Dorius's letter about the Suntara Sto
 hl(3566, "Thorius saw the proof and turned white. His own brother had set the trap and betrayed Ironforge.",
     "Curator Thorius learned that his brother had set everything up. He feared the Old Gods' influence was still strong.")
 hl(7701, "Overseer Maltorius, the Thorium Brotherhood's traitor, was dead. Lolo Longstriker paid the bounty between hiccups.",
-    "Lookout Captain Lolo Longstriker paid the bounty on Maltorius, glad never to see that face again.")
+    "Lookout Captain Lolo Longstriker paid the bounty on Maltorius, surprised to see that ugly face again.")
 for _, id in ipairs({4449, 4450, 4451, 3181, 3367, 3368, 3372, 3566, 3441, 7728, 7729, 7723, 7724, 7727, 7701}) do src(id, "LoreForever quest:" .. id .. " (facts only)") end
 
 -- Batch W3-4: Desolace's coast and valleys (Mai'Lahii, Drulzegar's revenge on the
@@ -4993,13 +4993,13 @@ P.threads.world_thaurissanruins = "the history of Thaurissan"
 q(6142, "Clam Bait", "Desolace", 35, "shadowprey", 2,
     "Mai'Lahii at Shadowprey Village loved to fish, and swore by soft-shelled clam meat as bait. The clams lay around a wrecked ship off the northern coast.",
     "Soft-shelled clams from the wreck up north made the best bait, according to Mai'Lahii.",
-    "Mai'Lahii said the witch doctor had prescribed fishing for a headache. With the clam meat, Mai'Lahii felt better already.",
+    "Mai'Lahii said the witch doctor had prescribed fishing for a headache, and with the clam meat, Mai'Lahii felt better already.",
     "Mai'Lahii had fresh bait and a cure for a headache, as the witch doctor had promised.")
 q(6143, "Other Fish to Fry", "Desolace", 36, "shadowprey", 3,
     "Drulzegar Skraghook's crew had fished near Ranazjar Isle until the naga attacked one morning. Only Drulzegar survived, and the guilt drove him to seek revenge.",
-    "Naga had killed every member of Drulzegar's fishing crew but him. He wanted them punished at Ranazjar Isle.",
+    "Naga had killed every member of Drulzegar's fishing crew but him, and he wanted them punished at Ranazjar Isle.",
     "Drulzegar was glad to hear the naga had been beaten, though his heart still felt empty. He swore to spend his life seeing them all killed.",
-    "Drulzegar Skraghook paid as he had promised. The news was sweet to him, but did not fill the loss of his crew.")
+    "Drulzegar Skraghook paid as he had promised, though the sweet news did not fill the loss of his crew.")
 q(5386, "Catch of the Day", "Desolace", 37, "shadowprey", 2,
     "Nataka Longhorn at Ghost Walker Post missed the smell of cooked fish. The centaur kept Nataka too busy to visit Jinar'Zillen, the fisherman at Shadowprey Village.",
     "Shadowprey's trolls caught the best fish in Desolace. Bloodbelly fish from Jinar'Zillen were Nataka's favorite.",
@@ -5007,28 +5007,28 @@ q(5386, "Catch of the Day", "Desolace", 37, "shadowprey", 2,
     "Nataka was delighted with the Bloodbelly fish and paid with a choice of items.")
 q(5381, "Hand of Iruxos", "Desolace", 38, "iruxos", 3,
     "Taiga Wisemane said the Burning Blade used the Hand of Iruxos to open demon portals at Mannoroc Coven. It lay in their Demon Box, behind a red crystal in Thunder Axe Fortress.",
-    "A demon pick could break the red crystal guarding the Burning Blade's Demon Box. The box held the Hand of Iruxos, and Taiga wanted both.",
-    "Taiga Wisemane received the Demon Box and opened it to reveal the Hand of Iruxos.",
+    "A demon pick could break the red crystal guarding the Burning Blade's Demon Box, which held the Hand of Iruxos, and Taiga wanted both.",
+    "Taiga Wisemane received the Demon Box and offered to open it and reveal the Hand of Iruxos.",
     "Taiga took the Demon Box from Thunder Axe Fortress and prepared to open it.")
 q(5581, "Portals of the Legion", "Desolace", 38, "iruxos", 4,
     "The Hand of Iruxos was a gruesome thing, and it was needed to banish the demon portals at Mannoroc Coven. Their guardians, Taiga warned, would fight.",
     "With the Hand of Iruxos, the portals at Mannoroc Coven could be closed. The demons' road into the world had to be shut.",
-    "Taiga Wisemane commended the work. The portals were banished, and Azeroth was safer for it.",
+    "Taiga Wisemane commended the work. The portals were banished, and in Taiga's words all of Azeroth was safer for it.",
     "Taiga said the closing of the Mannoroc portals had greatly helped the fight against the demons.")
 q(6027, "Book of the Ancients", "Desolace", 38, "shadowprey", 3,
     "Azore Aldamort gave the Gem of the Serpent, to be set in the hand of the Serpent Statue on Ranazjar Isle. It would summon the guardian of an ancient naga tome.",
-    "An ancient naga tome held secrets kept for centuries. Its guardian answered only to the Gem of the Serpent.",
+    "An ancient naga tome held secrets kept for centuries. The Gem of the Serpent would summon its guardian.",
     "Azore Aldamort received the long-lost naga tome and promised it to the high council.",
     "Azore welcomed the naga tome and thanked its bearer as a hero should be thanked.")
 q(6132, "Get Me Out of Here!", "Desolace", 39, "brimbuzzle", 3,
     "Melizza Brimbuzzle had gone to the Valley of Spears to do business with the Maraudine centaur. They had other ideas, and she heard talk of firewood for their cookpot.",
-    "Melizza was caught among the Maraudine and wanted out. Her brother Hornizz, at the camp by the kodo graveyard, would pay.",
+    "Melizza was caught among the Maraudine and wanted out, and her brother Hornizz, at the camp by the kodo graveyard, would pay.",
     "Hornizz Brimbuzzle thanked the rescuer for getting his sister out of her jam. He expected she had already found a new one.",
     "Hornizz was glad Melizza had been brought out of the Valley of Spears, for now.")
 q(6134, "Ghost-o-plasm Round Up", "Desolace", 39, "brimbuzzle", 2,
     "Hornizz Brimbuzzle thought the Magram would pay well for ghost energy from the Valley of Bones. His ghost magnets drew the spirits to the Dead Goliaths.",
-    "The Magram feared the ghosts in the Valley of Bones, so Hornizz meant to sell them the ghost-o-plasm.",
-    "Hornizz admired the slimy ghost-o-plasm. It would be worth a fortune, if the centaur could be convinced what it was.",
+    "The Magram, Hornizz reckoned, feared the ghosts in the Valley of Bones, so he meant to sell them the ghost-o-plasm.",
+    "Hornizz admired the slimy ghost-o-plasm, which would be worth a fortune if the centaur could be convinced what it was.",
     "Hornizz Brimbuzzle took the ghost-o-plasm and began to plan the sale.")
 q(5501, "Bone Collector", "Desolace", 39, "brimbuzzle", 2,
     "Bibbly F'utzbuckle sold kodo bones to customers making furniture, instruments and blasting powder. A caravan carried them on to Shadowprey Village.",
@@ -5042,7 +5042,7 @@ q(3701, "The Smoldering Ruins of Thaurissan", "Ironforge", 54, "thaurissanruins"
     "Archesonus was pleased with the relics from the ruins. There was more to learn about Thaurissan.", true)
 q(3702, "The Smoldering Ruins of Thaurissan", "Ironforge", 54, "thaurissanruins", 3,
     "Royal Historian Archesonus offered a short history of the Dark Iron dwarves.",
-    "A full account of Thaurissan's history was on offer from the Royal Historian.",
+    "A brief account of the Dark Iron dwarves' history was on offer from the Royal Historian.",
     "Archesonus finished the account of Thaurissan and was ready to proceed.",
     "Archesonus told the history of the Dark Irons to its end.", true)
 fallback("The Smoldering Ruins of Thaurissan", "Burning Steppes", "thaurissanruins", "3701,3702",
@@ -5051,29 +5051,29 @@ fallback("The Smoldering Ruins of Thaurissan", "Burning Steppes", "thaurissanrui
     "Archesonus's study of Thaurissan went on.",
     "The Royal Historian had more on Thaurissan.")
 q(4283, "FIFTY! YEP!", "Burning Steppes", 56, "blackrock", 2,
-    "Oralius at Morgan's Vigil claimed to be the only sane one there. He collected ogre ears and now wanted fifty orc badges.",
+    "At Morgan's Vigil, Oralius claimed to be the only sane one there, and after collecting ogre ears he now wanted fifty orc badges.",
     "Oralius wanted orc badges to go with his ogre ear collection. He wanted fifty of them.",
     "Oralius rewarded the badges with the chance to rub his belly.",
     "Oralius had fifty badges, and offered his belly as the prize.")
 q(4081, "KILL ON SIGHT: Dark Iron Dwarves", "Badlands", 52, "kef", 3,
     "Warlord Goretooth of the Kargath Expeditionary Force ordered General Angerforge's forces in Blackrock Depths destroyed. They had massacred the 109th division.",
     "A wanted sign in Kargath offered a tribute for breaking the first line of Angerforge's forces in Blackrock Depths.",
-    "Warlord Goretooth said the first strike would put a crease in Angerforge's pants. He had battles to plan and pointed to the wanted signs.",
+    "Warlord Goretooth said the first strike would put a crease in Angerforge's pants. He had battles to plan, and more work waited on the wanted signs.",
     "Goretooth paid the first tribute and sent the soldier back to the wanted signs.")
 q(4082, "KILL ON SIGHT: High Ranking Dark Iron Officials", "Badlands", 54, "kef", 4,
-    "Grandmaster Lexlort had found where Angerforge's high-ranking officers trained, through a locked gate near the heart of the Dark Iron city.",
+    "Grandmaster Lexlort had found where high-ranking Dark Iron officials trained their forces, through a locked gate near the heart of the Dark Iron city.",
     "A second posting named the Dark Iron officials who trained forces against the Horde in Blackrock Depths.",
     "Warlord Goretooth guessed Angerforge was angry by now. After a third tribute, he said, Operation Death to Angerforge would begin.",
     "Goretooth paid the second tribute. Operation Death to Angerforge, he hinted, would involve somebody dying.")
 q(4062, "The Rise of the Machines", "Badlands", 54, "machines", 3,
     "The initials G.L.A. and a rank marking were etched into the elemental shards. Theodora sent a sample to Lotwil Veriatus, a scholar of elemental science.",
-    "Theodora had found initials on the rock creatures' shards. A scholar in the camp to the east, Lotwil, might know them.",
+    "Theodora had found initials on the rock creatures' shards, and a scholar in the camp to the east, Lotwil, might know them.",
     "Lotwil Veriatus turned white at the shard. He knew those markings.",
     "Lotwil recognized the G.L.A. markings at once, and went pale.", true)
 hl(5581, "Taiga Wisemane commended the closing of the demon portals at Mannoroc Coven, done with the Hand of Iruxos.",
     "The Hand of Iruxos banished the portals at Mannoroc Coven. Taiga said Azeroth was safer for it.")
 hl(4082, "Warlord Goretooth paid his second tribute and promised Operation Death to Angerforge after a third.",
-    "Angerforge's officers in Blackrock Depths had fallen. Goretooth was already planning the next operation.")
+    "High-ranking Dark Iron officials in Blackrock Depths had fallen. Goretooth was already planning the next operation.")
 for _, id in ipairs({6142, 6143, 5386, 5381, 5581, 6027, 6132, 6134, 5501, 3701, 3702, 4283, 4081, 4082, 4062}) do src(id) end
 for _, id in ipairs({6142, 6143, 5386, 5381, 5581, 6132, 6134, 5501}) do src(id, "LoreForever quest:" .. id .. " (facts only)") end
 src(3701, "LoreForever npc:royal-historian-archesonus (facts only)")
@@ -5102,17 +5102,17 @@ q(3982, "What Is Going On?", "Blackrock Depths", 54, RR, 4,
     "The guards were beaten back from Gor'shak's cell, but the Dark Irons now knew intruders were there.", true)
 q(4001, "What Is Going On?", "Orgrimmar", 54, RR, 4,
     "Gor'shak had convinced Kharan, a dwarf held across the hall, that the Horde meant him no harm. Above all, the Warchief wanted the princess returned safely to Ironforge.",
-    "Kharan in the opposite cell knew more about the princess and her captors. Gor'shak wanted it all taken to the Warchief.",
+    "Kharan in the opposite cell knew more about the princess and her captors, and Gor'shak wanted it all taken to the Warchief.",
     "Thrall saw a chance for the Horde to change the politics of a war-torn world. Failure, he said, was not an option.",
     "The Warchief heard what had been learned in the Depths and called the mission one the Horde could not fail.", true)
 fallback("What Is Going On?", "Blackrock Depths", RR, "3982,4001",
     "Commander Gor'shak had news from inside the Dark Iron city.",
     "A Horde agent in Blackrock Depths was gathering intelligence.",
-    "Gor'shak's intelligence moved a step further.",
-    "Word from Gor'shak's cell went on its way.")
+    "Gor'shak's effort to learn about the Princess's captors moved forward.",
+    "Gor'shak's work inside the Dark Iron city went on.")
 q(4002, "The Eastern Kingdoms", "Orgrimmar", 54, RR, 4,
     "Thrall said a Warchief had to do what was best for the Horde and its future generations. Helping the dwarves could strengthen the Horde's standing in the Eastern Kingdoms.",
-    "The Warchief saw an opening to shape future alliances by aiding the dwarves. He asked whether the messenger was prepared.",
+    "The Warchief saw an opening to shape future alliances by aiding the dwarves, and asked whether the messenger was prepared.",
     "Thrall said there was no going back from this point.",
     "Warchief Thrall committed the Horde's agent to the mission. There was no turning back.")
 q(4341, "Kharan Mighthammer", "Blackrock Depths", 59, RR, 4,
@@ -5129,40 +5129,40 @@ q(4361, "The Bearer of Bad News", "Ironforge", 59, RR, 4,
     "Kharan wanted his news taken back to King Magni, sure the king would know what to do.",
     "What Kharan had said in his cell had to reach Ironforge.",
     "King Magni slammed his fist down in anger at the news.",
-    "Magni heard Kharan's account and struck the table in rage.")
+    "Magni heard Kharan's account and brought his fist down in rage.")
 q(4324, "Yuka Screwspigot", "Burning Steppes", 53, "screwspigot", 2,
-    "Ribbly Screwspigot had always wasted his family's money, but Baron Revilgaz had put a price on his head. His sister Yuka had tracked him to the Burning Steppes.",
-    "The Screwspigots were glad that Ribbly was finally worth something. Their sister Yuka was hiding in Flame Crest and wanted hired hands.",
+    "Ribbly Screwspigot had been worthless his whole life, but now he was suddenly worth something. His sister Yuka had tracked him to the Burning Steppes.",
+    "The Screwspigots were glad that Ribbly was finally worth something. His sister Yuka was holed up in Flame Crest and wanted hired hands.",
     "Yuka Screwspigot wanted her brother brought back, bless his heart. If not all of him, his head would do.",
-    "Yuka was hunting her brother Ribbly and welcomed the help, whole or in part.")
+    "Yuka was hunting her brother Ribbly and welcomed the help. She would take him whole, or just his head.")
 q(4136, "Ribbly Screwspigot", "Burning Steppes", 53, "screwspigot", 3,
     "Revilgaz's bounty had sent Ribbly into hiding deep in Blackrock Depths. His sister wanted him brought back, or failing that, his head.",
-    "Ribbly was hiding in Blackrock Depths from the price on his head. His sister wanted him, alive or not.",
+    "Ribbly was hiding in Blackrock Depths from the price on his head, and his sister wanted him, alive or not.",
     "Yuka Screwspigot saw that Ribbly had not come quietly. Her family was very happy, she said, and Ribbly had never looked so peaceful.",
-    "Yuka was sorry only to have missed telling Ribbly of the plan to turn him in. She thanked the hunter on behalf of the Screwspigots.")
+    "Yuka was sorry only to have missed telling Ribbly of the plan to turn him in. She gave thanks on behalf of the Screwspigots.")
 q(4128, "Ragnar Thunderbrew", "Dun Morogh", 55, "thunderbrew", 2,
     "Ragnar Thunderbrew was furious that someone had stolen his ale, and he would pay well for help. He was at the Thunderbrew Distillery in Kharanos.",
     "Word had spread that Ragnar Thunderbrew needed stalwart adventurers and was willing to pay.",
-    "Ragnar was robbed of a family recipe and fuming. As if he lacked reasons to hate the Dark Irons, he said, they were in for it now.",
+    "Ragnar had been robbed of a family recipe and was fuming. As if he lacked reasons to hate the Dark Irons, he said, they were in for it now.",
     "Ragnar Thunderbrew raged about the theft of a family recipe by the Dark Iron dwarves.")
 q(4126, "Hurley Blackbreath", "Dun Morogh", 55, "thunderbrew", 3,
     "Hurley Blackbreath and his Dark Irons had stolen the recipe for Thunderbrew Lager. Their kegs were to be smashed and the recipe brought home.",
-    "Ragnar could not stand the thought of Dark Irons drinking his family's lager. The recipe was somewhere in Blackrock Depths.",
+    "The thought of Dark Irons drinking his family's lager was more than Ragnar could stand, and the recipe was somewhere in Blackrock Depths.",
     "Ragnar Thunderbrew had his recipe back. He hoped Hurley had taken a good thumping, and called the finder a hero of heroes.",
     "Ragnar celebrated the recovered recipe. The Thunderbrews, he said, were at the finder's service.")
 q(4133, "Vivian Lagrave", "Badlands", 55, "thunderbrew", 2,
-    "Shadowmaster Vivian Lagrave was in Kargath, pursuing rumors of a Dark Iron brew. She had asked for help.",
+    "Shadowmaster Vivian Lagrave was in Kargath, pursuing rumors of a Dark Iron brew, and she had asked for help.",
     "A summons led to Vivian Lagrave in the Badlands, where she was following talk of a brew from Blackrock Depths.",
     "Vivian Lagrave found Kargath lacking the comforts of the Apothecarium. Then she turned to business.",
     "Vivian greeted the arrival and wasted little time on pleasantries.")
 q(4134, "Lost Thunderbrew Recipe", "Badlands", 55, "thunderbrew", 3,
     "Hurley Blackbreath had stolen the Thunderbrew Lager recipe, said to give its drinker strength and courage. The Forsaken wanted it studied for their own purposes.",
-    "To find Hurley, the Forsaken were told, one had to threaten his precious ale. The recipe he had taken was what Vivian wanted.",
-    "Vivian Lagrave sent the recipe to the Apothecarium. She found it amusing that the drink might one day be turned on the Alliance's dwarves.",
+    "Hurley might have to be lured out by threatening his precious ale, Vivian warned. The recipe he had taken was what she wanted.",
+    "Vivian Lagrave planned to send the recipe to the Apothecarium. She found it amusing that the drink might one day be turned on the Alliance's dwarves.",
     "Vivian took the lager recipe for the apothecaries to study, and admitted death might have changed her sense of humor.")
 q(4201, "The Love Potion", "Blackrock Depths", 54, "rocknot", 2,
     "Mistress Nagmara was spurned by Private Rocknot. Her potion needed gromsblood, giant silver veins from Azshara's cliff giants and water from Un'Goro's Golakka Springs.",
-    "A succubus in the Grim Guzzler wanted to break down the walls around Rocknot's heart. Her potion called for ingredients from three distant lands.",
+    "A succubus in the Grim Guzzler wanted to break down the walls around Rocknot's heart. Her potion called for gromsblood and rare ingredients from Azshara and Un'Goro.",
     "Nagmara could now brew her potion for Rocknot. She called the gatherer a champion of love.",
     "Mistress Nagmara was delighted with the ingredients and sure Rocknot would fall for her charms.")
 q(3906, "Disharmony of Flame", "Badlands", 52, "disharmony", 3,
@@ -5173,20 +5173,20 @@ q(3906, "Disharmony of Flame", "Badlands", 52, "disharmony", 3,
 q(3907, "Disharmony of Fire", "Badlands", 56, "disharmony", 5,
     "Lord Incendius was only an emissary, Thunderheart said, and something commanded him. His master's hiding place had to be found.",
     "The wind and earth cried the name Lord Incendius. Whoever stood behind him had to be found.",
-    "Thunderheart clutched the Tablet of Kurniya and named Ragnaros, a general of the Old Gods. Kargath would have to decide whether to stay and fight.",
-    "Thunderheart read the tablet and learned that Ragnaros was in the world. A far greater evil lived in Blackrock's depths, he warned.")
+    "Thunderheart clutched the Tablet of Kurniya and named Ragnaros, a general of the Old Gods. Those at Kargath would have to decide whether to stay and fight.",
+    "Thunderheart read the tablet and learned that Ragnaros was in the world, a far greater evil living in Blackrock's depths.")
 q(4262, "Overmaster Pyron", "Burning Steppes", 52, "disharmony", 3,
     "Jalinda Sprig's last five mages had come back from Blackrock Mountain burned, or worse. Overmaster Pyron guarded the way into the Depths at the quarry.",
     "The Morgan's Vigil expedition could not reach Blackrock Depths while Overmaster Pyron held the quarry entrance.",
     "Jalinda Sprig heard the name Incendius and said, oh dear.",
-    "Jalinda was relieved about Pyron, then dismayed to hear of Incendius.")
+    "With Pyron destroyed, Jalinda heard the name Incendius and could only say, oh dear.")
 hl(3982, "Commander Gor'shak said Emperor Thaurissan had kidnapped the Princess of Ironforge. Then the Dark Iron guards attacked his cell.",
     "In Blackrock Depths, Gor'shak revealed he was a willing prisoner on Thrall's orders, gathering news of the captive princess.")
 hl(4361, "Kharan's news reached King Magni, who slammed his fist down in anger.",
-    "King Magni heard what Kharan had to say about his daughter and struck the table in rage.")
+    "King Magni heard what Kharan had to say about his daughter and brought his fist down in rage.")
 hl(4126, "Ragnar Thunderbrew had his family's lager recipe back from Hurley Blackbreath and called its finder a hero of heroes.",
     "The stolen Thunderbrew Lager recipe came home to Kharanos. Ragnar hoped Hurley had been thumped.")
-hl(3907, "The Tablet of Kurniya told Thunderheart that Ragnaros was in the world. Kargath had to decide whether to fight or flee.",
+hl(3907, "The Tablet of Kurniya told Thunderheart that Ragnaros was in the world. Those at Kargath had to decide whether to fight or flee.",
     "Thunderheart learned from the tablet that Ragnaros commanded Incendius, and warned of the evil in Blackrock's depths.")
 for _, id in ipairs({3981, 3982, 4001, 4002, 4341, 4342, 4361, 4324, 4136, 4128, 4126, 4133, 4134, 4201, 3906, 3907, 4262}) do src(id) end
 for _, id in ipairs({3981, 3982, 4001, 4002, 4341, 4342, 4361}) do P.questIDs[id].threadLabel = P.threads.world_royal_rescue end
@@ -5205,24 +5205,24 @@ q(7816, "Gammerita, Mon!", "The Hinterlands", 48, "revantusk", 2,
     "Katoom the Angler had his lure again, taken from Gammerita's stomach.")
 q(7815, "Snapjaws, Mon!", "The Hinterlands", 50, "revantusk", 2,
     "Katoom could not fish for five minutes before a saltwater snapjaw broke his line. He asked for the whole lot of them killed, for Revantusk's sake.",
-    "The saltwater snapjaws stole Katoom's bait and broke his lines. Revantusk Village would be better off without them, he said.",
+    "The saltwater snapjaws stole Katoom's bait and broke his lines, and Revantusk Village would be better off without them, he said.",
     "Katoom could not thank the hunter enough, and offered a fishing pole as reward.",
     "Katoom the Angler handed over a fishing pole in thanks for the snapjaw hunt.")
 q(7828, "Stalking the Stalkers", "The Hinterlands", 48, "revantusk", 2,
-    "Huntsman Markhor had lost many hunters to the Silvermane wolves, which waited in the brush to strike. He wanted the stalkers stalked in turn.",
+    "Many Revantusk trolls had been lost to the wilds, and Huntsman Markhor named the Silvermane wolves among the worst threats. He wanted the stalkers stalked in turn.",
     "The Silvermane wolves ambushed Revantusk's hunters from cover. Every one of them was to be slain, Markhor said.",
     "Huntsman Markhor thanked the hunter on behalf of the Revantusk.",
     "Markhor called the wolf hunt a job well done.")
 q(7829, "Hunt the Savages", "The Hinterlands", 48, "revantusk", 2,
     "Savage owlbeasts had killed many good Revantusk warriors. Every one was to be killed, and Markhor promised to weigh the effort.",
-    "Markhor wanted the savage owlbeasts of the Hinterlands killed on sight. The work would be judged when it was done.",
+    "Every savage owlbeast in the Hinterlands was to be killed on sight, Markhor said, and the work would be judged when it was done.",
     "Huntsman Markhor judged the hunt and named the hunter a worthy ally of the Revantusk.",
     "Markhor was satisfied with the owlbeast hunt and said so.")
 q(7830, "Avenging the Fallen", "The Hinterlands", 48, "revantusk", 3,
     "The Wildhammer trained gryphons to kill trolls, Markhor said. He wanted the plume of a Razorbeak Skylord, one of the elder gryphons that bred the rest.",
     "Elder gryphons called Skylords fathered the birds that hunted Revantusk trolls. One of them was to die.",
     "Huntsman Markhor examined the plume and wondered how many of his hunters the beast had devoured.",
-    "Markhor took the Skylord's plume as the beast's sentence carried out.")
+    "Markhor took the Skylord's plume as proof that the beast had been brought to justice.")
 q(7849, "Separation Anxiety", "The Hinterlands", 50, "revantusk", 4,
     "Markhor's twin brother Malkhor had been taken by the Vilebranch in the same raid as Torntusk's mate. He was executed and his remains thrown to the oozes and wolves.",
     "It was too late to save Malkhor's life, his brother said, but not his soul. His remains lay among the Vilebranch.",
@@ -5230,7 +5230,7 @@ q(7849, "Separation Anxiety", "The Hinterlands", 50, "revantusk", 4,
     "Markhor received his brother's remains and grieved for him. Mystic Yayo'jin would prepare them for burial.")
 q(7841, "Message to the Wildhammer", "The Hinterlands", 48, "revantusk", 2,
     "Otho Moji'ko spat at the Wildhammer's new deals with the high elves. He wanted the Highvale elves killed and left as a warning.",
-    "The Wildhammer were forging alliances with the high elves of Highvale. A message in blood was what Otho wanted.",
+    "The Wildhammer were forging alliances with the high elves of Highvale, and a message in blood was what Otho wanted.",
     "Otho Moji'ko said the Revantusk were forging new alliances too.",
     "Otho was pleased with the first message to the Wildhammer.")
 q(7842, "Another Message to the Wildhammer", "The Hinterlands", 48, "revantusk", 2,
@@ -5245,14 +5245,14 @@ q(7843, "The Final Message to the Wildhammer", "The Hinterlands", 50, "revantusk
     "Otho was delighted that the spear stood in Aerie Peak, and paid with his big mojo.")
 q(7844, "Cannibalistic Cousins", "The Hinterlands", 48, "revantusk", 3,
     "Mystic Yayo'jin said the three troll tribes of the Hinterlands shared little but their home. The Vilebranch fed on other trolls, and with Zul'jin gone, the Revantusk had to deal with them.",
-    "The Vilebranch were cannibals, Yayo'jin said, and Zul'jin had not returned to destroy them. Their numbers had to be cut.",
+    "The Vilebranch were cannibals, Yayo'jin said, and since Zul'jin had not returned to destroy them, their numbers had to be cut.",
     "Mystic Yayo'jin said Zul'jin himself could not have done better.",
     "Yayo'jin praised the work against the Vilebranch.")
 q(7850, "Dark Vessels", "The Hinterlands", 50, "torntusk", 3,
     "The Vilebranch fought with unnatural fury because of the Vile Priestess Hexx. Vessels of tainted blood in Jintha'Alor carried the blood god's magic.",
     "Taken from Jintha'Alor, the dark vessels could be cleansed of their taint by Primal Torntusk.",
     "Primal Torntusk lifted the dark energy that drove the Vilebranch, for now. Even if Hexx fell, she warned, another would take her place.",
-    "Primal Torntusk cleansed the vessels and loosened the Vilebranch's madness, though she knew it would return.")
+    "Primal Torntusk cleansed the vessels and loosened the blood god's grip on the Vilebranch, though only for now.")
 q(7845, "Kidnapped Elder Torntusk!", "The Hinterlands", 51, "torntusk", 4,
     "Primal Torntusk's mate had been taken in a midnight raid. Spies said he was alive atop Jintha'Alor, and Hexx meant to sacrifice him to Hakkar.",
     "The Vilebranch held Elder Torntusk prisoner on Jintha'Alor, readying him for the blood god.",
@@ -5270,7 +5270,7 @@ q(7847, "Return to Primal Torntusk", "The Hinterlands", 51, "torntusk", 4,
     "Torntusk received the news of her mate's freedom with deep gratitude.")
 q(7862, "Job Opening: Guard Captain of Revantusk Village", "The Hinterlands", 51, "revantusk", 3,
     "Guard Captain Malkhor was dead, and Revantusk needed a new one. The notice asked for Vilebranch berserkers, shadow hunters, blood drinkers and soul eaters to be killed.",
-    "Primal Torntusk would review applications for captain of the guard. The test was a cull of the Vilebranch warriors.",
+    "Primal Torntusk would review applications for captain of the guard, and the test was a cull of the Vilebranch warriors.",
     "Torntusk called the applicant worthy and gave a trinket. She would review all applications next year.",
     "Torntusk accepted the application with a trinket of thanks, and promised a decision next year.")
 hl(7849, "Huntsman Markhor mourned his twin brother Malkhor, whose remains came back from the Vilebranch for a proper burial.",
@@ -5302,7 +5302,7 @@ q(3122, "Return to Witch Doctor Uzer'i", "Feralas", 45, "muisek", 2,
     "Neeru's herbs went straight into the ritual that readied the muisek vessel.")
 q(3125, "Faerie Dragon Muisek", "Feralas", 45, "muisek", 3,
     "The faerie dragons served the night elves as allies. Their spirit was strong, and the witch doctor wanted it captured for the Horde with his vessel.",
-    "Sprite darters and sprite dragons looked fragile, but their spirit was powerful. Its muisek could be taken with the vessel once they were slain.",
+    "Sprite darters and sprite dragons looked fragile, but their spirit was powerful. Once they were slain, the vessel could take their muisek.",
     "Mojache's witch doctor now held the faerie dragons' muisek, their spiritual power available to the Horde.",
     "Eight faerie dragon spirits filled the vessel, and another task was already waiting.")
 q(3124, "Hippogryph Muisek", "Feralas", 47, "muisek", 3,
@@ -5312,7 +5312,7 @@ q(3124, "Hippogryph Muisek", "Feralas", 47, "muisek", 3,
     "Ten hippogryph spirits were held in the vessel, where they could take no revenge.")
 q(3126, "Treant Muisek", "Feralas", 50, "muisek", 3,
     "Treants fought for the night elves against the Horde. Slow as they were, the wandering forest walkers were strong protectors.",
-    "Three forest walkers were next for the vessel. The witch doctor meant to use their strength for the Horde.",
+    "Three forest walkers were next for the vessel, and the witch doctor meant to use their strength for the Horde.",
     "Mojache's witch doctor said his muisek collection was almost complete.",
     "Treant muisek joined the collection, with only one more to go.")
 q(3127, "Mountain Giant Muisek", "Feralas", 50, "muisek", 3,
@@ -5327,11 +5327,11 @@ q(3128, "Natural Materials", "Feralas", 50, "muisek", 2,
     "Logs, minerals, sinew and fragments were ready for the binding.")
 q(3129, "Weapons of Spirit", "Feralas", 50, "muisek", 4,
     "With everything gathered, the difficult work of imbuing weapons with the muisek could begin.",
-    "The captured spirits and the materials were ready. Sealing them into weapons took a moment of the witch doctor's craft.",
+    "The captured spirits and the materials were ready, and sealing them into weapons took a moment of the witch doctor's craft.",
     "Mojache's witch doctor offered a choice of weapons, each with a creature's muisek sealed into it for good.",
     "Weapons of spirit were finished, the muisek bound in them for their wielder to use.")
 q(2976, "A Grim Discovery", "Orgrimmar", 45, "mojache_requests", 3,
-    "Krueg Skullsplitter admitted he had mentioned a bounty. He crated the horns and sent word of what had been seen to Belgrom Rockmaul in Orgrimmar.",
+    "Krueg Skullsplitter admitted he had mentioned a bounty. He had the horns crated and sent their finder to report to Belgrom Rockmaul in Orgrimmar.",
     "Krueg said that Belgrom Rockmaul in the Valley of Honor would want to hear what had been found in Feralas.",
     "Belgrom Rockmaul was surprised to hear of the Grimtotem in Feralas. His peers would want the news, and he paid while he listened.",
     "Belgrom counted out the coin while hearing about the Grimtotem, and gave his thanks for the report.", true)
@@ -5342,19 +5342,19 @@ fallback("A Grim Discovery", "Feralas", "mojache_requests", "2974,2976",
     "The matter of the Grimtotem in Feralas moved a step further.",
     "Krueg's dealings over the Grimtotem went on.")
 P.quests["A Grim Discovery"].threadLabel = P.threads.world_mojache_requests
-q(2979, "Dark Ceremony", "Feralas", 46, "woodpaw", 3,
+q(2979, "Dark Ceremony", "Feralas", 46, "gordunni", 3,
     "The plans described a dark ceremony led by the Gordunni mage-lords. An orb from one of them was what Rok Orhan wanted.",
     "A mage-lord's orb held great power, Rok Orhan said, and could reveal more about the Gordunni ceremony.",
     "Rok Orhan took the orb to learn more about the Gordunni, and to plan their downfall.",
     "Rok had his Gordunni orb, and with it a way to study their magic.")
 q(3063, "Vengeance on the Northspring", "Feralas", 50, "talo", 3,
     "Talo Thornhoof had once been a fearless hunter until harpies ambushed him in the forest. He still heard their cries, and wanted revenge on the Northspring.",
-    "An old ambush by harpies had changed Talo Thornhoof forever. After all these years, he wanted to get even.",
+    "An old ambush by harpies had changed Talo Thornhoof forever, and after all these years he wanted to get even.",
     "Talo Thornhoof said his old mind was at peace.",
     "Talo thanked the avenger. The Northspring had paid for the old ambush.")
 q(3062, "Dark Heart", "Feralas", 50, "talo", 4,
-    "Edana Hatetalon ruled the Northspring harpies, and Talo heard her heart was made of crystal. Her horn, blown by the Hatetalon stones, would summon her.",
-    "Talo wanted the Northspring queen's dark heart. A harpy horn sounded at the Hatetalon stones would bring her out.",
+    "Edana Hatetalon ruled the Northspring harpies, and Talo heard her heart was made of crystal. A horn carried by her harpies, blown by the Hatetalon stones, would summon her.",
+    "The Northspring queen's dark heart was what Talo wanted, and a harpy horn sounded at the Hatetalon stones would bring her out.",
     "Talo Thornhoof knew Edana was truly dead. He would keep her heart as a reminder of what had been done for him.",
     "Talo held Edana Hatetalon's dark heart and was at last sure of her death.")
 q(4120, "The Strength of Corruption", "Feralas", 52, "talo", 3,
@@ -5365,7 +5365,7 @@ q(4120, "The Strength of Corruption", "Feralas", 52, "talo", 3,
 q(2821, "The Mark of Quality", "Feralas", 46, "yetihides", 2,
     "Pratt McGrubben would not compromise on quality, and thick yeti hides from Feral Scar Vale had caught his eye. Ten would earn a choice of his leather goods.",
     "The yetis of Feral Scar Vale had thick hides that Pratt wanted for his leatherwork.",
-    "Pratt McGrubben thought the hides, treated properly, could be stronger than iron. He offered a choice of his goods.",
+    "Pratt McGrubben thought the hides, treated properly, could be stronger than iron, and offered a choice of his goods.",
     "Pratt was delighted with the yeti hides and the mark of quality they could bring.", true)
 q(2822, "The Mark of Quality", "Feralas", 46, "yetihides", 2,
     "Jangdor Swiftstrider took pride in his leatherwork and had found thick yeti hides west of Camp Mojache. Ten would earn a choice of his goods.",
@@ -5404,16 +5404,16 @@ for _, id in ipairs({3121, 3122, 3125, 3124, 3126, 3127, 3128, 3129, 2976, 2979,
 -- for the Witherbark venom through Gadrin to Shadra, and Rin'ji's tablet.
 P.threads.world_oox = "Oglethorpe's homing robots"
 P.threads.world_zorbin = "Zorbin Fandazzle's Ultra-Shrinker"
-P.threads.world_shadra = "the venom of the Witherbark spider god"
-P.threads.world_rinji = "Rin'ji's tablet"
+P.threads.world_shadra = "the Witherbark venom"
+P.threads.world_rinji = "Rin'ji's secret"
 q(351, "Find OOX-17/TN!", "Tanaris", 48, "oox", 2,
     "A metal egg turned up in Tanaris and opened into a gnomish device. Oglethorpe Obnoticus spoke from inside, saying his homing robot had crashed near the Gaping Chasm.",
     "Oglethorpe Obnoticus offered a reward for his lost homing robot. His beacon pointed to the Gaping Chasm.",
     "OOX-17/TN stood up, humming and whirring, once the beacon was placed inside. Oglethorpe said it worked, but needed major repairs.",
-    "The robotic chicken came back to life with the beacon inside it. Oglethorpe asked for more help moving it.")
+    "The robotic chicken came back to life with the beacon inside it. Oglethorpe asked for help watching over it, since it was too heavy to carry.")
 q(648, "Rescue OOX-17/TN!", "Stranglethorn Vale", 48, "oox", 3,
-    "Oglethorpe needed OOX-17/TN moved to Steamwheedle Port for a long take-off. Its cloaking would take time to restore.",
-    "The repaired robot had to be escorted to Steamwheedle Port, then Oglethorpe waited in Booty Bay.",
+    "OOX-17/TN had to be moved to Steamwheedle Port for a long take-off, Oglethorpe said, since its cloaking would take time to restore.",
+    "OOX-17/TN had to be escorted to Steamwheedle Port for its take-off, while Oglethorpe waited in Booty Bay.",
     "Oglethorpe Obnoticus called the escort the great savior of OOX-17/TN. The rescue had saved him hours of rebuilding and much gold.",
     "Oglethorpe thanked the robot's rescuer in Booty Bay and offered a choice of his items.")
 q(485, "Find OOX-09/HL!", "The Hinterlands", 48, "oox", 2,
@@ -5438,7 +5438,7 @@ q(2767, "Rescue OOX-22/FE!", "Stranglethorn Vale", 45, "oox", 3,
     "Oglethorpe was grateful for the Feralas robot's rescue, which had saved him gold and hours of work.")
 q(7003, "Zapped Giants", "Feralas", 48, "zorbin", 2,
     "Zorbin Fandazzle found the giants bad for business. He had built a goblin shrinking ray and wanted it tested on them, with their miniaturization residue brought back.",
-    "A goblin variant of a gnomish shrinking ray needed a field test. Shrunken Feralas giants would leave the residue Zorbin wanted.",
+    "A goblin variant of a gnomish shrinking ray needed a field test, and shrunken Feralas giants would leave the residue Zorbin wanted.",
     "Zorbin Fandazzle was relieved to see the residue and every limb intact. He called the tester a friend to goblins everywhere.",
     "Zorbin had his miniaturization residue, and the Ultra-Shrinker had not exploded.")
 q(7721, "Fuel for the Zapping", "Feralas", 48, "zorbin", 2,
@@ -5447,13 +5447,13 @@ q(7721, "Fuel for the Zapping", "Feralas", 48, "zorbin", 2,
     "Zorbin Fandazzle had cores enough to keep him working, and fewer elementals near his shop.",
     "Zorbin paid in loot for the water elemental cores, despite the strain on his purse.")
 q(7725, "Again With the Zapped Giants", "Feralas", 55, "zorbin", 2,
-    "Zorbin could always use more residue. He offered less coin, and word of the deed to his goblin friends.",
+    "More residue was always welcome to Zorbin, who offered less coin along with word of the deed to his goblin friends.",
     "More miniaturization residue was wanted, though the pay would be smaller this time.",
     "Zorbin Fandazzle said the deed was echoing through the halls of the Steamwheedle Cartel.",
     "Zorbin paid a smaller sum and promised his Cartel friends would hear of it.")
 q(7726, "Refuel for the Zapping", "Feralas", 55, "zorbin", 2,
-    "Zorbin needed more water elemental cores to set up shop on the coast. He promised to tell everyone in earshot.",
-    "More cores were needed for the Ultra-Shrinker. The reward would be smaller, but the Cartel would hear of it.",
+    "More water elemental cores were needed, but setting up shop had left Zorbin short of coin. He promised to tell everyone in earshot.",
+    "More cores were needed for the Ultra-Shrinker, and though the reward would be smaller, the Cartel would hear of it.",
     "Zorbin Fandazzle paid what he could and promised his Steamwheedle comrades would hear about it.",
     "Zorbin had more cores, and promised to spread word of the help.")
 q(2932, "Grim Message", "Stranglethorn Vale", 42, "shadra", 3,
@@ -5469,17 +5469,17 @@ q(2933, "Venom Bottles", "Hillsbrad Foothills", 43, "shadra", 2,
 q(2934, "Undamaged Venom Sac", "Hillsbrad Foothills", 45, "shadra", 2,
     "Fresh venom was needed from the spiders near Shadra'Alor, in an undamaged sac, for Lydon's tests.",
     "A fresh, intact venom sac from the Hinterlands spiders was what Lydon wanted for his tests.",
-    "Apothecary Lydon was delighted. The venom was fresh and very deadly.",
-    "Lydon had his fresh venom, and a collection of small animals to test it on.")
+    "Apothecary Lydon was delighted. The venom was fresh, and he was sure it was very deadly.",
+    "Lydon had his fresh venom, and small animals already on order to test it on.")
 q(2935, "Consult Master Gadrin", "Durotar", 45, "shadra", 3,
     "The broodguards' venom was weaker than the first sample. Lydon sent the question of its source to Master Gadrin in Sen'jin Village.",
     "Lydon wanted the venom's true source. A troll who knew the Witherbark well, Master Gadrin, might know it.",
     "Master Gadrin understood what was wanted and warned that the answer would not be welcome.",
-    "Gadrin sat his visitor down. The source of the Witherbark venom was bad news.")
+    "Gadrin bid his visitor sit. The source of the Witherbark venom was bad news.")
 q(2936, "The Spider God", "Durotar", 45, "shadra", 4,
     "The Witherbark worshipped a spider god and took their strongest venom from her. Her true name was on a tablet guarded by Theka the Martyr in Zul'Farrak.",
     "To get the venom, Gadrin said, the spider god herself had to be summoned. Her name lay in Zul'Farrak, in Theka's tomb.",
-    "Master Gadrin heard the name Elortha no Shadra and warned it should only be whispered. He set it down as a spell of summoning.",
+    "Master Gadrin heard the name Elortha no Shadra and warned it should only be whispered. He promised to set it down as a spell of summoning.",
     "Gadrin received the spider god's true name and began to write it into a summoning.")
 q(2937, "Summoning Shadra", "Hillsbrad Foothills", 55, "shadra", 4,
     "Gadrin's parchment was to be read at the altar of Shadra'Alor, deep in the Witherbark realm. It would summon Shadra.",
@@ -5495,17 +5495,17 @@ q(2742, "Rin'ji is Trapped!", "The Hinterlands", 47, "rinji", 2,
     "Rin'ji, a Witherbark troll, had lost his axe and been captured. He begged for help and promised a secret hidden at the Overlook Cliffs.",
     "A captured Witherbark named Rin'ji pleaded to be freed, offering a hidden secret in return.",
     "Rin'ji's secret turned out to be a troll tablet covered in markings that could not be deciphered.",
-    "At the Overlook Cliffs lay Rin'ji's secret, a tablet in Witherbark script.")
+    "At the Overlook Cliffs lay Rin'ji's secret, a troll tablet covered in markings that could not be read.")
 q(2782, "Rin'ji's Secret", "Undercity", 47, "rinji", 2,
-    "The tablet might be valuable, or worthless. A troll in trouble would say anything to escape, but Oran Snakewrithe studied the Witherbark.",
-    "A scholar of the Witherbark in the Undercity, Oran Snakewrithe, might read Rin'ji's tablet.",
-    "Oran found the tablet unusual and asked where it had been found.",
-    "Oran was intrigued by Rin'ji's tablet.")
+    "The tablet might be valuable, or worthless. A troll in trouble would say anything to escape, so the Witherbark markings needed an expert eye.",
+    "Rin'ji's tablet was covered in Witherbark markings that only an expert could read.",
+    "The tablet was judged quite unusual, and its finder was asked where it had come from.",
+    "The tablet drew interest as something quite unusual.")
 hl(648, "Oglethorpe Obnoticus thanked the savior of OOX-17/TN in Booty Bay, once the robot reached Steamwheedle Port.",
     "OOX-17/TN reached Steamwheedle Port, and Oglethorpe paid in Booty Bay.")
-hl(2936, "Master Gadrin learned the spider god's true name, Elortha no Shadra, from Theka's tablet, and wrote it into a summoning.",
+hl(2936, "Master Gadrin learned the spider god's true name, Elortha no Shadra, from Theka's tablet, and promised a spell of summoning.",
     "The name of the Witherbark spider god came back from Zul'Farrak. Gadrin warned it should only be whispered.")
-hl(2938, "Shadra's venom reached Apothecary Faranell in the Undercity, the most potent poison Lydon had found.",
+hl(2938, "Shadra's venom, the most potent poison Lydon had found, reached Apothecary Faranell in the Undercity.",
     "Apothecary Faranell received the spider god's venom for the Royal Apothecary Society.")
 for _, id in ipairs({351, 648, 485, 836, 2766, 2767, 7003, 7721, 7725, 7726, 2932, 2933, 2934, 2935, 2936, 2937, 2938, 2742, 2782}) do src(id) end
 for _, id in ipairs({485, 836, 2766, 2767, 7003, 7721, 7725, 7726, 2932, 2933, 2934, 2935, 2742, 2782}) do src(id, "LoreForever quest:" .. id .. " (facts only)") end
@@ -5586,19 +5586,19 @@ q(621, "Zanzil's Secret", "Stranglethorn Vale", 44, "dues", 3,
     "Crank Fizzlebub paid for the samples of Zanzil's mixture, with a little extra for discretion.",
     "Crank paid well for the mixture, and a bit more to keep quiet.")
 q(609, "Voodoo Dues", "Stranglethorn Vale", 44, "dues", 3,
-    "Maury Club Foot Wilkins, Jon-Jon the Crow and Chucky Ten Thumbs owed months of debts. They were said to be cursed and wandering the jungle ruins.",
+    "Maury Club Foot Wilkins, Jon-Jon the Crow and Chucky Ten Thumbs had debts months overdue. They were said to be cursed and wandering the jungle ruins.",
     "The three debtors now wandered the Ruins of Aboraz and Jubuwal under some curse. Regardless, their creditor wanted his due.",
     "Their creditor was pleased with the valuables, especially whatever was inside Maury's foot. They should have been careful whom they gambled with, he said.",
     "The cursed debtors' valuables were collected. Nobody should bet what they could not afford to lose, their creditor said.")
 q(613, "Cracking Maury's Foot", "Stranglethorn Vale", 44, "dues", 2,
-    "Maury had put a lock on his wooden foot, and his loot was inside. He had once been chased from the Mosh'Ogg mound for winning too much, so the ogres might have the key.",
+    "Maury had put a lock on his foot, and his loot was inside. He had once been chased from the Mosh'Ogg mound for winning too much, so the ogres might have the key.",
     "The key to Maury's foot was likely somewhere among the Mosh'Ogg ogres he used to gamble with.",
     "Maury's key was found, and the lock on his foot could be opened. The creditor called it a big help.",
     "Maury's key came back from the ogres, and the reward with it.")
 q(587, "Up to Snuff", "Stranglethorn Vale", 41, "sailors", 2,
     "Deeg liked grog and good snuff when he came into port. Booty Bay's herbalist had sold out, his shipment hijacked by the Bloodsail.",
     "The Bloodsail had taken the herbalist's snuff, and Deeg wanted some before he shipped out.",
-    "Deeg had his snuff just before shipping out, and could not thank his old friend enough.",
+    "Deeg had his snuff just before shipping out, and said he could not give enough thanks.",
     "Deeg was delighted with the recovered snuff.")
 q(576, "Keep An Eye Out", "Stranglethorn Vale", 42, "sailors", 2,
     "Dizzy One-Eye had a glass eye enchanted by a wizard in Menethil. Bloodsail Buccaneers had jumped him and taken it.",
@@ -5609,8 +5609,8 @@ hl(342, "Barnil Stonepot had the finale of Nesingwary's manuscript back together
     "The last part of the scattered manuscript was restored for Barnil.")
 hl(586, "Gan'zulah's rage eased once Ana'thek the Cruel was defeated. He promised a rematch in the Nether.",
     "Gan'zulah's head admitted that Ana'thek had fallen.")
-hl(591, "Kin'weelay received the Mind's Eye from Mai'Zoth's mound and began the ritual to bend it to Yenniku's rescue.",
-    "Mai'Zoth was gone and the Mind's Eye came to Kin'weelay, the only hope of saving Yenniku.")
+hl(591, "Kin'weelay received the Mind's Eye from Mai'Zoth's mound. A ritual was still needed to bend it toward saving Yenniku.",
+    "Mai'Zoth was gone, and the Mind's Eye, the only hope of saving Yenniku, came to Kin'weelay.")
 for _, id in ipairs({585, 586, 591}) do P.questIDs[id].threadLabel = P.threads.world_yenniku end
 P.questIDs[598].threadLabel = P.threads.world_darkspear_trophies
 for _, id in ipairs({339, 340, 341, 342, 585, 586, 591, 598, 638, 189, 213, 209, 621, 609, 613, 587, 576}) do src(id, "LoreForever quest:" .. id .. " (facts only)") end
@@ -5627,7 +5627,8 @@ P.threads.world_stockade = "the prisoners of the Stormwind Stockade"
 P.threads.world_shadowfang = "the Forsaken campaign against Arugal"
 P.threads.world_ragefire = "the errands into Ragefire Chasm"
 P.threads.world_ratchet = "Ratchet's errands below the Barrens"
-q(214, "Red Silk Bandanas", "Westfall", 17, "moonbrookmine", 3,
+P.threads.world_westfallmilitia = "the People's Militia against the Defias"
+q(214, "Red Silk Bandanas", "Westfall", 17, "westfallmilitia", 3,
     "Scout Riell had learned that the Defias marked rank by the material of their red bandanas. The highest-ranking members would be in VanCleef's secret hideout.",
     "Silk bandanas marked the Defias leaders. Ten of them would prove their deaths to Riell.",
     "Scout Riell saluted the work on behalf of the People's Militia, and promised the land would soon be returned to its people.",
@@ -5656,7 +5657,7 @@ q(1014, "Arugal Must Die", "Silverpine Forest", 27, "shadowfang", 5,
     "Silverpine could not be held for the Dark Lady while Arugal lived in Shadowfang Keep. Arugal's head was what Dalar Dawnweaver wanted.",
     "Arugal's magic would be seen to by Dalar Dawnweaver, but someone else had to bring the wizard's head.",
     "Dalar Dawnweaver declared Silverpine free of Arugal at last, a great service to the Dark Lady.",
-    "Dalar received Arugal's head. The Forsaken's hold on Silverpine was stronger for it.")
+    "Dalar received Arugal's head and promised that such tenacity would be rewarded.")
 q(386, "What Comes Around...", "Redridge Mountains", 25, "stockade", 3,
     "Targorr the Dread had been Gath'Ilzogg's executioner and tortured Stormwind's soldiers. A noble had put a hold on his execution, and Guard Berton suspected foul play.",
     "Berton feared some noble's trickery would free Targorr the Dread. He wanted the orc beheaded in the Stockade.",
@@ -5679,11 +5680,11 @@ q(388, "The Color of Blood", "Stormwind City", 26, "stockade", 4,
     "Nikova grieved over the red bandanas. Her grandson's death had been avenged.")
 q(378, "The Fury Runs Deep", "Wetlands", 27, "stockade", 4,
     "Roggo had proof that Kam Deepfury helped plan the attack on Thandol Span, where Longbraid lost his kin. The Dark Iron had to die, said Motley Garmason.",
-    "Kam Deepfury was held in the Stockade for political reasons. Bound to stay with Longbraid, Motley wanted his head.",
+    "Kam Deepfury was held in the Stockade for political reasons. Honor bound Motley to stay with Longbraid, so he asked for Deepfury's head.",
     "Motley Garmason said the Thandol Span victims' families could rest. Longbraid's brother had been avenged.",
     "Motley was glad Deepfury had paid. The cowardly Dark Iron got what he deserved, he said.")
 q(391, "The Stockade Riots", "Stormwind City", 29, "stockade", 5,
-    "Bazil Thredd led the riot. The warden did not trust the volunteer, and Thelwater demanded Thredd's head as proof of loyalty.",
+    "Bazil Thredd led the riot, and Warden Thelwater, who did not trust the volunteer, demanded his head as proof of loyalty.",
     "The warden wanted Thredd's head, and threatened the same fate if the volunteer took the rioters' side.",
     "Warden Thelwater admitted he had misjudged the volunteer. Without Thredd, the riots might be controlled, and he knew something of Thredd's activities.",
     "Thelwater had not expected anyone to come out alive. With Thredd dead, he offered what he knew of the ringleader's dealings.")
@@ -5699,9 +5700,9 @@ q(5724, "Returning the Lost Satchel", "Thunder Bluff", 16, "ragefire", 2,
     "Rahauro received the satchel and paid as Magatha had instructed.")
 q(5725, "The Power to Destroy...", "Undercity", 16, "ragefire", 3,
     "Two powerful spell books were in the hands of the Searing Blade, in the caverns below Orgrimmar. The Dark Lady wished to borrow them, Varimathras said.",
-    "The Dark Lady wanted the Searing Blade's spell books, and Varimathras had a hundred other tasks to see to.",
+    "The Dark Lady wanted the Searing Blade's spell tomes, and Varimathras had a hundred other tasks to see to.",
     "Varimathras called the service to the Dark Lady well done, and hinted at future tasks.",
-    "Varimathras took the Searing Blade's books for the Dark Lady.")
+    "Varimathras took the Searing Blade's tomes for the Dark Lady.")
 q(959, "Trouble at the Docks", "The Barrens", 18, "ratchet", 2,
     "Crane Operator Bigglefuzz had dropped a cargo stack, and Mad Magglish ran off with a bottle of 99-year-old port. He fled into the Wailing Caverns.",
     "The port Mad Magglish stole was a gift from Baron Revilgaz to Gazlowe. Its loss had put Bigglefuzz's job at risk.",
@@ -5716,7 +5717,7 @@ fallback("The Glowing Shard", "The Barrens", "ratchet", "3366,6981",
     "A green shard from the Wailing Caverns had smoke swirling under its surface.",
     "The strange glowing shard seemed worth showing to someone in Ratchet.",
     "The glowing shard was taken to Ratchet.",
-    "Ratchet saw the strange green shard.")
+    "Someone in Ratchet got a look at the strange green shard.")
 hl(167, "Wilder Thistlenettle saw his brother's Explorers' League badge and knew he had died in the Moonbrook cave-in.",
     "The badge from the collapsed tunnels ended Wilder's hope for his brother.")
 hl(391, "Warden Thelwater had Bazil Thredd's head, and admitted he had misjudged the one who brought it.",
@@ -5733,8 +5734,8 @@ for _, id in ipairs({214, 168, 167, 2040, 1098, 1014, 386, 377, 387, 388, 378, 3
 -- names Theldurin's fear, not the order. 692 only fears that Myzrael may be free.
 P.threads.world_yagyin = "Theldurin's search for Yagyin's Digest"
 q(692, "The Lost Fragments", "Badlands", 41, "myzrael", 3,
-    "Theldurin the Lost warned that the Scroll of Myzrael could pull her to the surface. Then he feared she might already be free, and the scroll needed to bind her again.",
-    "Enraged elementals had stolen the Scroll of Myzrael and torn it apart. They fought over its fragments behind Theldurin's camp.",
+    "Theldurin the Lost warned that the Scroll of Myzrael could pull her to the surface. Then he feared she might already be free, and that the scroll would be needed to trap her again.",
+    "Enraged elementals had stolen the Scroll of Myzrael and torn it apart. They now fought among themselves over its fragments.",
     "Theldurin the Lost had the fragments, perhaps the only chance against Myzrael. He went looking for his scrap-ratchet to piece them together.",
     "Theldurin welcomed the torn scroll's fragments and set about reattaching them.")
 q(727, "To Ironforge for Yagyin's Digest", "Ironforge", 40, "yagyin", 4,
@@ -5792,28 +5793,28 @@ q(6563, "The Essence of Aku'Mai", "Ashenvale", 22, "blackfathom", 3,
     "Je'neu took the sapphires and was glad they were out of naga hands.")
 q(1198, "In Search of Thaelrid", "Blackfathom Deeps", 24, "blackfathom", 3,
     "Dawnwatcher Shaedlass gathered news for the Argent Dawn. The scout Argent Guard Thaelrid had gone into Blackfathom Deeps weeks before and not reported.",
-    "Rumors joined the Twilight's Hammer and the naga in Blackfathom Deeps. Shaedlass wanted her missing scout found.",
+    "Rumors told of the Twilight's Hammer joining the naga in Blackfathom Deeps. Shaedlass wanted her missing scout found.",
     "Argent Guard Thaelrid was found alive. He said a wicked plot was underway in the corrupted temple.",
     "Thaelrid welcomed the help Shaedlass had sent, and warned of a plot in the depths.")
 q(1275, "Researching the Corruption", "Darkshore", 24, "blackfathom", 2,
     "Gershala Nightwhisper feared the blood elves would be deformed by demonic magic, as the naga and satyrs had been. Brain stems from both would help that study.",
     "Brain stems from the satyrs and naga of Blackfathom Deeps might show Gershala where the blood elves were headed.",
     "Gershala Nightwhisper thanked the traveler for selfless help with research meant for all Azeroth, then went back to work.",
-    "Gershala took the brain stems and turned at once to her research.")
+    "Gershala took the brain stems and thanked the traveler for help meant for all Azeroth.")
 q(1199, "Twilight Falls", "Darnassus", 25, "blackfathom", 3,
-    "The Twilight's Hammer sought the return of the Old Gods and had allied with the naga in Blackfathom Deeps, once a temple with a great moonwell.",
+    "The Twilight's Hammer sought the Old Gods' return. According to the Argent Dawn, it had joined the naga in Blackfathom Deeps, once a moonwell temple.",
     "War on the Twilight's Hammer in Blackfathom was what Argent Guard Manados asked for, with proof brought back.",
     "Argent Guard Manados commended the work against the Twilight's Hammer on behalf of the Argent Dawn.",
     "Manados praised the courage shown against the cultists.")
 fallback("Allegiance to the Old Gods", "Blackfathom Deeps", "blackfathom", "6564,6565",
-    "Lorgus of the Twilight's Hammer served the Old Gods in Blackfathom Deeps.",
+    "A Twilight's Hammer servant of the Old Gods schemed in Blackfathom Deeps.",
     "Je'neu Sancrea wanted the Twilight's Hammer plan in Blackfathom stopped.",
     "The matter of Lorgus moved a step further.",
     "Je'neu's effort against the Twilight's Hammer went on.")
 q(6565, "Allegiance to the Old Gods", "Ashenvale", 26, "blackfathom", 4,
     "Lorgus of the Twilight's Hammer had a plan to serve the Old Gods, creatures of chaos defeated long ago. Too weak to stop him himself, Je'neu asked for help.",
     "Lorgus had to die in Blackfathom Deeps before the cultist's plan could be finished, Je'neu said.",
-    "Je'neu Sancrea knew the Twilight's Hammer was not stopped, but another of their plans had been. They could rest easy for now.",
+    "Je'neu Sancrea knew the Twilight's Hammer was not stopped, but another of its plans had been. Zoram'gar could rest easy for now.",
     "Je'neu was relieved that Lorgus was dead and his plan staved off.", true)
 q(824, "Je'neu of the Earthen Ring", "Ashenvale", 27, "blackfathom", 3,
     "The Earthen Ring studied the elements and knew more of old gods and legends than most scholars. Mastok had a friend in the Ring at Zoram'gar.",
@@ -5826,10 +5827,10 @@ q(1200, "Blackfathom Villainy", "Darnassus", 27, "blackfathom", 5,
     "Selgorm saluted the deed on behalf of the Argent Dawn. Kelris had long eluded them, and his end spared many innocents.",
     "Selgorm had long thought Kelris dead or missing. His death, Selgorm said, had saved many lives.", true)
 q(6561, "Blackfathom Villainy", "Thunder Bluff", 27, "blackfathom", 5,
-    "Thaelrid said the Old God's corruption had tainted Blackfathom's moonwell and raised Aku'Mai. Kelris and his cultists sacrificed innocents there.",
-    "Kelris's head was to go to Bashana in Thunder Bluff, Thaelrid asked.",
+    "Thaelrid said the Old God's corruption had tainted Blackfathom's moonwell and raised Aku'Mai. There Kelris and his cultists sacrificed innocents.",
+    "Thaelrid asked for the cult leader Kelris to be slain and his head taken to Bashana in Thunder Bluff.",
     "Bashana praised the Earthmother. Kelris had sought to return the world to chaos, and his death spared many innocents.",
-    "Bashana thanked the slayer of Kelris, a worshipper of the Old Gods.", true)
+    "Kelris had worshipped the Old Gods, and Bashana thanked the one who slew him.", true)
 fallback("Blackfathom Villainy", "Blackfathom Deeps", "blackfathom", "1200,6561",
     "Kelris led the Twilight's Hammer in Blackfathom Deeps.",
     "The Argent Dawn wanted Kelris stopped.",
@@ -5852,13 +5853,13 @@ fallback("Baron Aquanis", "Blackfathom Deeps", "blackfathom", "909,6922",
     "Aquanis's globe went to those who studied the elements.")
 q(6922, "Baron Aquanis", "Ashenvale", 30, "blackfathom", 4,
     "The defeated water elemental Baron Aquanis had left a strange globe, sloshing with putrid water. If anyone could make sense of it, it was Je'neu Sancrea.",
-    "A globe that had fed Baron Aquanis seemed worth taking to the Earthen Ring at Zoram'gar.",
+    "A globe that seemed to have fed Baron Aquanis was worth taking to the Earthen Ring at Zoram'gar.",
     "Je'neu Sancrea expected the globe to show what had corrupted Baron Aquanis, and how. He suspected the Twilight's Hammer.",
     "Je'neu took Aquanis's globe for study, with the Earthen Ring's warmest regards.", true)
 q(1048, "Into The Scarlet Monastery", "Undercity", 42, "scarletmonastery", 5,
     "While the Dark Lady dealt with the Lich King, Varimathras saw to the Scarlet Crusade at home. He wanted High Inquisitor Whitemane and her lieutenants killed.",
     "Whitemane, Commander Mograine, Herod and Houndmaster Loksey were to die in the Scarlet Monastery, by Varimathras's order.",
-    "Varimathras said the Dark Lady had been well served, and the loyalty shown would be remembered.",
+    "Varimathras said the Dark Lady had been well served, and that such tenacity in combat would be remembered.",
     "Varimathras noted the loyalty to the Forsaken shown in the Monastery.")
 q(1049, "Compendium of the Fallen", "Thunder Bluff", 38, "scarletmonastery", 3,
     "Sage Truthseeker distrusted the Forsaken and wanted to counsel Cairne well. The Compendium of the Fallen lay in the Scarlet Monastery, guarded by zealots.",
@@ -5901,7 +5902,7 @@ P.threads.world_ulda_reagents = "the alchemists' Uldaman errands"
 q(2398, "The Lost Dwarves", "Uldaman", 40, "uldaman", 3,
     "The troggs had overrun the Uldaman dig site so quickly that some dwarves might be trapped inside. Just before they came, Baelog had led a small band deep into the site.",
     "Prospector Stormpike feared for Baelog's band, caught behind the troggs' lines in Uldaman.",
-    "Baelog was alive, and only worried about losing a bet with Olaf. Olaf had wagered his beard would reach his knees before another living face appeared.",
+    "Baelog was alive and had nearly lost a bet with Olaf. Olaf had wagered his beard would reach his knees before another living face appeared.",
     "Baelog's band was found alive. He won his bet with Olaf and offered to split the winnings.")
 q(2240, "The Hidden Chamber", "Ironforge", 40, "uldaman", 4,
     "Baelog's diary described how to open the locked door of the Chamber of Khaz'mul. His band was stuck, so someone else had to explore it.",
@@ -5909,7 +5910,7 @@ q(2240, "The Hidden Chamber", "Ironforge", 40, "uldaman", 4,
     "Prospector Stormpike had doubted the Chamber of Khaz'mul existed. He hoped the find would spur Ironforge's leaders to retake Uldaman.",
     "Stormpike was amazed to hear of the chamber. If Uldaman were ever retaken, its secrets would belong to Ironforge.")
 q(1139, "The Lost Tablets of Will", "Ironforge", 45, "uldaman", 5,
-    "Hammertoe had dreamt of the Tablet of Will, a shard the titans inscribed to give their creations a will of their own. It had to be found before the Shadowforge clan could use it, Belgrum said.",
+    "Hammertoe had dreamt of the Tablet of Will, a shard the titans were said to have inscribed to give their creations a will of their own. It had to be found before the Shadowforge clan found it, Belgrum said.",
     "Hammertoe's death was not to be in vain. The Tablet of Will lay somewhere in Uldaman, and Belgrum feared what the Dark Irons' golems could become with it.",
     "Advisor Belgrum could hardly believe it. The stone shard would go to the king's mages to test the legends.",
     "Belgrum took the Tablet of Will for the king's mages, saying the help had gone beyond anything he expected.")
@@ -5920,14 +5921,14 @@ q(2418, "Power Stones", "Badlands", 36, "uldaman", 2,
     "The power stones went to the tinkerer, who had a robotic rodent waiting for them.")
 q(17, "Uldaman Reagent Run", "Badlands", 42, "ulda_reagents", 2,
     "An alchemist wanted a dozen magenta fungus caps, a newly found plant growing deep in Uldaman, though the clusters could spew poison spores.",
-    "Magenta fungus caps grew deep in Uldaman, and their alchemical use was worth studying.",
+    "Magenta fungus caps grew deep in Uldaman, and the alchemist hoped to study their use in alchemy.",
     "The alchemist welcomed the caps and gave a potent restorative from a personal stock.",
-    "The caps were an interesting study, the alchemist said, and paid with a brew.", true)
+    "The alchemist called the caps an interesting study and paid with a restorative brew.", true)
 q(2202, "Uldaman Reagent Run", "Loch Modan", 42, "ulda_reagents", 2,
     "An alchemist had heard of magenta fungus caps deep in the Uldaman dig site and wanted a dozen to study.",
     "Magenta fungus caps from Uldaman might have alchemical uses, and an alchemist would trade an elixir for them.",
     "The alchemist welcomed the caps and gave a potent restorative brew in return.",
-    "The magenta caps reached the alchemist, who paid in elixirs.", true)
+    "The magenta caps reached the alchemist, who paid with a taste from his own stock.", true)
 fallback("Uldaman Reagent Run", "Badlands", "ulda_reagents", "17,2202",
     "An alchemist wanted magenta fungus caps from deep in Uldaman.",
     "Magenta fungus caps from Uldaman were wanted for study.",
@@ -5946,7 +5947,7 @@ q(2199, "Lore for a Price", "Ironforge", 41, "talvash", 3,
 q(2200, "Back to Uldaman", "Uldaman", 42, "talvash", 3,
     "A rival had spread word that Talvash's necklace cursed the paladin. Talvash would reassemble it if the gems were found and his name cleared.",
     "The paladin's body in Uldaman might hold the clue to the gems. Talvash sent a phial to reach him from there.",
-    "The paladin's diary named the gems' hiding places. Shadowforge dwarves had the ruby, the troggs had hidden the topaz near trapped dwarves, and the trogg elder held the sapphire.",
+    "The paladin's diary named the gems' hiding places. Shadowforge dwarves had the ruby, the troggs had hidden the topaz near some Alliance dwarves, and the trogg elder held the sapphire.",
     "Reading the dead paladin's diary revealed where each of the three gems was.")
 q(2201, "Find the Gems", "Uldaman", 43, "talvash", 4,
     "The paladin's diary pointed to the Shadowforge and the troggs. Once the gems were found, Talvash was to be told through the Phial of Scrying.",
@@ -5981,12 +5982,12 @@ q(2338, "Translating the Journal", "Badlands", 42, "droffers", 3,
 fallback("Translating the Journal", "Badlands", "droffers", "2318,2338",
     "A dead paladin's diary from Uldaman needed translating.",
     "The diary was written in the human tongue and could not be read.",
-    "The diary's translation was arranged.",
+    "A translator for the dead paladin's diary was found at Kargath in the Badlands.",
     "The matter of the paladin's diary moved on.")
 q(2339, "Find the Gems and Power Source", "Badlands", 44, "droffers", 4,
     "The translated diary said the dwarves hid the ruby, the troggs the topaz, and a trogg named Grimlok held the sapphire. A power source from Uldaman's strongest construct was needed too, Jarkal said.",
     "Deep in Uldaman lay the gems, and the power source Droffers did not know was needed.",
-    "Jarkal Mossmeld was sure he could now make such necklaces himself. He analyzed the gems before they went to Orgrimmar.",
+    "Jarkal Mossmeld was sure he could now make such necklaces himself. He meant to analyze the gems before they went to Orgrimmar.",
     "Jarkal kept the power source and checked the gems with an incantation.")
 q(2340, "Deliver the Gems", "Orgrimmar", 44, "droffers", 3,
     "Jarkal kept the power source and sent the gems and necklace to Droffers and Son, asking for silence about their deal.",
@@ -5999,13 +6000,13 @@ q(2341, "Necklace Recovery, Take 3", "Badlands", 44, "droffers", 4,
     "Jarkal Mossmeld said the power source had exceeded his hopes. He had made two necklaces, one for each of them, with enough left for more.",
     "Jarkal gave a necklace of his own making, the Droffers none the wiser.")
 hl(2240, "Prospector Stormpike heard that the Chamber of Khaz'mul was real, and hoped Ironforge would act to retake Uldaman.",
-    "Baelog's hidden chamber in Uldaman existed. Stormpike was amazed.")
+    "The Chamber of Khaz'mul in Uldaman was real after all. Prospector Stormpike was amazed.")
 hl(1139, "Advisor Belgrum received the Tablet of Will, Hammertoe's dream, for the king's mages to study.",
-    "The Tablet of Will reached Belgrum, the shard Hammertoe had dreamt of.")
-hl(2204, "Talvash del Kissel fused the power source into the necklace and its gems, restoring the dead paladin's jewel.",
+    "Belgrum received the Tablet of Will, the stone shard Hammertoe had dreamt of finding.")
+hl(2204, "Talvash del Kissel took the power source from Uldaman and prepared to fuse it with the necklace and its gems.",
     "Talvash began restoring the necklace with the power source from Uldaman.")
 hl(2341, "Jarkal Mossmeld gave a necklace made with the power source from Uldaman, while Droffers and Son knew nothing of it.",
-    "The power source let Jarkal make necklaces for both of them.")
+    "The power source let Jarkal Mossmeld make one necklace for his helper and another for himself.")
 for _, id in ipairs({2398, 2240, 1139, 2418, 17, 2202, 2198, 2199, 2200, 2201, 2204, 2283, 2284, 2318, 2338, 2339, 2340, 2341}) do src(id) end
 
 -- Batch W3-14: Zul'Farrak errands (Gahz'rilla's scale, Tabetha's tiara, Nekrum's
@@ -6045,7 +6046,7 @@ q(2864, "Tran'rek", "Tanaris", 45, "scarabs", 2,
 q(2865, "Scarab Shells", "Tanaris", 45, "scarabs", 2,
     "Scarab shells were so useful that the scarabs had been hunted nearly to extinction. A colony survived in Zul'Farrak, Tran'rek said.",
     "The Zul'Farrak scarabs still had their shells, and Tran'rek needed uncracked ones for Krazek.",
-    "Tran'rek called the shell-bearer a lifesaver. Krazek's load could go at last.",
+    "Tran'rek called the shell-bearer a real lifesaver. The shells were what Krazek's load had been waiting on.",
     "Tran'rek had his scarab shells for his impatient cousin.")
 q(7028, "Twisted Evils", "Desolace", 47, "maraudonerrands", 3,
     "Willow wanted relics of the old gods from the crystal caverns of Terramok, deep in Maraudon. Theradric crystal carvings would let Willow study powers long at rest.",
@@ -6073,12 +6074,12 @@ q(7067, "The Pariah's Instructions", "Desolace", 48, "maraudonerrands", 4,
     "The Centaur Pariah rejoiced. Now he could begin uniting the tribes, and he hoped they would meet next on different terms.",
     "The Pariah had what he needed to forge one great centaur tribe.")
 q(1444, "Return to Fel'Zerul", "Swamp of Sorrows", 44, "atalai", 3,
-    "Jammal'an the Prophet had cast the Atal'ai exile out for his doubts. The artifacts were harmless, he said, but the right fetish enchantment could put the world in peril.",
+    "Jammal'an the Prophet had cast the Atal'ai exile out for his doubts. The artifacts were harmless, the exile said, but the right fetish enchantment could put the world in peril.",
     "Jammal'an's faith in his prophecy would destroy the Atal'ai, the exile warned. The news had to go back to Fel'Zerul in Stonard.",
     "Fel'Zerul had not seen the traveler in some time, and wanted to know what the exile had said.",
     "Fel'Zerul asked to hear the exile's knowledge.")
 q(1445, "The Temple of Atal'Hakkar", "Swamp of Sorrows", 50, "atalai", 4,
-    "Jammal'an believed Hakkar's return would make the Atal'ai immortal. It was trickery to Fel'Zerul, and the exile's enchanted fetishes worried him.",
+    "Jammal'an believed Hakkar's return would make the Atal'ai immortal. To Fel'Zerul it was trickery, and the enchanted fetishes the exile spoke of worried him.",
     "If the fetishes were the key to the Atal'ai ritual, the Horde had to understand them. They had to be seized from the Temple, Fel'Zerul said.",
     "Fel'Zerul called the bearer a great champion of the Horde. The fetishes of Hakkar had to be dealt with at once.",
     "Fel'Zerul took the collected fetishes of Hakkar and would see to them.")
