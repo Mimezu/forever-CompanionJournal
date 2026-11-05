@@ -26,6 +26,13 @@ local evidence = {}
 for title, id, level in source:gmatch("### ([^\r\n]+)  %(id (%d+), level (%d+)%)") do
     evidence[tonumber(id)] = {title = title, level = tonumber(level)}
 end
+-- A few Forever stages exist only in the part1 capture (no completion text there).
+local part1 = assert(io.open("StorageInvestigation/journal-voice/part1_corpus.txt", "rb"))
+for id, title, level in part1:read("*a"):gmatch("### (%d+) ([^\r\n]-) %(lvl (%d+),") do
+    id = tonumber(id)
+    if not evidence[id] then evidence[id] = {title = title, level = tonumber(level), part1 = true} end
+end
+part1:close()
 local META = {"journal", "tale", "story", "stories", "song", "songs", "verse", "record", "chronicle", "legend", "bard",
     "page", "book", "chapter"}
 local pronouns = {i = true, me = true, my = true, mine = true, we = true, us = true, our = true, ours = true,
@@ -54,6 +61,7 @@ for id, entry in pairs(P.questIDs) do
     check(evidence[id] and evidence[id].title == entry.title, "source ID/title mismatch " .. id)
     check(evidence[id].level == entry.level, "source level mismatch " .. id)
     check(entry.source[1]:find(tostring(id), 1, true), "missing source ID " .. id)
+    check(not evidence[id].part1 or entry.source[1]:find("part1_corpus", 1, true), "part1-only stage must cite part1 " .. id)
     check(entry.setting == "Forever", "stage not labelled Forever " .. id)
     -- (own fv_ threads, or the Zephras threads shared with LoreHordeStories.lua)
     check(L.storyThreads[entry.thread] ~= nil and (P.threads[entry.thread] ~= nil or entry.thread:find("^forever_")), "missing thread " .. id)

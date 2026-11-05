@@ -229,59 +229,9 @@ P.threads.fv_thanes = "the Dark Iron incursion beneath Ironforge"
 P.threads.fv_tombs = "the restless tombs of the thanes"
 
 ---------------------------------------------------------------- Zephras Isle, Thendal Grove (Skyborne start, 1-6)
--- LoreHordeStories.lua already tells 92460-92469 and the other stages it lists;
--- these are the grove stages it does not. Givers: LoreForever quest:94414
--- (Halaan Hawk-Eye), 92474 (Myriaal Mistwake), 92473 (Valreaa Valewind),
--- 92544 (Hanaa Nightwind), 92598 (Ventaari Brightwish), 92470/92472 (Aetheen).
+-- LoreHordeStories.lua tells the grove stages (92460-92474, 92544, 92598,
+-- 94414, 96638); none of them is registered here (coordinator, 2026-11-05).
 -- Class-trainer referrals (92481-92485, 92532) are left to the class pack.
-q(94414, "The Anchors of Zephras", "Zephras Isle", 2, "forever_winds", 3,
-    "Halaan Hawk-Eye often came to look upon the ancient anchor pylon, a gift of the wind spirits that bound and sustained the island.",
-    "The anchor pylons' magic had grown unstable of late, though Halaan could see nothing wrong with them. He offered to lend his own gift for a closer look.",
-    "Halaan was grateful for the company at the pylon, and went on watching over the grove and pondering the state of his homeland.",
-    "Halaan called his gift simple and was grateful for it. In his view, yearning for what was lost only led to despair.",
-    false, {"LoreForever quest:94414 (wiki: in-game quest text; Halaan Hawk-Eye)"})
-q(92474, "Falling With Style", "Zephras Isle", 2, "forever_grove", 2,
-    "Myriaal Mistwake dared the young of Thendal to jump from a ledge and float on the air, with bonus points for landing in front of Rorian and startling him.",
-    "The shen'dorei could walk on the air, and Myriaal thought a jump from the ledge the best way to practice it.",
-    "Rorian complained that Myriaal kept encouraging reckless use of the skyborne gifts, then allowed that a little practice in the village was acceptable.",
-    "Rorian advised using the gift with care, so it would not be spent thoughtlessly before it was truly needed.",
-    false, {"LoreForever quest:92474 (wiki: in-game quest text; Myriaal Mistwake to Rorian the Dayseeker)"})
-q(92471, "Aetheen of the Gales", "Zephras Isle", 4, "forever_grove", 3,
-    "Rorian said every task in Thendal had been a trial of sorts, and that Aetheen of the Gales had been watching.",
-    "Aetheen of the Gales, one of the leaders of the shen'dorei on Zephras, had a task for those coming of age.",
-    "Aetheen of the Council of Elders had come to Thendal Grove to read the winds and to judge the young. Rorian had already told her much.",
-    "Aetheen had come to Thendal to read the winds, and to ask the young whether they were ready to serve Zephras Isle.",
-    false, {"LoreForever quest:92471 (wiki: in-game quest text)"})
-q(92473, "Aggressive Encroachment", "Zephras Isle", 4, "forever_grove", 3,
-    "An adolescent ursera had wandered close to Thendal and attacked a boy playing beneath the elder tree, and Valreaa Valewind wanted the den to the southwest thinned.",
-    "Hunger had made the ursera of the southwest den bold, and the rangers could not say what had changed them.",
-    "The scrawniest of the ursera were put down, and their claws went to Valreaa. The Rangers of the Grove counted themselves in debt.",
-    "Valreaa had her proof in ursera claws, and the den was less of a danger to the village.",
-    false, {"LoreForever quest:92473 (wiki: in-game quest text; Valreaa Valewind)"})
-q(92470, "Foul Matriarch", "Zephras Isle", 5, "forever_grove", 4,
-    "Aetheen offered a test of resolve deep in the ursera caves to the south, where the rangers' quarry was a matriarch called Urs'anah.",
-    "The ursera caves south of Thendal answered to a matriarch the rangers named Urs'anah, and Aetheen wanted her put down.",
-    "Urs'anah's head went to Aetheen, who said the path ahead now led beyond the safety of Thendal Village.",
-    "The matriarch of the caves was dead. Aetheen called it an important step, and warned that greater challenges lay ahead.",
-    false, {"LoreForever quest:92470 (wiki: in-game quest text; Head of Urs'anah)"})
-q(92472, "The Next Step", "Zephras Isle", 5, "forever_cult", 4,
-    "The Al'Aketh were zealots who worshipped Al'Akir the Windlord, and they threatened Shen'dar Village to the south.",
-    "Elder Aetheen sent help south to Constable Aonda in Shen'dar, for the cult's ambitions grew more deadly by the day.",
-    "Constable Aonda confessed to doubts, but Shen'dar Village would not turn down aid sent by Elder Aetheen herself.",
-    "Aetheen's name was enough for Constable Aonda, and Shen'dar had one more ally against the cult.",
-    false, {"LoreForever quest:92472 (wiki: in-game quest text; Aetheen to Constable Aonda)"})
-q(92544, "Al'Aketh Thugs", "Zephras Isle", 5, "forever_cult", 3,
-    "Cult ruffians led by Malduko Cloudcrush had camped by the temple ruins, attacking travelers and pressing the grove's people to join the Al'Aketh.",
-    "Hanaa Nightwind believed High Priestess Lorthuna had sent the thugs from the Shrine of Akir. Hanaa could not leave her post to deal with them.",
-    "Malduko and his band were dealt with. Hanaa had barely kept from joining the fight, and gave the thanks of the Rangers of Thendal Grove.",
-    "The ruffians by the temple ruins were beaten, and Hanaa hoped the rest would take the message and leave.",
-    false, {"LoreForever quest:92544 (wiki: in-game quest text; Hanaa Nightwind)"})
-q(92598, "The Gift of Skysight", "Zephras Isle", 4, "forever_winds", 3,
-    "Ventaari Brightwish taught that a Windshaper's skysight, a gift of the elemental spirits, grew strongest at an elemental convergence.",
-    "An elemental convergence waited among the standing stones northeast of Thendal, a place where the spirits gathered.",
-    "The skysight was used at the convergence. Ventaari said the gift had to be exercised like a muscle, and that hearing the elements might be the key to the island's survival.",
-    "At the standing stones, the gift bridged the mortal and the spiritual, and Ventaari urged that the lesson be remembered.",
-    false, {"LoreForever quest:92598 (wiki: in-game quest text; Ventaari Brightwish)"})
 
 ---------------------------------------------------------------- Zephras Isle, Shen'dar Village and Falaath (6-8)
 -- The two traditions: Windshapers (Horde) and the High Order (Alliance, of
@@ -465,12 +415,6 @@ q(93738, "The Broken Construct", "Zephras Isle", 9, "forever_winds", 4,
     "Ayessa was disappointed that Belathaan, Valennia Stormfist's cousin and the son of a Windshaper, had a hand in the broken construct.",
     "Ayessa Dawnsinger heard that the High Order was behind the broken construct, and needed a moment to reflect.",
     true)
-q(93746, "A Firm Response", "Zephras Isle", 9, "traditions", 5,
-    "Ayessa wanted Belathaan Brightwish taught to respect the Windshapers' boundaries, and he had last been seen on the road to the Shrine of Akir.",
-    "To make an example of Belathaan, Ayessa wanted him confronted alone on the road north.",
-    "Belathaan was dead. He had gone to meet the Al'Aketh to discuss peace, and Ayessa blamed the High Order's arrogance for sending him alone.",
-    "Ayessa learned that Belathaan was dead and that the High Order had been treating with the cult. There was no peace with the Al'Aketh, she said.",
-    false, {"part1_corpus.txt #93746 (Belthaan Brightwish on the road to the Shrine of Akir)"})
 q(94003, "The Skybreaker Bulwark", "Zephras Isle", 10, "forever_cult", 4,
     "Seena was the last of the Skybreakers on Zephras. The Al'Aketh had murdered the rest.",
     "A cultist named Zaal Stormshield carried the Skybreaker Bulwark, Seena's ancestral shield, at the Shrine of Akir.",
@@ -478,8 +422,616 @@ q(94003, "The Skybreaker Bulwark", "Zephras Isle", 10, "forever_cult", 4,
     "Seena had her family's shield again. She offered the Skybreaker Defense, a secret few on Zephras were thought worthy of, and gave away the shield she no longer needed.")
 P.threads.fv_windfield = "the Windfield orchard"
 
+---------------------------------------------------------------- Zephras Isle, the war with the Al'Aketh (11-13)
+-- LoreHordeStories.lua tells 92640, 92643, 92644, 92646/93835, 94369 and 94485;
+-- these are the stages between them. The Windshaper and High Order versions of
+-- the Belathaan affair (93746 in LoreHordeStories.lua, 92834 here) each keep
+-- their own side's account.
+q(93320, "Tower Defense", "Zephras Isle", 11, "forever_cult", 4,
+    "The cult was attacking the pylon watchtower east of Valanaar, and Valennia had sent her last spare peacekeepers to break through to the defenders.",
+    "Valennia's lieutenant Yorana Windyreed had led the relief force to the east watchtower, if she still lived.",
+    "Yorana's fighters were holding the cult off for now, but they were outnumbered and tiring, and the stalemate had to break soon.",
+    "The defenders at the east watchtower still held, though the cult had greater numbers.")
+q(92642, "Disrupting Logistics", "Zephras Isle", 11, "forever_cult", 3,
+    "Yorana could hardly believe Valennia had sent a single fighter against a full assault, but she would take what she could get.",
+    "The cult's healers kept its attackers coming at the east watchtower, and Yorana wanted them taken out.",
+    "The cult's healers were cut down below the hill. Yorana called it a small miracle that anyone came back alive.",
+    "With the healers dead, Yorana hoped her people could rally and push the attackers back.")
+q(92645, "Breaking the Breaker", "Zephras Isle", 11, "forever_cult", 5,
+    "Belguilos the Breaker commanded the cult's assault from a villa at the foot of the hill. She had been a peacekeeper once, and even then something about her was off.",
+    "Yorana believed the attack on the watchtower could not be broken while Belguilos lived.",
+    "Belguilos was dead, and Yorana began to think her people might come out of it alive.",
+    "The cult's commander at the east watchtower had fallen, and Yorana blessed the four winds for it.").highlight = {
+    "Belguilos the Breaker was dead, and the east watchtower might hold after all.",
+    "The cult lost its commander at the east watchtower, a former peacekeeper called Belguilos the Breaker."}
+q(92880, "Return to Valanaar", "Zephras Isle", 11, "forever_cult", 3,
+    "The east watchtower was stable, though mopping up the attackers would take time, and Yorana's report had to reach Valennia.",
+    "Yorana sent her report back to Valanaar. The watchtower was stable, and the chances of holding it far better.",
+    "Valennia was visibly relieved to hear that the eastern watchtower held.",
+    "The report from the eastern watchtower reached Valennia, who thanked the winds.",
+    false, {"part1_corpus.txt #92880 (Yorna's Report)"})
+q(92881, "The High Elder's Request", "Zephras Isle", 11, "forever_cult", 4,
+    "The attacks on both watchtowers were no coincidence. After what the skypriest had done at the western tower, the peacekeepers guessed the cult was after the anchor pylons.",
+    "High Elder Shadowsong had a lead that might explain what the cult wanted with the anchor pylons.",
+    "Talaanis Shadowsong had a small matter that needed an adventurer's kind of help.",
+    "The High Elder was ready to share his lead on the cult's designs.")
+q(94568, "The Cult's True Plans", "Zephras Isle", 11, "forever_cult", 4,
+    "The turncoat had feared the cult's plans enough to defect, and had died before he could tell them.",
+    "The damaged crystal the turncoat had carried was all that remained of his attempt to warn Valanaar.",
+    "Open battle with the cult would go badly for the peacekeepers, and Valanaar's leaders agreed they needed a different approach.",
+    "Valanaar's leaders weighed sending peacekeepers straight at the cult, and judged they would not fare well in open battle.")
+q(92834, "Avenged Tenfold", "Zephras Isle", 11, "forever_cult", 5,
+    "Elaadrin Evengale had sent his friend Belathaan Brightwish to the Shrine of Akir to open talks. A box came back holding Belathaan's tongue, dipped in silver pigment.",
+    "Elaadrin had argued for dialogue while the Windshapers and peacekeepers postured. After Belathaan's death he wanted the cultists' prayer charms instead.",
+    "Elaadrin's eyes crackled with arcane light. The cult had mistaken the High Order's prudence for weakness, he said, and was not ready to pay for that error.",
+    "The prayer charms reached Elaadrin, who admitted the Windshapers had been right about the cult, and that his mistake had cost a friend's life.")
+q(92840, "Catching Wind", "Zephras Isle", 11, "traditions", 4,
+    "The magic that sustained Zephras lingered at the standing stones of the Shen'dar Highlands, sacred to the Windshapers and closed to the High Order's study.",
+    "With the Windshapers busy elsewhere, the High Order wanted a device placed at the standing stones to gather data, discreetly.",
+    "Windshaper blood had been spilled at the stones. The High Order laid the blame on the Windshapers, who would not retaliate in Valanaar but would not forget.",
+    "The device gathered its data at the standing stones, and word of the fighting there spread quickly among the Windshapers.")
+q(93740, "Blood for Blood", "Zephras Isle", 11, "forever_cult", 4,
+    "Windshaper novices had been found dead in the highlands, and Ayessa suspected the Al'Aketh. Windshapers traded blood for blood.",
+    "Ayessa wanted the Al'Aketh to the north killed and their windstone prayer charms brought back as proof.",
+    "Ayessa took the windstone charms looking shaken and distant. It had been a trying day, she said.",
+    "The prayer charms reached Ayessa, who called it only the start of the cult's reckoning.")
+q(98512, "Al'Aketh Assassins", "Zephras Isle", 11, "forever_cult", 3,
+    "A scout on patrol near the border had spotted Al'Aketh skulking around a house on the hill to the north.",
+    "No one knew what the Al'Aketh wanted at the house on the hill, but it could not be good.",
+    "The Al'Aketh at the house were dead. The scout, glad of the help, meant to mention it in the report to Valanaar.",
+    "The assassins near the border were dealt with, though what they had been after remained a question.",
+    false, {"part1_corpus.txt #98512 (objective: kill 10)"})
+q(93065, "Prepare for Battle", "Zephras Isle", 12, "forever_cult", 4,
+    "The peacekeepers were mobilizing, and everyone was to meet on the eastern road north out of Valanaar for a final check before the march.",
+    "Valanaar's fighters geared up for the march on the cult, with the Windshapers and the High Order among them.",
+    "At the eastern road, the peacekeepers said they were as ready as they would ever be.",
+    "The final check was done, and the march on the cult could begin.")
+q(92947, "Making Our Move", "Zephras Isle", 12, "forever_cult", 5,
+    "Valennia sent her best fighters in through the front of the shrine as a distraction, while she led the Windshapers and the High Order in from the flank.",
+    "The plan was to punch through quickly and reach the High Priestess, while others caused trouble on the way to the shrine's steps.",
+    "At the steps of the shrine, Hyusaa Quickbreeze said they had fought hard to get that far, and it was not over yet.",
+    "The assault had reached the shrine steps, where Valennia's second, Hyusaa Quickbreeze, waited. More fighting lay ahead.",
+    false, {"part1_corpus.txt #92947 (objective: slay 8)"})
+q(93958, "The Inner Sanctum", "Zephras Isle", 12, "forever_cult", 5,
+    "Valennia's forces had breached the inner sanctum, and after thick fighting it had gone unsettlingly quiet.",
+    "One fighter stayed at the entrance to watch the way back, while someone went in to find Valennia and whatever was left of her forces.",
+    "Valennia was found inside, gravely wounded.",
+    "Valennia was still alive in the sanctum, but gravely wounded.")
+q(93459, "More Al'Aketh Ears", "Zephras Isle", 13, "shadowgale", 2,
+    "The druids of Shadowgale Forest kept rumors of a haunting alive to keep folk away, and now the Al'Aketh had come anyway.",
+    "Vayn Moonclaw offered coin, and in time the secrets of the order, for the ears of Al'Aketh cultists.",
+    "Vayn paid for the ears as promised.",
+    "Vayn paid for the cultists' ears, as the druids of Shadowgale had promised.",
+    false, {"part1_corpus.txt #93459 (Vayn Moonclaw in Shadowgale Forest)"})
+q(92741, "Unwelcome Visitors", "Zephras Isle", 13, "shadowgale", 3,
+    "Shrieklings had multiplied in Shadowgale Forest and begun spreading beyond the woods, and a scholar of the High Order wanted their talons.",
+    "Shriekling talons had alchemical properties, and the High Order saw scholarly gain in a much-needed culling.",
+    "The scholar could not wait to dig into the haul of talons.",
+    "The talons went to the High Order, which did not usually work as trappers, but would for a scholar's gain.")
+P.threads.fv_shadowgale = "the dangers of Shadowgale Forest"
+
+---------------------------------------------------------------- Zephras Isle, Shadowgale Forest (11-13)
+-- The Nightfang Den: Elegael Thornpaw and the Nightclaw druids (94484 to 94491;
+-- LoreHordeStories.lua tells 94485). The quest text spells the fallen village
+-- Ban'aethall once and Ban'aethal elsewhere; the lines use Ban'aethal. 94487's
+-- heirlooms are the coming-of-age relics of 92460. 94902 is a placeholder quest
+-- (its text reads "[PH]") and is left out.
+q(94484, "Unnerving Silence", "Zephras Isle", 11, "nightfang", 4,
+    "Lotheluum in Valanaar had waited too long for word from the druid conclave in Shadowgale Forest, and feared the worst with Ban'aethal in ruins.",
+    "The druids of Shadowgale were long overdue with their letters, and Lotheluum wanted Elegael Thornpaw found.",
+    "Elegael Thornpaw paled to learn that no reinforcements were coming. Her message had never reached Valanaar.",
+    "Elegael learned her call for help had not got through, and decided the druids would have to handle it on their own, and quickly.")
+q(94493, "A Sacrifice in Vain", "Zephras Isle", 11, "nightfang", 4,
+    "Elegael's message to Valanaar had not got through, and no reinforcements were coming to the druids of Shadowgale.",
+    "The Al'Aketh had ambushed the druids' den, and Elegael resolved to deal with it without waiting for Valanaar.",
+    "Elegael told how the cultists had struck with little warning, leaving many in her den wounded or dying.",
+    "Many in the druids' den lay wounded or dying, and Elegael begged for help before it was too late.")
+q(94486, "Feathers for Binding", "Zephras Isle", 11, "nightfang", 3,
+    "Elegael's poultice needed feathers from young shrieklings, to cover the moss and keep its antiseptic sap from drying.",
+    "The shrieklings of Shadowgale were usually docile but had turned hostile, and Elegael regretted asking for the young ones' feathers.",
+    "Elegael took the feathers and promised to use every one, so the shrieklings' deaths would not be wasted.",
+    "The shriekling feathers gave Elegael what she still needed for her poultices.")
+q(94487, "Unwanted and Unworthy", "Zephras Isle", 11, "nightfang", 4,
+    "The Al'Aketh had ambushed the druids without warning, and Elegael wanted the cultists slain and the heirlooms they wore taken back.",
+    "Elegael said the cultists did not deserve to be called shen'dorei. Their ashes, she said, did not deserve the winds.",
+    "Elegael looked at the bloodied heirlooms in distress. So many young lives were gone, she said, and the relics would wait in the High Elder's collection for a worthier generation.",
+    "The cultists' heirlooms would go back to the High Elder, Elegael said, to wait for the next generation coming of age.")
+q(94488, "The Ties That Bind", "Zephras Isle", 11, "nightfang", 5,
+    "Haalien, a druid of the circle who had vanished months before, had joined the cultists who attacked his own kin.",
+    "Elegael caught Haalien's scent over the bloodshed, and wanted his head for the blood he had spilled.",
+    "Elegael grimaced at Haalien's head and nodded. He was her cousin, and she could not easily have struck him down herself.",
+    "Haalien was dead. Elegael asked that no one mourn him, for his malice had killed many innocents that day.")
+q(94490, "Ripped Missive", "Zephras Isle", 12, "nightfang", 5,
+    "A torn, bloodstained note tucked behind Haalien's bracer held something of why the cult had attacked the druids' den.",
+    "Haalien had carried orders, and Elegael would want to read them.",
+    "The cult had come for the pylon, and the druids had died for being in the way. The orders seemed to come from Valanaar, and Elegael sent the missive to Lotheluum.",
+    "Elegael read that the attack was about the pylon, not her people. If the orders came from Valanaar, a traitor was hiding there.")
+q(94489, "The Wounds of Betrayal", "Zephras Isle", 12, "nightfang", 5,
+    "Elegael's poultices were ready for the druids in the Nightfang Den, too hurt to heal their own wounds. There were so few shen'dorei druids that every life was precious.",
+    "Elegael's mate, Jorel Windsinger, had been in dire condition when she left the den, and she asked that he be found.",
+    "Elegael heard what had become of Jorel and the others, and choked back a sob. She swore that anyone allied with the Al'Aketh would feel her wrath.",
+    "The poultices reached the den, but the news of Jorel was worse than Elegael had feared. She swore the cult would pay.",
+    false, {"part1_corpus.txt #94489 (the Nightfang Den; heal 7 druids)"})
+q(94491, "The Fate of the Den", "Zephras Isle", 12, "nightfang", 6,
+    "Someone in Valanaar was feeding the cult information, and Lotheluum had to hear of it, and of those the den had lost.",
+    "Elegael was in no shape to travel, and stayed behind with cultists still to slay.",
+    "Lotheluum went pale at the account of the den. If the missive was genuine, Valanaar held an accomplice or a traitor, and he took it straight to the High Elder.",
+    "Lotheluum had no words for the loss. He carried the missive to the High Elder, determined that the druids' sacrifice would not be in vain.").highlight = {
+    "Lotheluum learned of the slaughter in the Nightfang Den, and of a traitor feeding the cult from Valanaar.",
+    "The missive from the den reached Lotheluum, and the High Elder would hear of a traitor in Valanaar."}
+q(93165, "Mercy Falls on Deaf Ears", "Zephras Isle", 13, "nightfang", 2,
+    "The Al'Aketh had brought tragedy on the Nightclaw enclave, and its druids meant to repay blood with blood.",
+    "The Nightclaw offered coin, and in time their secrets, for the ears of slain cultists.",
+    "The Nightclaw paid for the ears and hoped the cult understood that their resentments ran deep.",
+    "The cultists' ears were counted and paid for, and the Nightclaw asked for more.",
+    false, {"part1_corpus.txt #93165 (objective: 10 cultist ears)"})
+q(93159, "The Strange Hermit", "Zephras Isle", 13, "shadowgale", 2,
+    "A hooded hermit lived alone in Shadowgale Forest, so long out of company that speaking came hard.",
+    "The hermit of Shadowgale stammered a greeting and asked how the day was going.",
+    "The hermit had friends and handmade things, and seemed to need little else, but admitted it was nice to talk to someone who talked back.",
+    "The forest spirits tried to talk with the hermit, but only ever sang. A visitor who answered made a welcome change.")
+q(93160, "The Forest's Bounty", "Zephras Isle", 13, "shadowgale", 2,
+    "The hermit had gathered the acorns close by, but raptor-birds roamed the rest of the forest floor.",
+    "The hermit offered to cook something tasty in return for acorns, rather than risk becoming a giant bird's lunch.",
+    "The hermit swore the acorns were delicious roasted, and went off to cook them.",
+    "The acorns were in, and the hermit set about roasting them.")
+q(93172, "Free the Hollows", "Zephras Isle", 13, "shadowgale", 4,
+    "Ghost-like spirits gathered at the old ruins northeast of the hermit's home, and some nights they seemed to sing something very sad.",
+    "The hermit believed something terrible had happened at the ruins, and that the spirits were trapped there.",
+    "The hollows at the ruins were set free, and the hermit hoped they would find peace.",
+    "The trapped spirits were released from the ruins, and the hermit gave quiet thanks.")
+q(94896, "Aid For The Refugees", "Zephras Isle", 11, "banaethal", 3,
+    "Ban'aethal, deep in Shadowgale Forest, had begun to fall into the sky one night, and its people fled with little more than their clothes.",
+    "Ealaane and the other refugees could not go back to Ban'aethal, and hoped someone would recover what they had left behind.",
+    "Ealaane promised to return the recovered belongings to their owners. It gave the refugees a place to start over.",
+    "The belongings from Ban'aethal went back to the refugees, a small kindness after losing their home.",
+    false, {"part1_corpus.txt #94896 (objective: collect 8)"})
+q(94897, "The Fate of a Loved One", "Zephras Isle", 11, "banaethal", 5,
+    "Resaan had gone back to Ban'aethal for supplies though Ealaane begged him not to, and a week had passed without word.",
+    "Ealaane feared Resaan was dead, and asked that his heirloom be brought back if he was.",
+    "Ealaane wept over Resaan's heirloom. Their life together had only just begun, and now her home and her love were both gone.",
+    "Resaan had not survived the ruins of Ban'aethal. His heirloom gave Ealaane some closure, if little else.",
+    false, {"part1_corpus.txt #94897 (find Resaan in the Ruins of Ban'aethal)"})
+P.threads.fv_nightfang = "the slaughter at the Nightfang Den"
+P.threads.fv_banaethal = "the fall of Ban'aethal"
+
+---------------------------------------------------------------- Tirisfal, the risen paladins and Bandarion Keep (1-13)
+-- Forever's Forsaken paladins: Aramis Hammerhand at Deathknell, Shari Stilwell
+-- in Brill, Danitha Morr's order at Bandarion Keep, and Forever's own history
+-- of Naxxramas striking at the Undercity (#96896, #96898), where Garek Bandarion
+-- fell. Class quests (category -141) are only offered to paladins, so a stage
+-- here never makes a paladin of anyone else. Givers: LoreForever quest:98601,
+-- 90902, 91208, 91209, 98389 (Shadow Priest Sarvis, Aramis Hammerhand).
+q(98601, "A Difficult Path", "Tirisfal Glades", 1, "risen", 4,
+    "A scroll reeking of the Light had come to Deathknell for a newly risen paladin, and Shadow Priest Sarvis wanted to be well away when it was read.",
+    "Paladins made Shadow Priest Sarvis uneasy, but the scroll he handed over sent a risen paladin to Aramis Hammerhand.",
+    "Aramis Hammerhand said the training could begin in earnest. The Light would hurt now, and the pain, he said, was a crucible.",
+    "Aramis warned against turning from the Light even for a moment, and urged that its pain be embraced.",
+    false, {"LoreForever quest:98601 (wiki: World of Warcraft: Forever)"})
+q(90902, "Rediscovering the Light", "Tirisfal Glades", 2, "risen", 4,
+    "Aramis Hammerhand welcomed another newly risen paladin, and warned that healing with the Light would now hurt.",
+    "Injured Deathguards near the chapel needed healing, and the only way past the pain of the Light, Aramis said, was through it.",
+    "The Forsaken were hardy to pain, Aramis said, and this pain was proof of still serving the Light.",
+    "The injured Deathguards were healed, and Aramis called the pain that came with it a badge of honor.",
+    false, {"part1_corpus.txt #90902 (objective: heal 5)", "LoreForever quest:90902 (wiki: World of Warcraft: Forever; Injured Deathguard)"})
+q(91208, "Coming to Terms", "Tirisfal Glades", 4, "risen", 4,
+    "A newly risen paladin had fled into the hills west of the chapel, unable to bear becoming what she had fought in life.",
+    "Aramis hoped a kind word could lead the frightened paladin back into the Light, though many in her state turned violent.",
+    "The frightened paladin could not be brought back. Aramis said a prayer for her, and called her end a clean one.",
+    "Aramis said that sometimes the best the Forsaken could give their risen was a clean end, and prayed to the Light for her.",
+    false, {"LoreForever quest:91208 (wiki: World of Warcraft: Forever)"})
+q(98389, "A Light in the Darkness", "Tirisfal Glades", 4, "risen", 3,
+    "Some Forsaken feared their paladins would smite them as monsters, and Aramis meant to show otherwise.",
+    "Freshly raised Forsaken were trapped by the spiders of Night's Web Hollow, and freeing them would prove what the paladins were for.",
+    "The webbed Forsaken were freed. Aramis hoped Executor Arren and the others would see that the paladins lived to protect their people, as in life.",
+    "Aramis believed the paladins would in time be seen as just as valuable to the Dark Lady as any other Forsaken.",
+    false, {"LoreForever quest:98389 (wiki: World of Warcraft: Forever; Webbed Forsaken)"})
+q(91209, "Continue Your Training", "Tirisfal Glades", 4, "risen", 3,
+    "Aramis sent his risen paladins on to Shari Stilwell in {p:Brill}, warning that many in the Dark Lady's service distrusted those close to the Light.",
+    "The lands of the Forsaken still needed protecting, and the next part of a paladin's training lay with Shari Stilwell in {p:Brill}.",
+    "Shari Stilwell welcomed one more of their number, and promised guidance once the people of {p:Brill} had seen proof of worth.",
+    "Shari Stilwell took over the training in {p:Brill}, where there was work for any paladin willing.",
+    false, {"LoreForever quest:91209 (wiki: World of Warcraft: Forever; Aramis Hammerhand to Shari Stilwell)"})
+q(91282, "A Second Home", "Tirisfal Glades", 11, "risen", 4,
+    "Risen paladins had begun to form a new order in Tirisfal, at a monastery called Bandarion Keep on the bluffs of Northface Rock.",
+    "The paladins of Tirisfal believed faith and fellowship were the way for the risen to thrive, and their new order kept a keep northwest of the Solliden Farmstead.",
+    "Breton Samuels welcomed the new recruit to Tyr's Watch, as he called it.",
+    "At Bandarion Keep, Breton Samuels took in another recruit.",
+    false, {"part1_corpus.txt #91282 (Bandarion Keep; Breton Samuels)"})
+q(91285, "Murlocs at the Gates", "Tirisfal Glades", 11, "risen", 2,
+    "The Vile Fin murlocs had once spawned where the keep now stood, and they had attacked it ever since the paladins drove them out.",
+    "Breton Samuels could not rebuild the keep with murlocs lurking in the bluffs and around the lake.",
+    "The murlocs were driven back for now. Breton hoped it would slow them, since rebuilding was hard enough without a spear in the back.",
+    "The Vile Fin attacks would not stop entirely, Breton said, but the keep had some breathing room.",
+    false, {"part1_corpus.txt #91285 (Vile Fin Attackers and Seers; Breton Samuels)"})
+q(91294, "Touring the Grounds", "Tirisfal Glades", 11, "risen", 3,
+    "With the murlocs under control, Breton Samuels encouraged a look around the keep before meeting its leader.",
+    "Bandarion Keep was not much yet, Breton said, but it was home.",
+    "Danitha Morr, the closest thing the keep had to a commander, offered fellowship to those still loyal to the Light.",
+    "The keep's leader, Danitha Morr, welcomed help, for much work remained before the order was fully established.")
+q(91316, "Making Repairs", "Tirisfal Glades", 11, "risen", 2,
+    "Far from the Undercity, the keep was short of building materials, and an old root cellar in ruined Shadowvale might hold some.",
+    "The keep looked imposing on its bluffs, the paladins admitted, but it was hard to supply so far from proper civilization.",
+    "Sturdy lumber from Shadowvale reached the keep, and more recruits would be sent to clear out the rest of the cellar.",
+    "The Shadowvale cellar yielded its lumber, and the restoration of the keep could go on.",
+    false, {"part1_corpus.txt #91316 (12 Sturdy Lumber from Shadowvale)"})
+q(91317, "The Tarnished", "Tirisfal Glades", 12, "risen", 5,
+    "Some risen paladins had carried their old prejudices into undeath, and these Tarnished were killing other Forsaken from Shadowvale.",
+    "Every Forsaken the Tarnished killed made the people of Tirisfal trust their paladins less, and the order wanted their leader's head.",
+    "Commander Rudolph Gelhardt's head was taken. The order hoped it would help secure its place in Tirisfal, though acceptance might take decades.",
+    "The Tarnished at Shadowvale were broken. Earning the Forsaken's trust, the order expected, could still take years.",
+    false, {"part1_corpus.txt #91317 (Commander Rudolph Gelhardt)"})
+q(95803, "A Token of Good Faith", "Undercity", 12, "risen", 6,
+    "Sylvanas Windrunner mistrusted the paladins and all but openly disparaged them. Danitha sent the Tarnished commander's head to the {p:Undercity} to show the order kept its own house.",
+    "Rudolph Gelhardt's head was a gift for the Dark Lady, proof of the paladins' devotion to the Forsaken.",
+    "Sylvanas did not doubt Danitha's sincerity, but expected more paladins to go mad and turn the Light on their own. The order would be watched.",
+    "The Dark Lady received the head coldly. She might one day stop tolerating the order, she said, and told its paladins to serve diligently.",
+    false, {"part1_corpus.txt #95803 (Rudolph Gelhardt's head to Sylvanas Windrunner)"}).highlight = {
+    "Sylvanas took the Tarnished commander's head, and warned that the paladins' order would be watched.",
+    "The Dark Lady accepted the paladins' token, though not yet their order."}
+q(96895, "The Argent Emissary", "Tirisfal Glades", 13, "argent", 3,
+    "Two Forsaken emissaries of the Argent Dawn had passed through Tirisfal, and not everyone liked them poking around unsupervised.",
+    "One of the Argent emissaries had gone southeast, toward Scourge cultists snooping near the {p:Undercity}.",
+    "The Argent Dawn member was found near the {p:Undercity}, watching the cultists and warning to stay low.",
+    "The emissary was found keeping watch on the cultists, who were not to be trifled with.",
+    false, {"part1_corpus.txt #96895"})
+q(96896, "A Righteous Cause", "Tirisfal Glades", 13, "argent", 5,
+    "Leonid Barthalomew the Revered had fought beside Danitha Morr when Naxxramas attacked the {p:Undercity}, and lost many friends that day.",
+    "Garek Bandarion, after whom the keep was named, had died defending the {p:Undercity} from Naxxramas. He might have been the first Forsaken to wield the Light as a paladin.",
+    "Leonid would stay a while among old friends before returning to {p:Light's Hope Chapel}, where the Argent Dawn could always use more help.",
+    "Leonid saw Bandarion's legacy living on in Danitha's order, and wished the rest of the Forsaken felt the same.",
+    false, {"part1_corpus.txt #96896 (Danitha Morr and Leonid Barthalomew the Revered)"})
+q(96897, "The Cult of the Damned", "Tirisfal Glades", 13, "argent", 3,
+    "Cultists of the Cult of the Damned were at work on the outskirts of the {p:Undercity}, and the Argent emissary wanted them stopped.",
+    "Between the mindless dead and the Scarlet Crusade, Tirisfal had enough to deal with without the Scourge's living servants.",
+    "The cultists were cut down. The emissary warned that only vigilance would keep Lordaeron's history from repeating.",
+    "The Dark Neophytes and Enforcers near the {p:Undercity} were dead.",
+    false, {"part1_corpus.txt #96897 (Dark Neophytes and Dark Enforcers)"})
+q(96898, "Remnants of War", "Tirisfal Glades", 13, "argent", 4,
+    "When Naxxramas bore down on the {p:Undercity}, the great necrotic crystal beneath it had shattered, and its fragments lay scattered near the city.",
+    "The cultists had likely come for the necrotic crystal fragments, and the Argent emissary meant to deny them.",
+    "The most conspicuous fragments were gathered. The emissary expected Tirisfal's people to be digging the rest out of the ground for years.",
+    "The necrotic fragments were out of the Scourge's reach, and the cult's work near the {p:Undercity} was slowed.",
+    false, {"part1_corpus.txt #96898 (12 Necrotic Crystal Fragments)"})
+q(96899, "Bandarion Keep", "Tirisfal Glades", 13, "argent", 4,
+    "The Argent emissary and his commander had been bound for Bandarion Keep before the cultists turned up.",
+    "The emissary's commander, Leonid Barthalomew, waited at Bandarion Keep to the northwest.",
+    "Leonid remembered the keep from the Argent Dawn's war against the Scourge in Tirisfal, and was glad Danitha's paladins kept it now.",
+    "The keep had once been the Argent Dawn's, Leonid said, and Danitha had named it after a friend they shared.",
+    false, {"part1_corpus.txt #96899 (Leonid Barthalomew at Bandarion Keep)"})
+-- The order's errand in Silverpine (class quests, 22-26): Lumina Windsinger, a
+-- Windshaper on Azeroth, and the Moonsilver Blade for Old Fire-Eye. Givers:
+-- part1_corpus.txt objectives; LoreForever quest:91859 (Trevan Rol to
+-- Deathguard Baldren). The seller of the Kor Gem lore in Ashenvale is unnamed.
+q(91858, "Diplomatic Incident", "Silverpine Forest", 22, "lumina", 4,
+    "Two dignitaries of the Earthen Ring had gone missing in {p:Silverpine} on their way to {p:Tarren Mill}, and Danitha saw a chance for her order to prove its worth to the Horde.",
+    "Rumor called the missing Earthen Ring travelers a diplomatic incident. Bandarion Keep's man at {p:the Sepulcher}, Trevan Rol, knew more.",
+    "Trevan Rol already knew why Danitha had sent help, and called the business a damned fine mess.",
+    "At {p:the Sepulcher}, Trevan Rol took up the search for the missing travelers with the order's help.",
+    false, {"part1_corpus.txt #91858 (Trevan Rol at the Sepulcher)"})
+q(91859, "A Curious Pair", "Silverpine Forest", 22, "lumina", 4,
+    "The missing dignitaries were no ordinary diplomats. One was a tauren, and the other, Trevan would swear, a high elf.",
+    "No one knew why an elf traveled with a tauren through Horde lands, and Trevan sent the search on to Deathguard Baldren at the town's entrance.",
+    "Deathguard Baldren cared little for paladins, but admitted the timing was impeccable.",
+    "Baldren had news to share, though he made no secret of his opinion of paladins.",
+    false, {"LoreForever quest:91859 (wiki: World of Warcraft: Forever; Trevan Rol to Deathguard Baldren)"})
+q(91860, "A Grim Fate", "Silverpine Forest", 22, "lumina", 4,
+    "Deathguard Baldren had seen gnolls dump a large body onto a pyre on {p:Fenris Isle}, and thought the elf was likely long dead.",
+    "Baldren called the search a lost cause of the kind paladins loved, and pointed the way to {p:Fenris Isle} anyway.",
+    "The body on the pyre was a tauren's, heavily gnawed. There was no sign of the elf woman, and the fortress nearby might still hold her.",
+    "Only the tauren had burned on the pyre. The elf might still be alive deeper in the fortress.",
+    false, {"part1_corpus.txt #91860"})
+q(91861, "Into Fenris Keep", "Silverpine Forest", 22, "lumina", 4,
+    "Only one body had been found on the pyre, and that gave some hope that the elf was alive inside Fenris Keep.",
+    "The missing member of the Earthen Ring party had to be somewhere in the fortress north of the pyre.",
+    "Deep in the keep, a captive asked whether her finder was one of the Forsaken, and begged to be freed while there was time.",
+    "The missing elf was found alive in Fenris Keep, caged and pleading for haste.",
+    false, {"part1_corpus.txt #91861"})
+q(91862, "Lumina Windsinger", "Silverpine Forest", 22, "lumina", 5,
+    "The captive was no high elf. She was Lumina Windsinger, a Windshaper of the shen'dorei, come as a guest of the Earthen Ring to study the elemental convergences of Arathi.",
+    "Lumina's cage key lay with the gnolls nearby, and she would tell the rest once safely away.",
+    "Lumina was free, though not yet out of danger.",
+    "The cage opened, and Lumina called the gnolls the second worst creatures she had met on Azeroth.",
+    false, {"part1_corpus.txt #91862"})
+q(96204, "The Windshaper's Wrath", "Silverpine Forest", 22, "lumina", 5,
+    "Freed, Lumina meant to make the gnolls regret ever laying eyes on a Windshaper.",
+    "Lumina had to be brought out of Fenris Keep, and she meant to make the gnolls pay on the way.",
+    "Lumina reached {p:the Sepulcher} and met Trevan. She had heard little good of paladins, but said they had a friend among the Windshapers.",
+    "As a shen'dorei walking Horde lands, Lumina knew how easily prejudice took root. The paladins of Bandarion Keep, she said, had a friend among the Windshapers.",
+    false, {"part1_corpus.txt #96204"}).highlight = {
+    "Lumina Windsinger was brought out of Fenris Keep, and the paladins gained a friend among the Windshapers.",
+    "Lumina reached the Sepulcher alive, and promised the paladins a friend among the Windshapers."}
+q(95034, "The Debt", "Silverpine Forest", 24, "lumina", 5,
+    "It had not been gnolls who first attacked Lumina and Banon on the road, but a worgen. Banon threw himself in its path and was badly bitten.",
+    "Lumina wanted it known what had truly happened to Banon on the road through {p:Silverpine}.",
+    "Pierced by gnoll blades and at the end of his strength, Banon had turned on Lumina, still knowing her and unable to stop himself. She swore on the sky to kill the creature that doomed him.",
+    "Lumina swore upon the sky to see the worgen that doomed Banon dead, so it could never do the same to another.",
+    false, {"part1_corpus.txt #95034"})
+q(95036, "A Moon-Kissed Blade", "Silverpine Forest", 25, "lumina", 4,
+    "The worgen that attacked Lumina was Old Fire-Eye, the biggest of his kind in {p:Silverpine}, and some magic kept him from staying dead.",
+    "Putting Old Fire-Eye down would take a special weapon, and Trevan Rol had a list of what was needed to forge it.",
+    "Trevan had the materials, and knew of a smith who could make the blade.",
+    "The materials for the moon-kissed blade were gathered. The Light needed a good blade to guide, Trevan said.",
+    false, {"part1_corpus.txt #95036 (Trevan Rol in the Sepulcher)"})
+q(95042, "Seeking the Kor Gem", "Ashenvale", 25, "lumina", 3,
+    "A scholar in {p:Ashenvale} was amused to meet a Forsaken paladin, and said the Kor Gems of the naga could empower a weapon.",
+    "The naga below {p:Blackfathom Deeps} still used Kor Gems, and the scholar warned against going alone.",
+    "The gem was corrupted by the naga witches, but the scholar dispelled the evil simply enough, and offered to buy it instead.",
+    "The scholar cleansed the gem's corruption, with some regret at what might have been learned from it.",
+    false, {"part1_corpus.txt #95042"})
+q(95111, "An Underrated Talent", "Hillsbrad Foothills", 25, "lumina", 3,
+    "Ott, a weaponsmith of {p:Tarren Mill}, sold plain blades to travelers, but smiths in the {p:Undercity} had once mistaken one of his swords for a master's work.",
+    "Trevan wanted to give Ott, an unassuming orc, the chance to make something truly special.",
+    "Ott had never been asked for a custom commission, and wondered why anyone would pass over the smiths of the {p:Undercity} for him.",
+    "Ott accepted the commission. He made humble, honest weapons, he said, and sought no glory.",
+    false, {"part1_corpus.txt #95111"})
+q(95125, "Ott's Masterwork", "Hillsbrad Foothills", 25, "lumina", 4,
+    "Ott called the materials truly fine, and hoped he could live up to the trust placed in him.",
+    "With the materials in hand, Ott began to forge the blade.",
+    "Ott called the blade his finest work, and said farewell in the orcish way.",
+    "The blade was finished, the best Ott had ever made.")
+q(95126, "The Moonsilver Blade", "Silverpine Forest", 25, "lumina", 4,
+    "Ott's finished blade was to go back to Trevan Rol, with Ott's thanks for the chance.",
+    "Trevan waited at {p:the Sepulcher} to see whether Ott had managed the commission.",
+    "Trevan inspected the Moonsilver Blade and declared it would do nicely. He had known Ott had it in him.",
+    "The Moonsilver Blade passed Trevan's inspection. Only the beast remained.",
+    false, {"part1_corpus.txt #95126"})
+q(95140, "Old Fire-Eye", "Silverpine Forest", 26, "lumina", 6,
+    "Old Fire-Eye hunted south of {p:the Sepulcher}, near the gates of Gilneas, and the Moonsilver Blade had been made to end him.",
+    "Lumina prayed the new blade would not fail against the worgen that had doomed Banon.",
+    "Old Fire-Eye was destroyed, and Banon could rest in peace. Lumina laid a small measure of her people's magic on the bloodied blade.",
+    "Lumina's oath was kept. She touched the bloodied blade with a little of the winds' magic and prayed it would serve well.",
+    false, {"part1_corpus.txt #95140 (Use the Moonsilver Blade to destroy Old Fire-Eye)"}).highlight = {
+    "Old Fire-Eye fell to the Moonsilver Blade, and Lumina Windsinger's oath for Banon was kept.",
+    "The worgen that doomed Banon was dead, and Lumina blessed the blade that killed it."}
+P.threads.fv_lumina = "Lumina Windsinger and the Moonsilver Blade"
+P.threads.fv_risen = "the risen paladins of Tirisfal"
+P.threads.fv_argent = "the Argent Dawn in Tirisfal"
+
+---------------------------------------------------------------- Westfall, Alba Fairmoon and the poisoned land (12-18)
+-- Forever's Westfall chain: the poison in the soil traced from the wells to a
+-- forge in the Deadmines. Givers: LoreForever quest:92742-92819 (Alba Fairmoon,
+-- Sprite Jumpsprocket, Jasper Fel). 92819's verdict on Stormwind is Alba's own
+-- and stays attributed. 93928 is a placeholder ("(PH) Thanks!") and is left out.
+q(98021, "Journey to Sentinel Hill", "Westfall", 13, "alba", 3,
+    "Stormwind sent newcomers who wished to do some good to Gryan Stoutmantle at {p:Sentinel Hill}, where the people of {p:Westfall} needed aid.",
+    "The troubles of {p:Westfall} might seem small to someone from another plane, but to the people living them they meant everything.",
+    "Gryan Stoutmantle had begged Stormwind for aid for months, and grumbled that it had sent him a skinny elf. Beggars could not be choosers, he said.",
+    "At {p:Sentinel Hill}, Gryan Stoutmantle took the help Stormwind had sent and set about putting it to work.")
+q(92742, "Testing the Wells", "Westfall", 12, "alba", 3,
+    "Something was poisoning the land of {p:Westfall}, and Alba Fairmoon meant to begin with the groundwater under the farms.",
+    "Alba Fairmoon wanted water from the wells at the Jansen Stead and the Molsen Farm, to learn what was corrupting the land.",
+    "Samples from the wells of the Jansen Stead and the Molsen Farm went to Alba Fairmoon for testing.",
+    "Alba had well water from two of Westfall's farms, the first step in finding the poison.")
+-- Not in corpus_vanilla_quests.txt: the description comes from part1_corpus.txt
+-- and the completion text was never captured, so the outcome stays minimal.
+P.questIDs[92742].source = {"part1_corpus.txt quest 92742 (description only)"}
+q(92744, "Murloc Gills", "Westfall", 12, "alba", 3,
+    "Alba feared the corruption of Westfall's crops had reached the sea, and that tainted fish could bring famine to Stormwind.",
+    "Murloc gills were sensitive to contaminants, and Alba meant to read the coast's seawater in them.",
+    "The gills looked healthy, for now. Alba would not let that make her complacent.",
+    "By the evidence of the murloc gills, the sea off {p:Westfall} was still clean.")
+q(92745, "The State of the Mines", "Westfall", 14, "alba", 3,
+    "The well samples held toxic metals, and if the poisoning went on, it would be decades before crops grew in that soil again.",
+    "The Defias held the mines of {p:Westfall} and stripped them with creature labor, and Alba wanted their miners at Jangolode and the Gold Coast Quarry cut down.",
+    "The Defias miners were disrupted, but Alba feared the poison came from somewhere else.",
+    "The miners at the Jangolode and the Gold Coast were dealt with, yet the source of the poison still eluded Alba.")
+q(92747, "Moonbrook Espionage", "Westfall", 16, "alba", 4,
+    "The poison did not come from the mines already searched. The Deadmines beneath {p:Moonbrook}, abandoned since the First War, were the last lead.",
+    "Alba wanted evidence from {p:Moonbrook} that the old Deadmines were working again.",
+    "Alba looked over the industrial supplies found in {p:Moonbrook} and asked what it all was.",
+    "Moonbrook yielded suspicious industrial supplies, signs of some operation in the old mines.",
+    false, {"LoreForever quest:92747 (wiki: World of Warcraft: Forever; Suspicious Industrial Supplies)"})
+q(92748, "Explosive Consultation", "Westfall", 16, "alba", 3,
+    "The supplies from {p:Moonbrook} pointed to a massive industrial operation in the Deadmines, and to the source of the toxins.",
+    "Whatever lay in the Deadmines would be hard to destroy, and Alba wanted an engineer in Stormwind's Dwarven District to supply explosives.",
+    "In the Dwarven District, Sprite Jumpsprocket asked whether something needed blowing up.",
+    "Sprite Jumpsprocket, an engineer of the Dwarven District, was ready to listen.",
+    true, {"LoreForever quest:92748 (wiki: World of Warcraft: Forever; Alba Fairmoon to Sprite Jumpsprocket)"})
+q(92749, "A Dynamite Plan", "Westfall", 16, "alba", 3,
+    "Industrial sabotage caught Sprite Jumpsprocket's attention, and the plan began with dynamite.",
+    "Sprite needed coarse dynamite for the bomb meant for the Deadmines.",
+    "The dynamite was a great start, Sprite said, and needed only tying together and a little extra zing.",
+    "Sprite had the dynamite and set about building something with more zing.",
+    false, {"LoreForever quest:92749 (wiki: World of Warcraft: Forever; Coarse Dynamite)"})
+q(92750, "Detonation at a Distance", "Westfall", 16, "alba", 3,
+    "Sprite had no remote detonator, and suggested the sneaky folk of Stormwind Intelligence might find one.",
+    "A controlled explosion meant keeping all one's limbs, and that needed a remote detonator.",
+    "Jasper Fel of Stormwind Intelligence asked whether something specific was wanted.",
+    "Stormwind Intelligence had been found, and Jasper Fel was listening.",
+    true, {"LoreForever quest:92750 (wiki: World of Warcraft: Forever; Sprite Jumpsprocket to Jasper Fel)"})
+q(92751, "Detonation at a Distance", "Westfall", 16, "alba", 4,
+    "Stormwind Intelligence already knew of the work in {p:Moonbrook}. Jasper Fel offered a prototype remote detonator, and asked that his part be kept from the elf.",
+    "Jasper Fel advised being well outside the caves before any explosion, and handed over his engineers' newest detonator.",
+    "Sprite was delighted. It was just the detonator they needed.",
+    "The prototype detonator reached Sprite, and the bomb could be finished.",
+    true, {"LoreForever quest:92751 (wiki: World of Warcraft: Forever; Jasper Fel to Sprite Jumpsprocket)"})
+q(92752, "Explosive Consultation", "Westfall", 16, "alba", 3,
+    "Sprite's bomb was ready, and the detonator with it.",
+    "With the bomb finished, Alba Fairmoon waited to hear of it.",
+    "Alba was glad to see the bomb and its detonator brought back.",
+    "The bomb reached Alba Fairmoon, ready for the Deadmines.",
+    true, {"LoreForever quest:92752 (wiki: World of Warcraft: Forever; Sprite Jumpsprocket to Alba Fairmoon)"})
+q(92753, "Destruction in Deadmines", "The Deadmines", 18, "alba", 5,
+    "Alba believed the poison came from a large forge hidden in the Deadmines, and the explosives had to be placed there.",
+    "Alba would wait in the hills behind {p:Moonbrook} until the forge was found and the bomb set. With the forge gone, the land might begin to heal.",
+    "The forge was found and the bomb planted. Only the detonation remained.",
+    "The bomb lay at the forge in the Deadmines, and Alba waited for the last step.",
+    true)
+q(92819, "Destruction in Deadmines", "Westfall", 18, "alba", 6,
+    "The bomb was planted at the forge, and all that was left was the detonator.",
+    "Alba Fairmoon waited in the hills behind {p:Moonbrook} for the end of it.",
+    "The detonator was used and the forge destroyed. Alba could hardly believe that Stormwind would put its military ambitions before the livelihood of its people.",
+    "With the forge gone, Alba was left with a bitter thought, that Stormwind had put its military ambitions over its own people.",
+    true).highlight = {
+    "The poisoning forge beneath {p:Moonbrook} was destroyed, and Alba Fairmoon blamed Stormwind's military ambitions for it.",
+    "The forge in the Deadmines was blown apart, and Alba could hardly believe what Stormwind had put before its people."}
+fallback("Explosive Consultation", "Westfall", "alba", "92748, 92752",
+    "Alba Fairmoon's search for the poison in {p:Westfall} needed explosives from Stormwind's Dwarven District.",
+    "An engineer named Sprite Jumpsprocket was building a bomb for the Deadmines.",
+    "The work on the bomb for the Deadmines moved forward.",
+    "One step toward the bomb was done.")
+fallback("Detonation at a Distance", "Westfall", "alba", "92750, 92751",
+    "The bomb for the Deadmines needed a remote detonator, and Stormwind Intelligence had one.",
+    "A controlled explosion beneath {p:Westfall} needed a detonator that worked from afar.",
+    "The search for a remote detonator moved forward.",
+    "One step toward a safe detonation was done.")
+fallback("Destruction in Deadmines", "Westfall", "alba", "92753, 92819",
+    "Alba Fairmoon had traced the poison of {p:Westfall} to a forge hidden in the Deadmines.",
+    "A bomb from Stormwind's Dwarven District was meant for the forge beneath {p:Moonbrook}.",
+    "The plan against the hidden forge moved forward.",
+    "One step of the work in the Deadmines was done.")
+q(92909, "Harvesting the Harvesters", "Westfall", 15, "harvesters", 3,
+    "A tinkerer from Ironforge had come to recalibrate the harvesters of {p:Westfall}, and they had chased the poor tinkerer into a stable.",
+    "Isosprings and gyrostabilizers from the harvesters could build a device to cover an escape from the stable.",
+    "The tinkerer had the parts and set to work on an escape plan.",
+    "The harvester parts reached the stable, and the escape plan could begin.",
+    true)
+q(92910, "Harvesting the Harvesters", "Westfall", 15, "harvesters", 2,
+    "A part salvaged from a harvester was mostly intact, and someone interested in harvest golems would want to see it.",
+    "The harvest golems of {p:Westfall} had turned aggressive, and an intact piece of one was worth studying.",
+    "The tinkerer from Ironforge took the salvaged part with great interest.",
+    "The salvaged assembly reached the tinkerer, who wanted to know what it was.",
+    true)
+q(92911, "Harvesting the Harvesters", "Westfall", 15, "harvesters", 3,
+    "The salvaged assembly showed the tinkerer what made the harvesters tick, and gave an idea for overriding them, at least for a moment.",
+    "The tinkerer needed more parts to build a device against the harvesters.",
+    "The device was ready to try. The tinkerer would stay behind in the stable, which was starting to feel like home.",
+    "The tinkerer handed over the finished device and chose to stay in the stable.",
+    true)
+fallback("Harvesting the Harvesters", "Westfall", "harvesters", "92909, 92910, 92911",
+    "The harvest golems of {p:Westfall} had grown aggressive, and a tinkerer from Ironforge was hiding from them in a stable.",
+    "Parts from the harvesters could help the trapped tinkerer.",
+    "The tinkerer's work against the harvesters moved forward.",
+    "One step of the tinkerer's plan was done.")
+P.threads.fv_alba = "Alba Fairmoon's search for Westfall's poison"
+P.threads.fv_harvesters = "the tinkerer in the stable"
+
+---------------------------------------------------------------- Duskwood and Stormwind (22-28)
+-- Sirra Von'Indi's Valor family search and King Terenas's statuette. 96137
+-- (Ira's Dagger) and 98219 (The Shamed Lieutenant) have no captured objective or
+-- completion and are left out; 98447 has an objective but no completion, so its
+-- outcome stays at what the objective itself establishes.
+q(96139, "The Valor Family", "Duskwood", 22, "valor", 3,
+    "Sirra Von'Indi kept a library in {p:Darkshire} but had almost nothing on Raven Hill, whose history had died with its people.",
+    "Sirra wanted Darkshire's heroes remembered as well as its foes, and asked for anything found at Raven Hill.",
+    "The tome from Raven Hill was about the Valor family. Sirra had heard of a few of them, good folk, and made a copy.",
+    "Sirra doubted the Valors merited a whole tome of their own, but copied it and asked for anything else about them.",
+    true, {"part1_corpus.txt #96139 (Sirra Von'Indi in Darkshire)"})
+q(96138, "Merrick's Bow", "Duskwood", 28, "valor", 3,
+    "A bow left by the spirit of Merrick Valor, a Watcher who had kept the roads safe, hinted at his unfinished business.",
+    "Merrick's spirit wandered the roads near Raven Hill, and the Splint Fist ogres south of town might be what troubled it.",
+    "The Splint Fist warriors and taskmasters south of Raven Hill were cut down, and Sirra Von'Indi heard of it in {p:Darkshire}.",
+    "The ogres near Merrick's old home were dealt with, and Sirra Von'Indi was told.",
+    false, {"part1_corpus.txt #96138 (8 Splint Fist Warriors, 4 Taskmasters; Sirra Von'Indi)"})
+q(98447, "The Valor Family", "Duskwood", 27, "valor", 4,
+    "Even with the Valor ghosts put down, the attacks around Raven Hill had not stopped, and Sirra suspected their unfinished business was still unsettled.",
+    "Sirra believed the whole Valor family had vanished at once, and hoped their weapons would stir something at Raven Hill.",
+    "The cause of the Valor ghosts was found at Raven Hill, as Sirra had hoped.",
+    "Sirra Von'Indi learned what lay behind the Valor family's ghosts.",
+    true, {"part1_corpus.txt #98447 (objective only: find the cause of the Valor family ghosts)"})
+fallback("The Valor Family", "Duskwood", "valor", "96139, 98447",
+    "Sirra Von'Indi of {p:Darkshire} wanted the Valor family of Raven Hill remembered.",
+    "Raven Hill's history had died with its people, and Sirra searched for what was left of it.",
+    "Sirra's search into the Valor family moved forward.",
+    "One more piece of the Valors' history reached Sirra.")
+q(98190, "A Friend of the Family", "Wetlands", 25, "terenas", 4,
+    "A statuette of King Terenas had come to {p:Menethil Harbor}, and its keepers feared the Dragonmaw would loot it.",
+    "Menethil was a calm harbor in a storm of enemies, and the statuette was to go straight to Highlord Fordragon in {p:Stormwind}.",
+    "The statuette of King Terenas reached Highlord Bolvar Fordragon in {p:Stormwind}.",
+    "Bolvar Fordragon had the statuette, delivered past every rung of the chain of command.",
+    true, {"LoreForever quest:98190 (wiki: World of Warcraft: Forever; to Highlord Bolvar Fordragon)"})
+q(98191, "A Friend of the Family", "Stormwind City", 25, "terenas", 4,
+    "Terenas had been a humble king who hated memorials, and few had survived Lordaeron's fall. The Light seemed to have gathered in this one.",
+    "Bolvar wanted the statuette kept in the Cathedral of Light, with Lord Grayson Shadowbreaker.",
+    "Lord Grayson Shadowbreaker took the statuette of King Terenas into the Cathedral's safekeeping.",
+    "The statuette of King Terenas found its place in the Cathedral of Light.",
+    true, {"LoreForever quest:98191 (wiki: World of Warcraft: Forever; Bolvar Fordragon to Lord Grayson Shadowbreaker)"})
+fallback("A Friend of the Family", "Stormwind City", "terenas", "98190, 98191",
+    "A statuette of King Terenas, one of the few memorials to survive Lordaeron's fall, needed safekeeping.",
+    "Stormwind wanted the statuette of King Terenas kept out of the Dragonmaw's reach.",
+    "The statuette of King Terenas was a step closer to safekeeping.",
+    "The statuette moved on toward its keeping in {p:Stormwind}.")
+P.threads.fv_valor = "the Valor family of Raven Hill"
+P.threads.fv_terenas = "the statuette of King Terenas"
+
+---------------------------------------------------------------- Dun Morogh, the Grizzled Den and Father Gavin (7-9)
+-- Senir Whitebeard's reports (98322, 98319, 98323 share a title), the miners'
+-- lost ore, and Father Gavin's hermitage of the Argent Dawn in the peaks.
+q(98322, "Secure the Mountain", "Dun Morogh", 8, "grizzled", 3,
+    "Senir Whitebeard sent mountaineers to learn about the wendigos spreading through the hills, and one of his reports had never come back.",
+    "Whitebeard was late with his reports to Ironforge, and wanted someone to check on Mountaineer Gretchen west of town.",
+    "Gretchen had Whitebeard's report, and called the whole situation a mess.",
+    "Mountaineer Gretchen was found west of town, with news of a mess in the hills.",
+    true, {"part1_corpus.txt #98322"})
+q(98319, "Secure the Mountain", "Dun Morogh", 8, "grizzled", 4,
+    "Wendigos had filled the Grizzled Den, and Gretchen's partner Cornelius had charged in head first.",
+    "Gretchen could not finish Whitebeard's report without Cornelius, who had gone into the Grizzled Den alone.",
+    "Cornelius was found in the den. Gretchen grieved for the brave fool, and said they had their report.",
+    "The search for Cornelius ended in the Grizzled Den, and Gretchen had her answer for Whitebeard.",
+    true, {"part1_corpus.txt #98319 (Mountaineer Cornelius in the Grizzled Den)"})
+q(98323, "Secure the Mountain", "Dun Morogh", 8, "grizzled", 4,
+    "Gretchen would send no one else into the Grizzled Den, and her letter for Senir Whitebeard said the cave was a lost cause.",
+    "Gretchen meant to hold her post until the mountain was secure, and sent her word back to Whitebeard.",
+    "Whitebeard was not surprised to hear the den was completely overrun, and folded Gretchen's letter into his pile of notes.",
+    "The report of the overrun den reached Senir Whitebeard, who added it to the rest.",
+    true, {"part1_corpus.txt #98323"})
+fallback("Secure the Mountain", "Dun Morogh", "grizzled", "98322, 98319, 98323",
+    "Wendigos had spread from their caves into the Grizzled Den, and Senir Whitebeard's mountaineers were watching them.",
+    "The mountaineers of {p:Dun Morogh} reported on the wendigos to Senir Whitebeard.",
+    "One more report on the wendigos was in.",
+    "Whitebeard's reports on the Grizzled Den moved forward.")
+q(98321, "Flintfire's Shipment", "Dun Morogh", 7, "grizzled", 3,
+    "Wendigos had overrun the cave that gave Flintfire's forge its ore, and the miners had dropped everything when they fled.",
+    "Flintfire was short of supplies, and the lost shipments still lay in the Grizzled Den.",
+    "The shipments came back from the Grizzled Den, and Flintfire expected the forge to be running again in no time.",
+    "Flintfire had the ore again. The miners had at least all got out alive.",
+    false, {"part1_corpus.txt #98321"})
+q(98326, "Frosthowl", "Dun Morogh", 9, "grizzled", 3,
+    "A wendigo called Frosthowl had stolen a sack of fish that had taken days to catch on the frozen lake.",
+    "Paxton had fished the frozen lake for days, and his wife could not bear to tell him the whole catch was lost to a wendigo.",
+    "The fish came back from the Grizzled Den. Paxton would not have to spend another night on the lake, and there might be a real feast.",
+    "Frosthowl was dead and the catch recovered, sparing Paxton's wife an awkward confession.",
+    false, {"part1_corpus.txt #98326 (Frosthowl in the Grizzled Den)"})
+q(99158, "Dawn in the Mountains", "Dun Morogh", 8, "gavin", 2,
+    "Father Gavin of the Argent Dawn had fixed up an old building in the peaks as a rest for travelers, and a shipment of holy candles was due to him.",
+    "Father Gavin was a priest who would rather heal than fight, and lived in a hermitage among the mountains of {p:Dun Morogh}.",
+    "The candles from Ironforge reached Father Gavin, one of the few things his hermitage needed from the city.",
+    "The priest took the holy candles gladly. He lived mostly on his own, he said, but valued a few gifts from the city.")
+q(99159, "Finding Warmth", "Dun Morogh", 8, "gavin", 2,
+    "Father Gavin's hearth was open to any soul, but he had been too busy to gather firewood.",
+    "The hermitage needed firewood, and Father Gavin had other tasks on his mind.",
+    "The firewood was stacked at the hermitage, the wet pieces left to dry.",
+    "He had his firewood now, and more tasks for anyone willing.",
+    false, {"part1_corpus.txt #99159 (14 pieces of firewood)"})
+q(99160, "Rime's Wrath", "Dun Morogh", 8, "gavin", 3,
+    "A shelf of rock and ice had fallen from the peaks and riled the elementals near Father Gavin's hermitage.",
+    "The frozen road was treacherous enough without the elements taking form, and Father Gavin was no longer one for fighting.",
+    "The elementals were put down. Father Gavin wished they could have been calmed instead, but they had been too dangerous to leave.",
+    "The road near the hermitage was safer, though Father Gavin regretted that the spirits could not simply be placated.",
+    true)
+q(99161, "Rime's Wrath", "Dun Morogh", 8, "gavin", 4,
+    "The first elemental to appear after the rockslide was larger than the rest, and Father Gavin called it Avala. It seemed to cause the sudden weather and the smaller slides.",
+    "Father Gavin wanted Avala killed and its core brought back as proof.",
+    "Avala's core reached Father Gavin, who hoped the peaks would now claim fewer lives.",
+    "With Avala dead, Father Gavin blessed the work that made the mountain road safer.",
+    true)
+fallback("Rime's Wrath", "Dun Morogh", "gavin", "99160, 99161",
+    "A rockslide in the peaks of {p:Dun Morogh} had stirred the elementals near Father Gavin's hermitage.",
+    "Father Gavin wanted the mountain road made safe from the restless elementals.",
+    "Part of the trouble with the elementals was dealt with.",
+    "The road near the hermitage was a little safer.")
+q(99162, "Treacherous Cold", "Dun Morogh", 8, "gavin", 4,
+    "After every slide, Father Gavin searched for survivors or victims, praying there was nothing to find, but the restless elements kept him close to home.",
+    "Mountaineers of Ironforge had been lost in the peaks, and Father Gavin wanted their rifles brought back.",
+    "The mountaineers engraved their names on their rifle stocks. Father Gavin would send the rifles to Ironforge, to be passed to their families.",
+    "The lost mountaineers' rifles went to Father Gavin, bound for Ironforge and whatever kin remained.",
+    false, {"part1_corpus.txt #99162 (rifles of fallen mountaineers)"})
+P.threads.fv_grizzled = "the wendigos of the Grizzled Den"
+P.threads.fv_gavin = "Father Gavin's hermitage"
+
 -- Alliance-side stages (the rest are Horde or both); the test renders them as such.
-P.alliance = {92415, 95161, 95189, 95195, 96408, 96392, 96390, 96391, 96393, 96394, 96403, 93461, 92596, 94413, 92701, 92699}
+P.alliance = {92415, 95161, 95189, 95195, 96408, 96392, 96390, 96391, 96393, 96394, 96403, 93461, 92596, 94413, 92701, 92699, 92834, 92840, 92741, 94493, 98021, 92742, 92744, 92745, 92747, 92748, 92749, 92750, 92751, 92752, 92753, 92819, 92909, 92910, 92911, 96139, 96138, 98447, 98190, 98191, 98322, 98319, 98323, 98321, 98326, 99158, 99159, 99160, 99161, 99162}
 
 ---------------------------------------------------------------- registration
 -- Drop any stage or title another pack already owns (it loads earlier and

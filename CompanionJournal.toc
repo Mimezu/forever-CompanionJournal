@@ -22,6 +22,7 @@ LoreHordeStories.lua
 LoreAllianceStories.lua
 LoreWorldStories.lua
 LoreClassStories.lua
+LoreForeverStories.lua
 LoreNotes.lua
 LorePlaces.lua
 LorePeopleHistory.lua
