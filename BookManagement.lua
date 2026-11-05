@@ -411,6 +411,7 @@ function A.BuildBookWorldSettings(section, category, ui)
     elseif category == "recording" then
         Check("peopleJournal", "Record our adventures", "Keep quests, dungeons, levels and time together in the journal.")
         Check("journalSeen", "Record when we cross paths", "Adds occasional encounters outside your shared travels; requires recording to be enabled.")
+        Check("moreMoments", "Record more moments", "In your own journal: books and plaques read, areas discovered, flight paths, spells from a trainer, reputation standings, duels, trade-skill ranks, honorable kills, rare creatures killed.")
     elseif category == "adding" then
         Check("peopleAutoGroup", "Remember groupmates as acquaintances")
         Check("peopleGroupIcon", "Give new groupmates the group icon")

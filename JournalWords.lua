@@ -1341,3 +1341,34 @@ PB.recordedIntervalBond = {
     "{gap} later, {name}, {bondWord}, was beside {me} in {zoneD}.",
     "{gap} later, {pair} were together again in {zoneD}.",
 }
+
+-- More moments shared with a companion (your own journal saw them while you
+-- were together; 2026-11-05). Tokens: {I} {me} {my} {we} {our} {pair} {name} and
+-- the moment's own ({who} {outcome} {what} {places} {faction} {standing}).
+PB.shared.duelWith = {
+    "{pair} duelled, and {winner} won.",
+    "{pair} crossed blades in a duel, and {winner} won it.",
+    "There was a duel between {pair}, and {winner} won.",
+}
+PB.shared.duel = {
+    "{I} duelled {who} while {we} were together, and {outcome}.",
+    "{who} and {I} duelled that day, and {I} {outcome}.",
+}
+PB.shared.rareKilled = {
+    "{I} killed {what} while {we} travelled together, a creature few ever see.",
+    "{what} crossed {our} path, and {I} killed it.",
+}
+PB.sharedRep = {
+    friendly = {"{Faction} counted {me} a friend by then.", "By then {I} stood in good standing with {faction}."},
+    honored = {"{Faction} held {me} in honor by then.", "By then {faction} honored {my} name."},
+    revered = {"{Faction} revered {me} by then.", "By then {I} was revered among {faction}."},
+    exalted = {"{I} stood as high with {faction} as anyone could.", "There was no higher standing with {faction} than the one {I} held now."},
+}
+PB.shared.explore = {
+    "{I} found {my} way to {places} while {we} were out.",
+    "On the way, {I} came upon {places}, new ground to {me}.",
+}
+PB.shared.read = {
+    "Along the way {I} stopped to read {what}.",
+    "{I} read {what} while {we} were there.",
+}

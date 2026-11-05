@@ -100,38 +100,142 @@ function A.FindPerson(unit)
     if not key then return nil end
     return A.People[key] or (A.Recognize and A.Recognize(key)), key
 end
+-- The People list's right-click menu is the addon's own. Blizzard's context
+-- menus opened from addon code run the gamepad window manager under addon
+-- taint (gamepad A and B dead until /reload, seen 2026-09-27). This one is a
+-- leather panel with the Legacy rim: rows the mouse or the gamepad cursor
+-- clicks; Escape, or a click anywhere else, closes it.
+local personMenu = {open = false}
+A.PersonMenu = personMenu -- (tests)
+local MENU_ROW, MENU_PAD, MENU_MIN_W = 20, 8, 170
+
+local function ClosePersonMenu()
+    if personMenu.panel then personMenu.panel:Hide() end
+    if personMenu.catcher then personMenu.catcher:Hide() end
+    personMenu.open, personMenu.owner, personMenu.key = false, nil, nil
+end
+personMenu.Close = ClosePersonMenu
+
+local function PersonMenuPanel()
+    if personMenu.panel then return personMenu.panel end
+    -- Covers the screen under the menu: a click anywhere else closes it. Escape
+    -- too, when the keyboard can be taken (not in combat); other keys pass through.
+    local catcher = CreateFrame("Frame", nil, UIParent)
+    catcher:SetFrameStrata("FULLSCREEN_DIALOG"); catcher:SetFrameLevel(90)
+    catcher:SetAllPoints(UIParent); catcher:EnableMouse(true)
+    catcher:SetScript("OnMouseDown", ClosePersonMenu)
+    catcher:SetScript("OnKeyDown", function(self, key)
+        if key == "ESCAPE" then
+            pcall(self.SetPropagateKeyboardInput, self, false)
+            ClosePersonMenu()
+        else
+            pcall(self.SetPropagateKeyboardInput, self, true)
+        end
+    end)
+    catcher:Hide()
+    local panel = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
+    panel:SetFrameStrata("FULLSCREEN_DIALOG"); panel:SetFrameLevel(100)
+    panel:EnableMouse(true); panel:SetClampedToScreen(true)
+    if A.OptionsSkin and A.OptionsSkin.Panel then A.OptionsSkin.Panel(panel) end
+    panel.rows = {}
+    panel:Hide()
+    personMenu.panel, personMenu.catcher = panel, catcher
+    return panel
+end
+
+local function PersonMenuRow(panel, i)
+    local row = panel.rows[i]
+    if row then return row end
+    row = CreateFrame("Button", nil, panel)
+    row:SetHeight(MENU_ROW)
+    row.text = row:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
+    row.text:SetPoint("LEFT", 12, 0); row.text:SetPoint("RIGHT", -12, 0)
+    row.text:SetJustifyH("LEFT"); row.text:SetWordWrap(false)
+    row.hover = row:CreateTexture(nil, "HIGHLIGHT")
+    row.hover:SetPoint("TOPLEFT", 4, 0); row.hover:SetPoint("BOTTOMRIGHT", -4, 0)
+    row.hover:SetColorTexture(1, 0.8, 0.4, 0.12)
+    row.line = row:CreateTexture(nil, "ARTWORK")
+    row.line:SetPoint("LEFT", 8, 0); row.line:SetPoint("RIGHT", -8, 0)
+    row.line:SetHeight(1); row.line:SetColorTexture(0.68, 0.50, 0.26, 0.45)
+    row:SetScript("OnClick", function(self)
+        local entry = self.entry
+        if not entry or entry.disabled or entry.title or entry.divider then return end
+        ClosePersonMenu()
+        if entry.func then entry.func() end
+    end)
+    panel.rows[i] = row
+    return row
+end
+
+-- entries: {title = text}, {divider = true}, {text, func, disabled}
+local function ShowPersonMenu(owner, key, entries)
+    local panel = PersonMenuPanel()
+    local width, top = MENU_MIN_W, MENU_PAD
+    for i, entry in ipairs(entries) do
+        local row = PersonMenuRow(panel, i)
+        row.entry = entry
+        local kind = entry.divider and "divider" or entry.title and "title" or "item"
+        local height = kind == "divider" and 9 or MENU_ROW
+        row:ClearAllPoints()
+        row:SetPoint("TOPLEFT", 0, -top); row:SetPoint("TOPRIGHT", 0, -top)
+        row:SetHeight(height)
+        row:EnableMouse(kind == "item")
+        row.line:SetShown(kind == "divider")
+        row.text:SetShown(kind ~= "divider")
+        row.text:SetText(entry.text or entry.title or "")
+        row.text:SetFontObject(kind == "title" and "GameFontNormal" or "GameFontHighlight")
+        if kind == "title" then row.text:SetTextColor(1, 0.82, 0)
+        elseif entry.disabled then row.text:SetTextColor(0.5, 0.5, 0.5)
+        else row.text:SetTextColor(1, 1, 1) end
+        row.hover:SetShown(kind == "item" and not entry.disabled)
+        width = math.max(width, (tonumber(row.text:GetStringWidth()) or 0) + 24)
+        top = top + height
+        row:Show()
+    end
+    for i = #entries + 1, #panel.rows do panel.rows[i]:Hide() end
+    panel:SetSize(width, top + MENU_PAD)
+    personMenu.open, personMenu.owner, personMenu.key = true, owner, key
+    if not owner.companionJournalMenuHook then
+        owner.companionJournalMenuHook = true
+        owner:HookScript("OnHide", function() if personMenu.owner == owner then ClosePersonMenu() end end)
+    end
+    if not InCombatLockdown() then
+        pcall(personMenu.catcher.EnableKeyboard, personMenu.catcher, true)
+        pcall(personMenu.catcher.SetPropagateKeyboardInput, personMenu.catcher, true)
+    end
+    personMenu.catcher:Show()
+    panel:ClearAllPoints()
+    panel:SetPoint("TOPLEFT", owner, "BOTTOMLEFT", 0, -2)
+    panel:Show()
+end
+
 -- Capture the character name when opening: list rows can be reused by search,
 -- paging, or selection changes while the menu is still open.
 function A.OpenPersonMenu(owner, key)
     local person = key and (A.People[key] or A.Recognize(key))
     local name = person and not person.npc and Text(person.name)
-    if not name or not MenuUtil or not MenuUtil.CreateContextMenu then return end
-    -- In the gamepad interface an addon-made menu (and Whisper focusing chat
-    -- from addon code) makes Blizzard's gamepad focus code run tainted: every
-    -- later gamepad press (cancel, interact) is then blocked. Seen 2026-09-27.
-    if A.GamepadUI and A.GamepadUI() then return end
+    if not name then ClosePersonMenu(); return end
+    -- The same row closes the menu it opened.
+    if personMenu.open and personMenu.owner == owner and personMenu.key == key then ClosePersonMenu(); return end
+    ClosePersonMenu()
     local addFriend = C_FriendList and C_FriendList.AddFriend
     local whisper = (ChatFrameUtil and ChatFrameUtil.SendTell) or ChatFrame_SendTell
     local invite = C_PartyInfo and C_PartyInfo.InviteUnit
-    MenuUtil.CreateContextMenu(owner, function(_, root)
-        root:CreateTitle(name)
-        local friendButton = root:CreateButton(ADD_FRIEND or "Add Friend", function()
-            if addFriend then addFriend(name) end
-        end)
-        friendButton:SetEnabled(addFriend ~= nil)
-        local whisperButton = root:CreateButton(WHISPER or "Whisper", function()
-            if whisper then whisper(name) end
-        end)
-        whisperButton:SetEnabled(whisper ~= nil)
-        local inviteButton = root:CreateButton("Invite to Group", function()
-            if invite then invite(name) end
-        end)
-        inviteButton:SetEnabled(invite ~= nil)
-        if A.OpenJournal and (A.People[key] or #A.OtherJournals(key) > 0) then
-            root:CreateDivider()
-            root:CreateButton("Open journal", function() A.OpenJournal(key) end)
-        end
-    end)
+    -- Whisper focuses the chat box from addon code; in the gamepad interface
+    -- that makes Blizzard's gamepad focus code run tainted (seen 2026-09-27),
+    -- so it stays off there.
+    local gamepad = A.GamepadUI and A.GamepadUI() or false
+    local entries = {
+        {title = name},
+        {text = ADD_FRIEND or "Add Friend", func = function() addFriend(name) end, disabled = addFriend == nil},
+        {text = WHISPER or "Whisper", func = function() whisper(name) end, disabled = whisper == nil or gamepad},
+        {text = "Invite to Group", func = function() invite(name) end, disabled = invite == nil},
+    }
+    if A.OpenJournal and (A.People[key] or #A.OtherJournals(key) > 0) then
+        entries[#entries + 1] = {divider = true}
+        entries[#entries + 1] = {text = "Open journal", func = function() A.OpenJournal(key) end}
+    end
+    ShowPersonMenu(owner, key, entries)
 end
 function A.AddNPCPerson(id, name, fields)
     local key = A.NPCKey(id)
@@ -532,48 +636,51 @@ end
 local menuInstalled = false
 local menuTags = {"MENU_UNIT_PLAYER", "MENU_UNIT_PARTY", "MENU_UNIT_RAID_PLAYER", "MENU_UNIT_FRIEND", "MENU_UNIT_TARGET",
     "MENU_UNIT_ENEMY_PLAYER"}
+-- This runs inside Blizzard's menu generator (the only way to add to the unit
+-- menu): a few table reads and unit lookups, nothing more, and never an error.
+local function AddUnitMenuEntries(root, context)
+    if not A.db or not A.db.peopleMenu or not A.db.enabled or type(context) ~= "table" then return end
+    -- In the gamepad interface, closing a menu after an addon entry ran
+    -- makes Blizzard's gamepad focus code call a protected function
+    -- (SetPreferredGamepadInteractTarget) and the game blocks it. Use the
+    -- "Add target to Companion Journal" key binding there instead.
+    if A.GamepadUI() then return end
+    local name, realm = context.name, context.server
+    local npcID
+    if context.unit then
+        local okPlayer, player = pcall(UnitIsPlayer, context.unit)
+        if okPlayer and Public(player) and player == false then
+            npcID = A.NPCID and A.NPCID(context.unit)
+            if not npcID then return end
+            local okName, unitName = pcall(UnitName, context.unit)
+            name = okName and unitName or nil
+        elseif UnitFullName then
+            local ok, unitName, unitRealm = pcall(UnitFullName, context.unit)
+            if ok then name, realm = unitName, unitRealm end
+        end
+    end
+    local key = npcID and A.NPCKey(npcID) or A.PersonKey(name, realm)
+    if not key then return end
+    root:CreateDivider()
+    if A.People[key] or A.Recognize(key) then
+        root:CreateButton("Edit in Companion Journal", function()
+            A.OpenOptions(); A.SelectPerson(key)
+        end)
+    else
+        root:CreateButton("Add to Companion Journal", function()
+            if npcID then A.AddNPCPerson(npcID, name)
+            else
+                local person = A.AddPerson(name, realm)
+                if person and context.unit and A.IsEnemyPlayer(context.unit) then person.circle = "rival"; A.Refresh() end
+            end
+            A.OpenOptions(); A.SelectPerson(key)
+        end)
+    end
+end
 function A.InstallPeopleMenu()
     if menuInstalled or not Menu or not Menu.ModifyMenu then return end
     menuInstalled = true
     for _, tag in ipairs(menuTags) do
-        Menu.ModifyMenu(tag, function(_, root, context)
-            if not A.db.peopleMenu or not A.db.enabled or type(context) ~= "table" then return end
-            -- In the gamepad interface, closing a menu after an addon entry ran
-            -- makes Blizzard's gamepad focus code call a protected function
-            -- (SetPreferredGamepadInteractTarget) and the game blocks it. Use the
-            -- "Add target to Companion Journal" key binding there instead.
-            if A.GamepadUI() then return end
-            local name, realm = context.name, context.server
-            local npcID
-            if context.unit then
-                local okPlayer, player = pcall(UnitIsPlayer, context.unit)
-                if okPlayer and Public(player) and player == false then
-                    npcID = A.NPCID and A.NPCID(context.unit)
-                    if not npcID then return end
-                    local okName, unitName = pcall(UnitName, context.unit)
-                    name = okName and unitName or nil
-                elseif UnitFullName then
-                    local ok, unitName, unitRealm = pcall(UnitFullName, context.unit)
-                    if ok then name, realm = unitName, unitRealm end
-                end
-            end
-            local key = npcID and A.NPCKey(npcID) or A.PersonKey(name, realm)
-            if not key then return end
-            root:CreateDivider()
-            if A.People[key] or A.Recognize(key) then
-                root:CreateButton("Edit in Companion Journal", function()
-                    A.OpenOptions(); A.SelectPerson(key)
-                end)
-            else
-                root:CreateButton("Add to Companion Journal", function()
-                    if npcID then A.AddNPCPerson(npcID, name)
-                    else
-                        local person = A.AddPerson(name, realm)
-                        if person and context.unit and A.IsEnemyPlayer(context.unit) then person.circle = "rival"; A.Refresh() end
-                    end
-                    A.OpenOptions(); A.SelectPerson(key)
-                end)
-            end
-        end)
+        Menu.ModifyMenu(tag, function(_, root, context) pcall(AddUnitMenuEntries, root, context) end)
     end
 end

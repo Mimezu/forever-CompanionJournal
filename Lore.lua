@@ -82,8 +82,15 @@ L.peoples = {Human = "human", Dwarf = "dwarf", Gnome = "gnome", NightElf = "nigh
 local function SkyElf(race) return type(race) == "string" and (race:find("Sky") or race:find("Shen")) ~= nil end
 -- Where each people begins (the first zone of a new life).
 L.starts = {Human = "Elwynn Forest", Dwarf = "Dun Morogh", Gnome = "Dun Morogh", NightElf = "Teldrassil", Orc = "Durotar", Troll = "Durotar",
-    Tauren = "Mulgore", Scourge = "Tirisfal Glades"}
-function L.IsStart(race, zone) return race and zone and L.starts[race] == zone or false end
+    Tauren = "Mulgore", Scourge = "Tirisfal Glades", Skyborne = "Zephras Isle"}
+-- The Skyborne begin on Zephras Isle (warcraft.wiki.gg Zephras Isle; LoreForever
+-- UI RACE_START). Trolls still begin in Durotar: Forever's Darkspear Islands are a
+-- battleground, not a starting zone (LoreForever zone:darkspearislands).
+function L.IsStart(race, zone)
+    if not race or not zone then return false end
+    if SkyElf(race) then return zone == "Zephras Isle" end
+    return L.starts[race] == zone
+end
 function L.IsHome(race, zone)
     if not race or not zone then return false end
     if SkyElf(race) then return zone == "Zephras Isle" end
@@ -440,9 +447,23 @@ Add("elemental", {
 })
 -- Forever's own
 Add("undead", {
-    ["Rath'mael"] = {e = "the necromancer who brought the fog", kind = "humanoid", last = true},
-    ["Durgen Dirgehammer"] = {e = "the Dark Iron commander under Ironforge", kind = "humanoid", last = true},
+    ["Rath'mael"] = {e = "the necromancer who brought the fog", kind = "humanoid", last = true,
+        after = "The fog over the ruins had lost its maker."},
+    ["Durgen Dirgehammer"] = {e = "the Dark Iron commander under Ironforge", kind = "humanoid", last = true,
+        after = "The Dark Iron incursion beneath Ironforge had lost its commander."},
 })
+-- Forever's dungeon rosters (warcraft.wiki.gg Ruins of Lordaeron (instance) for the
+-- creature type; corpus #95216 for the venom). The other Forever bosses (The Baron,
+-- Viktor the Vile, The Abandoned, Bjork, Faldrim Anvilmar, Magmatus, Plunder) wait
+-- for lore notes: tests/LoreCatalog.lua requires every boss name to open one.
+do
+    local RoL = {dungeon = "Ruins of Lordaeron", setting = "Forever", source = "https://warcraft.wiki.gg/wiki/Ruins_of_Lordaeron_(instance)"}
+    local function With(base, info) for k, v in pairs(base) do info[k] = info[k] or v end return info end
+    Add("undead", {
+        ["Witherfang"] = With(RoL, {e = "the spider whose venom ate through undead flesh", kind = "beast",
+            source = "StorageInvestigation/journal-voice/quests_corpus.txt #95216 The New Plague; https://warcraft.wiki.gg/wiki/Ruins_of_Lordaeron_(instance)"}),
+    })
+end
 
 -- How a place is written mid-sentence ("the Barrens", "the Undercity").
 local ARTICLE = {["Undercity"] = "the Undercity", ["The Barrens"] = "the Barrens", ["The Hinterlands"] = "the Hinterlands",
@@ -705,6 +726,48 @@ L.dungeonStory['The Hall of Thanes'] = {
     why = {"A Dark Iron incursion had disturbed the tombs beneath {p:Old Ironforge}."},
     inside = {"Restless dead stirred in the lower vaults of the {p:Hall of Thanes}."},
     detail = {"Dark Iron invaders had emerged from the deeper caverns in mole machines."},
+}
+-- Forever pass 2026-11-05: more lines from the captured quest text, so a
+-- return visit does not repeat the first. Sources per line in the comments.
+do
+    local function More(pool, lines) for _, line in ipairs(lines) do pool[#pool + 1] = line end end
+    local RoL, HoT = L.dungeonStory['Ruins of Lordaeron'], L.dungeonStory['The Hall of Thanes']
+    RoL.source = RoL.source .. ', #92421, #95189, #95195, #95216'
+    More(RoL.why, {"The Scourge still roamed the old capital in great numbers, and the Forsaken who fought to reclaim it were dwindling.", -- #92421
+        "Relics of the fallen kingdom lay in the ruins, and both {p:Stormwind} and the {p:Undercity} wanted them back."}) -- #95189, #95204
+    More(RoL.inside, {"Ghouls, wights and abominations walked the broken streets of Lordaeron's old capital.", -- wiki boss types
+        "The graveyard lay trodden by the dead, among the ruins of the city Arthas had razed."}) -- #92401, #92415
+    More(RoL.detail, {"Old crests of Lordaeron and the insignia of its soldiers still lay in the rubble.", -- #95189, #95195
+        "A spider in the ruins carried a venom said to eat through undead flesh."}) -- #95216
+    HoT.source = HoT.source .. ', #96391, #96392, #96395'
+    More(HoT.why, {"A Dark Iron map showed tunnels that met beneath {p:Ironforge}, and their diggers were heading for its vaults.", -- #96391
+        "Earthseer Farsen, a Wildhammer visiting from Aerie Peak, had seen the Dark Iron spies gather in {p:Dun Morogh}."}) -- #96392
+    More(HoT.inside, {"The keepers of the hall would not go in, for the dead had woken in their tombs.", -- #96394
+        "Below the halls of the living city lay the old tombs of Ironforge's thanes."}) -- #96393, #96394
+    More(HoT.detail, {"The ghost of an old thane could not rest for an ancient grudge.", -- #96395
+        "A gnome named Thom had offered to look after the vaults' heirlooms, and seemed eager to appraise them."}) -- #96403
+end
+-- Forever 1.60.1 dungeons and raids with no captured quest text yet: public
+-- setting only (warcraft.wiki.gg Krol'dok Stronghold, Riverglades, Mount Hyjal
+-- (Forever), Barrow Deeps; LoreForever zone:hyjal for the Druids of the Claw).
+L.dungeonStory["Krol'dok Stronghold"] = {
+    setting = 'Forever', source = 'https://warcraft.wiki.gg/wiki/Krol%27dok_Stronghold; https://warcraft.wiki.gg/wiki/Riverglades',
+    why = {"Ogres of the Twilight's Hammer held Krol'dok Stronghold in the Riverglades.",
+        "Long ago the Horde had fallen back to Krol'dok after its siege of Farholde failed, and the ogres had kept the fortress since."},
+    inside = {"Ogres of the Twilight's Hammer filled the fortress."},
+    detail = {"In the Second War, the Brotherhood of the Horse had driven the besiegers of Farholde back to these walls."},
+}
+L.dungeonStory["Barrow Deeps"] = {
+    setting = 'Forever', source = 'https://warcraft.wiki.gg/wiki/Mount_Hyjal_(Forever); LoreForever zone:hyjal (wiki Barrow Deeps)',
+    why = {"Beneath Mount Hyjal lay the barrow deeps, where the Druids of the Claw had slept for thousands of years."},
+    inside = {"The barrow dens ran deep under the mountain, among the oldest places of the night elves."},
+    detail = {"Malfurion Stormrage had woken the sleeping druids here with the Horn of Cenarius, to fight the Legion."},
+}
+L.dungeonStory["Hyjal Summit"] = {
+    setting = 'Forever', source = 'https://warcraft.wiki.gg/wiki/Mount_Hyjal_(Forever); LoreForever zone:hyjal (wiki Battle of Mount Hyjal, Nordrassil)',
+    why = {"The summit of Hyjal held Nordrassil, the World Tree, and the Well of Eternity beneath it."},
+    inside = {"Nordrassil stood over the summit, still scarred from the last battle of the Third War."},
+    detail = {"Archimonde had died at the roots of the tree, and the night elves had lost their immortality with him."},
 }
 function L.DungeonStory(name) return name and L.dungeonStory[DUNGEON_ALIASES[name] or name] end
 -- What was seen inside, by the part of the dungeon you fought in (the
@@ -1017,6 +1080,39 @@ L.zoneStory = {
             "A thousand years ago, the Scarab Wall had been raised to keep the silithid in."}}, -- new
 }
 function L.ZoneStory(name) return name and L.zoneStory[name] end
+-- Forever's own zones (pass of 2026-11-05). Facts from warcraft.wiki.gg
+-- (Riverglades, Shen'dralas, Zephras Isle, Mount Hyjal (Forever)), LoreForever
+-- (zone:riverglades, subzone:sunnyglade, zone:shendralas, subzone:valley-of-bones,
+-- zone:hyjal, zone:darkspearislands; facts only, CC BY-SA) and, for Zephras, the
+-- quest corpus (#92460, #92472, #92473, #94414). The story packs append more.
+L.zoneStory["Riverglades"] = {setting = "Forever",
+    sight = {"Farms and logging camps lay along the rivers of the valley, down to the Forbidding Sea.",
+        "The stone tower of Sunnyglade still stood over the ruins of the town.",
+        "Boats left Powderfuse Port for Steamwheedle Port, across the sea in Tanaris."},
+    stakes = {"The Brotherhood of the Horse held Farholde Keep, and fought to win back land Stormwind had given up in the First War.",
+        "The Twilight's Hammer held the ruins of Sunnyglade, and its ogres held Krol'dok Stronghold.",
+        "The Horde kept outposts at Rog'mar and Bolder'ok, where ogres who had left the Twilight's Hammer now fought beside it."}}
+L.zoneStory["The Riverglades"] = L.zoneStory["Riverglades"]
+L.zoneStory["Shen'dralas"] = {setting = "Forever",
+    sight = {"Highborne ruins stood among the crags, south of Desolace.",
+        "The way in from Desolace ran through the Valley of Bones, past two great skeletons slumped against the cliffs."},
+    stakes = {"The Magram centaur fought along their front, and the Bristleback quilboar held a fortified retreat.",
+        "Neither Horde nor Alliance held the crags, and outcasts hid there from both."}}
+L.zoneStory["Mount Hyjal"] = {setting = "Forever",
+    sight = {"Nordrassil, the World Tree, stood over the summit, still scarred by the last battle of the Third War.",
+        "Forest covered the slopes of the mountain, sacred to the night elves and the Wild Gods before them."},
+    stakes = {"Archimonde had died at the roots of the World Tree, and the night elves had paid for it with their immortality.",
+        "Malfurion Stormrage had sealed the mountain off after the war, and the tree had been slowly healing."}}
+L.zoneStory["Darkspear Islands"] = {setting = "Forever",
+    sight = {"The isles lay off the coast of Kalimdor, ceremonial ground of Vol'jin's trolls.",
+        "The fighting ran from the camp and the old ruins to the abandoned tower and Shipwreck Cove."},
+    stakes = {"The Horde fought for the isles out of an old debt to the Darkspear, who had stood with Thrall when he had little else.",
+        "The Alliance wanted a foothold off Kalimdor's coast, and a blow at one of the Horde's proudest peoples."}}
+L.zoneStory["Zephras Isle"] = L.zoneStory["Zephras Isle"] or {setting = "Forever",
+    sight = {"Zephras floated high in Skywall, the elemental plane of air, far above the world below.",
+        "An elder tree stood in the center of Thendal Village, and the greatfather tree rose just west of it."},
+    stakes = {"The air elementals who had shared the island were gone, and the magic holding it aloft was fading.",
+        "The Al'Aketh cult worshipped Al'Akir the Windlord, and its zealots grew bolder by the day."}}
 
 -- Quests worth a line when turned in (why, after; zone and level of the giver).
 -- Quest lore pack for the Companion Journal storyteller.

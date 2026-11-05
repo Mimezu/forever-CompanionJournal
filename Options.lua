@@ -364,10 +364,12 @@ function A.CreateOptions()
         Note(shows, "Updated at most every five minutes per person.", 44, -312 + o, 340)
 
         -- The journal (Forever Names had it on its Immersion page).
-        local journalCard = Card(optionsView, "Journal", 0, -342 + o, 400, 90)
+        local journalCard = Card(optionsView, "Journal", 0, -342 + o, 400, 114)
         local journalCheck = Check(journalCard, "peopleJournal", "Keep a journal of our adventures", 12, -36, 360)
         Tooltip(journalCheck, "For people in your list, and groupmates you add when the group ends: time grouped, dungeons, bosses, quests you both had, campfires and levels. Nothing is recorded while this is off. Open one: double-click someone in the list.")
         local journalSeen = Check(journalCard, "journalSeen", "Also when we cross paths", 40, -60, 164)
+        local moreMoments = Check(journalCard, "moreMoments", "Record more moments", 40, -84, 200)
+        Tooltip(moreMoments, "In your own journal: books and plaques read, areas discovered, flight paths learned, spells bought from a trainer, reputation standings reached, duels, trade-skill ranks, honorable kills in the open world, rare creatures killed. Off until you turn it on.")
         Text(journalCard, "Writing", 238, -64, "GameFontHighlightSmall")
         local writing = Segmented(journalCard, 288, -60, 50, {{"Simple", "simple"}, {"Story", "story"}},
             function() return A.JournalVoice and A.JournalVoice() or "simple" end,
@@ -672,6 +674,7 @@ function A.CreateOptions()
             SetCheckEnabled(groupPrompt, db.peopleAutoGroup and true or false)
             promptStyle:Update(true)
             SetCheckEnabled(journalSeen, db.peopleJournal and true or false)
+            SetCheckEnabled(moreMoments, db.peopleJournal and true or false)
             count:SetText(#keys .. " " .. circleNames[circle])
             addName:SetShown(circle == "companion"); addButton:SetShown(circle == "companion")
             local blockedView = circle == "blocked"

@@ -18,7 +18,17 @@ local singleNames = {Thrall=true, Onyxia=true, Nefarian=true, Ragnaros=true, Var
     Antonidas=true, Khadgar=true, Ironaya=true, Archaedas=true, Ravenholdt=true, Durnholde=true,
     Arthas=true, Sylvanas=true, ["Kel'Thuzad"]=true, ["C'Thun"]=true,
     Horde=true, Alliance=true, Forsaken=true, Scourge=true, Defias=true,
-    Gurubashi=true, Zandalar=true, Timbermaw=true}
+    Gurubashi=true, Zandalar=true, Timbermaw=true,
+    -- 2026-11-05: distinctive one-word titles the story prose uses unmarked.
+    -- Each note is public (no discovery policy); ordinary words stay out.
+    Hakkar=true, ["Atal'ai"]=true, Deathstalkers=true, Lethtendris=true, Naralex=true,
+    Alaric=true, Tarindrella=true, Margoz=true, Herod=true, Vectus=true, Zaetar=true,
+    Thoradin=true, Pusillin=true, ["Immol'thar"]=true, Hydrospawn=true, ["Gar'Thok"]=true,
+    Baelog=true, Zolo=true, Zerillis=true, Viscidus=true, ["Vile'rel"]=true, Verek=true,
+    ["Tsu'zee"]=true, Theldren=true, Thaddius=true, Techbot=true, Stonespine=true,
+    Stalagg=true, Revanchion=true, Renataki=true, ["Rath'mael"]=true, Ragglesnout=true,
+    Pimgib=true, Ouro=true, Ohgan=true, Mushgog=true, Mijan=true, Maexxna=true,
+    Loatheb=true, Kormok=true, Ironspine=true, Hukku=true, Ilthalaine=true, Tenaron=true}
 local V = "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"
 local Q = "StorageInvestigation/journal-voice/quests_corpus.txt"
 local N = "StorageInvestigation/journal-voice/npc_corpus.txt"
@@ -2038,13 +2048,13 @@ Curated("npc:teremus", "Teremus the Devourer", "Person",
 -- Forever-specific dungeons are identified separately from the Vanilla roster.
 local FQ = "StorageInvestigation/journal-voice/part1_corpus.txt"
 Curated("dungeon:lordaeron-ruins", "Ruins of Lordaeron", "Dungeon",
-    "The streets and graveyard above the Undercity were overrun by Scourge. Reports from Lordamere Overlook described an unholy fog that concealed them, while families still searched the ruins for their missing dead.", {Q .. " #92401 A Frightened Request; #92422 The Wrath of Rath'mael"}, {"the Ruins of Lordaeron"}, {"place:undercity", "npc:rathmael", "npc:witherfang"}, "Forever")
+    "The streets and graveyard above the Undercity were overrun by Scourge. Reports from Lordamere Overlook described an unholy fog that concealed them, while families still searched the ruins for their missing dead.\n\nThe ruins hold more than the necromancer Rath'mael. The spider Witherfang, an abomination called the Baron, the ghoul Viktor the Vile, a wraith known as the Abandoned and the wight Bjork all haunt the fallen capital, and the ghost of a Lordaeron captain is sometimes seen among its old guards.", {Q .. " #92401 A Frightened Request; #92422 The Wrath of Rath'mael", "https://warcraft.wiki.gg/wiki/Ruins_of_Lordaeron_(instance) (boss list, added in patch 1.60.1)"}, {"the Ruins of Lordaeron"}, {"place:undercity", "npc:rathmael", "npc:witherfang", "npc:the-baron", "npc:viktor-vile", "npc:bjork"}, "Forever")
 Curated("npc:rathmael", "Rath'mael", "Person",
     "Forsaken scouts identified Rath'mael as the necromancer conjuring fog over Lordaeron's streets and graveyard. Deathguard Kristof feared the cover it gave the Scourge and called for action.", {Q .. " #92422 The Wrath of Rath'mael"}, nil, {"dungeon:lordaeron-ruins"}, "Forever")
 Curated("npc:witherfang", "Witherfang", "Person",
     "An arthropod stalking the Ruins of Lordaeron, Witherfang was said to possess venom that ate through undead flesh. Theodore Griffs sought a sample to test those claims.", {Q .. " #95216 The New Plague, objective and description"}, nil, {"dungeon:lordaeron-ruins"}, "Forever")
 Curated("dungeon:hall-thanes", "The Hall of Thanes", "Dungeon",
-    "The hall lay beneath Old Ironforge, with tombs and lower vaults disturbed by a Dark Iron incursion. The dead stirred while the invaders emerged from deeper caverns in mole machines.", {FQ .. " #96393 Old Ironforge Incursion; #96394 The Restless Dead; #96403 Important Heirlooms"}, {"Hall of Thanes", "the Hall of Thanes"}, {"npc:durgen"}, "Forever")
+    "The hall lay beneath Old Ironforge, with tombs and lower vaults disturbed by a Dark Iron incursion. The dead stirred while the invaders emerged from deeper caverns in mole machines.\n\nThe ghost of the old thane Faldrim Anvilmar cannot rest for an ancient grudge. Deeper in, the fiery brute Magmatus and the enchanted golem Plunder guard the vaults, and Durgen Dirgehammer commands the Dark Irons in the innermost halls.", {FQ .. " #96393 Old Ironforge Incursion; #96394 The Restless Dead; #96403 Important Heirlooms", "https://warcraft.wiki.gg/wiki/Hall_of_Thanes_(instance) (boss order, added in patch 1.60.1)", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #96395 An Ancient Grudge"}, {"Hall of Thanes", "the Hall of Thanes"}, {"npc:durgen", "npc:faldrim-anvilmar", "npc:magmatus", "npc:plunder"}, "Forever")
 Curated("npc:durgen", "Durgen Dirgehammer", "Person",
     "Durgen led the Dark Iron incursion into the vaults beneath Old Ironforge. Earthseer Farsen identified him from the invaders' speech and directed a warning to King Magni.", {FQ .. " #96393 Old Ironforge Incursion, description and completion"}, nil, {"dungeon:hall-thanes"}, "Forever")
 

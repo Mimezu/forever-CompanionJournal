@@ -4,7 +4,7 @@ local addonName, A = ...
 -- Alone it works with Blizzard's nameplates (a small icon beside the name);
 -- with Forever Names installed, your people's display names and icons are
 -- drawn on its labels instead. Settings are account-wide.
-A.version = "1.12.4"
+A.version = "1.12.5"
 A.defaults = {enabled = true, colors = {}}
 local function Public(value) return not issecretvalue or not issecretvalue(value) end
 local function Text(value)

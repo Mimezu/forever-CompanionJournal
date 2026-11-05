@@ -45,6 +45,15 @@ function A.SelfJournalOn()
     local db = A.db
     return A.JournalOn() and db.selfJournal ~= false and A.Me and A.Me() ~= nil
 end
+-- "Record more moments" (off until you turn it on): books and plaques read,
+-- areas discovered, flight paths learned, spells bought from a trainer, a
+-- standing reached with a faction, duels, trade-skill milestones, honorable
+-- kills in the open world, a rare creature killed. Small factual lines, like
+-- the rest; nothing here is recorded while it is off.
+A.defaults.moreMoments = false
+function A.MoreMomentsOn()
+    return A.SelfJournalOn() and A.db.moreMoments == true
+end
 
 -- Your own journal as a person the book and the journal window can show:
 -- this character's (writable), or another character's (read only).
@@ -514,6 +523,248 @@ end
 closeFrame:SetScript("OnEvent", function() if A.SelfJournalOn() then CloseCall() end end)
 A.SelfHealthCheck = function() if A.SelfJournalOn() then CloseCall() end end -- (the tests)
 
+-- More moments (A.MoreMomentsOn) -------------------------------------------------------
+local function Num(value) return Public(value) and tonumber(value) or nil end
+-- A pattern from one of the game's own message strings ("Discovered: %s"), the
+-- magic characters escaped, %s and %d caught; nil when the string is missing.
+local function Pattern(key, capture)
+    local s = _G[key]
+    if type(s) ~= "string" then return nil end
+    local escaped = s:gsub("([%(%)%.%+%-%*%?%[%]%^%$])", "%%%1")
+    -- ("%1$s" becomes "%1%$s" once escaped: ordered placeholders, in message order)
+    local order = {}
+    for n in escaped:gmatch("%%(%d)%%%$s") do order[#order + 1] = tonumber(n) end
+    local body = escaped:gsub("%%%d%%%$s", capture or "(.-)"):gsub("%%s", capture or "(.-)"):gsub("%%d", "%%d+")
+    return "^" .. body .. "$", order
+end
+-- Books, letters and plaques: the title of the text you open, once per
+-- stretch ({k = "read", d = title, m = "parchment" | "stone" | "bronze" ...}).
+local readAt = setmetatable({}, {__mode = "k"})
+local function ReadText()
+    if not stretch then return end
+    local title = Text(Ask(ItemTextGetItem))
+    if not title then return end
+    local seen = readAt[stretch] or {}
+    readAt[stretch] = seen
+    if seen[title] then return end
+    seen[title] = true
+    local material = Text(Ask(ItemTextGetMaterial))
+    Add({k = "read", d = title, m = material and material:lower() or nil})
+end
+-- Areas discovered and flight paths learned come through the game's own info
+-- messages; the type is named by GetGameMessageInfo, the area by the message.
+local explorePatterns
+local function InfoMessage(errorType, message)
+    if not Public(errorType) or not GetGameMessageInfo then return end
+    local name = Text(Ask(GetGameMessageInfo, errorType))
+    if name == "ERR_NEWTAXIPATH" then
+        local place = SubZone() or Zone()
+        if place then Add({k = "taxi", d = place}) end
+    elseif name == "ERR_ZONE_EXPLORED" or name == "ERR_ZONE_EXPLORED_XP" then
+        if explorePatterns == nil then
+            explorePatterns = {}
+            for _, key in ipairs({"ERR_ZONE_EXPLORED_XP", "ERR_ZONE_EXPLORED"}) do
+                local pattern = Pattern(key)
+                if pattern then explorePatterns[#explorePatterns + 1] = pattern end
+            end
+        end
+        local area
+        if type(message) == "string" and Public(message) then
+            for _, pattern in ipairs(explorePatterns) do area = area or message:match(pattern) end
+        end
+        area = Text(area) or SubZone() or Zone()
+        if area then Add({k = "explore", d = area}) end
+    end
+end
+A.SelfInfoMessage = InfoMessage
+-- Spells bought from a trainer, one line per stretch ({k = "learn", c = count, m = {up to three names}}).
+local trainerOpen = false
+local learned = setmetatable({}, {__mode = "k"})
+local function Learned(spellID)
+    if not stretch or not trainerOpen or not Public(spellID) then return end
+    local name = (C_Spell and C_Spell.GetSpellName and Text(Ask(C_Spell.GetSpellName, spellID))) or (GetSpellInfo and Text(Ask(GetSpellInfo, spellID)))
+    local entry = learned[stretch]
+    if not entry then
+        entry = Add({k = "learn", c = 0, m = {}})
+        learned[stretch] = entry
+        if not entry then return end
+    end
+    entry.c, entry.e = (entry.c or 0) + 1, Now()
+    entry.m = type(entry.m) == "table" and entry.m or {}
+    if name and #entry.m < 3 then
+        local known = false
+        for _, n in ipairs(entry.m) do if n == name then known = true end end
+        if not known then entry.m[#entry.m + 1] = name end
+    end
+end
+-- A standing reached with a faction (friendly 5, honored 6, revered 7, exalted 8):
+-- the standings are kept on the character; the first look only seeds them.
+local STANDINGS = {[5] = "friendly", [6] = "honored", [7] = "revered", [8] = "exalted"}
+A.SelfStandings = STANDINGS
+local repQueued = false
+local function ScanReputation()
+    repQueued = false
+    if not A.MoreMomentsOn() then return end
+    local mine = A.MyCharacter and A.MyCharacter(true)
+    local rep = C_Reputation
+    if type(mine) ~= "table" or not rep or not rep.GetNumFactions or not rep.GetFactionDataByIndex then return end
+    local seeded = type(mine.rep) == "table"
+    mine.rep = seeded and mine.rep or {}
+    for i = 1, Num(Ask(rep.GetNumFactions)) or 0 do
+        local data = Ask(rep.GetFactionDataByIndex, i)
+        if type(data) == "table" and (not data.isHeader or data.isHeaderWithRep) then
+            local name, reaction = Text(data.name), Num(data.reaction)
+            if name and reaction then
+                local before = mine.rep[name]
+                if seeded and before and reaction > before and STANDINGS[reaction] then Add({k = "rep", d = name, s = reaction}) end
+                mine.rep[name] = reaction
+            end
+        end
+    end
+end
+A.SelfScanReputation = ScanReputation
+-- A duel's end comes as a system message naming both duellists; yours are kept
+-- ({k = "duel", d = the other, w = "won" | "lost", fled = they or you left the ring}).
+local duelPatterns
+local function DuelMessage(message)
+    if duelPatterns == nil then
+        duelPatterns = {}
+        for _, key in ipairs({"DUEL_WINNER_KNOCKOUT", "DUEL_WINNER_RETREAT"}) do
+            local pattern, order = Pattern(key)
+            if pattern then duelPatterns[#duelPatterns + 1] = {pattern = pattern, order = order, fled = key == "DUEL_WINNER_RETREAT"} end
+        end
+    end
+    local me = Text(Ask(UnitName, "player"))
+    if not me then return false end
+    for _, dp in ipairs(duelPatterns) do
+        local a, b = message:match(dp.pattern)
+        if a and b then
+            local args = {}
+            if #dp.order == 2 then args[dp.order[1]], args[dp.order[2]] = a, b else args[1], args[2] = a, b end
+            local winner, loser = (args[1] or ""):gsub("%-.*$", ""), (args[2] or ""):gsub("%-.*$", "")
+            if winner == me and loser ~= "" then Add({k = "duel", d = loser, w = "won", fled = dp.fled or nil})
+            elseif loser == me and winner ~= "" then Add({k = "duel", d = winner, w = "lost", fled = dp.fled or nil}) end
+            return true
+        end
+    end
+    return false
+end
+-- Trade skills crossing 75, 150, 225 and 300 (the ranks a trainer teaches past).
+local TRADES = {Alchemy = true, Blacksmithing = true, Enchanting = true, Engineering = true, Herbalism = true, Leatherworking = true,
+    Mining = true, Skinning = true, Tailoring = true, Cooking = true, ["First Aid"] = true, Fishing = true}
+local SKILL_MARKS = {75, 150, 225, 300}
+local skillQueued = false
+local function ScanSkills()
+    skillQueued = false
+    if not A.MoreMomentsOn() then return end
+    local mine = A.MyCharacter and A.MyCharacter(true)
+    local info = C_SkillInfo
+    if type(mine) ~= "table" or not info or not info.GetNumSkillLines or not info.GetSkillLineInfo then return end
+    local seeded = type(mine.skills) == "table"
+    mine.skills = seeded and mine.skills or {}
+    for i = 1, Num(Ask(info.GetNumSkillLines)) or 0 do
+        local line = Ask(info.GetSkillLineInfo, i)
+        if type(line) == "table" and not line.isHeader then
+            local name, rank = Text(line.name), Num(line.rank)
+            if name and rank and TRADES[name] then
+                local before = mine.skills[name]
+                if seeded and before and rank > before then
+                    for _, mark in ipairs(SKILL_MARKS) do
+                        if before < mark and rank >= mark then Add({k = "skill", d = name, c = mark}) end
+                    end
+                end
+                mine.skills[name] = rank
+            end
+        end
+    end
+end
+A.SelfScanSkills = ScanSkills
+-- Honorable kills in the open world, counted per stretch ({k = "hk", c = n}).
+local lastHK
+local hkAt = setmetatable({}, {__mode = "k"})
+local function SeedHonor()
+    if GetPVPSessionStats then lastHK = Num((Ask(GetPVPSessionStats))) end
+end
+local function HonorChanged()
+    if not GetPVPSessionStats then return end
+    local hk = Num((Ask(GetPVPSessionStats)))
+    if not hk then return end
+    local gained = lastHK and (hk >= lastHK and hk - lastHK or hk) or 0
+    lastHK = hk
+    if gained <= 0 or not stretch then return end
+    local okInst, _, kind = pcall(IsInInstance or function() return false end)
+    if okInst and kind == "pvp" then return end
+    local entry = hkAt[stretch]
+    if entry then entry.c, entry.e = (entry.c or 0) + gained, Now()
+    else hkAt[stretch] = Add({k = "hk", c = gained}) end
+end
+-- A rare creature you targeted and fought, dead ({k = "rarekill", d = name, sz = zone}):
+-- watched only while one is targeted (UNIT_HEALTH for "target" alone), and let go after ten minutes.
+local rareWatch
+local rareFrame = CreateFrame("Frame")
+local lastCombatEnd = 0
+local function RareUnwatch()
+    rareWatch = nil
+    pcall(rareFrame.UnregisterEvent, rareFrame, "UNIT_HEALTH")
+end
+local function RareTargeted()
+    local rank = Text(Ask(UnitClassification, "target"))
+    if rank ~= "rare" and rank ~= "rareelite" then return end
+    local name = Text(Ask(UnitName, "target"))
+    if not name or Ask(UnitCanAttack, "player", "target") ~= true or Ask(UnitIsDeadOrGhost, "target") == true then return end
+    rareWatch = {name = name, t = Now(), zone = Zone()}
+    if rareFrame.RegisterUnitEvent then pcall(rareFrame.RegisterUnitEvent, rareFrame, "UNIT_HEALTH", "target") end
+end
+local function RareHealth()
+    local watch = rareWatch
+    if not watch or not A.MoreMomentsOn() then return RareUnwatch() end
+    if Now() - watch.t > 600 then return RareUnwatch() end
+    if Text(Ask(UnitName, "target")) ~= watch.name or Ask(UnitIsDeadOrGhost, "target") ~= true then return end
+    RareUnwatch()
+    if Ask(UnitAffectingCombat, "player") == true or Now() - lastCombatEnd <= 5 then
+        -- (each rare once a life; no "first" claim, a kill is a kill)
+        local firsts = Firsts()
+        if firsts and not firsts["rarekill:" .. watch.name] then
+            firsts["rarekill:" .. watch.name] = Now()
+            Add({k = "rarekill", d = watch.name, sz = watch.zone})
+        end
+    end
+end
+rareFrame:SetScript("OnEvent", RareHealth)
+A.SelfRareHealth = RareHealth -- (the tests)
+local MORE_EVENTS = {"ITEM_TEXT_BEGIN", "UI_INFO_MESSAGE", "LEARNED_SPELL_IN_SKILL_LINE", "TRAINER_SHOW", "TRAINER_CLOSED", "UPDATE_FACTION",
+    "SKILL_LINES_CHANGED", "PLAYER_REGEN_ENABLED"}
+-- What the more-moments recorder does with an event (its own function: the main
+-- handler below is at Lua 5.1's limit of upvalues).
+local function MoreEvent(event, ...)
+    if event == "PLAYER_ENTERING_WORLD" then
+        SeedHonor()
+        -- (the standings and skills are seeded once the game has filled them in)
+        C_Timer.After(20, function() ScanReputation(); ScanSkills() end)
+    elseif event == "CHAT_MSG_SYSTEM" then
+        local message = ...
+        if type(message) == "string" and Public(message) then DuelMessage(message) end
+    elseif event == "PLAYER_TARGET_CHANGED" then
+        RareTargeted()
+    elseif event == "PLAYER_PVP_KILLS_CHANGED" then
+        HonorChanged()
+    elseif event == "ITEM_TEXT_BEGIN" then
+        ReadText()
+    elseif event == "UI_INFO_MESSAGE" then
+        InfoMessage(...)
+    elseif event == "LEARNED_SPELL_IN_SKILL_LINE" then
+        Learned((...))
+    elseif event == "TRAINER_SHOW" or event == "TRAINER_CLOSED" then
+        trainerOpen = event == "TRAINER_SHOW"
+    elseif event == "UPDATE_FACTION" then
+        if not repQueued then repQueued = true; C_Timer.After(2, ScanReputation) end
+    elseif event == "SKILL_LINES_CHANGED" then
+        if not skillQueued then skillQueued = true; C_Timer.After(2, ScanSkills) end
+    elseif event == "PLAYER_REGEN_ENABLED" then
+        lastCombatEnd = Now()
+    end
+end
+
 local events = CreateFrame("Frame")
 local EVENTS = {"PLAYER_ENTERING_WORLD", "ZONE_CHANGED_NEW_AREA", "ZONE_CHANGED", "ZONE_CHANGED_INDOORS", "PLAYER_LOGOUT", "QUEST_TURNED_IN", "ENCOUNTER_START",
     "ENCOUNTER_END", "PLAYER_CONTROL_LOST", "PLAYER_PVP_KILLS_CHANGED", "CHAT_MSG_LOOT", "PLAYER_EQUIPMENT_CHANGED",
@@ -603,6 +854,7 @@ local restedAt = setmetatable({}, {__mode = "k"})
 local auctionPattern -- (the auction-sold message as a pattern, built on first use)
 events:SetScript("OnEvent", function(_, event, ...)
     if not A.SelfJournalOn() then return end
+    if A.MoreMomentsOn() then MoreEvent(event, ...) end
     if event == "PLAYER_ENTERING_WORLD" or event == "ZONE_CHANGED_NEW_AREA" then
         if event == "PLAYER_ENTERING_WORLD" then
             Settle()
@@ -913,6 +1165,10 @@ function A.UpdateSelfJournalEvents()
         else pcall(events.RegisterEvent, events, event) end
     end
     pcall(closeFrame.UnregisterEvent, closeFrame, "UNIT_HEALTH")
+    for _, event in ipairs(MORE_EVENTS) do
+        if A.MoreMomentsOn() then pcall(events.RegisterEvent, events, event) else pcall(events.UnregisterEvent, events, event) end
+    end
+    if not A.MoreMomentsOn() then RareUnwatch() else SeedHonor() end
     if ticker and ticker.Cancel then ticker:Cancel() end
     ticker = nil
     if A.SelfJournalOn() and C_Timer and C_Timer.NewTicker then ticker = C_Timer.NewTicker(30, Tick) end

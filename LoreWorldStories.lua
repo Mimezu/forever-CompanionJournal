@@ -2070,4 +2070,555 @@ P.questIDs[10].highlight = {"Scrimshank's gear returned from the Gaping Chasm. F
 P.questIDs[110].highlight = {"Pestlezugg's results troubled him. He believed an unknown malignant power had remade the insects into ravagers.", "The analysis strengthened Pestlezugg's suspicion of outside control: he believed the insects had been changed into ravagers by an unknown power."}
 P.questIDs[113].highlight = {"Fizzledowser agreed to copy the report for free distribution. He disliked giving away valuable information, but trusted Pestlezugg's warning.", "The report reached Fizzledowser, who agreed to copy it. Pestlezugg's judgment outweighed his reluctance to give valuable findings away."}
 
+-- BEGIN OVERNIGHT WORLD PASS 20261105
+-- Exact IDs from corpus_vanilla_quests.txt (Quest / Progress / Completion), read
+-- in full before writing; NPC names cross-checked against LoreForever quest
+-- metadata (facts only). Report: StorageInvestigation/cj-overnight-20261105/world/.
+local function src(id, extra)
+    local v = P.questIDs[id]
+    v.source[2] = "https://classicdb.ch/?quest=" .. id
+    if extra then v.source[3] = extra end
+end
+local function hl(id, h1, h2) P.questIDs[id].highlight = {h1, h2} end
+
+-- Batch 1: the Tanaris investigation carried to the scholars, Un'Goro and back;
+-- Feathermoon's missing courier. Shared titles are exact-only with fallbacks.
+P.threads.world_raschal = "the search for Feathermoon's missing courier"
+P.threads.world_gahzridian = "the hydra ornaments of Tanaris"
+q(32, "Rise of the Silithid", "Orgrimmar", 48, "silithid", 4,
+    "Fizzledowser wanted his insect report read by Zilzibin Drumlore, a troll historian who had long studied creatures unique to Azeroth. Zil lived on the upper tier of the Drag in Orgrimmar.",
+    "The Gadgetzan report needed a scholar's judgment. Fizzledowser sent it to Zilzibin Drumlore in Orgrimmar, hoping the troll could say what the insects were and how to stop them.",
+    "Zilzibin had dealt with these creatures before. He named them silithid, tools of a threat to Horde and Alliance alike, and warned that they would consume Tanaris quickly.",
+    "The report reached Zilzibin. He gave the insects a name, silithid, and called them one of the greatest menaces the world would face.", true)
+q(162, "Rise of the Silithid", "Darnassus", 49, "silithid", 4,
+    "Fizzledowser sent his insect report to Gracina Spiritmight, a night elf historian who had long studied the creatures of Azeroth. She lived in the Temple of the Moon in Darnassus.",
+    "A scholar in Darnassus might explain the danger in Tanaris. Fizzledowser trusted Gracina Spiritmight, at the Temple of the Moon, to know how the insects could be stopped.",
+    "Gracina recognized the creatures in the report. Her people knew them as silithid, and she called them tools of a danger to Horde and Alliance alike.",
+    "In the Temple of the Moon, Gracina named the insects silithid. She warned that they would consume the Tanaris desert and regretted that no one had seen the danger sooner.", true)
+q(4267, "Rise of the Silithid", "Darnassus", 46, "raschal", 4,
+    "Shandris Feathermoon sent a copy of Raschal's report on the infestation of southeastern Feralas to Gracina Spiritmight, a priestess at the Temple of the Moon.",
+    "While Raschal's report went to Darnassus through official hands, General Feathermoon wanted a copy placed with Gracina Spiritmight, whose knowledge of such creatures might help.",
+    "Gracina knew the creatures in Raschal's report. She named them silithid, warned that they would consume Feralas, and prayed for the resolve to defeat them.",
+    "The copy reached the Temple of the Moon. Gracina called the insects of Feralas silithid, mere tools of a far greater threat to Horde and Alliance.", true)
+fallback("Rise of the Silithid", "Tanaris", "silithid", "32,162,4267",
+    "Reports of strange insects in southern Kalimdor were carried to a scholar who knew such creatures.",
+    "An insect report needed a historian's judgment before anyone could say what the creatures were.",
+    "The scholar who received the report named the insects silithid and warned of the danger they posed.",
+    "A historian read the insect report and gave the creatures their name, silithid.")
+q(4493, "March of the Silithid", "Tanaris", 53, "silithid", 4,
+    "Gracina believed the silithid existed to devour everything outside their own ecology, and that their strength came from Un'Goro Crater. She sent her theory to Alchemist Pestlezugg in Gadgetzan.",
+    "What had been seen so far, Gracina thought, was only the first stage. She suspected the hives drew their strength from Un'Goro Crater and wanted Pestlezugg in Gadgetzan to hear it.",
+    "Pestlezugg took up Gracina's theory. Un'Goro was a mysterious jungle west of Gadgetzan, and he thought it might bring him a step closer to understanding the silithid.",
+    "Gracina's message reached Pestlezugg. He was not sure the crater was the heart of the silithid, but he was ready to look there.", true)
+q(4494, "March of the Silithid", "Tanaris", 53, "silithid", 4,
+    "Zilzibin believed the silithid existed to devour everything outside their own ecology, and that their strength came from Un'Goro Crater. He sent his theory to Alchemist Pestlezugg in Gadgetzan.",
+    "What had been seen so far, Zilzibin thought, was only the first stage. He suspected the hives drew their strength from Un'Goro Crater and wanted Pestlezugg in Gadgetzan to hear it.",
+    "Pestlezugg took up Zilzibin's theory. Un'Goro was a mysterious jungle west of Gadgetzan, and he thought it might bring him a step closer to understanding the silithid.",
+    "Zilzibin's message reached Pestlezugg. He was not sure the crater was the heart of the silithid, but he was ready to look there.", true)
+fallback("March of the Silithid", "Tanaris", "silithid", "4493,4494",
+    "A scholar suspected that the silithid drew their strength from Un'Goro Crater.",
+    "The theory that the hives were rooted in Un'Goro Crater was sent to Alchemist Pestlezugg in Gadgetzan.",
+    "Pestlezugg heard the theory about Un'Goro Crater.",
+    "The message about the silithid and Un'Goro reached Pestlezugg in Gadgetzan.")
+q(4496, "Bungle in the Jungle", "Tanaris", 53, "silithid", 4,
+    "Pestlezugg's research suggested that the silithid behaved like bees, and that a dead queen would throw her hive into disarray. His lure needed an undamaged scent gland from the Un'Goro hive and samples of the crater's soil.",
+    "To draw a silithid queen into the open, Pestlezugg meant to brew a lure. He needed a scent gland from one of the crater's insects, intact, and some of Un'Goro's native soil.",
+    "The gland's membrane was intact and the soil would serve. He began grinding both into the lure he hoped would stop the silithid before they overran Gadgetzan.",
+    "Pestlezugg had his reagents. With a few additions of his own, the gland and the Un'Goro soil would become a lure for the hive's queen.")
+q(4507, "Pawn Captures Queen", "Tanaris", 54, "silithid", 5,
+    "Pestlezugg's lure was meant for a crystal in the hive's hatcheries, which he believed the silithid used to attune the whole hive. It should draw out the queen, and he wanted her brain for study.",
+    "The queen would answer the lure with guards around her. Pestlezugg asked for her brain, which he needed to learn whether a malign intelligence controlled the silithid.",
+    "The queen's brain reached Pestlezugg, who called the day quite a victory. He still doubted that one queen was the full extent of the silithid; the resolution seemed too clean to him.",
+    "Pestlezugg received the brain for study and celebrated the success. Then he admitted his doubt that the silithid ended with this queen.")
+q(4508, "Calm Before the Storm", "Darnassus", 54, "silithid", 4,
+    "Pestlezugg sent his latest report to Gracina Spiritmight. She had friends among the Alliance's leaders, and Gadgetzan could not fight the silithid alone.",
+    "The findings from the Un'Goro hive needed hands that could act on them. Pestlezugg hoped Gracina, in Darnassus, could bring powerful friends into the fight.",
+    "Gracina doubted the report would change much. The Alliance looked only for threats from the Horde, she said, and Fandral Staghelm denied that the silithid were the ancient danger she believed them to be.",
+    "Gracina accepted Pestlezugg's report with little hope. She blamed leaders who could see no enemy but the Horde, Fandral Staghelm among them, and urged that the fight against the silithid go on.", true)
+q(4509, "Calm Before the Storm", "Orgrimmar", 54, "silithid", 4,
+    "Pestlezugg sent his latest report to Zilzibin Drumlore. The troll had friends high in the Horde, and Gadgetzan could not fight the silithid alone.",
+    "The findings from the Un'Goro hive needed hands that could act on them. Pestlezugg hoped Zilzibin, on the Drag in Orgrimmar, could bring powerful friends into the fight.",
+    "Zilzibin doubted the report would do much good. The Horde looked for no enemy but the Alliance, he said; Thrall might act on the facts, but conflicting advice surrounded him.",
+    "Zilzibin received Pestlezugg's findings with frustration. He believed Thrall would listen if the facts reached him, and blamed advisers who saw every danger as a chance to strike at the Alliance.", true)
+fallback("Calm Before the Storm", "Tanaris", "silithid", "4508,4509",
+    "Pestlezugg's findings on the silithid were sent to a scholar with friends among the leaders of a faction.",
+    "Gadgetzan could not fight the silithid alone, so Pestlezugg's report went to a scholar who might reach the powerful.",
+    "The scholar received Pestlezugg's report, doubtful that the faction's leaders would heed it.",
+    "Pestlezugg's report reached the scholar, who urged that the fight against the silithid continue.")
+hl(4507, "The silithid queen's brain reached Pestlezugg for study. He called it a victory, then said the resolution seemed too clean to be the end of the hives.",
+    "Pestlezugg received the queen's brain from the Un'Goro hive. He doubted one queen was the full extent of the silithid.")
+hl(4508, "Pestlezugg's report reached Gracina. She doubted it would move leaders who feared only the Horde, and blamed Fandral Staghelm's arrogance.",
+    "Gracina took Pestlezugg's findings, unsure they would help. Fandral Staghelm, she said, refused to see the silithid as the ancient danger she knew them to be.")
+hl(4509, "Pestlezugg's report reached Zilzibin. He doubted it would move a Horde that watched only the Alliance, though Thrall might act if the facts reached him.",
+    "Zilzibin took Pestlezugg's findings with frustration. Thrall might listen, he said, but conflicting advice surrounded the Warchief.")
+q(3161, "Gahz'ridian", "Tanaris", 48, "gahzridian", 2,
+    "Long ago the trolls of Tanaris carved ornaments in honor of Gahz'rilla, the hydra they worshipped. Marvon Rivetseeker named their material Gahz'ridian and wanted more of it to study.",
+    "Marvon Rivetseeker was a scientist and a treasure hunter at heart. He lent out a helmet of his own invention that detected the buried troll ornaments called Gahz'ridian.",
+    "The ornaments suited Marvon's studies perfectly. He thanked the searcher, then asked for his helmet back.",
+    "Marvon received the Gahz'ridian ornaments for study. His detector helmet came back to him as well.")
+
+q(4124, "The Missing Courier", "Feralas", 43, "raschal", 3,
+    "A Feathermoon courier had been missing for about a week, and the Stronghold's own searches had found nothing. Latronicus Moonspear asked for help on behalf of Ginro Hearthkindle.",
+    "Latronicus Moonspear had declared the courier missing in action, but his associate Ginro Hearthkindle still wanted help finding him and the parcels he carried.",
+    "Ginro welcomed the help, though he called the search a lost cause. Each day he went out into Feralas looking for Raschal and came back with nothing but gnoll teeth.",
+    "At the Stronghold, Ginro accepted the offer of help. A week of his own searching for Raschal had brought him only gnoll teeth and disappointment.", true)
+q(4125, "The Missing Courier", "Feralas", 43, "raschal", 3,
+    "Raschal had set out for Thalanaar a week earlier, planning to row down the coast and cross southern Feralas away from the Horde camp. Ginro had never found his boat.",
+    "Ginro knew Raschal's route. The courier, with Feathermoon since the expedition first landed, meant to take a rowboat down the coast, and the boat might hold a clue.",
+    "The rowboat lay wrecked in muddy water, its port side torn with holes and a Feathermoon crest painted on the other. Something had tried to snap it in two.",
+    "Raschal's boat was found, nearly shredded to its frame, with the Stronghold's crest on its side. In the mud beneath it, something metal glinted.", true)
+fallback("The Missing Courier", "Feralas", "raschal", "4124,4125",
+    "Raschal, a Feathermoon courier bound for Thalanaar, had been missing for about a week.",
+    "Ginro Hearthkindle was still searching Feralas for the Stronghold's missing courier.",
+    "The search for Raschal moved a step forward.",
+    "Ginro's search for the missing courier had new help.")
+q(4127, "Boat Wreckage", "Feralas", 44, "raschal", 3,
+    "A well-kept knife lay in the mud beneath the wrecked boat. Ginro had asked for any clue to be brought back to the Stronghold.",
+    "The knife from the wreck might have belonged to whoever was aboard, and Ginro Hearthkindle was waiting at Feathermoon for any clue.",
+    "The knife was Raschal's, Ginro believed. Alone it proved little, so he suggested an unusual way to learn more, a reading called psychometry.",
+    "It was Raschal's knife, Ginro said. Finding it with the boat did not explain the disappearance, and he began to talk of psychometry.")
+q(4129, "The Knife Revealed", "Feralas", 44, "raschal", 3,
+    "Quintis Jonespyre, the Stronghold's druid, could read an object's history by touch. Ginro sent the knife to his tree house with a promise to forgive Quint's card debt.",
+    "Ginro did not understand Quint's psychometry, but he had seen it work. The druid also owed him money from Kalimdor Hold 'Em.",
+    "Quint agreed to read the knife. Psychometry was no exact art, he warned, and it drained him, but he hoped for a glimpse of what had happened to Raschal.",
+    "Quint took the knife. Known at the Stronghold's card tables as the King of the Bad Beats, he thought this reading might be the breakthrough the search needed.")
+q(4130, "Psychometric Reading", "Feralas", 44, "raschal", 4,
+    "Quint's vision showed Raschal carrying two leather backpacks inland and meeting Woodpaw gnolls. Back at his boat, the courier was so frightened that he never saw water elementals forming behind him.",
+    "Still unsteady from the reading, Quint described what the knife had shown and sent word to Ginro. Raschal had been terrified of something just before the visions stopped.",
+    "Ginro heard Quint's visions and promised to go easier on him at cards. Raschal could handle gnolls, he said, so something else had frightened him.",
+    "The visions reached Ginro. Gnolls had never worried Raschal, he said, and the courier's terror pointed to something worse.")
+q(4131, "The Woodpaw Gnolls", "Feralas", 44, "raschal", 3,
+    "Ginro doubted the Woodpaw had killed Raschal, but their camps were the best place to start. Gnolls kept what they scavenged, and the missing backpacks might be among their spoils.",
+    "With Quint's vision to go on, Ginro no longer wanted to avoid a fight. He sent the search straight into the Woodpaw camps for Raschal's backpacks.",
+    "Two leather backpacks hung on a tree near the Woodpaw camps, each marked with the small insignia of Feathermoon Stronghold.",
+    "The backpacks from Quint's vision turned up among the gnoll camps, tacked to a tree and still bearing the Stronghold's insignia.")
+q(4135, "The Writhing Deep", "Feralas", 46, "raschal", 4,
+    "Raschal's backpacks held a parcel for Thalanaar and a hurried note. He had found insect creatures in the Writhing Deep, south of the gnoll camps, and gone to investigate them himself.",
+    "A note signed by Raschal of Feathermoon described bug-like creatures in a place called the Writhing Deep. He believed they threatened all of Feralas.",
+    "Inside the Writhing Deep stood a pod as tall as a person, slick and studded with hardened growths. A faint humanoid shape showed through its skin.",
+    "Raschal's trail ended at a pod in the Writhing Deep. Through its skin, the shape of someone sealed inside could just be seen.")
+q(4265, "Freed from the Hive", "Feralas", 46, "raschal", 5,
+    "The pod split open and released Raschal, alive and stunned. The insects had overwhelmed him, and he had woken paralyzed inside it.",
+    "Raschal, the missing courier, came out of the pod alive and thanked Elune. He asked whether the Stronghold had sent help.",
+    "Raschal reached Feathermoon and told Ginro what had happened. Ginro said the courier would have died without that timely aid, and promised to remain a friend.",
+    "Back at the Stronghold, Raschal had already reported in. Ginro said the rescue had come without a mercenary's fee and called it a hero's deed.")
+q(4266, "A Hero's Welcome", "Feralas", 46, "raschal", 4,
+    "General Shandris Feathermoon wanted to give her thanks in person, and to discuss the Zukk'ash insects found in southern Feralas.",
+    "Ginro sent word that Shandris Feathermoon was waiting in the main compound. The reports of the Zukk'ash had frightened the Stronghold.",
+    "Shandris gave her thanks for Raschal's rescue and a reward on behalf of the whole Stronghold. With a Zukk'ash hive now found in Feralas, she asked for help once more.",
+    "The general offered the Stronghold's thanks and a reward. She already had another task in mind, one that concerned the Zukk'ash hive.")
+hl(4135, "Raschal's backpacks held a note about insect creatures in the Writhing Deep. His trail ended there, at a pod with a humanoid shape inside.",
+    "Following Raschal's note into the Writhing Deep led to a pod as tall as a person, with someone sealed inside it.")
+hl(4265, "Raschal was freed from the pod alive and made his way back to Feathermoon. Ginro said the courier would have died without the rescue.",
+    "The missing courier came out of the Writhing Deep alive. At the Stronghold, Ginro called the rescue a hero's deed and promised his friendship.")
+hl(4266, "Shandris Feathermoon gave the Stronghold's thanks for Raschal's rescue, then asked for help against the Zukk'ash hive.",
+    "At Feathermoon, General Shandris gave the Stronghold's reward and turned at once to the Zukk'ash hive in southern Feralas.")
+for _, id in ipairs({32, 162, 4267, 4493, 4494, 4496, 4507, 4508, 4509, 3161, 4124, 4125, 4127, 4129, 4130, 4131, 4135, 4265, 4266}) do src(id) end
+P.questIDs[4267].source[3] = "LoreForever quest:4267 (wiki: Rise of the Silithid (Feralas))"
+P.questIDs[4267].threadLabel = P.threads.world_raschal
+
+-- Batch 2: the level-sixty roads to Onyxia's lair. Thread labels stay neutral
+-- until the stage that presents the court's secret (6403); Windsor's escape is
+-- told only by 4322's completion (LoreDiscoveryData windsor_escaped).
+P.threads.world_truemasters = "Lakeshire's appeal to Stormwind"
+P.threads.world_windsor = "the search for Marshal Windsor"
+P.threads.world_onyxia_key = "the key to the Wyrmbog lair"
+P.threads.world_goretooth = "Warlord Goretooth's orders"
+q(4183, "The True Masters", "Redridge Mountains", 54, "truemasters", 3,
+    "At Morgan's Vigil, Helendis Riverhorn had learned that the Blackrock orcs answered to the black dragonflight, which fed their rage. She sealed the finding in a letter for Magistrate Solomon of Lakeshire.",
+    "The Blackrock were not simply savage, Helendis Riverhorn believed. The black dragonflight controlled them, and Magistrate Solomon in Lakeshire needed to know.",
+    "Magistrate Solomon broke the seal on Helendis's letter and began to read. It concerned Lakeshire's old enemy and the power behind it.",
+    "Helendis's sealed letter reached Solomon, and the magistrate opened it at once.", true)
+q(4184, "The True Masters", "Stormwind City", 54, "truemasters", 4,
+    "Solomon called the letter grim news. Lakeshire could not survive both the Blackrock and the black dragonflight, and if it fell, he feared Darkshire, Goldshire and Stormwind would follow.",
+    "Magistrate Solomon wanted Helendis's findings taken to Highlord Bolvar Fordragon at once. If this did not earn Stormwind's aid for Lakeshire, he said, nothing would.",
+    "In Stormwind Keep, Highlord Bolvar Fordragon heard the report and refused to believe it. Dragons, he said, were impossible.",
+    "The news from Lakeshire reached Bolvar Fordragon, who dismissed the idea of dragons out of hand.", true)
+q(4185, "The True Masters", "Stormwind City", 54, "truemasters", 3,
+    "Bolvar would not send his thinly spread troops to Lakeshire on speculation. He wanted proof, and sent the question to Lady Prestor, a learned woman who knew much of dragons.",
+    "Before acting on Solomon's claims, Highlord Bolvar wanted the opinion of Lady Prestor, whom the court regarded as learned in dragons and dragonkin.",
+    "Bolvar weighed the matter after the visit to Lady Prestor. He respected her stance, he said, but believed another solution might settle everyone's concerns.",
+    "The Highlord listened, chin in hand. Lady Prestor had given her view, and Bolvar said he had a solution of his own in mind.", true)
+q(4186, "The True Masters", "Redridge Mountains", 54, "truemasters", 3,
+    "Bolvar made the bearer of Lakeshire's report an acting deputy of Stormwind and sent a decree back to Magistrate Solomon.",
+    "Stormwind's answer to Lakeshire was a decree and a single new deputy. Bolvar sent both back to Solomon.",
+    "Solomon read Bolvar's decree and said it could have been worse. Then he judged that Lakeshire's fate rested on the new deputy's shoulders, and his eyes filled with tears.",
+    "Bolvar's decree reached Lakeshire. Solomon blinked rapidly as he read it and admitted that the town's fate now rested on one deputy.", true)
+q(4223, "The True Masters", "Burning Steppes", 54, "truemasters", 3,
+    "As a deputy of Stormwind, the next report was owed to Marshal Maxwell at Morgan's Vigil. Solomon sighed and wished good luck.",
+    "Solomon's last instruction sent Stormwind's new deputy back to the Burning Steppes, to report to Marshal Maxwell.",
+    "Marshal Maxwell laughed when Stormwind's new deputy reported to him.",
+    "At Morgan's Vigil, Marshal Maxwell greeted Bolvar's deputy with a laugh.", true)
+q(4224, "The True Masters", "Burning Steppes", 54, "truemasters", 3,
+    "Maxwell had seen Stormwind's deputies before, and lost soldiers waiting for the kingdom to act. Marshal Windsor had vanished with all their intelligence on the Blackrock; Ragged John had been with him when a raiding party struck.",
+    "The Vigil's evidence against the Blackrock had gone missing with its commander, Marshal Windsor. Maxwell sent the search to Ragged John, last seen in a cave to the north.",
+    "Ragged John had been found and heard out in his cave. Maxwell laughed that he might have warned about the man and had chosen not to.",
+    "The visit to Ragged John was done. Maxwell admitted he could have given a warning first, but thought that would have spoiled the fun.", true)
+fallback("The True Masters", "Burning Steppes", "truemasters", "4183,4184,4185,4186,4223,4224",
+    "Morgan's Vigil had evidence that the Blackrock orcs were driven by the black dragonflight.",
+    "Lakeshire's fear of the Blackrock and the black dragonflight passed between Morgan's Vigil, Lakeshire and Stormwind.",
+    "Another part of Lakeshire's appeal to Stormwind was complete.",
+    "The report about the Blackrock's true masters moved one step along its road.")
+q(4241, "Marshal Windsor", "Blackrock Depths", 54, "windsor", 4,
+    "Ragged John claimed that Marshal Windsor was alive. Maxwell sent his deputy into Blackrock Depths to bring Windsor back, or proof of his death.",
+    "If Windsor lived, Maxwell wanted him brought home from the Dark Iron prison. If he was dead, Maxwell wanted proof.",
+    "Marshal Windsor was alive in a Blackrock Depths cell, and in a killing rage.",
+    "Windsor was found alive in the Dark Iron prison, and his first words were a threat of murder.")
+q(4242, "Abandoned Hope", "Burning Steppes", 54, "windsor", 3,
+    "Windsor raged at Bolvar's blindness. His proof was lost, he said, and if he ever escaped with Ironfoe, his first stop would be Stormwind.",
+    "In his cell, Windsor called Bolvar a blind fool and his own gathered evidence unrecoverable. He sent his visitor away.",
+    "Maxwell lowered his head at the news. He believed Windsor's mind had broken, called the search a dead end, and paid his deputy for the work so far.",
+    "Hearing how Windsor had spoken, Maxwell mourned a proud warrior turned, as he saw it, into a raving man. He offered a reward for the effort all the same.")
+q(4264, "A Crumpled Up Note", "Blackrock Depths", 58, "windsor", 4,
+    "A stained note signed by Emperor Dagran Thaurissan spoke of Windsor's notes. General Angerforge had found the pattern of their encryption, and Argelmach was almost done decoding them.",
+    "Thaurissan's crumpled note mentioned the fall of the Alliance and Windsor's encrypted notes, nearly decoded by the golem lord Argelmach.",
+    "Marshal Windsor saw the note and took it to read in his cell.",
+    "Windsor took the emperor's note through the bars of his cell and read it.")
+q(4282, "A Shred of Hope", "Blackrock Depths", 58, "windsor", 5,
+    "The note gave Windsor hope. His lost information was held by two Dark Iron dwarves, General Angerforge and the golem lord Argelmach, and neither would give it up without a fight.",
+    "Windsor shook the note with excitement. Angerforge and Argelmach had his information, and he wanted them destroyed and the records brought back.",
+    "Windsor snatched the two tablets of his information and said it was time to get out.",
+    "Angerforge and Argelmach were dead, and their tablets reached Windsor's hands. He wanted out of the prison at once.")
+q(4322, "Jail Break!", "Burning Steppes", 58, "windsor", 5,
+    "Windsor needed his gear from the prison's supply area and his friends freed from their cells. If they escaped, Marshal Maxwell at Morgan's Vigil would give the next orders.",
+    "The escape from Blackrock Depths meant recovering Windsor's equipment and freeing the prisoners with him, then reporting to Maxwell at the Vigil.",
+    "Maxwell reported that Windsor had stormed through Morgan's Vigil only minutes earlier, carrying his evidence. The marshal was on his way to Stormwind to confront Bolvar and Lady Prestor.",
+    "Windsor was free. He had passed through the Vigil with his evidence and gone on toward Stormwind, Maxwell said, to confront Bolvar and Lady Prestor.")
+q(6402, "Stormwind Rendezvous", "Stormwind City", 60, "windsor", 4,
+    "Maxwell said that what Windsor meant to reveal would shake the kingdom. The meeting was set at Stormwind's gates, and no one was to go there alone.",
+    "Windsor would wait at the gates of Stormwind. Maxwell's orders were to gather companions and come armed.",
+    "At the gates, Windsor asked for an army to be gathered before anything began.",
+    "Windsor waited at Stormwind's gates. Before he went in, he wanted an army behind him.")
+q(6403, "The Great Masquerade", "Stormwind City", 60, "windsor", 6,
+    "Windsor named Lady Prestor as Onyxia, Deathwing's daughter and Nefarian's twin. He believed her spell held the kingdom, Bolvar included, and meant to break it that day.",
+    "Windsor's evidence pointed at Lady Prestor. She was Onyxia, he said, and the Highlord was her puppet; he led the way into Stormwind Keep to end it.",
+    "Bolvar held the shattered medallion that had kept his mind captive. Windsor's sacrifice had freed the kingdom, he said, though Onyxia and her kin remained a threat.",
+    "The spell over Bolvar broke, and he credited Windsor's sacrifice. The shattered medallion that had controlled him had also given him muddled glimpses of Onyxia's secrets.")
+q(6501, "The Dragon's Eye", "Winterspring", 60, "onyxia_key", 4,
+    "Bolvar gave a fragment of the shattered medallion. A new key to Onyxia's lair in the Wyrmbog would need help from another of dragon blood, perhaps one living in disguise among mortals.",
+    "The medallion's magic had to be rekindled. Bolvar did not know where to find a dragon willing to help, only that some were said to live among the mortal races.",
+    "Haleh, in the caverns of Mazthoril, sensed evil in the fragment and named it a piece of Onyxia, the black dragon brood mother. She found it revolting.",
+    "Haleh, who kept to the caverns of Mazthoril, knew the fragment for what it was, a piece of Onyxia, and recoiled from it.")
+q(6502, "Drakefire Amulet", "Winterspring", 60, "onyxia_key", 5,
+    "The fragment was an enchanted dragon scale, Haleh explained, useless while broken. Mending it needed the blood of General Drakkisath, who ruled Nefarian's dragonspawn armies.",
+    "Haleh could repair the medallion's scale, but only with the blood of a black dragon champion. That meant General Drakkisath in Blackrock Spire.",
+    "Haleh enchanted the fragment with Drakkisath's blood into the Drakefire Amulet. While it was held, Onyxia's wards in Dustwallow Marsh could not bar the way.",
+    "Drakkisath's blood restored the scale, and Haleh gave it back as an amulet. The Blue Flight, she said, wished its bearer luck in Onyxia's lair.")
+
+q(4903, "Warlord's Command", "Badlands", 60, "goretooth", 4,
+    "Warlord Goretooth ordered three of Blackrock Spire's masters destroyed, Highlord Omokk, War Master Voone and Overlord Wyrmthalak. Any important documents found there were to come back too.",
+    "Goretooth's orders from Kargath named Omokk, Voone and Wyrmthalak in the lower Spire, and promised honor to those who succeeded.",
+    "Goretooth read the documents brought out of the Spire, and his green skin turned pale for a moment.",
+    "The three masters of the lower Spire were dead. When Goretooth saw the documents found there, the color left his face.")
+q(4941, "Eitrigg's Wisdom", "Orgrimmar", 60, "goretooth", 4,
+    "The documents said that Rend Blackhand lived, though he had been thought dead for decades. Goretooth sent word to Eitrigg, who knew the Blackrock better than anyone, and then to the Warchief.",
+    "Rend Blackhand alive was hard to believe. Goretooth wanted Eitrigg told, since no one should be denied vengeance, and Thrall consulted.",
+    "Thrall heard the news of Rend Blackhand with dismay.",
+    "Word that Rend still lived reached Thrall, and the Warchief was dismayed.")
+q(4974, "For The Horde!", "Orgrimmar", 60, "goretooth", 6,
+    "Thrall said Rend's grand claims rested on the protection of the black dragonflight. He ordered Rend destroyed beyond the Halls of Ascension and his head brought to Orgrimmar.",
+    "The self-named Warchief of the Blackrock had to die. Thrall wanted Rend's head held high in his chambers.",
+    "Rend's head came back to Thrall. With their Warchief dead, the Blackrock legion was thrown into chaos, and Thrall promised a reward to the people of Kalimdor.",
+    "Thrall received Rend Blackhand's head and called it a crippling blow to the Blackrock. In honor of the deed, he declared, all of Kalimdor would be rewarded.")
+q(6567, "The Champion of the Horde", "Desolace", 60, "onyxia_key", 4,
+    "One of Thrall's champions had found a possible way into the dragon's lair. Rexxar wandered Desolace between Stonetalon and Feralas, and he was waiting.",
+    "Thrall's orders led to Rexxar, who roamed the wastes of Desolace and had word of a path into the dragon's lair.",
+    "Rexxar explained that only the strongest of the black dragonflight could enter the brood mother's lair, with a key enchanted by General Drakkisath himself. An outsider would find passage difficult.",
+    "There was one way into the lair, Rexxar said. Only black dragonkin who passed many trials earned the key, and Drakkisath enchanted it himself.")
+q(6569, "Oculus Illusions", "Western Plaguelands", 60, "onyxia_key", 3,
+    "Myranda the Hag could craft an illusion to pass among the black flight, but the divination needed a pack full of black dragonspawn eyes from the upper Spire.",
+    "Rexxar and Thrall had sent the request to Myranda. The eyes of the creatures to be mimicked were the most important part of her illusion.",
+    "Myranda approved of the eyes. From them she would make a medallion whose illusion could fool the black dragonflight's gatekeeper.",
+    "The dragonspawn eyes would do nicely, Myranda said, and she set about making the illusion's medallion.")
+q(6570, "Emberstrife", "Dustwallow Marsh", 60, "onyxia_key", 4,
+    "Myranda's medallion would hold its illusion inside the den of Emberstrife, an ancient drake of the Wyrmbog who tested dragonspawn seeking to guard Onyxia.",
+    "Emberstrife, an old gatekeeper of Nefarian, judged those who would rise to Onyxia's elite guard. Myranda's illusion was made to pass his inspection.",
+    "Emberstrife took the disguise for a whelp sent by Nefarian. He sneered and promised his tests would never be passed.",
+    "The disguise held. Emberstrife saw only a broodling and complained that Nefarian must be short of soldiers.")
+q(6601, "Ascension...", "Desolace", 60, "onyxia_key", 4,
+    "Emberstrife gave up a medallion shaped from the skulls of enemies. General Drakkisath was to place its final enchantment, marking ascension to the brood mother's guard.",
+    "The medallion of the brood mother's guardians was unfinished. Emberstrife ordered it carried to Drakkisath in the Spire.",
+    "Rexxar dismissed Emberstrife's speech as dragon-talk, more hot air than substance.",
+    "Rexxar heard about the drake's medallion and laughed off the pompous words as the way of dragons.")
+q(6602, "Blood of the Black Dragon Champion", "Desolace", 60, "onyxia_key", 5,
+    "Rexxar had no intention of attending Drakkisath's ceremony as one of the black flight. The amulet needed only the General's blood, so Drakkisath had to die.",
+    "A black flight ceremony meant bloodletting, Rexxar said. Drakkisath's blood would wake the latent amulet, and he wanted it brought back from the Spire.",
+    "Rexxar activated the Drakefire Amulet with Drakkisath's blood. It was the key to Onyxia's lair, and he told its bearer to gather forces and conquer for the Horde.",
+    "Rexxar grinned as the amulet came alive with Drakkisath's blood. The deed, he said, would be spoken of for years.")
+hl(4282, "Angerforge and Argelmach were dead, and Windsor had his two tablets back. He wanted out of Blackrock Depths at once.",
+    "Windsor's lost information came back on two tablets taken from Angerforge and Argelmach. Escape was his next thought.")
+hl(4322, "Windsor escaped Blackrock Depths with his evidence. Maxwell said he had gone on to Stormwind to confront Bolvar and Lady Prestor.",
+    "The jail break freed Windsor. He stormed through Morgan's Vigil and set out for Stormwind with his evidence.")
+hl(6403, "In Stormwind Keep, Onyxia's spell over Bolvar broke. The Highlord credited Windsor's sacrifice and held the shattered medallion that had controlled him.",
+    "Windsor's sacrifice freed Bolvar from Onyxia's spell. The shattered medallion in the Highlord's hand still held glimpses of her secrets.")
+hl(6502, "Haleh used Drakkisath's blood to turn the medallion fragment into the Drakefire Amulet, the key past Onyxia's wards.",
+    "Drakkisath's blood mended the fragment. Haleh gave it back as the Drakefire Amulet, with the Blue Flight's wish for luck.")
+hl(4974, "Rend Blackhand's head reached Thrall. The Blackrock were thrown into chaos, and Thrall rewarded all of Kalimdor for the deed.",
+    "Thrall took Rend's head as a crippling blow to the Blackrock legion and declared a reward for the people of Kalimdor.")
+hl(6602, "Drakkisath's blood activated the Drakefire Amulet. Rexxar called it the key to Onyxia's lair and urged a conquest for the Horde.",
+    "Rexxar woke the amulet with Drakkisath's blood and grinned. The way into Onyxia's lair was open.")
+for _, id in ipairs({4183, 4184, 4185, 4186, 4223, 4224, 4241, 4242, 4264, 4282, 4322, 6402, 6403, 6501, 6502,
+    4903, 4941, 4974, 6567, 6569, 6570, 6601, 6602}) do src(id) end
+P.questIDs[6403].source[3] = "LoreDiscoveryData prestor_identity presented/completed 6403; windsor_escaped completed 4322"
+
+-- Batch 3: the Eastern Plaguelands at level sixty. Nathanos's Horde errands
+-- name him openly (he is the quest giver); the Alliance SI:7 case learns that
+-- he is the Blightcaller only in 6186's text, so 6182-6185 and the thread
+-- label keep the two names apart.
+P.threads.world_marris_stead = "Nathanos's orders at the Marris Stead"
+P.threads.world_marris_case = "SI:7's missing agents"
+P.threads.world_lights_hope = "the Argent Dawn's work at Light's Hope"
+P.threads.world_smokey = "Smokey LaRue's commissions"
+q(6133, "The Ranger Lord's Behest", "Eastern Plaguelands", 60, "marris_stead", 3,
+    "The high elves of Quel'Lithien Lodge held a document about Nathanos Blightcaller's life as a mortal. He wanted the registry back and the lodge left in grief, and he refused to explain.",
+    "Nathanos sent his agent north to Quel'Lithien Lodge for a registry of his mortal life. Its contents, he said, were none of anyone's business.",
+    "The registry was back in his hands, and Nathanos warned that only an idiot would have read it.",
+    "The registry from Quel'Lithien reached the Marris Stead. Nathanos's only thanks was the hope that no one had been foolish enough to read it.")
+q(6135, "Duskwing, Oh How I Hate Thee...", "Eastern Plaguelands", 60, "marris_stead", 3,
+    "Nathanos allowed that his missions had been done, if slowly, and offered a harder one. Duskwing, an albino demon bat, roamed the country to the north, and he wanted its white fur.",
+    "The white fur of Duskwing, a demon bat haunting the fields north of the Marris Stead, was Nathanos's next demand. He advised against hunting it alone.",
+    "Duskwing's white fur went to Nathanos, who promised to fashion it into something useful.",
+    "Duskwing was dead. Nathanos called the work excellent, for once, and set about turning the fur into a reward.")
+q(6136, "The Corpulent One", "Eastern Plaguelands", 60, "marris_stead", 3,
+    "West of Northdale, past Light's Hope, the maggot beast Borelgore had devoured whole regiments of Nathanos's soldiers. The more it ate, the larger it grew.",
+    "Nathanos sent the hunt after Borelgore and warned that the beast had swallowed small battalions. He would not grieve if it ate the hunter, he said, but preferred the other outcome.",
+    "Borelgore was dead. Nathanos threatened to promote his agent from imbecile to mental deficient, first class.",
+    "Nathanos met the news of Borelgore's death with his usual contempt and a mocking promise of promotion.")
+q(6022, "To Kill With Purpose", "Eastern Plaguelands", 58, "marris_stead", 2,
+    "Anyone staying on the Marris Stead killed with purpose. Nathanos wanted living rot from the Scourge at Corin's Crossing, ground in his mortar and left to set, to feed his hounds.",
+    "Nathanos's hounds needed feeding. The living rot from fresh Scourge carcasses at Corin's Crossing spoiled quickly, so the killing had to be fast.",
+    "Nathanos took the coagulated rot with a sigh. He had hoped to feed his agent to the hounds instead.",
+    "The rot was good enough for the hounds. Nathanos called it disappointing all the same.")
+q(6042, "Un-Life's Little Annoyances", "Eastern Plaguelands", 58, "marris_stead", 2,
+    "Bats swarmed the land around the Marris Stead and pestered Nathanos whenever he took his hounds out after the Scourge. He had better things to do than kill them, he said, and called the chore training.",
+    "The winged pests around the Marris Stead kept Nathanos from hunting the Scourge with his hounds in peace. Thinning them, in his words, was training.",
+    "It was incredible, Nathanos remarked, what a little anger and rage could accomplish.",
+    "The bats around the stead were fewer. Nathanos credited anger and rage for the result.")
+q(6144, "The Call to Command", "Undercity", 60, "marris_stead", 4,
+    "Varimathras wanted Nathanos's most capable agents in the Undercity for a sensitive operation. Nathanos said those had died three years ago, and sent the agent he had with a cold warning not to embarrass him.",
+    "Orders came down from Varimathras, and Nathanos sent his agent back to the Undercity to report.",
+    "Varimathras said the Grand Crusader sat safe in the Scarlet Bastion while his forces murdered the Forsaken. Sylvanas had ordered Nathanos to deal with him, and Varimathras named the newcomer the instrument of that reckoning.",
+    "In the Undercity, Varimathras laid out the Dark Lady's command. Nathanos was to strike at the Grand Crusader, whose forces poured into Forsaken lands from the safety of Stratholme.")
+q(6145, "The Crimson Courier", "Eastern Plaguelands", 60, "marris_stead", 4,
+    "The Scarlet command in Stratholme was too well defended to attack directly. Nathanos's deathstalkers had learned that a courier carried a daily report from there to Tyr's Hand, and he wanted it.",
+    "Cut the body out from under the head, Nathanos said. The Crimson Courier's report from Stratholme to Tyr's Hand was the key to his plan.",
+    "Nathanos laughed over the courier's report. At last he had a chance to destroy the Scarlet Oracle.",
+    "The intercepted report delighted Nathanos. It gave him an opening against the Scarlet Oracle.")
+q(6146, "Nathanos' Ruse", "Eastern Plaguelands", 60, "marris_stead", 4,
+    "Nathanos altered the courier's command so that it would expose the Scarlet Oracle. Disguised by a rotten apple eaten inside Tyr's Hand, his agent was to hand it to Crusader Lord Valdelmar in person.",
+    "A forged command and an enchanted rotten apple were Nathanos's ruse. Eaten in Tyr's Hand, the apple would give its bearer a shape the humans would accept.",
+    "Valdelmar took the false courier for one of his own and demanded to know where he had been. The Crusade had feared the Scourge had captured him.",
+    "The disguise held in Tyr's Hand. Crusader Lord Valdelmar received the altered command from a courier he thought lost to the Scourge.")
+q(6147, "Return to Nathanos", "Eastern Plaguelands", 60, "marris_stead", 3,
+    "Valdelmar found the Grand Crusader's request unusual but meant to obey. He sent word that the Oracle would soon be on her way to Stratholme, guarded with every precaution.",
+    "The Crusader Lord had swallowed the ruse. His reply promised that the Oracle would travel to Stratholme under heavy protection.",
+    "Nathanos exulted that his deception had gone unnoticed and called for a strike with cold cunning.",
+    "Valdelmar's answer reached Nathanos, who laughed at the fools of Tyr's Hand and prepared to strike.")
+q(6148, "The Scarlet Oracle, Demetria", "Eastern Plaguelands", 60, "marris_stead", 5,
+    "Demetria, the Grand Crusader's chief adviser, was called the Oracle for her otherworldly senses. The ruse had drawn her out of Tyr's Hand, and Nathanos wanted her killed on the road.",
+    "The Scarlet Oracle had helped the Crusade to several victories over the Scourge. Now she was moving out of Tyr's Hand, perhaps expecting trouble, and Nathanos meant to supply it.",
+    "Demetria was dead. Nathanos said the Crusade would be reeling for years, and for once offered his respect along with the reward.",
+    "The Oracle fell on the road from Tyr's Hand. Nathanos praised the blow, and the agent he had called imbecile now had his respect.")
+hl(6148, "Demetria, the Scarlet Oracle, was killed on the road from Tyr's Hand. Nathanos said the Crusade would be reeling for years and offered his respect.",
+    "Nathanos's ruse ended with the Scarlet Oracle dead. He rewarded the deed and, for once, offered respect.")
+
+q(6182, "The First and the Last", "Stormwind City", 60, "marris_case", 4,
+    "Nathanos Marris had been the first and last of the human ranger lords, a disciple of Sylvanas Windrunner before she became the Banshee Queen. He was thought killed defending Lordaeron five years earlier, though his body was never found.",
+    "The fate of Nathanos Marris, the ranger lord presumed dead in the Eastern Plaguelands, had come under question. Mathias Shaw, at the Old Town barracks, had been investigating.",
+    "Mathias Shaw explained that SI:7 agents had gone east after reports of unusual Forsaken activity in the Plaguelands. What they found unsettled him.",
+    "Mathias Shaw confirmed that his SI:7 agents had investigated strange Forsaken movements in the Eastern Plaguelands, with troubling results.")
+q(6183, "Honor the Dead", "Stormwind City", 60, "marris_case", 4,
+    "Five SI:7 agents had taken the Marris case. One came back and died in his sleep three days later, having said little beyond two words, Nathanos and Blightcaller.",
+    "Shaw had no agents left for the Marris case, and Ravenholdt would not help. He wanted it closed, if only for the families of his dead.",
+    "Shaw nodded at the offer. He had trusted Bolvar to send someone of honor.",
+    "Mathias Shaw accepted the help, saying he had expected Bolvar to send the Alliance's most dedicated soldiers.")
+q(6184, "Flint Shadowmore", "Western Plaguelands", 60, "marris_case", 3,
+    "SI:7's only lead was that a Blightcaller might have killed Nathanos Marris and the missing agents. Shaw sent the case to Flint Shadowmore at Chillwind Point.",
+    "Flint Shadowmore, an SI:7 operative at Chillwind Point in the Western Plaguelands, was to brief the next stage of the Marris case.",
+    "Flint gave the first assignment plainly. It was reconnaissance, in and out.",
+    "At Chillwind Point, Flint Shadowmore took over the case and called the first mission simple reconnaissance.")
+q(6185, "The Eastern Plagues", "Western Plaguelands", 60, "marris_case", 4,
+    "Flint wanted clues about the Blightcaller and the missing operatives, whom he assumed were dead. Every SI:7 agent carried an insignia, and he swallowed hard as he asked for any that could be found.",
+    "SI:7's missing agents would have left bodies somewhere in the Eastern Plaguelands. Flint showed his own insignia so that theirs could be recognized.",
+    "Flint clutched the recovered insignias and named his dead, Rutger, Fredo and Turyen. He asked where they had been found and what more was known of the Blightcaller.",
+    "The insignias came back to Chillwind Point. Rutger, Fredo and Turyen were all dead, and Flint wanted to know everything that had been learned of their killer.")
+q(6186, "The Blightcaller Cometh", "Stormwind City", 60, "marris_case", 5,
+    "The color drained from Flint's face. Nathanos was the Blightcaller, the noble ranger lord now an agent of the Forsaken, and Highlord Fordragon had to be told at once.",
+    "The evidence named Nathanos Marris as the Blightcaller. Shaken, Flint asked that the news be carried to Stormwind.",
+    "Bolvar could not believe that Nathanos had become the Banshee Queen's champion. The Highlord slumped in defeat.",
+    "The news reached Highlord Bolvar Fordragon, who cried out that it could not be true.")
+q(6187, "Order Must Be Restored", "Stormwind City", 60, "marris_case", 6,
+    "Bolvar remembered Nathanos as a tactical genius behind a decade of Alliance victories. He wanted an army sent to the Plaguelands to destroy the Blightcaller.",
+    "There had only ever been one human ranger lord, and now he was the Forsaken's champion. Bolvar ordered the Blightcaller destroyed, and wished the army luck.",
+    "The Blightcaller was dead. Bolvar called it a tragedy and said humankind seemed cursed to lose its greatest heroes. Wherever Nathanos Marris was now, he said, the ranger lord would be smiling.",
+    "Nathanos Blightcaller had been destroyed. Bolvar thanked the army and grieved for the ranger lord Nathanos had once been.")
+hl(6186, "Flint's dead agents led to a name. Nathanos Marris was the Blightcaller, and Bolvar slumped in defeat at the news.",
+    "The Blightcaller was Nathanos Marris, now champion of the Banshee Queen. Bolvar could not believe it.")
+hl(6187, "The Blightcaller was destroyed. Bolvar called it a tragedy and grieved for the ranger lord Nathanos Marris had once been.",
+    "Nathanos Blightcaller was dead. Bolvar said humankind seemed cursed to lose its greatest heroes.")
+
+q(5243, "Houses of the Holy", "Eastern Plaguelands", 60, "lights_hope", 3,
+    "Leonid Barthalomew treated his undeath as a malady, and as a weapon the Argent Dawn could turn against the Scourge. He wanted the Dawn's surplus of holy water recovered from the supply crates of Stratholme.",
+    "The Argent Dawn had left holy water in Stratholme's supply crates. Leonid warned that the Scourge would not touch it, but vermin might have spoiled some.",
+    "Leonid received the holy water. Tolerance of others, he said, need not soften the will to destroy Kel'Thuzad's minions.",
+    "The holy water came back to Light's Hope, and Leonid praised a dedication that stopped at nothing against the Scourge.")
+q(5212, "The Flesh Does Not Lie", "Eastern Plaguelands", 60, "lights_hope", 3,
+    "Betina Bigglezink had studied the plague for years and found it growing stronger, not weaker. She wanted samples of the most recently infected flesh from Stratholme.",
+    "The plague's potency was rising, Betina believed, and the freshest tainted flesh in Stratholme would show her how.",
+    "Betina found that something had changed in the chemistry of the plague's active agents. She needed more data.",
+    "The samples confirmed Betina's fear of a change in the plague. One test was not enough, and she asked for more.")
+q(5213, "The Active Agent", "Eastern Plaguelands", 60, "lights_hope", 4,
+    "The Scourge drew great power from the ziggurats beyond Stratholme's first gates. Betina wanted them searched for anything that might explain the plague's new active agent.",
+    "Betina believed she was on the verge of identifying the plague's new agent. The answer, she hoped, lay in the ziggurats of Stratholme.",
+    "Betina called the findings astonishing and months of work to analyze. The Argent Dawn thanked the searcher with a Seal or Rune of the Dawn.",
+    "The ziggurat data reached Betina, who expected months of analysis. She offered the Dawn's seal or rune in thanks.")
+q(5281, "The Restless Souls", "Eastern Plaguelands", 60, "restless", 3,
+    "Many of Stratholme's people had thrown themselves into the burning city rather than join the Scourge. Caretaker Alen wanted their restless spirits helped, and sent word to Egan, who studied ghosts near the city.",
+    "Alen believed the spirits of Stratholme's dead could still be aided. His associate Egan was testing his inventions in the Eastern Plaguelands.",
+    "Egan was glad that Alen had finally found someone brave enough to help.",
+    "Egan received Alen's helper with relief. His work on Stratholme's ghosts could go forward.", true)
+q(5214, "The Great Fras Siabi", "Eastern Plaguelands", 60, "smokey", 2,
+    "Fras Siabi had refused to leave his tobacco shop when Stratholme fell, vowing to burn every leaf first. Smokey LaRue hoped one box had survived.",
+    "Smokey LaRue missed Fras Siabi's famous tobacco and suspected the shop in Stratholme had gone up in flames, perhaps with Fras inside.",
+    "Smokey had his box of Fras's tobacco and greeted it like an old friend.",
+    "One box of Fras's tobacco had survived, to Smokey's delight.")
+q(6026, "That's Asking A Lot", "Eastern Plaguelands", 58, "smokey", 3,
+    "The Argent Dawn had commissioned Smokey LaRue for demolition work in Plaguewood. He offered to split the fee in return for gathering the parts for his bombs.",
+    "Smokey would mark the Scourge buildings in Plaguewood to be destroyed. The bomb components were the missing part of his deal.",
+    "Smokey offered half the payment up front and half when the job was done.",
+    "The components reached Smokey. He paid half the commission at once and promised the rest after the demolition.")
+q(6041, "When Smokey Sings, I Get Violent", "Eastern Plaguelands", 58, "smokey", 3,
+    "Smokey's people had marked the Scourge buildings in Plaguewood. Ten sticks of his special compound were to be planted inside them.",
+    "The demolition plan was simple, Smokey said. Plant the compound in the marked structures, and the Argent Dawn's job was done.",
+    "The marked Scourge buildings were gone. Smokey laughed at the charred look of his partner, paid out the cut and added something for the burns.",
+    "Smokey paid the rest of the Argent Dawn's commission, with a little extra to soothe the burns.")
+hl(6041, "Smokey's compound brought down the marked Scourge buildings in Plaguewood. He paid out the commission and added something for the burns.",
+    "The Plaguewood demolition was done. Smokey laughed, paid the second half and threw in a salve's worth for the burns.")
+for _, id in ipairs({6133, 6135, 6136, 6022, 6042, 6144, 6145, 6146, 6147, 6148, 6182, 6183, 6184, 6185, 6186, 6187,
+    5243, 5212, 5213, 5281, 5214, 6026, 6041}) do src(id) end
+
+-- Batch 4: Winterspring's elven ruins and the Felstone farm's ghost. Each
+-- Felstone stage names only the recipient its own record establishes.
+P.threads.world_starfall = "the road to Starfall"
+P.threads.world_zinmalor = "the shattered crystal of Kel'Theril"
+P.threads.world_wildkin = "Erelas Ambersky's wildkin inquiry"
+P.threads.world_felstone = "Janice Felstone's undelivered package"
+q(5249, "To Winterspring!", "Winterspring", 56, "starfall", 2,
+    "Ivy Leafrunner had too much work in Felwood to visit the elven ruins of Winterspring herself. She suggested a visit to Wynd Nightchaser at Starfall Village, who knew the area well.",
+    "Winterspring was harsh country full of old elven ruins. Ivy Leafrunner sent her friends north to Wynd Nightchaser of Starfall Village.",
+    "Wynd Nightchaser welcomed a friend of Ivy Leafrunner to Starfall.",
+    "Wynd Nightchaser greeted the newcomer Ivy had sent north.")
+q(5250, "Starfall", "Winterspring", 56, "starfall", 2,
+    "Daryn Lightwind's studies kept him from Winterspring and its elven ruins. He sent a student north to Wynd Nightchaser at Starfall, who knew the area well.",
+    "Winterspring held many secrets among its ruins. Daryn Lightwind wanted them studied, and Wynd Nightchaser at Starfall could help.",
+    "Wynd Nightchaser welcomed a student of Daryn Lightwind to Starfall.",
+    "At Starfall, Wynd Nightchaser greeted Daryn Lightwind's student.")
+q(5244, "The Ruins of Kel'Theril", "Winterspring", 56, "zinmalor", 3,
+    "The highborne of Kel'Theril had once stolen a sacred artifact to siphon its power. The relic shattered in a great explosion and its pieces sank beneath the ice of the lake, leaving the thieves bound there by a curse.",
+    "Kel'Theril's highborne were a cursed people, held at the lake where their ritual had failed. Jaron Stoneshaper had visited the ruins recently and could say more.",
+    "Jaron Stoneshaper was willing to describe what he had seen at Kel'Theril, though he was no historian.",
+    "Jaron Stoneshaper agreed to share what he had seen among the ruins, with the warning that he was no scholar.")
+q(5245, "Troubled Spirits of Kel'Theril", "Eastern Plaguelands", 56, "zinmalor", 3,
+    "The highborne spirits still searched for pieces of the relic that had cursed them. Jaron lent his pick for prying the fragments from the lake's ice, and named Aurora Skycaller near Northpass Tower as someone who might understand them.",
+    "Jaron could not explain the fragments under Kel'Theril's ice, but he knew Aurora Skycaller, who lived near Northpass Tower in the Eastern Plaguelands.",
+    "Aurora Skycaller did not want to speak of the high elves' past. It pained her, she said, and nothing could set it right.",
+    "The fragments reached Aurora, who first refused to talk of her ancestors' mistakes. She saw no way to make things right.")
+q(5246, "Fragments of the Past", "Eastern Plaguelands", 56, "zinmalor", 4,
+    "Aurora relented and examined the fragments. She believed they were the Crystal of Zin-Malor, which could contain great arcane forces, shattered by the evil intentions of its thieves. The sacred writings she needed lay in the Temple of Zin-Malor in Azshara.",
+    "The fragments were the Crystal of Zin-Malor, Aurora thought. Only the sacred writings from the Temple of Zin-Malor in Azshara could tell her whether it might be mended.",
+    "The pages from Azshara reached Aurora, untouched for many years.",
+    "Aurora received the old writings from Azshara. No one had turned those pages in a very long time.", true)
+q(5247, "Fragments of the Past", "Eastern Plaguelands", 57, "zinmalor", 4,
+    "To fuse the fragments, Aurora needed an enchanted thorium bar, five crystal restores and a vial of water from the dire pool along Eldreth Row in Dire Maul.",
+    "Aurora could mend the crystal with strong magic. She asked for enchanted thorium, crystal restores and water from Dire Maul's dire pool, and warned that the relic must never be stolen again.",
+    "Aurora had her materials and began fusing the fragments, hoping to restore the crystal to what it had been.",
+    "The thorium, restores and dire pool water reached Aurora, and she set to joining the shards.", true)
+fallback("Fragments of the Past", "Eastern Plaguelands", "zinmalor", "5246,5247",
+    "Aurora Skycaller studied the shards recovered from beneath the ice of Lake Kel'Theril.",
+    "The fragments from Kel'Theril needed a high elf's knowledge before anything could be done with them.",
+    "Aurora's work on the Kel'Theril fragments went a step further.",
+    "Another step toward mending the shattered relic was complete.")
+q(5248, "Tormented By the Past", "Winterspring", 58, "zinmalor", 4,
+    "Aurora wept for the elves, a race as shattered as the crystal had been. She asked that the restored Crystal of Zin-Malor be shown at Lake Kel'Theril to a highborne spirit who recognized the old error.",
+    "The crystal was whole again. Aurora wanted the spirits of Kel'Theril to see that the wrong had been put right, and hoped one of them understood what had been done.",
+    "At Lake Kel'Theril, a highborne spirit moaned of its endless curse and begged to be left alone.",
+    "The restored crystal was carried among the spirits of Kel'Theril. The one that answered could only plead to be left alone.")
+q(5252, "Remorseful Highborne", "Eastern Plaguelands", 58, "zinmalor", 4,
+    "One highborne spirit admitted the error of long ago. Knowing the crystal was recovered gave it peace, and it asked that the crystal be returned.",
+    "The remorseful spirit could not change the past, but the restored crystal had brought it peace. It insisted the relic go back.",
+    "Aurora recognized the crystal at once.",
+    "The Crystal of Zin-Malor came back to Aurora Skycaller, who could hardly believe what she saw.")
+q(5253, "The Crystal of Zin-Malor", "Darnassus", 58, "zinmalor", 5,
+    "The Temple of Zin-Malor lay in ruin, so the crystal could not go back there. Aurora wanted it in the hands of Arch Druid Fandral Staghelm, where its power would not be abused.",
+    "Only a handful of the strongest mages could control the Crystal of Zin-Malor. Aurora sent it to Fandral Staghelm in Darnassus for safekeeping.",
+    "Fandral knew of the crystal and its power over arcane forces. He said he was impressed that its bearer had not tried to use it, promised the Cenarion Circle would keep it safe, and hoped the cursed spirits would rest.",
+    "The Crystal of Zin-Malor reached Fandral Staghelm. The Circle would guard it, he said, and he hoped the spirits that once guarded its shards could finally be at peace.")
+hl(5253, "The restored Crystal of Zin-Malor reached Fandral Staghelm for safekeeping. He hoped Kel'Theril's cursed spirits would finally rest.",
+    "Fandral Staghelm took charge of the Crystal of Zin-Malor, mended from the shards beneath Kel'Theril's ice.")
+q(979, "Find Ranshalla", "Winterspring", 57, "wildkin", 3,
+    "Erelas Ambersky found the same magical enchantment in the wildkin feathers that she had noticed before. Her colleague Ranshalla had gone to Winterspring to observe the wildkin in their habitat.",
+    "The wildkin feathers held an enchantment Erelas Ambersky could not explain. She sent the question on to Ranshalla, who was studying wildkin in Winterspring.",
+    "Ranshalla was glad of company. She was just setting out for the caves.",
+    "Ranshalla welcomed help from someone Erelas had sent, and prepared to go up to the caves.")
+q(4901, "Guardians of the Altar", "Teldrassil", 59, "wildkin", 4,
+    "Ranshalla believed an altar of Elune stood at the top of the ridge. Five torches in each cave had to be lit while she recited incantations copied from the ruins of Kel'Theril.",
+    "The way to the altar lay through caves of wildkin. Ranshalla would speak the incantations from Kel'Theril while the torches were lit one by one.",
+    "The torches were lit and Ranshalla's incantations spoken. Back in Rut'theran, Erelas asked first whether Ranshalla had been found.",
+    "Ranshalla reached the altar of Elune at the top of the ridge, and her findings went back to Erelas Ambersky.")
+q(4902, "Wildkin of Elune", "Darnassus", 57, "wildkin", 3,
+    "Erelas was fascinated by what the altar had shown and wanted Arch Druid Fandral Staghelm told at once.",
+    "The findings from Winterspring were important, Erelas said, and should go straight to Fandral Staghelm in the Cenarion Circle.",
+    "Fandral said the Cenarion Circle had long known the wildkin as Elune's chosen guardians of sacred places. It was not news to him, but he complimented the effort with a reward.",
+    "The wildkin were Elune's guardians, Fandral confirmed, a fact the druids had known for some time. He thanked the messenger for coming straight to him.")
+q(5251, "The Archivist", "Eastern Plaguelands", 60, "lights_hope", 4,
+    "The Argent Dawn counted the Scarlet Crusade's zealotry as one more dangerous extreme. Archivist Galford guarded the Crusade's most valued documents in Stratholme, and the Dawn wanted him killed and his archives burned.",
+    "How many innocents had the Crusade destroyed in the name of the Light, the Argent Dawn asked. Archivist Galford's archives in Stratholme held its intelligence.",
+    "Galford was dead and his archives burned. Years of Scarlet intelligence were lost, and the Crusade would feel the blow for weeks to come.",
+    "The Scarlet archives in Stratholme went up in flames. The Argent Dawn called it an outstanding blow against the Crusade.")
+
+q(5021, "Better Late Than Never", "Western Plaguelands", 52, "felstone", 3,
+    "Janice Felstone's ghost cowered upstairs in the farmhouse, begging for her package to be delivered before she was trapped. She thought it was still by her horse.",
+    "In the Felstone farmhouse, the apparition of a woman cried that a package must be delivered. She was only half aware of anyone near her.",
+    "In the barn, among the decay, stood a package easily overlooked. It was likely the one Janice's ghost was clamoring about.",
+    "The barn held a dusty package that stood out amid the ruin, probably the one Janice Felstone's ghost wanted delivered.", true)
+q(5022, "Better Late Than Never", "Stormwind City", 52, "felstone", 3,
+    "Janice's package was addressed in a hurried hand to Emma Felstone of Stormwind, dated more than four years earlier. The Royal Factors of the Stormwind Census might know whether she still lived.",
+    "The package from the Felstone farm bore the name of Emma Felstone of Stormwind. Stormwind's census office was the place to look for her.",
+    "The census showed an Emma Felstone in Stormwind five years before. The factor wondered aloud whether the package could be meant for Ol' Emma.",
+    "Stormwind's census held a record of Emma Felstone from before the plague. The factor began to suspect she was the woman called Ol' Emma.", true)
+q(5023, "Better Late Than Never", "Undercity", 52, "felstone", 3,
+    "Janice's package was addressed in a hurried hand to Jeremiah Felstone of Lordaeron, dated more than four years earlier. The Undercity's census overseers might know what had become of him.",
+    "The package from the Felstone farm bore the name of Jeremiah Felstone of Lordaeron. The Undercity kept a census of its people, living and former.",
+    "Jeremiah Felstone had lived in the city before the plague, the overseer found. As one of the Forsaken he now went by Jeremiah Payson, and he sold cockroaches.",
+    "The Undercity census traced Jeremiah Felstone to a new name, Jeremiah Payson. The overseer realized he was the cockroach vendor.", true)
+fallback("Better Late Than Never", "Western Plaguelands", "felstone", "5021,5022,5023",
+    "Janice Felstone's ghost still waited at her farm for a package that had never been delivered.",
+    "A package left at the Felstone farm for more than four years was meant for Janice's family.",
+    "The search for the package's recipient moved forward.",
+    "Janice Felstone's package was one step closer to its owner.")
+q(5048, "Good Natured Emma", "Stormwind City", 52, "felstone", 3,
+    "Ol' Emma wandered Stormwind talking to herself, ornery but harmless. The census records suggested she was Emma Felstone.",
+    "The factor believed Ol' Emma was Emma Felstone. Asking her last name was the simplest test.",
+    "Emma confirmed her name, the first time in years anyone had used it. She expected her sister to be dead and took the visitor for a grave-robber, until she heard there was a package from Janice.",
+    "Ol' Emma admitted she was Emma Felstone. She had lost most of her family to the plague, and was startled to learn her sister had sent her something.")
+q(5049, "The Jeremiah Blues", "Undercity", 52, "felstone", 3,
+    "The evidence pointed to Jeremiah Payson, who sold cockroaches near the Undercity bank. The overseer added his good wishes with heavy sarcasm.",
+    "The intended recipient was Jeremiah Payson, the cockroach vendor groveling beneath a walkway near the bank.",
+    "Jeremiah admitted to the old name and called the messenger a vulture for claiming to have spoken to a sister four years dead. Then he heard there was a package.",
+    "Jeremiah Payson had once been Jeremiah Felstone. He was ready to take offense, until he learned his dead sister had sent him a package.")
+q(5050, "Good Luck Charm", "Western Plaguelands", 52, "felstone", 4,
+    "The package held Janice's personal effects, even the deed to the Felstone farm. Her sibling apologized for the earlier suspicion and sent back half of a good luck charm, hoping it would let her rest. Her husband John had carried the other half.",
+    "Janice's sibling kept the farm deed for another day and returned half of her good luck charm, in the hope that her spirit might rest.",
+    "Janice's ghost took the half-charm and asked for John's half. They could not be together without both, she said, and she could not see him.",
+    "The half-charm reached Janice, who called for her husband and asked where he had put the other half.")
+q(5051, "Two Halves Become One", "Western Plaguelands", 54, "felstone", 5,
+    "Janice's ghost kept calling for John and his half of the charm, begging him to hurry before the plague changed them both. The other half had to be found and the charm made whole.",
+    "Janice could not see John, but she felt him near. Only the whole good luck charm, both halves joined, would answer what her spirit sought.",
+    "Janice took the reassembled charm and her form shimmered. With clear, sad eyes she said she was free, and gave the charm away for the solace it had given her.",
+    "The two halves of the charm came together in Janice Felstone's hands. Her spirit was freed, and she no longer needed it.")
+hl(5051, "Both halves of the good luck charm reached Janice Felstone's ghost. She was freed at last, and gave the charm away.",
+    "The reassembled charm released Janice Felstone. She looked on with clear, sad eyes and said she no longer needed it.")
+for _, id in ipairs({5249, 5250, 5244, 5245, 5246, 5247, 5248, 5252, 5253, 979, 4901, 4902, 5251,
+    5021, 5022, 5023, 5048, 5049, 5050, 5051}) do src(id) end
+
 A.Lore.RegisterStoryPack("world_journeys", P)

@@ -2432,3 +2432,103 @@ if PB and PB.myLevel then
 end
 end
 end
+
+-- More moments ("Record more moments", 2026-11-05): books and plaques read, areas
+-- found, flight paths, spells from a trainer, standings, duels, trade marks,
+-- honorable kills, a rare creature killed. Tokens as JournalSelfTale fills them.
+W.read = {
+    "I stopped to read {what}.",
+    "I read {what}.",
+    "There was {what}, and I read it.",
+    "I found {what} and read it through.",
+}
+W.readMany = {
+    "I read {whats}.",
+    "I stopped to read {whats}.",
+    "There was time to read {whats}.",
+}
+W.readStone = {
+    "I read the words cut into {what}.",
+    "I stopped at {what} and read what was written there.",
+    "{What} stood there, and I read the inscription.",
+}
+W.readAgain = {
+    "I read {what} again.",
+    "I came across {what} again, and read it once more.",
+}
+-- ({places}: one to three names; {rest}: how many more)
+W.exploreOne = {
+    "I found my way to {places}.",
+    "{Places} was new ground to me.",
+    "I came upon {places}, which I had not seen before.",
+}
+W.explore = {
+    "I found my way to {places}.",
+    "{Places} were new ground to me.",
+    "I came upon {places}, none of which I had seen before.",
+    "My way took me through {places}, all new to me.",
+}
+W.exploreMore = {
+    "I found my way to {places} and {rest} other places I had not seen before.",
+    "{Places} were new to me, and so were {rest} more places that day.",
+    "I came upon {places}, and {rest} other places I had never set foot in.",
+}
+W.exploreTally = {
+    [50] = {"That made fifty places I had found for myself, counting from {origin}.", "Fifty places had been new ground to me by then."},
+    [100] = {"That made a hundred places I had found for myself.", "A hundred places had been new to me by then, one after another."},
+    [200] = {"Two hundred places had been new ground to me by then."},
+}
+W.taxi = {
+    "I learned the flight path at {place}.",
+    "The flight master at {place} would carry me from then on.",
+    "From then on I could fly out of {place}.",
+}
+W.taxiHere = {
+    "I learned the flight path there.",
+    "The flight master there would carry me from then on.",
+}
+-- ({names}: one to three spells; {rest}: how many more)
+W.learn = {
+    "The trainer taught me {names}.",
+    "I learned {names} from the trainer.",
+    "At the trainer, I paid for {names}.",
+}
+W.learnMore = {
+    "The trainer taught me {names}, among other things.",
+    "I learned {names} and more from the trainer.",
+    "At the trainer, I paid for {names} and {rest} more.",
+}
+-- ({faction} with its article where one belongs: "the Argent Dawn", "Orgrimmar")
+W.rep = {
+    friendly = {"{Faction} counted me a friend by then.", "I was in good standing with {faction} now.", "By then {faction} called me a friend."},
+    honored = {"{Faction} held me in honor by then.", "By then {faction} honored my name.", "I had earned honor with {faction}."},
+    revered = {"{Faction} revered me by then.", "I was revered among {faction}.", "By then {faction} revered my name."},
+    exalted = {"There was no higher standing with {faction} than the one I held now.", "{Faction} held me in the highest standing they gave.",
+        "I stood as high with {faction} as anyone could."},
+}
+-- ({who}: the other duellist; {count} {wins} for a series)
+W.duelWon = {"I duelled {who} and won.", "I beat {who} in a duel.", "A duel with {who} went my way.", "{Who} and I duelled, and I won."}
+W.duelLost = {"I duelled {who} and lost.", "{Who} beat me in a duel.", "A duel with {who} did not go my way.", "{Who} and I duelled, and {who} won."}
+W.duelWonFled = {"{Who} and I duelled, and {who} left the ring before it was done.", "I duelled {who}, who stepped out of bounds before the end."}
+W.duelLostFled = {"I duelled {who}, and left the ring before it was done.", "{Who} and I duelled, and I was the one who stepped out of bounds."}
+W.duelSeries = {"{Who} and I duelled {count} times, and I won {wins} of them.", "I duelled {who} {count} times that day and won {wins}."}
+W.duelRecord = {"That made {wins} to {losses} between {who} and me.", "Between {who} and me the count stood at {wins} to {losses}."}
+-- ({trade}: "cooking", "first aid")
+W.skill = {
+    [75] = {"My {trade} had come as far as an apprentice's can.", "I had learned all an apprentice could of {trade}."},
+    [150] = {"I could call myself a journeyman at {trade} by then.", "My {trade} had reached a journeyman's."},
+    [225] = {"I was an expert at {trade} by then, as the trainers reckon it.", "My {trade} had reached an expert's."},
+    [300] = {"There was nothing more anyone could teach me of {trade}.", "I had mastered {trade}, as far as any trainer could tell."},
+}
+-- ({count} {side} {zoneD})
+W.hk = {"{Count} of the {side} fell to me in {zoneD}.", "I killed {count} of the {side} that day.", "{Count} of the {side} died by my hand there."}
+W.hkOne = {"One of the {side} fell to me in {zoneD}.", "I killed one of the {side} there.", "One of the {side} died by my hand in {zoneD}."}
+W.hkAfterFirst = {"{Count} of them fell to me before the day was out.", "By the end of the day, {count} of them had died by my hand."}
+W.rareKilled = {"I killed {what}, a creature few ever see.", "{What} crossed my path, and I killed it.", "I brought down {what}, and not many ever do."}
+W.titles.read = {"{what}"}
+W.titles.explore = {"New Ground", "Unmapped Ground"}
+W.titles.duel = {"A Duel", "A Challenge"}
+W.titles.rep = {"{Faction}"}
+W.titles.skill = {"{Trade}"}
+W.titles.hk = {"Against the {Side}"}
+W.titles.rareKilled = {"{what}"}

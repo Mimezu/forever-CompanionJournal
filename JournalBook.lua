@@ -164,6 +164,25 @@ local function Add(scene, entry)
         end
     elseif k == "cave" and entry.d then
         scene.events[#scene.events + 1] = {k = "cave", t = entry.t, d = entry.d}
+    -- More moments (JournalSelf.lua, "Record more moments").
+    elseif k == "read" and entry.d then
+        scene.events[#scene.events + 1] = {k = "read", t = entry.t, d = entry.d, m = entry.m}
+    elseif k == "explore" and entry.d then
+        scene.explored = scene.explored or {}
+        local known = false
+        for _, name in ipairs(scene.explored) do if name == entry.d then known = true end end
+        if not known then
+            scene.explored[#scene.explored + 1] = entry.d
+            scene.events[#scene.events + 1] = {k = "explore", t = entry.t, d = entry.d}
+        end
+    elseif (k == "taxi" or k == "rep" or k == "skill" or k == "duel" or k == "rarekill") and entry.d then
+        scene.events[#scene.events + 1] = {k = k, t = entry.t, d = entry.d, s = entry.s, c = entry.c, w = entry.w, fled = entry.fled, sz = entry.sz}
+    elseif k == "learn" then
+        scene.events[#scene.events + 1] = {k = "learn", t = entry.t, c = tonumber(entry.c) or 0, m = type(entry.m) == "table" and entry.m or {}}
+    elseif k == "hk" then
+        local n = tonumber(entry.c) or 1
+        if not scene.hk then scene.events[#scene.events + 1] = {k = "hk", t = entry.t} end
+        scene.hk = (scene.hk or 0) + n
     elseif k == "death" or k == "wipe" or k == "rez" or k == "rest" or k == "close" then
         scene.events[#scene.events + 1] = {k = k, t = entry.t, d = entry.d, z = entry.z, w = entry.w, env = entry.env, boss = entry.boss,
             by = entry.by, a = entry.a, sz = entry.sz, pr = entry.pr, pc = entry.pc, walk = entry.walk}
@@ -452,6 +471,9 @@ local function FirstText(event, seed)
     end
     return nil
 end
+-- The standings of the reputation window, as words.
+local STANDING_WORDS = {[5] = "friendly", [6] = "honored", [7] = "revered", [8] = "exalted"}
+A.JournalStandingWord = function(s) return STANDING_WORDS[tonumber(s) or 0] end
 -- Close calls are told now and then, not every time (seeded, so a page stays the same).
 local function TellClose(event) return tonumber(tostring(math.floor(tonumber(event.t) or 0)):sub(-2)) % 5 < 3 end
 function A.JournalEventText(name, event, v)
@@ -483,7 +505,7 @@ end
 -- ventured into Shadowfang Keep." Their own level-ups are their own sentence.
 local function Deeds(scene, name, v, inside)
     local sentences, clauses = {}, {}
-    local lastDungeon
+    local lastDungeon, exploreSaid
     local function Flush()
         if #clauses > 0 then sentences[#sentences + 1] = v.You .. " " .. List(clauses) .. "." end
         clauses = {}
@@ -514,6 +536,37 @@ local function Deeds(scene, name, v, inside)
             clauses[#clauses + 1] = "flew by night"
         elseif event.k == "cave" then
             clauses[#clauses + 1] = Pick(seed, {"went down into ", "went into ", "made my way into "}) .. P(event.d)
+        elseif event.k == "read" and event.d then
+            local stone = event.m and (event.m == "stone" or event.m == "bronze" or event.m == "marble")
+            clauses[#clauses + 1] = (stone and "read the words on " or "read ") .. Q(event.d)
+        elseif event.k == "explore" and event.d and not exploreSaid then
+            -- (all of the stretch's discoveries in one clause)
+            exploreSaid = true
+            local names = {}
+            for _, name in ipairs(scene.explored or {event.d}) do names[#names + 1] = P(name) end
+            clauses[#clauses + 1] = Pick(seed, {"found my way to ", "came upon ", "discovered "}) .. List(names)
+        elseif event.k == "taxi" and event.d then
+            clauses[#clauses + 1] = "learned the flight path at " .. P(event.d)
+        elseif event.k == "learn" and (event.c or 0) > 0 then
+            local names = {}
+            for _, name in ipairs(event.m or {}) do names[#names + 1] = name end
+            local what = event.c == 1 and "one spell" or (Words(event.c) .. " spells")
+            clauses[#clauses + 1] = "learned " .. what .. " from the trainer" .. (#names > 0 and ((event.c == 1 and ", " or ", among them ") .. List(names)) or "")
+        elseif event.k == "rep" and event.d then
+            Flush()
+            sentences[#sentences + 1] = "I became " .. (STANDING_WORDS[tonumber(event.s) or 0] or "known") .. " with " .. P(event.d) .. "."
+        elseif event.k == "duel" and event.d then
+            Flush()
+            sentences[#sentences + 1] = event.w == "won" and ("I won a duel against " .. N(event.d) .. ".") or ("I lost a duel to " .. N(event.d) .. ".")
+        elseif event.k == "skill" and event.d then
+            Flush()
+            sentences[#sentences + 1] = "My " .. event.d .. " reached " .. tostring(event.c) .. "."
+        elseif event.k == "rarekill" and event.d then
+            Flush()
+            sentences[#sentences + 1] = "I killed " .. P(event.d) .. ", a rare creature" .. (event.sz and (", in " .. PA(event.sz)) or "") .. "."
+        elseif event.k == "hk" and scene.hk then
+            local n = scene.hk
+            clauses[#clauses + 1] = "killed " .. (n == 1 and "one" or Words(n)) .. " of the other side"
         elseif event.k == "campfire" then
             clauses[#clauses + 1] = v.You == "I" and Pick(seed, {"sat by a campfire", "stopped at a campfire", "rested by a campfire"})
                 or Pick(seed, {"shared a campfire", "sat by a campfire", "stopped at a campfire"})
@@ -801,6 +854,19 @@ local function SelfDayHighlights(person, day)
             if event.k == "cave" then caves[#caves + 1] = P(event.d) end
             if event.k == "first" and FirstText(event) then firsts[#firsts + 1] = FirstText(event) end
             if event.k == "voyage" then firsts[#firsts + 1] = VoyageText(event) end
+            -- (more moments: the ones worth a short day's line)
+            if event.k == "duel" and event.d then
+                firsts[#firsts + 1] = event.w == "won" and ("I won a duel against " .. N(event.d) .. ".") or ("I lost a duel to " .. N(event.d) .. ".")
+            elseif event.k == "rep" and event.d and (tonumber(event.s) or 0) >= 6 then
+                firsts[#firsts + 1] = "I became " .. (STANDING_WORDS[tonumber(event.s)] or "known") .. " with " .. P(event.d) .. "."
+            elseif event.k == "skill" and event.d and tonumber(event.c) == 300 then
+                firsts[#firsts + 1] = "My " .. event.d .. " reached 300."
+            elseif event.k == "rarekill" and event.d then
+                firsts[#firsts + 1] = "I killed " .. P(event.d) .. ", a rare creature."
+            end
+        end
+        if scene.explored and #scene.explored >= 3 then
+            firsts[#firsts + 1] = "I discovered " .. Words(#scene.explored) .. " new places" .. (scene.zone and (" in " .. P(scene.zone)) or "") .. "."
         end
     end
     local out = {}

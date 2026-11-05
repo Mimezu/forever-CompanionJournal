@@ -413,6 +413,106 @@ q(8422, "Trolls of a Feather", "WARLOCK", "The Temple of Atal'Hakkar", 52, WI,
     "The nearly finished doll needed magical feathers from the Sunken Temple's six named trolls.", "Impsy promised something of Niby's in return for the stuffing that would finish his own pet.",
     "Impsy stuffed and embraced the completed doll, noticing an odd effect from the feathers.", "The temple materials finished the imp's pet and produced an unexpected magical side effect.", 5)
 
+-- Overnight world pass 2026-11-05, batch 5: the warlock's level-sixty rituals.
+-- corpus_vanilla_quests.txt Quest/Progress/Completion for each ID, read in full.
+-- A ritual preparation never claims the summoning it prepares; only 7631 (above)
+-- and the completions that state it (7583, 7603) hand over the knowledge.
+P.threads.class_warlock_infernal = "Niby's infernal lesson"
+P.threads.class_warlock_doomguard = "Daio's crystal prison"
+local WD, WN, WG = "class_warlock_dreadsteed", "class_warlock_infernal", "class_warlock_doomguard"
+q(7562, "Mor'zul Bloodbringer", "WARLOCK", "Burning Steppes", 58, WD,
+    "The warlock's trainer judged that a mastery of demons this deep might bind one of the dreadsteeds. The ritual was costly, and Mor'zul Bloodbringer, camped near the Altar of Storms in the Burning Steppes, knew its price.",
+    "A dreadsteed of Xoroth was won only through a perilous ritual. The first step was Mor'zul Bloodbringer at the Altar of Storms.",
+    "Mor'zul guessed the purpose of the visit at once. Mastering a dreadsteed would cost blood, sweat and gold, he warned, but the prize was worth winning.",
+    "Mor'zul Bloodbringer agreed to explain the ritual and its price in blood, sweat and gold.", 4)
+q(7563, "Rage of Blood", "WARLOCK", "Burning Steppes", 58, WD,
+    "Binding a dreadsteed meant invoking glyphs on a parchment, and Mor'zul needed a special ink to scribe them. It came from the blood of Winterspring's owl beasts, driven mad by the demonic emanations of Darkwhisper Gorge.",
+    "The owl beasts of Winterspring had once been pure creatures. Maddened by Darkwhisper Gorge, their blood carried the magic Mor'zul wanted for his ink.",
+    "Mor'zul took the blood to be distilled into ink for the parchment, and admitted he might keep a little for himself.",
+    "The maddened owl beasts' blood reached Mor'zul. He would have it made into ink, and had heard its taste was euphoric.", 3)
+q(7564, "Wildeyes", "WARLOCK", "Burning Steppes", 58, WD,
+    "Mor'zul's servant Gorzeeki, an alchemist of some skill, was to prepare the ink. The gathered blood went to him.",
+    "Gorzeeki Wildeyes would turn Mor'zul's blood into the ink for the glyph parchment.",
+    "Gorzeeki, who preferred his blood still warm in a rodent, recognized Mor'zul's work. A dreadsteed ritual, he said with delight, would need far more than blood.",
+    "Gorzeeki Wildeyes took the blood and guessed its purpose. If a dreadsteed was to be summoned, the ritual would need much more.", 3)
+q(7623, "Lord Banehollow", "WARLOCK", "Felwood", 58, WD,
+    "Opening a portal to Xoroth required Xorothian stardust. The only source Gorzeeki knew was Lord Banehollow in Jaedenar, seat of the Shadow Council, and getting in meant buying his shadowy potions.",
+    "Xorothian stardust was rare on Azeroth. Gorzeeki's potions would cloak a visitor in the Shadow Council's own evil long enough to reach Lord Banehollow.",
+    "Lord Banehollow received the visitor with contempt. His patience spanned millennia, he said, but his time did not.",
+    "In Jaedenar, Lord Banehollow granted an audience and warned that it would be brief.", 3)
+q(7624, "Ulathek the Traitor", "WARLOCK", "Felwood", 58, WD,
+    "Banehollow wanted proof of loyalty. His servant Ulathek was spying for Lord Hel'nurath of Xoroth, and Banehollow wanted the traitor confronted in Shadow Hold and his heart brought back.",
+    "Ulathek groveled before Banehollow while plotting with his rival Hel'nurath. Banehollow asked for the spy's heart as the price of his favor.",
+    "Banehollow savored the traitor's heart and meant to let it rot a week first. His patience for the newcomer had grown, he said, marginally.",
+    "Ulathek was dead and his heart delivered. Lord Banehollow was pleased, by his own account only slightly.", 4)
+q(7625, "Xorothian Stardust", "WARLOCK", "Burning Steppes", 60, WD,
+    "Banehollow knew the stardust was wanted to open a portal to Xoroth, the domain of his rival Hel'nurath. His servant Ur'dan would provide it, if the price was paid.",
+    "Stealing a dreadsteed from Hel'nurath amused Lord Banehollow. He sent the buyer to his servant Ur'dan, who kept a supply of Xorothian stardust.",
+    "Gorzeeki could hardly believe the stardust had been obtained. Now Mor'zul could finish the glyph parchment that would open a portal to Xoroth.",
+    "The Xorothian stardust reached Gorzeeki, who guessed it had cost a large sum, a bargain with the dreadlord, or both.", 4)
+q(7626, "Bell of Dethmoora", "WARLOCK", "Burning Steppes", 60, WD,
+    "A Circle of Greater Summoning needed three tools. The first, a bell named for the late warlock Dethmoora Darkeyes, could be built by Gorzeeki only from a large supply of elixirs of shadow power.",
+    "Gorzeeki could make a Bell of Dethmoora to conduct the circle's arcane power, but it took many elixirs of shadow power from an alchemist.",
+    "Gorzeeki took the elixirs and set about making the bell, to keep until the ritual.",
+    "The elixirs of shadow power reached Gorzeeki, who grumbled about miserly alchemists and began the Bell of Dethmoora.", 3)
+q(7627, "Wheel of the Black March", "WARLOCK", "Burning Steppes", 60, WD,
+    "The Wheel of the Black March would contain and direct the circle's violent energies. Gorzeeki needed large brilliant shards from an enchanter and dark iron ore from a master miner.",
+    "For the second tool of the circle, Gorzeeki asked for enchanted shards and dark iron ore from the depths of Blackrock.",
+    "Gorzeeki marveled at a warlock's dedication, then confessed he would rather see it spent on catching bugs. He began the wheel.",
+    "With the shards and dark iron ore in hand, Gorzeeki started on the Wheel of the Black March.", 3)
+q(7628, "Doomsday Candle", "WARLOCK", "Burning Steppes", 60, WD,
+    "A Doomsday Candle would burn any wayward demon that disrupted the ritual. Containing its fire required the essence in black dragon scales.",
+    "The third tool of the circle stored fire. Gorzeeki needed black dragonscales from a skinner before he dared start it.",
+    "Gorzeeki had his dragonscales and could make the candle without blowing up the camp.",
+    "The black dragonscales reached Gorzeeki, who would contain the candle's fire with them and keep it until the ritual.", 3)
+q(7629, "Imp Delivery", "WARLOCK", "Burning Steppes", 60, WD,
+    "Mor'zul's parchment needed paper infused with Xorothian stardust, and only the alchemy lab in Scholomance had the equipment. Gorzeeki lent a jar holding a clever imp to do the work there.",
+    "Gorzeeki could not travel to Caer Darrow himself. The imp in his jar could infuse the parchment, once released in Scholomance's alchemy lab.",
+    "The imp J'eevee had made the parchment. Gorzeeki asked after Scholomance's bugs and took back his jar, which was not for sale.",
+    "The infused parchment came back from Scholomance along with Gorzeeki's old jar.", 4)
+q(7630, "Arcanite", "WARLOCK", "Burning Steppes", 60, WD,
+    "With the bell, wheel and candle made, Gorzeeki wanted a black lodestone to sustain them if they failed during the ritual. The lodestone required arcanite.",
+    "A black lodestone would keep the ritual from fizzling out. Gorzeeki could make one, given arcanite from an alchemist.",
+    "Gorzeeki had his arcanite and could make the lodestone that would keep the ritual from failing.",
+    "The arcanite reached Gorzeeki, completing the materials for the Circle of Greater Summoning.", 3)
+q(7601, "What Niby Commands", "WARLOCK", "Felwood", 50, WN,
+    "Niby the Almighty would teach the summoning of an infernal servant once he had the infernal core of Kroshius. Kroshius had all but burned out and had to be raised from the rubble first; Niby's imp, Impsy, would explain.",
+    "To learn the infernal summoning, Niby wanted Kroshius destroyed. That meant first reigniting the demon's burned-out corpse, and Impsy knew how.",
+    "Impsy greeted the newcomer with weary resignation.",
+    "Niby's imp received his master's next student with a sigh, as if he had seen it all before.", 3)
+q(7602, "Flawless Fel Essence", "WARLOCK", "Felwood", 55, WN,
+    "Reanimating Kroshius needed fel fire, and Impsy could make it from three flawless fel essences, from the Legashi satyrs of Azshara, the legionnaires of Jaedenar and the felguard sentries of the Blasted Lands.",
+    "Impsy's fel fire called for essences from three distinct regions. He also confided that Niby was daft.",
+    "Impsy took the three essences and combined them into fel fire.",
+    "The three essences reached Impsy, who began making fel fire.", 3)
+q(7603, "Kroshius' Infernal Core", "WARLOCK", "Felwood", 55, WN,
+    "Fel fire set on the remains of Kroshius in Shatter Scar Vale would reanimate the fallen infernal. Impsy fully expected him to kill whoever tried, and advised bringing friends.",
+    "Kroshius lay in a heap to the northeast. Raised with fel fire, he would have to be killed again for his infernal core.",
+    "Kroshius's infernal core reached Niby. A deal was a deal, he said, and he hurried to hand over the knowledge before his own greatest conjuration began.",
+    "Niby received the core and kept his side of the bargain, though he was in a great hurry.", 5)
+q(7581, "The Prison's Bindings", "WARLOCK", "Blasted Lands", 60, WG,
+    "A Doomguard could be held only by a crystal prison of special make. Its bindings had to come from lesser demons, the Wildspawn satyrs of Dire Maul, whose blood would bond the Hederine shards.",
+    "Daio the Decrepit needed coagulated blood from the Wildspawn satyrs of Dire Maul to bind his crystal prison.",
+    "Daio judged the blood an excellent recovery. It would suppress the Doomguard's magical defenses.",
+    "The Wildspawn blood reached Daio, who meant to use it against the Doomguard's magic.", 3)
+q(7582, "The Prison's Casing", "WARLOCK", "Blasted Lands", 60, WG,
+    "The Hederine of Darkwhisper Gorge in Winterspring secreted fel poisons that hardened into anti-magic crystals, the Tears of the Hederine. Not even a Doomguard could break a prison made of them.",
+    "Daio's prison needed walls of the Tears of the Hederine, crystals the demons of Darkwhisper Gorge would not give up without a fight.",
+    "Daio had the Tears and needed only to combine them with the Wildspawn blood for the prison to be ready.",
+    "The Tears of the Hederine reached Daio. With the satyr blood, they would make the crystal prison.", 3)
+q(7583, "Suppression", "WARLOCK", "Blasted Lands", 60, WG,
+    "The prison was ready. A Doomguard Commander in the Tainted Scar had to be captured in it, and Daio warned that the demon would turn all its fury on the one performing the ritual.",
+    "Daio called the capture the hardest part. A cornered Doomguard Commander would flail and strike at its captor, and companions would be needed to stay alive.",
+    "The Doomguard was imprisoned. Daio declared the warlock ready for the knowledge to conjure and control such a beast.",
+    "With a Doomguard Commander captured in the crystal, Daio judged the task done and offered the knowledge to summon one.", 5)
+P.questIDs[7583].highlight = {"A Doomguard Commander was captured in Daio's crystal prison, and Daio offered the knowledge to conjure and control one.",
+    "Daio's prison held a Doomguard Commander from the Tainted Scar. The warlock, he said, was now ready to command such a beast."}
+P.questIDs[7603].highlight = {"Kroshius was raised with fel fire and destroyed. Niby took the infernal core and, in a hurry, kept his side of the bargain.",
+    "The infernal core of Kroshius reached Niby, who handed over the promised knowledge before his own conjuration."}
+for _, id in ipairs({7562, 7563, 7564, 7623, 7624, 7625, 7626, 7627, 7628, 7629, 7630, 7601, 7602, 7603, 7581, 7582, 7583}) do
+    P.questIDs[id].source[2] = "https://classicdb.ch/?quest=" .. id
+end
+
 -- Shared-title outcomes are never copied from a convenient last stage. Several
 -- Forever titles that look like trials are only referrals, notably 94007.
 local shared = {

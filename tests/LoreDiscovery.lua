@@ -153,8 +153,18 @@ Check(next(A.LoreKnowledge()) == nil, "malformed event quest IDs ignored")
 local fixturePack = {sources = {"discovery test source"}, quests = {}, questIDs = {}}
 for _, data in ipairs({{6403, "The Great Masquerade"}, {6501, "The Dragon's Eye"}, {6502, "Drakefire Amulet"},
     {6566, "What the Wind Carries"}, {7495, "Victory for the Alliance"}}) do
-    fixturePack.quests[data[2]] = {why = {"Prestor secretly controls the court. SECRET ENDING."}}
-    fixturePack.questIDs[data[1]] = {title = data[2], why = {"Prestor secretly controls the court. SECRET ENDING."}}
+    -- The world pack now authors 6403/6501/6502 (2026-11-05), with the secret
+    -- in 6403's own setup lines. A duplicate exact ID is refused and a second
+    -- title entry would make the title alias ambiguous, so the real stage and
+    -- its title context are checked in place of the fixture.
+    local real = A.Lore.questStoryIDs[data[1]]
+    if real then
+        Check(real.title == data[2] and (data[1] ~= 6403 or table.concat(real.why, " "):find("Prestor", 1, true)),
+            "real stage keeps the concealed identity this check protects")
+    else
+        fixturePack.quests[data[2]] = {why = {"Prestor secretly controls the court. SECRET ENDING."}}
+        fixturePack.questIDs[data[1]] = {title = data[2], why = {"Prestor secretly controls the court. SECRET ENDING."}}
+    end
 end
 A.Lore.RegisterStoryPack("discovery-test-surfaces", fixturePack)
 for _, data in ipairs({{6403, "The Great Masquerade"}, {6501, "The Dragon's Eye"}, {6502, "Drakefire Amulet"},

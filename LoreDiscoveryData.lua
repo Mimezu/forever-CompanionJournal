@@ -1623,3 +1623,22 @@ do
         ["stratholme.report_delivered"]={completed={5262}},
     },notes=notes,quests=quests})
 end
+
+-- 2026-11-05 overnight notes pass: the Baron of the Ruins of Lordaeron (Forever).
+-- Whose head the abomination wears is first said in #97289; #97288 only finds
+-- an unusual head. The public note never names him.
+do
+    local V = "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"
+    local RoL = "https://warcraft.wiki.gg/wiki/Ruins_of_Lordaeron_(instance) (boss list, added in patch 1.60.1)"
+    local othmar = {requires = {"baron.othmar"},
+        body = "The head once belonged to Othmar, a Grand Marshal of the Alliance whom the Dark Lady killed herself. The apothecaries of the Undercity mean to wake it on a new body and bend it to her will.",
+        sources = {V .. " #97289 Unending Torment (description)"}, related = {"place:apothecarium", "npc:sylvanas"}}
+    local notes = {}
+    notes["npc:the-baron"] = {public = {
+        body = "The Baron is an abomination in the Ruins of Lordaeron, above the Undercity. Its head has been sewn back onto its body several times, and each new stitching holds a little less well than the last.",
+        sources = {RoL, V .. " #97288 Unending Torment (description)"}, related = {"dungeon:lordaeron-ruins"}},
+        blocks = {othmar}}
+    A.RegisterLoreDiscovery({facts = {
+        ["baron.othmar"] = {presented = {97289}, completed = {97289}},
+    }, notes = notes})
+end

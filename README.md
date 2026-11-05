@@ -4,6 +4,17 @@ The players and NPCs you want to remember, and a journal of what you lived
 through together. It came out of Forever Names 1.10: the People list, the
 journal, the group popup and the campfire now live here, in their own window.
 
+## 1.12.5: the People list's menu is the addon's own
+
+- **Right-click on a person in the People list opens Companion Journal's own menu**
+  (Add Friend, Whisper, Invite to Group, Open journal) on a leather panel instead of
+  Blizzard's context menu. Blizzard's menus opened from addon code taint the gamepad
+  interface (A and B dead until /reload). The mouse or the gamepad cursor clicks the
+  rows; Escape, or a click anywhere else, closes it. It now opens in the gamepad
+  interface too; Whisper stays off there (it would focus the chat box from addon code).
+- The "Add to Companion Journal" entry on Blizzard's unit menu is unchanged (there is no
+  other way onto that menu); its code is now guarded so an error can never reach the menu.
+
 ## 1.12.4: review for the live client (build 70707)
 
 - **The open book redraws only for its own journal.** A line written into another
