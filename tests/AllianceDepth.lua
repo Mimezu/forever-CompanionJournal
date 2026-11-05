@@ -29,6 +29,16 @@ local journeys = {
     {"Gnome", "WARLOCK", {170, 3361}, {182, 218, 282}, {412, 433}},
     {"NightElf", "HUNTER", {456, 916, 4495, 3519}, {3521, 3522, 917, 920, 921}, {2159, 997, 918, 919, 475, 476},
         {489, 2438, 2459, 487, 922, 923}, {2498, 2499, 930, 931}, {927, 941, 937, 938, 940}, {483, 486}},
+    {"NightElf", "PRIEST", {6344, 6341, 6342, 6343}, {2178, 954, 953, 984, 985}, {5713, 963, 3524, 1138, 982},
+        {947, 948, 944, 949, 950}, {4762, 2138, 2139, 951}, {2098, 2078}},
+    {"Dwarf", "PALADIN", {323, 269, 270, 321, 324}, {322, 325, 55}, {469, 471, 288, 289, 290, 292}, {293},
+        {472, 631, 632, 633, 637}, {683, 686, 689, 700}},
+    {"Human", "MAGE", {373, 389}, {392, 393, 350, 2745}, {2746, 434, 394, 395, 396}},
+    {"Gnome", "ROGUE", {287, 291}, {6387, 6391, 6388, 6392}, {1339, 1338, 353, 257, 258}, {2039, 2038, 2041}},
+    {"NightElf", "DRUID", {730, 729, 731, 1579, 1580}, {741, 952, 942}, {965, 966, 986, 993, 994}, {995, 943}, {1167, 1143}},
+    {"Human", "PRIEST", {332, 333, 334}, {337, 343, 344, 345, 347, 346}, {399, 1097, 353}, {335, 336, 397}},
+    {"Dwarf", "WARRIOR", {385, 467, 466}, {468, 455}},
+    {"NightElf", "WARRIOR", {2519, 2518, 2520}},
 }
 local pack = A.Lore.storyPacks["alliance-starters"]
 local source = assert(io.open("StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt", "rb"))
@@ -37,7 +47,7 @@ local captured = {}
 for title, id, level in corpus:gmatch("### ([^\r\n]+)  %(id (%d+), level (%d+)%)") do
     captured[tonumber(id)] = {title = title, level = tonumber(level)}
 end
-local BANNED = {"journal", "chronicle", "legend", " tale", " song", " verse", " bard", "chapter",
+local BANNED = {"journal", "chronicle", "legend", " tale", " song", " verse", " bard", "chapter", " story", " stories",
     "the assignment", "proof of work", "the official's approval", "pressure had been taken off"}
 for _, journey in ipairs(journeys) do
     for d = 3, #journey do

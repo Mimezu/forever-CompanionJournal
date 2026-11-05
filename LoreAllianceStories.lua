@@ -3,7 +3,17 @@ local _, A = ...
 -- quest simulator: exact stage consequences are only selected by recorded ID.
 -- Evidence: StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt.
 -- That local corpus also includes the Forever additions explicitly cited below.
--- Coverage inventory: 196 exact quest IDs, 153 title contexts (21 conservative
+-- Coverage inventory (2026-11-05 overnight): 423 exact quest IDs here plus 11
+-- Stalvan stages below, about 350 title contexts (32 shared titles with
+-- conservative fallbacks), 48 continuity threads and 12 regional context sets.
+-- The overnight pass (tests/AllianceDepth.lua renders every added stage) filled
+-- Eastvale's murlocs, Westfall's lighthouse and Sentinel Hill, Lakeshire's
+-- bounties and Morganth, Sven and the shadowy figure through Morbent's Bane,
+-- the Embalmer after the hermit's letter, the cursed Third Fleet, Dun Modr and
+-- Sully Balloo's memorial, Coldridge to Kharanos, the timberlings and Gnarlpine
+-- of Teldrassil, the Twilight's Hammer, Remtravel and Volcor in Darkshore, and
+-- the Defias reach inside Stormwind through the audience at the Keep.
+-- Earlier inventory: 196 exact quest IDs, 153 title contexts (21 conservative
 -- shared-title fallbacks), 27 continuity threads and 12 regional context sets.
 -- Curated: Northshire/Elwynn errands, three militia stages, Westfall cooking,
 -- Redridge dispatches, Night Watch stages, Coldridge mail and provisions,
@@ -1508,7 +1518,7 @@ q(253, "Bride of the Embalmer", D, 30, HM,
     "The heart reached Ello still beating. Its magic, he said, would guard Darkshire against the Embalmer's evil, and the town would not forget the deed.",
     "Ello received the Embalmer's heart and called it a powerful aegis over Darkshire.", 5)
 P.questIDs[230].highlight = {"A book buried at Sven's farm told him that the shadowy figure he had seen had witnessed his family's death.", "Sven read the book from the mound and slammed it shut. The stranger at his farm had seen his family die, and Sven wanted to know who it was."}
-P.questIDs[453].highlight = {"The trail of the book west of Darkshire ended with Jitters, who admitted he had written it and said it told only half the story.", "The shadowy figure from Sven's farm was Jitters, hiding west of town. He owned up to the book, and to knowing more than it said."}
+P.questIDs[453].highlight = {"The trail of the book west of Darkshire ended with Jitters, who admitted he had written it and said it held only half of what happened.", "The shadowy figure from Sven's farm was Jitters, hiding west of town. He owned up to the book, and to knowing more than it said."}
 P.questIDs[268].highlight = {"Jitters's finished account reached Sven and set him against the dark riders and the wizard Morbent Fel, whom he had seen together at the Forlorn Rowe.", "Sven read what Jitters had written and turned his grief toward the dark riders and Morbent Fel."}
 P.questIDs[223].highlight = {"Calor's recommendation reached Jonathan Carevin, who welcomed help against demons, the undead and those who aided them.", "Master Carevin accepted Calor's letter after the worgen hunts and asked for vigilance against all who would not aid his cause."}
 P.questIDs[181].highlight = {"Zzarc'Vul's monocle became the lens of Viktori's star-viewing device, finishing the machine built from Cog's blueprint.", "Viktori's device was complete once the ogre's monocle was in place, and he went back to studying the stars."}
@@ -1722,6 +1732,608 @@ P.questIDs[938].highlight = {"Mist, the wounded sabercat, came home to Sentinel 
 P.questIDs[940].highlight = {"The Oracle Tree's message reached Fandral Staghelm, who feared his work on Teldrassil would never restore the night elves' immortality.", "Fandral read the Oracle Tree's word after its long silence. Some troubles had eased, he said, while others grew."}
 P.questIDs[486].highlight = {"Ursal the Mauler, the Gnarlpine chieftain behind the Fel Moss, was slain so that Athridas could complete the ritual for the Druids of the Talon.", "With Ursal the Mauler dead, Athridas could finish the ritual meant to free the sleeping Druids of the Talon."}
 
+-- Overnight 2026-11-05, Darkshore: Nessa's fish samples from Rut'theran,
+-- Terenthis and the Blackwood, the sunken captains, Anaya's spirit, the
+-- tablets of Ameth'Aran, Onu and the Twilight's Hammer at the Master's Glaive,
+-- Gelkak's first mate, Tharnariun's last hunt and Aynasha's ambush. The cult's
+-- aim stays a fear and an inquiry; no stage here defeats it.
+P.threads.alliance_nessa = "the fish of Rut'theran and Auberdine"
+P.threads.alliance_twilight = "the Twilight's Hammer at the Master's Glaive"
+P.threads.alliance_gyromast = "Gelkak Gyromast's first mate"
+local NS, TW, GY = "alliance_nessa", "alliance_twilight", "alliance_gyromast"
+q(6344, "Nessa Shadowsong", "Darnassus", 10, NS,
+    "Mydrannul in Darnassus had a friend in Rut'theran Village, the fishing merchant Nessa Shadowsong, who needed a parcel taken to Darkshore.",
+    "The portal west of the Temple Gardens led down to Rut'theran, where Nessa Shadowsong was looking for a courier.",
+    "Nessa confirmed she needed a courier for a package bound for Darkshore.",
+    "At Rut'theran, Nessa had a package for Darkshore and asked for help carrying it.")
+q(6341, "The Bounty of Teldrassil", T, 10, NS,
+    "Rut'theran's fish were extremely large and plentiful, and Nessa wanted them compared with the mainland's. Her collection of bones and scales was for Laird, a fish vendor in Auberdine.",
+    "Nessa's collection of fish bones and scales was to fly to Auberdine with the hippogryph master Vesprystus.",
+    "Vesprystus agreed to send Nessa's collection on to Auberdine.",
+    "The hippogryph master heard where the package was going and was ready to carry it.")
+q(6342, "Flight to Auberdine", "Darkshore", 10, NS,
+    "Vesprystus advised flying to Auberdine rather than taking the ferry; once a hippogryph master knew a traveler, the route stayed open.",
+    "Nessa's collection was bound for Laird in Auberdine, by hippogryph from Rut'theran.",
+    "Laird was amazed. A jawbone from Rut'theran was nearly twice the size of the same fish's on the mainland, and the scales were as big as a closed fist.",
+    "Nessa's samples reached Laird, who found them far larger than anything caught at Auberdine.")
+q(6343, "Return to Nessa", T, 10, NS,
+    "Laird suspected the World Tree itself was changing the wildlife around it, and sent his answer back to Nessa.",
+    "Laird's reply was for Nessa in Rut'theran, by hippogryph or by the ferry from the northwest dock.",
+    "Nessa had not thought the difference was so great. She would share the news with the villagers and hoped to find the root of it someday; until then, Rut'theran would reap the benefits.",
+    "The reply reached Nessa, who meant to tell the villagers. Whatever made Teldrassil's fish so large, she was content to enjoy it.")
+q(2178, "Easy Strider Living", "Darkshore", 12, J,
+    "Alanndarian Nightsong's strider stew was a secret recipe, and she would teach it to anyone who could bring her strider meat.",
+    "Before sharing her strider stew, Alanndarian Nightsong wanted proof that the beasts could be handled.",
+    "Alanndarian took the meat and offered a taste of the stew.",
+    "The strider meat filled Alanndarian's empty pot, and her recipe was shared.")
+q(953, "The Fall of Ameth'Aran", "Darkshore", 12, J,
+    "Sentinel Tysha Moonblade had found two tablets in Ameth'Aran telling of the city's fall, but the Highborne spirits drove her off before she could read them.",
+    "Ameth'Aran's tablets told how the Highborne city fell, and Tysha wanted them read for the Circle of Ancients.",
+    "Tysha had few records from the time of the War of the Ancients. With the tablets read, she could deliver a full report to the Circle.",
+    "The tablets' account of Ameth'Aran's fall went to Tysha, who could finish her report to the Circle of Ancients.")
+q(984, "How Big a Threat?", "Darkshore", 14, J,
+    "Terenthis had vowed to stop corruption among the furbolgs after some of his brethren were rescued from a corrupt furbolg in Teldrassil. He wanted a Darkshore camp scouted.",
+    "Terenthis had seen hints of corruption in Darkshore and wanted to know whether the furbolgs there had fallen to it.",
+    "Terenthis heard the signs of corruption and called it terrible news. With the furbolgs this close to Auberdine, the town would have to prepare.",
+    "The scouting confirmed corruption in a furbolg camp near Auberdine, and Terenthis began to prepare for what would follow.")
+q(985, "How Big a Threat?", "Darkshore", 14, J,
+    "The Blackwood camp south of Auberdine was the greatest threat to the town, and Terenthis wanted its pathfinders and windtalkers killed.",
+    "Terenthis asked for a fight against the Blackwood furbolgs south of Auberdine.",
+    "Terenthis said there was no need to mourn what had to be done. The threat to Auberdine was smaller, though fel moss still endangered Darkshore.",
+    "Fewer Blackwood furbolgs stood south of Auberdine. Terenthis gave thanks, though Darkshore was still in danger from the fel moss.")
+q(5713, "One Shot. One Kill.", "Darkshore", 15, J,
+    "Sentinel Aynasha had been poisoned by the furbolg Marosh and his trackers on the road to Auberdine. She needed defending until her antidote was ready.",
+    "Aynasha carried an important message to Auberdine but could barely stand after Marosh's attack.",
+    "Aynasha lived to deliver her message, and Onaeya at Maestra's Post welcomed the news and offered a reward.",
+    "Onaeya was glad to hear that Aynasha was alive and well, and asked Elune to watch over her rescuer.")
+q(963, "For Love Eternal", "Darkshore", 16, J,
+    "Cerellean Whiteclaw had lost his love Anaya when Ameth'Aran fell, thousands of years before. He had seen her haunted spirit in the ruins and could not bring himself to free her.",
+    "Anaya's spirit haunted the ruins of Ameth'Aran. Cerellean wanted her freed but lacked the heart to do it.",
+    "Cerellean gave thanks, and wondered if he should have done it himself. Even after thousands of years, he could not raise his hand against her, and he asked to be left alone with his grief.",
+    "Anaya's spirit was released. Cerellean thanked the one who had done what he could not, then asked to be alone.", 4)
+q(982, "Deep Ocean, Vast Sea", "Darkshore", 17, J,
+    "Murlocs had sunk the Silver Dawning and the Mist Veil off Darkshore's coast. Neither captain survived, and their logs and effects still lay below in lockboxes.",
+    "The surviving crews of two sunken ships wanted their captains' effects brought up from the sea floor.",
+    "The captains' effects came up from the wrecks, to be properly taken care of in Auberdine.",
+    "Auberdine counted the recovery a great service. The two captains' belongings could be tended at last.")
+q(1138, "Fruit of the Sea", "Darkshore", 17, J,
+    "Gubber Blump loved crab and could list a dozen ways to cook it. Busy fishing, he wanted fine crab chunks from the reef crawlers.",
+    "Gubber had a long list of crab dishes in mind and no time to catch the crabs himself.",
+    "Gubber took the crab chunks and gave away something he had fished up that was no use for crab dishes. Then he started on the list again.",
+    "The crab chunks reached Gubber, who paid with an odd find from his fishing and wondered aloud if he had told all about crabs.")
+q(947, "Cave Mushrooms", "Darkshore", 17, TW,
+    "Barithras Moonshade needed rare mushrooms from a cave behind Cliffspring Falls. The Grove of the Ancients had warned him away, sensing a new evil hiding there.",
+    "Barithras wanted the cave behind Cliffspring Falls scouted while his mushrooms were gathered, to test the Ancients' fears.",
+    "Barithras praised the mushrooms. He had hoped the Ancients were wrong this time, but the cave bore out their warning.",
+    "The mushrooms were fine specimens. What was seen at Cliffspring Falls confirmed the Ancients' warnings, to Barithras's regret.")
+q(948, "Onu", "Darkshore", 17, TW,
+    "Onu, an Ancient of Lore at the Grove of the Ancients, had heard about Cliffspring Falls and wished to speak. Barithras feared it was urgent.",
+    "The Grove of the Ancients lay south near the mountains, where Onu waited to talk about what was seen at the falls.",
+    "Onu had been expecting the visit. There were matters to discuss.",
+    "At the grove, the Ancient of Lore said there were matters to discuss.")
+q(944, "The Master's Glaive", "Darkshore", 17, TW,
+    "Onu found the naga in Darkshore strange, and the Twilight's Hammer stranger. The cult worshiped old lords of the earth, and one had fallen at the Master's Glaive to the south.",
+    "Onu sent a phial of scrying to the Master's Glaive, to look for Twilight's Hammer cultists and speak through the bowl.",
+    "Through the scrying bowl, Onu learned that the Twilight's Hammer was at the Glaive. The old lord impaled there was long dead, but slivers of his power might remain, and the cult must be seeking them.",
+    "The scrying bowl confirmed cultists at the Master's Glaive. Onu feared they sought what remained of the dead lord's power.")
+q(949, "The Twilight Camp", "Darkshore", 17, TW,
+    "The Twilight's Hammer's purpose at the Glaive was unknown, but Onu was sure it was dark. Their camp might hold something that showed their intentions.",
+    "Before making a plan, Onu wanted something from the cult's camp that would teach their intentions.",
+    "A book lay in the camp, hand printed in an ancient language and illustrated by a master artist.",
+    "The search turned up an illuminated book in an ancient tongue among the cultists' things.")
+q(950, "Return to Onu", "Darkshore", 17, TW,
+    "Peering into the Twilight Tome was maddening; its text swam and its scrollwork twisted. Only a single page of scribbles could be torn out.",
+    "One page torn from the Twilight Tome was all that could be carried back to Onu.",
+    "Onu sensed a chaotic, primal magic in the page, the work of the old ones. He hoped it would reveal the cult's purpose in Darkshore.",
+    "The page reached Onu, who felt the old ones' magic in it.")
+q(951, "Mathystra Relics", "Darkshore", 20, TW,
+    "The torn page came from an ancient elven text. The Twilight's Hammer seemed to be using old elven magic to bring their masters back, and relics from the ruins of Mathystra might show how.",
+    "Onu wanted relics from the ruins of Mathystra in the northeast, to learn how the cult meant to use elven magic.",
+    "The relics came from a time when Mathystra shone. Onu hoped to unlock the secrets of the place before the cult did, and urged vigilance.",
+    "Mathystra's relics reached Onu. Shards of its magic remained, and he meant to understand them before the Twilight's Hammer could.", 4)
+q(2139, "Tharnariun's Hope", "Darkshore", 18, J,
+    "Tharnariun Treetender had one last task, and it meant more killing. The Den Mother lived in a cave to the northeast, near Bashal'Aran.",
+    "Auberdine owed a debt for the sick animals put down, Tharnariun said, and he hoped the Den Mother would be the last of them.",
+    "Tharnariun praised the bravery shown for Auberdine. Many in the war-torn land chose to hide or flee to safer Alliance lands, he said, and he hoped someday to fight beside such help against another foe.",
+    "The Den Mother was dead, and Tharnariun gave thanks for the fight on Auberdine's behalf.", 4)
+q(2098, "Gyromast's Retrieval", "Darkshore", 20, GY,
+    "Gelkak Gyromast's ship had sunk off the coast, and the key to his mechanical first mate had broken on the rocks. Crawlers, foreststriders and murlocs had carried off the pieces.",
+    "The pieces of Gelkak's broken key were scattered among the beasts and murlocs of the Darkshore coast.",
+    "Gelkak cheered at the recovered key. His first mate would soon be working again, and the beasts would not know what hit them.",
+    "The key's pieces reached Gelkak, who asked next after his first mate.")
+q(2078, "Gyromast's Revenge", "Darkshore", 20, GY,
+    "Gelkak's first mate needed winding with the key and bringing back to serve the captain. The murlocs and their chief, he promised, would regret it.",
+    "The Threshwackonator waited to be wound up and led back to Gelkak for his revenge on the murlocs.",
+    "Gelkak judged the work more than a coward's, and joked about a promotion to poop deck swabby.",
+    "The first mate came back to Gelkak, who spoke of a promotion for his helper.")
+P.questIDs[6342].highlight = {"Nessa's fish samples flew from Rut'theran to Laird in Auberdine. A jawbone nearly twice the mainland size and scales as big as a fist amazed him.", "Laird opened Nessa's collection in Auberdine and found Teldrassil's fish far larger than his own."}
+P.questIDs[963].highlight = {"Anaya's haunted spirit in Ameth'Aran was released. Cerellean Whiteclaw, who had loved her thousands of years before, asked to be alone with his grief.", "Cerellean could not raise his hand against his beloved's spirit. Once Anaya was freed, he wondered if he should have done it himself."}
+P.questIDs[951].highlight = {"Relics from the ruins of Mathystra reached Onu, who hoped to learn how the Twilight's Hammer meant to use elven magic before the cult could.", "Onu took Mathystra's relics, shards of an old elven magic the Twilight's Hammer seemed to want, and urged vigilance."}
+P.questIDs[2139].highlight = {"The Den Mother, the last of the sick beasts Tharnariun asked to be put down, was dead. He praised the courage shown for Auberdine.", "Tharnariun's last hunt ended with the Den Mother near Bashal'Aran, and he hoped someday to fight beside such help."}
+
+-- Overnight 2026-11-05, Wetlands and the capitals: the road to Morbent's Bane
+-- (Farthing, the Flying Osprey's Lightforge Iron, Grimand Elmore), the cursed
+-- Third Fleet and the Eye of Paleth, Menethil's tanner, Dun Modr's fall and the
+-- Thandol Span, and Sully Balloo's memorial. The Eye's cleansing does not free
+-- the crew; the memorial stages never return Sully. Plea To The Alliance (634)
+-- and MacKreel's Moonshine (647) complete outside this pack's regions.
+P.threads.alliance_thirdfleet = "the cursed Third Fleet"
+P.threads.alliance_balloo = "Sully Balloo's memorial"
+local TF, BL = "alliance_thirdfleet", "alliance_balloo"
+q(269, "Seeking Wisdom", "Stormwind City", 29, SV,
+    "Sven sent Jitters's account to Bishop Farthing in the Cathedral of Light. Stormwind had forsaken Darkshire, but Farthing was kind and wise.",
+    "Facing Morbent Fel meant seeking counsel in Stormwind, where Bishop Farthing might know how it could be done.",
+    "Farthing read the account and called Morbent Fel immensely powerful, shielded by dark enchantments against physical harm. A weapon proof against them would be needed.",
+    "The bishop warned that Morbent Fel's enchantments turned aside ordinary weapons, and that the trial ahead needed something better.")
+q(270, "The Doomed Fleet", "Wetlands", 29, SV,
+    "Farthing knew of Lightforge Iron, a metal whose weapons struck with holy truth. A load of it had gone down with the Third Fleet of Kul Tiras off the Wetlands coast.",
+    "Farthing sent the search for Lightforge Iron to his dwarven colleague Glorin Steelbrow in Menethil Harbor.",
+    "Glorin called Lightforge Iron precious and the cause a dire one. If the iron could be found, he knew who could make it into a weapon against the necromancer.",
+    "In Menethil, Glorin Steelbrow agreed to help the search for the lost iron.")
+q(321, "Lightforge Iron", "Wetlands", 29, SV,
+    "The Flying Osprey, an elven ship carrying Lightforge Iron, had joined the Third Fleet for protection and sunk to the same red dragons. Its wreck lay south of Menethil.",
+    "Glorin pointed the search to the wreck of the Flying Osprey, south of the harbor.",
+    "The Osprey's chest was waterlogged and clawed by murlocs. A single Lightforge ingot remained deep inside, far from enough for a weapon.",
+    "Only one ingot was left in the Flying Osprey's broken chest; murlocs had taken the rest.")
+q(324, "The Lost Ingots", "Wetlands", 29, SV,
+    "Murloc raiders near the Flying Osprey's wreck had stolen the rest of the Lightforge Iron.",
+    "The missing ingots were with the murlocs who had clawed open the Osprey's chest.",
+    "Glorin was pleased to see the ingots and ready to have the iron hammered into something useful.",
+    "The lost Lightforge Iron came back from the murlocs, enough for Glorin's purpose.")
+q(322, "Blessed Arm", "Stormwind City", 29, SV,
+    "Glorin packed the iron into a crate for Grimand Elmore, a dwarven weaponsmith in Stormwind's Dwarven District who could work it.",
+    "Only a smith who knew Lightforge Iron could make the weapon, and Glorin sent the crate to Grimand Elmore.",
+    "Grimand had not worked Lightforge Iron in years and called it an honor. He set to making the weapon against Morbent Fel, and asked to hear later how the battle went.",
+    "The crate reached Grimand Elmore, who agreed to forge the weapon against the necromancer.")
+q(325, "Armed and Ready", D, 29, SV,
+    "Grimand's finished weapon was made to break through Morbent Fel's protections, and he wanted to hear how it fared.",
+    "Morbent's Bane was finished in Stormwind and bound for Sven Yorgen's camp.",
+    "Sven judged the weapon proof against the fiend. Morbent Fel would fall, he declared.",
+    "Sven took the weapon from Stormwind's smith and pronounced the preparations complete.", 4)
+q(288, "The Third Fleet", "Wetlands", 27, TF,
+    "Fitzsimmons had been first mate of the Wave Mistress, a ship of the Kul Tiras Third Fleet burned off this coast by orc-ridden red dragons. Before telling more, he wanted a drink for his hangover.",
+    "The sole survivor of the Third Fleet sat in Menethil with a pounding head, wanting a fresh drink before he went on.",
+    "The drink hit the spot and loosened Fitzsimmons's tongue.",
+    "Fitzsimmons had his drink, and with it the will to go on with his account.")
+q(289, "The Cursed Crew", "Wetlands", 29, TF,
+    "Something hidden aboard one of the Third Fleet's ships held the souls of Fitzsimmons's shipmates in the rotting hulls. Freeing some of them might break the curse.",
+    "His cursed brethren moaned in Fitzsimmons's dreams, and he wanted them freed.",
+    "Fitzsimmons gave thanks for himself and for his cursed brethren.",
+    "Some of the trapped crew were released, and Fitzsimmons passed on their gratitude.")
+q(290, "Lifting the Curse", "Wetlands", 30, TF,
+    "The thing behind the curse was locked in the strongbox of the Intrepid, and Captain Halyndor still walked that ship with the key.",
+    "The key to the Intrepid's strongbox had stayed with Fitzsimmons's old captain, Halyndor.",
+    "The rusted key fit the strongbox lock neatly.",
+    "Halyndor's key opened the Intrepid's strongbox.")
+q(292, "The Eye of Paleth", "Wetlands", 30, TF,
+    "Inside the strongbox lay a blackened orb pulsing with eerie light, a Cursed Eye of Paleth. Glorin Steelbrow might know how to lift its curse.",
+    "The cursed treasure from the Intrepid was bound for Glorin Steelbrow, the dwarven priest in Menethil.",
+    "Glorin was amazed to see an Eye of Paleth, and saw at once that something was wrong with it. No wonder Fitzsimmons was so spooked.",
+    "Glorin recognized the cursed Eye of Paleth; he had not known the Third Fleet carried one.")
+q(293, "Cleansing the Eye", "Stormwind City", 30, TF,
+    "Human priests had made the Eyes of Paleth, so Glorin could not lift the curse. Archbishop Benedictus at the Cathedral of Light could.",
+    "Glorin sent the cursed Eye to Stormwind and Archbishop Benedictus.",
+    "Benedictus saw that the Eye had witnessed a terrible tragedy, and cleansed it. Tainted, he said, the Eyes' powers were dangerous.",
+    "The Archbishop cleansed the sorrowful Eye of Paleth so it could shine as it was made to.", 4)
+q(469, "Daily Delivery", "Wetlands", 21, V,
+    "Einar Stonegrip had a bundle of crocolisk skins for James Halloran, the tanner in Menethil, and was putting off facing his wife.",
+    "Einar's skins for the Menethil tanner went with any traveler bound for the harbor.",
+    "Halloran recognized Einar's skins. Einar had not delivered them in person for nearly a week, and Halloran guessed it was trouble with the wife.",
+    "The skins reached Halloran, who joked about sending his own wife to talk with Sida.")
+q(471, "Apprentice's Duties", "Wetlands", 26, V,
+    "Halloran's apprentice had gone into the marshes to skin giant crocolisks and come back badly hurt. The midwife thought he might pull through; the skins were still needed.",
+    "The crocolisks north up the coast had maimed Halloran's apprentice, and the tanner still needed their skins.",
+    "Halloran joked about taking on a new apprentice, then said the skins were fine and he would put them to good use.",
+    "The giant crocolisk skins reached Halloran, whose apprentice, like a son to him, would have to live with one leg.")
+q(472, "Fall of Dun Modr", "Wetlands", 25, DI,
+    "Dun Modr had fallen to the Dark Irons. A badly wounded soldier in Menethil, struck by an axe as the regiment retreated, hoped Longbraid was still alive.",
+    "Most of Dun Modr's regiment had been killed after the Thandol Span ambush. Its wounded survivor wanted Longbraid found.",
+    "Longbraid was alive, and glad to hear young Harlo had survived. Dun Modr had fallen, and the regiment was a shadow of what it had been.",
+    "The news from Menethil gave Longbraid hope, though his regiment was much reduced and Dun Modr lost.", 4)
+q(631, "The Thandol Span", "Wetlands", 31, DI,
+    "A great explosion had torn through the hills at the Thandol Span, and good soldiers had died. Ol' Rustlocke had gone to scout the eastern bridge days ago and not come back.",
+    "With Dun Modr under siege, Rhag Garmason had no one to spare to look for Ol' Rustlocke.",
+    "A small dwarven body lay by the bridge, its helmet engraved Ebenezer Rustlocke.",
+    "Ol' Rustlocke was found dead, his name engraved in his helmet.")
+q(632, "The Thandol Span", "Wetlands", 31, DI,
+    "Rustlocke had run into a Dark Iron ambush, and a parchment lay by his clenched fist.",
+    "The grim news of Rustlocke had to reach Rhag Garmason, along with the parchment he had died holding.",
+    "Rhag Garmason called the news grave.",
+    "The parchment and the news of Rustlocke's death reached Rhag.")
+q(633, "The Thandol Span", "Wetlands", 31, DI,
+    "Rustlocke's parchment showed that Kam Deepfury had arranged a cache of explosives just across the Thandol Span. If it reached the bridge, the supply line north would be cut.",
+    "Rustlocke's death was not to be in vain, Rhag said. The explosives cached in the Arathi Highlands had to be destroyed.",
+    "The remaining bridge was saved, a great service to King Magni and Khaz Modan. Rhag hoped they could hold until reinforcements came.",
+    "Kam Deepfury's cache was destroyed and the last span stood. Reinforcements were still nowhere in sight.", 4)
+q(637, "Sully Balloo's Letter", "Ironforge", 30, BL,
+    "A waterlogged, war-torn envelope from the Thandol Span came apart, leaving a few pages addressed to Mrs. Sara Balloo of Ironforge.",
+    "Sully Balloo's last letter began with the words My dear Sara, and was meant for his wife in Ironforge.",
+    "Sara Balloo could hardly believe her Sully lay pinned beneath the icy waters. She took his letter to read.",
+    "Sully's letter reached Sara in Ironforge, and with it the news of where he had died.", 4)
+q(683, "Sara Balloo's Plea", "Ironforge", 30, BL,
+    "Sara Balloo had a note for King Magni Bronzebeard, but grief kept her from going before him herself.",
+    "Sara's plea was meant for King Magni, carried by someone known for service to the Alliance.",
+    "Magni had heard of the messenger's service to the Alliance, and took a moment to read Sara's letter.",
+    "The King of Ironforge received Sara Balloo's plea.")
+q(686, "A King's Tribute", "Ironforge", 30, BL,
+    "Magni could not bring Sully Balloo back, but he could honor him. He commissioned a memorial from Ironforge's Grand Mason.",
+    "The loss of every dwarf in the Alliance's wars weighed on Magni. He sent word to the Grand Mason to build a memorial to Sully Balloo.",
+    "The Grand Mason was impressed that King Magni himself had sent word. It had to be important.",
+    "Magni's commission reached the Grand Mason, who took it as a matter of great importance.")
+q(689, "A King's Tribute", "Ironforge", 31, BL,
+    "For a lasting memorial, the Grand Mason wanted Alterac Granite from Darrow Hill in Hillsbrad.",
+    "The Grand Mason grumbled about whether there would ever be peace, then asked for the finest stone, Alterac Granite.",
+    "The granite was better than the Grand Mason had imagined, and he had quite an imagination.",
+    "Alterac Granite reached the Grand Mason, enough to begin the memorial to Sully Balloo.")
+q(700, "A King's Tribute", "Ironforge", 31, BL,
+    "The memorial to Sully Balloo was complete, built of granite from troubled Lordaeron, and the King was to be told.",
+    "The Grand Mason was pleased with the memorial and sent word of it to King Magni.",
+    "Magni said the granite was a small token beside a great dwarf's life. He hoped the memorial would remind those of the future that brave soldiers like Sully Balloo gave their lives for them.",
+    "The memorial to Sully Balloo stood finished. Magni hoped it would remind future generations what such soldiers had given.", 5)
+P.questIDs[269].highlight = {"Bishop Farthing read Jitters's account in Stormwind and warned that Morbent Fel's enchantments would turn aside any ordinary weapon.", "In the Cathedral of Light, Farthing heard of the plan to face Morbent Fel and said a weapon proof against dark enchantments would be needed."}
+P.questIDs[325].highlight = {"Morbent's Bane, forged from Lightforge Iron by Grimand Elmore, reached Sven. Morbent Fel would fall, he declared.", "Sven took the finished weapon from Stormwind and judged it proof against the necromancer's protections."}
+P.questIDs[293].highlight = {"Archbishop Benedictus cleansed the Cursed Eye of Paleth from the Third Fleet, saying it had witnessed a terrible tragedy.", "The Eye of Paleth from the Intrepid's strongbox was cleansed in Stormwind's Cathedral of Light."}
+P.questIDs[633].highlight = {"Kam Deepfury's cache of explosives across the Thandol Span was destroyed, and the remaining bridge was saved for Khaz Modan.", "Rustlocke's parchment led to the Dark Iron explosives across the span. With them destroyed, Rhag Garmason's last bridge still stood."}
+P.questIDs[472].highlight = {"Longbraid the Grim was found alive near fallen Dun Modr, and glad to hear that young Harlo had survived.", "Word from Menethil reached Longbraid. His regiment was a shadow of itself, but Harlo lived."}
+P.questIDs[700].highlight = {"The memorial to Sully Balloo was finished in Alterac Granite. Magni hoped it would remind the future of what brave soldiers gave.", "King Magni heard the memorial to Sully Balloo was complete, a small token, he said, beside a great dwarf's life."}
+
+-- Overnight 2026-11-05, the capitals and Loch Modan: VanCleef's unsent letter
+-- through Lescovar and the audience at Stormwind Keep (Prestor is never named;
+-- her identity belongs to the discovery policy), Senir's report to the Senate,
+-- Daryl the Bold's challenges, the Stormpike errands between Loch Modan and
+-- Stormwind, Brock's honorary picks by gryphon, and Bingles of the movement.
+-- The Stockade Riots (391) is dungeon work and stays with the dungeon pack.
+P.threads.alliance_lescovar = "the Defias reach inside Stormwind"
+P.threads.alliance_brock = "Brock's honorary picks"
+local LS, BR = "alliance_lescovar", "alliance_brock"
+local SW, IF = "Stormwind City", "Ironforge"
+q(373, "The Unsent Letter", SW, 22, LS,
+    "Edwin VanCleef had carried an unsent letter, recently written and sealed, addressed to Baros Alexston, the City Architect of Stormwind.",
+    "Among VanCleef's things was a sealed letter for Baros Alexston at the City Hall in Cathedral Square.",
+    "Baros was surprised VanCleef was dead; he had been a peerless fighter in his youth. Reading the letter, he called Edwin an idealist and a romantic still, consumed by revenge, though Baros was not sure he could blame him.",
+    "The letter reached Baros Alexston, who found VanCleef unchanged by the years and did not wholly blame him for his bitterness.", 4)
+q(389, "Bazil Thredd", SW, 22, LS,
+    "Baros explained that he and VanCleef had been Stonemasons. The nobles refused to pay them for rebuilding Stormwind, and VanCleef led a riot and left swearing revenge. His lieutenant Bazil Thredd was held in the Stockade.",
+    "Bazil Thredd, VanCleef's lieutenant, might know more of his plans, and he was a prisoner in the Stockade.",
+    "Warden Thelwater was in the middle of a riot and in no mood for questions about Thredd. He suspected the asker of being one of Thredd's cronies.",
+    "The Stockade's warden had a crisis on his hands, every cell open, and wanted to know why anyone would ask after Bazil Thredd.")
+q(392, "The Curious Visitor", SW, 29, LS,
+    "Thredd had had no visitors for years, then regular ones from a quiet man whose papers named him Maelik. Thelwater had his suspicions and a description.",
+    "Thelwater's description of Thredd's visitor, Maelik, went to Baros Alexston.",
+    "Baros did not know the name or the description. The man could be a Stonemason or a Defias, but someone better connected might recognize him.",
+    "The name Maelik meant nothing to Baros, and he began to think who else might know.")
+q(393, "Shadow of the Past", SW, 29, LS,
+    "Baros sent the description to Master Mathias Shaw of SI:7 in Old Town, who owed him a favor and knew most of the city's shady dealings.",
+    "If anyone in Stormwind could name Thredd's visitor, it was Mathias Shaw.",
+    "Shaw knew the man, though not as Maelik. He was an assassin who also used the name Marzon, and he worked for Lord Gregor Lescovar, a noble of shady reputation.",
+    "Maelik was Marzon, an assassin, Shaw said, and Marzon worked for Lord Gregor Lescovar.", 4)
+q(350, "Look to an Old Friend", SW, 31, LS,
+    "With VanCleef and Thredd dead, there was no testimony against Lescovar, and a well-connected noble stood above the law. Shaw sent the matter to Trias in the Trade District.",
+    "Shaw loathed to ask, but he knew someone who would help against Lescovar, and sent word to Trias.",
+    "Trias could hardly believe Shaw wanted his help again, and wanted the whole account of the Defias from the beginning.",
+    "The news reached Trias in the Trade District, who asked to hear everything, leaving nothing out.")
+q(2745, "Infiltrating the Castle", SW, 31, LS,
+    "Trias would help, but the justice needed against Lescovar and Marzon was not a legal one. A gnome named Tyrion had been watching Lescovar at the castle for weeks.",
+    "Trias sent word to his old friend Tyrion, hidden near Stormwind Keep with his eye on Lescovar.",
+    "Tyrion nearly jumped out of the bushes, then demanded quiet before the guards noticed anyone else hiding there with him.",
+    "Tyrion was found in the castle bushes, cross at being startled and anxious about the guards.")
+q(2746, "Items of Some Consequence", SW, 31, LS,
+    "Tyrion had a disguise in mind to get his Spybot past Lescovar's guards. He needed silk and a couple of apples from Clara's farm outside the city.",
+    "Tyrion had been following Lescovar for links to the Twilight's Hammer, not the Defias, but now wanted silk and apples for his plan.",
+    "Tyrion had the rest of his gear in his pack and was ready to set out the plan in detail.",
+    "With the silk and apples in hand, Tyrion could disguise Spybot and lay out the plan.")
+q(434, "The Attack!", SW, 31, LS,
+    "In disguise, Spybot would draw Lescovar into the garden to meet Marzon, and Lescovar would dismiss his guards. Once the Defias were mentioned, both men had to die before the guards returned.",
+    "Trias had fed Marzon false word of a meeting, and Lescovar would wait for him in the garden without his guards.",
+    "Lescovar and Marzon were dead. Trias gave thanks for the discretion, and said he would keep an eye on such a useful ally.",
+    "The meeting in the garden ended with Lord Lescovar and his assassin dead. Trias advised keeping a clean nose.", 5)
+q(394, "The Head of the Beast", SW, 31, LS,
+    "Shaw needed to hear that Lescovar had been dealt with. Trias expected the news to go on to the nobles, who only thought they ruled the city.",
+    "The Lescovar threat was ended, and Mathias Shaw in Old Town was owed the account.",
+    "Shaw called the justice swift and hoped never to be its quarry. As master of assassins he could not criticize; he thanked the deed on Stormwind's behalf.",
+    "Shaw heard that Lescovar was dead and thanked the service done to the people of Stormwind.")
+q(395, "Brotherhood's End", SW, 31, LS,
+    "Baros Alexston had come looking for news of the Defias. Shaw advised telling everything except whose hand slew Lescovar, and never speaking of Trias.",
+    "Baros wanted to report the Brotherhood's affairs to the nobles, and Shaw had advice on what to leave out.",
+    "Baros had heard Lescovar was found dead. He was grateful to be saved, with many others, from VanCleef's revenge.",
+    "Lord Lescovar's death reached Baros as news, and he gave thanks that VanCleef's revenge would not touch him.")
+q(396, "An Audience with the King", SW, 31, LS,
+    "Baros had prepared a report for the King and wanted it delivered at Stormwind Keep, along with the account of what had been found.",
+    "The report on the Defias affair was bound for an audience at Stormwind Keep.",
+    "Highlord Bolvar Fordragon commended the service to Stormwind; VanCleef's plans could have done the kingdom great harm. He gave a token of the King's appreciation, since the King was away on a diplomatic mission.",
+    "At Stormwind Keep, the King's regent received Baros's report and rewarded the service in the King's absence.", 5)
+q(291, "The Reports", IF, 10, M,
+    "Senir's finished report was for Senator Barin Redstone, a sour sort, in the chamber where King Magni held court. Senir asked that nobody mention who had helped him.",
+    "The report from Kharanos had to reach the Senate in Ironforge.",
+    "Redstone read the report and was outraged. Whitebeard had acted on the authority of the King, and the Senate would not be pleased. He ordered the messenger out.",
+    "Senator Redstone took Senir's report badly, fuming that Whitebeard had taken matters into his own hands.")
+q(257, "A Hunter's Boast", "Loch Modan", 16, L,
+    "Daryl the Bold did not think anyone could match him, and offered his bow or gun if a flock of Loch Modan buzzards could be taken down in fifteen minutes.",
+    "Daryl the Bold set a challenge against the buzzards nesting in Loch Modan, sure it would fail.",
+    "Daryl was astonished at the success, called the buzzards small specimens any boy could kill, and kept his word anyway.",
+    "The buzzards were down in time, and Daryl the Bold, grumbling, held to his word.")
+q(258, "A Hunter's Challenge", "Loch Modan", 17, L,
+    "Daryl's second test was boar hunting in twelve minutes, no Coldridge hunt. He offered the shirt off his back if it succeeded, and started telling how he got his famous scar.",
+    "Daryl the Bold still doubted the newcomer, and set a boar hunt against the clock.",
+    "Daryl offered to be discreet about the struggle, then realized the boars were dead. He was not surprised, he said, and asked what bet.",
+    "The boars were killed in time, and Daryl the Bold forgot all about his bet.")
+q(1339, "Mountaineer Stormpike's Task", "Loch Modan", 15, L,
+    "Mountaineer Stormpike, at the top of the northern guard tower, was looking for a runner.",
+    "Stormpike had a task he could not do while on guard, and wanted someone to travel for him.",
+    "The task Stormpike could not do on guard would take its runner far from Loch Modan.",
+    "At the northern tower, Stormpike explained his errand, a long way from Loch Modan.")
+q(1338, "Stormpike's Order", SW, 14, L,
+    "Mountaineer Stormpike wanted a shield from Furen Longbeard, the dwarven armorsmith in Stormwind's Dwarven District.",
+    "Furen Longbeard's work was the finest, Stormpike thought, though he could not see why the smith lived among humans so far from Ironforge.",
+    "Furen recognized an order from the Stormpikes, a proud clan and a rich one, and promised to start on the shield by the end of the day.",
+    "Stormpike's order reached Furen Longbeard in Stormwind, who agreed to make the shield.")
+q(353, "Stormpike's Delivery", "Loch Modan", 15, L,
+    "Grimand Elmore in Stormwind had finished a weapon for Mountaineer Gringer Stormpike, far away at the northern guard tower in Loch Modan.",
+    "The Stormpikes had fine tastes, and Grimand's finished axe was bound for Loch Modan.",
+    "Stormpike was delighted that Grimand had finally finished his axe, eager to try it on troggs and kobolds, and paid for the long delivery.",
+    "The axe from Stormwind reached Stormpike, who could not wait to use it.")
+q(6387, "Honor Students", "Loch Modan", 10, BR,
+    "Brock Stoneseeker had a list of mining students who had earned honorary picks. The list was for Golnir Bouldertoe in Ironforge, by gryphon from Thelsamar.",
+    "Brock's best mining students had earned their picks, and the list had to reach Ironforge.",
+    "Thorgrum Borrelson offered a gryphon to Ironforge for a small fee.",
+    "The gryphon master in Thelsamar was ready to carry Brock's list.")
+q(6391, "Ride to Ironforge", IF, 10, BR,
+    "Thorgrum's gryphons flew to the Great Forge District, near the Deep Mountain Mining Guild where Golnir Bouldertoe worked.",
+    "Brock's list was for Golnir Bouldertoe in Ironforge's mining guild.",
+    "Golnir had a batch of honorary picks ready; he only had to chisel in the students' names.",
+    "Golnir took the list and set to chiseling the students' names into the picks.")
+q(6388, "Gryth Thurden", IF, 10, BR,
+    "The honorary picks were ready for Brock's students, and Gryth Thurden's gryphons could carry them back to Thelsamar.",
+    "Golnir sent the finished picks with the Ironforge gryphon master, Gryth Thurden.",
+    "Gryth agreed to fly the picks to Thelsamar, since its gryphon master already knew the traveler.",
+    "Ironforge's gryphon master was ready to carry the picks back to Loch Modan.")
+q(6392, "Return to Brock", "Loch Modan", 10, BR,
+    "Gryphons flew only to places their riders had already been, and Thelsamar was one. Brock's picks could go straight to him.",
+    "The honorary picks were bound for Brock Stoneseeker in Thelsamar.",
+    "Brock had the picks for his students, eager to use them on Loch Modan's ore, and paid the travel costs.",
+    "The picks reached Brock in Thelsamar, ready for his mining students.")
+q(2039, "Find Bingles", "Loch Modan", 15, G,
+    "Bingles had flown a reconnaissance mission over Gnomeregan and not reported back in over a week. Gnoarn feared he had blown himself up over the loch.",
+    "The movement had lost contact with Bingles, last seen flying over Loch Modan.",
+    "Bingles was alive, offended that Gnoarn doubted him, and in urgent need of help for the movement.",
+    "Bingles was found by the loch, and the movement needed him working again.")
+q(2038, "Bingles' Missing Supplies", "Loch Modan", 15, G,
+    "Bingles had crashed into the loch, and troggs from the nearby island had stolen his tools and his Blastenheimer Blastencapper explosives.",
+    "Without his gyrocopter or his explosives, Bingles said, the movement had no chance.",
+    "The tools and explosives came back. The troggs and leper gnomes in Gnomeregan, Bingles said, would soon feel a gnomish air assault.",
+    "The movement's supplies came back from the trogg island, and Bingles promised an air assault on Gnomeregan.")
+q(2041, "Speak with Shoni", SW, 15, G,
+    "Shoni the Shilent, commander of the movement's underground assault crew, needed help in Stormwind with her gyrodrillmatic excavationators.",
+    "The battle for Gnomeregan reached Stormwind, where Shoni the Shilent worked among the dwarves.",
+    "Shoni asked whether the messenger brought word from central command.",
+    "The movement's message reached Shoni in Stormwind.")
+P.questIDs[373].highlight = {"VanCleef's unsent letter reached Baros Alexston, who found him an idealist still, consumed by revenge, and could not wholly blame him.", "Baros Alexston read the letter VanCleef never sent. The years had not changed Edwin, he said."}
+P.questIDs[393].highlight = {"Mathias Shaw named Thredd's quiet visitor as Marzon, an assassin in the pay of Lord Gregor Lescovar.", "Thredd's visitor Maelik was the assassin Marzon, Shaw said, and Marzon served Lord Lescovar."}
+P.questIDs[434].highlight = {"Lord Lescovar met Marzon in the castle garden without his guards, and both men died there. Trias thanked the discretion.", "Trias's trap in the garden ended Lescovar's dealings with the Defias, and his assassin's with him."}
+P.questIDs[396].highlight = {"At Stormwind Keep, Highlord Bolvar Fordragon commended the work against VanCleef's plans and gave a token in the absent King's name.", "Baros's report reached Stormwind Keep. VanCleef's revenge had been stopped, and Bolvar rewarded the service for the King."}
+P.questIDs[291].highlight = {"Senir's report reached Senator Barin Redstone, who was outraged that Whitebeard had acted on the King's authority.", "Redstone read Senir's report and swore the Senate would not be pleased."}
+
+-- Overnight 2026-11-05, Darkshore continued: Prospector Remtravel's fossil
+-- from Darkshore to Menethil, the Darkshore stages of the Tower of Althalaxx
+-- (the Ashenvale stages 967, 970, 973, 1140 and 981 belong to the world lane),
+-- Volcor's rescue, Wizbang's lost parts and Fandral's message to Onu.
+-- Flagongut's stone is recovered, not shown to work; the cult's defeat is
+-- only Athrikus's death in 1143.
+P.threads.alliance_remtravel = "Prospector Remtravel's fossil"
+P.threads.alliance_althalaxx = "the Cult of the Dark Strand"
+P.threads.alliance_volcor = "the search for Volcor"
+local RT, AL, VC = "alliance_remtravel", "alliance_althalaxx", "alliance_volcor"
+q(730, "Trouble In Darkshore?", "Darkshore", 14, RT,
+    "Chief Archaeologist Greywhisker in Darnassus had heard nothing from his crew in Darkshore for weeks. Recent finds in Khaz Modan, he said, showed a power that threatened all of Azeroth.",
+    "Greywhisker wanted a clue to where his missing dig crew had gone, starting in Auberdine.",
+    "Archaeologist Hollee was relieved that Greywhisker had sent for help.",
+    "In Auberdine, Hollee welcomed word from Greywhisker; her crew needed help.")
+q(729, "The Absent Minded Prospector", "Darkshore", 20, RT,
+    "Hollee had worked under the great Prospector Remtravel until golems sprang from the ground and overran the dig. Remtravel never seemed to notice, and Hollee had run to Auberdine for help.",
+    "Prospector Remtravel was famous at Ironforge's academy, and famously oblivious. Hollee feared for him at the overrun dig south of Auberdine.",
+    "Remtravel was alive, asking for his stone brush, his missing fossil and Hollee, in no particular order.",
+    "The prospector was found at the dig, mistaking the newcomer for Hollee and more worried about his lost fossil than the golems.")
+q(731, "The Absent Minded Prospector", "Darkshore", 20, RT,
+    "Remtravel would not leave without the mysterious fossil, or his brush. The Explorers' League in Darnassus wanted some sign of his work.",
+    "The fossil hunt meant guarding Remtravel through a dig full of golems, while he kept confusing fossil and brush.",
+    "Hollee thanked the stars that Remtravel was safe. She had warned that he was absent minded, and could not believe he had stayed among those creatures.",
+    "Remtravel came out of the dig alive, to Hollee's great relief.", 4)
+q(741, "The Absent Minded Prospector", "Darnassus", 20, RT,
+    "Remtravel wanted his mysterious fossil sent to the Explorers' League, but Hollee would not leave Darkshore without him.",
+    "The fossil from Remtravel's dig was bound for Chief Archaeologist Greywhisker in Darnassus.",
+    "Greywhisker was delighted; it was just like Remtravel to discover such a find.",
+    "The fossil reached Greywhisker in Darnassus, who credited Remtravel with the find.")
+q(942, "The Absent Minded Prospector", "Wetlands", 20, RT,
+    "The fossil resembled one Greywhisker had seen at an Explorers' League conference, brought by an archaeologist named Flagongut who believed it held a power. Flagongut was waiting in Menethil's Deepwater Tavern.",
+    "Flagongut, last heard of in Menethil Harbor, might unlock the secret of Remtravel's fossil. The ship from Auberdine could take it there.",
+    "Flagongut was amazed that the fossil came from distant Kalimdor.",
+    "In the Deepwater Tavern, Flagongut marveled at a fossil from Kalimdor.")
+q(943, "The Absent Minded Prospector", "Wetlands", 24, RT,
+    "Flagongut's Stone of Relu was the key to the fossils, but raptors had swallowed it on the road to Whelgar's dig. Prospector Whelgar held the original fossil.",
+    "Flagongut needed both the Stone of Relu, lost inside a mottled raptor, and the original fossil held by Prospector Whelgar.",
+    "Both fossils and the stone were with Flagongut now, and he meant to see whether the stone would unlock their powers.",
+    "With the Stone of Relu recovered and Whelgar's fossil beside Remtravel's, Flagongut set to deciphering them.", 4)
+q(965, "The Tower of Althalaxx", "Darkshore", 18, AL,
+    "Elissa Starbreeze, charged with protecting Auberdine, had sent Balthule Shadowstrike to watch the Tower of Althalaxx. He was overdue.",
+    "Elissa worried that Balthule had met some danger near the Tower of Althalaxx to the northeast.",
+    "Balthule was well, with troubling news for Elissa and no way to send it.",
+    "Balthule was found watching the tower, glad of a messenger for the news he had.")
+q(966, "The Tower of Althalaxx", "Darkshore", 18, AL,
+    "Warlocks had settled around and inside the tower. Balthule had scraps of their parchment but needed more, and warned against entering the tower itself.",
+    "Balthule wanted more of the warlocks' scrolls to piece together who they were.",
+    "The scrolls named the Cult of the Dark Strand, a group Balthule had never heard of. Warning had to go to Delgren at once.",
+    "The cult's name was the Dark Strand, Balthule learned, but nothing of its plans; Delgren had to be told immediately.")
+q(1167, "The Tower of Althalaxx", "Darkshore", 28, AL,
+    "Before facing Athrikus, Delgren advised consulting Balthule, who had kept watch on the tower.",
+    "Balthule might know of recent changes at the tower before the final strike.",
+    "Balthule had seen a blinding flash in the tower's upper room, then screams, and lightning striking the ground.",
+    "Strange things had happened at the tower, Balthule said, a flash of light, screams and lightning.")
+q(1143, "The Tower of Althalaxx", "Darkshore", 31, AL,
+    "Athrikus Narassin, an ancient and powerful warlock, held the top of the tower among deadlier warlocks than before. Balthule thought it time to strike.",
+    "With his soulgems gone, Athrikus was weakened, and Balthule wanted him faced at the top of the Tower of Althalaxx.",
+    "Athrikus was dead. Balthule hoped the demonic forces would be driven back, though he expected them to regroup and return.",
+    "Athrikus Narassin lay dead at the top of the tower. Balthule expected the demons to regroup, and meant to be better prepared.", 5)
+q(986, "A Lost Master", "Darkshore", 20, VC,
+    "Terenthis wanted to help Grimclaw find his master Volcor, and offered to make a cloak that would let its wearer pass Darkshore's creatures unhindered. It needed five fine moonstalker pelts.",
+    "A magical cloak for the search for Volcor needed pelts from the moonstalker sires and matriarchs near Wildbend River.",
+    "Terenthis set to work on the cloak, warning that its illusion would break if its wearer did much more than speak.",
+    "The pelts were enough for Terenthis's cloak, and he asked for a few moments to make it.")
+q(993, "A Lost Master", "Darkshore", 20, VC,
+    "The cloak's magic would last perhaps five minutes. Grimclaw waited by the road to point the way to his master's cave.",
+    "Volcor was somewhere in a cave south of Auberdine, and Grimclaw knew where.",
+    "Volcor, wounded by the furbolgs, was glad Terenthis had found help, and admired the moonstalker cloak through his coughing.",
+    "The search ended in the cave, where Volcor, hurt by the furbolgs, needed a moment's rest before he could talk.", 4)
+q(994, "Escape Through Force", "Darkshore", 22, VC,
+    "Volcor chose to fight his way down to the road, where Grimclaw waited.",
+    "Getting Volcor out meant fighting through the furbolgs to the road.",
+    "Terenthis was pleased to see the rescue done. Volcor's escape, he said, gave him faith that Darkshore's troubles could be overcome.",
+    "Volcor made it out, and Terenthis took heart from the rescue.")
+q(995, "Escape Through Stealth", "Darkshore", 20, VC,
+    "Volcor chose to sneak out instead, and would make his own way to Auberdine.",
+    "The quiet way out of the cave suited Volcor, who expected to reach Auberdine first.",
+    "Back in Auberdine, Terenthis welcomed the news of Volcor's escape and took it as a sign that Darkshore could overcome its troubles.",
+    "Volcor slipped away safely, and Terenthis said the rescue gave him faith.")
+q(1579, "Gaffer Jacks", "Darkshore", 12, J,
+    "Wizbang Cranktoggle had come to Auberdine for quiet to invent in, and had dropped his box of gaffer jacks overboard after too much to drink on the voyage.",
+    "Without his gaffer jacks, Wizbang could not tune his stintle pegs, and they lay somewhere in the sea off Darkshore.",
+    "Wizbang could not believe the gaffer jacks had been fished up, and called the finder the luckiest in Kalimdor.",
+    "The box of gaffer jacks came up out of the sea, to Wizbang's amazement.")
+q(1580, "Electropellers", "Darkshore", 12, J,
+    "Testing a self-propelled exploding duck decoy while a little tipsy, Wizbang had woken in Auberdine with singed hair and his bag of electropellers gone.",
+    "Wizbang's electropellers were somewhere in a Darkshore lake or stream, and he needed them for his duck decoys.",
+    "Wizbang called the finder the best fisherman he had ever seen, and gave fishing gear in thanks.",
+    "The electropellers came out of the water, and Wizbang's research on duck decoys could go on.")
+q(952, "Grove of the Ancients", "Darkshore", 17, J,
+    "Fandral Staghelm had a message for Onu, the Ancient of Lore, in the Grove of the Ancients south of Auberdine. Onu had been waiting for it, as Fandral had waited for news from the Oracle Glade.",
+    "The Arch Druid's message for Onu had to cross to Darkshore, likely by hippogryph.",
+    "Onu remarked that the Arch Druid always seemed in a hurry. The forest knew all would come in its appointed time, and Shan'do Stormrage had understood that.",
+    "Fandral's message reached Onu, who found the Arch Druid's haste strange.")
+P.questIDs[731].highlight = {"Prospector Remtravel came safely out of his golem-overrun dig with his fossil, to Archaeologist Hollee's relief.", "Hollee thanked the stars that the absent-minded Remtravel was safe, after he had insisted on staying among the golems."}
+P.questIDs[943].highlight = {"The Stone of Relu came back out of a raptor, and Flagongut had both fossils to try it on.", "Flagongut received the Stone of Relu and Whelgar's fossil, ready to see what the old relics held."}
+P.questIDs[1143].highlight = {"Athrikus Narassin, master of the Cult of the Dark Strand, was dead at the top of the Tower of Althalaxx. Balthule expected the demons to regroup.", "The Tower of Althalaxx lost its master when Athrikus died, and Balthule meant to be ready for whatever came back."}
+P.questIDs[993].highlight = {"Wrapped in Terenthis's moonstalker cloak, the search found Volcor alive in a cave south of Auberdine, wounded by furbolgs.", "Grimclaw led the way to his master, and Volcor was found hurt but alive."}
+P.questIDs[952].highlight = {"Fandral's message reached Onu in the Grove of the Ancients. The Ancient of Lore found the Arch Druid's haste strange; Shan'do Stormrage had known better.", "Onu took the Arch Druid's message and remarked that all things came in their appointed time."}
+
+-- Overnight 2026-11-05, city errands: the Trade District deliveries, Zardeth's
+-- stout for Lord Wishock (what the brew does is never shown), the overdue
+-- library book, Brother Kristoff's copy of The Stresses of Iron by way of
+-- Northshire and Lakeshire, Baros's compass, Grimand's delivery referral, and
+-- the dwarven errands for crocolisk skins and incendicite.
+P.threads.alliance_stresses = "the copy of The Stresses of Iron"
+local SI = "alliance_stresses"
+q(332, "Wine Shop Advert", SW, 2, F,
+    "Renato Gallina handed out pamphlets for his family's wine shop by the Trade District canals, good for a free bottle from his sister Suzetta.",
+    "The Gallinas claimed to sell the best wine in Stormwind, and Renato's pamphlet promised a complimentary bottle of their pinot noir.",
+    "Suzetta Gallina handed over a bottle of the special pinot noir, insisting it had no equal in all of Azeroth.",
+    "The pamphlet earned its bottle of pinot noir at the Gallinas' shop.")
+q(333, "Harlan Needs a Resupply", SW, 2, F,
+    "Harlan Bagley was selling armor and sturdy clothes as if everyone expected a hard season ahead, and he was running out of knitted clothing. His request was for Rema Schneider at the Canal Tailor and Fit Shop.",
+    "Business was booming for Harlan Bagley, and Rema Schneider supplied the knitted clothing he needed.",
+    "Rema was glad Harlan's business was booming, but wondered why so many people needed armor. She had heard nothing of open war, and asked whether the nobles were keeping something back.",
+    "Harlan's order reached Rema, who promised the supplies and wondered aloud what the nobles were not telling people.")
+q(334, "Package for Thurman", SW, 2, F,
+    "Rema's son Thurman, an apprentice at Larson Clothiers in the Mage Quarter, had rushed off without his shears and needles.",
+    "Without his sewing kit, Thurman could not do his apprentice work at Larson Clothiers.",
+    "Thurman groaned. He had hoped that forgetting his kit would get him out of work, and now he would have to help the Larsons after all.",
+    "The sewing kit reached Thurman, who had been counting on its absence to spare him a day's work.")
+q(337, "An Old History Book", SW, 25, F,
+    "A mud-caked book stamped with the seal of the Stormwind Library, The History of Stormwind, had been checked out and never returned.",
+    "The Stormwind Library's seal on the first page of the old book showed where it belonged.",
+    "Milton Sheaf said the book had not rested on his shelves since before Stormwind was rebuilt. Once restored, it would join the rare books collection.",
+    "The History of Stormwind came home to the Royal Library after many years, to be restored for the rare books.")
+q(343, "Speaking of Fortitude", SW, 24, SI,
+    "Brother Kristoff wanted to quote a book on metallurgy, The Stresses of Iron, in a speech on the Fortitude of the Spirit. The Royal Library's head librarian, Milton Sheaf, would know where it was.",
+    "Kristoff's speech needed passages from The Stresses of Iron, kept in the Royal Library in Stormwind Keep.",
+    "Milton Sheaf was happy to help Brother Kristoff with his speech, once he knew which book on metallurgy it was.",
+    "The request reached Milton Sheaf, who had many books on metallurgy and asked which one Kristoff needed.")
+q(344, "Brother Paxton", E, 24, SI,
+    "The Stresses of Iron, written by the dwarven miner Margulf Blaggon, had gone to Northshire Abbey so Brother Paxton could copy it. That had been months ago.",
+    "The library's book had gone to Brother Paxton at Northshire Abbey months before, and Sheaf wondered what was keeping him.",
+    "Paxton admitted, a little embarrassed, that he still had the book and was not ready to give up the original.",
+    "The book was at Northshire, and Brother Paxton had not finished his copy.")
+q(345, "Ink Supplies", R, 24, SI,
+    "Paxton's own ink dried quickly, too quickly, and his last batch had dried up before the copy was done. He needed Rethban Iron Ore from Foreman Oslow in Lakeshire.",
+    "Paxton's quick-drying ink called for Rethban Iron Ore, and Lakeshire's foreman usually supplied it.",
+    "Oslow was busy fortifying Lakeshire and repairing the damage from orc attacks. If Paxton wanted ore, it would have to be gathered by hand.",
+    "The request reached Foreman Oslow, who had no time to spare from Lakeshire's defenses.")
+q(347, "Rethban Ore", E, 24, SI,
+    "Rethban ore, named for Bart Rethban, gave scribes a dark, flat dye. Gnoll drudgers had taken over the Rethban Caverns north of Lakeshire and were mining it themselves.",
+    "With Lakeshire's people too busy to gather it, the Rethban ore for Paxton's ink had to come from the gnoll-held caverns.",
+    "Paxton was delighted. The ore would make his dye, and he could finish copying The Stresses of Iron.",
+    "The Rethban ore reached Paxton at Northshire, enough to finish his copy.")
+q(346, "Return to Kristoff", SW, 24, SI,
+    "With his copy finished, Paxton sent the original Stresses of Iron back, with an apology to Milton for the delay.",
+    "The original Stresses of Iron was at last free to go to Brother Kristoff.",
+    "Kristoff had the book for his speech and asked the Light to shine on body and spirit both.",
+    "The Stresses of Iron reached Brother Kristoff, who gave a priest's blessing in thanks.")
+q(399, "Humble Beginnings", SW, 15, LS,
+    "Baros Alexston had grown up on a farm in Westfall, now burned and held by thieves. His father thought the boy's first compass was still hidden there.",
+    "The Alexston Farmstead lay west of Sentinel Hill, and somewhere on it was a compass Baros had treasured as a boy.",
+    "The compass was of no practical use to Baros, but he valued it deeply and thanked the finder for going so far for it.",
+    "Baros's first compass came back from the ruined farm in Westfall, a keepsake of the boy he had been.")
+q(335, "A Noble Brew", SW, 30, F,
+    "Lord Wishock was lobbying the House of Nobles to investigate Zardeth's hidden establishment. Zardeth meant to keep him busy, and needed a Tear of Tilloa from the Garden of Stalvan and a Musquash Root from below the Stonewrought Dam.",
+    "Zardeth of the Black Claw had a plan for Lord Wishock, and it began with a white flower from Duskwood and a root from the Wetlands.",
+    "Zardeth was pleased; the flower and the root were fine samples.",
+    "The Tear of Tilloa and the Musquash Root reached Zardeth, who called them fine.")
+q(336, "A Noble Brew", SW, 30, F,
+    "Wishock spent his days trying to close Zardeth's tavern and his nights running up a bill upstairs. Zardeth had brewed him a special Black Claw stout.",
+    "Zardeth sent his Black Claw stout to Lord Wishock in the Hall of Petitioners, promising it had quite a kick.",
+    "Wishock took the stout, called its bearer a servant, tipped a copper and waved them out of sight so he could enjoy his drink.",
+    "Lord Wishock accepted the fine-looking stout with a copper and a dismissal.")
+q(1097, "Elmore's Task", SW, 15, L,
+    "Smith Argus in Goldshire had word that Grimand Elmore, a dwarven weaponsmith in Stormwind, needed a package carried north. Keeping ties strong with the dwarves mattered.",
+    "Grimand Elmore wanted help with a delivery to his homeland, and Argus sent someone to the Dwarven District.",
+    "Grimand was glad to have help with his delivery.",
+    "At the weapon shop in the Dwarven District, Grimand explained the delivery he needed.")
+q(385, "Crocolisk Hunting", "Loch Modan", 15, L,
+    "Marek Ironheart traded in the skins and meat of Loch Modan's crocolisks, which had dug in on the islands of the loch.",
+    "Crocolisk skins brought good money, Marek said, and he was ready to tell how one had nearly taken his hand.",
+    "Marek called the skins excellent specimens, good money for high quality materials.",
+    "The crocolisk skins reached Marek at the lodge, and he paid well for them.")
+q(467, "Stonegear's Search", "Dun Morogh", 23, M,
+    "Pilot Stonegear was always looking for ways to improve his tank's firepower, and had heard rumors of a rare ore.",
+    "Stonegear at Steelgrill's Depot wanted someone to hunt down a rare ore for him.",
+    "Stonegear was glad to see someone eager for adventure, and had a task in mind.",
+    "At the depot, Stonegear explained the search he had in mind.")
+q(466, "Search for Incendicite", "Dun Morogh", 22, M,
+    "Incendicite, a rare and volatile ore, had been found in a cave northwest of Algaz Gate. Stonegear thought it could make cannon shells with a mighty punch.",
+    "Stonegear wanted incendicite ore from the Wetlands, though it was hard to use without blowing oneself up.",
+    "Stonegear meant to find someone to work the incendicite right away, and hoped they would not blow themselves up.",
+    "The incendicite reached Stonegear, ready for someone brave enough to experiment with it.")
+P.questIDs[346].highlight = {"After a long detour through Northshire and Lakeshire, The Stresses of Iron reached Brother Kristoff for his speech.", "Paxton's copy was finished at last, and the original book reached Kristoff with an apology for the delay."}
+P.questIDs[399].highlight = {"Baros Alexston's first compass came back from his family's burned farm in Westfall.", "A boyhood compass from the Alexston Farmstead reached Baros, worth nothing in practice and a great deal to him."}
+
+-- Overnight 2026-11-05, last small batch: Lady Sathrah's sacrifice at the
+-- Temple of the Moon (Elune's acceptance stays a hope), Zardeth's reward, and
+-- Rockgar's call for scouts before the Algaz Gauntlet.
+q(2519, "The Temple of the Moon", "Darnassus", 10, B,
+    "Sister Aquinne in Dolanaar said a once great creature of the forest needed help, a hard task that Priestess A'moora in the Temple of the Moon would explain.",
+    "A difficult task waited at the Temple of the Moon, and Aquinne sent help to Priestess A'moora.",
+    "A'moora received the one Aquinne had sent, ready to explain the task.",
+    "In the Temple of the Moon, Priestess A'moora took up the matter Aquinne had mentioned.")
+q(2518, "Tears of the Moon", T, 12, B,
+    "Lady Sathrah, a great spider once beloved of Elune, had spun silver threads whose dew held healing power for the temple. Now she had gone mad, and A'moora wanted her suffering ended near Wellspring Lake.",
+    "Lady Sathrah was beyond hope, A'moora said with regret, and her silvery spinnerets were to be brought back.",
+    "The forest mourned Lady Sathrah, A'moora said, but it had to be done.",
+    "Sathrah's spinnerets reached A'moora, meant as a sacrifice to Elune so the spider might be reborn at peace.", 4)
+q(2520, "Sathrah's Sacrifice", "Darnassus", 12, B,
+    "Sathrah's spinnerets were to be laid at the temple's central fountain, where the holy water would cleanse the corruption that had driven her mad.",
+    "The sacrifice for Lady Sathrah belonged in the fountain at the heart of the Temple of the Moon.",
+    "The spinnerets were offered at the fountain. A'moora said only in this way could Sathrah be reborn with a renewed spirit, and hoped Elune would accept the sacrifice.",
+    "Sathrah's sacrifice lay in the temple's waters, and A'moora prayed that Elune would accept it.", 4)
+q(397, "You Have Served Us Well", SW, 30, F,
+    "Zardeth had heard that Lord Wishock enjoyed his drink. The warlocks of Stormwind could practice undisturbed, he said, and his servant Zggi held a gift in reward.",
+    "Zardeth sent the one who had served him to claim a gift from his servant Zggi.",
+    "Zggi handed over the gift, admitting he wanted to keep it but knew better than to betray his master.",
+    "Zggi gave up his master's gift, though not gladly.")
+q(468, "Report to Mountaineer Rockgar", "Loch Modan", 21, KD,
+    "Mountaineer Rockgar at Dun Algaz wanted volunteers for a scouting mission through the pass into the Wetlands.",
+    "North up the road beyond the guard tower, Rockgar was gathering scouts for the Wetlands.",
+    "Rockgar welcomed the volunteer and warned that the scouting mission had turned into something messier.",
+    "At Dun Algaz, Rockgar said the scouting had become a messier business.")
+P.questIDs[2520].highlight = {"Lady Sathrah's spinnerets were laid in the Temple of the Moon's fountain, where the holy water would cleanse the corruption that had maddened her.", "Sathrah's sacrifice went into the temple's waters, and A'moora hoped Elune would accept it."}
+
 -- Only unambiguous titles may reuse exact-ID consequences. All chain titles
 -- receive explicitly conservative fallback prose below, including Forever steps.
 local ambiguous = {
@@ -1737,7 +2349,10 @@ local ambiguous = {
     ["Reclaiming the Charred Vale"] = true, ["On Guard in Stonetalon"] = true,
     ["Captain Sander's Hidden Treasure"] = true, ["Messenger to Westfall"] = true,
     ["Messenger to Darkshire"] = true, ["Worgen in the Woods"] = true,
-    ["Look to the Stars"] = true,
+    ["Look to the Stars"] = true, ["How Big a Threat?"] = true,
+    ["The Thandol Span"] = true, ["A King's Tribute"] = true,
+    ["The Absent Minded Prospector"] = true, ["The Tower of Althalaxx"] = true,
+    ["A Lost Master"] = true, ["A Noble Brew"] = true,
 }
 for _, entry in pairs(P.questIDs) do
     if not ambiguous[entry.title] then P.quests[entry.title] = entry end
@@ -1874,6 +2489,41 @@ chain("Look to the Stars", 174,
     "Viktori hoped the stars could explain the change in Duskwood's forest, and his device needed parts.",
     "Viktori's star-viewing device gained another part.",
     "The work on Viktori's device moved another step.")
+chain("How Big a Threat?", 984,
+    "Terenthis wanted to know how far the furbolgs' corruption had spread in Darkshore.",
+    "Corruption among the furbolgs worried Auberdine's defenders after what had happened in Teldrassil.",
+    "Terenthis had help with the furbolg threat near Auberdine.",
+    "Another part of the work against the corrupted furbolgs was finished.")
+chain("The Thandol Span", 631,
+    "The Dark Irons had struck at the Thandol Span and Dun Modr, and Rhag Garmason's defenders were stretched thin.",
+    "The bridge carried Khaz Modan's supply line north, and its defenders waited for reinforcements that did not come.",
+    "Rhag Garmason had help at the Thandol Span.",
+    "Another part of the work at the Thandol Span was finished.")
+chain("A King's Tribute", 686,
+    "King Magni had commissioned a memorial to Sully Balloo, a soldier lost at the Thandol Span.",
+    "The memorial to Sully Balloo passed between the King and Ironforge's Grand Mason.",
+    "The work on Sully Balloo's memorial moved another step.",
+    "Another part of King Magni's tribute was done.")
+chain("The Absent Minded Prospector", 729,
+    "Prospector Remtravel's dig in Darkshore had turned up a mysterious fossil and a great deal of trouble.",
+    "Remtravel's fossil passed between archaeologists in Darkshore, Darnassus and Menethil.",
+    "The work around Remtravel's fossil moved another step.",
+    "Another part of the Explorers' League's business with the fossil was done.")
+chain("The Tower of Althalaxx", 965,
+    "Warlocks of the Cult of the Dark Strand had gathered at the Tower of Althalaxx in northern Darkshore.",
+    "Balthule and Delgren the Purifier were working against the warlocks of the Tower of Althalaxx.",
+    "The work against the Dark Strand had help.",
+    "Another part of the fight against the tower's warlocks was finished.")
+chain("A Lost Master", 986,
+    "Terenthis and Grimclaw were searching for Volcor, missing in Darkshore.",
+    "Grimclaw's master Volcor had not come back from the furbolg country south of Auberdine.",
+    "The search for Volcor moved another step.",
+    "Another part of the work to find Volcor was done.")
+chain("A Noble Brew", 335,
+    "Zardeth of the Black Claw wanted Lord Wishock kept away from his hidden establishment beneath Stormwind.",
+    "Lord Wishock's campaign against Zardeth's tavern had given the warlock a reason to scheme.",
+    "Zardeth's plan for Lord Wishock moved another step.",
+    "Another part of Zardeth's errand was done.")
 -- Shared titles cannot turn the first referral (66) into the execution (98).
 -- Original quest description/completion: corpus_vanilla_quests.txt #66, #98.
 q(66, "The Legend of Stalvan", D, 28, "alliance_stalvan",
@@ -2062,7 +2712,7 @@ A.Lore.RegisterStoryPack("discovery-stalvan-stages", {
             ["importance"] = 3,
             ["thread"] = "alliance_stalvan",
             ["threadLabel"] = "the inquiry into Stalvan",
-            ["why"] = {"Haggard recommended Smitts at the Scarlet Raven Tavern for his knowledge of local history.", "The faded page needed examination by someone Haggard trusted to recognize a local story."},
+            ["why"] = {"Haggard recommended Smitts at the Scarlet Raven Tavern for his knowledge of local history.", "The faded page needed examination by someone Haggard trusted to know the town's past."},
             ["after"] = {"Smitts recognized the handwriting on the page.", "At the Scarlet Raven Tavern, the writing proved familiar to Smitts."},
             ["noteSummary"] = "The Legend of Stalvan is an inquiry in Darkshire. The town hall's records offer a starting point for tracing a name.",
             ["noteSources"] = {"StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt: quest 66 (public inquiry context)"},
