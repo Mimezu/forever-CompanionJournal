@@ -26,6 +26,10 @@ local added = {
     mulgore = {3376, 1656, 770, 99079, 99081, 99101, 99080, 99082, 98430, 98424, 98427, 98435},
     silverpine = {445, 3221, 6321, 6323, 6322, 6324, 477, 478, 481, 482, 479, 95981, 480, 98299},
     barrens = {5041, 3281, 1358, 4021, 6541, 6542, 6543, 878, 5052, 879, 906, 893, 3261, 883, 884, 885, 897},
+    barrens2 = {3921, 3922, 3923, 3924, 819, 821, 822, 1491, 843, 846, 849, 874, 873, 92706, 95494, 95495, 95507, 95508},
+    improved = {747, 750, 752, 753, 780, 755, 757, 767, 771, 772, 748, 756, 759, 760, 745, 746, 743, 744, 761, 766, 764, 367, 368, 369, 792, 794, 823, 827, 815, 817, 834, 835, 842, 844, 840, 845, 869, 848, 868},
+    ancestors = {91921, 5761},
+    zephras = {94414, 92474, 92598, 92473, 92471, 92470, 92544, 92472, 93746, 93090, 95350, 93739},
 }
 local all = {}
 for _, ids in pairs(added) do for _, id in ipairs(ids) do all[#all + 1] = id end end
@@ -43,7 +47,7 @@ for _, id in ipairs(all) do
     for _, line in ipairs(lines) do
         local low = line:lower()
         for _, bad in ipairs(BANNED) do Check(not low:find(bad), "banned word " .. bad .. " in " .. id .. ": " .. line) end
-        Check(not line:find(":", 1, true), "no colon in " .. id .. ": " .. line)
+        Check(not line:gsub("{%a:", "{"):find(":", 1, true), "no colon in " .. id .. ": " .. line)
         Check(not line:find("?", 1, true), "no question in " .. id)
         Check(line:match("[%.!]$"), "full sentence in " .. id .. ": " .. line)
     end
@@ -87,6 +91,31 @@ Check(not After("Betrayal from Within", 879):find("Thork", 1, true), "the kills 
 Check(not After("Betrayal from Within"):find("Thork", 1, true) and not After("Betrayal from Within"):find("Orcbane", 1, true),
     "title-only betrayal names no stage")
 Check(not After("Tribes at War", 878):find("Orcbane", 1, true), "the Bristleback stage does not reveal the raid leaders")
+Check(not After("Samophlange Manual", 3924):lower():find("fixed", 1, true), "the manual does not repair the samophlange")
+Check(not After("Revenge of Gann", 846):find("destroyed", 1, true), "gathering reagents does not destroy the flying machine")
+Check(not After("Revenge of Gann"):find("flying machine", 1, true), "title-only revenge does not choose the finale")
+Check(not After("Chen's Empty Keg"):find("stormstout", 1, true), "title-only keg does not brew")
+Check(not After("The Hermit Tanner", 95495):find("Kul Tiras", 1, true), "the tanner's past is told only in the next stage")
+Check(not After("Aetheen of the Gales", 92471):find("Urs'anah", 1, true), "meeting Aetheen is not the matriarch hunt")
+Check(not After("What Comes Next", 93090):find("Thrall", 1, true), "the blessing is not the meeting with Thrall")
+for _, craft in ipairs({"Cooking", "First Aid", "Alchemy", "Mining", "Fishing", "Tailoring", "Enchanting",
+    "Blacksmithing", "Leatherworking", "Engineering", "Herbalism", "Skinning"}) do
+    local s = assert(A.Lore.QuestStory("Camping 101: " .. craft), "camping title context: " .. craft)
+    Check(not s.zone and not s.thread and #s.why >= 2 and #s.after >= 2, "camping title stays zone- and thread-free: " .. craft)
+    for _, line in ipairs(s.after) do
+        Check(not line:find("Brill", 1, true) and not line:find("Thunder Bluff", 1, true), "camping names no town: " .. craft)
+    end
+end
+Check(not After("Slaying the Beast", 5761):find("Neeru", 1, true), "the Taragaman stage reveals no hidden identity")
+Check(not After("A Firm Response", 93746):find("killed him", 1, true), "Belathaan's death names no killer")
+for _, id in ipairs(added.zephras) do
+    local s = Story(id)
+    for _, field in ipairs({"why", "after", "highlight"}) do
+        for _, line in ipairs(s[field] or {}) do
+            Check(not line:find("Alliance", 1, true), "Zephras stage infers no faction: " .. id)
+        end
+    end
+end
 
 -- Connected days for each Horde start. Each day is one outing in one zone.
 local BASE = os.time({year = 2026, month = 9, day = 1, hour = 18})
@@ -107,6 +136,20 @@ local journeys = {
     {name = "Crossroads to Taurajo", race = "Troll", class = "HUNTER", days = {
         {"The Barrens", {854, 5041, 869, 3281, 1358}}, {"The Barrens", {913, 3261, 878, 5052, 893}},
         {"The Barrens", {883, 884, 879, 906, 897, 885}}, {"The Barrens", {4021, 6541, 6543}}}},
+    {name = "Ratchet and Bael Modan", race = "Tauren", class = "WARRIOR", days = {
+        {"The Barrens", {902, 3921, 3922, 819, 821}}, {"Orgrimmar", {3923}}, {"The Barrens", {3924, 865, 1491, 92706}},
+        {"The Barrens", {95494, 95495, 95507, 95508}}, {"The Barrens", {843, 846, 849, 822, 874, 873}}}},
+    {name = "Thendal to Orgrimmar", race = "SkyElf", class = "SHAMAN", days = {
+        {"Zephras Isle", {92460, 94414, 92474, 92461}}, {"Zephras Isle", {92462, 92463, 92598, 92471, 92473, 92470}},
+        {"Zephras Isle", {92464, 92465, 92544, 92472}}, {"Zephras Isle", {93746, 93090}},
+        {"Mulgore", {95349}}, {"Orgrimmar", {95350, 93739}}}},
+    {name = "Narache and the rites", race = "Tauren", class = "DRUID", days = {
+        {"Mulgore", {752, 747, 753, 750}}, {"Mulgore", {755, 757, 780, 3376, 1656}},
+        {"Mulgore", {763, 767, 748, 761, 771}}, {"Mulgore", {772, 754, 756, 758, 745, 746}},
+        {"Mulgore", {759, 760, 743, 766, 773}}, {"Thunder Bluff", {775, 744}}}},
+    {name = "Sen'jin and the Burning Blade", race = "Troll", class = "SHAMAN", days = {
+        {"Durotar", {792, 794, 805, 823}}, {"Durotar", {815, 817, 808, 826, 785}},
+        {"Durotar", {834, 835, 828, 827}}, {"The Barrens", {840, 842, 844, 845}}}},
     {name = "Agamand and the lich", race = "Scourge", class = "MAGE", days = {
         {"Tirisfal Glades", {96656, 86784, 375, 426, 361, 362}}, {"Tirisfal Glades", {354, 355, 405, 357, 366}},
         {"Tirisfal Glades", {409, 411, 408, 97558, 95314}}}},
@@ -156,4 +199,4 @@ for _, journey in ipairs(journeys) do
         end
     end
 end
-print(("HordeDeepening: %d checks; %d stages added tonight; %d journeys"):format(checks, #all, #journeys))
+print(("HordeDeepening: %d checks; %d stages added or reworked tonight; %d journeys"):format(checks, #all, #journeys))

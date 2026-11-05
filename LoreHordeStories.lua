@@ -3,14 +3,18 @@ local _, A = ...
 -- only to the recorded stage; old title-only records use restrained fallbacks.
 -- The file named corpus_vanilla_quests.txt also contains Forever additions.
 -- corpus_forever_new_quests.txt was empty at the time of this review.
--- Coverage: 272 curated IDs, 194 title contexts, eight regional expansions. The
+-- Coverage: 400 curated IDs, 303 title contexts, eight regional expansions. The
 -- tests derive these counts. This is not an exhaustive quest database.
+-- Overnight 2026-11-05 added Deathknell/Brill/Agamand/Brightwater, Durotar's
+-- valley and coast, Bloodhoof and the Longwalkers, the Sepulcher's supply and
+-- Ambermill chains, the Crossroads/Taurajo/Ratchet/Bael Modan stages and
+-- Thendal's trials; see StorageInvestigation/cj-overnight-20261105/horde/REPORT.md.
 -- Gaps: uncaptured Forever branches, most repeatable errands and referral-only
 -- shaman captures (#96243, #98517) keep conservative title/general context.
 -- No later-expansion Echo Isles reclamation or presumed Zephras rescue is used.
 -- Silverpine now has exact scout, Arugal, Fenris and Deliah stages, including
--- Forever 98298; Hillsbrad has the seven executor campaign stages. Ambermill,
--- Hillsbrad's elixirs and most later outdoor regions remain coverage gaps.
+-- Forever 98298; Hillsbrad has the seven executor campaign stages. Hillsbrad's
+-- elixirs and most later outdoor regions remain coverage gaps.
 -- Stonetalon's spirits/toxin route and Thousand Needles' camps, escorts and
 -- Arikara extend the early Kalimdor coverage. Region-by-region review:
 -- StorageInvestigation/cj-leveling-stage-research-20261012.txt.
@@ -58,45 +62,45 @@ end
 
 -- Mulgore: daily provision, rites, water and the passage into Thunder Bluff.
 Q(747, "The Hunt Begins", "Mulgore", 2, "horde_narache",
-    "Meat and feathers had run short at {p:Camp Narache}.",
-    "The plainstriders on Red Cloud Mesa supplied both food and material for clothing.",
-    "The plainstrider provisions replenished the village's stores.",
-    "Grull Hawkwind received meat and feathers for the people of Narache.")
+    "Meat had run low at {p:Camp Narache}, and the tribe needed feathers for clothing. Grull Hawkwind sent the young to hunt the plainstriders of Red Cloud Mesa before they could prove themselves to his father, the chief.",
+    "On Red Cloud Mesa the tauren hunted out of need as well as for sport. Grull Hawkwind asked for plainstrider meat and feathers to resupply the village.",
+    "Grull Hawkwind thanked the hunter on behalf of the tauren of Narache, who saw much promise in the work.",
+    "Plainstrider meat and feathers restocked Camp Narache. Grull called it a first step toward proving oneself before the chief.")
 Q(750, "The Hunt Continues", "Mulgore", 3, "horde_narache",
-    "The children needed clothing, and the tents at Narache needed mending.",
-    "Mountain cougar pelts had practical value to a village living from the plains.",
-    "Fresh pelts supplied the tribe's clothing and repairs.",
-    "Grull Hawkwind had the cougar hides needed by Camp Narache.")
+    "Narache's children needed clothing and its tents needed mending. Grull Hawkwind wanted pelts from the mountain cougars in the hills to the south.",
+    "A tauren hunter took prey for survival, not trophies, Grull Hawkwind said. The mountain cougars' pelts would impress the elders.",
+    "The cougar pelts went to clothe Narache's children and mend its tents. Grull Hawkwind promised to tell his father of the gift.",
+    "The pelts were gratefully received, and Grull predicted that such skill would one day be honored in Thunder Bluff.")
 Q(752, "A Humble Task", "Mulgore", 2, "horde_narache",
-    "Greatmother Hawkwind had been away at the well longer than the chief expected.",
-    "Tribal business kept Chief Hawkwind in Narache while his mother fetched water.",
-    "Greatmother Hawkwind was found at the well.",
-    "The chief's concern led to Greatmother Hawkwind, still attending to the village's water.", nil, true)
+    "Greatmother Hawkwind had gone to the well southeast of Narache that morning and was taking a long time. Tribal matters kept her son, the chief, in camp.",
+    "Every member of the tribe shared in its work, Chief Hawkwind said. While he saw to tribal matters, he asked someone to check on his mother at the well.",
+    "Greatmother Hawkwind was found at the well, surprised that anyone had come so far to help an old woman.",
+    "At the well, Greatmother Hawkwind welcomed the visitor her son had sent and called the visitor a keeper.", nil, true)
 Q(753, "A Humble Task", "Mulgore", 3, "horde_narache",
-    "A filled water pitcher still needed carrying from the well to Narache.",
-    "Greatmother Hawkwind had a small errand for the chief's household.",
-    "The water pitcher reached Chief Hawkwind at his mother's request.",
-    "A pitcher of water returned to Narache, and the chief acknowledged the help.", nil, true)
+    "Greatmother Hawkwind's old legs had lost their vigor. She gave her water pitcher to younger hands for the walk back to her son in Camp Narache.",
+    "Even the humblest task could earn the recognition of elders, Greatmother Hawkwind said, and handed over the pitcher for the chief.",
+    "Chief Hawkwind received the pitcher his mother had sent, and said such willingness to help would make the tribe proud in Thunder Bluff.",
+    "The water from the well reached the chief at the Greatmother's bidding, and he praised the help given to the people of Narache.", nil, true)
 Fallback("A Humble Task", "horde_narache",
     "Fetching water was part of the shared work that sustained Narache.",
     "The Hawkwind household depended on the same everyday work as the rest of the village.",
     "A small piece of Narache's daily work had received attention.",
     "Service to the village had taken a quieter form than hunting.", {V .. " #752, #753"})
 Q(780, "The Battleboars", "Mulgore", 4, "horde_narache",
-    "The Bristlebacks trained battleboars near the tribe's hunting grounds.",
-    "Brambleblade Ravine held aggressive boars as well as the quilboar who trained them.",
-    "The battleboar meat supplied stew for the village's young.",
-    "The hunt reduced the boar threat and brought back food for Narache.")
+    "The Bristleback quilboar trained battleboars to be vicious, and the beasts were pushing into the tribe's hunting grounds from Brambleblade Ravine. Narache wanted their snouts and flanks for stew.",
+    "Battleboars from Brambleblade Ravine were encroaching on Narache's hunting grounds. Their meat could feed the village's young.",
+    "The snouts and flanks would make a fine stew for Narache's young, and the dead boars were meant as a lesson to the Bristlebacks.",
+    "The battleboars lost ground near Narache, and their meat went into stew for the village's young.")
 Q(755, "Rites of the Earthmother", "Mulgore", 3, "horde_rites",
-    "Chief Hawkwind directed the beginning of the three Rites of the Earthmother.",
-    "Seer Graytongue kept an abode in the hills south of Camp Narache.",
-    "Seer Graytongue received Chief Hawkwind's referral.",
-    "The first rite had reached the seer who would explain its demands.", nil, true)
+    "Chief Hawkwind saw greatness ahead for a young tauren willing to do humble work. First came the three Rites of the Earthmother, beginning with Seer Graytongue in the hills south of Camp Narache.",
+    "The Rites of the Earthmother were three, and the Rite of Strength came first. Chief Hawkwind sent the young to Seer Graytongue.",
+    "Seer Graytongue heard that Chief Hawkwind had sent the newcomer, and warned that the rites were no small task.",
+    "In the hills south of Narache, Seer Graytongue received the chief's word and the first of the rites began.", nil, true)
 Q(757, "Rite of Strength", "Mulgore", 4, "horde_rites",
     "Bristlebacks from Brambleblade Ravine ambushed hunting parties and stole from Narache.",
     "The first of the Earthmother's rites called for proof against the tribe's raiders.",
-    "The Bristleback belts supplied proof, and the first rite was passed.",
-    "Chief Hawkwind accepted the evidence of strength against the Bristlebacks.")
+    "The Bristleback belts reached Chief Hawkwind, and the first of the Earthmother's rites was passed. The tribe, he said, would be proud.",
+    "Chief Hawkwind took the Bristleback belts as proof of valor against the raiders of his tribe.")
 Q(763, "Rites of the Earthmother", "Mulgore", 5, "horde_rites",
     "Baine Bloodhoof continued the rites at {p:Bloodhoof Village}.",
     "Chief Hawkwind's carved totem served as an introduction beyond Narache.",
@@ -105,28 +109,28 @@ Q(763, "Rites of the Earthmother", "Mulgore", 5, "horde_rites",
 Fallback("Rites of the Earthmother", "horde_rites",
     "The rites linked Narache's teaching with the elders of Thunder Bluff.",
     "Strength, vision and wisdom each had a place in the tauren rites.",
-    "Another part of the rites' work had been attended to.",
-    "The recorded errand belonged to the path toward the elders' recognition.", {V .. " #755, #763, #776"})
+    "The path of the rites led a little closer to the elders of Thunder Bluff.",
+    "The Rites of the Earthmother moved on toward the elders' recognition.", {V .. " #755, #763, #776"})
 Q(767, "Rite of Vision", "Mulgore", 6, "horde_rites",
-    "Zarlman Two-Moons was the spiritual leader entrusted with the Rite of Vision.",
-    "The rite began with instruction in Bloodhoof Village.",
-    "Zarlman received the applicant for the Rite of Vision.",
-    "The next stage of the rites reached Zarlman Two-Moons.", nil, true)
+    "The land was the tauren's most holy provider. For the Rite of Vision, the young were sent to Zarlman Two-Moons, spiritual leader of Bloodhoof Village.",
+    "The second of the Earthmother's rites, the Rite of Vision, began with Zarlman Two-Moons in Bloodhoof Village.",
+    "Zarlman Two-Moons said he had sensed the newcomer coming, and could always recognize one attempting the rites.",
+    "Zarlman Two-Moons received the young tauren seeking the Rite of Vision, as he had expected.", nil, true)
 Q(771, "Rite of Vision", "Mulgore", 7, "horde_rites",
     "Well stones and fallen ambercorn were needed for the Water of the Seers.",
     "Zarlman's brew drew its ingredients from Mulgore's wells and trees.",
     "Zarlman received the ingredients and could prepare the Water of the Seers.",
-    "The gathered stones and ambercorn made the vision brew possible.", nil, true)
+    "From the well stones and fallen ambercorn, Zarlman Two-Moons could brew the Water of the Seers.", nil, true)
 Q(772, "Rite of Vision", "Mulgore", 7, "horde_rites",
     "The Water of the Seers was taken beside the tribal fire.",
     "Zarlman's rite called for a vision to be followed from the village fire.",
-    "The Rite of Vision was passed.",
-    "The vision's guidance brought that part of the rites to completion.", nil, true)
+    "The vision rose by the fire and was followed to its end. There the Rite of Vision was declared passed, with a word to be not afraid.",
+    "The Water of the Seers brought a vision by the tribal fire, and following it completed the Rite of Vision.", nil, true)
 Fallback("Rite of Vision", "horde_rites",
     "Zarlman Two-Moons tended the teaching and preparations of the Rite of Vision.",
     "The Water of the Seers had a place in Mulgore's rites.",
     "The work belonged to the Rite of Vision.",
-    "Another recorded part of the vision rite was complete.", {V .. " #767, #771, #772"})
+    "The Rite of Vision moved forward under Zarlman Two-Moons.", {V .. " #767, #771, #772"})
 Q(773, "Rite of Wisdom", "Mulgore", 10, "horde_rites",
     "The ancestral spirits at Red Rocks remembered the founding and defense of Thunder Bluff.",
     "Red Rocks was the sacred ground where the Rite of Wisdom ended.",
@@ -143,35 +147,35 @@ Q(776, "Rites of the Earthmother", "Thunder Bluff", 14, "horde_rites",
     "Arra'chea's horn reached Cairne, who arranged to collect the hide and meat.",
     "The kodo hunt supplied proof for Cairne and provisions for the people.", nil, true)
 Q(748, "Poison Water", "Mulgore", 5, "horde_wells",
-    "Goblins and their servants had poisoned Mulgore's sacred wells.",
-    "The Winterhoof well needed a cleansing totem made from wolf paws and plainstrider talons.",
-    "The gathered paws and talons supplied the first cleansing totem's ingredients.",
-    "The materials were ready for a totem; the poisoned well still needed its ritual.")
+    "Goblins and their servants had tainted Mulgore's sacred wells. Mull Thunderhorn meant to make a cleansing totem for each, starting with the Winterhoof Water Well.",
+    "For the Winterhoof totem, the land had to offer its aid. Mull Thunderhorn wanted prairie wolf paws and adult plainstrider talons.",
+    "Mull Thunderhorn took the paws and talons to bind their power into a totem. The Winterhoof well itself was still poisoned.",
+    "The wolf paws and plainstrider talons reached Mull Thunderhorn, ready to become the first cleansing totem.")
 Q(754, "Winterhoof Cleansing", "Mulgore", 6, "horde_wells",
     "The Winterhoof totem had to be carried to the guarded well.",
     "Winterhoof water had been unusable while the goblins' taint remained.",
     "Beasts were already drinking from the cleansed Winterhoof well.",
     "The Winterhoof ritual restored a source of drinking water to the plains.")
 Q(756, "Thunderhorn Totem", "Mulgore", 7, "horde_wells",
-    "The Thunderhorn well grew more tainted while its totem awaited materials.",
+    "The Thunderhorn Water Well grew more tainted by the hour. Mull Thunderhorn needed the claws of the plains' predators, prairie stalkers and flatland cougars, for its totem.",
     "Prairie stalker and flatland cougar claws were needed for the next cleansing totem.",
-    "The predator claws supplied the Thunderhorn totem's preparation.",
-    "The materials for cleansing Thunderhorn were gathered, with the ritual still ahead.")
+    "Mull Thunderhorn had his claws. The goblins, he said, would never learn the difference between fighting the land and living in harmony with it.",
+    "The predators' claws went into the Thunderhorn totem. The well's cleansing was still ahead.")
 Q(758, "Thunderhorn Cleansing", "Mulgore", 8, "horde_wells",
     "The Thunderhorn Water Well lay north of Bloodhoof Village.",
     "A prepared totem could carry the cleansing ritual to the Thunderhorn well.",
     "The Thunderhorn well was cleansed.",
     "The ritual removed the taint from Thunderhorn's water.")
 Q(759, "Wildmane Totem", "Mulgore", 10, "horde_wells",
-    "Prairie wolf alphas roamed near the base of Thunder Bluff.",
-    "Their teeth were needed for the Wildmane cleansing totem.",
-    "The alpha teeth supplied the Wildmane totem's materials.",
-    "The hunt made preparation of the last cleansing totem possible.")
+    "Only the Wildmane Water Well remained. Its totem needed the teeth of prairie wolf alphas, which wandered near the base of Thunder Bluff.",
+    "Mull Thunderhorn's last cleansing totem called for the teeth of a fierce predator, the prairie wolf alpha.",
+    "Mull Thunderhorn felt the land's sacrifice in the alphas' teeth, and said his spirit swelled with sadness and pride.",
+    "The alpha teeth reached Mull Thunderhorn for the Wildmane totem, the last of the three.")
 Q(760, "Wildmane Cleansing", "Mulgore", 10, "horde_wells",
     "The Wildmane well north of Thunder Bluff remained poisoned.",
     "The prepared Wildmane totem had one remaining well to cleanse.",
-    "Clean water flowed at Wildmane again.",
-    "The Wildmane ritual removed the poison from the last well in the cleansing work.")
+    "Clean water flowed at Wildmane again. Bloodhoof Village was grateful, and Mull Thunderhorn wished that Mulgore's waters would stay clean forever.",
+    "The last of the poisoned wells was cleansed. The spirits, Mull Thunderhorn said, already spoke of the work at Winterhoof and Thunderhorn.")
 Q(749, "The Ravaged Caravan", "Mulgore", 8, "horde_venture",
     "Venture Company salvagers had returned to burned wagons beside Stonebull Lake.",
     "Supply crates had survived the attack on the Venture Company caravan.",
@@ -188,45 +192,45 @@ Fallback("The Ravaged Caravan", "horde_venture",
     "The caravan investigation added evidence about the mining operation.",
     "The ruined wagons had yielded something of the company's business.", {V .. " #749, #751"})
 Q(764, "The Venture Co.", "Mulgore", 10, "horde_venture",
-    "The Venture Company mined Mulgore despite having been refused mining rights.",
-    "A mine northeast of the ruined caravan lay behind the growing company presence.",
-    "The company's workers met armed resistance to the unauthorized mining.",
-    "The attack challenged the Venture Company's assumption that Mulgore could be taken without resistance.")
+    "The Venture Company had been refused mining rights in Mulgore and was digging anyway. Morin Cloudstalker wanted a message sent to its mine northeast of the ravaged caravan.",
+    "Show a goblin something, the saying went, and the scales could be heard in the background. Morin Cloudstalker meant to show the Venture Company that Mulgore was not for sale.",
+    "Morin Cloudstalker doubted the Venture Company could misread the message. The tauren would not let them steal the land's resources without protest.",
+    "The mine's workers learned that the tauren would not be taken lightly, and Morin was satisfied with the signal sent.")
 Q(765, "Supervisor Fizsprocket", "Mulgore", 12, "horde_venture",
     "The caravan documents implicated Supervisor Fizsprocket in plans to drive the tauren from their land.",
     "Fizsprocket directed the Venture Company's work from its mine.",
     "Fizsprocket was dead, and his clipboard was available for examination.",
     "The supervisor's personal papers offered further evidence of the company's intentions.")
 Q(744, "Preparation for Ceremony", "Mulgore", 11, "horde_narache",
-    "A headdress needed azure and bronze feathers before a brother's ceremony before Cairne.",
-    "Leather straps were already being tanned while feathers remained to be gathered.",
-    "The feathers supplied the headdress's unfinished design.",
-    "The ceremony's gift was closer to completion, with its feathers delivered.")
+    "Eyahn Eagletalon's brother would soon stand before Cairne Bloodhoof, and Eyahn was making his headdress. Six azure and six bronze harpy feathers were still missing.",
+    "While Eyahn Eagletalon tanned the leather straps, there was no time to gather feathers for his brother's ceremonial headdress.",
+    "The feathers completed Eyahn's design. Giving the headdress and witnessing the ceremony were all that remained of his part.",
+    "Eyahn Eagletalon had his feathers, and his gift for his brother's ceremony before Cairne was nearly done.")
 Q(743, "Dangers of the Windfury", "Mulgore", 8, "horde_narache",
-    "Windfury harpies nested along Mulgore's mountain edges away from the road.",
-    "Ruul offered a test against the harpies before the journey beyond Mulgore.",
-    "Ruul accepted the completed harpy test as preparation for travel.",
-    "The fighting against the Windfury met Ruul's challenge.")
+    "Windfury harpies nested along Mulgore's southeastern mountain edges, away from the road. Ruul Eagletalon, warrior and teacher, offered them as a test of strength.",
+    "Ruul Eagletalon judged that a young tauren had to prepare before adventuring beyond Mulgore. The Windfury harpies would be a good gauge of skill.",
+    "Ruul judged the harpy fight well done and the fighter ready to travel onward, and wished the wind always at their back.",
+    "The Windfury harpies met Ruul Eagletalon's challenge, and Ruul sent the young tauren on with a blessing of the wind.")
 Q(745, "Sharing the Land", "Mulgore", 8, "horde_mulgoreland",
-    "Palemane gnolls hunted Mulgore's wildlife without restraint.",
-    "Attempts to communicate with the gnolls south of Bloodhoof had failed.",
-    "The response to the Palemane hunting threat was acknowledged.",
-    "The task ended with a reminder of responsibility toward the land and its creatures.")
+    "Palemane gnolls had settled south of Bloodhoof Village and slew Mulgore's wildlife without restraint. Baine Bloodhoof said words were no longer the answer.",
+    "The gnolls south of Bloodhoof had scorned every attempt to speak with them. Baine Bloodhoof wanted the young to see how much harm even a small threat could do.",
+    "Baine was glad the task had been taken seriously. Death and life were a circle, he said, and respect for the land must never be forgotten.",
+    "The Palemane killing of Mulgore's wildlife was checked, and Baine Bloodhoof asked that the lesson of the land never be forgotten.")
 Q(746, "Dwarven Digging", "Mulgore", 8, "horde_mulgoreland",
-    "A dwarven dig threatened to disturb Mulgore's kodos.",
-    "The excavation's tools could be smashed at a forge to interrupt the digging.",
-    "The broken tools were returned as proof of interference with the excavation.",
-    "The dwarves lost digging tools to the effort to protect the land.")
+    "Dwarves were preparing a dig northwest of Bloodhoof Village, and Baine Bloodhoof feared it would enrage Mulgore's kodos. He wanted their tools taken and smashed at a forge.",
+    "The dwarves believed secrets lay in the earth, and Baine Bloodhoof agreed, but hollowing the land was no way to earn its teachings.",
+    "The dwarves' broken tools reached Baine, who said it would calm the beasts of Mulgore and perhaps teach the diggers a lesson.",
+    "Smashed at a forge, the dwarves' tools went back to Baine as proof. He hoped the dig would trouble the kodos no longer.")
 Q(761, "Swoop Hunting", "Mulgore", 6, "horde_narache",
-    "Swoops ranged widely over Mulgore, making their quills a test of hunting skill.",
-    "The birds of the open plains were quick and difficult quarry.",
-    "The gathered quills supplied proof of the swoop hunt.",
-    "The hunting trophy was accepted at Bloodhoof Village.")
+    "Swoops ranged all over Mulgore and were hard to find and harder to catch. Harken Windtotem called a collection of their quills a badge of cleverness and determination.",
+    "A hunter needed sharp eyes and quick hooves for the swoop. Harken Windtotem asked for their quills.",
+    "Harken Windtotem knew the quills had not been easy to gather, and said it was good to have such a hunter at Bloodhoof Village.",
+    "The swoop quills reached Harken Windtotem, proof of a hunter of merit.")
 Q(766, "Mazzranache", "Mulgore", 8, "horde_narache",
-    "A bite from Mazzranache had left a traveler feverish with infection.",
-    "The remedy required a wolf heart, cougar femur, plainstrider scale and swoop gizzard.",
-    "The ingredients made a remedy possible for the infected bite.",
-    "The gathered animal parts supplied treatment for Mazzranache's bite.")
+    "Maur Raincaller's grandfather had told stories of a strider named Mazzranache, with red eyes and a venomous bite. Maur met it on the plains, and the bite left him feverish.",
+    "To clean the infection from Mazzranache's bite, Maur Raincaller needed a wolf heart, a cougar femur, a plainstrider scale and a swoop gizzard before the fever took him.",
+    "Maur Raincaller could make his remedy and said he owed his life for it. He would never forget Mazzranache's screeching call.",
+    "The ingredients arrived in time for Maur to stop the infection's spread. He warned others to be wary on their travels.")
 Q(833, "A Sacred Burial", "Mulgore", 10, "horde_rites",
     "Bristleback intruders were ravaging the graves at Red Rocks.",
     "The burial ground honored tauren who had founded and defended Thunder Bluff.",
@@ -270,25 +274,31 @@ Fallback("Sarkoth", "horde_trials",
     "Hana'zua's trouble had drawn help in the Valley of Trials.",
     "The task addressed the aftermath of Hana'zua's encounter with the scorpid.", {V .. " #790, #804"})
 Q(792, "Vile Familiars", "Durotar", 4, "horde_blade",
+    "Zureetha Fargaze had come to the Valley of Trials to guide recruits and found a growing taint. The Burning Blade's coven hid in a cave to the northeast, and its vile familiars had spilled out.",
+    "A cult coven had taken root inside the valley used to train recruits, and its vile familiars roamed outside the cave mouth.",
+    "Zureetha Fargaze called the familiars mere pets of the coven's darker powers, but said the success foretold greater deeds.",
+    "The vile familiars outside the Burning Blade's cave were cut down, a first blow against the cult in the Valley of Trials.", nil, true)
+-- The warlock trial (#1485, #1499) shares this title with another giver.
+Fallback("Vile Familiars", "horde_blade",
     "The Burning Blade's familiars had spilled from a cave into the Valley of Trials.",
     "A cult coven had taken root inside the valley used to train recruits.",
     "The familiars were thinned, but the coven's darker powers remained.",
-    "The first attack checked the cult's creatures outside the cave.")
+    "The vile familiars in the Valley of Trials were cut down.", {V .. " #792, #1485, #1499"})
 Q(794, "Burning Blade Medallion", "Durotar", 5, "horde_blade",
-    "A medallion of power lay inside the Burning Blade coven.",
-    "The cult's cave concealed more than the familiars roaming the valley.",
-    "The medallion was removed from the coven, leaving questions about the cult's wider aims.",
-    "The recovered medallion struck at the valley coven without ending the Burning Blade's threat.")
+    "Zureetha Fargaze's divinations showed an item of power, the Burning Blade Medallion, hidden deep in the coven and perhaps carried by one of its agents.",
+    "The cult's cave concealed more than the familiars roaming the valley. Zureetha wanted its medallion taken.",
+    "Zureetha was glad to see the medallion, but feared the Burning Blade had further aims in Durotar.",
+    "With the medallion taken, the coven in the Valley of Trials was weakened. Zureetha warned that the cult had not been seen for the last time.")
 Q(823, "Report to Orgnil", "Durotar", 7, "horde_blade",
     "News of the Burning Blade concerned Sen'jin Village as well as the Valley of Trials.",
     "Orgnil Soulscar watched for corruption from his post at Razor Hill.",
-    "The report reached Orgnil at Razor Hill.",
-    "Razor Hill received word of the trouble reported from the valley and Sen'jin.")
+    "Orgnil Soulscar, who kept Durotar watched for evils like the Burning Blade, demanded to hear the report.",
+    "Orgnil in Razor Hill learned of the Burning Blade in the valley and of the trouble facing Sen'jin.")
 Q(827, "Skull Rock", "Durotar", 12, "horde_blade",
     "Cultists at Skull Rock wore collars that burned their flesh.",
     "Margoz sought searing collars to study the Burning Blade's demonic power.",
-    "The recovered collars gave Margoz evidence for his investigation.",
-    "Margoz had the cult's searing collars to examine.")
+    "Margoz had his searing collars and was sure the Burning Blade's secret hid within them.",
+    "The searing collars from Skull Rock reached Margoz, who meant to learn how the cultists drew on demonic power.")
 Q(829, "Neeru Fireblade", "Orgrimmar", 12, "horde_blade",
     "The demonic collars exceeded what Margoz could explain through his own divination.",
     "Neeru Fireblade claimed to study demons in the Warchief's service.",
@@ -305,14 +315,14 @@ Q(826, "Zalazane", "Durotar", 10, "horde_darkspear",
     "The returned head satisfied the village's demand for proof against Zalazane.",
     "The Darkspear credited the blow against Zalazane with relief for Sen'jin Village.")
 Q(815, "Break a Few Eggs", "Durotar", 8, "horde_darkspear",
-    "Sen'jin's next meal needed taillasher eggs from the Echo Isles.",
-    "The taillashers guarded eggs that could supply the village's cooking pot.",
-    "The eggs arrived in time for the cooking to continue.",
-    "The cook had another batch of eggs for the village's meals.")
+    "Cook Torka had nearly forgotten breakfast. Sen'jin's next meal needed taillasher eggs from the Echo Isles.",
+    "The taillashers guarded eggs that could supply Cook Torka's pot, and buried them deep when they could.",
+    "The cook judged the egg-gatherer weak but at least not clumsy, and went back to cooking.",
+    "Cook Torka had three eggs, enough for the next day's meal, and wasted no more time on thanks.")
 Q(817, "Practical Prey", "Durotar", 8, "horde_darkspear",
-    "Tiger hides supplied blankets, armor and tents for a growing settlement.",
-    "Stocks of hides had fallen behind the needs of Sen'jin's people.",
-    "The tiger furs supplied material for protection against the weather.",
+    "Vel'rin Fang made blankets, armor and tents from Durotar tiger hides. Sen'jin's numbers were growing faster than its stocks.",
+    "The Darkspear hunted Durotar's tigers and let them thrive at the same time. Now Vel'rin Fang needed more furs from the islands than the stores held.",
+    "The tiger furs meant Sen'jin's people would not go cold as the seasons changed.",
     "Fresh hides replenished the village's stores for clothing and shelter.")
 Q(813, "Finding the Antidote", "Orgrimmar", 9, "horde_darkspear",
     "Kor'ghan needed venomtail poison sacs to make an antidote for Rhinag.",
@@ -325,50 +335,50 @@ Q(812, "Need for a Cure", "Durotar", 9, "horde_darkspear",
     "The antidote saved Rhinag's life.",
     "Rhinag survived the venom and faced more training under Kor'ghan.")
 Q(834, "Winds in the Desert", "Durotar", 9, "horde_roads",
-    "Dustwind harpies had seized a shipment needed for Rezlak's work.",
+    "Rezlak, one of Gazlowe's goblins, had been sent to help the orcs of Durotar. The Dustwind harpies of Razorwind Canyon had snatched his last shipment.",
     "Stolen caravan sacks lay in the canyons while construction waited.",
-    "Rezlak recovered the supplies needed to resume work.",
+    "Rezlak had his supplies back and could return to work, as soon as he found someone to haul the sacks.",
     "The stolen shipment was back in Rezlak's hands.")
 Q(835, "Securing the Lines", "Durotar", 11, "horde_roads",
     "Harpies in Drygulch Ravine threatened each new supply caravan.",
     "Recovering a shipment left the raiders along Rezlak's routes to contend with.",
-    "The attack on the harpies gave Rezlak reason to expect safer deliveries.",
-    "Pressure on the caravan routes eased after the Drygulch fighting.")
+    "Rezlak could breathe easy about his caravans, just in time for a shipment of new toys. He suggested looking up his boss Gazlowe in Ratchet.",
+    "With the Drygulch harpies dealt with, Rezlak paid as promised and expected his supply caravans to get through.")
 Q(840, "Conscript of the Horde", "The Barrens", 12, "horde_roads",
-    "Takrin's recruitment letter needed Kargal's signature for Barrens duty.",
-    "The Horde needed recruits at the outposts beyond Durotar.",
-    "Kargal signed the letter and pointed toward the Crossroads.",
-    "The recruitment letter was approved, with the Crossroads still needing help.")
+    "Takrin Pathseeker had a recruitment letter for his friend Kargal Battlescar, who needed new hands for Barrens duty.",
+    "The Horde needed recruits at the outposts beyond Durotar, and Takrin Pathseeker thought a strong newcomer should carry his letter to Kargal.",
+    "Kargal signed the letter on his excellent scout Takrin's word. What he really needed, he said, was someone at the Crossroads.",
+    "Kargal Battlescar approved the recruitment letter and pointed the recruit on toward the Crossroads.")
 Q(842, "Crossroads Conscription", "The Barrens", 12, "horde_roads",
     "Sergra Darkthorn directed the work awaiting recruits at the Crossroads.",
-    "Kargal's signed letter served as an introduction to the Crossroads command.",
+    "Kargal called Sergra Darkthorn a nasty shaman who would talk a recruit's head in circles, though Thrall thought her something special.",
     "Sergra accepted the letter and made the demands of Crossroads duty clear.",
-    "The recruitment errand reached Sergra Darkthorn.")
+    "Sergra Darkthorn took Kargal's letter and warned that she would tolerate no insolence. Thrall, she said, had declared the Horde's women equal.")
 Q(844, "Plainstrider Menace", "The Barrens", 12, "horde_roads",
     "Plainstriders east of the Crossroads were harassing its food supplies.",
     "Keeping the outpost fed began with a hunt close to its supply routes.",
-    "The plainstrider beaks proved a hunt that eased pressure on the food stores.",
+    "With the plainstriders gone, Sergra expected the supply chains to be easier to keep intact. The next prey, she warned, had more fire in its blood.",
     "Sergra judged the supplies easier to protect with fewer plainstriders harassing them.")
 Q(845, "The Zhevra", "The Barrens", 13, "horde_roads",
     "Sergra's next hunting test called for zhevra hooves.",
     "The zhevra north and south of the Crossroads could strike hard with their hooves.",
-    "The hooves supplied proof that Sergra's zhevra test was complete.",
-    "Sergra accepted the zhevra hunt before proposing more difficult prey.")
+    "A zhevra's kick could knock even a tauren on its haunches, Sergra said. She judged the hunter strong enough for a real challenge.",
+    "Sergra accepted the zhevra hooves before proposing more difficult prey.")
 Q(848, "Fungal Spores", "The Barrens", 15, "horde_apothecary",
     "The Barrens' oases nourished and altered the life around them.",
     "Mushrooms growing near the oases held spores useful to the apothecaries.",
-    "The spores were accepted as potent research specimens.",
-    "The apothecary received samples of the oases' unusual fungi.")
+    "Apothecary Helbrim judged the spores potent and paid as promised. The Forsaken, he said, honored their contracts.",
+    "Helbrim had his spores, needed for a concoction bound for his associate in Thunder Bluff.")
 Q(868, "Egg Hunt", "The Barrens", 22, "horde_roads",
     "Little was known about the insect-like creatures in the Field of Giants.",
     "An observer working for Orgrimmar sought intact eggs from the southern mounds.",
-    "The eggs and digging tool were returned for the study.",
-    "The collected eggs supplied specimens of the Field of Giants' creatures.")
+    "Korran was pleased to have the eggs and his digging claw back unbroken, for his report to his masters in Orgrimmar.",
+    "The eggs from the Field of Giants reached Korran, whose masters in Orgrimmar wanted to know more of the clever insect creatures.")
 Q(869, "Raptor Thieves", "The Barrens", 13, "horde_roads",
     "Silver intended for the Crossroads guards' pay had been stolen, and a captured thief was a raptor.",
     "The missing payroll had prompted an unusual hunt for raptor thieves.",
-    "The raptor heads supplied proof of the requested hunt.",
-    "The hunt struck the suspected thieves without accounting for the missing silver.")
+    "Gazrog was glad to see the raptor heads and hoped no more silver would go missing. The stolen payroll itself was still unaccounted for.",
+    "The raptors Gazrog blamed were hunted down, but the missing silver was not recovered.")
 
 -- Forsaken beginnings and the apothecaries' early research. Each recipe stage
 -- stands alone; no reagent delivery silently becomes a successful new plague.
@@ -407,7 +417,7 @@ for _, r in ipairs(scarlet) do Q(r[1], "At War With The Scarlet Crusade", "Tiris
 Fallback("At War With The Scarlet Crusade", "horde_scarlet",
     "Scarlet detachments occupied the ruined towers of Tirisfal.",
     "Brill's executors directed a series of attacks against the Crusade.",
-    "The recorded strike was one part of the fighting against the Scarlet forces.",
+    "One more of the Crusade's detachments in Tirisfal had been struck.",
     "The Crusade faced another attack in Tirisfal.", {V .. " #427, #370, #371, #372"})
 local plague = {
     {367, 6, "Sylvanas had challenged the Royal Apothecary Society to brew a plague that would ruin Arthas's Scourge. Apothecary Johaan in Brill believed the blood of beasts might be the key.", "Apothecary Johaan was testing a theory for the Dark Lady's new plague. His first experiment called for five vials of darkhound blood.", "Johaan had his darkhound blood and could begin testing his theory.", "Five vials of darkhound blood reached Johaan's workbench in Brill, and he gave his thanks."},
@@ -418,7 +428,7 @@ for _, r in ipairs(plague) do Q(r[1], "A New Plague", "Tirisfal Glades", r[2], "
 Fallback("A New Plague", "horde_apothecary",
     "The Royal Apothecary Society was experimenting with a new disease.",
     "Brill's apothecary collected reagents for a proposed weapon against the Scourge.",
-    "The recorded work contributed to the apothecary's experiment.",
+    "Brill's apothecary had more to work with for the Dark Lady's plague.",
     "The research advanced another step without settling its eventual result.", {V .. " #367, #368, #369, #492"})
 
 -- Deathknell and Brill (overnight 2026-11-05). Read from the corpus by ID;
@@ -847,25 +857,25 @@ Q(451, "A Recipe For Death", "Undercity", 18, "horde_apothecary",
 Fallback("A Recipe For Death", "horde_apothecary",
     "Renferrel and Faranell pursued the ingredients and records of plague research.",
     "The apothecaries' work connected Silverpine with the laboratories of the Undercity.",
-    "Another part of the recipe's research reached the apothecaries.",
-    "The recorded task supplied the continuing investigation.", {V .. " #447, #450, #451"})
+    "Renferrel and Faranell had more to work with in their search for a plague.",
+    "Another sample or record reached the Royal Apothecary Society's plague research.", {V .. " #447, #450, #451"})
 
 -- Shaman trials. The title is shared across ingredients, introductions,
 -- manifestations and rewards, including Forever's other racial routes.
 Fallback("Call of Earth", "shaman_earth",
     "The earth rite taught patience, endurance and the foundations of the shaman's craft.",
     "Sapta and sacred ground had their places in the call of earth.",
-    "The recorded task marked a stage in the earth rite.",
+    "The earth rite moved a step further.",
     "Another part of the earth's teaching had been attended to.", {V .. " #1516-1521, #92466-92468", F .. " #94374"})
 Fallback("Call of Fire", "shaman_fire",
     "The fire rite concerned creation as well as destruction.",
     "The teaching of fire demanded more than strength alone.",
-    "The recorded task completed a stage of the fire rite.",
+    "The fire rite moved a step further.",
     "The work belonged to the shaman's study of fire.", {V .. " #1522-1527, #2984", F .. " #94449, #94465-94468"})
 Fallback("Call of Water", "shaman_water",
     "Water's healing power depended on purity, and its teaching ranged far beyond a single pool.",
     "The water rite joined practical gathering with concern for corrupted springs.",
-    "The recorded task marked one stage in the water rite.",
+    "The water rite moved a step further.",
     "Another part of the work of water had been completed.", {V .. " #63, #96, #100, #220, #1103, #1528-1536", F .. " #94495-94505"})
 local earth = {
     {1516, "Durotar", "Felstalker hooves were needed to prepare Canaga's earth sapta.", "The trial began with materials from the felstalkers north of the valley camp.", "Canaga had the ingredients to prepare the earth sapta.", "The gathered hooves made the next step of the earth rite possible."},
@@ -937,7 +947,7 @@ end
 Fallback("Call of Air", "shaman_air",
     "The shaman's teaching included the elusive element of air.",
     "The winds had their own place among the four elemental paths.",
-    "The recorded task marked work on the call of air.",
+    "The call of air moved a step further.",
     "The air teaching had received another part of its due.", {V .. " #1531, #1532"})
 
 -- Forever dwarf shaman stages use their own teachers and geography.
@@ -1058,7 +1068,7 @@ Q(93737, "The Broken Construct", "Zephras Isle", 9, "forever_winds",
 Fallback("The Broken Construct", "forever_winds",
     "A damaged wind construct in Valanaar needed the Windshapers' attention.",
     "Only a few of the island's old magical constructs still functioned.",
-    "The recorded work addressed the damaged construct.",
+    "The damaged construct in Valanaar received attention.",
     "The construct's condition had received attention in Valanaar.", {F .. " #93735, #93737"})
 Q(92640, "Desperate Times", "Zephras Isle", 11, "forever_cult",
     "An assault on the shrine offered a chance to interrupt Lorthuna's scheme.",
@@ -1102,6 +1112,81 @@ Q(95349, "The Earthen Ring", "Mulgore", 13, "forever_winds",
     "The crisis had delayed the Windshaper delegation, leaving a small vanguard to sail first.",
     "The arrival reached Alaana while the Windshapers were still establishing a foothold on Azeroth.",
     "Mulgore received the vanguard from Zephras, with the rest of the delegation still delayed.", F)
+
+-- Zephras: Thendal's first trials, the cult's reach and the Windshapers'
+-- crossing to Kalimdor (Forever content, overnight 2026-11-05). Halaan,
+-- Myriaal, Ventaari, Valreaa, Hanaa and Belathaan's family name come from
+-- LoreForever Z_zephras; the rest is quest text. No race implies allegiance.
+Q(94414, "The Anchors of Zephras", "Zephras Isle", 2, "forever_winds",
+    "Halaan Hawk-Eye often came to look upon the ancient anchor pylon. Gifts of the wind spirits, the pylons bound and sustained Zephras, but their magic had grown unstable.",
+    "The anchor pylons that held Zephras together showed no sign of distress, yet their magic wavered. Halaan Hawk-Eye offered to lend a gift so that others could look upon them.",
+    "Halaan gave thanks for the shared moment, and went on watching over the grove and pondering the state of the homeland.",
+    "Halaan called the gift simple and mundane, but was grateful for it. Yearning for what was lost, Halaan said, led only to despair.")
+Q(92474, "Falling With Style", "Zephras Isle", 2, "forever_grove",
+    "Myriaal Mistwake had a game for the young of Thendal. Jump from a ledge, walk on the air to slow the fall, and land in front of Rorian the Dayseeker to startle him.",
+    "Myriaal Mistwake dared the young to leap and float on their skyborne gift, with bonus points for startling Rorian.",
+    "Rorian complained that Myriaal kept encouraging reckless use of the skyborne gifts, but allowed that a little practice inside the village was acceptable.",
+    "Rorian warned against exhausting the gift thoughtlessly when it might be needed in earnest, though practice in the village was acceptable.")
+Q(92598, "The Gift of Skysight", "Zephras Isle", 4, "forever_winds",
+    "Ventaari Brightwish taught young Windshapers to use skysight, the gift of the elemental spirits. It was strongest at the elemental convergence among the standing stones northeast of the village.",
+    "Windshapers could draw on skysight anywhere, but an elemental convergence made it stronger. The standing stones northeast of Thendal held one.",
+    "Skysight, Ventaari said, had to be exercised like a muscle. Hearing what the elements said might be the key to the Windshapers' survival.",
+    "The skysight was used at the convergence. Ventaari urged that the lesson be remembered, since bridging the mortal and the spiritual could prove invaluable.")
+Q(92473, "Aggressive Encroachment", "Zephras Isle", 4, "forever_grove",
+    "Only last week the rangers had killed a young ursera that nearly attacked a boy playing by Thendal's elder tree. Valreaa Valewind wanted the hungry beasts in the southwestern den culled.",
+    "Hunger and desperation had made the ursera too dangerous to leave unchecked. Valreaa Valewind asked for the scrawniest put down and their claws brought back.",
+    "Valreaa said the Rangers of the Grove were in debt for the cull, while still wondering what had made the ursera so aggressive.",
+    "The ursera claws reached Valreaa. Why the beasts had turned so fierce remained a question for the rangers.")
+Q(92471, "Aetheen of the Gales", "Zephras Isle", 4, "forever_grove",
+    "Everything done in Thendal so far had been a trial of sorts. Aetheen of the Gales, one of the island's leaders, had been watching and had a task to give.",
+    "Rorian sent the young to Aetheen of the Gales, who was assessing those coming of age.",
+    "Aetheen, a member of the Council of Elders, had come to read the winds in Thendal Grove. She asked whether the young were ready to serve Zephras Isle.",
+    "Aetheen had heard much from Rorian, and asked whether the next step could begin.")
+Q(92470, "Foul Matriarch", "Zephras Isle", 5, "forever_grove",
+    "Aetheen of the Gales offered a dangerous test of resolve. In the caves south of the village, the ursera matriarch the rangers called Urs'anah had to be put down.",
+    "To be of service to Zephras Isle, Aetheen said, the young would face much greater challenges. The first was Urs'anah, matriarch of the southern caves.",
+    "Aetheen judged the test well done. The path ahead, she said, had to lead beyond the safety of Thendal Village.",
+    "Urs'anah was dead. Aetheen saw great promise, and said it was time to look beyond Thendal Village.")
+Q(92544, "Al'Aketh Thugs", "Zephras Isle", 5, "forever_cult",
+    "Al'Aketh ruffians under Malduko Cloudcrush had camped by the temple ruins southwest of the grove, attacking travelers and pressing people into the cult. Hanaa Nightwind believed Lorthuna had sent them.",
+    "Hanaa Nightwind could not leave the post that warned travelers leaving the grove, so the cultists at the temple ruins and their leader Malduko Cloudcrush were left to others.",
+    "Hanaa had barely kept from joining the fight, hoped the cultists had got the message, and gave thanks on behalf of the Rangers of Thendal Grove.",
+    "Malduko Cloudcrush and his ruffians were dealt with, and the Rangers of Thendal Grove gave their thanks.")
+Q(92472, "The Next Step", "Zephras Isle", 5, "forever_cult",
+    "The Al'Aketh Cult worshipped Al'Akir the Windlord, and its zealots grew more deadly by the day. Aetheen of the Gales sent help south to Constable Aonda in Shen'dar Village.",
+    "Shen'dar Village, to the south, needed aid against the cult. Aetheen told the young to present themselves to Constable Aonda.",
+    "Aonda said the newcomer did not look like much, but Shen'dar would not turn down help sent by Elder Aetheen.",
+    "Constable Aonda accepted the aid Aetheen had sent, doubts and all.")
+Q(93746, "A Firm Response", "Zephras Isle", 9, "forever_cult",
+    "The High Order had been warned against meddling in Windshaper affairs. Ayessa Dawnsinger wanted Belathaan sent back to them bruised, and he had been seen on the road north toward the Shrine of Akir.",
+    "Ayessa Dawnsinger meant to make an example of Belathaan, the High Order's envoy, and confront him alone on the road north.",
+    "Belathaan was dead. Ayessa learned that the High Order had sent him to talk peace with the Al'Aketh, and blamed its arrogance, not the one who brought the news.",
+    "The news of Belathaan's death stunned Ayessa. There was no peace with the cult, she said, and Elaadrin should never have sent him to treat with them alone.")
+Q(93090, "What Comes Next", "Zephras Isle", 13, "forever_winds",
+    "High Elder Shadowsong gave the Windshapers' expedition his blessing. He hoped whatever solution they found would bring the stability Zephras had lacked for years.",
+    "Shadowsong sent his thanks to Ayessa for all that the Windshapers and the Earthen Ring had done for Zephras Isle.",
+    "Ayessa was pleased to have the high elder's blessing. With the cult defeated and preparations made, she judged it time to go.",
+    "Muln had worked to make skycutter crossings to Mulgore reliable, and some of the Windshapers were already waiting there. Ayessa declared the expedition ready.")
+Q(95350, "Welcome to Azeroth", "Orgrimmar", 13, "forever_winds",
+    "The Earthen Ring belonged to the Horde, and its allies were the Windshapers' hope of survival. An emissary was to travel from Thunder Bluff to Orgrimmar and meet Warchief Thrall.",
+    "The Windshapers needed the Horde's friendship. Their emissary was sent from Mulgore to Thrall in Orgrimmar.",
+    "Thrall had been told to expect an emissary of the Windshapers. He had not expected a high elf, but welcomed the guest and granted passage through Horde lands.",
+    "Warchief Thrall gave the Windshaper his blessing to travel through Horde lands.")
+Q(93739, "Exploring the Horde", "Orgrimmar", 13, "forever_winds",
+    "The Horde's territory was vast, and Thrall advised a guest to visit Orgrimmar, Thunder Bluff and the Undercity in turn.",
+    "Thrall's advisor Nazgrel had directions for a guest who meant to see the Horde's capital cities.",
+    "The Windshaper guest reached Nazgrel in Grommash Hold.",
+    "Thrall's advice brought the Windshaper guest to Nazgrel.")
+for _, id in ipairs({92470, 92472, 93746}) do pack.questIDs[id].importance = 4 end
+for _, id in ipairs({93090, 95350}) do pack.questIDs[id].importance = 5 end
+pack.questIDs[94414].highlight = {"Halaan Hawk-Eye watched the anchor pylons that bound Zephras together. Their splendor had not changed, but their magic had grown unstable.", "Through Halaan Hawk-Eye's gift, the ancient anchor pylon could be seen as Halaan saw it, sound to the eye though its magic wavered."}
+pack.questIDs[92474].highlight = {"Myriaal Mistwake's game sent the young leaping and floating down to startle Rorian the Dayseeker. Rorian disapproved, then allowed that practice in the village was acceptable.", "Floating down on the skyborne gift to land before Rorian earned a lecture on recklessness, and grudging permission to practice in the village."}
+pack.questIDs[92473].highlight = {"After a young ursera nearly attacked a boy by Thendal's elder tree, Valreaa Valewind had the hungry den culled. Why the beasts had grown so aggressive, no one knew.", "The ursera den southwest of Thendal was culled, and the Rangers of the Grove were in debt for it."}
+pack.questIDs[92470].highlight = {"Aetheen of the Gales tested the young against Urs'anah, matriarch of the ursera in the southern caves. When she fell, Aetheen said the path now led beyond Thendal Village.", "Urs'anah, the ursera matriarch, was put down in the caves south of Thendal. Aetheen saw great promise in the deed."}
+pack.questIDs[92544].highlight = {"Malduko Cloudcrush's cult ruffians had been preying on travelers near the temple ruins. They were dealt with, and Hanaa Nightwind thanked the help for the Rangers of Thendal Grove.", "The Al'Aketh thugs at the temple ruins southwest of the grove lost their leader, Malduko Cloudcrush."}
+pack.questIDs[93746].highlight = {"Ayessa Dawnsinger wanted the High Order's envoy Belathaan sent home bruised. Instead he died, having been sent by Elaadrin to talk peace with the cult.", "Ayessa blamed Elaadrin for sending Belathaan of the High Order to treat with the Al'Aketh alone. The envoy was dead."}
+pack.questIDs[93090].highlight = {"High Elder Shadowsong blessed the Windshapers' expedition to Kalimdor. With the cult defeated and skycutters crossing to Mulgore, Ayessa judged it time to go.", "Ayessa Dawnsinger received the high elder's blessing. Some Windshapers were already waiting in Mulgore, and the expedition was ready."}
+pack.questIDs[95350].highlight = {"In Orgrimmar, Warchief Thrall received the Windshapers' emissary. He had not expected a high elf, but welcomed the guest and granted passage through Horde lands.", "The Windshapers' emissary met Thrall in Orgrimmar and left with his blessing to travel through Horde lands."}
 
 -- Durotar's ordinary work and reports connect the valley, coast and capital.
 Q(781, "Attack on Camp Narache", "Mulgore", 4, "horde_narache",
@@ -1504,7 +1589,7 @@ Fallback("Samophlange", "horde_ratchet",
     "The Venture Company's samophlange required careful work around unfamiliar machinery.",
     "An experimental device drew Ratchet's interest toward a Venture Company facility.",
     "Another stage of the work around the samophlange was complete.",
-    "The recorded task advanced the effort to obtain the experimental device.", {V .. " #894, #900, #901, #902"})
+    "The work around the samophlange moved forward.", {V .. " #894, #900, #901, #902"})
 Q(858, "Ignition", "The Barrens", 18, "horde_ratchet",
     "Wizzlecrank had climbed into a Venture Company shredder without its ignition key.",
     "The supervisor above the derrick held the key needed to move the stolen machine.",
@@ -1519,7 +1604,7 @@ Fallback("The Escape", nil,
     "Getting out of danger required practical help.",
     "An escape depended on assistance before the immediate difficulty could be left behind.",
     "The requested help with the escape was supplied.",
-    "The recorded escape errand was complete.", {V .. " #114, #863"})
+    "The escape was seen through.", {V .. " #114, #863"})
 pack.quests["The Escape"].thread = false
 pack.quests["The Escape"].threadLabel = false
 Q(896, "Miner's Fortune", "The Barrens", 18, "horde_ratchet",
@@ -1547,6 +1632,125 @@ Q(899, "Consumed by Hatred", "The Barrens", 20, "horde_roads",
     "A watcher scanned the horizon for quilboar and wanted more of them killed.",
     "The delivered tusks were welcomed, but the demand for vengeance remained unsatisfied.",
     "Proof of the quilboars' deaths brought thanks without ending the bitterness behind the task.")
+
+-- Ratchet's broken samophlange, Chen's brews, Gann's revenge, the coast and
+-- Vrang's ridge (overnight 2026-11-05). Sputtervalve, Wenikee, Drohn, Mebok
+-- and Gann are named from LoreForever Z_barrens; Vrang's chain (95494-95508)
+-- and Bruuz (92706) are Forever additions.
+local HV, HN2 = "horde_gann", "horde_vrang"
+pack.threads[HV] = "Gann Stonespire's war on Bael Modan"
+pack.threads[HN2] = "Vrang and the hermit tanner"
+Q(3921, "Wenikee Boltbucket", "The Barrens", 14, "horde_ratchet",
+    "Sputtervalve had already told colleagues in Undermine about the samophlange, and then he broke it. He hoped Wenikee Boltbucket, south of Mor'shan Rampart, could fix it.",
+    "The broken samophlange went to Wenikee Boltbucket near Mor'shan Rampart. Sputtervalve called her clever and inquisitive.",
+    "Wenikee had no idea what a samophlange was. She liked the way it moved and the sound of the gears inside, and wanted to fix it at once.",
+    "Wenikee asked what a samophlange was, then heard the intricate gears inside and decided she had to fix it.")
+Q(3922, "Nugget Slugs", "The Barrens", 15, "horde_ratchet",
+    "Wenikee needed seventeen-point-five gauge nugget slugs to fix the samophlange. The Venture Company kept them in tool buckets at the Sludge Fen.",
+    "Repairs on the samophlange waited on nugget slugs from the Venture Company's tool buckets in the Sludge Fen.",
+    "Wenikee had her nugget slugs and set to work on the samophlange.",
+    "The nugget slugs reached Wenikee, who could finally begin tinkering.")
+Q(3923, "Rilli Greasygob", "Orgrimmar", 18, "horde_ratchet",
+    "Wenikee's extra gauges read the samophlange's structural integrity at an all-time low. Rather than add more dials, she sent it to Rilli Greasygob, a former Venture Company man at Nogg's Machine Shop in Orgrimmar.",
+    "If anyone could fix the samophlange, Wenikee thought, it was Rilli Greasygob in Orgrimmar's Valley of Honor.",
+    "Rilli recognized the samophlange at once and asked whether its bearer had been poking around Venture Company holdings. Very brave or very stupid, he decided.",
+    "The samophlange reached Rilli Greasygob, who judged anyone carrying it either very brave or very stupid.")
+Q(3924, "Samophlange Manual", "Orgrimmar", 19, "horde_ratchet",
+    "Rilli could fix the samophlange with its manual. His old Venture Company rival, Boss Copperplug at the Boulder Lode Mine, had hoarded it and handed out pages to a trusted few.",
+    "Boss Copperplug had kept the samophlange's secrets from Rilli in their Venture Company days. The manual, and any pages he had given away, were at the Boulder Lode Mine.",
+    "Rilli had the manual at last. Sputtervalve sent thanks and a reward, and Rilli promised word if the samophlange ever worked.",
+    "The manual reached Rilli, eager to learn how to fix the samophlange. The repair itself was still ahead.")
+Q(819, "Chen's Empty Keg", "The Barrens", 15, "horde_trade",
+    "A small placard on an empty keg named Chen Stormstout and wished that it would always raise his spirits.",
+    "An empty keg with Chen Stormstout's name on it was taken to Brewmaster Drohn.",
+    "Drohn recognized one of Chen Stormstout's kegs. Chen had traveled with Rexxar long ago, and Drohn had not heard of him in years.",
+    "The keg reminded Brewmaster Drohn of Chen Stormstout, who had traveled with Rexxar a long time before.", nil, true)
+Q(821, "Chen's Empty Keg", "The Barrens", 15, "horde_trade",
+    "Brewmaster Drohn had learned Chen's stormstout from his mentor, who had it from Chen himself. He needed savannah lion tusks, plainstrider kidneys and a thunder lizard horn.",
+    "To brew stormstout, Chen Stormstout's namesake, Drohn needed ingredients from the beasts of the Barrens.",
+    "Drohn laughed at brewing stormstout again. The batch stirred his nostalgia and reminded him of the last trogg brew he had made.",
+    "The stormstout was brewed, and Drohn said the memories warmed his stomach.", nil, true)
+Q(822, "Chen's Empty Keg", "The Barrens", 24, "horde_trade",
+    "Drohn had another of Chen's recipes, a trogg brew with a real kick. It called for stormhide lightning glands, a greater thunderhawk's saliva gland and a kodo liver.",
+    "Chen Stormstout had also taught a trogg brew, and Drohn offered to make it for anyone who brought the glands and liver.",
+    "Drohn brewed his trogg brew and promised more whenever the ingredients came back.",
+    "The trogg brew was ready. Drohn had known the offer would be hard to resist.", nil, true)
+Fallback("Chen's Empty Keg", "horde_trade",
+    "Chen Stormstout's empty keg had found its way into the Barrens.",
+    "Brewmaster Drohn kept recipes that Chen Stormstout had passed on.",
+    "Chen Stormstout's name came up over Drohn's brewing.",
+    "Drohn's brews kept Chen Stormstout's recipes alive.", {V .. " #819, #821, #822"})
+Q(1491, "Smart Drinks", "The Barrens", 18, "horde_ratchet",
+    "Mebok Mizzyrix's raptor horn drinks had not worked. He now believed that wailing essence, gathered in the ectoplasmic creatures of the Wailing Caverns, would make them smart.",
+    "Mebok Mizzyrix wanted wailing essence for his smart drinks. He thought it caused the strange plants and animals of the Barrens.",
+    "Mebok had his wailing essence and was sure it would make his fortune. He promised more reward once he was rich.",
+    "The essence reached Mebok, who could not wait to try it in his drink. Its effect remained to be seen.")
+Q(843, "Gann's Reclamation", "The Barrens", 23, HV,
+    "The dwarves of Bael Modan blasted holes in the land that had once fed Gann Stonespire's tribe. Talks had failed, and Gann wanted the dig driven out and Prospector Khazgorm's notebook brought to him.",
+    "Gann Stonespire wandered the roads alone since the dwarves of Bael Modan drove his tribe from its ancestral home. He meant to take the land back by force.",
+    "Khazgorm was dead, and Gann felt no remorse for him. He turned to studying the prospector's notebook.",
+    "The prospector's death was a warning, Gann said, to all who threatened the tauren way of life. Khazgorm's notebook was his to read.")
+Q(846, "Revenge of Gann", "The Barrens", 26, HV,
+    "Khazgorm's notebook showed how much the dig depended on explosives. Gann wanted nitroglycerin, wood pulp and sodium nitrate from the keep's soldiers to make a charge of his own.",
+    "A new foreman would soon take over at Bael Modan. Gann meant to give the dwarves a taste of their own medicine.",
+    "Gann had the makings of his charge and promised the dwarves a surprise.",
+    "The ingredients reached Gann, who praised the industry of whoever had brought them.", nil, true)
+Q(849, "Revenge of Gann", "The Barrens", 26, HV,
+    "Gann fashioned an explosive from Khazgorm's plans. The flying machine at Bael Modan served the dig and the war, and to him it insulted the memory of his tribe.",
+    "Gann handed over an explosive stick meant for the dwarves' flying machine at Bael Modan.",
+    "The flying machine at Bael Modan was destroyed. Gann hoped its destroyer would be revered in Thunder Bluff as a champion of his lost tribe.",
+    "Gann had his revenge on Bael Modan's flying machine, and called it the work of a defender of sacred tauren lands.", nil, true)
+Fallback("Revenge of Gann", HV,
+    "Gann Stonespire wanted revenge on the dwarves of Bael Modan.",
+    "The dig at Bael Modan had cost Gann's tribe its ancestral land.",
+    "Gann's plans against Bael Modan moved forward.",
+    "The dwarves of Bael Modan felt more of Gann's anger.", {V .. " #846, #849"})
+Q(874, "Mahren Skyseer", "The Barrens", 27, "horde_hunts",
+    "A true hunter, Jorn Skyseer said, could stalk prey down any path, even the sea. His sister Mahren hunted the great water beasts along the coast.",
+    "Jorn Skyseer sent the hunter to his sister Mahren on the human-held Barrens coast.",
+    "Mahren gave her respect to anyone who had earned her brother's, and offered to teach the ways of the water beasts.",
+    "Mahren Skyseer welcomed her brother's student and asked if the hunter was ready to go farther down the hunter's path.")
+Q(873, "Isha Awak", "The Barrens", 27, "horde_hunts",
+    "Isha Awak, the Deep Doom, was lord of the coastal waters and had eaten many of the humans on the shore. Mahren Skyseer did not fear him. To her he was honorable prey.",
+    "Mahren sent the hunter into the sea after Isha Awak. His spirit dwelt in his heart, she said, and to hear it beat was to know one's fate.",
+    "Isha Awak's heart reached Mahren. His spirit, she said, now lurked in the hunter's eyes.",
+    "The Deep Doom was dead, and Mahren declared the hunter one with Isha Awak.")
+Q(92706, "WANTED: Bruuz", "The Barrens", 20, "horde_ratchet",
+    "A giant shark the dockworkers called Bruuz was circling Ratchet's shipping dock, attacking sailors and small boats. Gazlowe offered a hefty reward for its fin.",
+    "Gazlowe could not get a crew into the water while all of Ratchet cried shark. He posted a bounty on Bruuz.",
+    "Gazlowe paid for Bruuz's fin and thought he might put it in a soup that night, to have the last laugh.",
+    "With Bruuz dead, Gazlowe could get his crews back in the water.")
+Q(95494, "Bruised Pride and Lion Hides", "The Barrens", 18, HN2,
+    "Vrang had injured his leg and could not hunt, but he had obligations to keep. It stung his pride to ask a stranger for lion hides.",
+    "Vrang traded raw lion hides to a local tanner for finished leather. With his leg hurt, he needed someone else to take the big lions.",
+    "Vrang judged the hides good. He had never come up short on his arrangement with the tanner and did not mean to start now.",
+    "The lion hides would keep Vrang's bargain with the tanner, injury or not.")
+Q(95495, "The Hermit Tanner", "The Barrens", 18, HN2,
+    "Vrang's hides were bound for a hermit tanner on the ridge behind his camp. Vrang could not manage the climb, and warned that the tanner's looks were no cause for alarm.",
+    "A tanner who lived alone atop the ridge above the Dry Hills traded leather for Vrang's hides.",
+    "The tanner accepted the hides and regretted that Vrang had not come himself. There was a matter he wanted to discuss with him.",
+    "The hides reached the hermit tanner, who had something he wished to talk over with Vrang.")
+Q(95507, "Vrang's Game", "The Barrens", 18, HN2,
+    "Vrang's traps were strewn across the valley, and his injured leg kept him from checking them.",
+    "Vrang wanted the small game from his traps brought back, and warned of other wildlife in the valley.",
+    "Vrang was grateful for the game. Without it, he said, his wounded leg might have sent him to bed hungry.",
+    "The trapped game reached Vrang, who would not go hungry after all.")
+Q(95508, "Unwelcome Guests", "The Barrens", 18, HN2,
+    "The hermit tanner had once served in the Kul Tiras navy. He had objected to the Lord Admiral's campaign in Durotar, above all the execution of civilians.",
+    "Before the hermit could tell the rest of his past, a group of men came up the ridge.",
+    "Everyone on the ridge survived the attack. The tanner said he had always known his past would catch up with him, and gave what reward he could.",
+    "The men on the ridge were beaten off. The former Kul Tiras sailor said he was in debt for the help.")
+for _, id in ipairs({3924, 843, 873, 95508}) do pack.questIDs[id].importance = 4 end
+pack.questIDs[849].importance = 5
+pack.questIDs[3921].highlight = {"Sputtervalve had boasted to Undermine about the samophlange, then broke it. Wenikee Boltbucket had no idea what it was, but heard the gears inside and wanted to fix it.", "The broken samophlange went to Wenikee Boltbucket near Mor'shan Rampart, who was delighted by a machine she could not name."}
+pack.questIDs[3923].highlight = {"Wenikee's repairs left the samophlange worse, so it went to Rilli Greasygob in Orgrimmar. The former Venture Company man called its bearer very brave or very stupid.", "Rilli Greasygob of Nogg's Machine Shop recognized the samophlange at once, and wondered who had dared take it from the Venture Company."}
+pack.questIDs[3924].highlight = {"Boss Copperplug had hoarded the samophlange manual at the Boulder Lode Mine. Recovered, it went to his old rival Rilli, who promised word if the machine ever worked.", "Rilli Greasygob finally had the samophlange manual his Venture Company rival had kept from him. Sputtervalve sent thanks of his own."}
+pack.questIDs[821].highlight = {"Brewmaster Drohn brewed Chen Stormstout's stormstout again from Barrens ingredients. The batch made him nostalgic, and he said the memories warmed his stomach.", "With lion tusks, plainstrider kidneys and a thunder lizard horn, Drohn made stormstout for the first time in years."}
+pack.questIDs[843].highlight = {"Prospector Khazgorm, whose dig at Bael Modan had driven Gann Stonespire's tribe from its land, was dead. Gann felt no remorse and turned to the prospector's notebook.", "Gann Stonespire's talks with the dwarves had failed. Khazgorm's death at Bael Modan was his warning to all who threatened the tauren way of life."}
+pack.questIDs[849].highlight = {"Gann Stonespire's charge, made from Khazgorm's own plans, destroyed the dwarves' flying machine at Bael Modan. Gann hoped Thunder Bluff would honor a champion of his lost tribe.", "Bael Modan's flying machine, an insult to the memory of Gann's tribe, was blown apart. Gann called it the work of a defender of sacred tauren lands."}
+pack.questIDs[873].highlight = {"Isha Awak, the Deep Doom who had eaten many on the coast, was killed in the sea. Mahren Skyseer said his spirit now lurked in the hunter's eyes.", "Mahren Skyseer sent the hunter after Isha Awak, honorable prey to her. When his heart was brought to her, she declared the hunter one with him."}
+pack.questIDs[92706].highlight = {"Bruuz, the shark circling Ratchet's dock, was killed. Gazlowe paid the bounty and thought of putting its fin in a soup, just to have the last laugh.", "Gazlowe's crews could go back in the water once Bruuz's fin reached him."}
+pack.questIDs[95508].highlight = {"The hermit tanner above the Dry Hills had left the Kul Tiras navy over the execution of civilians in Durotar. When armed men came up his ridge, he survived, and said he had always known his past would catch up with him.", "Men came up the ridge for the former Kul Tiras sailor. Everyone survived, and the hermit tanner gave what reward he could."}
 
 -- Deliveries make the capitals part of everyday life without asserting a flight.
 Q(853, "Apothecary Zamah", "Thunder Bluff", 15, "horde_apothecary",
@@ -1637,7 +1841,7 @@ Fallback("Arugal's Folly", HA,
     "Dalar's research concerned Arugal's spells and the worgen troubling Silverpine.",
     "The Forsaken's efforts in the forest included an inquiry into the wizard's enchantments.",
     "Dalar's work concerning Arugal received further help.",
-    "Another part of the inquiry into the worgen's magic was finished.", {V .. " #422, #423, #424, #99, #98298"})
+    "Dalar Dawnweaver had more evidence for his inquiry into the worgen of Silverpine.", {V .. " #422, #423, #424, #99, #98298"})
 Q(428, "Lost Deathstalkers", "Silverpine Forest", 12, HS,
     "Rane and Quinn Yorick had failed to return from reconnaissance in northern Silverpine.",
     "The Sepulcher needed a search of the farms where its missing scouts had begun their mission.",
@@ -1796,7 +2000,7 @@ Q(477, "Border Crossings", "Silverpine Forest", 14, HM,
     "Inside the Dalaran crate lay old maps of western Lordaeron and a mysterious pendant.")
 Q(478, "Maps and Runes", "Silverpine Forest", 14, HM,
     "The pendant from the Dalaran crate was taken before the lid went back on. Shadow Priest Allister was waiting for anything useful.",
-    "Maps and a strange pendant from the wizards' supplies were bound for Shadow Priest Allister at the Sepulcher.",
+    "The maps and the strange pendant from the wizards' supplies were bound for Shadow Priest Allister at the Sepulcher.",
     "Allister found the maps and pendant interesting, but the wizards' aim was still hidden from him. Dalar, he thought, might know more.",
     "The pendant reached Allister, who could see Dalaran's interest in Ambermill but not its purpose. He looked to Dalar Dawnweaver for answers.")
 Q(481, "Dalar's Analysis", "Silverpine Forest", 14, HM,
@@ -1837,6 +2041,43 @@ pack.questIDs[479].highlight = {"The pendants taken from Ambermill's wizards slo
 pack.questIDs[480].highlight = {"Archmage Ataeric was killed at Ambermill and his staff brought to Shadow Priest Allister. The ley node the Kirin Tor had been waking fell dormant again.", "With the archmage dead, Dalaran's magic at Ambermill dissipated. Allister called it a major blow to the wizards, though such power so close still worried him."}
 pack.questIDs[6324].highlight = {"Deathguard Podrig's weapons order went to the Undercity by bat and came back as a crate from Gordon Wendham. The Sepulcher's Deathguards would not be caught unprepared.", "The weapons from the Undercity reached Deathguard Podrig at the Sepulcher. He called the errand a valuable service to the Dark Lady."}
 pack.questIDs[98299].highlight = {"Human refugees had gathered at the Greymane Wall, where the Forsaken feared Arugal's curse would take them. They were put down, and Gilneas kept its gate shut.", "To keep Arugal's curse from spreading, the refugees at the Greymane Wall were killed. The Gilneans let no one through their wall."}
+
+-- Quests recorded in Alberich's and Dahlia's beta journals that still had no
+-- scene (Migration/ancestor-journals-20261105), plus Forever's Camping 101
+-- family. Camping titles repeat across professions, races and zones, so they
+-- stay title contexts with no zone or thread; each names only its own fixture.
+Q(91921, "Return to Quinn (Again)", "Silverpine Forest", 11, HS,
+    "Renferrel had a new potion for Quinn's recovery, made, he said, with love extracted from six whole hearts. He wanted it delivered before more paperwork could be required.",
+    "Quinn Yorick was still waiting at the farm for a remedy. Apothecary Renferrel sent a new potion and asked to be excused from the visitor's company.",
+    "Quinn drank the new potion and felt it working. He had begun to come to terms with turning into a ghoul, and now expected to travel soon.",
+    "The potion reached Quinn, who thanked the courier for a great favor and expected to be on his feet before long.")
+Q(5761, "Slaying the Beast", "Orgrimmar", 16, "horde_blade",
+    "The Searing Blade made its home in Ragefire Chasm, secretly working to subvert members of the Horde. Its leader was a felguard, Taragaman the Hungerer.",
+    "Rooting out the demonic influence in the Warchief's city meant killing Taragaman the Hungerer, who led the Searing Blade in Ragefire Chasm.",
+    "Taragaman's heart was handed over with the promise that Thrall would hear of the victory.",
+    "Taragaman's heart was taken to be dealt with properly, and Thrall was to hear of the victory.")
+pack.questIDs[5761].importance = 5
+pack.questIDs[91921].highlight = {"Renferrel's second potion, made with love extracted from six whole hearts, reached Quinn Yorick. Quinn had been coming to terms with turning into a ghoul, and now expected to travel soon.", "Quinn Yorick drank Renferrel's new potion at the farm and felt it working."}
+pack.questIDs[5761].highlight = {"Taragaman the Hungerer, the felguard who led the Searing Blade in Ragefire Chasm, was slain. His heart was handed over, and Thrall was to hear of it.", "The Searing Blade lost its felguard master, Taragaman the Hungerer, deep in Ragefire Chasm."}
+local camping = {
+    {"Cooking", "Every camp began with a cook and a campfire, the camping teacher said.", "Cooking was the foundation of a camp, more than a way to make tasty food.", "A campfire could now be built anywhere in the wilds, the first piece of any camp.", "The basics of a campfire were learned. Bigger fires would come with more cooking skill.", "#96626, #96629"},
+    {"First Aid", "Injuries were a fact of adventuring, and a First Aid Kit at camp could save lives.", "A camping teacher knew someone who could show a first aider how to make a First Aid Kit for camp.", "A First Aid Kit could now be made for camp, to be set out in the wilds away from town.", "The First Aid Kit joined what could be built at camp, once a campfire was lit.", "#96047, #97903"},
+    {"Alchemy", "An alchemist could learn to build a Mana Well, a refreshment for the healers and spellcasters around a camp.", "A camping teacher offered to show an alchemist how to craft a Mana Well for camp.", "A Mana Well could now be crafted, to be tried out at a camp in the wilds.", "The Mana Well could stand beside a campfire in the wilds, since no camp was complete without one.", "#96045, #97899"},
+    {"Mining", "A miner could learn to build a Lodestone, which gave fighters gathered at a camp extra strength.", "Mining was honest work, the camping teacher said, and it could furnish a camp with a Lodestone.", "A Lodestone could now be crafted, to be tried out at a camp in the wilds.", "The Lodestone was ready for the next camp, though the teacher reminded that a fire had to come first.", "#96046, #97907"},
+    {"Fishing", "A fisher could learn to build a Fish Bowl, a bit of joy for adventurers at camp.", "Fishing could serve a camp too, the camping teacher said, by way of a Fish Bowl.", "A Fish Bowl could now be crafted, to be tried out at a camp in the wilds.", "The Fish Bowl joined what could be built at camp, once a campfire was lit.", "#96050, #97904"},
+    {"Tailoring", "A tailor could learn to make a banner for camp, to keep morale high.", "Inspiration and morale mattered on any battlefield, the camping teacher said, and a tailor could sew a rallying banner.", "A rallying banner could now be made, to be raised at a camp in the wilds.", "The banner could stand beside a campfire in the wilds, since no camp was complete without one.", "#96057, #97925"},
+    {"Enchanting", "An enchanter could learn to make an Enchanted Lute, for entertainment between hard days.", "A camping teacher offered to show an enchanter how to craft an Enchanted Lute for camp.", "An Enchanted Lute could now be crafted, to be played at a camp in the wilds.", "The Enchanted Lute was ready for the next camp, though the teacher reminded that a fire had to come first.", "#96059, #97901"},
+    {"Blacksmithing", "A blacksmith could learn to build a Sharpening Wheel, where warriors and rogues at camp could hone their weapons.", "A camping teacher knew someone who could show a blacksmith how to craft a Sharpening Wheel.", "A Sharpening Wheel could now be crafted, to be set up at a camp in the wilds.", "The Sharpening Wheel joined what could be built at camp, once a campfire was lit.", "#96044, #97900"},
+    {"Leatherworking", "A leatherworker could learn to make a tent, cool on hot days and dry on rainy ones.", "Good rest kept a traveler sharp, the camping teacher said, and a leatherworker could make a tent.", "A camp tent could now be made, to be pitched in the wilds away from town.", "The tent could stand beside a campfire in the wilds, since no camp was complete without one.", "#96031, #97906"},
+    {"Engineering", "An engineer could learn to build a Reagent Bot, keeping a camp supplied with the materials spells needed.", "A camping teacher knew someone who could show an engineer how to build a Reagent Bot for camp.", "A Reagent Bot could now be built, to be tried out at a camp in the wilds.", "The Reagent Bot was ready for the next camp, though the teacher reminded that a fire had to come first.", "#96058, #97902"},
+    {"Herbalism", "An herbalist could learn to make an Incense Candle, to keep healers and spellcasters at camp in high spirits.", "Picking flowers could be useful and profitable, the camping teacher said, and could furnish a camp with an Incense Candle.", "An Incense Candle could now be made, to be lit at a camp in the wilds.", "The Incense Candle joined what could be built at camp, once a campfire was lit.", "#96055, #97957"},
+    {"Skinning", "A skinner could learn to make a Camp Chair from gathered hides, a place to rest between fights.", "A bit of relaxation kept an adventurer at peak condition, the camping teacher said, and hides could make a Camp Chair.", "A Camp Chair could now be made, to be set out at a camp in the wilds.", "The Camp Chair could stand beside a campfire in the wilds, since no camp was complete without one.", "#96056, #97960"},
+}
+for _, r in ipairs(camping) do
+    local title = "Camping 101: " .. r[1]
+    Fallback(title, false, r[2], r[3], r[4], r[5], {V .. " " .. r[6]})
+    pack.quests[title].thread, pack.quests[title].threadLabel = false, false
+end
 
 -- The executor's orders are attributed to him; these stages neither declare a
 -- character's allegiance nor turn assaults into a permanent conquest.
@@ -1979,6 +2220,14 @@ Q(5088, "Arikara", "Thousand Needles", 28, HK,
     "The serpent was slain, while Motega remained puzzled by Magatha's explanation.")
 for _, id in ipairs({1086,4966,4770,4904,5088}) do pack.questIDs[id].importance = 4 end
 
+-- Compact scenes for Mulgore's turning points (overnight 2026-11-05, same sources).
+pack.questIDs[757].highlight = {"Bristlebacks from Brambleblade Ravine had ambushed Narache's hunters and stolen from the village. Their belts reached Chief Hawkwind, and the Rite of Strength was passed.", "The first of the Earthmother's rites was won against the Bristleback raiders. Chief Hawkwind said the tribe would be proud."}
+pack.questIDs[772].highlight = {"Zarlman's Water of the Seers brought a vision by the tribal fire. Followed to its end, it completed the Rite of Vision.", "Beside the tribal fire, the Water of the Seers raised a vision to follow. At its end the Rite of Vision was passed."}
+pack.questIDs[760].highlight = {"The last of Mulgore's poisoned wells, Wildmane, ran clean again. Bloodhoof Village was grateful, and Mull Thunderhorn wished the waters of Mulgore would stay clean forever.", "Mull Thunderhorn's third totem cleansed the Wildmane well north of Thunder Bluff. The goblins' poison was gone from all three wells."}
+pack.questIDs[766].highlight = {"Mazzranache, the strider of Maur Raincaller's grandfather's tales, had bitten Maur and left him feverish. The remedy's ingredients arrived in time, and Maur said he owed his life.", "Maur Raincaller had met the strider his grandfather fought, and nearly died of its bite. With a wolf heart, a cougar femur, a scale and a gizzard, he could make his cure."}
+pack.questIDs[745].highlight = {"Palemane gnolls had been slaughtering Mulgore's wildlife and scorned every attempt at talk. When they were checked, Baine Bloodhoof spoke of death and life as a circle.", "Baine Bloodhoof sent the young against the Palemane gnolls so they would see how much harm a small threat could do to the land."}
+pack.questIDs[744].highlight = {"Eyahn Eagletalon was making a headdress for his brother's ceremony before Cairne Bloodhoof. The harpy feathers he lacked completed the design.", "Twelve harpy feathers finished the headdress Eyahn Eagletalon was making for his brother's ceremony before Cairne."}
+
 -- Close these modest delivery arcs in Highlights before intermediary referrals.
 for _, id in ipairs({888, 6364, 6386}) do pack.questIDs[id].importance = 4 end
 
@@ -2092,7 +2341,7 @@ pack.questIDs[5730] = {
 }
 pack.questIDs[5730].threadLabel = pack.threads[pack.questIDs[5730].thread]
 pack.quests["Burning Shadows"].why = {"A pendant from Skull Rock called for closer examination.", "An unusual object from the cultists prompted an inquiry in Orgrimmar."}
-pack.quests["Burning Shadows"].after = {"The pendant's inquiry had received attention.", "The recorded errand concerning the pendant was complete."}
+pack.quests["Burning Shadows"].after = {"The pendant from Skull Rock was handed over to be examined.", "The cultists' pendant went to Orgrimmar for study."}
 pack.quests["Burning Shadows"].source = {"StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #832"}
 
 -- Complete short scenes: exact recorded stages only; see editorial-20261016 author packet.
