@@ -5866,7 +5866,7 @@ q(1049, "Compendium of the Fallen", "Thunder Bluff", 38, "scarletmonastery", 3,
     "Sage Truthseeker had begun to wonder if the Compendium existed. The tauren of Thunder Bluff had been well served.",
     "Truthseeker welcomed the Compendium of the Fallen at last.")
 q(1050, "Mythology of the Titans", "Ironforge", 38, "scarletmonastery", 3,
-    "The old Monastery's library, once a seminary for paladins, was said to hold Mythology of the Titans. Its keeper in Ironforge wanted to study the past.",
+    "The library of the old Monastery in Tirisfal Glades was rumored to hold Mythology of the Titans, and Librarian Mae Paledust in Ironforge wanted it to study the past.",
     "The Explorers' League wanted Mythology of the Titans rescued from the Scarlet Crusade's halls and kept in Ironforge.",
     "Librarian Mae Paledust thanked the rescuer of the sacred text on behalf of the Explorers' League.",
     "Mae Paledust welcomed Mythology of the Titans to Ironforge.")
@@ -6036,7 +6036,7 @@ q(3042, "Troll Temper", "Tanaris", 45, "zulfarrak", 2,
     "The Sandfury of Zul'Farrak made a tempering agent from sandstone, prized by connoisseurs. A good supply would be well paid by Trenton Lighthammer in Gadgetzan.",
     "Troll temper from Zul'Farrak would improve the goods Trenton Lighthammer crafted.",
     "Trenton Lighthammer had enough temper to keep him at work for days, and paid well.",
-    "Trenton was pleased with the troll temper and its amount.")
+    "Trenton Lighthammer called it very nice temper, and so much of it, then paid for the supply.")
 q(2864, "Tran'rek", "Tanaris", 45, "scarabs", 2,
     "Krazek's cousin Tran'rek in Gadgetzan had promised a load of scarab shells weeks ago. A reminder was due before something got broken, Krazek said.",
     "Krazek sent word to his cousin in Gadgetzan that the scarab shells were overdue.",
@@ -6085,8 +6085,8 @@ q(1445, "The Temple of Atal'Hakkar", "Swamp of Sorrows", 50, "atalai", 4,
 q(1475, "Into The Temple of Atal'Hakkar", "Stormwind City", 50, "atalai", 4,
     "The Temple of Atal'Hakkar lay sunk beneath the Pool of Tears. Near the end of his career, Brohann Caskbelly wanted its intact Atal'ai Tablets for the Explorers' League.",
     "His old bones could not brave the sunken temple, so Brohann asked for help with his last task for the Explorers' League.",
-    "Brohann Caskbelly said their names would go down in history together. He had fulfilled his final obligation.",
-    "Brohann thanked the finder of the Atal'ai Tablets, his last work for the League complete.")
+    "Brohann Caskbelly said that once he delivered the tablets to the Explorers' League, their names would go down in history together.",
+    "Brohann thanked the finder of the Atal'ai Tablets, which he meant to deliver to the League as his final obligation.")
 for _, id in ipairs({2770, 2846, 2991, 3042, 2864, 2865, 7028, 7029, 7041, 7067, 1444, 1445, 1475}) do src(id) end
 for _, id in ipairs({1444, 1445, 1475}) do P.questIDs[id].threadLabel = P.threads.world_atalai end
 P.questIDs[2991].threadLabel = P.threads.world_sharpbeak
