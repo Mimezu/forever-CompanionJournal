@@ -170,7 +170,30 @@ local singleNames = {Thrall=true, Onyxia=true, Nefarian=true, Ragnaros=true, Var
     Maurin=true, Lydon=true,
     -- Short forms added to existing notes in the last pass.
     Dalar=true, Sergra=true, Fandral=true, Trias=true}
-local V = "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"
+-- notes3 2026-11-05: ordinary given names and surnames a player or companion could
+-- carry. They never link on their own, whether listed above or the one-word title
+-- of an auto-linked note (Laird, Calor...); explicit markup and the longer names
+-- ("Marshal Windsor", "Magistrate Solomon") still open the note.
+local commonNames = {}
+for name in ([[Alaric Allister Aramis Arren Bartleby Berard Betina Bjork Calor Carlin Darcy Doan Doren
+    Eridan Farley Glorin Gordo Gunther Harken Hendel Herod Jorgen Jorn Kibler Laird Larion Linken Linnea
+    Lydon Malin Maurin Melor Mikhail Morin Myranda Paxton Ringo Sneed Solomon Tabetha Thule Trelane
+    Verner Vimes Windsor]]):gmatch("%S+") do
+    commonNames[name] = true
+    singleNames[name] = nil
+end
+-- notes3 batch 1: distinctive short forms of new notes (Myzrael, Reethe and
+-- Bel'dugur carry discovery policies; Krog, Merrin, Remy, Nazeer and Gerrig stay plain).
+for name in ([[Gorzeeki Mor'zul Impsy Rethiel Ormer Bath'rah Mok'thardin Tor'gan Erlgadin Wizbang
+    Derrington Vandis Darthalia Myzrael Bel'dugur Reethe Velinde Pozzik Razzeric Lotwil Gwennyth Wrenix
+    Rynthariel Ridgewell Fitzsimmons Shadowvale Windshaper]]):gmatch("%S+") do singleNames[name] = true end
+-- "Windshaper Boro" is a shaman trainer's title, not the Skyborne faction.
+for _, title in ipairs({"Ormer's Revenge", "Mok'thardin's Enchantment", "Myzrael's Allies", "Questioning Reethe",
+    "Windshaper Boro", "Velinde's Effects", "Wrenix of Ratchet", "Razzeric's Tweaking", "Delivery to Ridgewell",
+    "In Search of Menara Voidrender", "Vrang's Game", "That Shadowvale Green Elixir"}) do
+    knownNames[title] = {plain = true}
+end
+local V ="StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"
 local Q = "StorageInvestigation/journal-voice/quests_corpus.txt"
 local N = "StorageInvestigation/journal-voice/npc_corpus.txt"
 local function Plain(value)
@@ -231,7 +254,7 @@ local function Add(entry, names)
                     or entry.kind == "Dungeon" or entry.kind == "Raid")
             -- An explicitly registered spelling variant of an opted-in full title
             -- is safe too; arbitrary shortened aliases still do not inherit opt-in.
-            if type(name) == "string" and (name:match("%S+%s+%S+") or singleNames[name]
+            if type(name) == "string" and not commonNames[name] and (name:match("%S+%s+%S+") or singleNames[name]
                 or canonicalPlace or (entry.autoLink == true and Normalize(name) == Normalize(entry.title))) then
                 knownNames[name] = {id = entry.id, kind = entry.kind == "Person" and "n" or "p"}
                 knownNameOrder, knownNameBuckets = nil, nil
@@ -3771,7 +3794,7 @@ Curated("relic:eye-shadow",
 Curated("relic:dartols-rod",
     "Dartol's Rod of Transformation",
     "Relic",
-    "Dartol's Rod of Transformation is an enchanted rod that gives its bearer the appearance of a furbolg. Raene Wolfrunner's investigation in Ashenvale requires the broken artifact to be reconstructed and recharged at a hidden shrine, continuing the search begun by the fallen Teronis.\n\nThe disguise offers a way to approach Krolg, an uncorrupted furbolg who mistakes the transformed visitor for one of his own people. Krolg condemns the corruption afflicting his kin and the cruelty of Ran Bloodtooth, allowing Raene's search to proceed through conversation with a furbolg rather than attacks alone. The rod is therefore a means of crossing the hostility between the forest's inhabitants as well as a magical transformation.",
+    "Dartol's Rod of Transformation is an enchanted rod that gives its bearer the appearance of a furbolg. Raene Wolfrunner's investigation in Ashenvale requires the broken artifact to be reconstructed and recharged at a hidden shrine, continuing the search Teronis began.\n\nThe disguise offers a way to approach Krolg, an uncorrupted furbolg who mistakes the transformed visitor for one of his own people. Krolg condemns the corruption afflicting his kin and the cruelty of Ran Bloodtooth, allowing Raene's search to proceed through conversation with a furbolg rather than attacks alone. The rod is therefore a means of crossing the hostility between the forest's inhabitants as well as a magical transformation.",
     {"https://classicdb.ch/?item=5462 (original transformation effect)", "https://classicdb.ch/?quest=1030 (original objective and Krolg endpoint)", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #1026, #1027, #1028, #1029, #1030, #1045 and #1046 Raene's Cleansing"},
     {"Dartol's Rod", "Dartol’s Rod of Transformation"},
     {"region:417368656e76616c65"},
@@ -5939,12 +5962,37 @@ function A.LoreNoteCoverage()
     return counts
 end
 
+-- The user's own characters and the players in their list (read-only). A
+-- one-word name that one of them carries never becomes a link to a namesake
+-- NPC: the book owner is never in A.bookLinks, and a player missing from this
+-- book's list would otherwise open the NPC's note. A listed player's name keeps
+-- its person markup, which A.bookLinks routes to their journal first.
+local ownNames, ownNamesFor
+local function OwnNames()
+    local token = A.bookLinks
+    if ownNames and token and ownNamesFor == token then return ownNames end
+    local set, db = {}, A.db
+    local function Remember(key)
+        local base = type(key) == "string" and key:match("^([^%-]+)")
+        if base then set[base:lower()] = true end
+    end
+    if type(db) == "table" then
+        for key in pairs(type(db.characters) == "table" and db.characters or {}) do Remember(key) end
+        for key, card in pairs(type(db.people) == "table" and db.people or {}) do
+            if type(card) == "table" and not card.npc then Remember(key) end
+        end
+    end
+    ownNames, ownNamesFor = set, token
+    return set
+end
+
 -- Annotate a rendering copy only: never saved journal records. Exact case and
 -- word boundaries keep names out of larger words, while existing markup and
 -- native links remain opaque. Curated world names cannot imply quest stages.
 function A.MarkKnownLore(text)
     if type(text) ~= "string" or text == "" then return text end
     Import()
+    local own = OwnNames()
     if not knownNameOrder then
         knownNameOrder = {}
         for name, candidate in pairs(knownNames) do
@@ -5988,7 +6036,10 @@ function A.MarkKnownLore(text)
                     if text:sub(pos, last) == name and
                         (last == size or not text:sub(last + 1, last + 1):match("[%w_]")) then
                         local candidate = knownNames[name]
-                        out[#out + 1] = candidate.plain and name or
+                        local key = name:lower()
+                        local ownName = not name:find(" ", 1, true) and own[key]
+                            and not (candidate.kind == "n" and A.bookLinks and A.bookLinks[key])
+                        out[#out + 1] = (candidate.plain or ownName) and name or
                             "{" .. candidate.kind .. ":" .. name .. "}"
                         pos, matched = last + 1, true
                         break

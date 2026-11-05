@@ -1582,7 +1582,7 @@ do
         "King Magni Bronzebeard rules Ironforge, bearing the responsibilities of an Alliance monarch and the anguish of a father. His daughter Moira is with Emperor Dagran Thaurissan in Blackrock Depths. Magni believes his old Dark Iron enemy has enchanted her and calls for her return unharmed.\n\nHis concern for his subjects also appears in Sara Balloo's petition: her grief moves him to commission a memorial for her husband Sully, lost in the Alliance's service.",
         V .. " #4362 description; #683 and #686", {"npc:sara-balloo","faction:dark-iron"}, {family,husband,magniReply})
     notes["dungeon:stratholme"] = Rule(
-        "Stratholme is the ruined northern city where Arthas ordered the slaughter of inhabitants he believed infected with the plague, breaking with Uther. Its streets now hold Scourge forces and a Scarlet Crusade bastion, enemies fighting amid the remains of Lordaeron.\n\nBaron Rivendare commands the undead stronghold, while the Scarlet Bastion answers to Grand Crusader Dathrohan. The Argent Dawn investigates the plague's unnatural potency and the power drawn from the city's ziggurats. Anthion Harmon's spirit begs for the rescue of his wife Ysida from Rivendare.",
+        "Stratholme is the ruined northern city where Arthas ordered the slaughter of inhabitants he believed infected with the plague, breaking with Uther. Its streets now hold Scourge forces and a Scarlet Crusade bastion, enemies fighting amid the remains of Lordaeron.\n\nBaron Rivendare commands the undead stronghold, while the Scarlet Bastion answers to Grand Crusader Dathrohan. The Argent Dawn investigates the plague's unnatural potency and the power drawn from the city's ziggurats.",
         V .. " #5212, #5213, #8945 and #8968", {"npc:arthas","npc:rivendare","group:scarlet-crusade"}, {demon,doubt})
     notes["npc:balnazzar"] = Rule(
         "Balnazzar is the dreadlord discovered behind the Scarlet Crusade's Grand Crusader in Stratholme. His severed head supplies proof for the report to the Argent Dawn.",
@@ -1813,4 +1813,560 @@ do
         blocks = {{requires = {"raschal.wreck"},
             body = "His boat has been found wrecked, with his knife in the mud beside it.",
             sources = {V .. " #4125 The Missing Courier (completion); #4127 Boat Wreckage"}}}}}})
+end
+
+-- notes3 2026-11-05: Nathanos Blightcaller under the "nathanos" policy. Anyone can
+-- meet his name (Tyr's Hand, Quel'Lithien Lodge), so the public note keeps to his
+-- public role. The Marris Stead, his hounds and his errands belong to the Horde
+-- quests that send agents to him; his human past to #6186. The registry of his
+-- mortal life at Quel'Lithien Lodge is first said in #6133.
+do
+    local V = "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"
+    local WN = "https://warcraft.wiki.gg/wiki/Nathanos_Blightcaller (Classic-era role only)"
+    local notes = {}
+    notes["npc:nathanos"] = {public = {
+        body = "Nathanos Blightcaller is a champion of the Banshee Queen and an agent of the Forsaken in the Eastern Plaguelands. He fights the Scourge and the Alliance alike across that ruined land.",
+        sources = {WN}, related = {"npc:sylvanas", "faction:forsaken", "region:4561737465726e20506c616775656c616e6473"}},
+        blocks = {
+            {requires = {"nathanos.champion"},
+                body = "He holds the Marris Stead, where he keeps his hounds and from where he ranges out against the Scourge and the Alliance. Sylvanas counts him among her earliest champions. The Forsaken sent to help him find a harsh posting. He greets them with open contempt and judges them by their work, and even his hounds' food means a raid on the undead, since he wants fresh living rot from the Scourge at Corin's Crossing.",
+                sources = {V .. " #5961 The Champion of the Banshee Queen; #6022 To Kill With Purpose"}, related = {"place:marris-stead"}},
+            {requires = {"nathanos.revealed"}, unless = {"nathanos.champion"},
+                body = "He holds the Marris Stead, the old farm of the Marris family.",
+                sources = {V .. " #6186 The Blightcaller Cometh"}, related = {"place:marris-stead"}},
+            {requires = {"nathanos.registry"},
+                body = "The high elves of Quel'Lithien Lodge hold a registry of his mortal life. He wants it back and refuses to say what it contains.",
+                sources = {V .. " #6133 The Ranger Lord's Behest"}, related = {"place:quellithien-lodge"}},
+            {requires = {"nathanos.revealed"},
+                body = "In life he was Nathanos Marris, the first and last of the human ranger lords and the only human the high elves ever trained. Stormwind believed him killed defending Lordaeron. Highlord Bolvar Fordragon, who remembers him as a tactical genius, has ordered him destroyed.",
+                sources = {V .. " #6182 The First and the Last; #6186 The Blightcaller Cometh; #6187 Order Must Be Restored"}, related = {"npc:nathanos-marris"}}}}
+    notes["place:quellithien-lodge"] = {public = {
+        body = "Quel'Lithien Lodge is a high-elf hunting lodge in the northern Eastern Plaguelands, near the approach to Quel'Thalas. Ranger Lord Hawkspear and the lodge's defenders hold their position in a land devastated by the Scourge. Aurora Skycaller also lives here, working to recover knowledge from the past.",
+        sources = {"https://warcraft.wiki.gg/wiki/Quel%27Lithien_Lodge (original geography and pre-Cataclysm residents)"},
+        related = {"group:high-elves", "npc:aurora-skycaller", "region:4561737465726e20506c616775656c616e6473"}},
+        blocks = {{requires = {"nathanos.registry"},
+            body = "The lodge keeps a registry of Nathanos Blightcaller's mortal life. Nathanos wants it recovered, refuses to explain what it contains, and wants the lodge left in grief.",
+            sources = {V .. " #6133 The Ranger Lord's Behest"}, related = {"npc:nathanos"}}}}
+    A.RegisterLoreDiscovery({facts = {
+        ["nathanos.registry"] = {presented = {6133}, completed = {6133}},
+    }, notes = notes})
+end
+
+-- notes3 2026-11-05: Satyrnaar and the satyrs of Ashenvale under the "althalaxx"
+-- policy. Athrikus's soulgems among the satyrs come from Ilkrud's writings (#1140).
+do
+    local V = "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"
+    local gems = {requires = {"althalaxx.master"},
+        body = "Ilkrud Magthrull's writings show that Athrikus Narassin keeps two soulgems among the satyrs, one at Satyrnaar and the other at Night Run. Delgren the Purifier believes that destroying them will weaken the master of the Tower of Althalaxx.",
+        sources = {V .. " #1140 The Tower of Althalaxx"}, related = {"npc:athrikus", "place:tower-of-althalaxx"}}
+    local notes = {}
+    notes["place:satyrnaar"] = {public = {
+        body = "Satyrnaar is a satyr-held site in northeastern Ashenvale, with blood-soaked temples. It is part of the threat Delgren the Purifier watches from Maestra's Post.",
+        sources = {"https://warcraft.wiki.gg/wiki/Satyrnaar"}, related = {"region:417368656e76616c65", "place:maestras-post"}},
+        blocks = {gems}}
+    notes["group:satyrs"] = {public = {
+        body = "Satyrs are demonic beings descended from corrupted night elves, with horns, claws and hooved lower bodies. Their kind began with Xavius, whom Sargeras remade into the first satyr during the War of the Ancients. Xavius then spread that transformation among other night elves. The satyr sects of Kalimdor remain enemies of their former kin and servants of the Burning Legion.\n\nIn Ashenvale they hold Night Run, Satyrnaar and Xavian.",
+        sources = {"https://warcraft.wiki.gg/wiki/Satyr (independent lead and War of the Ancients synthesis before RPG)", V .. " #6441 Satyr Horns"},
+        related = {"faction:burning-legion", "faction:highborne", "place:satyrnaar"}},
+        blocks = {gems}}
+    A.RegisterLoreDiscovery({notes = notes})
+end
+
+-- notes3 2026-11-05: spoiler audit. These public notes stated quest-chain outcomes,
+-- hidden identities or mid-chain discoveries. Each public version keeps the place,
+-- the person's public role and the quest premise; the outcome returns once this
+-- character has seen the exact quest text that tells it. Notes whose secret has no
+-- quest to detect (the Ashbringer event in the Scarlet Monastery, raid lore, Atiesh
+-- and Thunderfury endings, the later Sven, Linken and Uldum steps) keep a public
+-- version only.
+do
+    local V = "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"
+    local notes = {}
+    notes["faction:grimtotem"] = {public = {body = "The Grimtotem are a tauren clan led by Elder Crone Magatha, one of the elders of Thunder Bluff. Her clansman Maur went into Ragefire Chasm to speak with its troggs on her behalf and did not come out. Elsewhere, Grimtotem bands bring conflict to tauren settlements and the forests beyond.\n\nAt Darkcloud Pinnacle, their guarded messages attract the attention of Freewind Post. Cliffwatcher Longhorn also seeks Arnak Grimtotem for murder and kidnapping. In Feralas, the clan cages faerie dragons; Kindal and Jer'kai Moonweaver work to free the creatures and strike back at their captors.",
+        sources = {"https://warcraft.wiki.gg/wiki/Grimtotem_tribe (identity and original World of Warcraft section only)", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #3518 Delivery to Magatha; #5722 Searching for the Lost Satchel; #5724 Returning the Lost Satchel", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #5064 Grimtotem Spying; #5147 Wanted - Arnak Grimtotem", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #2969 Freedom for All Creatures; #2970 Doling Justice"},
+        related = {"npc:maur-grimtotem", "place:freewind", "npc:kindal"}},
+        blocks = {{requires = {"maur.dead"}, body = "Maur's beaten body lies in Ragefire Chasm, with most of his clothing and gear still on it.",
+            sources = {V .. " #5722 Searching for the Lost Satchel (completion)"}, related = {}}}};
+    notes["faction:silver-hand"] = {public = {body = "The Knights of the Silver Hand are paladins who join service to the Holy Light with the discipline of armed defenders. The order arose after the First War, when Archbishop Alonsus Faol and his apprentice Uther faced the failure of unprotected clerics against the Horde. Uther called pious knights to a new vocation: warriors able to defend the people as well as heal them. They fought for the Alliance in the Second War.\n\nThe Third War shattered that brotherhood. At Stratholme, Uther refused Arthas's command to slaughter the city's people, and the prince dismissed him and suspended his paladins from service. Arthas later returned as a death knight and killed his former mentor. Tirion Fordring remembers Uther's death as the devastation of the order; his son Taelan abandoned its standard in despair.\n\nThe Silver Hand's name and duty nevertheless survive. Paladins still train at Northshire, where recruits are taught to live as visible examples of the Light. Tirion Fordring, an exiled paladin of the order, still hopes to draw his son Taelan away from the Scarlet Crusade.",
+        sources = {"https://warcraft.wiki.gg/wiki/Warcraft_II%3A_Tides_of_Darkness_manual", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt (quests 3101: Consecrated Letter)", "https://classic.battle.net/war2/units/paladin.shtml", "https://warcraft.wiki.gg/wiki/The_Culling_%28WC3_Human%29", "https://warcraft.wiki.gg/wiki/Digging_up_the_Dead", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt (quests 5845: Of Lost Honor)"},
+        related = {"npc:uther", "npc:tirion", "npc:taelan"}},
+        blocks = {{requires = {"taelan.fate"}, body = "Tirion's struggle to reclaim Taelan ends with his own declaration that the order will be reborn under his leadership.",
+            sources = {V .. " #5944 In Dreams"}, related = {}}}};
+    notes["npc:tirion"] = {public = {body = "Tirion Fordring is a human paladin of the Silver Hand living in exile in the Eastern Plaguelands. Once lord of Mardenholde, he lost his standing after defending the orc Eitrigg and refusing to abandon his oath to protect him. His belief that honor belongs to individuals rather than races endures in his welcome to travelers of either faction.\n\nHe remains near his former home to watch over Taelan, the son who believes him dead. Taelan has inherited Mardenholde but joined the Scarlet Crusade, and Tirion hopes to awaken his conscience through reminders of a better life: a childhood warhammer, the discarded standard of the Silver Hand, and Renfray's family portrait. He asks for help recovering these keepsakes so that his son can remember love and honor beyond the Crusade's demands.",
+        sources = {"StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt (quests 5781, 5845, 5846)", "https://warcraft.wiki.gg/wiki/Tirion", "https://public.ds003.info/wcbooks/novels/Warcraft%20-%20(2000)%20Of%20Blood%20And%20Honor%20-%20Chris%20Metzen.pdf"},
+        related = {"npc:taelan", "npc:renfray", "faction:silver-hand"}},
+        blocks = {{requires = {"taelan.fate"}, body = "The effort persuades Taelan to leave, but Grand Inquisitor Isillien kills him before father and son can reunite. Tirion defeats the inquisitor and kneels beside his son's body. Grief finally breaks his long withdrawal. He vows to fight the evil around him and declares the Silver Hand reborn, taking his place as Highlord of the renewed order.",
+            sources = {V .. " #5944 In Dreams"}, related = {}}}};
+    notes["npc:taelan"] = {public = {body = "Taelan Fordring is Tirion's paladin son and the Scarlet lord of Mardenholde Keep in Hearthglen. After Tirion's banishment, Taelan was told his father had died; the boy buried a treasured toy hammer at an empty grave. The later death of Uther and destruction of the Silver Hand deepened his despair. He abandoned his old standard and entered the Scarlet Crusade.\n\nHis father, alive and in exile, hopes to reach him through reminders of the life he left behind.",
+        sources = {"StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt (quests 5781, 5845, 5846)"},
+        related = {"npc:tirion", "group:scarlet-crusade", "faction:silver-hand"}},
+        blocks = {{requires = {"taelan.fate"}, body = "In time he recognizes that he has become the Grand Crusader's puppet. Tirion's appeal reaches him through the recovered hammer, his lost standard and a family portrait. Taelan breaks with the Crusade and sets out to meet the father he had believed dead. On the road, Grand Inquisitor Isillien intercepts and kills him. Tirion arrives too late to save his son, defeats Isillien, and vows to lead a renewed Order of the Silver Hand against the evil consuming Lordaeron.",
+            sources = {V .. " #5944 In Dreams"}, related = {}}}};
+    notes["npc:renfray"] = {public = {body = "Renfray painted Tirion, Karandra, and young Taelan together during a family visit to Caer Darrow. Tirion counts it as his fondest memory of his wife and son.",
+        sources = {"StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt (quest 5846)"},
+        related = {"npc:tirion", "npc:taelan"}},
+        blocks = {{requires = {"renfray.painting"}, body = "After Tirion's trial, the artist hid the portrait beneath another painting in what became Stratholme's Scarlet Bastion, preserving a memory others sought to bury.",
+            sources = {V .. " #5848 Of Love and Family"}, related = {}}}};
+    notes["dungeon:zulgurub"] = {public = {body = "Zul'Gurub is the ancient Gurubashi capital in Stranglethorn Vale, now the seat of Hakkar the Soulflayer's renewed power. The blood god has manifested within the city, and enthralled high priests channel the strength of their own sacred gods into him. His return threatens to restore the terror that once consumed the troll world and spread it beyond the jungle.\n\nThe Zandalar trolls gather on Yojamba Isle under Molthor to oppose him. They seek allies willing to break the priests' channeling and confront Hakkar himself. Even Hakkar's heart retains a kernel of his power after defeat, making the struggle more than the seizure of a ruined city.",
+        sources = {"https://warcraft.wiki.gg/wiki/Zul%27Gurub_%28Classic%29", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt (quests 8201, 8182, 8183)"},
+        related = {"npc:hakkar", "dungeon:atalhakkar"}},
+        blocks = {{requires = {"yehkinya.deceit"}, body = "Yeh'kinya's supposed plan to imprison the Soulflayer in an ancient egg instead helped bring him back.",
+            sources = {V .. " #8181 Confront Yeh'kinya"}, related = {"npc:yehkinya"}}}};
+    notes["npc:hakkar"] = {public = {body = "Hakkar the Soulflayer is the blood god of the trolls. The Zandalar trolls on Yojamba Isle seek a way to stop him in Zul'Gurub.",
+        sources = {"StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #8182 The Hand of Rastakhan (Hakkar)"},
+        related = {"dungeon:zulgurub"}},
+        blocks = {{requires = {"yehkinya.deceit"}, body = "His followers sought his rebirth through an ancient egg, and Yeh'kinya's deception aided that plan.",
+            sources = {V .. " #8181 Confront Yeh'kinya"}, related = {"npc:yehkinya"}}}};
+    notes["npc:yehkinya"] = {public = {body = "Yeh'kinya is a jungle troll at Steamwheedle Port in Tanaris, offering help against Hakkar. He begins by seeking the spirits of Feralas's vale screechers, claiming a link between them and the dead god. He then asks for Mosh'aru tablets and an ancient egg, presenting them as a means to contain Hakkar's essence. His ritual in the Sunken Temple calls forth Hakkar's avatar so that its essence can be placed in the egg.\n\nProspector Ironboot searches for further Mosh'aru tablets, wanting to know what their complete message says.",
+        sources = {"https://warcraft.wiki.gg/wiki/Yeh%27kinya (original identity)", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #3520; #3527; #3528; #4787; #4788"},
+        related = {"place:steamwheedle-port", "npc:hakkar", "relic:ancient-egg"}},
+        blocks = {{requires = {"yehkinya.deceit"}, body = "When confronted, Yeh'kinya admits helping Hakkar return to Zul'Gurub. His protection was a deception.",
+            sources = {V .. " #8181 Confront Yeh'kinya"}, related = {}}}};
+    notes["faction:mossflayer"] = {public = {body = "The Mossflayer are forest trolls of the Eastern Plaguelands, with a home at Zul'Mashar and undead members haunting the region. Hameya's desperate plea describes the danger facing his people: after eating tainted meat, he and his companions became infected, and a lich urged him to reach Zul'Mashar and spread the infection. He offered his hidden treasure to anyone who could kill him before he obeyed.\n\nThe tribe also possesses the third and fourth Tablets of Mosh'aru. Prospector Ironboot seeks them because the first pair's account of containing Hakkar is incomplete.",
+        sources = {"https://warcraft.wiki.gg/wiki/Mossflayer_tribe", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #6024 Hameya's Plea; #5065 The Lost Tablets of Mosh'aru"},
+        related = {"region:4561737465726e20506c616775656c616e6473", "relic:first-mosharu-tablet", "relic:ancient-egg"}},
+        blocks = {{requires = {"yehkinya.deceit"}, body = "The lost tablets reveal a threat that Yeh'kinya's assurances concealed.",
+            sources = {V .. " #8181 Confront Yeh'kinya"}, related = {"npc:yehkinya"}}}};
+    notes["relic:ancient-egg"] = {public = {body = "The Ancient Egg is a relic hidden in a cave beyond the summit amphitheater of Jintha'Alor in the Hinterlands. Yeh'kinya describes it as a survival of the great troll empires, able to hold Hakkar's essence, and presents its recovery as a way to protect the world.\n\nThe relic then becomes the Egg of Hakkar used in the Sunken Temple. Yeh'kinya's ritual calls forth Hakkar's avatar so that, after its defeat, the egg can receive its essence. The resulting Filled Egg of Hakkar is returned to him for safekeeping.",
+        sources = {"https://classicdb.ch/?quest=4787", "https://classicdb.ch/?quest=3528", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #4787 The Ancient Egg; #3528 The God Hakkar"},
+        related = {"place:jinthaalor", "dungeon:atalhakkar", "npc:hakkar"}},
+        blocks = {{requires = {"yehkinya.deceit"}, body = "Prospector Ironboot's reading of the lost Mosh'aru tablets exposes a deception. The same egg can give Hakkar a new birth, and when confronted, Yeh'kinya admits that his plan has hastened the Soulflayer's return in Zul'Gurub.",
+            sources = {V .. " #8181 Confront Yeh'kinya"}, related = {}}}};
+    notes["relic:first-mosharu-tablet"] = {public = {body = "The First Mosh'aru Tablet is held by Theka the Martyr, a long-dead troll in Zul'Farrak. Yeh'kinya seeks it together with the second tablet, held by the hydromancer Velratha. He presents the pair as a prophecy explaining how to contain the essence of Hakkar, and intends to join them for study.\n\nProspector Ironboot believes that there are six Tablets of Mosh'aru in all, and searches for the rest.",
+        sources = {"https://classicdb.ch/?quest=3527", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #3527 The Prophecy of Mosh'aru; #5065 The Lost Tablets of Mosh'aru"},
+        related = {"dungeon:zulfarrak", "relic:ancient-egg", "faction:mossflayer"}},
+        blocks = {{requires = {"yehkinya.deceit"}, body = "The tablets' promise of containment concealed the possibility of Hakkar's return.",
+            sources = {V .. " #8181 Confront Yeh'kinya"}, related = {}}}};
+    notes["faction:stonevault"] = {public = {body = "The Stonevault troggs inhabit Uldaman and the surrounding Badlands, where their presence makes dwarven exploration dangerous. Prospector Agmond, who ran the southern dig sites, has not been heard from in weeks.\n\nProspector Ironband suspects that ancient urns uncovered near Uldaman provoked the troggs, but seeks the objects for study rather than claiming the connection is settled. The troggs also carry flakes of indurium, whose ore lies deep in Uldaman. Their hold over the excavation therefore obstructs both the search for ancient knowledge and efforts to obtain its unusual materials.",
+        sources = {"StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #1108 Indurium", "https://classicdb.ch/?quest=1108"},
+        related = {"dungeon:uldaman", "npc:grimlok", "region:4261646c616e6473"}},
+        blocks = {{requires = {"agmond.dead"}, body = "Agmond is dead. The name Murdaloc is scratched beside his remains, and the hunt for his killer also targets Stonevault Bonesnappers.",
+            sources = {V .. " #738 Find Agmond; #739 Murdaloc"}, related = {}}}};
+    notes["region:4261646c616e6473"] = {public = {body = "The Badlands are an arid region of Khaz Modan, cut by rocky ridges and canyons south of Loch Modan. The Horde holds an outpost at Kargath, while Dark Iron dwarves occupy Angor Fortress and black dragons haunt Lethlor Ravine. In the north, the excavation at Uldaman draws prospectors toward ancient ruins, but Stonevault troggs make the search dangerous.\n\nThe prospectors are trying to understand the troggs and the ancient urns uncovered at the Uldaman dig. Elsewhere, Lotwil Veriatus studies rock elementals in the hope of binding one to his service. The region also preserves an unsettled legacy of the Second War: Horde agents seek the deaths of the imprisoned black dragons Blacklash and Hematus, former allies whose continued presence has become a matter of honor. Research, buried history and old allegiances all bring travelers into this seemingly barren country.",
+        sources = {"https://warcraft.wiki.gg/wiki/Badlands_%28Classic%29", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt (quests 710, 782)"},
+        related = {}},
+        blocks = {}};
+    notes["event:missing-diplomat"] = {public = {body = "The Missing Diplomat is the secret investigation into an envoy who vanished while traveling from Stormwind to meet Jaina Proudmoore in Theramore. Bishop DeLavey's contacts draw Elling Trias into the search. Defias papers at Addle's Stead lead to Dashel Stonefist in Stormwind and then to Slim in Menethil Harbor.",
+        sources = {"StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #1241, #1244-#1250, #1264-#1266, #1274 and #1324 The Missing Diplomat", "https://classicdb.ch/?npc=11699 (original Varian Wrynn, King of Stormwind identity)"},
+        related = {"npc:elling", "group:defias", "npc:jaina"}},
+        blocks = {{requires = {"diplomat.king"}, body = "Under questioning, Slim reveals that the captive is Stormwind's king, Varian Wrynn, and that the Defias are working with another, unnamed party. Slim's task was to place a man called Hendel aboard the royal ship. The trail therefore crosses the sea to Theramore's garrison.",
+            sources = {V .. " #1250 The Missing Diplomat"}, related = {"npc:slim"}},
+            {requires = {"diplomat.capture"}, body = "With Jaina's knowledge, Archmage Tervosh helps locate Private Hendel in Dustwallow Marsh. Hendel resists, but is subdued and taken for questioning. The investigation reaches a living accomplice, and the king's recovery remains an unresolved task.",
+            sources = {V .. " #1324 The Missing Diplomat"}, related = {"npc:private-hendel"}}}};
+    notes["npc:mikhail"] = {public = {body = "Mikhail is a retired contact of Elling Trias who now tends bar in Menethil Harbor. His welcome changes when Elling's name is mentioned: he is ready to help, but insists that their business remain quiet. During the missing-diplomat investigation, he notices a man listening too closely and urges that the stranger be stopped before he can flee. The listener proves to be Tapoke \"Slim\" Jahn.\n\nHis years behind the bar have left him with useful contacts, and he admits that he sometimes misses his former, less respectable work.",
+        sources = {"https://classicdb.ch/?quest=1248", "https://classicdb.ch/?quest=1249", "https://classicdb.ch/?quest=1250", "https://classicdb.ch/?quest=1264"},
+        related = {"place:menethil", "npc:elling", "npc:slim"}},
+        blocks = {{requires = {"diplomat.king"}, body = "Slim's information reveals that the captive is Stormwind's king and names Hendel as an accomplice. Mikhail promises to notify Elling, then points the search toward Commander Samaul in Theramore. He believes Hendel is among the marines who visit the tavern after payday.",
+            sources = {V .. " #1250 The Missing Diplomat; #1264 The Missing Diplomat"}, related = {"npc:private-hendel", "place:theramore"}}}};
+    notes["npc:slim"] = {public = {body = "Tapoke \"Slim\" Jahn is a Menethil Harbor rogue who worked for the Defias Brotherhood. His name surfaces when Dashel Stonefist admits that the Brotherhood had a second kidnapping plan after its first attempt failed. Elling Trias follows that lead through Mikhail, a retired contact working as a bartender in Menethil.\n\nSlim listens too closely to their conversation and must be subdued before he will talk.",
+        sources = {"StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt (quests 1247, 1248, 1249, 1250)", "https://warcraft.wiki.gg/wiki/Tapoke_%22Slim%22_Jahn"},
+        related = {"place:menethil", "group:defias", "npc:elling"}},
+        blocks = {{requires = {"diplomat.king"}, body = "His confession changes the investigation. The missing traveler was the king himself, bound for a secret meeting with Jaina Proudmoore in Theramore, and Slim's part was to put the Defias agent Hendel aboard the king's ship. He says the Defias were working with another party but gives no name for that partner.",
+            sources = {V .. " #1250 The Missing Diplomat"}, related = {"npc:private-hendel"}}}};
+    notes["npc:private-hendel"] = {public = {body = "Private Hendel is a soldier of the Theramore garrison in Dustwallow Marsh.",
+        sources = {"StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #1264 The Missing Diplomat"},
+        related = {"place:theramore", "npc:mikhail"}},
+        blocks = {{requires = {"diplomat.king"}, body = "Tapoke \"Slim\" Jahn names him as the man he helped place aboard the king of Stormwind's ship, which makes him a suspect in the king's abduction.",
+            sources = {V .. " #1250 The Missing Diplomat"}, related = {"npc:slim"}},
+            {requires = {"diplomat.tervosh"}, body = "Archmage Tervosh locates him on guard duty west of Theramore, protecting resting infiltrators who have been watching Brackenwall.",
+            sources = {V .. " #1265 The Missing Diplomat; #1266 The Missing Diplomat"}, related = {"npc:tervosh"}},
+            {requires = {"diplomat.capture"}, body = "Accused of working with the Defias, he responds with violence. Tervosh makes sure he is taken alive and brings him back to Theramore for questioning. Hendel is a living lead, but the search for the king goes on.",
+            sources = {V .. " #1324 The Missing Diplomat"}, related = {}}}};
+    notes["npc:tervosh"] = {public = {body = "Archmage Tervosh is a mage serving Lady Jaina Proudmoore in Theramore. With Jaina's permission, Tervosh asks travelers to collect fragments from the stone elementals of Maraudon. He calls these crystals shadowshards and studies their arcane properties, fashioning pendants from the samples. The same mage who aids a delicate political investigation is also pursuing practical magical research through Theramore's travelers.",
+        sources = {"https://classicdb.ch/?quest=1265", "https://classicdb.ch/?quest=1266", "https://classicdb.ch/?quest=1324", "https://classicdb.ch/?quest=7070"},
+        related = {"npc:jaina", "place:theramore"}},
+        blocks = {{requires = {"diplomat.tervosh"}, body = "When the search for Stormwind's missing king reaches Dustwallow Marsh, he brings Jaina's offer of assistance and directs the investigation toward Private Hendel, who is guarding infiltrators watching the Horde at Brackenwall. Tervosh's concern is to bring him back alive for questioning.",
+            sources = {V .. " #1265 The Missing Diplomat; #1266 The Missing Diplomat; #1324 The Missing Diplomat"}, related = {"npc:private-hendel"}}}};
+    notes["npc:elling"] = {public = {body = "Elling Trias sells cheese in Stormwind's Trade District, but his contacts make him a valuable investigator when a diplomat vanishes on the way to Theramore. A note from Jorgen draws him into Bishop DeLavey's inquiry. Beneath his shopkeeper's welcome, Elling knows people who can trace the Defias Brotherhood's movements beyond the city.\n\nHe sends an investigator to Watcher Backus in Darkshire and studies the plans recovered there, which lead him to the name of Dashel Stonefist.",
+        sources = {"StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt (quests 1242, 1243, 1245, 1246, 1247, 1248)", "https://warcraft.wiki.gg/wiki/Trias%27_Cheese"},
+        related = {"region:53746f726d77696e642043697479", "npc:jorgen", "group:defias"}},
+        blocks = {}};
+    notes["place:theramore"] = {public = {body = "Theramore is Jaina Proudmoore's island city and harbor on the coast of Dustwallow Marsh. Survivors who followed her from Lordaeron made a new home here after the Third War. Her willingness to work with the Horde has not erased the dangers and suspicions surrounding that peace.\n\nThe city's guards struggle to hold their positions in the marsh. The harbor is a foothold for the Alliance in Kalimdor, while its scattered garrison and delicate relations with its neighbors leave much for its leaders to manage.",
+        sources = {"https://warcraft.wiki.gg/wiki/Jaina_Proudmoore", "https://warcraft.wiki.gg/wiki/A_Blaze_of_Glory", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #1285 Daelin’s Men; #1286 The Deserters; #1287 The Deserters; #1241 and #1250 The Missing Diplomat; #1265 The Missing Diplomat; #1266 The Missing Diplomat"},
+        related = {"npc:jaina", "npc:tervosh", "region:4475737477616c6c6f77204d61727368"}},
+        blocks = {{requires = {"diplomat.king"}, body = "An inquiry that begins with a missing diplomat reveals the kidnapping of Stormwind's king. With Jaina's knowledge, Archmage Tervosh helps investigators pursue Private Hendel, the man placed aboard the king's ship.",
+            sources = {V .. " #1250 The Missing Diplomat; #1265 The Missing Diplomat"}, related = {"npc:private-hendel"}}}};
+    notes["place:sentry-point"] = {public = {body = "Sentry Point is Theramore's watchtower on the mainland road through Dustwallow Marsh. Its guards watch the approach to the city, and the tower becomes a meeting place during the search for Stormwind's missing diplomat.",
+        sources = {"https://warcraft.wiki.gg/wiki/Sentry_Point", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #1265 The Missing Diplomat; #1266 The Missing Diplomat", "https://wowpedia.fandom.com/wiki/The_Missing_Diplomat_quest_chain"},
+        related = {"place:theramore", "region:4475737477616c6c6f77204d61727368"}},
+        blocks = {{requires = {"diplomat.tervosh"}, body = "Commander Samaul sends the search for Private Hendel here, but Archmage Tervosh brings different news. Hendel is no longer there, and acting with Lady Jaina Proudmoore's knowledge, the mage points farther west, where the soldier guards resting infiltrators who have been watching Brackenwall.",
+            sources = {V .. " #1265 The Missing Diplomat; #1266 The Missing Diplomat"}, related = {"npc:tervosh"}}}};
+    notes["event:darrowshire"] = {public = {body = "The Battle of Darrowshire pitted the village's militia and Alliance reinforcements against the Scourge. Davil's paladins helped hold the line, and he defeated the ghoul lord Horgus at the cost of his own life. The defense collapsed, and the village fell.\n\nThe ruined village remains haunted.",
+        sources = {"https://warcraft.wiki.gg/wiki/Annals_of_Darrowshire (original Contents)", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #5142 Little Pamela; #5153 A Strange Historian; #5154 The Annals of Darrowshire; #5210 Brother Carlin", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #5168 Heroes of Darrowshire; #5181 Villains of Darrowshire; #5206 Marauders of Darrowshire; #5721 The Battle of Darrowshire"},
+        related = {"npc:pamela", "npc:chromie", "npc:joseph-redpath"}},
+        blocks = {{requires = {"redpath.corrupted"}, body = "The defense collapsed when Marduk the Black corrupted Captain Joseph Redpath's spirit. Redpath's treachery spread among the defenders, who turned on their allies and the villagers they had protected. Chromie finds a way to help Joseph through the village's history. Relics gathered from the battle can let its spirits rise again in the town square, where Davil must live until Horgus falls and Redpath must be corrupted and then defeated.",
+            sources = {V .. " #5154 The Annals of Darrowshire; #5721 The Battle of Darrowshire"}, related = {"npc:joseph-redpath", "npc:chromie"}},
+            {requires = {"redpath.saved"}, body = "Joseph's spirit is freed, and Pamela hears her father promise to come home.",
+            sources = {V .. " #5721 The Battle of Darrowshire (completion)"}, related = {}}}};
+    notes["npc:joseph-redpath"] = {public = {body = "Captain Joseph Redpath fought at Darrowshire and never came home. His daughter Pamela still waits for him, and his family remembers the man he was.",
+        sources = {"StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt (quest 5153)", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt (quest 5154)", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt (quest 5210)"},
+        related = {"npc:chromie", "npc:carlin", "event:darrowshire"}},
+        blocks = {{requires = {"redpath.corrupted"}, body = "The Annals of Darrowshire record his corruption and his betrayal of the village's defenders. Chromie seeks a way to free him from the fate the Scourge imposed.",
+            sources = {V .. " #5154 The Annals of Darrowshire"}, related = {"npc:chromie"}},
+            {requires = {"redpath.saved"}, body = "His spirit has been freed, and he has promised Pamela that he is coming home.",
+            sources = {V .. " #5721 The Battle of Darrowshire (completion)"}, related = {}}}};
+    notes["place:darrowshire"] = {public = {body = "Darrowshire is a ruined human village in the southern Eastern Plaguelands, destroyed in the fighting against the Scourge. Its dead have not all found rest. Some of the people who defended it now wander the Plaguelands as ghouls and flayers, their spirits held within the creatures they have become.\n\nPamela Redpath's ghost waits in the house where her aunt hid her when her father went to fight. She still wants her lost doll and hopes that her family will return. For the living who remember Darrowshire, the village's fall is still a family loss as well as a lost defense.",
+        sources = {"https://warcraft.wiki.gg/wiki/Darrowshire (original ruined village identity and geography)", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #5142 Little Pamela; #5149 Pamela's Doll; #5211 Defenders of Darrowshire; #5241 Uncle Carlin; #5721 The Battle of Darrowshire"},
+        related = {"npc:pamela", "event:darrowshire", "npc:carlin"}},
+        blocks = {{requires = {"redpath.corrupted"}, body = "Her uncle Carlin survives, and learning that Pamela remains a restless spirit deepens his grief. Relics from the battle offer a way to reach her father's spirit and free it.",
+            sources = {V .. " #5210 Brother Carlin; #5941 Return to Chromie"}, related = {"npc:carlin"}}}};
+    notes["npc:chromie"] = {public = {body = "The strange historian in Andorhal's ruined inn takes an unusual interest in the fate of Darrowshire's defenders and in the town's old records.",
+        sources = {"StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt (quest 5153)", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt (quest 5154)", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt (quest 5210)"},
+        related = {"npc:joseph-redpath", "event:darrowshire"}},
+        blocks = {{requires = {"redpath.corrupted"}, body = "She offers an unusual answer to Joseph Redpath's tragedy, a change in the past. Her magic extends the Annals of Darrowshire beyond the battle, uncovering surviving witnesses.",
+            sources = {V .. " #5154 The Annals of Darrowshire; #5210 Brother Carlin"}, related = {"npc:joseph-redpath"}}}};
+    notes["relic:redpaths-shield"] = {public = {body = "Redpath's Shield is the damaged shield of Captain Joseph Redpath, one of Darrowshire's defenders. It was lost when the village fell.",
+        sources = {"StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #5168 Heroes of Darrowshire; #5206 Marauders of Darrowshire; #5941 Return to Chromie; #5721 The Battle of Darrowshire"},
+        related = {"npc:joseph-redpath", "event:darrowshire", "npc:chromie"}},
+        blocks = {{requires = {"redpath.corrupted"}, body = "Carlin Redpath learns from the Annals that, after his brother's betrayal, the shield was cracked and discarded near the barn at Gahrron's Withering. It becomes an ingredient for Chromie's spell to call up the spirits of Darrowshire, part of an attempt to free the man who once carried it.",
+            sources = {V .. " #5168 Heroes of Darrowshire; #5941 Return to Chromie"}, related = {"npc:joseph-redpath"}}}};
+    notes["relic:davils-libram"] = {public = {body = "Davil's Libram belonged to Davil Lightfire, a paladin remembered among the heroes of Darrowshire. According to the Annals as read by Carlin Redpath, the Crusade carried the book to Hearthglen's town hall. Carlin asks that it be recovered with Captain Redpath's shield, bringing together possessions tied to the village's defenders.\n\nChromie needs these relics for the spell that raises Darrowshire's spirits.",
+        sources = {"StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #5168 Heroes of Darrowshire; #5206 Marauders of Darrowshire; #5941 Return to Chromie; #5721 The Battle of Darrowshire"},
+        related = {"event:darrowshire", "place:hearthglen", "npc:chromie"}},
+        blocks = {{requires = {"redpath.corrupted"}, body = "In the renewed battle, Davil must live long enough for Horgus to fall, one of the conditions needed to save Joseph Redpath's spirit.",
+            sources = {V .. " #5721 The Battle of Darrowshire"}, related = {}}}};
+    notes["relic:shattered-sword-marduk"] = {public = {body = "The Shattered Sword of Marduk is a relic of the battle that destroyed Darrowshire. Carlin Redpath's reading of the Annals distinguishes the broken weapon from a defeated wielder: Marduk the Black was not defeated, while his sword was shattered and lost in the gorge west of Corin's Crossing. Carlin seeks its recovery alongside the remains of Darrowshire's other great enemy, Horgus.\n\nChromie identifies the gathered relics as ingredients for a spell that can summon the village's spirits.",
+        sources = {"StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #5181 Villains of Darrowshire; #5206 Marauders of Darrowshire; #5941 Return to Chromie; #5721 The Battle of Darrowshire"},
+        related = {"npc:marduk", "event:darrowshire", "npc:chromie"}},
+        blocks = {{requires = {"redpath.corrupted"}, body = "Joined with relics of the defenders, it helps reopen the battle so that Joseph Redpath's tormented spirit may be saved.",
+            sources = {V .. " #5721 The Battle of Darrowshire"}, related = {}}}};
+    notes["npc:abercrombie"] = {public = {body = "Abercrombie lives in a shack overlooking Raven Hill cemetery in Duskwood, presenting himself as an old man too frail to make the journey to Darkshire. His errands seem to answer ordinary fears: Ghost Hair Thread to ward his door, Zombie Juice against the cold, and ghoul ribs for an effigy. He also sends a sealed letter to Mayor Ello Ebonlocke in Darkshire.",
+        sources = {"https://wowwiki-archive.fandom.com/wiki/Translated_Letter_from_The_Embalmer", "https://wowwiki-archive.fandom.com/wiki/Bride_of_the_Embalmer_quest_chain_%28Old%29"},
+        related = {"place:darkshire", "region:4475736b776f6f64"}},
+        blocks = {{requires = {"embalmer.revealed"}, body = "Those acts of kindness supply the Embalmer's work. His letter to Mayor Ello Ebonlocke boasts that its bearer has helped him build a murderous creature of flesh, bone and metal, and the abomination Stitches then threatens Darkshire.\n\nEllo recalls a children's tale about the Embalmer. A kindly alchemist, maddened by his wife Eliza's death, placed his own heart inside her to revive her, and she returned with a hunger for human flesh. Ello wants that still-beating heart taken from her grave, believing that it is the source of the Embalmer's power.",
+            sources = {V .. " #252 Translation to Ello; #253 Bride of the Embalmer"}, related = {}}}};
+    notes["npc:althea-ebonlocke"] = {public = {body = "Commander Althea Ebonlocke leads the Night Watch in Darkshire, defending the people of Duskwood against the undead. Her force is too small to keep the town safe on its own. She asks adventurers to carry the fight to Raven Hill, including the plague spreaders in its eastern mausoleum, because the danger there threatens the people under her protection.\n\nAlthea also handles the attacks of Mor'Ladim, the wandering undead believed to be Morgan Ladimore. He has killed townspeople and some of her strongest Watchers, making him a threat her patrols cannot contain.",
+        sources = {"https://warcraft.wiki.gg/wiki/Commander_Althea_Ebonlocke"},
+        related = {"place:darkshire", "region:4475736b776f6f64", "npc:morladim"}},
+        blocks = {{requires = {"morladim.daughter"}, body = "After his defeat, she reveals the personal cost behind the pursuit. Morgan's daughter Sarah survived and now serves in the Watch.",
+            sources = {V .. " #229 The Daughter Who Lived"}, related = {}}}};
+    notes["npc:morladim"] = {public = {body = "Mor'Ladim is the restless undead Morgan Ladimore, wandering the cemetery of Duskwood and attacking its people. Commander Althea Ebonlocke has lost even strong Watchers to him and seeks help ending his violence.\n\nThe Story of Morgan Ladimore records the tragedy behind him. Morgan had been a knight devoted to protecting others. He left his wife Lys and their children to fight beside Uther in Lordaeron, surviving the war's horrors by hoping to see them again. He returned to a ruined home and eventually found his wife's grave. Overwhelmed by grief, he killed three cemetery attendants who tried to restrain him. When he understood what he had done, he took his own life. His guilt and anguish denied him rest, and he rose as Mor'Ladim, consumed by hatred.",
+        sources = {"https://wowpedia.fandom.com/wiki/Morgan_Ladimore (The Story of Morgan Ladimore: explicitly identified original tome transcription)"},
+        related = {"npc:althea-ebonlocke", "place:raven-hill", "region:4475736b776f6f64"}},
+        blocks = {{requires = {"morladim.daughter"}, body = "Morgan's belief that he had lost his entire family was mistaken. His daughter Sarah survived and became a Watcher, and she asks for her ring to be placed on his grave so that he might know she lives and forgives him.",
+            sources = {V .. " #229 The Daughter Who Lived; #231 A Daughter's Love"}, related = {}},
+            {requires = {"morladim.peace"}, body = "Morgan's spirit recognizes her token, lays down his burden and gives up his sword Archeus as his soul finds peace.",
+            sources = {V .. " #231 A Daughter's Love (completion)"}, related = {}}}};
+    notes["npc:mankrik"] = {public = {body = "Mankrik is an orc at the Crossroads in the Barrens, searching for news of his missing wife. They were separated while fighting Bristleback quilboar at a small tauren camp. He saw her overwhelmed, then fell himself as he turned on their attackers. A tauren druid found him on the Gold Road and tended his wounds.\n\nThe pain in his chest tells him the worst has happened, but he still hopes she will be found safe.",
+        sources = {"https://warcraft.wiki.gg/wiki/Mankrik (original identity only)", "https://warcraft.wiki.gg/wiki/Lost_in_Battle (original objectives and Beaten Corpse inspection)"},
+        related = {"place:crossroads", "faction:bristleback", "region:5468652042617272656e73"}},
+        blocks = {{requires = {"mankrik.wife"}, body = "The search leads to a battered female orc's body south of the Crossroads, and it is his wife. His grief turns to a hunger for vengeance. He asks others to kill quilboar and admits that even their deaths have not satisfied his anger.",
+            sources = {V .. " #4921 Lost in Battle (completion); #899 Consumed by Hatred"}, related = {}}}};
+    notes["npc:highlord-mograine"] = {public = {body = "Highlord Alexandros Mograine was the paladin whose devastating sword earned him the name Ashbringer. Mograine became a death knight serving Kel'Thuzad and now rides among Naxxramas's Four Horsemen, bearing the corrupted weapon.",
+        sources = {"https://warcraft.wiki.gg/wiki/Corrupted_Ashbringer/Scarlet_Monastery_Event", "https://warcraft.wiki.gg/wiki/Ashbringer"},
+        related = {"dungeon:naxxramas", "npc:kelthuzad"}},
+        blocks = {}};
+    notes["npc:scarlet-mograine"] = {public = {body = "Renault Mograine, the Scarlet Commander, is one of the highest-ranking officers in the Scarlet Monastery. Both the Forsaken and Raleigh the Devout seek his death. Raleigh, a former Crusader, accuses the order's leaders of allowing their fear of the plague to become persecution: people outside the Crusade's ranks are treated as enemies, and innocent captives suffer for it.\n\nMograine guards the monastery's cathedral with High Inquisitor Whitemane. When he falls in battle, she puts the attackers to sleep and resurrects him; the two then fight together.",
+        sources = {"StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt (quests 1048, 1053)", "https://warcraft.wiki.gg/wiki/High_Inquisitor_Whitemane_%28Classic%29", "https://warcraft.wiki.gg/wiki/Corrupted_Ashbringer/Scarlet_Monastery_Event"},
+        related = {"dungeon:scarlet-monastery", "npc:whitemane", "npc:highlord-mograine"}},
+        blocks = {}};
+    notes["relic:ashbringer"] = {public = {body = "Ashbringer is the legendary sword associated with Highlord Alexandros Mograine and his destruction of the undead. Its reputation outlives him: at Light's Hope Chapel, Scarlet envoys hope that recovering it could turn the war, while Eligor Dawnbringer insists that its strength was inseparable from the man who wielded it. Mograine himself now serves among Naxxramas's Four Horsemen, bearing the corrupted blade.",
+        sources = {"https://warcraft.wiki.gg/wiki/Crusade_Commander_Eligor_Dawnbringer", "https://warcraft.wiki.gg/wiki/Corrupted_Ashbringer", "https://warcraft.wiki.gg/wiki/Corrupted_Ashbringer/Scarlet_Monastery_Event"},
+        related = {"npc:highlord-mograine", "dungeon:naxxramas", "dungeon:scarlet-monastery"}},
+        blocks = {}};
+    notes["npc:finkle-einhorn"] = {public = {body = "Finkle Einhorn is a gnome explorer who went missing while testing a lava suit in the Molten Span of Blackrock Spire.",
+        sources = {"https://wowwiki-archive.fandom.com/wiki/Finkle_Einhorn", "https://warcraft.wiki.gg/wiki/The_Beast"},
+        related = {"npc:the-beast", "dungeon:upper-blackrock-spire", "place:everlook"}},
+        blocks = {{requires = {"finkle.alive"}, body = "The Beast, a core hound in Upper Blackrock Spire, swallowed him while he was testing the suit. Its protection and a built-in food dispenser kept him alive in the creature's belly until he could be freed by skinning it. Finkle sends a glowing piece of the Beast's flesh to Malyfous Darkhammer in Everlook, along with word that he survived and that the suit worked.",
+            sources = {V .. " #5047 Finkle Einhorn, At Your Service!"}, related = {"npc:the-beast", "npc:malyfous-darkhammer"}}}};
+    notes["npc:malyfous-darkhammer"] = {public = {body = "Malyfous Darkhammer is a Dark Iron craftsman of the Thorium Brotherhood in Everlook, Winterspring. Malyfous's interest lies in turning rare materials into exceptional armor.\n\nHis catalogue offers three commissions: the Cap of the Scarlet Savant, Leggings of Arcana and Breastplate of Bloodthirst. Each requires a Pristine Hide of the Beast, other difficult ingredients and payment. The catalogue begins these commissions, while Malyfous receives the materials and delivers the finished work. His recipes connect Everlook's workshops with the dangerous creatures of Blackrock Spire, Scholomance and Stratholme.",
+        sources = {"https://classicdb.ch/?npc=10637", "https://classicdb.ch/?quest=5047", "https://classicdb.ch/?quest=5063", "https://classicdb.ch/?quest=5067", "https://classicdb.ch/?quest=5068", "https://warcraft.wiki.gg/wiki/Malyfous_Darkhammer", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #5047"},
+        related = {"place:everlook", "faction:thorium-brotherhood", "npc:finkle-einhorn"}},
+        blocks = {{requires = {"finkle.alive"}, body = "Finkle Einhorn sends him a glowing sample from the Beast's innards to learn what its remains might yield.",
+            sources = {V .. " #5047 Finkle Einhorn, At Your Service!"}, related = {"npc:finkle-einhorn"}}}};
+    notes["npc:the-beast"] = {public = {body = "The Beast is the core hound occupying the Furnace in Upper Blackrock Spire.",
+        sources = {"https://warcraft.wiki.gg/wiki/The_Beast", "https://wowwiki-archive.fandom.com/wiki/Finkle_Einhorn", "https://classicdb.ch/?quest=5047"},
+        related = {"dungeon:upper-blackrock-spire", "npc:finkle-einhorn"}},
+        blocks = {{requires = {"finkle.alive"}, body = "Its most unlikely captive is Finkle Einhorn, a gnome swallowed while testing a lava suit in the Molten Span. Protected by the suit and fed by its food dispenser, Finkle survived inside the creature until it was skinned, and he sent a glowing piece of its flesh to Malyfous Darkhammer in Everlook for appraisal.",
+            sources = {V .. " #5047 Finkle Einhorn, At Your Service!"}, related = {"npc:finkle-einhorn"}}}};
+    notes["npc:brann"] = {public = {body = "Brann Bronzebeard is a dwarven explorer and the youngest brother of Magni and Muradin. His travels carry him far beyond Ironforge: accounts of his journeys follow him through Elwynn Forest, Westfall and Stranglethorn Vale, recording the lands and inhabitants he encounters.\n\nIn Silithus, exploration draws him toward Ahn'Qiraj. A lost letter reports that most of his companions are dead, but that he has found important clues to the ancient conflict between the titans and the Old Gods. He intends to follow an old tunnel into the sealed city. Even amid that danger, he asks that his monkey be fed, watered and given affection at the expedition's camp.",
+        sources = {"https://warcraft.wiki.gg/wiki/Quotes_of_Warcraft_III/Human_Alliance", "https://warcraft.wiki.gg/wiki/Journey_of_Brann", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt (quests 8308, 9251)", "https://classicdb.ch/?quest=9251"},
+        related = {"npc:magni", "faction:explorers-league", "place:ahnqiraj"}},
+        blocks = {}};
+    notes["npc:ansirem-runeweaver"] = {public = {body = "Ansirem Runeweaver is a human archmage of the Kirin Tor found at the ruins of Dalaran in the Alterac Mountains. His learning reaches well beyond the city's reconstruction: he has studied Stranglethorn's relics and written a book about the legends of the Gurubashi Empire. Baron Revilgaz directs an investigation of the Stone of the Tides to him, trusting his knowledge of magical mysteries.\n\nHis daughter Catelyn left for Booty Bay to become a pirate.",
+        sources = {"https://warcraft.wiki.gg/wiki/Ansirem_Runeweaver", "https://classicdb.ch/?quest=602", "https://classicdb.ch/?quest=603", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #602 Magical Analysis; #603 Ansirem's Key"},
+        related = {"city:dalaran", "faction:kirin-tor", "place:booty-bay"}},
+        blocks = {}};
+    notes["npc:jitters"] = {public = {body = "Jitters is a terrified human hiding in the abandoned settlement of Raven Hill in Duskwood. Fear keeps him moving and hiding, and he is convinced that he will be found. Weeks of living on weeds and grubs have left him desperate for proper food.",
+        sources = {"https://warcraft.wiki.gg/wiki/Jitters", "https://warcraft.wiki.gg/wiki/Jitters%27_Completed_Journal", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #5 Jitters' Growling Gut"},
+        related = {"place:raven-hill", "region:4475736b776f6f64", "group:defias"}},
+        blocks = {}};
+    notes["npc:sven-yorgen"] = {public = {body = "Sven Yorgen is a Duskwood farmer pursuing the Dark Riders who slaughtered his family while he was away. Returning to his farm, he saw a shadowy figure bury something near the barn, but the stranger fled and Sven continued after the riders. He asks for the hiding place behind an old stump to be searched, hoping it holds an explanation.",
+        sources = {"https://classicdb.ch/?quest=95", "https://classicdb.ch/?quest=268", "https://classicdb.ch/?quest=55", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #95 Sven's Revenge; #230 Sven's Camp; #268 Return to Sven; #55 Morbent Fel"},
+        related = {"npc:jitters", "region:4475736b776f6f64", "place:raven-hill"}},
+        blocks = {}};
+    notes["npc:argelmach"] = {public = {body = "Argelmach's creations guard his workshop in Blackrock Depths.",
+        sources = {"StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #4063 The Rise of the Machines (Golem Lord Argelmach)"},
+        related = {"dungeon:blackrock-depths"}},
+        blocks = {}};
+    notes["npc:linken"] = {public = {body = "Linken has lost his memory and cannot explain how he came to Un'Goro. He hopes that his sword and other belongings can help him remember.",
+        sources = {"StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt (quest 3908)", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt (quest 3909)", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt (quest 3962)"},
+        related = {"npc:donova"}},
+        blocks = {}};
+    notes["npc:troyas"] = {public = {body = "Troyas Moonbreeze is a night elf researcher at Feathermoon Stronghold who searches Feralas's ruins for clues to their past. A stave found among the rubble catches his attention, though he and Angelas find no explanation in their books. He seeks help from a colleague in Darnassus, whose skepticism about his discoveries does little to diminish his interest.\n\nThe investigation identifies a possible key to the Equinex Monolith in the Ruins of Ravenwind. Troyas explains how essences from the ruins' four enduring flames can charge the stave and open the monument.",
+        sources = {"https://warcraft.wiki.gg/wiki/Troyas_Moonbreeze"},
+        related = {"place:feathermoon", "region:466572616c6173"}},
+        blocks = {{requires = {"morrow.stone"}, body = "The artifact within is the Morrow Stone. He recognizes its name and believes its concealment signals importance, but admits that he still does not know its purpose.",
+            sources = {V .. " #2942 The Morrow Stone (completion)"}, related = {}}}};
+    notes["place:ruins-ravenwind"] = {public = {body = "The Ruins of Ravenwind lie in northern Feralas, where Northspring harpies occupy the remains of an ancient night elf settlement. Among the ruins stands the Equinex Monolith, a shrine whose sealed chamber draws the interest of Troyas Moonbreeze at Feathermoon Stronghold. Four magical flames still burn nearby, holding the essences needed to awaken the shrine's key.\n\nTroyas believes that his stave may be the Stave of Equinex. Charged with the four essences beside the monolith, it should open the chamber.",
+        sources = {"https://warcraft.wiki.gg/wiki/Ruins_of_Ravenwind", "https://warcraft.wiki.gg/wiki/Equinex_Monolith"},
+        related = {"region:466572616c6173", "place:feathermoon"}},
+        blocks = {{requires = {"morrow.stone"}, body = "The chamber holds the Morrow Stone. Even after identifying the stone in his books, Troyas does not yet understand its purpose.",
+            sources = {V .. " #2942 The Morrow Stone (completion)"}, related = {}}}};
+    notes["relic:stave-equinex"] = {public = {body = "The Stave of Equinex is the key to the Equinex Monolith in the Ruins of Ravenwind, west of the Dream Bough in Feralas. Troyas Moonbreeze's research describes how to awaken it: the essences of four flames still burning among the ruins, Samha, Imbel, Byltan and Lahassa, must energize the stave beside the monolith.",
+        sources = {"https://warcraft.wiki.gg/wiki/Stave_of_Equinex"},
+        related = {"npc:troyas", "place:ruins-ravenwind"}},
+        blocks = {{requires = {"morrow.stone"}, body = "The charged stave opens a small door in the monolith, revealing the Morrow Stone, and its energy begins to fade once the stone is removed. Troyas identifies the artifact but remains uncertain of its purpose.",
+            sources = {V .. " #2942 The Morrow Stone"}, related = {}}}};
+    notes["npc:natalia"] = {public = {body = "Natalia continues her research in Silithus despite troubling changes in her behavior.",
+        sources = {"StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt (quest 8304)", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt (quest 8309)"},
+        related = {"npc:maralith"}},
+        blocks = {}};
+    notes["npc:morphaz"] = {public = {body = "Morphaz is a green drake in the Temple of Atal'Hakkar, encountered with Hazzas near the Chamber of the Dreamer. Several teachers send their pupils after him for different reasons. Ogtinc asks hunters for his tooth as a lesson in the strength of companions, while rogues seek the Azure Key he is said to possess for Lord Ravenholdt.\n\nArchmage Xylem has a more personal grievance. He says Morphaz ambushed him years earlier and swallowed his apprentice, along with a valuable arcane shard. Xylem wants the shard recovered.\n\nMorphaz also matters to the effort to heal Felwood. Ogtinc reports that druids died discovering his resistance to poison and disease, and sends priests to obtain his blood for Greta Mosshoof. Combined with other ingredients, it offers the Cenarion Circle a means to begin restoring the region's afflicted trees and creatures.",
+        sources = {"https://www.wowhead.com/classic/guide/temple-of-atalhakkar-sunken-temple-dungeon-strategy-wow-classic (Classic dungeon, not Season of Discovery): Hazzas and Morphaz", "https://classicdb.ch/?quest=8232", "https://classicdb.ch/?quest=8253", "https://classicdb.ch/?quest=8257", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #8232 The Green Drake; #8236 The Azure Key; #8253 Destroy Morphaz; #8257 Blood of Morphaz"},
+        related = {"dungeon:atalhakkar", "npc:hazzas", "npc:xylem"}},
+        blocks = {{requires = {"morphaz.shard"}, body = "Years within the drake have increased the shard's power.",
+            sources = {V .. " #8253 Destroy Morphaz (completion)"}, related = {}}}};
+    notes["npc:xylem"] = {public = {body = "Archmage Xylem is a mage of Azshara whose tower stands high on the cliffs. His servant Sanath Lim-yo provides the teleportation that gives visitors access. Xylem recruits capable mages to gather unusual materials for his research.\n\nHis quarrel with the green drake Morphaz is both personal and practical. Years earlier, the drake ambushed him and swallowed an apprentice carrying an exceptional arcane shard. Xylem wants the drake destroyed in the Temple of Atal'Hakkar and the shard recovered.",
+        sources = {"https://classicdb.ch/?npc=8379", "https://classicdb.ch/?quest=8250", "https://classicdb.ch/?quest=8251", "https://classicdb.ch/?quest=8252", "https://classicdb.ch/?quest=8253"},
+        related = {"region:417a7368617261", "npc:morphaz"}},
+        blocks = {{requires = {"morphaz.shard"}, body = "Its power has grown inside Morphaz, and recovering it restores Xylem's full ability to forge the arcane.",
+            sources = {V .. " #8253 Destroy Morphaz (completion)"}, related = {}}}};
+    notes["npc:moam"] = {public = {body = "Moam is an obsidian destroyer fashioned by the Twin Emperors as a weapon for Ahn'Qiraj's eventual return to war. After the Scarab Wall sealed the qiraji away, their dark master ordered Vek'lor to create a stronger construct. Vek'nilash shaped its body from volcanic stone, while Vek'lor strengthened the shell with spells and named it Moam. Their master then brought it to life.\n\nIts powers exceeded even the emperors' expectations. Moam could summon burning beings of pure mana, drawing on a source the twins had not understood: Arygos, Merithra and Caelestrasz, the three dragons they believed had died during the sealing of Ahn'Qiraj.",
+        sources = {"Original Blizzard Game Guide: Monsters of Ahn'Qiraj, Moam section, preserved at https://wowpedia.fandom.com/wiki/Game_Guide/Monsters_of_Ahn%27Qiraj", "https://warcraft.wiki.gg/wiki/Moam (original history and encounter corroboration; later origin theories excluded)"},
+        related = {"dungeon:ahnqiraj-ruins", "npc:veklor", "npc:veknilash"}},
+        blocks = {}};
+    notes["npc:sage-truthseeker"] = {public = {body = "Sage Truthseeker is a tauren historian in Thunder Bluff whose research serves both ancient mysteries and present concerns. Though loyal to Cairne Bloodhoof, he fears the Horde's pact with the Forsaken was made too hastily. He seeks the Compendium of the Fallen from the Scarlet Monastery, judging that even the zealots' research may help him offer better counsel.\n\nThe miniature Discs of Norgannon recovered from Uldaman turn his attention toward a deeper past. He studies them with the druid Nara Wildmane.",
+        sources = {"StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt (quests 1049, 2280, 2440, 2965, 2966, 2968)", "https://warcraft.wiki.gg/wiki/Sage_Truthseeker"},
+        related = {"region:5468756e64657220426c756666", "dungeon:uldaman", "place:uldum-gates"}},
+        blocks = {}};
+    notes["place:cathedral-square"] = {public = {body = "Stormwind's City Hall stood in Cathedral Square, where city architect Baros Alexston received correspondence.",
+        sources = {"StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #373"},
+        related = {}},
+        blocks = {}};
+    notes["place:thandol-span"] = {public = {body = "The Thandol Span is a pair of great stone bridges joining the Wetlands to the Arathi Highlands. Built by the dwarves, the crossing carries a vital northern supply route. Dark Iron attacks destroyed its western bridge, killing defenders; Dun Modr fell soon afterward.\n\nThe danger to the surviving bridge has not passed. Ebenezer Rustlocke went to scout the eastern crossing days ago and has not returned. With reinforcements still absent and Refuge Pointe unable to spare troops, the dwarven survivors depend on outside help to keep their last crossing open.",
+        sources = {"https://wowpedia.fandom.com/wiki/Thandol_Span (geographic introduction only)", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #303 The Dark Iron War; #304 A Grim Task; #631-633 The Thandol Span; #634 Plea To The Alliance"},
+        related = {"place:dun-modr", "region:41726174686920486967686c616e6473", "region:5765746c616e6473"}},
+        blocks = {{requires = {"rustlocke.dead"}, body = "Rustlocke died in a Dark Iron ambush. A parchment beside him reveals another cache of explosives across the Span, arranged by Kam Deepfury.",
+            sources = {V .. " #631 The Thandol Span (completion); #632 The Thandol Span"}, related = {}}}};
+    notes["region:5765746c616e6473"] = {public = {body = "The Wetlands form the marshy northern approaches to Khaz Modan. At Menethil Harbor, Alliance ships connect the Eastern Kingdoms with Auberdine and Theramore across the sea. Inland, the roads lead toward Loch Modan and the Thandol Span, making this difficult country an important link between the dwarven lands and the north.\n\nThat link is under attack. Dark Iron dwarves have taken Dun Modr after an ambush at the Span, leaving Longbraid's regiment badly depleted. The surviving defenders lack the men even to search for a missing scout. If the remaining bridge falls, their northern supply line will be cut. The marsh's crossings matter as much as its harbor.",
+        sources = {"https://warcraft.wiki.gg/wiki/Wetlands_%28Classic%29", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt (quests 472, 631, 632, 633)"},
+        related = {"place:menethil", "faction:dark-iron"}},
+        blocks = {{requires = {"rustlocke.dead"}, body = "Orders recovered from the scout's body reveal a cache of explosives intended for the remaining bridge.",
+            sources = {V .. " #632 The Thandol Span"}, related = {}}}};
+    notes["relic:tablet-will"] = {public = {body = "The Tablet of Will is a stone shard sought in Uldaman by Hammertoe. Advisor Belgrum recounts a legend that the titans inscribed it with magic for giving their creations life and wills of their own.\n\nThe search also carries a practical fear: Belgrum worries that the Shadowforge clan could use the shard to strengthen its army of golems. He wants it brought to the king's mages for study before the Dark Irons secure it. Until that examination, its power to awaken life remains a matter of legend.",
+        sources = {"StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #1139 The Lost Tablets of Will"},
+        related = {"dungeon:uldaman", "faction:dark-iron"}},
+        blocks = {}};
+    notes["relic:scythe-elune"] = {public = {body = "The Scythe of Elune is the mysterious weapon through which the priestess Velinde Starsong summoned worgen to fight the demons of Felwood. In her journal, she describes an ancient, gnarled wooden implement and believes that Elune granted it in answer to her prayers.\n\nAt first the summoned packs served her campaign, but some disappeared and their numbers kept growing even after she stopped calling more. Fearing that she was losing control, Velinde sought knowledge of the wizard Arugal, who was also said to have summoned worgen.",
+        sources = {"Original readable Velinde's Journal: https://warcraft.wiki.gg/wiki/Velinde%27s_Journal", "Original quest1043 cutscene dialogue: https://warcraft.wiki.gg/wiki/The_Scythe_of_Elune_%28Classic%29", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #1043 The Scythe of Elune; #1044 Answered Questions"},
+        related = {"npc:arugal", "npc:jitters", "npc:jonathan-carevin"}},
+        blocks = {}};
+    notes["relic:bindings-windseeker"] = {public = {body = "The Bindings of the Windseeker are two halves of a talisman holding the surviving essence of Thunderaan. Highlord Demitrian tells how Ragnaros, aided by Garr and Baron Geddon, struck the Windseeker by surprise. The Firelord could not consume all of his captive's essence, so he divided what remained between the two bindings and entrusted them to his lieutenants.\n\nDemitrian seeks to free his master. The bindings, elementium and the essence taken from Ragnaros are used to prepare Thunderaan's release, drawing adventurers from Molten Core to Silithus.",
+        sources = {"https://warcraft.wiki.gg/wiki/Highlord_Demitrian", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt (quests 7786, 7787)"},
+        related = {"dungeon:molten-core"}},
+        blocks = {}};
+    notes["relic:atiesh"] = {public = {body = "Atiesh is the greatstaff associated with the Guardians of Tirisfal and wielded by Medivh, whose power and corruption were both focused through it. According to its former watcher, Archmage Angela Dosantos, the Kirin Tor recovered it from Karazhan, only to lose the mages who touched it. They sealed the sentient staff behind magical barriers. After Archimonde destroyed Dalaran, it was lost and believed shattered by those protections.\n\nIts scattered pieces remain dangerous. Forty splinters can form the frame, but the head lies with Kel'Thuzad and the base remains in Ahn'Qiraj. Anachronos can guide the reconstruction, yet restoring its physical form does not remove the evil within.",
+        sources = {"Original Angela Dosantos Atiesh conversation: https://warcraft.wiki.gg/wiki/Archmage_Angela_Dosantos (World of Warcraft dialogue only)", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #9250 Frame of Atiesh; #9251 Atiesh, the Befouled Greatstaff; #9257/#9269/#9270/#9271 Atiesh, Greatstaff of the Guardian", "Original Splinter of Atiesh use text: https://warcraft.wiki.gg/wiki/Splinter_of_Atiesh ; original staff context corroborated at https://warcraft.wiki.gg/wiki/Atiesh"},
+        related = {"npc:medivh", "npc:anachronos", "dungeon:naxxramas"}},
+        blocks = {}};
+    notes["faction:blackwood"] = {public = {body = "The Blackwood are furbolgs of Darkshore whose corruption troubles the night elves of Auberdine. Thundris Windweaver concludes that a satyr is controlling them through talismans. He devises a cleansing meal from food gathered in their camps and water from the moonwell.",
+        sources = {"StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #4762 The Cliffspring River; #4763 The Blackwood Corrupted", "https://warcraft.wiki.gg/wiki/The_Blackwood_Corrupted (original quest transcript and giver)"},
+        related = {"region:4461726b73686f7265", "place:auberdine"}},
+        blocks = {}};
+    notes["faction:winterfall"] = {public = {body = "The Winterfall furbolgs of Winterspring have turned hostile, and their corruption troubles their Timbermaw neighbours.",
+        sources = {"StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt (quest 5084)", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt (quest 8481)"},
+        related = {"faction:timbermaw"}},
+        blocks = {}};
+    notes["faction:darkspear"] = {public = {body = "The Darkspear are the troll tribe that joined Thrall's Horde during its journey to Kalimdor. Their alliance began on an island where Sen'jin's people faced hostile humans and murlocs serving a sea witch. Thrall helped free the prisoners, but could not save Sen'jin. He welcomed the surviving trolls into his company, and together they escaped the sinking island.\n\nTheir new home brought another struggle. Zalazane's magic drove the Darkspear from the Echo Isles, and his enthralled followers continue crossing to the mainland to seize more victims. Master Gadrin calls for resistance against the witch doctor and the former tribesmen under his control.\n\nThe tribe's older ties also reach across the sea. Nimboya searches Stranglethorn for Yenniku, who had been entrusted to the Gurubashi before the Darkspear departed with Thrall.",
+        sources = {"Original Warcraft III demo campaign dialogue: https://wowwiki-archive.fandom.com/wiki/Riders_on_the_Storm ; https://worldofwarcraft.fandom.com/et/wiki/The_Fires_Down_Below (English original dialogue transcript, especially ending cinematic); https://wowwiki-archive.fandom.com/wiki/Countdown_to_Extinction", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #826 Zalazane; #581 Hunt for Yenniku; #584 Bloodscalp Clan Heads; #592 Saving Yenniku"},
+        related = {"npc:voljin", "npc:yenniku", "place:echo-isles"}},
+        blocks = {}};
+    notes["book:bloodsail-orders"] = {public = {body = "The Bloodsail Orders are Fleet-Master Firallon's written plan for an assault on Booty Bay. Kept at the pirates' Wild Shore encampment, they reveal how the ships and landing parties are meant to cooperate: the Damsel's Luck handles supplies and plunder, the Riptide puts attackers ashore, and Firallon's Crimson Veil provides gunfire and reserves.\n\nThe plan targets Revilgaz and Seahorn for death and calls for artillery to prevent Blackwater ships from using the port. Seahorn seeks the orders and accompanying charts to uncover the threat before the attack can unfold.",
+        sources = {"Original readable item3921 transcription: https://warcraft.wiki.gg/wiki/Bloodsail_Orders_%28Classic%29", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #604 The Bloodsail Buccaneers"},
+        related = {"faction:bloodsail", "place:booty-bay", "dungeon:deadmines"}},
+        blocks = {}};
+    notes["place:marshals-refuge"] = {public = {body = "Marshal's Refuge sheltered travelers and explorers in Un'Goro Crater. Spraggle waited there for the missing Ringo.",
+        sources = {"StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #3845; #4491"},
+        related = {}},
+        blocks = {}};
+    notes["place:northdale"] = {public = {body = "Northdale is a war-torn hamlet where Taelan Fordring once fought for the Silver Hand. Believing the order destroyed, he threw down its standard there, leaving a symbol that his father later sought for his redemption.",
+        sources = {"StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #5845"},
+        related = {}},
+        blocks = {}};
+    notes["place:stonewrought-dam"] = {public = {body = "The Stonewrought Dam is a vast dwarven landmark in Loch Modan. Its scale and the roar of its waterfall make it a wonder that Stormwind's orphans dream of seeing during Children's Week.\n\nSuch a conspicuous achievement also attracts enemies. Dark Iron insurgents plant Seaforium at its base, exploiting an explosive that becomes dangerous when wet. Hinderweir calls for a disarming mixture before the charge can destroy the dam.",
+        sources = {"https://classicdb.ch/?quest=1558", "https://classicdb.ch/?quest=274", "https://classicdb.ch/?quest=278", "https://classicdb.ch/?quest=280", "https://classicdb.ch/?quest=283"},
+        related = {"region:4c6f6368204d6f64616e", "faction:dark-iron"}},
+        blocks = {}};
+    notes["faction:blue-dragonflight"] = {public = {body = "The blue dragonflight follows Malygos and watches over the use of magic on Azeroth. Deathwing's betrayal brought the flight close to extinction, leaving its surviving dragons to continue their work in a world filled with dangerous magical relics.\n\nAzuregos guards ancient treasures in Azshara and was entrusted with the blue shard of the Scepter of the Shifting Sands. In Winterspring, Haleh watches over Mazthoril. Her concern for dragonkind brings her into opposition to Nefarian, and she offers aid against his brood. These scattered guardians preserve magical knowledge while deciding when the danger posed by other dragons requires mortal help.",
+        sources = {"https://warcraft.wiki.gg/wiki/Blue_dragonflight (independent introduction and After the Sundering narration; original-era facts only)", "https://warcraft.wiki.gg/wiki/Azuregos (original World of Warcraft section)", "https://warcraft.wiki.gg/wiki/Haleh (original World of Warcraft section)", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #5161 Wrath of the Blue Flight; #6502 Drakefire Amulet"},
+        related = {"npc:malygos", "npc:azuregos", "npc:haleh"}},
+        blocks = {{requires = {"drakefire_alliance_method"}, body = "She also knows how to restore the enchanted scale needed to pass Onyxia's wards.",
+            sources = {V .. " #6502 Drakefire Amulet"}, related = {}}}};
+    notes["place:forlorn-cavern"] = {public = {body = "The Forlorn Cavern is a quiet district of Ironforge. Gerrig Bonegrip keeps a shop there and warns his visitors that knowledge can be deadly.",
+        sources = {"StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #727 To Ironforge for Yagyin's Digest (progress)"},
+        related = {"region:49726f6e666f726765"}},
+        blocks = {{requires = {"myzrael.free"}, body = "Gerrig knows how Myzrael can be summoned to the surface, and serves her.",
+            sources = {V .. " #653 Myzrael's Allies"}, related = {"npc:gerrig-bonegrip"}}}};
+    notes["relic:star-xilyeh"] = {public = {body = "The Star of Xil'yeh is a gem whose last known owner is the ogre Grel'borg the Miser. He searches the debris of the Ruins of Alterac for more relics.",
+        sources = {"https://warcraft.wiki.gg/wiki/Star_of_Xil%27yeh"},
+        related = {"region:416c7465726163204d6f756e7461696e73"}},
+        blocks = {{requires = {"yagyin.bargain"}, body = "A whispered power of the Star is that its holder may be able to communicate with other worlds. Members of a secret order seek it alongside the Hand of Dagun and the Legacy Heart, and offer a copy of Yagyin's Digest in exchange for all three.",
+            sources = {V .. " #735 The Star, the Hand and the Heart; #736 The Star, the Hand and the Heart"}, related = {}}}};
+    notes["npc:theldurin-the-lost"] = {public = {body = "Theldurin the Lost is a dwarf who hides in the Badlands. His speech rambles, and he admits that madness is sometimes his only comfort. He is searching for ancient knowledge that he believes can avert a disaster, though he is too frightened to name what he fears.",
+        sources = {"https://warcraft.wiki.gg/wiki/Theldurin_the_Lost", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #687 Theldurin the Lost (completion)"},
+        related = {"region:4261646c616e6473", "relic:tablet-ryuneh"}},
+        blocks = {{requires = {"myzrael.free"}, body = "Gerrig Bonegrip and Zaruk of the Twilight's Hammer say that he once belonged to their order, lost his mind and fled with the scroll needed to summon their Lady, Myzrael.",
+            sources = {V .. " #687 Theldurin the Lost; #653 Myzrael's Allies; #688 Myzrael's Allies"}, related = {"group:twilights-hammer"}},
+            {requires = {"myzrael.warning"}, body = "Theldurin fears that summoning Myzrael will endanger the surface world. Enraged elementals stole the scroll and tore it apart, and he wants its fragments to repair it. If she is already free and gathering strength, he says, the same magic will be needed to bind her again before she can overpower her captors.",
+            sources = {V .. " #692 The Lost Fragments; #656 Summoning the Princess"}, related = {"relic:pendant-myzrael"}}}}
+    A.RegisterLoreDiscovery({facts = {
+        ["agmond.dead"] = {presented = {704, 739}, completed = {738, 704, 739}},
+        ["beldugur.cult"] = {presented = {728, 736}, completed = {728, 736}},
+        ["diplomat.capture"] = {presented = {}, completed = {1324}},
+        ["diplomat.king"] = {presented = {1250}, completed = {1250, 1264, 1265, 1266, 1324}},
+        ["diplomat.tervosh"] = {presented = {1266}, completed = {1265, 1266, 1324}},
+        ["embalmer.revealed"] = {presented = {252, 253}, completed = {252, 253}},
+        ["finkle.alive"] = {presented = {5047}, completed = {5047}},
+        ["gerrig.cult"] = {presented = {687, 727, 735}, completed = {653, 687, 727, 735}},
+        ["mankrik.wife"] = {presented = {899}, completed = {4921, 899}},
+        ["maur.dead"] = {presented = {5724}, completed = {5722, 5724}},
+        ["morladim.daughter"] = {presented = {229, 231}, completed = {229, 231}},
+        ["morladim.peace"] = {presented = {}, completed = {231}},
+        ["morphaz.shard"] = {presented = {}, completed = {8253}},
+        ["morrow.stone"] = {presented = {}, completed = {2942}},
+        ["myzrael.bound"] = {presented = {}, completed = {656}},
+        ["myzrael.free"] = {presented = {653, 688, 687}, completed = {653, 688, 687}},
+        ["myzrael.warning"] = {presented = {692, 656}, completed = {692, 656}},
+        ["redpath.corrupted"] = {presented = {5168, 5181, 5210, 5206, 5941, 5721}, completed = {5154, 5168, 5181, 5210, 5206, 5941, 5721}},
+        ["redpath.saved"] = {presented = {}, completed = {5721}},
+        ["reethe.badge"] = {presented = {1252, 1269}, completed = {1252, 1269}},
+        ["reethe.dead"] = {presented = {}, completed = {1273}},
+        ["reethe.expelled"] = {presented = {1287}, completed = {1287}},
+        ["reethe.hiding"] = {presented = {1273}, completed = {1269, 1273}},
+        ["reethe.identity"] = {presented = {1285}, completed = {1259, 1285}},
+        ["renfray.painting"] = {presented = {5848}, completed = {5848}},
+        ["rustlocke.dead"] = {presented = {632, 633}, completed = {631, 632, 633}},
+        ["taelan.fate"] = {presented = {}, completed = {5944}},
+        ["yagyin.bargain"] = {presented = {735, 736}, completed = {735, 736}},
+        ["yehkinya.deceit"] = {presented = {8181}, completed = {8181}},
+    }, notes = notes})
+end
+
+-- notes3 2026-11-05: Yagyin's Digest. Gerrig Bonegrip's and Keeper Bel'dugur's
+-- membership of Theldurin's old order is first said by Theldurin (#727, #728
+-- descriptions) or by Myzrael and Gerrig himself (#653, #687, both Alliance),
+-- and by Bel'dugur's own offer (#736). The bargain for the digest is #735/#736.
+-- Myzrael is a pleading prisoner in public; that she is free (#653/#688), that
+-- the Twilight's Hammer serve her and that she is a danger (#692, #656) follow
+-- the chain. Lieutenant Paval Reethe: the badge (#1252/#1269), Theramore's
+-- records (#1285), the deserters (#1287), the Horde's search (#1269, #1273).
+do
+    local V = "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"
+    local notes = {}
+    notes["npc:gerrig-bonegrip"] = {public = {
+        body = "Gerrig Bonegrip keeps Bonegrip's Runes and Dooms, a shop in Ironforge's Forlorn Cavern. He sells old tomes, among them The Powers Below, a book of foreboding names, rites of worship and sacrifices, and warns his visitors that knowledge can be deadly.",
+        sources = {V .. " #968 The Powers Below; #727 To Ironforge for Yagyin's Digest (progress)"}, related = {"place:forlorn-cavern"}},
+        blocks = {
+            {requires = {"gerrig.cult"},
+                body = "He belongs to the order that Theldurin the Lost fled, the Twilight's Hammer, and greets his fellows as brothers in praise of the dwellers beneath. He keeps a copy of Yagyin's Digest, which the order's most learned study.",
+                sources = {V .. " #687 Theldurin the Lost; #727 To Ironforge for Yagyin's Digest; #735 The Star, the Hand and the Heart"}, related = {"group:twilights-hammer", "npc:theldurin-the-lost"}},
+            {requires = {"myzrael.free"},
+                body = "He serves Myzrael, whom he calls the Lady, and knows how she can be summoned.",
+                sources = {V .. " #653 Myzrael's Allies"}, related = {"npc:myzrael"}}}}
+    notes["npc:beldugur"] = {public = {
+        body = "Keeper Bel'dugur is a Forsaken scholar of the Undercity who collects works of forbidden magic. He wants the Book of Ur from Shadowfang Keep, both for his collection and for certain parties among the Forsaken, and he praises Ur's knowledge while scorning the conscience that held Ur back.",
+        sources = {V .. " #1013 The Book of Ur"}, related = {"place:undercity", "book:ur"}},
+        blocks = {{requires = {"beldugur.cult"},
+            body = "He secretly belongs to the order that Theldurin the Lost fled, and keeps its copies of Yagyin's Digest. He warns his fellows to be discreet, since some would see them fail if they knew of them.",
+            sources = {V .. " #728 To the Undercity for Yagyin's Digest; #736 The Star, the Hand and the Heart"}, related = {"npc:theldurin-the-lost"}}}}
+    notes["npc:myzrael"] = {public = {
+        body = "Myzrael speaks through crystal shards in the Arathi Highlands. She calls herself a princess of the earth held captive beneath the Highlands by giants, and asks for help reaching the surface.",
+        sources = {V .. " #642 The Princess Trapped"}, related = {"relic:pendant-myzrael", "region:41726174686920486967686c616e6473"}},
+        blocks = {
+            {requires = {"myzrael.free"},
+                body = "Once the Stones of Binding and the Keystone are opened, she is free but hides to gather strength, meaning to confront the giants who held her. Gerrig Bonegrip in Ironforge and Zaruk in Hammerfall serve her and know how to summon her.",
+                sources = {V .. " #651 Stones of Binding; #653 Myzrael's Allies; #688 Myzrael's Allies"}, related = {"npc:gerrig-bonegrip", "group:twilights-hammer"}},
+            {requires = {"myzrael.warning"},
+                body = "Theldurin the Lost warns that she endangers the surface world and must be summoned at her shards, defeated and bound again with her Eldritch Shackles.",
+                sources = {V .. " #692 The Lost Fragments; #656 Summoning the Princess"}, related = {"npc:theldurin-the-lost"}},
+            {requires = {"myzrael.bound"},
+                body = "Bound again, she wails far below the shards, which no longer feel warm and safe but pulse with open menace.",
+                sources = {V .. " #656 Summoning the Princess (completion)"}}}}
+    notes["npc:reethe"] = {public = {
+        body = "Lieutenant Paval Reethe is an officer of the Theramore guard in Dustwallow Marsh.",
+        sources = {"https://warcraft.wiki.gg/wiki/Paval_Reethe"}, related = {"place:theramore", "region:4475737477616c6c6f77204d61727368"}},
+        blocks = {
+            {requires = {"reethe.badge"},
+                body = "His badge lies in the ashes of the burned Shady Rest Inn.",
+                sources = {V .. " #1252 Lieutenant Paval Reethe; #1269 Lieutenant Paval Reethe"}},
+            {requires = {"reethe.identity"},
+                body = "Theramore's records list him as a former Kul Tiras marine who came across the sea with Lady Proudmoore and is now missing. Captain Garran Vimes reads that as desertion by a man still loyal to Admiral Daelin.",
+                sources = {V .. " #1285 Daelin's Men"}, related = {"npc:vimes"}},
+            {requires = {"reethe.expelled"},
+                body = "The deserters at Lost Point say they threw him out for raiding the supplies of the Brackenwall ogres.",
+                sources = {V .. " #1287 The Deserters"}},
+            {requires = {"reethe.hiding"}, unless = {"reethe.dead"},
+                body = "Krog of Brackenwall says he deserted his fellow soldiers and hides in the woods, and some suspect him of stealing supplies.",
+                sources = {V .. " #1269 Lieutenant Paval Reethe (completion)"}, related = {"npc:krog"}},
+            {requires = {"reethe.dead"},
+                body = "The Horde found him hiding in the woods, suspected of stealing supplies. He died of an arrow wound after he was questioned, and the fire at the inn is still unexplained.",
+                sources = {V .. " #1273 Questioning Reethe (completion)"}, related = {"npc:krog"}}}}
+    notes["faction:theramore-guard"] = {public = {
+        body = "The Theramore Guard defends Jaina Proudmoore's settlement and its positions in Dustwallow Marsh. Its ranks include recruits who crossed the sea with her, while Adjutant Tesoran keeps the records of the soldiers and their equipment. Captain Garran Vimes commands its investigations.",
+        sources = {"https://warcraft.wiki.gg/wiki/Theramore_Guard", V .. " #1259 Lieutenant Paval Reethe"}, related = {"place:theramore", "region:4475737477616c6c6f77204d61727368"}},
+        blocks = {
+            {requires = {"reethe.identity"},
+                body = "Tesoran's books list Lieutenant Paval Reethe as a former Kul Tiras marine who joined the guard and is now missing. Vimes suspects desertion by a man still loyal to Admiral Daelin.",
+                sources = {V .. " #1285 Daelin's Men"}, related = {"npc:reethe"}},
+            {requires = {"reethe.expelled"},
+                body = "Deserters hold the abandoned watchtower at Lost Point. Their leader says they threw Reethe out for raiding the Brackenwall ogres' supplies, and Vimes orders a further search, which shows divisions within Theramore's forces.",
+                sources = {V .. " #1286 The Deserters; #1287 The Deserters"}}}}
+    notes["region:4475737477616c6c6f77204d61727368"] = {public = {
+        body = "Dustwallow Marsh stretches across a swampy part of central Kalimdor. Jaina Proudmoore's Theramore stands on its eastern coast, while Brackenwall Village is a Horde foothold inland. The peace between their peoples is uneasy. Theramore infiltrators report on Horde movements near Brackenwall, and Horde defenders are sent to hunt them down despite the truce.\n\nIn the south, black dragons have driven the Stonemaul ogres from their home. Onyxia's brood in the Wyrmbog and Dragonmurk threatens any attempt to return, while the crisis exposes resentment of the ogres' leader, Mok'Morokk. Another mystery waits at the burned Shady Rest Inn, whose fire nobody has explained.",
+        sources = {"https://warcraft.wiki.gg/wiki/Dustwallow_Marsh"}, related = {"place:theramore", "place:brackenwall"}},
+        blocks = {{requires = {"reethe.badge"},
+            body = "A strange shield and a badge bearing Lieutenant Paval Reethe's name lie in its ruins.",
+            sources = {V .. " #1251 The Black Shield; #1252 Lieutenant Paval Reethe"}, related = {"npc:reethe"}}}}
+    notes["group:rot-hides"] = {public = {
+        body = "The Rot Hides are gnolls given a kind of life by an embalming ichor. They serve the Scourge in Tirisfal Glades, carrying corpses from the Mass Graves near Garren's Haunt to swell the undead armies, and the Forsaken hunt them there. The apothecaries of the Undercity study their ichor, which carries warlock and necromantic magic.",
+        sources = {V .. " #358 Graverobbers; #444 Rot Hide Origins"}, related = {"place:fenris-isle", "npc:sevren"}},
+        blocks = {{requires = {"rothide.thule"},
+            body = "The ichor is the work of Thule Ravenclaw, once a promising mage, who betrayed his brethren to the Scourge and leads the Rot Hides from Fenris Isle.",
+            sources = {V .. " #446 Thule Ravenclaw"}, related = {"npc:thule"}}}}
+    A.RegisterLoreDiscovery({facts = {
+        ["rothide.thule"] = {presented = {446}, completed = {446}},
+    }, notes = notes})
+end
+
+-- notes3 2026-11-05: Thule Ravenclaw's hand in the Rot Hides' ichor is Bethor's
+-- finding in #446 (see group:rot-hides above).
+do
+    local V = "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"
+    A.RegisterLoreDiscovery({notes = {["npc:thule"] = {public = {
+        body = "Thule Ravenclaw studied magic alongside Bethor Iceshard before he joined the Scourge. His stronghold is on Fenris Isle in Silverpine Forest.",
+        sources = {V .. " #442 Assault on Fenris Isle"}, related = {"place:fenris-isle", "npc:bethor"}},
+        blocks = {{requires = {"rothide.thule"},
+            body = "Bethor recognizes his spellcraft in the ichor that animates the Rot Hide gnolls, and Thule leads them.",
+            sources = {V .. " #446 Thule Ravenclaw"}, related = {"group:rot-hides"}}}}}})
+end
+
+-- notes3 2026-11-05: Velinde Starsong. In public she has disappeared; her journal
+-- and the Scythe are read in #1038 (the chest key's completion); her fate in Duskwood
+-- is learned on #1044 Answered Questions.
+do
+    local V = "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"
+    A.RegisterLoreDiscovery({facts = {
+        ["velinde.journal"] = {presented = {1039}, completed = {1038}},
+        ["velinde.fate"] = {presented = {1044}, completed = {1044}},
+    }, notes = {["npc:velinde"] = {public = {
+        body = "Velinde Starsong is a priestess of Elune who led the struggle against Felwood's corruption from Ashenvale. At first she seemed to have the trouble in Felwood under control, but her efforts faltered, and one day she disappeared. The Sentinels keep her belongings in their bunkhouse in Astranaar and believe she had her own reasons for leaving.",
+        sources = {V .. " #1037 Velinde Starsong; #1038 Velinde's Effects (description)"}, related = {"npc:thyntel-bladeweaver", "region:417368656e76616c65"}},
+        blocks = {
+            {requires = {"velinde.journal"},
+                body = "The papers among her belongings tell of the Scythe of Elune, through which she summoned worgen against the demons of Felwood.",
+                sources = {V .. " #1038 Velinde's Effects (completion)"}, related = {"relic:scythe-elune"}},
+            {requires = {"velinde.fate"},
+                body = "The search for her ends at Roland's Doom in Duskwood, where her specter laments the worgen running loose and the loss of the Scythe.",
+                sources = {V .. " #1044 Answered Questions"}}}}}})
 end

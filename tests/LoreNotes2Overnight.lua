@@ -288,7 +288,8 @@ Marks("We completed Senir's Observations and Return to Brock.", "We completed Se
 
 -- Short forms added to existing notes.
 Marks("Dalar warned Allister; Sergra and Trias waited; Fandral read the report.",
-    "{n:Dalar} warned {n:Allister}; {n:Sergra} and {n:Trias} waited; {n:Fandral} read the report.")
+    -- notes3: Allister is an ordinary given name a player could carry; it stays plain.
+    "{n:Dalar} warned Allister; {n:Sergra} and {n:Trias} waited; {n:Fandral} read the report.")
 Marks("We completed Dalar's Analysis.", "We completed Dalar's Analysis.")
 -- Batch 6.
 Marks("Zamah waited below the Spirit Rise; Ruul sent the young to Magatha on Elder Rise.",

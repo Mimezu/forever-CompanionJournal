@@ -10,6 +10,16 @@ local function Check(value, why)
     checks = checks + 1
     assert(value, why)
 end
+-- notes3 2026-11-05: ordinary given names a player or companion could carry stay
+-- plain in prose (LoreNotes.lua commonNames); markup still resolves them.
+local playerLike = {Mikhail = true, Jorgen = true, Alaric = true, Herod = true, Windsor = true,
+    Solomon = true, Gunther = true, Laird = true, Calor = true, Darcy = true, Tabetha = true,
+    Ringo = true, Bjork = true, Kibler = true, Sneed = true, Gordo = true, Bartleby = true, Linken = true,
+    Larion = true, Doan = true, Hendel = true, Carlin = true, Morin = true, Malin = true, Melor = true}
+local function Expect(kind, name)
+    if playerLike[name] then return "About " .. name .. "." end
+    return "About {" .. kind .. ":" .. name .. "}."
+end
 Check(A.LoreNoteResolve("p", "Doomhammer") == "relic:doomhammer", "weapon must not open the Warchief")
 Check(A.LoreNoteResolve("p", "Orgrim Doomhammer") == "npc:orgrim", "full person name retains its biography")
 Check(A.LoreNoteResolve("n", "Orgrim") == "npc:orgrim", "unambiguous person alias remains")
@@ -91,7 +101,8 @@ for _, entry in ipairs({
     {"Archmage Tervosh", "npc:tervosh", "n"},
     {"Marshal Windsor", "npc:windsor", "n"},
     {"Bishop DeLavey", "npc:bishop-delavey", "n"},
-    {"Mikhail", "npc:mikhail", "n"},
+    -- notes3: "Mikhail" alone is a given name a player could carry; it resolves by
+    -- markup but stays plain in prose (checked below this list).
     {"Private Hendel", "npc:private-hendel", "n"},
     {"Silithus", "region:53696c6974687573", "p"},
     {"The Barrens", "region:5468652042617272656e73", "p"},
@@ -108,9 +119,11 @@ for _, entry in ipairs({
 }) do
     local name, id, kind = entry[1], entry[2], entry[3]
     Check(A.LoreNoteResolve(kind, name) == id, "round six exact identity: " .. name)
-    Check(A.MarkKnownLore("About " .. name .. ".") == "About {" .. kind .. ":" .. name .. "}.",
+    Check(A.MarkKnownLore("About " .. name .. ".") == Expect(kind, name),
         "round six complete phrase autolinks: " .. name)
 end
+Check(A.LoreNoteResolve("n", "Mikhail") == "npc:mikhail", "round six exact identity: Mikhail")
+Check(A.MarkKnownLore("About Mikhail.") == "About Mikhail.", "a player-like given name stays plain: Mikhail")
 for _, name in ipairs({"Quel'Serrar", "Rhok'delar"}) do
     Check(A.MarkKnownLore(name) == "{p:" .. name .. "}", "distinctive short artifact links: " .. name)
 end
@@ -141,7 +154,7 @@ for _, entry in ipairs({
 }) do
     local name, id, kind, linkName = entry[1], entry[2], entry[3], entry[4]
     Check(A.LoreNoteResolve(kind, name) == id, "round seven exact identity: " .. name)
-    Check(A.MarkKnownLore("About " .. linkName .. ".") == "About {" .. kind .. ":" .. linkName .. "}.",
+    Check(A.MarkKnownLore("About " .. linkName .. ".") == Expect(kind, linkName),
         "round seven whole identity autolinks: " .. linkName)
 end
 Check(A.MarkKnownLore("An Ancient Tablet lay nearby.") == "An Ancient Tablet lay nearby.",
@@ -180,7 +193,7 @@ for _, entry in ipairs({
 }) do
     local name, id, kind, linkName = entry[1], entry[2], entry[3], entry[4]
     Check(A.LoreNoteResolve(kind, name) == id, "round eight exact identity: " .. name)
-    Check(A.MarkKnownLore("About " .. linkName .. ".") == "About {" .. kind .. ":" .. linkName .. "}.",
+    Check(A.MarkKnownLore("About " .. linkName .. ".") == Expect(kind, linkName),
         "round eight whole identity autolinks: " .. linkName)
 end
 Check(A.MarkKnownLore("Slim chances remained.") == "Slim chances remained.", "ordinary adjective stays unlinked")
@@ -223,7 +236,7 @@ for _, entry in ipairs({
 }) do
     local name, id, kind, linkName = entry[1], entry[2], entry[3], entry[4]
     Check(A.LoreNoteResolve(kind, name) == id, "round nine exact identity: " .. name)
-    Check(A.MarkKnownLore("About " .. linkName .. ".") == "About {" .. kind .. ":" .. linkName .. "}.",
+    Check(A.MarkKnownLore("About " .. linkName .. ".") == Expect(kind, linkName),
         "round nine whole identity autolinks: " .. linkName)
 end
 for _, name in ipairs({"The Green Hills of Stranglethorn", "The Book of Ur", "Blackhand's Command", "Book of the Ancients", "The Scepter of Celebras"}) do
@@ -269,7 +282,7 @@ for _, entry in ipairs({
 }) do
     local name, id, kind, linkName = entry[1], entry[2], entry[3], entry[4]
     Check(A.LoreNoteResolve(kind, name) == id, "round ten exact identity: " .. name)
-    Check(A.MarkKnownLore("About " .. linkName .. ".") == "About {" .. kind .. ":" .. linkName .. "}.",
+    Check(A.MarkKnownLore("About " .. linkName .. ".") == Expect(kind, linkName),
         "round ten complete-name autolink: " .. linkName)
 end
 Check(A.LoreNoteResolve("p", "Arathi") == "region:41726174686920486967686c616e6473", "Arathi shorthand still means the Highlands")
@@ -313,7 +326,7 @@ for _, entry in ipairs({
 }) do
     local name, id, kind = entry[1], entry[2], entry[3]
     Check(A.LoreNoteResolve(kind, name) == id, "round eleven exact identity: " .. name)
-    Check(A.MarkKnownLore("About " .. name .. ".") == "About {" .. kind .. ":" .. name .. "}.",
+    Check(A.MarkKnownLore("About " .. name .. ".") == Expect(kind, name),
         "round eleven complete-name autolink: " .. name)
 end
 Check(A.LoreNoteResolve("p", "Battle of Grim Batol") == "event:grim-batol", "battle remains separate from new fortress")
@@ -359,7 +372,7 @@ for _, entry in ipairs({
 }) do
     local name, id, kind = entry[1], entry[2], entry[3]
     Check(A.LoreNoteResolve(kind, name) == id, "round twelve exact identity: " .. name)
-    Check(A.MarkKnownLore("About " .. name .. ".") == "About {" .. kind .. ":" .. name .. "}.",
+    Check(A.MarkKnownLore("About " .. name .. ".") == Expect(kind, name),
         "round twelve complete-name autolink: " .. name)
 end
 Check(A.LoreNoteResolve("p", "Mythology of the Titans") == "book:titans-shaping", "alternate book title reaches the same book")
@@ -402,7 +415,7 @@ for _, entry in ipairs({
 }) do
     local name, id, kind = entry[1], entry[2], entry[3]
     Check(A.LoreNoteResolve(kind, name) == id, "round thirteen exact identity: " .. name)
-    Check(A.MarkKnownLore("About " .. name .. ".") == "About {" .. kind .. ":" .. name .. "}.",
+    Check(A.MarkKnownLore("About " .. name .. ".") == Expect(kind, name),
         "round thirteen complete-name autolink: " .. name)
 end
 Check(A.LoreNoteResolve("n", "Cookie") == "npc:cookie", "the named cook remains explicitly reachable")
@@ -460,7 +473,7 @@ for _, entry in ipairs({
 }) do
     local name, id, kind = entry[1], entry[2], entry[3]
     Check(A.LoreNoteResolve(kind, name) == id, "round fourteen exact identity: " .. name)
-    Check(A.MarkKnownLore("About " .. name .. ".") == "About {" .. kind .. ":" .. name .. "}.",
+    Check(A.MarkKnownLore("About " .. name .. ".") == Expect(kind, name),
         "round fourteen complete-name autolink: " .. name)
 end
 Check(A.LoreNoteResolve("p", "Egg of Hakkar") == "relic:ancient-egg", "ritual egg is the same relic")
@@ -509,7 +522,7 @@ for _, entry in ipairs({
 }) do
     local name, id, kind = entry[1], entry[2], entry[3]
     Check(A.LoreNoteResolve(kind, name) == id, "round fifteen exact identity: " .. name)
-    Check(A.MarkKnownLore("About " .. name .. ".") == "About {" .. kind .. ":" .. name .. "}.",
+    Check(A.MarkKnownLore("About " .. name .. ".") == Expect(kind, name),
         "round fifteen complete-name autolink: " .. name)
 end
 Check(A.MarkKnownLore("Gordunni clan and Stonemaul clan") == "{p:Gordunni clan} and {p:Stonemaul clan}", "full sampled clan names link")
@@ -552,7 +565,7 @@ for _, entry in ipairs({
 }) do
     local name, id, kind = entry[1], entry[2], entry[3]
     Check(A.LoreNoteResolve(kind, name) == id, "round sixteen exact identity: " .. name)
-    Check(A.MarkKnownLore("About " .. name .. ".") == "About {" .. kind .. ":" .. name .. "}.",
+    Check(A.MarkKnownLore("About " .. name .. ".") == Expect(kind, name),
         "round sixteen complete-name autolink: " .. name)
 end
 Check(A.MarkKnownLore("SI:7 and Rattlegore") == "{p:SI:7} and {n:Rattlegore}", "organization punctuation and proper boss name link")
@@ -596,7 +609,7 @@ for _, entry in ipairs({
 }) do
     local name, id, kind = entry[1], entry[2], entry[3]
     Check(A.LoreNoteResolve(kind, name) == id, "round seventeen exact identity: " .. name)
-    Check(A.MarkKnownLore("About " .. name .. ".") == "About {" .. kind .. ":" .. name .. "}.",
+    Check(A.MarkKnownLore("About " .. name .. ".") == Expect(kind, name),
         "round seventeen complete-name autolink: " .. name)
 end
 Check(A.MarkKnownLore("Chromaggus and Rexxar") == "{n:Chromaggus} and {n:Rexxar}", "short proper boss and champion names link")
@@ -643,7 +656,7 @@ for _, entry in ipairs({
 }) do
     local name, id, kind = entry[1], entry[2], entry[3]
     Check(A.LoreNoteResolve(kind, name) == id, "round eighteen exact identity: " .. name)
-    Check(A.MarkKnownLore("About " .. name .. ".") == "About {" .. kind .. ":" .. name .. "}.",
+    Check(A.MarkKnownLore("About " .. name .. ".") == Expect(kind, name),
         "round eighteen complete-name autolink: " .. name)
 end
 Check(A.LoreNoteResolve("p", "Alterac") == "region:416c7465726163204d6f756e7461696e73", "unqualified Alterac keeps its region route")
@@ -690,7 +703,7 @@ for _, entry in ipairs({
 }) do
     local name, id, kind = entry[1], entry[2], entry[3]
     Check(A.LoreNoteResolve(kind, name) == id, "round nineteen exact identity: " .. name)
-    Check(A.MarkKnownLore("About " .. name .. ".") == "About {" .. kind .. ":" .. name .. "}.",
+    Check(A.MarkKnownLore("About " .. name .. ".") == Expect(kind, name),
         "round nineteen complete-name autolink: " .. name)
 end
 Check(A.LoreNoteResolve("p", "Elementals") == "group:elementals", "generic elementals available explicitly")
