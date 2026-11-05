@@ -45,8 +45,11 @@ function UnitFullName(unit) local m = Member(unit); if m then return m[1], "Fore
 function UnitClass(unit) local m = Member(unit); if m then return m[2], m[2] end end
 function UnitLevel(unit) local m = Member(unit); return m and m[3] or 0 end
 function UnitFactionGroup(unit) if unit == "player" then return "Horde" end local m = Member(unit); return m and m[4] or nil end
-local target = "Aeryn"
+local target, targetDead = "Aeryn", true
 function UnitName(unit) if unit == "target" then return target end return "Writer" end
+function UnitIsDeadOrGhost(unit) return unit == "target" and targetDead end
+local secret = {}
+function issecretvalue(value) return secret[value] == true end
 C_Spell = {GetSpellName = function(id) return ({[2006] = "Resurrection", [1234] = "Smite"})[id] end}
 C_QuestLog = {GetTitleForQuestID = function() return nil end, GetNumQuestLogEntries = function() return 0, 0 end,
     GetInfo = function() return nil end, IsComplete = function() return false end, IsUnitOnQuest = function() return false end}
@@ -77,7 +80,10 @@ inGroup = true
 db.peopleJournal = true
 A.UpdatePeopleHooks()
 local frame = Events()
-check(frame and frame.events.UNIT_SPELLCAST_SUCCEEDED, "your own casts are watched while the journal is on")
+check(frame and not frame.events.UNIT_SPELLCAST_SUCCEEDED, "your own casts are not watched while more moments is off (codereview)")
+db.moreMoments = true
+A.UpdatePeopleHooks()
+check(frame.events.UNIT_SPELLCAST_SUCCEEDED, "your own casts are watched once more moments is on")
 local function Fire(event, ...) frame.scripts.OnEvent(frame, event, ...) end
 check(Kinds(aeryn.journal) == "group", "the outing opened: " .. Kinds(aeryn.journal))
 
@@ -96,6 +102,23 @@ check(Kinds(aeryn.journal) == "group,rez:you", "your resurrection of Aeryn is re
 target = "Stranger"
 Fire("UNIT_SPELLCAST_SUCCEEDED", "player", "cast-5", 2006)
 check(Kinds(aeryn.journal) == "group,rez:you", "a raise of someone else is not Aeryn's: " .. Kinds(aeryn.journal))
+-- (codereview) a rez cast from a party frame while a living Aeryn is targeted is not hers
+target, targetDead = "Aeryn", false
+Fire("UNIT_SPELLCAST_SUCCEEDED", "player", "cast-6", 2006)
+check(Kinds(aeryn.journal) == "group,rez:you", "a living target was not the one raised: " .. Kinds(aeryn.journal))
+-- (codereview) a secret unit token is passed over, never compared
+targetDead = true
+secret["player"] = true
+Fire("UNIT_SPELLCAST_SUCCEEDED", "player", "cast-7", 2006)
+secret["player"] = nil
+check(Kinds(aeryn.journal) == "group,rez:you", "a secret caster token records nothing: " .. Kinds(aeryn.journal))
+
+-- (codereview) turning more moments off lets the cast watch go, the journal still on
+db.moreMoments = false
+A.UpdatePeopleHooks()
+check(not frame.events.UNIT_SPELLCAST_SUCCEEDED, "the cast watch goes with the setting")
+db.moreMoments = true
+A.UpdatePeopleHooks()
 
 -- 3. Off again: the event is gone with the journal.
 db.peopleJournal = false

@@ -565,6 +565,9 @@ function A.JournalRaised(spellID)
     local spellName = (C_Spell and C_Spell.GetSpellName and Text(Ask(C_Spell.GetSpellName, spellID)))
         or (GetSpellInfo and Text(Ask(GetSpellInfo, spellID)))
     if not spellName or not REZ_SPELLS[spellName] then return end
+    -- (the target must be the dead one: a rez cast from a party frame or by
+    -- mouseover leaves some living companion targeted, who was not raised)
+    if Ask(UnitIsDeadOrGhost, "target") ~= true then return end
     local key = A.PersonKey and A.PersonKey(Text(Ask(UnitName, "target")))
     local holder = key and sessions[key] and Holder(key)
     if holder then A.JournalAdd(holder, {k = "rez", w = "you"}) end
@@ -775,7 +778,7 @@ events:SetScript("OnEvent", function(_, event, ...)
         A.JournalResurrectOffer((...))
     elseif event == "UNIT_SPELLCAST_SUCCEEDED" then
         local unit, _, spellID = ...
-        if unit == "player" and Public(spellID) then A.JournalRaised(spellID) end
+        if Public(unit) and unit == "player" and Public(spellID) then A.JournalRaised(spellID) end
     elseif event == "PLAYER_ALIVE" or event == "PLAYER_UNGHOST" then
         A.JournalAlive()
     elseif event == "PLAYER_UPDATE_RESTING" then
@@ -806,8 +809,9 @@ end)
 function A.UpdateJournalEvents()
     if A.JournalOn() then
         for _, event in ipairs(EVENTS) do pcall(events.RegisterEvent, events, event) end
-        -- (your own casts only; the handler asks for "Record more moments" itself)
-        if events.RegisterUnitEvent then pcall(events.RegisterUnitEvent, events, "UNIT_SPELLCAST_SUCCEEDED", "player")
+        -- (your own casts only, and only with "Record more moments" on; the handler asks again)
+        if A.db.moreMoments ~= true then pcall(events.UnregisterEvent, events, "UNIT_SPELLCAST_SUCCEEDED")
+        elseif events.RegisterUnitEvent then pcall(events.RegisterUnitEvent, events, "UNIT_SPELLCAST_SUCCEEDED", "player")
         else pcall(events.RegisterEvent, events, "UNIT_SPELLCAST_SUCCEEDED") end
         PruneQuestRecords(Now())
         A.JournalGroupChanged()

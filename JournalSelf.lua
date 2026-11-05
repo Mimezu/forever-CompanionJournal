@@ -534,7 +534,9 @@ local function Pattern(key, capture)
     -- ("%1$s" becomes "%1%$s" once escaped: ordered placeholders, in message order)
     local order = {}
     for n in escaped:gmatch("%%(%d)%%%$s") do order[#order + 1] = tonumber(n) end
-    local body = escaped:gsub("%%%d%%%$s", capture or "(.-)"):gsub("%%s", capture or "(.-)"):gsub("%%d", "%%d+")
+    -- (an ordered number, "%1$d", becomes a plain "%d" first: left as "%1" it is a
+    -- back-reference, and match errors on every message)
+    local body = escaped:gsub("%%%d%%%$s", capture or "(.-)"):gsub("%%%d%%%$d", "%%d"):gsub("%%s", capture or "(.-)"):gsub("%%d", "%%d+")
     return "^" .. body .. "$", order
 end
 -- Books, letters and plaques: the title of the text you open, once per
@@ -602,22 +604,25 @@ end
 local STANDINGS = {[5] = "friendly", [6] = "honored", [7] = "revered", [8] = "exalted"}
 A.SelfStandings = STANDINGS
 local repQueued = false
+-- (only a standing already read this session counts as "before": the first look after
+-- a login, a /reload or turning the setting on only seeds, so a standing reached while
+-- the setting was off is never told as reached today)
+local repRead, skillRead = {}, {}
 local function ScanReputation()
     repQueued = false
     if not A.MoreMomentsOn() then return end
     local mine = A.MyCharacter and A.MyCharacter(true)
     local rep = C_Reputation
     if type(mine) ~= "table" or not rep or not rep.GetNumFactions or not rep.GetFactionDataByIndex then return end
-    local seeded = type(mine.rep) == "table"
-    mine.rep = seeded and mine.rep or {}
+    mine.rep = type(mine.rep) == "table" and mine.rep or {}
     for i = 1, Num(Ask(rep.GetNumFactions)) or 0 do
         local data = Ask(rep.GetFactionDataByIndex, i)
         if type(data) == "table" and (not data.isHeader or data.isHeaderWithRep) then
             local name, reaction = Text(data.name), Num(data.reaction)
             if name and reaction then
-                local before = mine.rep[name]
-                if seeded and before and reaction > before and STANDINGS[reaction] then Add({k = "rep", d = name, s = reaction}) end
-                mine.rep[name] = reaction
+                local before = repRead[name] and mine.rep[name]
+                if before and reaction > before and STANDINGS[reaction] then Add({k = "rep", d = name, s = reaction}) end
+                mine.rep[name], repRead[name] = reaction, true
             end
         end
     end
@@ -660,20 +665,19 @@ local function ScanSkills()
     local mine = A.MyCharacter and A.MyCharacter(true)
     local info = C_SkillInfo
     if type(mine) ~= "table" or not info or not info.GetNumSkillLines or not info.GetSkillLineInfo then return end
-    local seeded = type(mine.skills) == "table"
-    mine.skills = seeded and mine.skills or {}
+    mine.skills = type(mine.skills) == "table" and mine.skills or {}
     for i = 1, Num(Ask(info.GetNumSkillLines)) or 0 do
         local line = Ask(info.GetSkillLineInfo, i)
         if type(line) == "table" and not line.isHeader then
             local name, rank = Text(line.name), Num(line.rank)
             if name and rank and TRADES[name] then
-                local before = mine.skills[name]
-                if seeded and before and rank > before then
+                local before = skillRead[name] and mine.skills[name]
+                if before and rank > before then
                     for _, mark in ipairs(SKILL_MARKS) do
                         if before < mark and rank >= mark then Add({k = "skill", d = name, c = mark}) end
                     end
                 end
-                mine.skills[name] = rank
+                mine.skills[name], skillRead[name] = rank, true
             end
         end
     end
@@ -708,10 +712,15 @@ local function RareUnwatch()
     pcall(rareFrame.UnregisterEvent, rareFrame, "UNIT_HEALTH")
 end
 local function RareTargeted()
+    -- (a new target that is not a living rare lets the watch go: otherwise UNIT_HEALTH
+    -- stays registered for whatever is targeted next, for up to ten minutes)
     local rank = Text(Ask(UnitClassification, "target"))
-    if rank ~= "rare" and rank ~= "rareelite" then return end
+    if rank ~= "rare" and rank ~= "rareelite" then if rareWatch then RareUnwatch() end return end
     local name = Text(Ask(UnitName, "target"))
-    if not name or Ask(UnitCanAttack, "player", "target") ~= true or Ask(UnitIsDeadOrGhost, "target") == true then return end
+    if not name or Ask(UnitCanAttack, "player", "target") ~= true or Ask(UnitIsDeadOrGhost, "target") == true then
+        if rareWatch then RareUnwatch() end
+        return
+    end
     rareWatch = {name = name, t = Now(), zone = Zone()}
     if rareFrame.RegisterUnitEvent then pcall(rareFrame.RegisterUnitEvent, rareFrame, "UNIT_HEALTH", "target") end
 end
@@ -1168,7 +1177,18 @@ function A.UpdateSelfJournalEvents()
     for _, event in ipairs(MORE_EVENTS) do
         if A.MoreMomentsOn() then pcall(events.RegisterEvent, events, event) else pcall(events.UnregisterEvent, events, event) end
     end
-    if not A.MoreMomentsOn() then RareUnwatch() else SeedHonor() end
+    if not A.MoreMomentsOn() then
+        -- (off: the next time it is turned on starts afresh)
+        RareUnwatch()
+        trainerOpen, repRead, skillRead = false, {}, {}
+    else
+        SeedHonor()
+        -- (standings and skills seeded now, so the first change after turning it on is told)
+        if C_Timer and C_Timer.After then
+            if not repQueued then repQueued = true; C_Timer.After(2, ScanReputation) end
+            if not skillQueued then skillQueued = true; C_Timer.After(2, ScanSkills) end
+        end
+    end
     if ticker and ticker.Cancel then ticker:Cancel() end
     ticker = nil
     if A.SelfJournalOn() and C_Timer and C_Timer.NewTicker then ticker = C_Timer.NewTicker(30, Tick) end
