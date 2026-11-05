@@ -52,7 +52,8 @@ P.chronicler = {
 
 P.bard = {
     mix = 0.3, strong = 0.5, epithet = 0.3,
-    meetGroup = {"It began in {zoneE}, on the day {aWho} named {name} joined {my} party.", "In {zoneE} it began, the day {aWho} named {name} joined {my} party."},
+    meetGroup = {"It began in {zoneE}, on the day {aWho} named {name} joined {my} party.", "In {zoneE} it began, the day {aWho} named {name} joined {my} party.",
+        "{name}, {aWho}, first stood beside {me} in {zoneE}.", "In {zoneE} {I} first took {name}, {aWho}, into {my} company."},
     early = {"And {later}, {name} returned."},
     daily = {"Out {pair} went, that {weekday} {part}.", "Again {name} stood beside {me}.", "That {part}, as on most days, {name} was at {my} side."},
     often = {"{name} stood beside {me} that {part}, as {they} so often did.", "Again that {weekday}, out {pair} went."},

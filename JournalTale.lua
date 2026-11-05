@@ -748,8 +748,16 @@ function T.Tell(person, days, voice, player, brief)
         local sceneLimit = quietDay and f.together >= 3600 and 3 or 2
         local candidates = {}
         local firstRanks = {notable = 8, rezother = 7, landmark = 6, sunset = 6, snow = 5, rarebeast = 5, foeseen = 5}
+        local companionShort = Clean(person.name or ""):gsub("%-.*$", "")
+        local exploreRanked = false
         for i, e in ipairs(moments) do
             local rank = e.k == "first" and firstRanks[e.d] or ({voyage = 5, close = 4, swim = 3, nightflight = 3, gather = 1})[e.k]
+            -- (more moments: a duel with this very companion ranks with a rescue)
+            if e.k == "duel" and e.d then rank = Clean(e.d) == companionShort and 7 or 3
+            elseif e.k == "rarekill" then rank = 6
+            elseif e.k == "rep" then rank = (tonumber(e.s) or 0) >= 6 and 4 or 2
+            elseif e.k == "explore" and not exploreRanked then exploreRanked = true; rank = 2
+            elseif e.k == "read" then rank = 2 end
             if rank then candidates[#candidates + 1] = {entry = e, rank = rank, ordinal = i} end
         end
         table.sort(candidates, function(a, b)
@@ -831,6 +839,7 @@ function T.Tell(person, days, voice, player, brief)
             if pt and pt.weekdayUsed then pt.weekday, pt.Weekday, pt.weekdayUsed = false, false, nil end
             teller.pendingTokens = nil
             teller.started = true
+            text = A.JournalIslands and A.JournalIslands(text) or text
             out[#out + 1] = text
             outBeat[#out] = beat
             -- Named once it is written (a line the short telling drops names nobody).
@@ -1024,7 +1033,8 @@ function T.Tell(person, days, voice, player, brief)
                 if byGap ~= key and not (key == "daily" and gap <= 3) then key = byGap end
                 if key == "often" and gap >= 2 and rng() < 0.4 then key = "oftenGap" end
             end
-            if teller.base.bondWord and key ~= "reunionBond" and rng() < (startedTogether and 0.45 or 0.3) then key = "bondOpen" end
+            -- (the bond is said in an opening on one day in five, not one in three: a novelist does not re-announce "your wife")
+            if teller.base.bondWord and key ~= "reunionBond" and rng() < (startedTogether and 0.35 or 0.2) then key = "bondOpen" end
             -- Companions from the first day are old companions from the start.
             if key == "daily" and history.days < 7 and not startedTogether then key = "often" end
             if startedTogether and (key == "often" or key == "early" or key == "second") and (gap or 9) <= 3 then key = "daily" end
@@ -1137,8 +1147,17 @@ function T.Tell(person, days, voice, player, brief)
                 for _, x in ipairs(ownJournal or {}) do
                     if x.k == "play" and x.z == mainZone and (x.t or 0) < (day.t or f.t or 0) - 3600 then zs = nil; break end
                 end
-                if zs and zs.sight then Add(zs.sight[rng(#zs.sight)]); f.zoneLore = (f.zoneLore or 0) + 1 end
-                if zs and zs.stakes and rng() < 0.6 then Add(zs.stakes[rng(#zs.stakes)]); f.zoneLore = (f.zoneLore or 0) + 1 end
+                -- (not a line that names the other side's town for this character)
+                local function Ours(list)
+                    local kept = {}
+                    for _, line in ipairs(list or {}) do
+                        if not (A.SelfTale and A.SelfTale.NamesFoeTown and A.SelfTale.NamesFoeTown(line, player.faction)) then kept[#kept + 1] = line end
+                    end
+                    return #kept > 0 and kept or nil
+                end
+                local sight, stakes = zs and Ours(zs.sight), zs and Ours(zs.stakes)
+                if sight then Add(sight[rng(#sight)]); f.zoneLore = (f.zoneLore or 0) + 1 end
+                if stakes and rng() < 0.6 then Add(stakes[rng(#stakes)]); f.zoneLore = (f.zoneLore or 0) + 1 end
             elseif kind ~= "city" and history.zoneLastT[mainZone] and PB.zoneReturn and not cooldown and rng() < 0.6 then
                 -- Back after a long while: "for the first time since March".
                 local away = today - DayNumber(history.zoneLastT[mainZone])
@@ -1159,7 +1178,10 @@ function T.Tell(person, days, voice, player, brief)
         if together and discovery and mainZone and not history.zoneSetting[mainZone] then
             local setting = L.ZoneStory and L.ZoneStory(mainZone)
             if setting and not f.zoneLore then
-                local pool = setting.sight or setting.stakes
+                local pool = {}
+                for _, line in ipairs(setting.sight or setting.stakes or {}) do
+                    if not (A.SelfTale and A.SelfTale.NamesFoeTown and A.SelfTale.NamesFoeTown(line, player.faction)) then pool[#pool + 1] = line end
+                end
                 if pool and #pool > 0 then
                     beat = "land"
                     Add(pool[rng(#pool)])
@@ -2212,10 +2234,20 @@ function T.Tell(person, days, voice, player, brief)
         local pvpAll = 0
         local deathAnchors = {}
         for _, e in ipairs(f.deaths) do if e.w == "you" and (e.pr or e.pc) and not e.env then pvpAll = pvpAll + 1 end end
+        -- (their deaths with no boss to tell them with: twice or more in a day is one line with the count)
+        local theirPlain, theirPlainTold = 0, false
+        for _, e in ipairs(f.deaths) do if e.w ~= "you" and not e.boss then theirPlain = theirPlain + 1 end end
         for _, e in ipairs(f.deaths) do
             local beforeDeath = #out
             tokens.place = Place(e.z or mainZone or "the wilds")
-            if e.w == "you" then
+            if e.w ~= "you" and not e.boss and theirPlain >= 2 and PB.theyDieTimes then
+                if not theirPlainTold then
+                    theirPlainTold = true
+                    tokens.count = theirPlain == 2 and "twice" or (Words(theirPlain) .. " times")
+                    Add(teller:Say("theyDieTimes", PB.theyDieTimes, rng, tokens))
+                    mood.grim = true
+                end
+            elseif e.w == "you" then
                 if e.env and PB.dieEnv[e.env] then
                     -- the same end twice in a day
                     local again = PB.dieEnvAgain and PB.dieEnvAgain[e.env] and envSeen[e.env]
@@ -2430,7 +2462,12 @@ function T.Tell(person, days, voice, player, brief)
                         local setup = f.questSetupLines and f.questSetupLines[quest.qid or quest.title]
                         if setup then passage[#passage + 1] = setup end
                         if anchor or needsName then
-                            if not setup and qs.why and #qs.why > 0 then passage[#passage + 1] = qs.why[rng(#qs.why)] end
+                            -- (Highlights: a title-only stage continuing the thread just told keeps its outcome only)
+                            local continuing = brief and not quest.qid and qs.thread and previousStory and qs.thread == previousStory.thread
+                            if not setup and qs.why and #qs.why > 0 then
+                                local why = qs.why[rng(#qs.why)]
+                                if not continuing then passage[#passage + 1] = why end
+                            end
                             local changedPlace = multiQuestPlan and quest.scene and
                                 ((previousScene and quest.scene.zone ~= previousScene.zone)
                                     or (not previousScene and quest.scene.zone ~= mainZone))
@@ -2627,6 +2664,33 @@ function T.Tell(person, days, voice, player, brief)
                     tokens.work = clauses[1]
                     gatherSaid = true
                     if tokens.work then line = teller:Say("sharedFish", PB.shared.fish, rng, tokens) end
+                elseif e.k == "duel" and e.d and PB.shared.duel then
+                    if Clean(e.d) == companionShort and PB.shared.duelWith then
+                        -- ("you and Dahlia duelled, and Dahlia won" / "Dahlia and I duelled, and I won")
+                        tokens.winner = e.w == "won" and teller.base.I or teller.base.name
+                        line = teller:Say("sharedDuelWith", PB.shared.duelWith, rng, tokens)
+                    else
+                        tokens.who, tokens.outcome = "{n:" .. Clean(e.d) .. "}", e.w == "won" and "won" or "lost"
+                        line = teller:Say("sharedDuel", PB.shared.duel, rng, tokens)
+                    end
+                    if line then Title(54, "A Duel", "shared") end
+                elseif e.k == "rarekill" and e.d and PB.shared.rareKilled then
+                    tokens.what = Place(e.d)
+                    line = teller:Say("sharedRareKilled", PB.shared.rareKilled, rng, tokens)
+                    if line then Title(50, Clean(e.d), "shared") end
+                elseif e.k == "rep" and e.d and PB.sharedRep and A.JournalStandingWord and PB.sharedRep[A.JournalStandingWord(e.s) or ""] then
+                    local word = A.JournalStandingWord(e.s)
+                    tokens.faction = (A.SelfTale and A.SelfTale.FactionName and A.SelfTale.FactionName(e.d)) or Place(e.d)
+                    tokens.Faction = Cap(tokens.faction)
+                    line = teller:Say("sharedRep" .. word, PB.sharedRep[word], rng, tokens)
+                elseif e.k == "explore" and e.d and PB.shared.explore then
+                    local names = {}
+                    for _, x in ipairs(moments) do if x.k == "explore" and x.d and #names < 3 then names[#names + 1] = Place(x.d) end end
+                    tokens.places = List(names)
+                    line = teller:Say("sharedExplore", PB.shared.explore, rng, tokens)
+                elseif e.k == "read" and e.d and PB.shared.read then
+                    tokens.what = Q(e.d)
+                    line = teller:Say("sharedRead", PB.shared.read, rng, tokens)
                 elseif e.k == "close" and not closeSaid then
                     closeSaid = true
                     if e.d then

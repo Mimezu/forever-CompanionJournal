@@ -247,11 +247,18 @@ function A.JournalBook(person)
     local lastMoment
     for _, entry in ipairs(entries) do
         if entry.k ~= "group" and entry.k ~= "play" and entry.k ~= "with" then
-            local home
+            -- The outing it happened in: one that holds its time (and its zone, when
+            -- two touch); failing that, one within a minute of it. A companion's death
+            -- a minute before a hearthstone belongs where it happened, not where you landed.
+            local home, loose
             for i = #outings, 1, -1 do
                 local o = outings[i]
-                if (entry.t or 0) >= o.t - 60 and (entry.t or 0) <= o.e + 60 then home = o; break end
+                local t = entry.t or 0
+                if t >= o.t and t <= o.e then
+                    if not home or (entry.z and o.zone == entry.z and home.zone ~= entry.z) then home = o end
+                elseif not loose and t >= o.t - 60 and t <= o.e + 60 then loose = o end
             end
+            home = home or loose
             local own = entry.k == "custom" or entry.k == "met" or entry.k == "added" or entry.k == "seen"
             if home and not own then
                 Add(home, entry)
@@ -321,6 +328,20 @@ function A.JournalBook(person)
         end
     end
     return days
+end
+
+-- Islands take "on", not "in" ("on Zephras Isle", "on the Echo Isles"): applied to
+-- finished sentences, whatever pool they came from.
+local ISLANDS = {"Zephras Isle", "Echo Isles", "Fenris Isle", "Jaguero Isle", "Alcaz Island", "Theramore Isle", "Darkspear Islands", "Bloodmyst Isle"}
+function A.JournalIslands(text)
+    if type(text) ~= "string" or not text:find("Isl", 1, true) then return text end
+    for _, island in ipairs(ISLANDS) do
+        for _, form in ipairs({"the {p:" .. island .. "}", "{p:" .. island .. "}"}) do
+            local escaped = form:gsub("([%(%)%.%+%-%*%?%[%]%^%$])", "%%%1")
+            text = text:gsub("%f[%a]In (" .. escaped .. ")", "On %1"):gsub("%f[%a]in (" .. escaped .. ")", "on %1")
+        end
+    end
+    return text
 end
 
 -- Everything: one paragraph per scene -------------------------------------------
@@ -543,13 +564,13 @@ local function Deeds(scene, name, v, inside)
             -- (all of the stretch's discoveries in one clause)
             exploreSaid = true
             local names = {}
-            for _, name in ipairs(scene.explored or {event.d}) do names[#names + 1] = P(name) end
+            for _, area in ipairs(scene.explored or {event.d}) do names[#names + 1] = P(area) end
             clauses[#clauses + 1] = Pick(seed, {"found my way to ", "came upon ", "discovered "}) .. List(names)
         elseif event.k == "taxi" and event.d then
             clauses[#clauses + 1] = "learned the flight path at " .. P(event.d)
         elseif event.k == "learn" and (event.c or 0) > 0 then
             local names = {}
-            for _, name in ipairs(event.m or {}) do names[#names + 1] = name end
+            for _, spell in ipairs(event.m or {}) do names[#names + 1] = spell end
             local what = event.c == 1 and "one spell" or (Words(event.c) .. " spells")
             clauses[#clauses + 1] = "learned " .. what .. " from the trainer" .. (#names > 0 and ((event.c == 1 and ", " or ", among them ") .. List(names)) or "")
         elseif event.k == "rep" and event.d then
@@ -728,7 +749,7 @@ local function SelfSceneText(person, scene)
         for _, sentence in ipairs(CraftSentences(scene.craft)) do rest[#rest + 1] = sentence end
         local quests = QuestSentence(scene, v, false)
         if quests then rest[#rest + 1] = quests end
-        return lead .. (#rest > 0 and (" " .. table.concat(rest, " ")) or ""), lead
+        return A.JournalIslands(lead .. (#rest > 0 and (" " .. table.concat(rest, " ")) or "")), A.JournalIslands(lead)
     elseif k == "quest" then
         return QuestSentence(scene, v, false)
     elseif k == "boss" then
@@ -906,7 +927,7 @@ local function SelfDayHighlights(person, day)
     elseif #closes > 0 then
         Say(CloseText(closes[1]))
     end
-    return table.concat(out, " "), quotes
+    return A.JournalIslands(table.concat(out, " ")), quotes
 end
 function A.JournalDayHighlights(person, day, voice)
     if person.self then return SelfDayHighlights(person, day) end

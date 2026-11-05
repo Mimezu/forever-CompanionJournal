@@ -93,6 +93,8 @@ PB.bondOpen = {
     "That {part} {I} set out with {bondWord}, {name}.",
     "{Bond} was with {me} that {part}.",
     "{pair} set out that {part}.",
+    "{Bond} came along that {part}.",
+    "{name}, {bondWord}, was there when the {part} began.",
 }
 
 ---------------------------------------------------------------------------
@@ -795,6 +797,8 @@ PB.dieEnv.SLIME = {"{I} died in the slime.", "Slime killed {me}. There are bette
 
 -- PB.theyDie / PB.theyDieBoss
 PB.theyDie = {"{name} died in {place}.", "{name} was killed in {place}.", "{name} died there."}
+-- (the same companion, twice or more in a day, no boss to blame: {count})
+PB.theyDieTimes = {"{name} died {count} that day.", "{name} died in {place}, {count}.", "{count} that day, {name} was killed."}
 PB.theyDieBoss = {"{boss} killed {name}.", "{name} died fighting {boss}.", "{name} fell to {boss}.", "{name} was cut down by {boss}."}
 
 -- PB.rez. Truth: the engine picks "close" when the tier is close even if nobody was ever
@@ -1348,7 +1352,7 @@ PB.recordedIntervalBond = {
 PB.shared.duelWith = {
     "{pair} duelled, and {winner} won.",
     "{pair} crossed blades in a duel, and {winner} won it.",
-    "There was a duel between {pair}, and {winner} won.",
+    "There was a duel between the two of {us}, and {winner} won.",
 }
 PB.shared.duel = {
     "{I} duelled {who} while {we} were together, and {outcome}.",

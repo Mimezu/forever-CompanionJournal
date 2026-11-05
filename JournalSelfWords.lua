@@ -8,7 +8,7 @@ A.SelfWords = W
 W.originBridge = {
     "Later, {we} {were} in {zoneD}.",
     "Later came {zoneD}. That was where this part of the journey began.",
-    "{zoneD} lay further along the way. {We} {were} there now.",
+    "After that came {zoneD}, and this part of the way begins there.",
 }
 W.townBackdrop = {"{Town} was {lore}."}
 W.questReturn = {
@@ -130,6 +130,11 @@ W.origin = {
 }
 -- The origin town is named in the line above: its town line is left out.
 W.originTowns = {Scourge = "Deathknell", Human = "Northshire Abbey"}
+-- Forever's sky elves (LoreForever quest:92460 Coming of Age, npc:rorian-the-dayseeker; Lore.lua zoneStory Zephras Isle).
+W.origin.Skyborne = {
+    "My life began in Thendal Village, on Zephras Isle, where the Skyborne come of age.",
+    "I began among the Skyborne of Thendal Village, on Zephras Isle, high above the world.",
+}
 W.open = {
     "{When}, I was in {zoneE}.",
     "{When}, I set out in {zoneE}.",
@@ -2449,7 +2454,7 @@ W.readMany = {
 }
 W.readStone = {
     "I read the words cut into {what}.",
-    "I stopped at {what} and read what was written there.",
+    "I stopped at {what} and read what was written on it.",
     "{What} stood there, and I read the inscription.",
 }
 W.readAgain = {
@@ -2532,3 +2537,77 @@ W.titles.rep = {"{Faction}"}
 W.titles.skill = {"{Trade}"}
 W.titles.hk = {"Against the {Side}"}
 W.titles.rareKilled = {"{what}"}
+
+-- Continuity (2026-11-05): what the earlier chapters of the same book hold.
+-- ({foe} {Foe}: a foe that killed you on an earlier day; {nth} {count} from the third time on)
+W.deathAgainFoe = {
+    "{Foe} killed me again.",
+    "It was {foe} again, and again I died.",
+    "{Foe} had killed me before, and did it again.",
+    "For the second time, {foe} killed me.",
+}
+W.deathAgainFoeMany = {
+    "{Foe} killed me for the {nth} time.",
+    "That made {count} deaths to {foe}.",
+}
+-- ({boss}: a boss that killed you on an earlier day, fallen today)
+W.bossRevengeLater = {
+    "{Boss} had killed me once. This time it was {boss} who fell.",
+    "{Boss} had beaten me before. Not this time.",
+    "I had died to {boss} before, and this time {boss} died.",
+}
+-- ({When} {zoneD} {foe} {ago}: back where a foe killed you)
+W.openBackMemory = {
+    "{When}, I was back in {zoneD}, where {foe} had killed me {ago}.",
+    "{When}, I returned to {zoneD}. {Foe} had killed me there {ago}.",
+}
+-- ({foe} {ago}: the same, said after an opening of its own)
+W.backMemory = {
+    "{Foe} had killed me there {ago}.",
+    "It was there that {foe} had killed me, {ago}.",
+    "The last time, {ago}, {foe} had killed me there.",
+}
+-- ({span}: the time since the last death)
+W.deathAfterLong = {
+    "It was my first death in {span}.",
+    "I had not died in {span}.",
+}
+-- ({thread} {span}: a thread taken up again after a week or more)
+W.threadSince = {
+    "It was {span} since I had first taken up {thread}.",
+    "{Span} had passed since {thread} first came my way.",
+    "{Thread} had been waiting {span}.",
+}
+-- ({names}: the tenth, twenty-fifth and fiftieth recorded day out with the same companion)
+W.companionDays = {
+    [10] = {"That made ten days {names} and I had been out together.", "It was the tenth day {names} and I had spent out together."},
+    [25] = {"That made twenty-five days out with {names}.", "Twenty-five days {names} and I had been out together by then."},
+    [50] = {"Fifty days {names} and I had travelled together, counting from the first.", "That made fifty days out with {names}."},
+    [100] = {"A hundred days {names} and I had been out together, counting from the first."},
+}
+W.titles.companionDays = {[10] = "Ten Days Together", [25] = "Twenty-Five Days Together", [50] = "Fifty Days Together", [100] = "A Hundred Days Together"}
+-- Tallies of a life, once each.
+W.questTally = {
+    [100] = {"A hundred quests lay behind me by then.", "That made a hundred quests, by my own count."},
+    [250] = {"Two hundred and fifty quests lay behind me by then."},
+    [500] = {"Five hundred quests lay behind me by then, and the askers had not run out."},
+}
+W.dungeonTally = {
+    [10] = {"That was my tenth dungeon.", "Ten dungeons now, counting from the first."},
+    [25] = {"That made twenty-five dungeons."},
+    [50] = {"Fifty dungeons lay behind me by then."},
+}
+W.deathTally = {
+    [10] = {"That was the tenth time I had died.", "Ten deaths, by then."},
+    [25] = {"That made twenty-five deaths."},
+    [50] = {"Fifty times I had died by then."},
+}
+W.caveTally = {
+    [10] = {"That was the tenth cave or mine I had gone down into.", "Ten caves and mines now, by my own count."},
+    [25] = {"That made twenty-five caves and mines."},
+}
+-- ({names} {count}: a companion who died twice or more in one stretch)
+W.partyDeath.twice = {
+    "{names} died there, {count}.",
+    "{names} died {count} that day.",
+}
