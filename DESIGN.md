@@ -305,6 +305,26 @@ Read the README entries 1.6.0 to 1.12.0 for the full list. In short:
 - Next literary targets named: Tanaris investigation, Greenwarden follow-ups, repetitive
   reunion/date framing, level-sixty quest-count closings.
 
+### 4.5 The overnight pass (2026-11-05, 1.13.0): what it added and learned
+
+Brief, lane reports and coordinator log: `_forever_\StorageInvestigation\cj-overnight-20261105\`
+(`BRIEF.md`, `PROGRESS.md`, one folder per lane with `before/` backups and renders).
+- **Content**: exact stages 930 → about 2,260 across six packs, including a new
+  `LoreForeverStories.lua` (Forever's own quests, labelled, and it skips any ID another pack
+  owns). About 330 new lore notes; 70 notes behind discovery policies after a spoiler audit
+  (`tests/LoreNotes3Overnight.lua` fails if a guarded term reaches a public version).
+- **Engine** (see §7.3a): in-order callbacks, a per-character profile used for emphasis only,
+  companion voices, companion Highlights cut, "Record more moments".
+- **The lesson**: writer agents overstate outcomes ("cleared", plans told as done), slip in
+  small feelings and gestures, and state NPC opinions as fact. Independent fact-checks found
+  problems in about a third of new stages (213 lines fixed in the Horde/Alliance/Forever
+  packs; the world/class check followed). **Every content batch needs a separate reader
+  who checks each line against the quest text.** Names a writer took from memory rather
+  than the text were nearly always right but must be verified.
+- Coordination: give each agent exclusive files; a message to a finished agent resumes it
+  (it may then edit files another lane owns); an agent that waits on its own background
+  reviewers can be stopped and later re-woken, so run reviewers from the coordinator.
+
 ## 5. Decision log
 
 Dates are from memory notes and archive folders. "Untested in game" means the user had
@@ -339,6 +359,7 @@ testing happens now.
 | 2026-10-13 | Codex's manager sheet never scaled above 1 (grows instead); notes edited in place (no right-click menu) | README 1.12.3 |
 | 2026-10-23 | Live migration: CJ story starts fresh on the live realm; `people` decision pending | memory: live-migration-backup-2026-10-23 |
 | 2026-11-02 | All work in `_forever_`; beta is an archive; repo `Mimezu/forever-CompanionJournal` | memory: forever-live-workspace |
+| 2026-11-05 | Overnight pass toward "a unique story for each character" (1.13.0, §4.5, §7.3a); new recording behind one toggle that starts off; ancestor journals archived for a future "ancestors' diaries" feature (`Migration\ancestor-journals-20261105\`) | user, in session |
 | 2026-11-05 | Codex-era chapter length accepted: "story is paramount", a fixed sentence budget makes no sense; "the road" allowed as long as it is not overused; prune the 6 beta `people`; keep skins A and B both for now | user, in session |
 
 ### Rejected or reverted
@@ -470,6 +491,34 @@ day before, `Evening()`), merges outings (gap 20 min or less), builds scenes, Hi
   and starts (`L.IsHome`, `L.IsStart`). `LoreData.lua` is generated metadata (zone/dungeon
   level ranges, quest title → level and kind) from `SI: journal-voice/make_lore_data.py`.
 
+### 7.3a Added in 1.13.0 (overnight pass)
+
+Details and API evidence: `SI: cj-overnight-20261105\moments\DESIGN-moments.md`.
+- **Record more moments** (`db.moreMoments`, `A.MoreMomentsOn()`, default off; Settings >
+  Recording and Options > Journal). `JournalSelf.lua` registers its extra events only while
+  on, in a `MoreEvent` dispatcher (the main OnEvent closure is near Lua 5.1's 60-upvalue
+  limit). New own-journal kinds: `read`, `explore`, `taxi`, `learn`, `rep`, `duel`, `skill`,
+  `hk`, `rarekill`. `Journal.lua` records `rez` with `w = "you"` in a companion's journal when
+  your resurrection lands on them (dead target only). Reputation and skill ranks compare only
+  with values seen this session (first look seeds).
+- **Memory of the road** (`JournalSelfTale.lua`, in time order, never hindsight): a foe that
+  killed you before, a boss beaten after it killed you, a return to where you died, companion
+  day milestones, tallies, a thread taken up again after a week, no false first-continent.
+- **`ST.Profile`**: gatherer, fisher, crafter, dungeon regular, explorer, night player, caver,
+  duelist, fighter, paired, computed from the whole record. Used only to choose emphasis
+  (what Highlights keeps, which true fact gets the line); never stated as a trait.
+- **Companion voices** (`PB.voice.we` / `PB.voice.you` in `JournalWords.lua`): the diary as a
+  shared record, the game master recapping your party; rationed per chapter and per book.
+  `SharedMoments` brings your own firsts on a day together into their book.
+- **Companion Highlights cut** (`brief` in `T.Tell`): keeps exact-ID stages, importance 4+,
+  a chain's first and last; drops minor errands, fires, herbs, brief visits, greeting-only
+  days (draws still made, so both editions read the same stream).
+- **Openings**: chapters a week or less apart open on the place or company; a regular
+  companion's rhythm is said once. Role lines unique per book. Place-led outcomes get "You had
+  come to X by then." instead of a doubled place prefix.
+- **Links**: `commonNames` in `LoreNotes.lua` never auto-link; a name any of the user's
+  characters or listed players carries never links to an NPC (`A.MarkKnownLore`).
+
 ### 7.4 Pages
 
 `JournalStyles.lua` (styles B Chronicle, C Margins, D Diary with drop cap, E Ledger; A is
@@ -564,7 +613,13 @@ never reads SavedVariables.
 
 - The README's "Files" section is older than the Lore* and Book* files; the changelog is current.
 - Portraits cover only your own journal; companion portraits need the Looks plan.
-- Holidays, a round-trip boat, Hardcore telling, `W.levelBoth`: not built.
+- Holidays, a round-trip boat, Hardcore telling, `W.levelBoth`, talents, flights as
+  first-visit arrivals: not built.
+- "Record more moments" has never run in the real client (offline stubs only); the two
+  global-string patterns (ERR_ZONE_EXPLORED*, DUEL_WINNER_*) and the Skyborne race token
+  need an in-game check. Factions under a collapsed reputation header are not seen.
+- Riverglades, Shen'dralas and Mount Hyjal (launched 2026-11-04) have zone/dungeon lines
+  and notes but no quest scenes: their quest text was not captured yet.
 - Coverage: 74 of 1,290 quest events in the study still use title-only fallback; later
   outdoor regions and custom Forever foes have gaps (`SI: cj-lore-coverage-20261012.txt`).
 - Text widths in the offline mock renderer are estimates; fonts, drop caps and the
@@ -578,8 +633,11 @@ Settled 2026-11-05 (see the decision log): chapter length follows the Codex era,
 
 1. **Highlights.** Designed as "one entry a day, romanticized truth" (2026-09-29); since
    2026-10-16 it "retains every recorded stage rather than applying a scene cap", and a
-   reviewer noted it is sometimes indistinguishable from Detailed. What Highlights should
-   drop is undecided.
+   reviewer noted it is sometimes indistinguishable from Detailed. 1.13.0 cuts minor
+   errands, fires, herbs, gathering/crafting (unless it is the character's kind of work) and
+   greeting-only days, but **every exact-ID quest stage stays** because three Codex-era suites
+   (CompanionOutings, StorySceneContinuity, StoryHighlightsScenes) assert it. Fewer quest
+   scenes per day in Highlights needs the user's decision and those tests renegotiated.
 2. **Why the user liked the Codex pass** is recorded only as "good at storyteller/lore".
    §4.2 is inferred from the reviews; ask if a change would undo one of those qualities.
 3. **The `score.py` targets** predate the Codex era and were not re-run on its output in the
