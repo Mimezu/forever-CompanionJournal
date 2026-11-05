@@ -56,7 +56,7 @@ for zone, entry in pairs(P.zones) do
     zones = zones + 1
     prose(entry.sight, zone .. " sight"); prose(entry.stakes, zone .. " stakes")
 end
-check(count == 465, "curated ID coverage changed; inspect inventory") -- 309 exact stages since the 1.12.x world additions; 465 after the 2026-11-05 world pass (tests/WorldOvernight.lua)
+check(count == 697, "curated ID coverage changed; inspect inventory") -- 309 exact stages since the 1.12.x world additions; 465 after the 2026-11-05 world pass (tests/WorldOvernight.lua); 697 after the world2 pass (tests/WorldOvernight2.lua)
 check(zones == 26, "regional setting inventory changed")
 
 -- Identical titles must not consume a later stage's consequence.

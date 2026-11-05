@@ -31,7 +31,17 @@ for id, entry in pairs(P.questIDs) do
             check(not line:find("<") and not line:find("The summoned a ", 1, true) and not line:find("The summoned an ", 1, true), "clean authored sentence " .. id)
         end
     end
-    if repeats[entry.title] > 1 then check(P.quests[entry.title].after ~= entry.after, "shared title has an audited fallback: " .. entry.title) end
+    -- A shared title's audited fallback may live in another pack (Vile Familiars: horde
+    -- pack, which this suite does not load; tests/WorldOvernight2.lua checks it loaded).
+    if repeats[entry.title] > 1 then
+        local foreign = ({["Vile Familiars"] = "LoreHordeStories.lua", ["Encrypted Letter"] = "LoreWorldStories.lua"})[entry.title]
+        if foreign then
+            local f = assert(io.open(root .. foreign, "rb")); local s = f:read("*a"); f:close()
+            check(s:find('Fallback("' .. entry.title .. '"', 1, true) or s:find('P.quests["' .. entry.title .. '"] = {', 1, true), "foreign fallback for " .. entry.title)
+        else
+            check(P.quests[entry.title].after ~= entry.after, "shared title has an audited fallback: " .. entry.title)
+        end
+    end
 end
 for _, class in ipairs({"WARRIOR", "PALADIN", "HUNTER", "ROGUE", "PRIEST", "MAGE", "WARLOCK", "DRUID"}) do
     check((byClass[class] or 0) >= 5, "representative exact stages for " .. class)

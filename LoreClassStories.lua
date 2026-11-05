@@ -680,6 +680,172 @@ for _, id in ipairs({1818, 1819, 1820, 1821, 92481, 92482, 92483, 92484, 92485, 
     P.questIDs[id].setting = id < 90000 and "Classic / Forever" or "Forever"
 end
 
+-- World2 pass 2026-11-05, batch W2-6: the Durotar warlock's first trial under
+-- Ruzan. "Vile Familiars" is shared with Zureetha's own quest (horde pack 792,
+-- which also owns the title fallback), so both stages are exact-only here and
+-- neither claims a summoning lesson.
+q(1485, "Vile Familiars", "WARLOCK", "Durotar", 4, "class_warlock_binding",
+    "Ruzan said warlocks were tolerated by the Horde, not loved, and many dabbled in their magics alone. Before teaching summoning, Ruzan wanted six heads of the vile familiars from the cave to the northeast.",
+    "The warlock trainer Ruzan, in the Valley of Trials, asked for six vile familiar heads before any lesson in summoning.",
+    "Ruzan spoke of the many beings a warlock would learn to call, and warned against judging the imp by its size.",
+    "Six familiar heads reached Ruzan, who judged the novice ready to go on.", 3)
+q(1499, "Vile Familiars", "WARLOCK", "Durotar", 4, "class_warlock_binding",
+    "Zureetha Fargaze was sending novices to cull the creatures near the familiars' cave. Ruzan thought helping her would be good experience.",
+    "Ruzan sent the novice to Zureetha Fargaze with word of the help given against the imps.",
+    "Word of the culled imps pleased Zureetha, who rewarded Ruzan's novice and foresaw greater deeds.",
+    "Zureetha Fargaze welcomed the news of the imp problem and gave a reward.", 3)
+for _, id in ipairs({1485, 1499}) do
+    P.questIDs[id].source[2] = "https://classicdb.ch/?quest=" .. id
+    P.questIDs[id].source[3] = "LoreHordeStories.lua 792 and the Vile Familiars fallback; hand-off 2026-11-05"
+end
+
+-- World2 pass 2026-11-05, batch W2-7: the human class chains of Northshire and
+-- Stormwind. The six Northshire letters reach a trainer and never claim a lesson.
+-- Warrior: Burlguard, Haggard and Dead-tooth Jack, Barleybrew's gauntlet, Furen's
+-- shield and mail, Grimand's armor (1706 and 1782 have no captured text and stay
+-- out). Paladin: the call to Duthorian Rall and the Tome of Valor at the Stilwell
+-- house. Mage: Andromath. Rogue: Renzik and Lucius. The priests' Desperate Prayer
+-- stages stay unwritten (their records mix givers and destinations).
+P.threads.class_northshire = "the trainers of Northshire Abbey"
+P.threads.class_paladin_valor = "the paladin's test of valor"
+P.threads.class_mage_andromath = "High Sorcerer Andromath's errands"
+local NL, PV, MA = "class_northshire", "class_paladin_valor", "class_mage_andromath"
+q(3100, "Simple Letter", "WARRIOR", "Elwynn Forest", 1, NL,
+    "A letter waited at Northshire Abbey, sealed with the insignia of Llane, the local warrior trainer. Warriors had been gathering in Elwynn of late, which was bad news for the kobolds and the Defias.",
+    "Llane, Northshire's warrior trainer, had sent a sealed letter asking to be found.",
+    "Training was there whenever it was needed, night or day, Llane said. The Knights of the Silver Hand had made Northshire fairly safe, but its people still had problems a warrior could help with.",
+    "Back at the abbey, the warrior trainer offered lessons whenever they were wanted.", 2)
+q(3101, "Consecrated Letter", "PALADIN", "Elwynn Forest", 1, NL,
+    "A letter at Northshire Abbey bore the insignia of Brother Sammuel, the local paladin trainer.",
+    "Brother Sammuel, Northshire's paladin trainer, had sent a sealed letter.",
+    "Sammuel said a paladin was a symbol to many, and the Light within would be plain to friend and foe. He would teach more once some experience had been gained in Northshire.",
+    "Northshire's paladin trainer welcomed the newcomer and promised lessons later on.", 2)
+q(3102, "Encrypted Letter", "ROGUE", "Elwynn Forest", 1, NL,
+    "A letter at Northshire Abbey was sealed with the insignia of Jorik, one of the local trainers.",
+    "Jorik, who trained rogues quietly at the back of the abbey, had left a sealed letter.",
+    "Quiet suited Jorik. He warned that many outfits would covet a rogue's skills, SI:7 and the Defias among them, and offered training whenever it was wanted.",
+    "At the back of the abbey, Jorik introduced himself, offered training any time, and advised answering to no one.", 2)
+q(3103, "Hallowed Letter", "PRIEST", "Elwynn Forest", 1, NL,
+    "A letter at Northshire Abbey bore the insignia of Priestess Anetta, the local priest trainer.",
+    "Priestess Anetta, Northshire's priest trainer, had sent a sealed letter.",
+    "As experience grew, Anetta promised to share her knowledge, and she urged compassion and wisdom on the way.",
+    "Northshire's priest trainer welcomed the newcomer and offered to teach in time.", 2)
+q(3104, "Glyphic Letter", "MAGE", "Elwynn Forest", 1, NL,
+    "A letter at Northshire Abbey bore the insignia of Khelden, the local mage trainer.",
+    "Khelden Bremen, Northshire's mage trainer, had sent a sealed letter.",
+    "His note, Khelden laughed, had not put the newcomer off. A mage would be feared as much as respected, he warned, and he would be there for training.",
+    "Northshire's mage trainer welcomed the newcomer and promised training to come.", 2)
+q(3105, "Tainted Letter", "WARLOCK", "Elwynn Forest", 1, NL,
+    "A letter at Northshire Abbey bore the insignia of Drusilla, one of the local trainers.",
+    "Drusilla La Salle had sent a sealed letter for a new warlock at Northshire.",
+    "Corruption could reach anyone who dealt with creatures of the Twisting Nether, Drusilla warned. Patience and prudence were needed, but ambition should not be repressed.",
+    "Northshire's warlock trainer welcomed the newcomer and promised more teaching later.", 2)
+
+q(1639, "Bartleby the Drunk", "WARRIOR", "Stormwind City", 10, W,
+    "Harry Burlguard would teach, but first he wanted to see what moves a newcomer already had. Bartleby, the drunk at the end of the bar in the Pig and Whistle, would not give up his mug easily.",
+    "Harry Burlguard's first test was to get Bartleby's mug, and Bartleby would not just hand it over.",
+    "Insults about prissy hands and broken nails met the challenger at the end of the bar.",
+    "At the end of the bar, Bartleby answered with a sneer.", 3)
+q(1666, "Marshal Haggard", "WARRIOR", "Elwynn Forest", 10, W,
+    "Harry Burlguard thought a decent weapon was still needed. Marshal Haggard, retired at the Eastvale Lumber Camp in Elwynn, had collected a lot of gear in his career.",
+    "Burlguard sent word to Marshal Haggard, an old soldier in Elwynn Forest, who might have a spare weapon.",
+    "His eyes had failed him, and at first Haggard took the visitor for a gnoll.",
+    "Old Marshal Haggard squinted at the visitor and asked whether Burlguard had come himself.", 3)
+q(1667, "Dead-tooth Jack", "WARRIOR", "Elwynn Forest", 10, W,
+    "A Defias villain called Dead-tooth Jack had worn a Stormwind tabard in the dark and passed for Marshal Dughan. Haggard had handed over his old marshal's badge before Jack ran off laughing.",
+    "Marshal Haggard wanted his stolen badge back from Dead-tooth Jack's camp to the south before the Defias used it.",
+    "The badge was back, and the Defias could not use it to pose as a Stormwind official. Haggard offered a pick of his old weapons.",
+    "With his badge recovered, Marshal Haggard let his visitor choose from the weapons of his marshal days.", 4)
+q(1698, "Yorus Barleybrew", "WARRIOR", "Redridge Mountains", 20, W,
+    "Yorus Barleybrew had challenged every able warrior of the Alliance. He waited at the Lakeshire Inn in Redridge with a grand reward for anyone who passed his trial.",
+    "A warrior trainer passed on the challenge of Yorus Barleybrew, who waited at the Lakeshire Inn.",
+    "Barleybrew offered a seat and a drink, and suggested savoring it in case it was the last.",
+    "At the Lakeshire Inn, Yorus Barleybrew welcomed a challenger with a drink.", 3)
+q(1699, "The Rethban Gauntlet", "WARRIOR", "Redridge Mountains", 22, W,
+    "The Rethban Gauntlet meant a swig of Barleybrew Scalder, then a run to the first fork of the Rethban Caverns and back within an hour, through heaps of gnolls.",
+    "Yorus Barleybrew's gauntlet ran from Lakeshire to the Rethban Caverns north of town, against the clock and the Redridge gnolls.",
+    "Three cheers went up from Barleybrew for the runner who made it back in time.",
+    "Back at the Lakeshire Inn, Barleybrew called the run through the Rethban Caverns well done.", 4)
+q(1702, "The Shieldsmith", "WARRIOR", "Stormwind City", 22, W,
+    "Barleybrew kept his word, but the reward was in Stormwind. Furen Longbeard, the best shieldsmith in the Dwarven District, owed him a favor and would trade a shield for a cask of Barleybrew Scalder.",
+    "Yorus Barleybrew sent a cask of Scalder to Furen Longbeard in Stormwind, with a request for a shield.",
+    "Gladly taking the Scalder, Furen promised a shield like no other.",
+    "In the Dwarven District, the shieldsmith welcomed the cask and agreed to make the shield.", 3)
+q(1701, "Fire Hardened Mail", "WARRIOR", "Stormwind City", 28, W,
+    "Furen knew the secret of a very hard mail, made from rare materials. He would make a piece for anyone willing to gather them.",
+    "Fire hardened mail needed rare materials from far away, and Furen Longbeard would make it if they were found.",
+    "Furen was amazed, having feared the chimaeras would eat the gatherer, and started on the armor.",
+    "Every material for the fire hardened mail reached Furen, who set to work.", 3)
+q(1700, "Grimand Elmore", "WARRIOR", "Stormwind City", 28, W,
+    "Furen had copied his notes on the techniques he learned making armor, and wanted them sent to Grimand Elmore in the Dwarven District's weapon shop. He advised ducking, since Grimand was proud of his skill.",
+    "Furen Longbeard's armor notes were meant for Grimand Elmore, who would hate to learn anything from him.",
+    "Grimand was outraged, having taught Furen everything he knew. Still, something in the notes made him want to try it.",
+    "Grimand Elmore fumed over Furen's notes, then admitted there was something in them worth trying.", 3)
+q(1705, "Burning Blood", "WARRIOR", "Stormwind City", 28, W,
+    "Grimand grudgingly admitted Furen might have found something. To test the technique on new armor, he needed burning blood from the Nightbane worgen of Roland's Doom in Duskwood, and a burning rock from their leader, Gutspill.",
+    "Grimand Elmore's armor called for burning blood and a burning rock. Both were to be found with the Nightbane worgen in Duskwood.",
+    "Pleased with the materials, Grimand went off to his own work.",
+    "The burning blood and the rock reached Grimand, who began testing Furen's technique.", 3)
+
+q(2998, "Tome of Divinity", "PALADIN", "Stormwind City", 12, PW,
+    "Brother Wilhelm had overheard Duthorian Rall speaking well of a young paladin, and saying it was time for a test.",
+    "Duthorian Rall, one of the most influential paladins, wanted to see the newcomer at the Cathedral of Light in Stormwind.",
+    "Rall remarked on Stormwind's beauty and said the timing could not have been better.",
+    "At the Cathedral of Light, Duthorian Rall welcomed the paladin at a good moment.", 3)
+q(1649, "The Tome of Valor", "PALADIN", "Stormwind City", 20, PV,
+    "The Tome of Valor compared valor to a rare mineral, to be refined into a strong alloy. Faith and bravery had to be tested.",
+    "A paladin's courage, by the Tome of Valor, had to be put to the test with the Light's help.",
+    "Duthorian Rall welcomed a petition for the test of valor and warned that such a test could cost a life.",
+    "Rall accepted the petition, warning that the Church wanted its paladins worthy.", 3)
+q(1650, "The Tome of Valor", "PALADIN", "Westfall", 23, PV,
+    "Daphne Stilwell lived alone at the far end of Westfall's Longshore while her husband Jordan, a fine smith, was in Ironforge. The Defias had all but taken over the area.",
+    "Duthorian Rall sent the paladin to protect Daphne Stilwell, whose house on the Longshore stood among the Defias.",
+    "Daphne had already killed half a dozen Defias since the last sunrise, and expected more any minute.",
+    "Daphne Stilwell greeted her protector and warned that the Defias would come again soon.", 3)
+q(1651, "The Tome of Valor", "PALADIN", "Westfall", 25, PV,
+    "More Defias were coming than before. Daphne fetched her gun and made her stand by the house.",
+    "Daphne Stilwell expected another Defias attack on her house, and meant to fight beside her protector.",
+    "The Defias were beaten back. Daphne praised bravery in the face of overwhelming odds.",
+    "The Stilwell house held against the Defias, and Daphne gave her thanks.", 4)
+q(1652, "The Tome of Valor", "PALADIN", "Stormwind City", 25, PV,
+    "Daphne asked that Duthorian Rall be told she was safe for now, so word could reach Jordan in Ironforge.",
+    "The news of Daphne Stilwell's safety was for Duthorian Rall in the Cathedral of Light.",
+    "Rall said the Stilwells had helped the Church greatly, and protecting them was the least it could do. He rewarded the paladin's valor.",
+    "Duthorian Rall heard that the Stilwell home was safe and gave a reward for valor.", 4)
+P.questIDs[1652].highlight = {"Daphne Stilwell's house held against the Defias, and Duthorian Rall rewarded the paladin's valor.",
+    "Rall heard that the Stilwells were safe and gave a reward for valor."}
+
+q(1939, "High Sorcerer Andromath", "MAGE", "Stormwind City", 26, MA,
+    "Jennea Cannon passed on a summons from High Sorcerer Andromath, one of the most powerful mages outside Dalaran. He waited at the top of the Wizard's Sanctum.",
+    "High Sorcerer Andromath of Stormwind wished to speak with a promising mage.",
+    "Andromath greeted the visitor and hoped there was time to hear an old man's words.",
+    "At the top of the Wizard's Sanctum, Andromath welcomed the mage.", 3)
+q(1938, "Ur's Treatise on Shadow Magic", "MAGE", "Stormwind City", 28, MA,
+    "Long ago one of three mages studying in the tower fell to the dark arts and was banished. He took Ur's Treatise on Shadow Magic to his new tower of Ilgalar in Redridge.",
+    "The mages of Stormwind wanted Ur's Treatise on Shadow Magic back from the library in the tower of Ilgalar.",
+    "Andromath had feared that Morganth had hidden the treatise or found a way to open it. The seals placed on it still held.",
+    "Ur's Treatise came back to Andromath with its seals unbroken.", 4)
+q(1940, "Pristine Spider Silk", "MAGE", "Stormwind City", 26, MA,
+    "Andromath judged that an adept mage deserved a finer robe. The silk had to come from carrion recluse spiders in Duskwood, the most pristine only, for Wynne Larson to craft it.",
+    "A new robe for the adept mage needed pristine spider silk from Duskwood, taken to Wynne Larson in the mage district.",
+    "Wynne Larson liked the specimens and set straight to work on the robe.",
+    "Wynne Larson took the pristine silk and began the robe.", 3)
+
+q(2300, "SI:7", "ROGUE", "Stormwind City", 16, "class_rogue_si7",
+    "Mathias's second in command at SI:7, Renzik, had been looking for the new rogue, and Keryn Sylvius advised against keeping him waiting.",
+    "Keryn Sylvius passed on word that Renzik of SI:7 wanted to see the new rogue.",
+    "Renzik asked whether the recruit was ready to work or needed a nap first.",
+    "SI:7's Renzik the Shiv was ready to put the recruit to work.", 3)
+q(2281, "Redridge Rendezvous", "ROGUE", "Redridge Mountains", 16, "class_rogue_si7",
+    "Sending an untrained rogue into the field would be suicide, Renzik judged. Lucius, an SI:7 associate on the Lakeshire docks, would bring the recruit up to speed.",
+    "Renzik sent the recruit to Lucius, who lingered on the Lakeshire docks with the other shady types.",
+    "Fat fingers did not worry Lucius, who had turned worse thieves into accomplished rogues.",
+    "On the Lakeshire docks, Lucius took on the new recruit.", 3)
+for _, id in ipairs({3100, 3101, 3102, 3103, 3104, 3105, 1639, 1666, 1667, 1698, 1699, 1702, 1701, 1700, 1705,
+    2998, 1649, 1650, 1651, 1652, 1939, 1938, 1940, 2300, 2281}) do
+    P.questIDs[id].source[2] = "https://classicdb.ch/?quest=" .. id
+end
+
 -- Shared-title outcomes are never copied from a convenient last stage. Several
 -- Forever titles that look like trials are only referrals, notably 94007.
 local shared = {
@@ -690,6 +856,8 @@ local shared = {
     ["Body and Heart"] = true, ["Trial of the Lake"] = true, ["Trial of the Sea Lion"] = true,
     ["Aquatic Form"] = true, ["Gathering the Cure"] = true, ["Curing the Sick"] = true,
     ["Power over Poison"] = true, ["Child of Nature"] = true, ["Lord Grayson Shadowbreaker"] = true,
+    ["Vile Familiars"] = true, -- the horde pack owns this title's fallback (792 is Zureetha's own stage)
+    ["Encrypted Letter"] = true, -- the world pack's neutral title context covers 3102 and Alterac's 511
 }
 for _, e in pairs(P.questIDs) do if not shared[e.title] then P.quests[e.title] = e end end
 local function fallback(title, id, w1, w2, a1, a2)
@@ -768,6 +936,10 @@ fallback("Lord Grayson Shadowbreaker", 7638,
 fallback("Child of Nature", 94911,
     "The Cenarion Circle offered further knowledge to druids newly arrived from Zephras.", "A mainland trainer could introduce a visitor to the Circle's work.",
     "The introduction was made, opening the way toward further instruction.", "The referral reached a welcoming druid, before the journey to Moonglade.")
+
+fallback("The Tome of Valor", 1649,
+    "Duthorian Rall of the Cathedral of Light tested paladins by sending them to defend others.", "The test of valor began with a tome in Stormwind's Cathedral of Light.",
+    "A step of the test of valor was done.", "The paladin's test of valor went on.")
 
 -- Coverage is deliberately representative: class membership never selects these
 -- entries on its own. Unwritten areas include most armor/weapon crafting chains,
