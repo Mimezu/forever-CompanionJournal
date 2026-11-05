@@ -369,7 +369,7 @@ function A.CreateOptions()
         Tooltip(journalCheck, "For people in your list, and groupmates you add when the group ends: time grouped, dungeons, bosses, quests you both had, campfires and levels. Nothing is recorded while this is off. Open one: double-click someone in the list.")
         local journalSeen = Check(journalCard, "journalSeen", "Also when we cross paths", 40, -60, 164)
         local moreMoments = Check(journalCard, "moreMoments", "Record more moments", 40, -84, 200)
-        Tooltip(moreMoments, "In your own journal: books and plaques read, areas discovered, flight paths learned, spells bought from a trainer, reputation standings reached, duels, trade-skill ranks, honorable kills in the open world, rare creatures killed. Off until you turn it on.")
+        Tooltip(moreMoments, "In your own journal: books and plaques read, areas discovered, flight paths learned, spells bought from a trainer, reputation standings reached, duels, trade-skill ranks, honorable kills in the open world, rare creatures killed; in a companion's journal, raising them from death. Off until you turn it on.")
         Text(journalCard, "Writing", 238, -64, "GameFontHighlightSmall")
         local writing = Segmented(journalCard, 288, -60, 50, {{"Simple", "simple"}, {"Story", "story"}},
             function() return A.JournalVoice and A.JournalVoice() or "simple" end,

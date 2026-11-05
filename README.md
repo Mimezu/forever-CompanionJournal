@@ -4,6 +4,38 @@ The players and NPCs you want to remember, and a journal of what you lived
 through together. It came out of Forever Names 1.10: the People list, the
 journal, the group popup and the campfire now live here, in their own window.
 
+## 1.13.0: a story of your own
+
+- **More of your road is told.** Exact quest scenes, written from each quest's own
+  text with two setups and two outcomes, went from 930 to about 2,260: every race's
+  starting areas, the shared zones from 10 to 60 for both factions, dungeon chains
+  (Deadmines to Blackrock Depths), class quests, and Forever's own content (Zephras
+  Isle, the Ruins of Lordaeron, the Hall of Thanes, the Forsaken paladins, Crystal
+  Lake, Alba Fairmoon and more). Every new scene was checked against the quest text
+  by a separate reader; outcomes stop at what the quest itself says.
+- **Your book remembers.** A foe that killed you before, a boss you finally beat, a
+  return to where you died, the tenth or fiftieth day out with the same companion, a
+  chain picked up again after weeks. How you play (gathering, fishing, crafting,
+  dungeons, exploring, duels, night play) shifts what the book dwells on; it never
+  calls you anything.
+- **Companion books are a shared history.** The diary voice reads as two people's
+  record ("Dahlia and I", "between us"); the game-master voice recaps your party.
+  Your own firsts on a day together (a new zone, a continent, a first mount) reach
+  their book too. Highlights now make a real cut.
+- **Record more moments** (Settings > Recording, off by default): books and plaques
+  read, areas discovered, flight paths, trainer spells, reputation standings, duels,
+  trade-skill ranks, open-world honorable kills, rare creatures killed, and raising a
+  companion from death.
+- **Fewer machine tells.** Chapters a few days apart open on the place, not the date;
+  a weekly companion's rhythm is said once; role lines never repeat; level sixty is
+  told once; kills in one run make one sentence; place lines and articles fixed ("on
+  Zephras Isle", "the Ruins of Lordaeron").
+- **Lore notes:** about 330 new notes (every race's start, Forever's new zones and
+  bosses, the people the new scenes name). A spoiler audit put 70 notes behind the
+  quests that reveal them (Nathanos, Athrikus, Tirion and Taelan, the Missing
+  Diplomat, Darrowshire and others). Common first names, and any name one of your
+  characters or listed players carries, never link to an NPC.
+
 ## 1.12.5: the People list's menu is the addon's own
 
 - **Right-click on a person in the People list opens Companion Journal's own menu**
