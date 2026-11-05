@@ -36,7 +36,23 @@ local added={
     5021,5022,5023,5048,5049,5050,5051,
     -- batch 5 (LoreClassStories.lua): the warlock's level-sixty rituals
     7562,7563,7564,7623,7624,7625,7626,7627,7628,7629,7630,7601,7602,7603,7581,7582,7583,
+    -- batch 6 (LoreClassStories.lua): the paladin's charger and the hunter's ancients
+    7638,7670,7637,7639,7640,7641,7642,7648,7643,7645,7644,7646,7647,7632,7636,7635,7634,
+    -- batch 8: Un'Goro (Linken's middle stages, Torwa's hunts, A-Me 01, Williden)
+    3912,3913,3914,3941,3942,4084,4005,4289,4301,4290,4291,4292,4243,4244,4245,3884,
+    -- batch 9: Silithus and the bronze dragonflight
+    8286,8288,8301,8302,8303,8305,8278,8282,8283,8308,8309,8310,8321,8323,
+    -- batch 10: the Defiler's weapon, Hydraxis, Kim'jael, the Fallen Hero, Firegut, the K.E.F., Theodora
+    3510,3511,3602,3621,3625,3626,2621,2622,2623,6804,6805,5534,3824,3825,4122,4121,4132,4061,4063,
+    -- batch 11: the Stonemaul, Trelane's items, Faldir's Cove
+    1166,1168,1169,1170,1171,1172,1173,690,693,694,695,696,697,663,662,664,667,
+    -- batch 12 (LoreClassStories.lua): Brill warrior trial, Zephras class referrals
+    1818,1819,1820,1821,92481,92482,92483,92484,92485,92532,
+    -- batch 12 (alliance hand-off): the Ashenvale stages of the Tower of Althalaxx
+    967,970,973,1140,981,
 }
+-- A referral to a trainer never claims a lesson.
+local referrals={92481,92482,92483,92484,92485,92532,1818,1820}
 local pronouns={i=true,me=true,my=true,mine=true,we=true,us=true,our=true,ours=true,you=true,your=true,yours=true}
 local meta={journal=true,tale=true,song=true,verse=true,chronicle=true,legend=true,bard=true,page=true,book=true,chapter=true,story=true}
 local function prose(lines,label,need)
@@ -81,6 +97,26 @@ for _,id in ipairs(added) do
     end
 end
 
+-- No colon reveals or questions anywhere in the two lane packs (the cleanup of
+-- 2026-11-05 removed the last ones); titles are not narration and are skipped.
+for _,packID in ipairs({"world_journeys","class-stories"}) do
+    local pack=L.storyPacks[packID]
+    local function scan(entry,label)
+        for _,field in ipairs({"why","after","highlight"}) do
+            for _,line in ipairs(entry[field] or {}) do
+                check(not line:gsub("SI:7",""):gsub("XT:%d",""):find(":",1,true),label.." "..field.." colon: "..line)
+                check(not line:find("?",1,true),label.." "..field.." question: "..line)
+            end
+        end
+    end
+    for id,entry in pairs(pack.questIDs) do scan(entry,packID.." "..id) end
+    for title,entry in pairs(pack.quests) do scan(entry,packID.." "..title) end
+end
+
+for _,id in ipairs(referrals) do
+    local out=table.concat(L.questStoryIDs[id].after," "):lower()
+    check(not out:find("taught",1,true) and not out:find("learned",1,true),"referral claims a lesson "..id)
+end
 -- Stage boundaries: an earlier stage may not claim a later one's outcome.
 local boundaries={
     {id=4496,want="lure",reject="brain"},
@@ -108,7 +144,33 @@ local boundaries={
     {id=7630,want="arcanite",reject="dreadsteed's spirit"},
     {id=7582,want="prison",reject="imprisoned"},
     {id=7602,want="fel fire",reject="core"},
+    {id=7646,want="Darkreaver",reject="redeemed"},
+    {id=7644,want="barding",reject="redeemed"},
+    {id=7636,want="stave",reject="quiver"},
+    {id=4005,want="Blazerunner",reject="Blazerunner fell"},
+    {id=3914,want="sword",reject="remembered why"},
+    {id=4291,want="glands",reject="Lar'korwi was dead"},
+    {id=4244,want="casing",reject="came home"},
+    {id=8305,want="sorrow",reject="Scepter"},
+    {id=8278,want="Noggle",reject="satchel"},
+    {id=8309,want="Rutgar",reject="elixir"},
+    {id=3511,want="temper",reject="Galvan"},
+    {id=3625,want="demon slayer",reject="Razelikh fell"},
+    {id=4061,want="initials",reject="Argelmach"},
+    {id=4122,want="Grark",reject="custody"},
+    {id=1171,want="coward",reject="eggs"},
+    {id=1172,want="eggs",reject="fled"},
+    {id=694,want="agate",reject="phylactery"},
+    {id=1140,want="soulgems",reject="Athrikus Narassin was dead"},
+    {id=973,want="Ilkrud",reject="Athrikus"},
 }
+-- The compendium shows why[1] as a stage note: no new why[1] may carry Natalia's fate.
+for _,id in ipairs({8308,8309,8310}) do
+    check(not L.questStoryIDs[id].why[1]:find("Natalia",1,true) and not L.questStoryIDs[id].why[1]:find("madness",1,true),"stage note leaks Natalia's fate "..id)
+end
+for _,id in ipairs({7638,7670,7637,7639,7640,7641,7642,7648,7643,7645,7644,7646}) do
+    local out=table.concat(L.questStoryIDs[id].after," "):lower(); check(not out:find("epic charger",1,true) and not out:find("redeemed",1,true) and not out:find("as a steed",1,true),"charger claimed before 7647: "..id)
+end
 -- Ritual preparations never claim the summoning knowledge they prepare.
 for _,id in ipairs({7562,7563,7564,7623,7624,7625,7626,7627,7628,7629,7630,7601,7602,7581,7582}) do
     local out=table.concat(L.questStoryIDs[id].after," "):lower()
@@ -166,6 +228,18 @@ local scenarios={
     {name="Janice Felstone's package (Alliance)",race="Human",class="WARRIOR",faction="Alliance",ids={5021,5022,5048,5050,5051}},
     {name="The dreadsteed of Xoroth",race="Gnome",class="WARLOCK",faction="Alliance",ids={7562,7563,7564,7623,7624,7625,7626,7627,7628,7629,7630,7631}},
     {name="Infernal and Doomguard",race="Orc",class="WARLOCK",faction="Horde",ids={7601,7602,7603,7581,7582,7583}},
+    {name="The redemption of a charger",race="Dwarf",class="PALADIN",faction="Alliance",ids={7670,7637,7639,7640,7641,7642,7648,7645,7643,7644,7646,7647}},
+    {name="Felwood's ancients",race="NightElf",class="HUNTER",faction="Alliance",ids={7632,7636,7635,7634}},
+    {name="Linken's sword and the totem",race="Gnome",class="ROGUE",faction="Alliance",ids={3909,3912,3913,3914,3941,3942,4084,4005,3961}},
+    {name="Torwa's hunts and A-Me 01",race="Tauren",class="HUNTER",faction="Horde",ids={3884,4289,4290,4291,4243,4244,4245,4301,4292}},
+    {name="The bronze Brood and the Bronzebeard camp",race="Troll",class="PRIEST",faction="Horde",ids={8277,8278,8282,8283,8286,8288,8301,8302,8303,8305,8308,8309,8310,8321,8323}},
+    {name="The Defiler's weapon",race="Orc",class="WARRIOR",faction="Horde",ids={2621,2622,2623,3509,3510,3511,3602,3621,3625,3626,3627,3628}},
+    {name="Goretooth's K.E.F. and Theodora's machines",race="Troll",class="SHAMAN",faction="Horde",ids={4061,4063,4122,4121,4132,3824,3825,6804,6805,5534}},
+    {name="The Stonemaul and Onyxia's eggs",race="Tauren",class="DRUID",faction="Horde",ids={1166,1168,1169,1170,1171,1172,1173}},
+    {name="Trelane's items and Faldir's Cove",race="Human",class="MAGE",faction="Alliance",ids={690,663,662,664,667,693,694,695,696,697}},
+    {name="The Deathguards' test in Brill",race="Scourge",class="WARRIOR",faction="Horde",ids={1818,1819,1820,1821}},
+    {name="Thendal Grove's trainers",race="SkyElf",class="SHAMAN",faction="Horde",ids={92484,92481,92532}},
+    {name="The Tower of Althalaxx in Ashenvale",race="NightElf",class="PRIEST",faction="Alliance",ids={967,970,973,1140,981}},
     {name="Janice Felstone's package (Horde)",race="Scourge",class="MAGE",faction="Horde",ids={5021,5023,5049,5050,5051,5251}},
 }
 local base=os.time({year=2026,month=10,day=1,hour=18})

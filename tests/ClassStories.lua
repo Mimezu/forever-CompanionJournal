@@ -74,7 +74,7 @@ absent("Cyclonian", 1712, "cyclonian fell")
 present("The Summoning", 1713, "cyclonian fell")
 check(A.Lore.QuestStory("Taming the Beast", 1788).after == A.Lore.QuestStory("Taming the Beast").after, "mismatched ID cannot confer resurrection")
 for _, id in ipairs({5921, 5929, 94913, 94914}) do check(P.questIDs[id] == nil, "regional pack owns Moonglade " .. id) end
-check(byClass.SHAMAN == 4, "four source-checked advanced shaman stages")
+check(byClass.SHAMAN == 5, "four source-checked advanced shaman stages and the Zephras referral 92484 (2026-11-05)")
 for _, id in ipairs({1516,1517,1518,1519,1520,1521,1522,1523,1524,1525,1526,1527,
     1528,1529,1530,1531,1532,1534,1535,1536,2984,2986,63,96,100,220,1103}) do
     check(P.questIDs[id] == nil, "regional pack retains early shaman trial " .. id)

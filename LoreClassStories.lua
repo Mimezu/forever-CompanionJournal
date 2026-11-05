@@ -513,6 +513,173 @@ for _, id in ipairs({7562, 7563, 7564, 7623, 7624, 7625, 7626, 7627, 7628, 7629,
     P.questIDs[id].source[2] = "https://classicdb.ch/?quest=" .. id
 end
 
+-- Batch 6: the paladin's charger and the hunter's ancients in Felwood. The
+-- charger is claimed only by 7647's completion; the barding, feed and scryer
+-- stages prepare it. The bow of Ancients is never finished by any single
+-- stage here: 7636 gives the stave, 7635 the string, 7634 the quiver.
+P.threads.class_paladin_charger = "the redemption of a fallen charger"
+P.threads.class_hunter_ancients = "the gifts of Felwood's ancients"
+local PC2, HA = "class_paladin_charger", "class_hunter_ancients"
+q(7638, "Lord Grayson Shadowbreaker", "PALADIN", "Stormwind City", 60, PC2,
+    "The paladin's trainer said the time had come to learn what it would take to win a charger. Lord Grayson Shadowbreaker, in Stormwind's Cathedral District, would guide the tasks.",
+    "A paladin's most trusted mount was not simply given. Lord Grayson Shadowbreaker, close by in the Cathedral District, knew the trial.",
+    "Lord Grayson warned that the tests would be many, and no mere lesson. The future charger had to be saved from the clutches of evil.",
+    "Grayson Shadowbreaker explained the task ahead, to rescue a future companion from the very evil the paladins had always fought.", 4)
+q(7670, "Lord Grayson Shadowbreaker", "PALADIN", "Stormwind City", 60, PC2,
+    "The paladin's trainer said the time had come to learn what it would take to win a charger, and named Lord Grayson Shadowbreaker in Stormwind as the guide.",
+    "Winning a charger began with a journey to Stormwind's Cathedral District, where Lord Grayson Shadowbreaker would explain the trial.",
+    "Lord Grayson warned that the tests would be many, and no mere lesson. The future charger had to be saved from the clutches of evil.",
+    "Grayson Shadowbreaker explained the task ahead, to rescue a future companion from the very evil the paladins had always fought.", 4)
+q(7637, "Emphasis on Sacrifice", "PALADIN", "Ironforge", 60, PC2,
+    "The trial began with sacrifice. High Priest Rohan's exorcism censer was needed, and Grayson asked that ample coin be given in Ironforge to offset its loss.",
+    "High Priest Rohan's exorcism censer waited in Ironforge. Paying generously for it would show the sacrifice the trial demanded.",
+    "Rohan blessed the donation, which went well beyond the cost of a new censer and would feed Ironforge's needy. He prepared the censer for the trial.",
+    "The coin given in Ironforge helped Rohan replace his censer and refill the reserves of food for the poor. He blessed the censer thrice for its new use.", 3)
+q(7639, "To Show Due Judgment", "PALADIN", "Stormwind City", 60, PC2,
+    "Rohan gave his censer with his blessing. He had used it in several exorcisms himself, and Grayson was waiting for it in Stormwind.",
+    "With Rohan's exorcism censer in hand, the next step lay with Lord Grayson Shadowbreaker in Stormwind.",
+    "Grayson accepted the censer as proof of sacrifice. Next would come judgment, and the censer would carry it to the tortured spirits of lost lands.",
+    "The censer reached Grayson, who called sacrifice central to a paladin's duty. He would use it next to pass judgment on restless spirits.", 3)
+q(7640, "Exorcising Terrordale", "PALADIN", "Stormwind City", 60, PC2,
+    "Grayson added a pinch of tainted earth from Terrordale to the censer. Green auras in the Eastern Plaguelands marked where tormented spirits troubled the ground, and the censer would drive them out.",
+    "In Terrordale, the physical world buckled under the torment of the spirit realm. Grayson's censer would pass judgment there.",
+    "Grayson praised the judgments rendered in Terrordale. Next, he said, came the effort to reclaim the spirit of a fallen charger that now served the death knight Darkreaver.",
+    "Terrordale's spirits had been judged. Grayson named the path ahead, to a fallen charger bound to the death knight Darkreaver.", 4)
+q(7641, "The Work of Grimand Elmore", "PALADIN", "Stormwind City", 60, PC2,
+    "A charger without barding was a pack animal, Grayson said, and this barding had to be attuned to the spirit realm. Grimand Elmore in the Dwarven District was among the finest craftsmen alive.",
+    "Grayson recommended Grimand Elmore of Stormwind's Dwarven District, for barding of the finest quality at no small price.",
+    "Grimand had expected the visit. He agreed to make the barding, warned it would be neither cheap nor easy, and claimed none better could be found in Azeroth.",
+    "Grimand Elmore promised barding unmatched anywhere, and said plainly that it would cost a great deal.", 3)
+q(7642, "Collection of Goods", "PALADIN", "Stormwind City", 60, PC2,
+    "Grimand's barding needed runecloth for the lining, arcanite bars for the plating, Arthas' Tears for attunement and Stratholme holy water for imbuement, plus gold for his fee, saddle and stirrups included.",
+    "Five things stood between Grimand and finished barding, four materials from across the Plaguelands and the forge, and his fee.",
+    "Grimand found everything he had asked for and set to finishing the barding.",
+    "The runecloth, arcanite, Arthas' Tears, holy water and gold reached Grimand, who admired the resourcefulness and went to work.", 3)
+q(7648, "Grimand's Finest Work", "PALADIN", "Stormwind City", 60, PC2,
+    "Grimand wiped his brow and called the barding some of his finest work, as good as the set he had made for Grayson's own charger. He sent it to Grayson with his thanks.",
+    "The finished barding was ready. Grimand wanted Grayson to see it for himself.",
+    "Grayson admired the barding and said Grimand's craft improved with age. A charger's barding needed a blessing as well, so he kept it until one could be found.",
+    "Grayson praised Grimand's work, but the barding was not yet worthy of a paladin's charger. It still needed blessing by a fitting spirit.", 3)
+q(7643, "Ancient Equine Spirit", "PALADIN", "Dire Maul", 60, PC2,
+    "The barding needed a blessing from the Ancient Equine Spirit in Dire Maul, held by the corrupt treant Tendris Warpwood. Freeing the spirit was not enough; it had to be soothed with special feed from Merideth Carlson of Southshore.",
+    "Tendris Warpwood held an ancient horse spirit in Dire Maul. Only once the treant was judged and the spirit fed would it bless the barding.",
+    "The Ancient Equine Spirit ate the Manna-Enriched Horse Feed, then stood as if waiting for the barding to be laid on its back.",
+    "Freed from Tendris Warpwood and fed from Merideth's blend, the horse spirit turned expectantly toward the barding.", 4)
+q(7645, "Manna-Enriched Horse Feed", "PALADIN", "Hillsbrad Foothills", 60, PC2,
+    "The Silver Hand had called Merideth Carlson of Southshore mad for claiming that spirit horses could be fed. The feed would be made, for Enriched Manna Biscuits from the Argent Dawn and gold as payment for years of mockery.",
+    "Merideth Carlson could nourish spirit horses and wanted the paladins to pay for the old mockery. The price was Argent Dawn biscuits and gold.",
+    "Payment for wrongs others had committed took Merideth by surprise. An offer of free feed in future followed, though the gold stayed in Southshore.",
+    "The biscuits and gold reached Merideth Carlson, who answered the sacrifice with a promise of free feed in future and kept the money.", 3)
+q(7644, "Blessed Arcanite Barding", "PALADIN", "Stormwind City", 60, PC2,
+    "On the Ancient Equine Spirit's back the barding glowed, and the air thickened with power. Then it was blessed and ready to return to Grayson.",
+    "The horse spirit's blessing had passed into the barding. Grayson wanted it brought back to Stormwind.",
+    "Grayson declared the barding ready to harness the charger once its redemption was done. One last item remained to be made before the struggle ahead.",
+    "The blessed barding reached Grayson. The great trial was near, he said, with one more thing still to make.", 4)
+q(7646, "The Divination Scryer", "PALADIN", "Stormwind City", 60, PC2,
+    "The censer from Terrordale would be the heart of a Divination Scryer, and Grayson would build its housing. The scryer needed two diamonds, an Azerothian and a Pristine Black, to pierce the shadows.",
+    "Grayson called the scryer the last worldly sacrifice before the trial. Two diamonds, one bright and one black, would complete it.",
+    "Grayson set the diamonds in place and revealed the trial. In the Great Ossuary of Scholomance, the hollowed soul of a once-noble charger served as the death knight Darkreaver's steed.",
+    "The Divination Scryer was finished. Darkreaver waited in Scholomance with the charger he rode, and Grayson called the trial at hand.", 4)
+q(7647, "Judgment and Redemption", "PALADIN", "Scholomance", 60, PC2,
+    "Grayson gave a satchel for the trial. In the basement of the Great Ossuary, the scryer would call up accursed spirits to be judged, and then Darkreaver himself.",
+    "Accursed spirits first, then the death knight Darkreaver, Grayson warned. Only then could the charger's lost soul be reclaimed.",
+    "Darkreaver fell, and the charger's judged soul was returned to it. Life came back into its eyes, it accepted the barding, and from then on it would come as a steed when called.",
+    "The fallen charger was redeemed in Scholomance. With the blessed barding on its back, it nuzzled the hand that had freed it.", 6)
+P.questIDs[7647].highlight = {"Darkreaver fell in the Great Ossuary, and the fallen charger's soul was redeemed. It accepted the blessed barding, an epic charger ready to serve.",
+    "In Scholomance, the charger Darkreaver had ridden was judged and redeemed. Wearing its blessed barding, it was ready to serve."}
+P.questIDs[7640].highlight = {"The censer passed judgment on the tormented spirits of Terrordale. Grayson then named the true trial, a fallen charger serving Darkreaver.",
+    "Terrordale's spirits were judged with Rohan's censer, and Grayson revealed the charger bound to the death knight Darkreaver."}
+
+q(7632, "The Ancient Leaf", "HUNTER", "Felwood", 60, HA,
+    "A glowing green leaf, deeply veined and wrinkled, seemed to come from something ancient and powerful. Its owner might be found.",
+    "The strange leaf was in perfect condition and plainly not from any ordinary tree. Someone ancient might want it back.",
+    "Vartrus the Ancient recognized his own leaf and was pleased it had been returned. He suggested an exchange of service between the ancients and their helper.",
+    "The leaf belonged to Vartrus the Ancient, who groaned his thanks and offered an exchange of service.", 4)
+q(7636, "Stave of the Ancients", "HUNTER", "Felwood", 60, HA,
+    "Agents of the Burning Legion still corrupted the world in disguise. Vartrus wanted them tracked down and killed alone, as they would flee from a group, and their heads brought back.",
+    "Vartrus gave a piece of his bark whose inscriptions led to hidden demonic corrupters. They had to be faced singly, and they would try to kill a lone hunter.",
+    "Vartrus gave a stave from the ancients and said to combine it with the bowstring Stoma could make. Together they would form a formidable weapon.",
+    "The demon agents were destroyed. Vartrus rewarded the service with a stave of the ancients, the body of a bow still lacking its string.", 5)
+q(7635, "A Proper String", "HUNTER", "Felwood", 60, HA,
+    "Stoma alone could enchant the string for a bow of Ancients. He wanted sinew from a mature black dragon.",
+    "Vartrus could give the stave, but the bowstring was Stoma's to make. Its sinew had to come from a slain black dragon.",
+    "Stoma found the black dragon's sinew foul with evil, and set to cleansing it and laying on the enchantments.",
+    "The sinew reached Stoma, who began making it into a nearly indestructible bowstring.", 4)
+q(7634, "Ancient Sinew Wrapped Lamina", "HUNTER", "Felwood", 60, HA,
+    "Hastat, Ancient of Lore, could bind one of his leaves into a quiver not seen in ten thousand years. He needed sinew from an adult blue dragon.",
+    "A quiver to accompany a bow of Ancients could be made from Hastat's leaf, if bound with blue dragon sinew.",
+    "Hastat blessed the finished quiver, that its arrows might be protected and strike true.",
+    "The blue dragon sinew bound Hastat's leaf into a quiver, which he gave with a blessing.", 4)
+P.questIDs[7636].highlight = {"Vartrus gave a stave of the ancients for slaying the Legion's disguised agents. Stoma's bowstring would complete it.",
+    "The hidden demon corrupters were dead, and Vartrus answered with a stave of the ancients."}
+for _, id in ipairs({7638, 7670, 7637, 7639, 7640, 7641, 7642, 7648, 7643, 7645, 7644, 7646, 7647, 7632, 7636, 7635, 7634}) do
+    P.questIDs[id].source[2] = "https://classicdb.ch/?quest=" .. id
+end
+
+-- Batch 12, picked up from the horde lane's hand-off: the Forsaken warrior's
+-- Brill trial (Coleman and the Agamand crypt are set up in the horde pack's
+-- stages 354, 362 and 408) and Forever's Zephras class referrals. A referral
+-- reaches a trainer; it never proves that a lesson or spell was learned.
+P.threads.class_warrior_brill = "the Deathguards' test in Brill"
+P.threads.class_zephras_trainers = "the trainers of Thendal Grove"
+local WBR, ZT = "class_warrior_brill", "class_zephras_trainers"
+q(1818, "Speak with Dillinger", "WARRIOR", "Tirisfal Glades", 10, WBR,
+    "Deathguard Dillinger, posted at the west end of Brill near the graveyard, had a job for a warrior willing to prove their value to the Dark Lady's forces.",
+    "A mission was waiting in Brill for a warrior of the Forsaken. Deathguard Dillinger kept his post by the graveyard.",
+    "Dillinger had an important mission ready, one that would test both skill in combat and resolve in the defense of the Forsaken.",
+    "Dillinger welcomed the new warrior and promised a test of resolve.", 3)
+q(1819, "Ulag the Cleaver", "WARRIOR", "Tirisfal Glades", 10, WBR,
+    "The Forsaken had captured a Scourge champion, Ulag the Cleaver, whose mind was free but still enthralled by the Lich King. Every attempt to break that hold had failed, so the skull stone by the mausoleum would lift his seal, and he was to be killed.",
+    "Dillinger could not free Ulag from the Lich King's control. What remained was to open the mausoleum's seal and kill him.",
+    "Ulag was dead. Dillinger said he had been no minor agent of the Scourge, and that the deed proved a warrior worthy of further instruction.",
+    "Ulag the Cleaver fell outside the mausoleum, and the Deathguards counted it proof of skill and resolve.", 5)
+q(1820, "Speak with Coleman", "WARRIOR", "Tirisfal Glades", 10, WBR,
+    "Coleman Farthing, in the Gallow's End Tavern in eastern Brill, wanted a warrior to be his instrument of revenge against the Forsaken's enemies.",
+    "Having proved their worth to the Dark Lady, a warrior could now serve one of her subjects. Coleman Farthing waited at the Gallow's End.",
+    "Coleman admitted his means were small, but his task would serve both him and the Forsaken, and pay twice over.",
+    "At the Gallow's End Tavern, Coleman Farthing explained that his revenge and the Forsaken's cause ran together.", 3)
+q(1821, "Agamand Heirlooms", "WARRIOR", "Tirisfal Glades", 11, WBR,
+    "The Agamands had employed Coleman in life and caused his death. Now mindless servants of the Lich King, they still kept a sword, an axe, a dagger and a mace in their family crypt at the north end of the Agamand Mills.",
+    "Coleman wanted the last vestiges of the Agamands' honor. Their crypt held four heirloom weapons among lurking Scourge and dead Agamands.",
+    "Coleman had the four heirlooms. The last semblance of honor had been stripped from the cursed Agamand lands, he said, and the family was truly no more.",
+    "The Agamand sword, axe, dagger and mace reached Coleman Farthing, who rejoiced that the family he hated was finished.", 4)
+P.questIDs[1821].highlight = {"The Agamand heirlooms reached Coleman Farthing, whose employers had caused his death. He said the family was truly no more.",
+    "Coleman took the sword, axe, dagger and mace from the Agamand crypt as the end of the family that had killed him."}
+q(92481, "A Student of the Arcane", "MAGE", "Zephras Isle", 2, ZT,
+    "With the vuldren dealt with, a recall crystal from Dorii Brightwhisper, Thendal Grove's mage trainer, carried a message.",
+    "Dorii Brightwhisper had left a recall crystal for a new student of magic, and waited in the building behind the village's speaker.",
+    "Dorii said the arcane had waned among the sky elves over the millennia spent in the clouds, and hoped the newcomer would help rediscover what was lost.",
+    "Dorii Brightwhisper judged the newcomer a fine young mage and offered further steps when ready.", 3)
+q(92482, "The Way of the Hunter", "HUNTER", "Zephras Isle", 2, ZT,
+    "After the vuldren were dealt with, a note from Tai'ree Farsight, Thendal Grove's hunter trainer, asked for a visit near the center of the village.",
+    "Tai'ree Farsight had left a note for a new hunter. She could be found in the middle of Thendal Grove.",
+    "Tai'ree warned that the hunter's way was full of danger and belonged to those with keen senses and quick reflexes. She saw her younger self in the newcomer.",
+    "Tai'ree Farsight nodded curtly, then said the newcomer had what it took, if the choice was made.", 3)
+q(92483, "At Home in the Shadows", "ROGUE", "Zephras Isle", 2, ZT,
+    "Akeri Duskblade, Thendal Grove's rogue trainer, had asked to speak with the newcomer. His note said to find him in the village watchtower.",
+    "A shady fellow named Akeri Duskblade waited in the watchtower for a new rogue.",
+    "Akeri almost did not hear the approach, and almost, he said, would not be good enough beyond Thendal Grove. Survival on Zephras would come down to vigilance.",
+    "Akeri Duskblade eyed the newcomer with suspicion, then spoke of silence, patience and the dangers outside the grove.", 3)
+q(92484, "Embracing the Elements", "SHAMAN", "Zephras Isle", 2, ZT,
+    "Windshaper Boro, Thendal Grove's shaman trainer, had left a recall crystal and waited near the center of the village.",
+    "With the vuldren dealt with, Windshaper Boro, Thendal Grove's shaman trainer, wanted to meet a new shaman.",
+    "Boro explained that the spirits of the four winds had stopped speaking with the sky elves years ago. Shaman studied the elements in the hope of restoring that dialogue.",
+    "Boro asked whether the newcomer would walk the path to master the elements, and offered training when ready.", 3)
+q(92485, "A Student of Nature", "DRUID", "Zephras Isle", 2, ZT,
+    "Xyton Silverwind, Thendal Grove's druid trainer, had left a note. He waited on the ground floor of the great tree behind the village's speaker.",
+    "A new druid was to seek out Xyton Silverwind, keeper of druidic lore, and heed his counsel.",
+    "Xyton described the island's life as a tapestry that druids kept in balance. He saw potential, and warned that the path of the fang, claw, feather and branch was not easy.",
+    "Xyton Silverwind welcomed a new student of nature and offered guidance for the road ahead.", 3)
+q(92532, "The Warrior's Path", "WARRIOR", "Zephras Isle", 2, ZT,
+    "Blademaster Ren, Thendal Grove's warrior trainer, had asked that the newcomer be sent to the village watchtower, and left a note.",
+    "A note from Blademaster Ren waited for a new warrior, with directions to the watchtower.",
+    "Ren spoke of a changing world that would need people willing to lead and protect others, and promised training as the newcomer grew.",
+    "Blademaster Ren wished the newcomer luck and offered guidance on the dangerous journey ahead.", 3)
+for _, id in ipairs({1818, 1819, 1820, 1821, 92481, 92482, 92483, 92484, 92485, 92532}) do
+    P.questIDs[id].source[2] = id < 90000 and ("https://classicdb.ch/?quest=" .. id) or "Forever addition: corpus_vanilla_quests.txt record (no Classic database page)"
+    P.questIDs[id].setting = id < 90000 and "Classic / Forever" or "Forever"
+end
+
 -- Shared-title outcomes are never copied from a convenient last stage. Several
 -- Forever titles that look like trials are only referrals, notably 94007.
 local shared = {
@@ -522,7 +689,7 @@ local shared = {
     ["Gakin's Summons"] = true, ["Creature of the Void"] = true, ["The Binding"] = true,
     ["Body and Heart"] = true, ["Trial of the Lake"] = true, ["Trial of the Sea Lion"] = true,
     ["Aquatic Form"] = true, ["Gathering the Cure"] = true, ["Curing the Sick"] = true,
-    ["Power over Poison"] = true, ["Child of Nature"] = true,
+    ["Power over Poison"] = true, ["Child of Nature"] = true, ["Lord Grayson Shadowbreaker"] = true,
 }
 for _, e in pairs(P.questIDs) do if not shared[e.title] then P.quests[e.title] = e end end
 local function fallback(title, id, w1, w2, a1, a2)
@@ -595,6 +762,9 @@ fallback("Curing the Sick", 6124,
 fallback("Power over Poison", 6125,
     "The practical antidote work prepared the way for lasting instruction against poison.", "The final return concerned a power beyond individually prepared salves.",
     "The trainer taught the power to cure poisonous afflictions.", "The completed practical lesson earned permanent instruction against poison.")
+fallback("Lord Grayson Shadowbreaker", 7638,
+    "A paladin ready for a charger was sent to Lord Grayson Shadowbreaker in Stormwind's Cathedral District.", "Lord Grayson Shadowbreaker knew the trial that would win a paladin's charger.",
+    "Lord Grayson explained that a future charger had to be rescued from evil.", "Grayson Shadowbreaker set out the long trial for the charger ahead.")
 fallback("Child of Nature", 94911,
     "The Cenarion Circle offered further knowledge to druids newly arrived from Zephras.", "A mainland trainer could introduce a visitor to the Circle's work.",
     "The introduction was made, opening the way toward further instruction.", "The referral reached a welcoming druid, before the journey to Moonglade.")
