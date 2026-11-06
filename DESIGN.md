@@ -325,6 +325,17 @@ Brief, lane reports and coordinator log: `_forever_\StorageInvestigation\cj-over
   (it may then edit files another lane owns); an agent that waits on its own background
   reviewers can be stopped and later re-woken, so run reviewers from the coordinator.
 
+### 4.6 The second pass (2026-11-06, 1.14.0)
+
+Same folder, `PROGRESS.md` "Round 2". Fable lanes built absence openings and dungeon
+history (857c935), places (8b75117), battlegrounds and milestones (0cb341f), a whole-life
+review (f2b3a68) and zone bands 20-60 plus end game; Opus lanes fact-checked every one
+(problem rates 24% for place lines, about 50% for new quest scenes: outcomes past the
+completion text, invented gestures and laughter, wrong genders, the player called a
+hunter) and finished the writer's pass when Fable ran out of credits mid-edit.
+Tests now include Openings, DungeonRepeat, BattlegroundSeries/Record, Milestones,
+Rehearsal, PlaceLead, Band2030/3050/5060, LoreNotes4-7.
+
 ## 5. Decision log
 
 Dates are from memory notes and archive folders. "Untested in game" means the user had

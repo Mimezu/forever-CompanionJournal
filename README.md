@@ -22,7 +22,8 @@ journal, the group popup and the campfire now live here, in their own window.
   three hundred, gold, ranks and the level-sixty look-back are told as moments.
 - **Coverage:** 2,722 exact quest scenes in all (930 two nights ago), levels 1 to 60
   and the end game, every one read against its quest text by a separate fact-checker.
-  About 700 more lore notes, many behind the quests that reveal them.
+  About 380 more lore notes (about 710 over the two nights), many behind the quests
+  that reveal them.
 - **A writer's pass** over everything: fewer repeated shapes ("again", "together",
   "by then"), no hindsight closers, outcomes told in the people's own words.
 - Unverified on Forever: whether the Naxxramas raid exists; Umi Rumplesnicker and Storm
