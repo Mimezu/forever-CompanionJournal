@@ -367,8 +367,10 @@ function A.JournalSpeechLead(line)
     local plain = line:gsub("{%a:([^}]*)}", "%1")
     if plain:match("^[\"']") then return true end
     local head = plain:match("^[^%.%?]*") or plain
-    local rest = head:match("^[^,!]+[,!]%s+(.*)$")
-    if not rest then return false end
+    -- (only a short opening cry before the comma: "Finally, said Lydon"; a whole report with its
+    -- speaker at the end, "Captain Fairmount ... shot at anything in sight, Thalo'thas said", is a sentence)
+    local lead, rest = head:match("^([^,!]+)[,!]%s+(.*)$")
+    if not rest or select(2, lead:gsub("%S+", "")) > 3 then return false end
     rest = rest:lower()
     for _, shape in ipairs({"^said ", "^asked ", "^%S+ said", "^%S+ %S+ said", "^%S+ asked", "^%S+ %S+ asked"}) do
         if rest:match(shape) then return true end
@@ -384,7 +386,9 @@ function A.JournalPlaceLead(place, line, corpus)
     if not word or word == "I" or word:match("^%u%u") or word:lower() == word then return prefix .. line end
     local low = word:lower()
     local lower = LEAD_LOWER[word] or (#word >= 6 and word:match("ly$") ~= nil)
-    if not lower and corpus then
+    -- (a title before a name, "Captain Fairmount", "Blacksmith Verringtan", keeps its capital
+    -- even where the scene says "the captain")
+    if not lower and corpus and not tail:match("^ %u") then
         lower = (corpus:gsub("{%a:([^}]*)}", "%1")):find("%f[%a]" .. low .. "%f[%A]") ~= nil
     end
     -- (a place or a dungeon of that name keeps its capital)
