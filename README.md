@@ -4,6 +4,30 @@ The players and NPCs you want to remember, and a journal of what you lived
 through together. It came out of Forever Names 1.10: the People list, the
 journal, the group popup and the campfire now live here, in their own window.
 
+## 1.14.0: a game master at the table
+
+- **Chapter openings after time away.** A chapter opens by how long it has been (a
+  week, ten days, a month, months, half a year, a year), where you stood last time and
+  where you are now, who is back, the hour, and on long gaps what the last outing ended
+  on ("The time before, Ragefire Chasm had been the end of the day, and Taragaman with
+  it."). The same in a companion's book, in both voices.
+- **Dungeons run again.** A return is never told as a first descent; a run that turned
+  back before the last boss ends unfinished; the run that finally reaches him says so; a
+  veteran falling short reads differently from a newcomer turning back.
+- **Places set the scene.** Every zone, capital, dungeon and raid has more and better
+  arrival lines, return lines and lines for a run left unfinished; every boss has its
+  own epithet and fall.
+- **Battlegrounds and milestones** (see 1.13.0's bullets): an evening of matches is one
+  passage; first mount, first blue and epic, sets, world bosses, raid lords, trades at
+  three hundred, gold, ranks and the level-sixty look-back are told as moments.
+- **Coverage:** 2,722 exact quest scenes in all (930 two nights ago), levels 1 to 60
+  and the end game, every one read against its quest text by a separate fact-checker.
+  About 700 more lore notes, many behind the quests that reveal them.
+- **A writer's pass** over everything: fewer repeated shapes ("again", "together",
+  "by then"), no hindsight closers, outcomes told in the people's own words.
+- Unverified on Forever: whether the Naxxramas raid exists; Umi Rumplesnicker and Storm
+  Shadowhoof in Everlook.
+
 ## 1.13.0: a story of your own
 
 - **Battlegrounds as a story.** With "Record more moments" on, the end screen of a
