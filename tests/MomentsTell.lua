@@ -128,7 +128,8 @@ do
         check(chapters[2].plain:find("expert at first aid", 1, true) or chapters[2].plain:find("first aid had reached an expert's", 1, true), "an expert's first aid: " .. chapters[2].plain)
         local three = chapters[3].plain
         check(three:find("no higher standing", 1, true) or three:find("highest standing", 1, true) or three:find("as high with", 1, true), "exalted: " .. three)
-        check(three:find("nothing more anyone could teach me of first aid", 1, true) or three:find("anything left to teach me of first aid", 1, true), "first aid mastered: " .. three)
+        check(three:find("nothing more anyone could teach me of first aid", 1, true) or three:find("anything left to teach me of first aid", 1, true)
+            or three:find("a bandage left to teach me", 1, true) or three:find("first aid had reached three hundred", 1, true), "first aid mastered: " .. three)
         check(chapters[3].title == "Argent Dawn" or chapters[3].title == "First Aid", "titled for the standing or the trade: " .. tostring(chapters[3].title))
     end
 end

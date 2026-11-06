@@ -856,8 +856,11 @@ function T.Tell(person, days, voice, player, brief)
         -- (your own firsts that fell on a day together: a first zone or continent, a first mount,
         -- raid, epic or honorable kill; caves and battlegrounds entered together)
         local firstRanks = {notable = 8, rezother = 7, landmark = 6, sunset = 6, snow = 5, rarebeast = 5, foeseen = 5,
-            zone = 6, continent = 7, mount = 6, raid = 7, epic = 4, pvp = 4}
-        local SURE_FIRSTS = {zone = true, continent = true, mount = true, raid = true, epic = true, pvp = true}
+            zone = 6, continent = 7, mount = 6, raid = 7, epic = 4, pvp = 4,
+            -- (milestones lane, 2026-11-06)
+            epicmount = 6, famous = 8, legendary = 8, setfull = 6, tier = 4, worldboss = 7, rare = 4}
+        local SURE_FIRSTS = {zone = true, continent = true, mount = true, raid = true, epic = true, pvp = true,
+            epicmount = true, famous = true, legendary = true, setfull = true, tier = true, rare = true}
         local companionShort = Clean(person.name or ""):gsub("%-.*$", "")
         local exploreRanked = false
         for i, e in ipairs(moments) do
@@ -878,6 +881,7 @@ function T.Tell(person, days, voice, player, brief)
             -- (more moments: a duel with this very companion ranks with a rescue)
             if e.k == "duel" and e.d then rank = Clean(e.d) == companionShort and 7 or 3
             elseif e.k == "rarekill" then rank = 6
+            elseif e.k == "rank" then rank = 5
             elseif e.k == "rep" then rank = (tonumber(e.s) or 0) >= 6 and 4 or 2
             elseif e.k == "explore" and not exploreRanked then exploreRanked = true; rank = 2
             elseif e.k == "read" then rank = 2 end
@@ -3230,9 +3234,40 @@ function T.Tell(person, days, voice, player, brief)
                     tokens.what = Place(e.d)
                     line = teller:Say("sharedCave", PB.shared.cave, rng, tokens)
                 elseif e.k == "bg" and e.d and PB.shared.bg then
-                    tokens.what = Place(e.d)
-                    line = teller:Say("sharedBg", PB.shared.bg, rng, tokens)
-                    if line then Title(56, Place(e.d), "shared") end
+                    -- (all the matches of this battleground that day, in one line, with the
+                    -- results the own journal keeps; the first win ever says so)
+                    teller.bgShared = teller.bgShared or {}
+                    local shareKey = tostring(day.key) .. ":" .. e.d
+                    if not teller.bgShared[shareKey] then
+                        teller.bgShared[shareKey] = true
+                        local n, wins, losses, known, firstT = 0, 0, 0, true, e.t or 0
+                        for _, x in ipairs(moments) do
+                            if x.k == "bg" and x.d == e.d then
+                                n = n + 1
+                                if x.r == "won" then wins = wins + 1 elseif x.r == "lost" then losses = losses + 1 elseif x.r ~= "draw" then known = false end
+                                if (x.t or 0) < firstT then firstT = x.t end
+                            end
+                        end
+                        local wonBefore = false
+                        for _, x in ipairs(ownJournal) do if x.k == "bg" and x.r == "won" and (x.t or 0) < firstT then wonBefore = true end end
+                        tokens.what = Place(e.d)
+                        tokens.times = n == 2 and "twice" or (Words(n) .. " times")
+                        tokens.Times = Cap(tokens.times)
+                        tokens.wins = Words(wins)
+                        local pool, key = PB.shared.bg, "sharedBg"
+                        if known and n == 1 then
+                            local r = e.r
+                            pool, key = (r == "won" and PB.shared.bgWon) or (r == "lost" and PB.shared.bgLost) or PB.shared.bgDraw, "sharedBg" .. tostring(r)
+                        elseif known and n >= 2 then
+                            pool, key = (wins == n and PB.shared.bgSeriesAll) or (wins == 0 and PB.shared.bgSeriesNone) or PB.shared.bgSeries, "sharedBgSeries"
+                        end
+                        line = teller:Say(key, pool or PB.shared.bg, rng, tokens)
+                        if line and known and wins > 0 and not wonBefore and PB.shared.bgFirstWin then
+                            local firstLine = teller:Say("sharedBgFirstWin", PB.shared.bgFirstWin, rng, tokens)
+                            if firstLine then line = line .. " " .. firstLine end
+                        end
+                        if line then Title(wins > 0 and not wonBefore and 62 or 56, Place(e.d), "shared") end
+                    end
                 elseif e.k == "first" and e.d == "mount" and not e.u and PB.shared.mount then
                     line = teller:Say("sharedMount", PB.shared.mount, rng, tokens)
                     if line then Title(58, "A First Mount", "shared") end
@@ -3243,6 +3278,38 @@ function T.Tell(person, days, voice, player, brief)
                     line = teller:Say("sharedEpic", PB.shared.epic, rng, tokens)
                 elseif e.k == "first" and e.d == "pvp" and not e.u and PB.shared.pvp then
                     line = teller:Say("sharedPvp", PB.shared.pvp, rng, tokens)
+                -- (milestones lane, 2026-11-06: more of your own moments reach the day together)
+                elseif e.k == "first" and e.d == "epicmount" and not e.u and PB.shared.epicMount then
+                    line = teller:Say("sharedEpicMount", PB.shared.epicMount, rng, tokens)
+                    if line then Title(60, "A Swift Mount", "shared") end
+                elseif e.k == "first" and (e.d == "famous" or e.d == "legendary") and e.z and not e.u and PB.shared.legendary and (function()
+                    -- (the famous name over "legendary" for the same item)
+                    if e.d == "legendary" then
+                        for _, x in ipairs(moments) do if x.k == "first" and x.d == "famous" and x.z == e.z then return false end end
+                    end
+                    return true
+                end)() then
+                    tokens.what = Q(e.z)
+                    line = teller:Say("sharedLegendary", PB.shared.legendary, rng, tokens)
+                    if line then Title(70, Clean(e.z), "shared") end
+                elseif e.k == "first" and e.d == "rare" and e.z and not e.u and PB.shared.rare then
+                    tokens.what = Q(e.z)
+                    line = teller:Say("sharedRare", PB.shared.rare, rng, tokens)
+                elseif e.k == "first" and e.d == "tier" and e.z and not e.u and PB.shared.tier then
+                    tokens.what = Q(e.z)
+                    line = teller:Say("sharedTier", PB.shared.tier, rng, tokens)
+                elseif e.k == "first" and e.d == "setfull" and e.z and not e.u and PB.shared.setfull then
+                    tokens.what = Q(e.z)
+                    line = teller:Say("sharedSetfull", PB.shared.setfull, rng, tokens)
+                    if line then Title(62, "The Whole Set", "shared") end
+                elseif e.k == "first" and e.d == "worldboss" and e.z and PB.shared.worldboss then
+                    tokens.what = Place(e.z)
+                    line = teller:Say("sharedWorldboss", PB.shared.worldboss, rng, tokens)
+                    if line then Title(68, Clean(e.z), "shared") end
+                elseif e.k == "rank" and e.d and PB.sharedRank then
+                    tokens.rank, tokens.mySide = Clean(e.d), player.faction or "my side"
+                    line = teller:Say("sharedRank", PB.sharedRank, rng, tokens)
+                    if line then Title(58, Clean(e.d), "shared") end
                 elseif e.k == "close" and not closeSaid then
                     closeSaid = true
                     if e.d then

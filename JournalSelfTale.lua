@@ -384,6 +384,25 @@ end
 local function Worth(s)
     return (s.e - s.t) >= 300 or #s.events > 0 or s.questCount > 0 or next(s.gather) ~= nil or next(s.craft) ~= nil
 end
+-- A battleground stretch (a `bg` event in its own zone), and the queue: a short
+-- stop with nothing in it, in the zone you queued from, between two matches of
+-- the same battleground. The queue is not travel; it is left out of the telling.
+local function BattlegroundOf(s)
+    for _, e in ipairs(s.events or {}) do if e.k == "bg" and e.d and (e.d == s.zone or e.z == s.zone) then return e.d end end
+    return nil
+end
+function ST.DropQueues(stretches)
+    local kept = {}
+    for i, s in ipairs(stretches) do
+        local before, after = stretches[i - 1], stretches[i + 1]
+        -- (a short empty stop next to a match, before the first, between two or after the last)
+        local nextTo = (before and BattlegroundOf(before)) or (after and BattlegroundOf(after))
+        local queue = nextTo and not BattlegroundOf(s) and (s.e - s.t) < 900 and #s.events == 0 and s.questCount == 0
+            and next(s.gather) == nil and next(s.craft) == nil
+        if not queue then kept[#kept + 1] = s end
+    end
+    return kept
+end
 
 -- The picture of a character, from the whole record: how they play, in counts.
 -- It is used to choose emphasis among true facts (which moment a short telling
@@ -728,6 +747,7 @@ function ST.Tell(person, days, brief, retell)
         end
         local stretches = {}
         for _, s in ipairs(f.stretches) do if Worth(s) then stretches[#stretches + 1] = s end end
+        stretches = ST.DropQueues(stretches)
         -- Titles: the best of the day, and not one an earlier chapter already had.
         local titles = {}
         local function Title(rank, text) if text and text ~= "" then titles[#titles + 1] = {rank = rank, text = text} end end
@@ -984,7 +1004,7 @@ function ST.Tell(person, days, brief, retell)
             end
             bossOpen = bossOpen and anyBoss
             local bgOpen = false
-            for _, e in ipairs(first.events) do if (e.k == "bg" or (e.k == "first" and e.d == "battleground")) and (e.d == first.zone or e.z == first.zone) then bgOpen = When ~= nil end end
+            for _, e in ipairs(first.events) do if (e.k == "bg" or (e.k == "first" and e.d == "battleground")) and (e.d == first.zone or e.z == first.zone) then bgOpen = true end end
             local origin = not When and person.startLevel and person.startLevel <= 2 and (first.level or 1) <= 3 and W.origin and W.origin[race]
             local together0 = origin and beganWith and W.originTogether and W.originTogether[race]
             local originGap = origin and first.zone ~= (L and L.starts and L.starts[race]) and first.zone ~= ORIGIN_PLACE[race]
@@ -1070,7 +1090,7 @@ function ST.Tell(person, days, brief, retell)
             elseif not When and townOpen and not crossing and (person.startLevel or 1) < 10 then
                 -- (a first chapter that begins in a town: the town's own line opens it)
                 prefix = nil
-            elseif not When then
+            elseif not When and not bgOpen then
                 -- ("I began in ..." is a birthplace: only for a journal begun at the start)
                 local firstLines = W.openFirst
                 if (person.startLevel or 1) > 2 then
@@ -1289,11 +1309,276 @@ function ST.Tell(person, days, brief, retell)
             local flewTo -- a flight told with where it went
             local Milestone, FirstDeath, GatherLine
             -- (a mount bought with the level the day brought: told after that level)
-            local afterLevel, levelsSaid = {}, false
+            local afterLevel, levelsSaid, talentToday = {}, false, false
             local consequenceAt -- (the line of what a lord's fall meant: the day's level goes before it)
             local companionsSaid = {}
             -- (named by the book's opening; or a wife, a friend there every day, said at most one chapter in four)
             for name, at in pairs(history.introduced or {}) do if at == index then companionsSaid[name] = true end end
+            -- A battleground day: one passage per battleground, its matches in time order.
+            -- The results as runs ("The Alliance took the first and second, and the third we
+            -- won"), the first win ever, a win after defeats, streaks across days, one length,
+            -- one personal mark (flags, the most killing blows, bases), the company; a match
+            -- without a recorded result keeps the plain count. `opened` means the first-time
+            -- line (W.battleground) was just said. Counters only; no new draws.
+            local function BattlegroundPassage(e, s, opened)
+                local name = e.d or e.z
+                if not name then return end
+                if history.bgDay ~= index then history.bgDay, history.bgToday = index, {} end
+                if history.bgToday[name] then return end
+                history.bgToday[name] = true
+                history.bg = history.bg or {seen = {}, placeSaid = {}, matches = 0, wins = 0, losses = 0, streakN = 0, longest = 0, streakSaid = {}}
+                local hb = history.bg
+                local matches = {}
+                for _, s2 in ipairs(stretches) do
+                    for _, x in ipairs(s2.events) do if x.k == "bg" and x.d == name then matches[#matches + 1] = {e = x, s = s2} end end
+                end
+                table.sort(matches, function(a, b) return (a.e.t or 0) < (b.e.t or 0) end)
+                local n = #matches
+                if n == 0 then return end
+                local mySide = (faction == "Alliance" or faction == "Horde") and faction or nil
+                local foeSide = mySide == "Alliance" and "Horde" or mySide == "Horde" and "Alliance" or nil
+                local function Times(k) return k == 1 and "once" or k == 2 and "twice" or (Words(k) .. " times") end
+                local bt = {what = Place(name), mySide = mySide or "my side", foeSide = foeSide or "the other side",
+                    part = PartOfDay(matches[1].e.t or s.t), n = Words(n), times = Times(n)}
+                local visits = hb.seen[name] or 0
+                hb.seen[name] = visits + 1
+                local function T(extra)
+                    local tokens = {}
+                    for k2, v in pairs(bt) do tokens[k2] = v end
+                    for k2, v in pairs(extra or {}) do tokens[k2] = v end
+                    return tokens
+                end
+                local function S(key, pool, extra, major, kind)
+                    if type(pool) ~= "table" or #pool == 0 then return end
+                    -- (the chapter's "when" opens this line: no "that evening" on top of it)
+                    if prefix then
+                        local kept = {}
+                        for _, l in ipairs(pool) do if not l:find("{part}", 1, true) then kept[#kept + 1] = l end end
+                        if #kept > 0 then pool = kept end
+                    end
+                    Say(teller:Say(key, pool, T(extra)), major, kind or "bg")
+                end
+                -- what the place is, the first visit to it (Everything only): right after the
+                -- line that names it (W.battleground, or the opener below)
+                local placePending = not brief and W.bgPlace and W.bgPlace[name] and not hb.placeSaid[name]
+                local function PlaceLine()
+                    if not placePending then return end
+                    placePending, hb.placeSaid[name] = false, true
+                    S("bgPlace" .. name, W.bgPlace[name], nil, false, "lore")
+                end
+                if opened then PlaceLine() end
+                local results, known = {}, true
+                for i, m in ipairs(matches) do results[i] = m.e.r; if not m.e.r then known = false end end
+                if not known then
+                    -- (no result recorded: the count, as before)
+                    if opened then
+                        if n >= 2 and W.bgSeriesFirst then S("bgSeriesFirst", W.bgSeriesFirst, {times = Times(n - 1)}, true) end
+                    elseif n >= 2 then
+                        S(visits > 0 and "bgTimesAgain" or "bgTimes", (visits > 0 and W.bgTimesAgain) or W.bgTimes, nil, true)
+                    elseif visits == 0 then S("bgOnce", W.bgOnce or W.bgLeft, nil, true)
+                    else S("bgLeft", W.bgLeft or W.bgAgain, nil, true) end
+                    if not opened then Title(52, Clean(name)) end
+                    hb.matches = hb.matches + n
+                    return
+                end
+                -- the runs, the counts, the first win ever, a turn after defeats, the streak
+                local runs, wins, losses = {}, 0, 0
+                local firstWinAt, turnAt, turnLosses
+                local streak, streakN = hb.streak, hb.streakN
+                local reached = {}
+                for i, r in ipairs(results) do
+                    local last = runs[#runs]
+                    if last and last.kind == r then last.to = i else runs[#runs + 1] = {kind = r, from = i, to = i} end
+                    if r == "won" then
+                        if hb.wins + wins == 0 then firstWinAt = i end
+                        if streak == "lost" and streakN >= 2 and not turnAt then turnAt, turnLosses = i, streakN end
+                        wins = wins + 1
+                    elseif r == "lost" then losses = losses + 1 end
+                    if r == "won" or r == "lost" then
+                        if streak == r then streakN = streakN + 1 else streak, streakN = r, 1 end
+                        if (streakN == 3 or streakN == 5) and not hb.streakSaid[r .. streakN] then reached[#reached + 1] = {kind = r, n = streakN} end
+                    end
+                end
+                bt.wins, bt.losses = Words(wins), Words(losses)
+                local function Ords(from, to)
+                    local len = to - from + 1
+                    if len == 1 then return Ordinal(from) end
+                    if len == 2 then return Ordinal(from) .. " and " .. Ordinal(to) end
+                    if to == n then return "last " .. Words(len) end
+                    return "next " .. Words(len)
+                end
+                local firstWinSaid = false
+                if n == 1 then
+                    local r = results[1]
+                    if opened then
+                        local pool = (r == "won" and W.bgResultWon) or (r == "lost" and W.bgResultLost) or W.bgResultDraw
+                        if r == "lost" and hb.matches == 0 and W.bgFirstLoss then pool = W.bgFirstLoss end
+                        S("bgResult" .. r, pool, nil, true)
+                    else
+                        local again = visits == 1
+                        local pool = (r == "won" and ((again and W.bgWonAgain) or W.bgWon)) or (r == "lost" and ((again and W.bgLostAgain) or W.bgLost)) or W.bgDraw
+                        S("bg" .. r .. (again and "Again" or ""), pool, nil, true)
+                        PlaceLine()
+                    end
+                    if firstWinAt and not opened and W.bgFirstWin then S("bgFirstWin", W.bgFirstWin, nil, true); firstWinSaid = true end
+                elseif brief then
+                    -- Highlights: the count and the result in one line
+                    if opened then
+                        S("bgSeriesFirst", W.bgSeriesFirst, {times = Times(n - 1)}, true)
+                        S(wins == n and "bgAllWon" or losses == n and "bgAllLost" or "bgTally", (wins == n and W.bgAllWon) or (losses == n and W.bgAllLost) or W.bgTally, nil, true)
+                    else
+                        S(wins == n and "bgBriefAll" or losses == n and "bgBriefNone" or "bgBrief", (wins == n and W.bgBriefAll) or (losses == n and W.bgBriefNone) or W.bgBrief, nil, true)
+                    end
+                    if firstWinAt and W.bgFirstWinBrief and wins < n then S("bgFirstWinBrief", W.bgFirstWinBrief, {ordinal = Ordinal(firstWinAt)}, true); firstWinSaid = true end
+                else
+                    if opened then S("bgSeriesFirst", W.bgSeriesFirst, {times = Times(n - 1)}, true)
+                    else S(visits > 0 and "bgSeriesBack" or "bgSeries", (visits > 0 and W.bgSeriesBack) or W.bgSeries, nil, true) end
+                    PlaceLine()
+                    if wins == n or losses == n then
+                        local pool = wins == n and ((n == 2 and W.bgBothWon) or W.bgAllWon) or ((n == 2 and W.bgBothLost) or W.bgAllLost)
+                        S(wins == n and "bgAllWon" or "bgAllLost", pool, nil, true)
+                        if firstWinAt and W.bgFirstWinSweep then S("bgFirstWinSweep", W.bgFirstWinSweep, nil, true); firstWinSaid = true end
+                    else
+                        -- the runs, two or three to a sentence; five runs or more fall back to the tally
+                        local told = runs
+                        if #runs >= 5 then
+                            S("bgTally", W.bgTally, nil, true)
+                            told = {runs[1], runs[#runs]}
+                        end
+                        local pending, pendingJoined = nil, false
+                        local function Flush() if pending then Say(pending, true, "bg") end; pending, pendingJoined = nil, false end
+                        local function Lower(text) if text:match("^I ") or text:match("^{") then return text end return (text:gsub("^%u", string.lower)) end
+                        if n == 2 and (W.bgTwoWonLost or W.bgTwoLostWon) then
+                            -- (two matches, one each way: one sentence)
+                            local wonFirst = results[1] == "won"
+                            pending = teller:Say(wonFirst and "bgTwoWonLost" or "bgTwoLostWon", wonFirst and W.bgTwoWonLost or W.bgTwoLostWon, T({}))
+                            if firstWinAt and W.bgFirstWin then Flush(); pending = teller:Say("bgFirstWin", W.bgFirstWin, T({})); firstWinSaid = true end
+                            told = {}
+                        end
+                        for ri, run in ipairs(told) do
+                            local isFirst, isLast = run == runs[1], run == runs[#runs]
+                            local len = run.to - run.from + 1
+                            local extra = {ordinals = Ords(run.from, run.to), ordinal = Ordinal(run.from), were = len == 1 and "was" or "were"}
+                            local sentence, clause, more
+                            local rest = nil
+                            if run.kind == "won" and firstWinAt and firstWinAt >= run.from and firstWinAt <= run.to and not firstWinSaid and W.bgRunFirstWin then
+                                firstWinSaid = true
+                                extra.ordinal = Ordinal(firstWinAt)
+                                sentence = teller:Say("bgRunFirstWin", W.bgRunFirstWin, T(extra))
+                                if run.to > firstWinAt then rest = {firstWinAt + 1, run.to} end
+                            elseif run.kind == "won" and turnAt == run.from and W.bgTurn then
+                                extra.losses = Words(turnLosses)
+                                sentence = teller:Say("bgTurn", W.bgTurn, T(extra))
+                                if run.to > run.from then rest = {run.from + 1, run.to} end
+                            elseif isFirst then
+                                sentence = teller:Say(run.kind == "won" and "bgRunOpenWon" or "bgRunOpenLost", run.kind == "won" and W.bgRunOpenWon or W.bgRunOpenLost, T(extra))
+                            elseif isLast then
+                                sentence = teller:Say(run.kind == "won" and "bgRunCloseWon" or "bgRunCloseLost", run.kind == "won" and W.bgRunCloseWon or W.bgRunCloseLost, T(extra))
+                            else
+                                clause = teller:Say(run.kind == "won" and "bgRunWon" or "bgRunLost", run.kind == "won" and W.bgRunWon or W.bgRunLost, T(extra))
+                            end
+                            -- (the wins after the first win, or after the turn: their own short sentence)
+                            if sentence and rest and W.bgRunMore then
+                                local restLen = rest[2] - rest[1] + 1
+                                more = teller:Say("bgRunMore", W.bgRunMore, T({ordinals = Ords(rest[1], rest[2]), were = restLen == 1 and "was" or "were"}))
+                            end
+                            if clause and pending and not pendingJoined then
+                                pending, pendingJoined = pending:gsub("%.$", "") .. ", and " .. Lower(clause) .. ".", true
+                            elseif clause then
+                                Flush()
+                                pending = Cap(clause) .. "."
+                            else
+                                Flush()
+                                pending = sentence
+                                if more then Flush(); pending = more end
+                            end
+                        end
+                        Flush()
+                    end
+                end
+                do
+                    -- the company: who of the list was in the matches, said once (Highlights keep it)
+                    local company, order = {}, {}
+                    for _, m in ipairs(matches) do
+                        local seen = {}
+                        for _, w in ipairs(m.s.with or {}) do
+                            if w.seconds >= (m.s.e - m.s.t) * 0.5 and not seen[w.name] then
+                                seen[w.name] = true
+                                if not company[w.name] then company[w.name] = {k = 0, key = w.key}; order[#order + 1] = w.name end
+                                company[w.name].k = company[w.name].k + 1
+                            end
+                        end
+                        for _, who in ipairs(m.e.c or {}) do
+                            if not seen[who] then
+                                seen[who] = true
+                                if not company[who] then company[who] = {k = 0}; order[#order + 1] = who end
+                                company[who].k = company[who].k + 1
+                            end
+                        end
+                    end
+                    local said = 0
+                    for _, who in ipairs(order) do
+                        local marked = N(who)
+                        if said < 2 and not companionsSaid[marked] then
+                            companionsSaid[marked] = true
+                            local entry = company[who]
+                            local info = not history.companions[who] and entry.key and Companion(entry.key)
+                            local bond = info and info.bond and BOND_WORDS[info.bond] and BOND_WORDS[info.bond][info.pronouns or "they"]
+                            history.companions[who] = true
+                            local k = entry.k >= n and "all" or Words(entry.k)
+                            local series = n >= 2
+                            local pool = (bond and ((series and W.bgWithBondSeries) or W.bgWithBond)) or ((series and W.bgWithSeries) or W.bgWith)
+                            S(bond and "bgWithBond" or "bgWith", pool, {names = marked, k = k, bond = bond}, brief)
+                            said = said + 1
+                        end
+                    end
+                end
+                if not brief then
+                    -- a personal mark: one, or two on a long evening (four matches or more)
+                    local marks = {fc = 0, fr = 0, ba = 0, ta = 0, ga = 0}
+                    local top
+                    for i, m in ipairs(matches) do
+                        for key, v in pairs(m.e.m or {}) do if marks[key] then marks[key] = marks[key] + (tonumber(v) or 0) end end
+                        if m.e.top and not top then top = i end
+                    end
+                    local lines = {}
+                    if marks.fc > 0 then lines[#lines + 1] = {"bgFlags", marks.fc == 1 and W.bgFlag or W.bgFlags, {times = Times(marks.fc)}} end
+                    if top then lines[#lines + 1] = {"bgTop", (n >= 2 and W.bgTop) or W.bgTopOne or W.bgTop, {ordinal = Ordinal(top)}} end
+                    if marks.ba > 0 then lines[#lines + 1] = {"bgBases", marks.ba == 1 and W.bgBase or W.bgBases, {n = Words(marks.ba)}} end
+                    if marks.ta > 0 then lines[#lines + 1] = {"bgTowers", marks.ta == 1 and W.bgTower or W.bgTowers, {n = Words(marks.ta)}} end
+                    if marks.ga > 0 then lines[#lines + 1] = {"bgGraveyards", marks.ga == 1 and W.bgGraveyard or W.bgGraveyards, {n = Words(marks.ga)}} end
+                    if marks.fr > 0 then lines[#lines + 1] = {"bgReturns", marks.fr == 1 and W.bgReturn or W.bgReturns, {times = Times(marks.fr)}} end
+                    for i = 1, math.min(#lines, n >= 4 and 2 or 1) do S(lines[i][1], lines[i][2], lines[i][3]) end
+                    -- one length: the longest, when it was long; else a quick one
+                    local longI, longD, quickI, quickD
+                    for i, m in ipairs(matches) do
+                        local d = tonumber(m.e.dur)
+                        if d and (not longD or d > longD) then longI, longD = i, d end
+                        if d and (not quickD or d < quickD) then quickI, quickD = i, d end
+                    end
+                    local about = A.JournalAbout
+                    if longD and longD >= 2100 and about then
+                        S("bgLong", n >= 2 and W.bgLong or W.bgLongOne, {ordinal = Ordinal(longI), length = about(longD)})
+                        if hb.longest > 0 and longD > hb.longest and W.bgLongest then S("bgLongest", W.bgLongest) end
+                    elseif quickD and quickD <= 480 and about then
+                        S("bgQuick", n >= 2 and W.bgQuick or W.bgQuickOne, {ordinal = Ordinal(quickI), length = about(quickD)})
+                    end
+                    for _, r in ipairs(reached) do
+                        hb.streakSaid[r.kind .. r.n] = true
+                        S("bgStreak" .. r.kind, r.kind == "won" and W.bgStreakWon or W.bgStreakLost, {n = Words(r.n)})
+                    end
+                    if longD then hb.longest = math.max(hb.longest, longD) end
+                end
+                -- titles
+                if firstWinAt and W.titles.bgFirstWin then Title(66, teller:Pick("tBgFirstWin", W.titles.bgFirstWin))
+                elseif wins == n and n >= 2 and W.titles.bgSwept then Title(60, teller:Pick("tBgSwept", W.titles.bgSwept))
+                elseif n >= 3 and W.titles.bgSeries then
+                    local t = teller:Pick("tBgSeries", W.titles.bgSeries)
+                    if t then Title(58, (t:gsub("{what}", Clean(name)):gsub("{What}", Clean(name)):gsub("{Times}", Cap(Times(n))))) end
+                elseif not opened then Title(52, Clean(name)) end
+                hb.matches, hb.wins, hb.losses = hb.matches + n, hb.wins + wins, hb.losses + losses
+                hb.streak, hb.streakN = streak, streakN
+            end
             if bondAllDay then
                 local bondName = N(bondAllDay.w and bondAllDay.w.name or bondAllDay.name)
                 if history.bondSaid and history.chapter - history.bondSaid < 4 then companionsSaid[bondName] = true
@@ -1366,6 +1651,7 @@ function ST.Tell(person, days, brief, retell)
                     if e.k == "first" and e.d == "tram" then arrives = true end
                     if e.k == "voyage" then arrives = true end
                     if e.k == "town" and e.d == s.zone then arrives = true end
+                    if e.k == "bg" then arrives = true end -- (a battleground is not a road stop: its own passage opens it)
                 end
                 st.zoneSaid = si == 1
                 for _, e in ipairs(s.events) do
@@ -1712,6 +1998,20 @@ function ST.Tell(person, days, brief, retell)
                 for _, e in ipairs(s.events) do
                     if e.k == "first" and e.d == "continent" and e.z and history.continents[e.z] then e.u = true end
                 end
+                -- (milestones lane, 2026-11-06: a world boss's first fall replaces its kill line; the
+                -- thousand gold and the swift mount of one day make one sentence; the first talent
+                -- point rides in the level-ten line)
+                for _, e in ipairs(s.events) do
+                    if e.k == "first" and e.d == "worldboss" and e.z then
+                        for _, x in ipairs(s.events) do if x.k == "boss" and x.d and Clean(x.d) == Clean(e.z) then x.skip = true end end
+                    elseif e.k == "first" and e.d == "epicmount" and not e.u then
+                        for _, x in ipairs(s.events) do
+                            if x.k == "first" and x.d == "gold" and tonumber(x.c) == 1000 and not x.u and W.epicMountPrice then x.skip = true; e.price = true end
+                        end
+                    elseif e.k == "first" and e.d == "talent" and not e.u and W.milestoneTalent then
+                        for _, level in ipairs(f.levels) do if level == 10 then e.skip = true; talentToday = true end end
+                    end
+                end
                 -- (a rare you killed: the sighting goes without saying; of a trade's marks in one day, the highest)
                 for _, e in ipairs(s.events) do
                     if e.k == "rarekill" and e.d then
@@ -1768,17 +2068,80 @@ function ST.Tell(person, days, brief, retell)
                     -- (the first mount by its kind, when the recorder read it)
                     if e.d == "mount" and e.n and W.mountFirstKind and W.mountFirstKind[e.n] then pool = W.mountFirstKind[e.n] end
                     if e.d == "epicmount" and e.n and W.epicMountKind and W.epicMountKind[e.n] then pool = W.epicMountKind[e.n] end
+                    -- (milestones lane, 2026-11-06: the moment's own tokens, and the pool that fits what the record holds)
+                    mt.zoneD = Place(s.zone or "")
+                    if e.d == "epicmount" and e.price then pool = W.epicMountPrice; mt.kind = e.n or "mount" end
+                    if e.d == "gold" and W.gold and W.gold[tonumber(e.c)] then pool = W.gold[tonumber(e.c)] end
+                    if e.d == "worldboss" then
+                        local lord = L and L.Boss and L.Boss(name)
+                        mt.epithet = lord and lord.e or nil
+                        mt.zoneD = Place(e.sz or s.zone or "")
+                    elseif e.d == "raid" then
+                        local dl = L and L.Dungeon and L.Dungeon(name)
+                        mt.lore = dl and type(dl.lore) == "table" and dl.lore[1] or nil
+                    elseif e.d == "tier" then
+                        local TIER_HOME = {[1] = "Molten Core", [2] = "Blackwing Lair", [2.5] = "Temple of Ahn'Qiraj", [3] = "Naxxramas"}
+                        local home = TIER_HOME[tonumber(e.c)]
+                        if tonumber(e.c) == 0 and W.tierDungeon then pool = W.tierDungeon
+                        elseif home and W.tierWhere then pool = W.tierWhere; mt.where = Place(home); mt.Where = Cap(mt.where) end
+                        history.tierFirstDay, history.tierHome = history.tierFirstDay or {}, history.tierHome or {}
+                        history.tierFirstDay[name], history.tierHome[name] = dayNumber, home
+                    elseif e.d == "setfull" then
+                        local firstDay = history.tierFirstDay and history.tierFirstDay[name]
+                        local home = history.tierHome and history.tierHome[name]
+                        local visits = home and tonumber(history.dungeonVisits[home])
+                        if firstDay and dayNumber - firstDay >= 1 and visits and visits >= 2 and W.setfullSpan then
+                            pool = W.setfullSpan
+                            local span = dayNumber - firstDay
+                            mt.span = span < 7 and (Words(span) .. " days") or Ago(span)
+                            mt.visits = Words(visits) .. " visits to " .. Place(home)
+                        end
+                    elseif e.d == "craftepic" then
+                        local trade = e.n and Clean(e.n) or nil
+                        mt.trade = trade and trade:lower() or "trade"
+                        mt.tool = trade and W.craftTools and W.craftTools[trade] or nil
+                        if W.craftEpic then pool = W.craftEpic end
+                        -- (the day's crafting line names it already: "It came off my own bench"; Highlights
+                        -- drops the crafting line, so there the name stays)
+                        if not brief then
+                            for _, line in pairs(s.craft or {}) do
+                                for _, m in ipairs(line.made or {}) do if Clean(m) == name and W.craftEpicIt then pool = W.craftEpicIt end end
+                            end
+                        end
+                    end
+                    -- (a line whose token the record cannot fill is left out)
+                    do
+                        local kept = {}
+                        for _, line in ipairs(pool or {}) do
+                            local ok = true
+                            for tok in line:gmatch("{(%a+)}") do if tok ~= "what" and mt[tok] == nil then ok = false end end
+                            if ok then kept[#kept + 1] = line end
+                        end
+                        if #kept > 0 then pool = kept end
+                    end
                     pool = Fresh(pool)
                     if e.d == "pvp" and W.milestone2.pvpHere and currentStretch and currentStretch.zone == e.z and currentStretch.zoneSaid then pool = W.milestone2.pvpHere end
                     local loot = e.d == "epic" or e.d == "legendary" or e.d == "famous" or e.d == "tier" or e.d == "setfull" or e.d == "rare"
                     local mline = teller:Say("m:" .. e.d, pool, mt)
                     -- (loot from a dungeon's fights: after your part in them)
-                    if loot and st.dungeonNow then st.lootAfter = st.lootAfter or {}; table.insert(st.lootAfter, mline)
-                    else Say(mline, true, loot and "loot" or "first") end
-                    if (e.d == "famous" or e.d == "legendary") and ITEM_LORE[name] then Say(ITEM_LORE[name][teller.rng(#ITEM_LORE[name])], true, "lore") end
+                    local itemLore = (e.d == "famous" or e.d == "legendary") and ITEM_LORE[name] and ITEM_LORE[name][teller.rng(#ITEM_LORE[name])]
+                    if loot and st.dungeonNow then
+                        st.lootAfter = st.lootAfter or {}
+                        table.insert(st.lootAfter, mline)
+                        -- (what the item is, right after the item, not before it)
+                        if itemLore then table.insert(st.lootAfter, itemLore) end
+                    elseif e.d == "craftepic" and next(s.craft or {}) then
+                        -- (made at the bench: after the day's crafting line)
+                        st.afterCraft = st.afterCraft or {}
+                        table.insert(st.afterCraft, mline)
+                    else
+                        Say(mline, true, loot and "loot" or "first")
+                        if itemLore then Say(itemLore, true, "lore") end
+                    end
                     local rank = ({raid = 88, famous = 92, legendary = 92, worldboss = 86, setfull = 84, epicmount = 83, mount = 80,
-                        tier = 78, epic = 76, landmark = 74, pvp = 72, sunset = quiet and 66 or 55})[e.d] or 60
-                    local t = teller:Pick("t:" .. e.d, W.titles[e.d] or {"{what}"})
+                        tier = 78, epic = 76, landmark = 74, pvp = 72, sunset = quiet and 66 or 55, gold = e.c == 1000 and 70 or 50, craftepic = 72})[e.d] or 60
+                    local titlePool = (e.d == "gold" and W.titlesGold and W.titlesGold[tonumber(e.c)]) or W.titles[e.d] or {"{what}"}
+                    local t = teller:Pick("t:" .. e.d, titlePool)
                     Title(rank, t and (t:gsub("{what}", (name:gsub("%%", "")))))
                     -- (the other titles of the pool, a little lower: one an earlier chapter has not used)
                     for _, other in ipairs(W.titles[e.d] or {}) do Title(rank - 0.5, (other:gsub("{what}", (name:gsub("%%", ""))))) end
@@ -1816,6 +2179,7 @@ function ST.Tell(person, days, brief, retell)
                     elseif e.k == "first" and not e.u and e.d == "battleground" and e.z and W.battleground then
                         Say(teller:Say("battleground", Fresh(W.battleground), {what = Place(e.z), mySide = faction or "my side"}), true, "first")
                         Title(68, Clean(e.z))
+                        BattlegroundPassage({d = e.z, t = e.t}, s, true)
                     elseif e.k == "first" and not e.u and e.d == "class" and e.z and W.classFirst and W.classFirst[e.z] then
                         local pool = (W.classFirstRace and W.classFirstRace[race] and W.classFirstRace[race][e.z]) or W.classFirst[e.z]
                         if e.z == "pet" and not e.n then pool = W.classFirst.petPlain end
@@ -1970,7 +2334,9 @@ function ST.Tell(person, days, brief, retell)
                         local word = A.JournalStandingWord(e.s)
                         local ft = {faction = FactionName(e.d)}
                         ft.Faction = Cap(ft.faction)
-                        Say(teller:Say("rep" .. word, W.rep[word], ft), (tonumber(e.s) or 0) >= 6, "first")
+                        -- (exalted with a faction that gives something for it: the thing, not the standing)
+                        local repPool = (word == "exalted" and W.exaltedBy and W.exaltedBy[Clean(e.d)]) or W.rep[word]
+                        Say(teller:Say("rep" .. word, repPool, ft), (tonumber(e.s) or 0) >= 6, "first")
                         if (tonumber(e.s) or 0) >= 7 then
                             Title(e.s == 8 and 62 or 52, ((teller:Pick("tRep", W.titles.rep) or ""):gsub("{Faction}", (Clean(e.d):gsub("^[Tt]he ", "")))))
                         end
@@ -2005,8 +2371,24 @@ function ST.Tell(person, days, brief, retell)
                         Title(54, teller:Pick("tDuel", W.titles.duel))
                     elseif e.k == "skill" and e.d and e.c and W.skill and W.skill[e.c] then
                         local trade = Clean(e.d):lower()
-                        Say(teller:Say("skill" .. e.c, W.skill[e.c], {trade = trade}), e.c == 300, "first")
+                        local skillPool = W.skill[e.c]
+                        if e.c == 300 then
+                            -- (three hundred by the trade's own noun; the second main trade there says "both")
+                            local MAIN = {Alchemy = true, Blacksmithing = true, Enchanting = true, Engineering = true, Herbalism = true,
+                                Leatherworking = true, Mining = true, Skinning = true, Tailoring = true}
+                            if MAIN[Clean(e.d)] then history.topTrades = (history.topTrades or 0) + 1 end
+                            if MAIN[Clean(e.d)] and history.topTrades == 2 and W.skillTopBoth then skillPool = W.skillTopBoth
+                            elseif W.skillTop and W.skillTop[Clean(e.d)] then skillPool = W.skillTop[Clean(e.d)] end
+                        end
+                        Say(teller:Say("skill" .. e.c, skillPool, {trade = trade}), e.c == 300, "first")
                         if e.c == 300 then Title(56, ((teller:Pick("tSkill", W.titles.skill) or ""):gsub("{Trade}", Clean(e.d)))) end
+                    elseif e.k == "rank" and e.d and W.rank then
+                        -- (a PvP rank: the title, and the kills behind it when the record has them)
+                        local rt = {rank = Clean(e.d), mySide = faction or "my side", side = faction == "Horde" and "Alliance" or "Horde"}
+                        local kills = tonumber(e.n)
+                        if kills and kills >= 2 then rt.kills = Words(kills); rt.Kills = Cap(rt.kills) end
+                        Say(teller:Say("rank", (rt.kills and W.rankKills) or W.rank, rt), true, "first")
+                        Title(70, Clean(e.d))
                     elseif e.k == "rarekill" and e.d and W.rareKilled then
                         Say(teller:Say("rareKilled", W.rareKilled, {what = Place(e.d)}), true, "first")
                         Title(50, Clean(e.d))
@@ -2045,19 +2427,8 @@ function ST.Tell(person, days, brief, retell)
                         local named = not brief and table.concat(out, " "):find(Clean(e.d), 1, true)
                         Say(teller:Say("home", (named and W.homeHere) or W.home, {place = Place(e.d)}), true, "first")
                         Title(44, teller:Pick("tHome2", W.titles.newHome))
-                    elseif e.k == "bg" and e.d and W.bgAgain and not (history.bgDay == index and history.bgToday[e.d]) then
-                        if history.bgDay ~= index then history.bgDay, history.bgToday = index, {} end
-                        history.bgToday[e.d] = true
-                        history.bgSeen = history.bgSeen or {}
-                        local n = 0
-                        for _, s2 in ipairs(stretches) do for _, x in ipairs(s2.events) do if x.k == "bg" and x.d == e.d then n = n + 1 end end end
-                        local bt = {what = Place(e.d), mySide = faction or "my side", times = n == 2 and "twice" or (Words(n) .. " times")}
-                        local seen = history.bgSeen[e.d]
-                        history.bgSeen[e.d] = true
-                        if n >= 2 and W.bgTimes then Say(teller:Say(seen and "bgTimesAgain" or "bgTimes", (seen and W.bgTimesAgain) or W.bgTimes, bt), true)
-                        elseif not seen and W.bgOnce then Say(teller:Say("bgOnce", W.bgOnce, bt), true)
-                        else Say(teller:Say("bgAgain", W.bgAgain, bt)) end
-                        Title(52, Clean(e.d))
+                    elseif e.k == "bg" and e.d and not (history.bgDay == index and history.bgToday[e.d]) then
+                        BattlegroundPassage(e, s)
                     elseif e.k == "first" and e.d == "notable" then
                         Milestone(e)
                     elseif e.k == "first" and e.u and e.d == "class" and e.z and W.classAgain and W.classAgain[e.z] then
@@ -2335,6 +2706,22 @@ function ST.Tell(person, days, brief, retell)
                             st.Boss = st.boss
                             Say(teller:Say("bossRevengeLater", W.bossRevengeLater, st), true, "kill")
                             Title(66, (L and L.Short and L.Short(e.d)) or Clean(e.d))
+                        elseif (function()
+                            -- (milestones lane, 2026-11-06: a raid's lord, the first time it falls in the book)
+                            local RAIDS = {["Molten Core"] = true, ["Onyxia's Lair"] = true, ["Blackwing Lair"] = true, ["Zul'Gurub"] = true,
+                                ["Ruins of Ahn'Qiraj"] = true, ["Temple of Ahn'Qiraj"] = true, ["Ahn'Qiraj Temple"] = true, ["Naxxramas"] = true,
+                                ["Barrow Deeps"] = true, ["Hyjal Summit"] = true, ["The Hall of Thanes"] = true}
+                            local lord = L and L.Boss and L.Boss(e.d)
+                            history.lordFell = history.lordFell or {}
+                            return lord and lord.last and lord.e and W.lordFell and RAIDS[Clean(e.z or s.zone or "")] and not history.lordFell[Clean(e.d)]
+                        end)() then
+                            FlushKills()
+                            history.lordFell[Clean(e.d)] = true
+                            history.lordFellDay = history.lordFellDay or {}
+                            history.lordFellDay[Clean(e.d)] = index
+                            local lord = L.Boss(e.d)
+                            Say(teller:Say("lordFell", W.lordFell, {boss = Place((L.Short and L.Short(e.d)) or e.d), epithet = lord.e}), true, "kill")
+                            Title(89, (L.Short and L.Short(e.d)) or Clean(e.d))
                         else
                             pendingKills[#pendingKills + 1] = Place(e.d)
                         end
@@ -2432,9 +2819,12 @@ function ST.Tell(person, days, brief, retell)
                         local pt = {side = side, aRace = (lead:match("^[aeiou]") and "an" or "a") .. (theirRace and (" " .. theirRace) or ""), class = theirClass}
                         pt.ARace = Cap(pt.aRace)
                         local again = st.pvpDied and W.deathPvpAgain
-                        local line = teller:Say(again and "deathPvpAgain" or "deathPvp", again or W.deathPvp, pt)
+                        -- (the first of the other side ever to kill me, in a book kept from the start)
+                        local firstPvp = not again and (history.pvpDeaths or 0) == 0 and (person.startLevel or 99) <= 9 and W.deathPvpFirst or nil
+                        history.pvpDeaths = (history.pvpDeaths or 0) + 1
+                        local line = teller:Say((firstPvp and "deathPvpFirst") or (again and "deathPvpAgain") or "deathPvp", firstPvp or again or W.deathPvp, pt)
                         -- (a race only one side has needs no "of the Alliance")
-                        if theirRace then line = line:gsub(", one of the " .. side, ""):gsub(" of the " .. side, "") end
+                        if theirRace and not firstPvp then line = line:gsub(", one of the " .. side, ""):gsub(" of the " .. side, "") end
                         Say((line:gsub(" %.", "."):gsub("  ", " ")), true, "death")
                         st.pvpDied = true
                         -- ("Caught Alone" only when you were)
@@ -2653,7 +3043,16 @@ function ST.Tell(person, days, brief, retell)
                 for _, b in ipairs(bosses) do
                     local lore = L and L.Boss and L.Boss(b)
                     if lore and lore.last then Title(70, (L.Short and L.Short(b)) or b) end
-                    if lore and lore.after and not history.bosses[b] then
+                    -- (the lord's own sentence carried its epithet today: an after line that repeats
+                    -- the epithet's noun, "the swarm's general", is not said twice)
+                    local epithetSaid = history.lordFellDay and history.lordFellDay[Clean(b)] == index and lore and lore.e and lore.after
+                    if epithetSaid then
+                        epithetSaid = false
+                        for word in lore.e:lower():gmatch("%a%a%a%a%a+") do
+                            if lore.after:lower():find(word:gsub("s$", ""), 1, true) then epithetSaid = true end
+                        end
+                    end
+                    if lore and lore.after and not history.bosses[b] and not epithetSaid then
                         local countBefore = #out
                         Say((not st.raceSaid and lore.afterRace and lore.afterRace[race]) or lore.after, true, "lore")
                         if #out > countBefore then consequenceAt = #out end
@@ -2663,7 +3062,9 @@ function ST.Tell(person, days, brief, retell)
                 end
                 if dn then
                     if dn.first then
-                        if deathsHere == 0 and not consequence then Say(teller:Say("firstDungeonEnd", W.firstDungeonEnd, st), true) end
+                        st.dungeonD = Place(dn.name)
+                        if deathsHere == 0 and not consequence then Say(teller:Say("firstDungeonEnd", W.firstDungeonEnd, st), true)
+                        elseif deathsHere > 0 and W.firstDungeonDied then Say(teller:Say("firstDungeonDied", W.firstDungeonDied, st), true) end
                         Title(78, teller:Pick("tFirstDungeon", W.titles.firstDungeon))
                     end
                     -- The run that stopped short of the lord: the lord beat us, a veteran fell short, or the
@@ -3118,6 +3519,9 @@ function ST.Tell(person, days, brief, retell)
                         if foe then
                             local name = Clean(foe)
                             history.killers[name] = (history.killers[name] or 0) + 1
+                            if not history.firstKiller then
+                                history.firstKiller = (e.d and not e.boss) and ((e.a and ((name:match("^[AEIOUaeiou]") and "an " or "a ")) or "") .. Place(e.d)) or Place(foe)
+                            end
                             if e.d and not e.boss then
                                 local said = (e.a and ((name:match("^[AEIOUaeiou]") and "an " or "a ")) or "") .. Place(e.d)
                                 history.zoneMemory[s.zone or "?"] = {foe = said, day = dayNumber}
@@ -3178,6 +3582,7 @@ function ST.Tell(person, days, brief, retell)
                     -- (a level from an earlier part of the day, or half an hour and more before the last turn-in)
                     local early = W.levelEarly and f.levelT and lastQuestT > f.levelT + 300
                         and ((levelStretch and levelStretch < questStretch) or lastQuestT - f.levelT >= 1800)
+                        and not (mark == 10 and talentToday) -- (level ten with the talent point keeps its own line)
                     local earlyPool
                     local whereLevel = early and levelStretch and levelStretch < questStretch and stretches[levelStretch].zone
                     if whereLevel and stretches[questStretch].zone ~= whereLevel then
@@ -3190,7 +3595,26 @@ function ST.Tell(person, days, brief, retell)
                         Say(teller:Say("levelEarly", earlyPool or W.levelEarly, lt), mark ~= nil, "level")
                         if mark then Title(mark == 60 and 90 or 50, (teller:Pick("tLevel", W.titles.level) or ""):gsub("{level}", tostring(mark))) end
                     elseif mark then
-                        Say(teller:Say("milestone" .. mark, W.milestone[mark], lt), true, "level")
+                        -- (level ten with the first talent point, when the record has it)
+                        local markPool = (mark == 10 and talentToday and W.milestoneTalent) or W.milestone[mark]
+                        lt.class = (person.class or "adventurer"):lower()
+                        -- (forty on the day the mount itself is told: the level line leaves riding to the mount)
+                        if mark == 40 then
+                            local mountToday = false
+                            for _, s2 in ipairs(stretches) do
+                                for _, x in ipairs(s2.events) do
+                                    if x.k == "first" and (x.d == "mount" or (x.d == "class" and (x.z == "warhorse" or x.z == "felsteed"))) then mountToday = true end
+                                end
+                            end
+                            if mountToday then
+                                local kept = {}
+                                for _, line in ipairs(markPool) do
+                                    if not line:find("mount", 1, true) and not line:find("ridden", 1, true) and not line:find("ride", 1, true) then kept[#kept + 1] = line end
+                                end
+                                if #kept > 0 then markPool = kept end
+                            end
+                        end
+                        Say(teller:Say("milestone" .. mark, markPool, lt), true, "level")
                         Title(mark == 60 and 90 or 50, (teller:Pick("tLevel", W.titles.level) or ""):gsub("{level}", tostring(mark)))
                         if mark == 60 and W.lookBackLate and (person.startLevel or 0) >= 50 and history.firstDay and history.originPlace then
                             -- (a short book: where it began, and when)
@@ -3210,6 +3634,10 @@ function ST.Tell(person, days, brief, retell)
                             local enough = math.max(3600, 0.2 * (history.playTime or 0))
                             for name, secs in pairs(history.companionTime) do if secs >= enough and (not bestTime or secs > bestTime) then best, bestTime = name, secs end end
                             if best and W.lookBackPeople then Say(teller:Say("lookBackPeople", W.lookBackPeople, {names = N(best)}), true) end
+                            -- (the first thing that killed me, by name: how far the climb went)
+                            if history.firstKiller and W.lookBackKiller then
+                                Say(teller:Say("lookBackKiller", W.lookBackKiller, {killer = history.firstKiller, Killer = Cap(history.firstKiller)}), true)
+                            end
                         end
                     elseif W.levelsFast and (lt.from or 0) >= 20 and top - (lt.from or top) >= 3 then
                         -- (three levels and more in one day: the speed is the news)
@@ -3440,7 +3868,8 @@ function ST.Tell(person, days, brief, retell)
                 joinedMajors[#joinedOut] = majors[i] or majors[i + 1]
                 i = i + 2
             elseif plain and kinds[i] == "death" and kinds[i + 1] == "rez" and wa + wb <= 24 then
-                joinedOut[#joinedOut + 1] = a:gsub("%.$", "") .. ", but " .. b
+                -- ("..., but a stranger named Gorna brought me back": an article loses its capital after the join)
+                joinedOut[#joinedOut + 1] = a:gsub("%.$", "") .. ", but " .. (b:match("^An? ") and (b:sub(1, 1):lower() .. b:sub(2)) or b)
                 joinedMajors[#joinedOut] = majors[i] or majors[i + 1]
                 i = i + 2
             elseif b and kinds[i] == "kill" and kinds[i + 1] == "loot" and a:match("%.$") and not a:find(" and ", 1, true)

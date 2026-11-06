@@ -1608,6 +1608,37 @@ PB.shared.pvp = {
     "{I} took {my} first honorable kill that day, with {name} in the party.",
     "That was the day of {my} first honorable kill, with {name} there.",
 }
+-- More of your own moments on a day together (milestones lane, 2026-11-06): the
+-- swift mount, a legendary, the first blue, a set piece and the whole set, a
+-- world boss, a PvP rank. Gold and the talent point stay in your own book.
+PB.shared.epicMount = {
+    "{I} rode a swift mount for the first time that day, with {name} along.",
+    "That was the day {my} swift mount first came when {I} called.",
+}
+PB.shared.legendary = {
+    "{what} came to {me} that day, and {name} was there to see it.",
+    "{I} came away with {what}, one of a handful in the world, and {name} had been there.",
+}
+PB.shared.rare = {
+    "{what} came to {me} that day, the first thing of any worth {I} had owned.",
+    "{I} came away with {what}, the first thing {I} had found worth keeping.",
+}
+PB.shared.tier = {
+    "The first piece of {what} was {mine} that day.",
+    "{I} put on the first piece of {what} while {we} were there.",
+}
+PB.shared.setfull = {
+    "With the last piece, {I} wore the whole of {what}, and {name} saw it.",
+    "{I} wore all of {what} for the first time that day.",
+}
+PB.shared.worldboss = {
+    "{what} fell that day, and {pair} were both in the crowd under it.",
+    "{pair} were there when {what} came down.",
+}
+PB.sharedRank = {
+    "{I} was {rank} now, in the {mySide}'s own reckoning.",
+    "The {mySide} gave {me} the rank of {rank} that day.",
+}
 -- You brought them back from death (recorded with "Record more moments" on).
 PB.rezGiven = {
     "{I} brought {name} back from death.",
@@ -1801,3 +1832,14 @@ do
     we.fires10 = {"It was the tenth fire {name} and I had shared."}
     you.fires10 = {"It was the tenth fire {my} party had shared."}
 end
+
+-- Battlegrounds together, with the result the own journal keeps (2026-11-06,
+-- battlegrounds lane): one line for all the matches of one battleground that
+-- day. Tokens: {pair} {I} {my} {name} and {what}, {times}, {wins}, {part}.
+PB.shared.bgWon = {"{pair} went into {what} together, and won.", "{pair} fought in {what} together that {part}, and the match was won."}
+PB.shared.bgLost = {"{pair} went into {what} together, and lost.", "{pair} fought in {what} together that {part}, and the other side won."}
+PB.shared.bgDraw = {"{pair} fought in {what} together, and neither side won."}
+PB.shared.bgSeries = {"{pair} fought {times} in {what} that {part} and won {wins} of them.", "{Times} {pair} went into {what} together, and {wins} of those were won."}
+PB.shared.bgSeriesAll = {"{pair} fought {times} in {what} that {part} and won every one.", "{pair} went into {what} {times} together, and won each time."}
+PB.shared.bgSeriesNone = {"{pair} fought {times} in {what} that {part}, and lost every one."}
+PB.shared.bgFirstWin = {"It was the first battleground {I} had won, and {name} was in it.", "{name} was there for {my} first win in a battleground."}

@@ -95,9 +95,12 @@ end
 -- waits for 40, an epic mount for 60, raid gear for the raids. Otherwise the
 -- moment is still kept, marked unsure (u), and told without the claim. The
 -- level from which each is possible:
-local POSSIBLE = {mount = 40, epicmount = 60, epic = 20, legendary = 60, famous = 60, tier = 58, setfull = 45, raid = 50,
+local POSSIBLE = {mount = 40, epicmount = 60, epic = 20, legendary = 60, famous = 60, tier = 58, setfull = 45, raid = 14,
     worldboss = 60, landmark = 30, pvp = 10, tram = 1, flight = 1, zeppelin = 1, boat = 1, continent = 1,
-    foeseen = 1, battleground = 10, rezother = 10, rare = 1, snow = 1, rarebeast = 1, aucsale = 1}
+    foeseen = 1, battleground = 10, rezother = 10, rare = 1, snow = 1, rarebeast = 1, aucsale = 1, talent = 10, craftepic = 40}
+-- (raid 14: the Hall of Thanes is a raid for levels 14 to 18 on Forever)
+-- A set piece's gate by tier: the dungeon set (0) from 45, the Molten Core set from 58, the rest from 60.
+local TIER_GATE = {[0] = 45, [1] = 58, [2] = 60, [2.5] = 60, [3] = 60}
 -- Class milestones: a spell learned (most from a class quest), by id, with the
 -- level it comes at (the gate for "the first time").
 local CLASS_SPELLS = {
@@ -110,6 +113,7 @@ local CLASS_SPELLS = {
     [3562] = {"teleport", 20}, [3565] = {"teleport", 20},
 }
 CLASS_SPELLS[18960] = {"moonglade", 10}
+CLASS_SPELLS[688] = {"imp", 1} -- (a warlock's first demon)
 A.SelfClassSpells = CLASS_SPELLS
 -- Someone of your party died (Journal.lua sees it): kept in your own journal too.
 function A.SelfPartyDeath(name, boss)
@@ -128,7 +132,7 @@ local function First(key, entry)
     local firsts = Firsts()
     if not firsts or firsts[key] then return end
     firsts[key] = Now()
-    local possible, start = entry.gate or POSSIBLE[entry.d], StartLevel()
+    local possible, start = entry.gate or (entry.d == "tier" and TIER_GATE[entry.c]) or POSSIBLE[entry.d], StartLevel()
     entry.gate = nil
     -- A journal begun before level 10 saw it all: every first is sure. Begun
     -- later, a first is sure only above its level gate (a mount at 40...).
@@ -211,6 +215,12 @@ local FAMOUS = {[18608] = "Benediction", [18609] = "Anathema", [19019] = "Thunde
 -- Tier sets by set id: 1 (Molten Core) and 2 (Blackwing Lair).
 local TIERS = {[164] = 1, [201] = 1, [202] = 1, [203] = 1, [204] = 1, [206] = 1, [207] = 1, [208] = 1, [209] = 1,
     [210] = 2, [211] = 2, [212] = 2, [213] = 2, [214] = 2, [215] = 2, [216] = 2, [217] = 2, [218] = 2}
+-- The dungeon set (0), the Ahn'Qiraj set (2.5) and the Naxxramas set (3), by the
+-- set ids of the 1.12 client; a wrong id only misses a line. The level from
+-- which a first piece is a sure first, by tier.
+for id = 181, 189 do TIERS[id] = 0 end
+for id = 493, 501 do TIERS[id] = 2.5 end
+for id = 521, 529 do TIERS[id] = 3 end
 local WORLD_BOSSES = {["Azuregos"] = true, ["Lord Kazzak"] = true, ["Emeriss"] = true, ["Lethon"] = true, ["Taerar"] = true,
     ["Ysondre"] = true}
 -- An item's name, quality and set id (GetItemInfo's 1st, 3rd and 16th values).
@@ -499,6 +509,14 @@ local function Crafted(spellID)
         local known = false
         for _, name in ipairs(entry.m) do if name == made then known = true end end
         if not known then entry.m[#entry.m + 1] = made end
+    end
+    -- The first epic made by your own hands ("Record more moments"): the recipe's
+    -- output item and its quality.
+    if A.MoreMomentsOn() and C_TradeSkillUI and C_TradeSkillUI.GetRecipeOutputItemData then
+        local output = Ask(C_TradeSkillUI.GetRecipeOutputItemData, spellID)
+        local link = type(output) == "table" and (Text(output.hyperlink) or (Public(output.itemID) and tonumber(output.itemID))) or nil
+        local name, quality = link and ItemInfo(link)
+        if name and quality and quality >= 4 then First("craftepic", {d = "craftepic", z = name, n = profession}) end
     end
 end
 
@@ -794,15 +812,208 @@ local function RareHealth()
 end
 rareFrame:SetScript("OnEvent", RareHealth)
 A.SelfRareHealth = RareHealth -- (the tests)
+-- Gold: the first gold piece, the first hundred, the first thousand ({k = "first",
+-- d = "gold", c = 1 | 100 | 1000}). The purse is compared only with a value seen
+-- this session: the first look after a login, a /reload or turning the setting
+-- on only seeds, so a purse already past a mark never "reaches" it. Each mark
+-- is a first once a life (spending below it and earning it back is nothing).
+local GOLD_MARKS = {{1, 5}, {100, 20}, {1000, 40}} -- gold, and the level from which the first is sure
+local moneySeen
+local function MoneyChanged()
+    local now = Num(Ask(GetMoney))
+    if not now then return end
+    local before = moneySeen
+    moneySeen = now
+    if not before or now <= before then return end
+    for _, mark in ipairs(GOLD_MARKS) do
+        local copper = mark[1] * 10000
+        if before < copper and now >= copper then First("gold:" .. mark[1], {d = "gold", c = mark[1], gate = mark[2]}) end
+    end
+end
+A.SelfMoneyChanged = MoneyChanged -- (the tests)
+-- The first talent point to spend, at level ten: the game's own event, confirmed
+-- by its own reader (a point already earned before the journal began is not told).
+local function TalentEarned()
+    local info = C_SpecializationInfo
+    if not info or type(info.HasPlayerEarnedATalentPoint) ~= "function" then return end
+    if Ask(info.HasPlayerEarnedATalentPoint) == true and (tonumber(Ask(UnitLevel, "player")) or 0) >= 10 then First("talent", {d = "talent"}) end
+end
+-- A PvP rank reached ({k = "rank", d = title, c = rank, n = lifetime honorable kills}):
+-- the rank frame's own reader (C_MajorFactions, faction 2800), the title from
+-- UnitPVPName (read through Public), else the game's PVP_RANK_<n>_<side> string.
+-- Only a rank above one seen this session counts; the first look seeds.
+local PVP_RANK_FACTION = 2800
+local rankSeen
+local function RankTitle(rank)
+    local full, me = Text(Ask(UnitPVPName, "player")), Text(Ask(UnitName, "player"))
+    if full and me and full ~= me then
+        local title = full:gsub("%s*" .. me:gsub("%p", "%%%0") .. "%s*$", "")
+        if title ~= "" and title ~= full then return title end
+    end
+    local base = Enum and type(Enum.PvPRanks) == "table" and tonumber(Enum.PvPRanks.Rank_1)
+    local side = A.PlayerFaction and A.PlayerFaction() == "Horde" and 1 or 0
+    local key = base and ("PVP_RANK_" .. (base + rank - 1) .. "_" .. side)
+    if not key then return nil end
+    if type(GetText) == "function" then
+        local s = Text(Ask(GetText, key))
+        if s then return s end
+    end
+    return Text(_G[key])
+end
+local function RankChanged()
+    local mf = C_MajorFactions
+    if not mf or type(mf.GetMajorFactionProgressionInfo) ~= "function" then return end
+    local info = Ask(mf.GetMajorFactionProgressionInfo, PVP_RANK_FACTION)
+    local rank = type(info) == "table" and Num(info.renownLevel) or nil
+    if not rank then return end
+    local before = rankSeen
+    rankSeen = rank
+    if before == nil or rank <= before then return end
+    local title = RankTitle(rank)
+    if not title then return end
+    Add({k = "rank", d = title, c = rank, n = GetPVPLifetimeStats and Num((Ask(GetPVPLifetimeStats))) or nil})
+end
+A.SelfRankChanged = RankChanged -- (the tests)
+-- A battleground match at its end screen (PVP_MATCH_COMPLETE): the result, the
+-- length, my own score line, the battleground's own marks (flags, bases, towers,
+-- graveyards) and listed people on my side, written onto the `bg` entry that
+-- entering the match began ({r = "won"|"lost"|"draw", dur = seconds, kb, hk, dt,
+-- hon, m = {fc, fr, ba, bd, ga, gd, ta, td, mc}, top = true, c = {names}}).
+-- Score lines are secret while a match runs (SecretInActivePvPMatch); they are
+-- read only after the end, through Num, and a field is kept only when it came
+-- back public. A match left early keeps the plain entry.
+local FACTION_INDEX = {Horde = 0, Alliance = 1}
+local function MySide()
+    local mine = Num((Ask(GetBattlefieldArenaFaction)))
+    if mine == nil then
+        local group = Text((Ask(UnitFactionGroup, "player")))
+        mine = group and FACTION_INDEX[group] or nil
+    end
+    return mine
+end
+local function OpenMatch()
+    local journal = Journal()
+    if not journal or not inside then return nil end
+    for i = #journal, math.max(1, #journal - 40), -1 do
+        local entry = journal[i]
+        if entry.k == "bg" and entry.d == inside and not entry.r and Now() - (entry.t or 0) < 3 * 3600 then return entry end
+    end
+    return nil
+end
+local function ShortName(name)
+    name = Text(name)
+    return name and (name:gsub("%-.*$", "")) or nil
+end
+local function ScoreLine(index)
+    local fn = C_PvP and C_PvP.GetScoreInfo
+    if type(fn) ~= "function" then return nil end
+    local ok, info = pcall(fn, index)
+    return ok and type(info) == "table" and info or nil
+end
+local function ScoreCount() return math.min(Num((Ask(GetNumBattlefieldScores))) or 0, 80) end
+local function MyScoreLine()
+    local guid = Ask(GetPlayerGuid) or Ask(UnitGUID, "player")
+    local byGuid = C_PvP and C_PvP.GetScoreInfoByPlayerGuid
+    if guid and type(byGuid) == "function" then
+        local ok, info = pcall(byGuid, guid)
+        if ok and type(info) == "table" then return info end
+    end
+    local me = ShortName(Ask(UnitName, "player"))
+    for i = 1, ScoreCount() do
+        local info = ScoreLine(i)
+        if info and me and ShortName(info.name) == me then return info end
+    end
+    return nil
+end
+-- The battleground's own columns, by the words in their names (the ids are not documented).
+local STAT_KEYS = {{"flag", "captur", "fc"}, {"flag", "return", "fr"}, {"base", "assault", "ba"}, {"base", "defend", "bd"},
+    {"graveyard", "assault", "ga"}, {"graveyard", "defend", "gd"}, {"tower", "assault", "ta"}, {"tower", "destroy", "ta"},
+    {"tower", "defend", "td"}, {"mine", "captur", "mc"}}
+local matchScanned = setmetatable({}, {__mode = "k"})
+local function ReadMatch(entry)
+    if not entry then return end
+    local info = MyScoreLine()
+    if info then
+        for field, key in pairs({killingBlows = "kb", honorableKills = "hk", deaths = "dt", honorGained = "hon"}) do
+            if entry[key] == nil then entry[key] = Num(info[field]) end
+        end
+        if entry.m == nil and type(info.stats) == "table" then
+            local marks, any = {}, false
+            for _, stat in ipairs(info.stats) do
+                local name = type(stat) == "table" and Text(stat.name)
+                local value = name and Num(stat.pvpStatValue)
+                if value and value > 0 then
+                    local low = name:lower()
+                    for _, k in ipairs(STAT_KEYS) do
+                        if low:find(k[1], 1, true) and low:find(k[2], 1, true) then marks[k[3]] = (marks[k[3]] or 0) + value; any = true; break end
+                    end
+                end
+            end
+            if any then entry.m = marks end
+        end
+    end
+    -- The other lines on my side: the most killing blows, and listed people in the match.
+    if matchScanned[entry] then return end
+    local mine, me = MySide(), ShortName(Ask(UnitName, "player"))
+    if mine == nil then return end
+    local best, allPublic, mates = 0, true, {}
+    for i = 1, ScoreCount() do
+        local line = ScoreLine(i)
+        local name = line and ShortName(line.name)
+        if name and Num(line.faction) == mine and name ~= me then
+            local kb = Num(line.killingBlows)
+            if kb == nil then allPublic = false elseif kb > best then best = kb end
+            local key = A.PersonKey and A.PersonKey(Text(line.name))
+            local person = key and A.People and A.People[key]
+            if person and not person.npc and not withOpen[key] and #mates < 4 then mates[#mates + 1] = Text(person.name) or name end
+        end
+    end
+    if #mates > 0 then entry.c = mates end
+    if allPublic and entry.kb and entry.kb > best then entry.top = true end
+    matchScanned[entry] = allPublic or nil
+end
+local function MatchComplete(winner, duration)
+    local entry = OpenMatch()
+    if not entry then return end
+    local mine = MySide()
+    winner = Num(winner)
+    if winner == nil then winner = Num((Ask(C_PvP and C_PvP.GetActiveMatchWinner))) end
+    if mine ~= nil and winner ~= nil then
+        entry.r = (winner == mine and "won") or (winner == (mine + 1) % 2 and "lost") or "draw"
+    end
+    local seconds = Num(duration) or Num((Ask(C_PvP and C_PvP.GetActiveMatchDuration)))
+    if seconds and seconds > 0 then entry.dur = math.floor(seconds) end
+    pcall(RequestBattlefieldScoreData or function() end)
+    if C_Timer and C_Timer.After then
+        C_Timer.After(1.5, function() ReadMatch(entry) end)
+        C_Timer.After(6, function() ReadMatch(entry) end)
+    else
+        ReadMatch(entry)
+    end
+end
+A.SelfMatchComplete = MatchComplete -- (the tests)
 local MORE_EVENTS = {"ITEM_TEXT_BEGIN", "UI_INFO_MESSAGE", "LEARNED_SPELL_IN_SKILL_LINE", "TRAINER_SHOW", "TRAINER_CLOSED", "UPDATE_FACTION",
-    "SKILL_LINES_CHANGED", "PLAYER_REGEN_ENABLED"}
+    "SKILL_LINES_CHANGED", "PLAYER_REGEN_ENABLED", "PLAYER_MONEY", "CHARACTER_POINTS_CHANGED", "PLAYER_PVP_RANK_CHANGED",
+    "MAJOR_FACTION_RENOWN_LEVEL_CHANGED", "PVP_MATCH_COMPLETE"}
 -- What the more-moments recorder does with an event (its own function: the main
 -- handler below is at Lua 5.1's limit of upvalues).
 local function MoreEvent(event, ...)
     if event == "PLAYER_ENTERING_WORLD" then
         SeedHonor()
-        -- (the standings and skills are seeded once the game has filled them in)
-        C_Timer.After(20, function() ScanReputation(); ScanSkills() end)
+        -- (a /reload at a battleground's end screen: the match is still complete)
+        if Ask(C_PvP and C_PvP.IsMatchComplete) == true then C_Timer.After(3, function() MatchComplete() end) end
+        moneySeen, rankSeen = nil, nil
+        -- (the standings, skills, purse and rank are seeded once the game has filled them in)
+        C_Timer.After(20, function() ScanReputation(); ScanSkills(); MoneyChanged(); RankChanged() end)
+    elseif event == "PLAYER_MONEY" then
+        MoneyChanged()
+    elseif event == "CHARACTER_POINTS_CHANGED" then
+        TalentEarned()
+    elseif event == "PLAYER_PVP_RANK_CHANGED" or event == "MAJOR_FACTION_RENOWN_LEVEL_CHANGED" then
+        local arg = ...
+        if (event == "PLAYER_PVP_RANK_CHANGED" and (arg == "player" or arg == nil)) or (event == "MAJOR_FACTION_RENOWN_LEVEL_CHANGED" and Num(arg) == PVP_RANK_FACTION) then
+            C_Timer.After(1, RankChanged)
+        end
     elseif event == "CHAT_MSG_SYSTEM" then
         -- (a duel's end; or a discovery, a flight path or a trainer's spell that
         -- reached chat alone, in the game's own words)
@@ -824,6 +1035,8 @@ local function MoreEvent(event, ...)
         if not repQueued then repQueued = true; C_Timer.After(2, ScanReputation) end
     elseif event == "SKILL_LINES_CHANGED" then
         if not skillQueued then skillQueued = true; C_Timer.After(2, ScanSkills) end
+    elseif event == "PVP_MATCH_COMPLETE" then
+        MatchComplete(...)
     elseif event == "PLAYER_REGEN_ENABLED" then
         lastCombatEnd = Now()
     end
@@ -1236,9 +1449,13 @@ function A.UpdateSelfJournalEvents()
         -- (off: the next time it is turned on starts afresh)
         RareUnwatch()
         trainerOpen, repRead, skillRead = false, {}, {}
+        moneySeen, rankSeen = nil, nil
     else
         SeedHonor()
-        -- (standings and skills seeded now, so the first change after turning it on is told)
+        -- (standings, skills, purse and rank seeded now, so the first change after turning it on is told)
+        moneySeen, rankSeen = nil, nil
+        MoneyChanged()
+        RankChanged()
         if C_Timer and C_Timer.After then
             if not repQueued then repQueued = true; C_Timer.After(2, ScanReputation) end
             if not skillQueued then skillQueued = true; C_Timer.After(2, ScanSkills) end

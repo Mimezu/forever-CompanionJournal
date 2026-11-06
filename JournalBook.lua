@@ -59,6 +59,7 @@ local function About(seconds)
     if frac < 0.7 then return "over " .. (whole == 1 and "an hour" or (Words(whole) .. " hours")) end
     return "nearly " .. Words(whole + 1) .. " hours"
 end
+A.JournalAbout = About -- (the storytellers: a battleground match's length)
 local function Hour(t) return tonumber(date and date("%H", t or 0) or 12) or 12 end
 local function PartOfDay(t)
     local h = Hour(t)
@@ -138,7 +139,9 @@ local function Add(scene, entry)
     elseif k == "pdeath" and entry.n then
         scene.events[#scene.events + 1] = {k = "pdeath", t = entry.t, n = entry.n, boss = entry.boss}
     elseif (k == "guild" or k == "home" or k == "bg" or k == "hearth") and (entry.d or k == "hearth") then
-        scene.events[#scene.events + 1] = {k = k, t = entry.t, d = entry.d}
+        scene.events[#scene.events + 1] = {k = k, t = entry.t, d = entry.d,
+            -- (a battleground match's end: result, length, score line, marks, the most blows, listed people)
+            r = entry.r, dur = entry.dur, kb = entry.kb, hk = entry.hk, dt = entry.dt, hon = entry.hon, m = entry.m, top = entry.top, c = entry.c}
     elseif k == "craft" and entry.d then
         scene.craft = scene.craft or {}
         local line = scene.craft[entry.d] or {count = 0, made = {}}
@@ -175,8 +178,9 @@ local function Add(scene, entry)
             scene.explored[#scene.explored + 1] = entry.d
             scene.events[#scene.events + 1] = {k = "explore", t = entry.t, d = entry.d}
         end
-    elseif (k == "taxi" or k == "rep" or k == "skill" or k == "duel" or k == "rarekill") and entry.d then
-        scene.events[#scene.events + 1] = {k = k, t = entry.t, d = entry.d, s = entry.s, c = entry.c, w = entry.w, fled = entry.fled, sz = entry.sz}
+    elseif (k == "taxi" or k == "rep" or k == "skill" or k == "duel" or k == "rarekill" or k == "rank") and entry.d then
+        scene.events[#scene.events + 1] = {k = k, t = entry.t, d = entry.d, s = entry.s, c = entry.c, w = entry.w, fled = entry.fled, sz = entry.sz,
+            n = k == "rank" and tonumber(entry.n) or nil}
     elseif k == "learn" then
         scene.events[#scene.events + 1] = {k = "learn", t = entry.t, c = tonumber(entry.c) or 0, m = type(entry.m) == "table" and entry.m or {}}
     elseif k == "hk" then
@@ -417,6 +421,8 @@ local UNSURE = {
     famous = function(e) return e.z and (Q(e.z) .. " was mine at last.") end,
     tier = function(e) return e.z and ("I put on a piece of " .. Q(e.z) .. ".") end,
     setfull = function(e) return e.z and ("I wore the whole of " .. Q(e.z) .. ".") end,
+    gold = function(e) return e.c and ("I had " .. (({[1] = "a gold piece", [100] = "a hundred gold", [1000] = "a thousand gold"})[tonumber(e.c)] or "gold") .. " to my name.") end,
+    craftepic = function(e) return e.z and ("I made " .. Q(e.z) .. " myself.") end,
 }
 A.JournalUnsureFirst = function(event) local f = UNSURE[event.d]; return f and f(event) or nil end
 -- Class milestones, plainly.
@@ -459,6 +465,12 @@ local function FirstText(event, seed)
         return "I rode my own mount for the first time."
     elseif event.d == "epicmount" then
         return "I rode my first epic mount."
+    elseif event.d == "gold" and event.c then
+        return ({[1] = "My purse held its first gold piece.", [100] = "I had a hundred gold for the first time.", [1000] = "I had a thousand gold for the first time."})[tonumber(event.c)]
+    elseif event.d == "talent" then
+        return "I had my first talent point to spend."
+    elseif event.d == "craftepic" and event.z then
+        return "I made " .. Q(event.z) .. ", my first epic."
     elseif event.d == "sunset" and event.z then
         return "I watched the sun go down at " .. P(event.z) .. "."
     elseif event.d == "zeppelin" then
@@ -552,7 +564,8 @@ local function Deeds(scene, name, v, inside)
             Flush()
             sentences[#sentences + 1] = "I set my hearthstone in " .. P(event.d) .. "."
         elseif event.k == "bg" and event.d then
-            clauses[#clauses + 1] = "fought in " .. P(event.d)
+            local result = (event.r == "won" and " and won") or (event.r == "lost" and " and lost") or (event.r == "draw" and ", and neither side won") or ""
+            clauses[#clauses + 1] = "fought in " .. P(event.d) .. result
         elseif event.k == "swim" and event.d then
             clauses[#clauses + 1] = "swam a long way in " .. P(event.d)
         elseif event.k == "nightflight" then
@@ -585,6 +598,9 @@ local function Deeds(scene, name, v, inside)
         elseif event.k == "skill" and event.d then
             Flush()
             sentences[#sentences + 1] = "My " .. event.d .. " reached " .. tostring(event.c) .. "."
+        elseif event.k == "rank" and event.d then
+            Flush()
+            sentences[#sentences + 1] = "I reached the rank of " .. event.d .. "."
         elseif event.k == "rarekill" and event.d then
             Flush()
             sentences[#sentences + 1] = "I killed " .. P(event.d) .. ", a rare creature" .. (event.sz and (", in " .. PA(event.sz)) or "") .. "."
@@ -848,6 +864,7 @@ end
 -- yourself are kept as they are (returned separately).
 local function SelfDayHighlights(person, day)
     local seed = day.key .. "self"
+    local bgs, bgOrder, bgFirst = {}, {}, {} -- battleground matches by name: count, wins, losses; the first ever
     local minutes, zones, zoneSeen, quests, dungeons, bosses, levels, deaths, with, withSeen, quotes = 0, {}, {}, 0, {}, {}, {}, {}, {}, {}, {}
     local closes, caves, gather, craft, firsts = {}, {}, {}, {}, {}
     for _, scene in ipairs(day.scenes) do
@@ -885,9 +902,18 @@ local function SelfDayHighlights(person, day)
                 firsts[#firsts + 1] = "I became " .. (STANDING_WORDS[tonumber(event.s)] or "known") .. " with " .. P(event.d) .. "."
             elseif event.k == "skill" and event.d and tonumber(event.c) == 300 then
                 firsts[#firsts + 1] = "My " .. event.d .. " reached 300."
+            elseif event.k == "rank" and event.d then
+                firsts[#firsts + 1] = "I reached the rank of " .. event.d .. "."
             elseif event.k == "rarekill" and event.d then
                 firsts[#firsts + 1] = "I killed " .. P(event.d) .. ", a rare creature."
+            elseif event.k == "bg" and event.d then
+                local tally = bgs[event.d]
+                if not tally then tally = {n = 0, won = 0, lost = 0}; bgs[event.d] = tally; bgOrder[#bgOrder + 1] = event.d end
+                tally.n = tally.n + 1
+                if event.r == "won" then tally.won = tally.won + 1 elseif event.r == "lost" then tally.lost = tally.lost + 1 end
             end
+            -- (the first battleground ever and its matches: one sentence, below)
+            if event.k == "first" and event.d == "battleground" and event.z then bgFirst[event.z] = FirstText(event) end
         end
         if scene.explored and #scene.explored >= 3 then
             firsts[#firsts + 1] = "I discovered " .. Words(#scene.explored) .. " new places" .. (scene.zone and (" in " .. P(scene.zone)) or "") .. "."
@@ -910,7 +936,27 @@ local function SelfDayHighlights(person, day)
         Say(most and (List(names) .. (#names == 1 and " was" or " were") .. " with me for most of it.")
             or (List(names) .. " joined me for " .. About(with[1].seconds) .. "."))
     end
-    for _, first in ipairs(firsts) do Say(first) end
+    for _, first in ipairs(firsts) do
+        local merged = false
+        for _, text in pairs(bgFirst) do if text == first then merged = true end end
+        if not merged then Say(first) end
+    end
+    for _, name in ipairs(bgOrder) do
+        local tally = bgs[name]
+        local result = ""
+        if tally.won + tally.lost == tally.n and tally.n > 0 then
+            if tally.n == 1 then result = tally.won == 1 and " and won" or " and lost"
+            elseif tally.won == tally.n then result = " and won every one"
+            elseif tally.won == 0 then result = " and lost every one"
+            else result = " and won " .. Words(tally.won) end
+        end
+        local count = tally.n == 2 and " twice" or tally.n > 2 and (" " .. Words(tally.n) .. " times") or ""
+        if bgFirst[name] then
+            Say("I fought in " .. P(name) .. " for the first time" .. (tally.n >= 2 and (", " .. Words(tally.n) .. " matches,") or "") .. result .. ".")
+        else
+            Say("I fought in " .. P(name) .. count .. result .. ".")
+        end
+    end
     if #dungeons > 0 then Say("I went into " .. List(dungeons) .. ".") end
     if #caves > 0 then Say("I went down into " .. List(caves) .. ".") end
     local gathered = GatherClauses(gather)
@@ -1136,7 +1182,8 @@ function A.JournalSceneItems(person, scene)
         elseif event.k == "home" and event.d then
             items[#items + 1] = {glyph = "moon", text = "Hearthstone set in " .. P(event.d)}
         elseif event.k == "bg" and event.d then
-            items[#items + 1] = {glyph = "swords", text = "Fought in " .. P(event.d)}
+            local verb = (event.r == "won" and "Won in ") or (event.r == "lost" and "Lost in ") or "Fought in "
+            items[#items + 1] = {glyph = "swords", text = verb .. P(event.d)}
         end
         i = i + 1
     end

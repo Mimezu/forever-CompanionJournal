@@ -6,6 +6,16 @@ journal, the group popup and the campfire now live here, in their own window.
 
 ## 1.13.0: a story of your own
 
+- **Battlegrounds as a story.** With "Record more moments" on, the end screen of a
+  battleground is kept: won or lost, how long it ran, your flags, bases, towers and
+  graveyards, whether you had the most killing blows on your side, and which of your
+  people were in the match (with you or on the same side). Your chapter tells an
+  evening of matches as one passage in order (the defeats, the first win you ever
+  had, a win after defeats, the long one, the company), says what Warsong Gulch,
+  Arathi Basin or Alterac Valley is the first time you are there, and counts a streak
+  across evenings. Queue stops between matches are no longer told as travel. The
+  companion book tells the matches you fought together with their result. Without
+  the setting, only "fought in" is kept, as before.
 - **More of your road is told.** Exact quest scenes, written from each quest's own
   text with two setups and two outcomes, went from 930 to about 2,260: every race's
   starting areas, the shared zones from 10 to 60 for both factions, dungeon chains
@@ -25,7 +35,21 @@ journal, the group popup and the campfire now live here, in their own window.
 - **Record more moments** (Settings > Recording, off by default): books and plaques
   read, areas discovered, flight paths, trainer spells, reputation standings, duels,
   trade-skill ranks, open-world honorable kills, rare creatures killed, and raising a
-  companion from death.
+  companion from death. Also, with it on: the first gold piece, the first hundred and
+  the first thousand gold, the first talent point (in the level-ten line), PvP ranks,
+  and the first epic you craft yourself.
+- **The big moments of a life, told as moments.** Level ten to sixty each say what the
+  level changes; the first mount ends forty levels of walking; the swift mount names
+  its thousand gold when both fall on one day; the first epic, the first set piece
+  (and which raid holds the rest), the whole set with the weeks and visits it took, a
+  world boss with its epithet, the first raid, a raid lord's first fall (Ragnaros,
+  Onyxia, Nefarian, Hakkar, Ossirian, C'Thun, Kel'Thuzad) in its own sentence, a trade
+  at three hundred by its own noun, exalted with the factions that give something for
+  it, the first dungeon even when it killed you, the first of the other side to kill
+  you, and the level-sixty look-back names the first thing that ever killed you. The
+  dungeon set, the Ahn'Qiraj and Naxxramas sets count as set pieces. A companion's
+  book now shares your swift mount, legendary, first blue, set pieces, world boss and
+  rank when they were there.
 - **Fewer machine tells.** Chapters a few days apart open on the place, not the date;
   a weekly companion's rhythm is said once; role lines never repeat; level sixty is
   told once; kills in one run make one sentence; place lines and articles fixed ("on

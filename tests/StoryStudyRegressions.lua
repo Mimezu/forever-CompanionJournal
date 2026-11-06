@@ -36,7 +36,9 @@ local function render(p, brief, retell, player, voice)
     return chapters[#chapters] or '', table.concat(chapters, '\n\n')
 end
 local firstPhrases = {'never been inside a dungeon', 'first time I had gone into such a place',
-    'my first time in such a place', 'first dungeon I had ever', 'first dungeon you had ever', 'first dungeon we had ever'}
+    'my first time in such a place', 'first dungeon I had ever', 'first dungeon you had ever', 'first dungeon we had ever',
+    -- (the milestones lane's shapes, 2026-11-06)
+    'first dungeon of my life', 'never been inside such a place', "first time under a dungeon's roof", 'was my first dungeon'}
 local function noFalseFirst(text)
     for _, phrase in ipairs(firstPhrases) do check(not text:find(phrase, 1, true), 'false first dungeon: ' .. text) end
 end

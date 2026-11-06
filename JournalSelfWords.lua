@@ -520,9 +520,14 @@ W.dungeonRegular = {
 }
 -- The very first dungeon of your life, after it.
 W.firstDungeonEnd = {
-    "It was the first time I had gone into such a place.",
-    "I had never been inside a dungeon before.",
-    "It was my first time in such a place, and I came out again.",
+    "{dungeonD} was the first dungeon of my life, and I walked out of it on my feet.",
+    "I had never been inside such a place before, and I came out again.",
+    "It was my first time under a dungeon's roof, and I came out with the others.",
+}
+-- The first dungeon of your life, when it killed you ({dungeonD}).
+W.firstDungeonDied = {
+    "{dungeonD} was my first dungeon, and it killed me once before we were done.",
+    "It was the first dungeon of my life. It cost me a death, and I came out all the same.",
 }
 ---------------------------------------------------------------------------
 -- The same dungeon again (2026-11-06): each run told by its place in the
@@ -873,12 +878,27 @@ W.levels = {
     "I was level {from} when I set out and level {level} when I stopped.",
 }
 W.milestone = {
-    [10] = {"I reached level ten.", "Level ten, at last."},
-    [20] = {"I reached level twenty.", "Level twenty."},
-    [30] = {"I reached level thirty.", "Level thirty."},
-    [40] = {"I reached level forty.", "Level forty, and a long way still to go."},
-    [50] = {"I reached level fifty.", "I reached level fifty, and the end was in sight."},
-    [60] = {"I reached level sixty, as high as any adventurer climbs."},
+    [10] = {"I reached level ten that day, and the first roads were behind me.",
+        "Level ten came that day. The trainers had more to teach me now.",
+        "I made level ten, the first number of any weight."},
+    [20] = {"I reached level twenty, a third of the way to the top.",
+        "Level twenty came that day, and with it the roads of the middle country.",
+        "I made level twenty. The middle country was open to me now."},
+    [30] = {"I reached level thirty, halfway to the top.",
+        "Level thirty came that day. Half the climb was done.",
+        "I made level thirty. The second half of the climb began."},
+    [40] = {"I reached level forty, the level at which an adventurer may ride.",
+        "Level forty came that day, and with it the right to a mount of my own.",
+        "I made level forty. From there, the road is ridden.",
+        -- (the day the mount itself is told, the level leaves riding to it)
+        "I reached level forty, with twenty levels left to climb.",
+        "Level forty came that day, two thirds of the way to the top."},
+    [50] = {"I reached level fifty. Ten more stood between me and the top.",
+        "Level fifty came that day, with ten left to climb.",
+        "I made level fifty. The top came into sight."},
+    [60] = {"I reached level sixty, as high as any adventurer climbs.",
+        "I reached level sixty. There was no sixty-one to climb to.",
+        "That day I reached level sixty, the last level there is."},
 }
 -- Level sixty, looking back to the recorded beginning. The quest and death
 -- scenes already tell the intervening work; a second tally obscures that ending.
@@ -2120,15 +2140,32 @@ end
 -- NEW POOL (engine hook: the first mount, keyed by its kind, from the summon spell's name: Raptor,
 -- Wolf, Kodo, Horse/Stallion/Mare/Pinto/Palomino, Ram, Mechanostrider, Saber, Skeletal). No tokens.
 -- "For the first time, I rode my own mount." said of a troll; a Darkspear rides a raptor.
+-- ({zoneD}: the day's country; forty levels of walking is what a first mount ends)
 W.mountFirstKind = {
-    raptor = {"For the first time, I rode a raptor of my own.", "I had a raptor of my own at last, and the land went by faster."},
-    wolf = {"For the first time, I rode a wolf of my own.", "I had a wolf of my own at last, and the land went by faster."},
-    kodo = {"For the first time, I rode a kodo of my own.", "I had a kodo of my own at last, slow to start and hard to stop."},
-    horse = {"For the first time, I rode a horse of my own.", "I had a horse of my own at last, and the land went by faster."},
-    ram = {"For the first time, I rode a ram of my own.", "I had a ram of my own at last, and the land went by faster."},
-    mechanostrider = {"For the first time, I rode a mechanostrider of my own.", "I had a mechanostrider of my own at last, and it clanked the whole way."},
-    saber = {"For the first time, I rode a nightsaber of my own.", "I had a nightsaber of my own at last, and the land went by faster."},
-    skeletal = {"For the first time, I rode a skeletal horse of my own.", "I had a skeletal horse of my own at last, and the land went by faster."},
+    raptor = {"For the first time, I rode a raptor of my own, and {zoneD} went by faster than my feet had ever managed.",
+        "A raptor of my own came when I called. Forty levels of walking ended that day.",
+        "I had a raptor of my own at last, and the long walks were over."},
+    wolf = {"For the first time, I rode a wolf of my own, and {zoneD} went by faster than my feet had ever managed.",
+        "A wolf of my own came when I called. Forty levels of walking ended that day.",
+        "I had a wolf of my own at last, and the long walks were over."},
+    kodo = {"For the first time, I rode a kodo of my own, slow to start and hard to stop.",
+        "A kodo of my own came when I called. Forty levels of walking ended that day.",
+        "I had a kodo of my own at last, and {zoneD} went by under its feet instead of mine."},
+    horse = {"For the first time, I rode a horse of my own, and {zoneD} went by faster than my feet had ever managed.",
+        "A horse of my own came when I called. Forty levels of walking ended that day.",
+        "I had a horse of my own at last, and the long walks were over."},
+    ram = {"For the first time, I rode a ram of my own, and {zoneD} went by faster than my feet had ever managed.",
+        "A ram of my own came when I called. Forty levels of walking ended that day.",
+        "I had a ram of my own at last, and the long walks were over."},
+    mechanostrider = {"For the first time, I rode a mechanostrider of my own, and {zoneD} went by faster than my feet had ever managed.",
+        "A mechanostrider of my own came when I called. Forty levels of walking ended that day.",
+        "I had a mechanostrider of my own at last, and it clanked the whole way."},
+    saber = {"For the first time, I rode a nightsaber of my own, and {zoneD} went by faster than my feet had ever managed.",
+        "A nightsaber of my own came when I called. Forty levels of walking ended that day.",
+        "I had a nightsaber of my own at last, and the long walks were over."},
+    skeletal = {"For the first time, I rode a skeletal horse of my own, and {zoneD} went by faster than my feet had ever managed.",
+        "A skeletal horse of my own came when I called. Forty levels of walking ended that day.",
+        "I had a skeletal horse of my own at last, and the long walks were over."},
 }
 
 -- NEW POOL (engine hook: W.craftMade / craftPlain by trade, before them). Tokens {count} {made}.
@@ -2146,8 +2183,11 @@ W.craftBy = {
 
 -- W.milestone[20] / [30]  (no tokens). "Level twenty." and "Level thirty." closed three chapters of
 -- batch 2 as two-word fragments.
-W.milestone[20] = {"I reached level twenty.", "By the end of it I was level twenty."}
-W.milestone[30] = {"I reached level thirty.", "By the end of it I was level thirty."}
+-- (milestones lane, 2026-11-06: the lines of W.milestone above, with the fact each level changes)
+W.milestone[20] = {"I reached level twenty, a third of the way to the top.", "By the end of it I was level twenty, a third of the way to the top.",
+    "Level twenty came that day, and with it the roads of the middle country.", "I made level twenty. The middle country was open to me now."}
+W.milestone[30] = {"I reached level thirty, halfway to the top.", "By the end of it I was level thirty, halfway to the top.",
+    "Level thirty came that day. Half the climb was done.", "I made level thirty. The second half of the climb began."}
 
 -- PB.rolesPair["healer+damage"]  ({I} {name} {they}). "High Inquisitor Whitemane killed Nyx...
 -- You kept Nyx alive while she fought." (Nyx I). No line here claims they lived.
@@ -2414,11 +2454,16 @@ W.lookBackLate = {
 -- (engine hook: the first epic mount, by the kind of its summon aura; in place of milestone2.epicmount).
 -- No tokens. "I rode my new mount for the first time" said of a tauren's great kodo.
 W.epicMountKind = {
-    kodo = {"My great kodo came when I called, and it left my old one behind."},
-    raptor = {"My swift raptor came when I called, and it left my old one behind."},
-    wolf = {"My swift wolf came when I called, and it left my old one behind."},
-    horse = {"My swift horse came when I called, and it left my old one behind."},
-    ram = {"My swift ram came when I called, and it left my old one behind."},
+    kodo = {"My great kodo came when I called, and it left my old one behind.",
+        "A great kodo of my own came when I called. The old one would carry packs now."},
+    raptor = {"My swift raptor came when I called, and it left my old one behind.",
+        "A swift raptor of my own came when I called. Nothing I had ridden before came close to it."},
+    wolf = {"My swift wolf came when I called, and it left my old one behind.",
+        "A swift wolf of my own came when I called. Nothing I had ridden before came close to it."},
+    horse = {"My swift horse came when I called, and it left my old one behind.",
+        "A swift horse of my own came when I called. Nothing I had ridden before came close to it."},
+    ram = {"My swift ram came when I called, and it left my old one behind.",
+        "A swift ram of my own came when I called. Nothing I had ridden before came close to it."},
     mechanostrider = {"My swift mechanostrider came when I called, and it left my old one behind."},
     saber = {"My swift saber came when I called, and it left my old one behind."},
     skeletal = {"My skeletal warhorse came when I called, and it left my old one behind."},
@@ -2910,3 +2955,320 @@ W.partyDeath.twice = {
     "{names} died there, {count}.",
     "{names} died {count} that day.",
 }
+
+---------------------------------------------------------------------------
+-- The important moments of a life (milestones lane, 2026-11-06): each told
+-- once, through its consequence and a concrete noun. Tokens as noted.
+---------------------------------------------------------------------------
+-- The first mount without its kind ({zoneD})
+W.milestone2.mount = {
+    "For the first time, I rode a mount of my own, and {zoneD} went by faster than my feet had ever managed.",
+    "A mount of my own came when I called. Forty levels of walking ended that day.",
+    "I had a mount of my own at last, and the long walks were over.",
+}
+W.milestone2.epicmount = {
+    "My new mount came when I called, and it left my old one behind.",
+    "I rode out on my new mount, and nothing I had ridden before came close to it.",
+}
+-- (the thousand gold fell the same day: {kind})
+W.epicMountPrice = {
+    "A thousand gold went for it, and a swift {kind} came when I called.",
+    "The thousand gold I had saved went for a swift {kind}, and it left my old one behind.",
+}
+-- Gold (first:gold, c = 1 | 100 | 1000)
+W.gold = {
+    [1] = {"For the first time, I had a whole gold piece to my name.",
+        "A gold piece was mine that day, the first I had ever held whole.",
+        "My purse held its first whole gold piece that day."},
+    [100] = {"My purse held a hundred gold for the first time.",
+        "A hundred gold was mine, more than I had ever carried.",
+        "For the first time, there was a hundred gold in my purse."},
+    [1000] = {"A thousand gold lay in my purse for the first time, the kind of sum a swift mount costs.",
+        "For the first time, I had a thousand gold to my name.",
+        "My purse held a thousand gold, more than it had ever held."},
+}
+W.milestone2.gold = {"For the first time, I had gold of my own in my purse."}
+W.titlesGold = {[1] = {"The First Gold Piece"}, [100] = {"A Hundred Gold"}, [1000] = {"A Thousand Gold"}}
+-- Level ten with the first talent point ({class}: "hunter")
+W.milestoneTalent = {
+    "I reached level ten, and had my first talent point to spend.",
+    "Level ten came that day, and with it the first point to spend on what kind of {class} I would be.",
+    "I made level ten, and a talent point waited to be spent for the first time.",
+}
+W.milestone2.talent = {"I had my first talent point to spend."}
+-- The sixty look-back, a third sentence ({killer}, {Killer}: the first named foe that killed me in the book)
+W.lookBackKiller = {
+    "The first thing to kill me had been {killer}.",
+    "At the start, {killer} had been enough to kill me.",
+    "{Killer} had killed me once, near the beginning. It would not now.",
+}
+-- Epic, legendary
+W.milestone2.epic = {
+    "{what} was mine, the finest thing I had ever carried.",
+    "I took {what} from the spoils, the first of its kind I had ever held.",
+    "{what} came into my hands, and nothing else I owned came close to it.",
+    "{what} was mine. Everything else on my back looked plain beside it.",
+}
+W.milestone2.legendary = {
+    "{what} was mine. There are few like it in the world.",
+    "{what} was mine, one of a handful in all the world.",
+    "Few hands in the world had held {what}, and now mine had.",
+}
+-- Tier: the first piece ({what}; {where} the raid it comes from; the dungeon set says so)
+W.milestone2.tier = {
+    "I put on the first piece of {what}.",
+    "The first piece of {what} was mine.",
+    "I wore the first piece of {what}, with seven to find.",
+}
+W.tierWhere = {
+    "I put on the first piece of {what}. The rest of it was still in {where}.",
+    "The first piece of {what} was mine. {Where} held the other seven.",
+}
+W.tierDungeon = {
+    "I put on the first piece of {what}, the set the dungeons give out a piece at a time.",
+    "The first piece of {what} was mine, one of the eight the dungeons hand out.",
+}
+-- The whole set ({span} since the first piece and {visits} to its home, when the record has both)
+W.milestone2.setfull = {
+    "The last piece of {what} was mine, and I wore all of it.",
+    "For the first time, I wore the whole of {what}.",
+    "With the last piece, I wore all of {what} at once.",
+}
+W.setfullSpan = {
+    "With the last piece, I wore the whole of {what}. It had taken {span} and {visits} to gather.",
+    "The last piece of {what} was mine, {span} and {visits} after the first.",
+}
+-- A world boss ({what}, {epithet} from Lore, {zoneD})
+W.milestone2.worldboss = {
+    "{what}, {epithet}, fell in {zoneD}, and I had a hand in it.",
+    "I was one of the many who brought down {what} in {zoneD}.",
+    "{what} came down in {zoneD}. I had been one of the crowd under it.",
+    "{what} fell to a crowd of us, and I was in the crowd.",
+}
+-- The first raid ({what}, {lore} from the dungeon's own lines)
+W.milestone2.raid = {
+    "For the first time, I went into {what} with a company larger than any I had fought beside.",
+    "My first raid took me into {what}, {lore}.",
+    "{what} was my first raid. There were more of us than I had ever stood among.",
+    "I joined my first raid, and we went into {what}.",
+}
+-- A raid's lord, the first time it falls in the book ({boss}, {epithet}); its Lore after line follows
+W.lordFell = {
+    "{boss}, {epithet}, fell to us for the first time.",
+    "For the first time, we brought down {boss}, {epithet}.",
+    "{boss}, {epithet}, fell for the first time with me there to see it.",
+}
+-- Trades at three hundred, by their noun
+W.skillTop = {
+    Tailoring = {"No trainer in the world had a stitch left to teach me.", "My tailoring had reached three hundred, as far as the needle goes."},
+    Blacksmithing = {"No smith anywhere had a stroke left to teach me at the anvil.", "My blacksmithing had reached three hundred, as far as the hammer goes."},
+    Alchemy = {"No trainer had a recipe left to teach me at the vials.", "My alchemy had reached three hundred, as far as the trade goes."},
+    Enchanting = {"No enchanter had a formula left to teach me.", "My enchanting had reached three hundred, as far as the rod goes."},
+    Engineering = {"No tinker anywhere had a schematic left to teach me.", "My engineering had reached three hundred, as far as the wrench goes."},
+    Leatherworking = {"No trainer had a pattern left to teach me at the awl.", "My leatherworking had reached three hundred, as far as the trade goes."},
+    Mining = {"No trainer had anything left to teach me about the pick.", "My mining had reached three hundred, as far as the pick goes."},
+    Herbalism = {"No trainer had a plant left to teach me.", "My herbalism had reached three hundred, as far as the trade goes."},
+    Skinning = {"No trainer had anything left to teach me about the knife.", "My skinning had reached three hundred, as far as the knife goes."},
+    Cooking = {"No cook anywhere had a recipe left to teach me.", "My cooking had reached three hundred, as far as the pot goes."},
+    ["First Aid"] = {"No trainer had a bandage left to teach me.", "My first aid had reached three hundred, as far as the trade goes."},
+    Fishing = {"No trainer had a cast left to teach me.", "My fishing had reached three hundred, as far as the line goes."},
+}
+-- (the second main trade at three hundred: {trade})
+W.skillTopBoth = {
+    "With that, both my trades stood at three hundred.",
+    "My {trade} had reached three hundred too, and both my trades were as far as they go.",
+}
+-- The first epic made by my own hands ({what}, {trade} lower case, {tool})
+W.craftTools = {Blacksmithing = "anvil", Tailoring = "loom", Engineering = "bench", Alchemy = "vials", Enchanting = "rod", Leatherworking = "awl",
+    Cooking = "pot"}
+W.craftEpic = {
+    "{what} came off my own {tool}, the first epic thing I ever made.",
+    "I made {what} myself, the first epic to come from my {trade}.",
+    "{what} was my own work, and the finest thing my {trade} had ever made.",
+}
+W.milestone2.craftepic = {"I made {what} myself, the first epic thing to come from my own hands."}
+-- (the crafting line of the day has named it already: "It")
+W.craftEpicIt = {
+    "It came off my own {tool}, the first epic thing I ever made.",
+    "It was my own work, and the finest thing my {trade} had ever made.",
+    "It was the first epic to come from my {trade}.",
+}
+-- A PvP rank ({rank}: the title; {mySide}; {side} the enemy; {kills} lifetime honorable kills)
+W.rank = {
+    "The {mySide} gave me the rank of {rank}.",
+    "I was {rank} now, in the {mySide}'s own reckoning.",
+    "The rank of {rank} came that day.",
+}
+W.rankKills = {
+    "The {mySide} gave me the rank of {rank}. {Kills} of the {side} had fallen to me by then.",
+    "I was {rank} now, with {kills} honorable kills behind the title.",
+}
+-- Exalted, by faction (a concrete consequence where there is one)
+W.exaltedBy = {
+    ["Timbermaw Hold"] = {"The Timbermaw held me as high as any outsider, and their tunnels were open to me.",
+        "There was no higher standing with the Timbermaw than the one I held now, and their guards let me pass."},
+    ["Wintersaber Trainers"] = {"The Wintersaber Trainers held me as one of their own, and the frostsabers of Winterspring were open to me."},
+    ["Argent Dawn"] = {"The Argent Dawn held me in the highest standing it gives."},
+    ["Cenarion Circle"] = {"The Cenarion Circle held me in the highest standing it gives."},
+    ["Thorium Brotherhood"] = {"The Thorium Brotherhood held me as high as it holds anyone, and its forges had no secrets from me."},
+}
+-- The first of the other side ever to kill me (once a book, a book kept from the start)
+W.deathPvpFirst = {
+    "{ARace} {class} of the {side} killed me, the first of them ever to do it.",
+    "For the first time, one of the {side} killed me, {aRace} {class}.",
+    "I had died to beasts and bandits before that day. {ARace} {class} of the {side} was the first of them to kill me.",
+}
+-- A warlock's first demon
+W.classFirst.imp = {"An imp answered my first summons, and it followed me from then on.", "I bound my first demon, an imp, and it came when I called."}
+if W.titles.classBy then W.titles.classBy.imp = {"The Imp"} end
+-- One more shape each: a blue, a stranger's rez, a guild, a hearth, a flight
+W.rare[#W.rare + 1] = "{what} came out of the fight, and it was better than anything on my back."
+W.rezStranger[#W.rezStranger + 1] = "I owed the rest of that day to {by}, a stranger who stopped for me."
+W.guild[#W.guild + 1] = "I joined {guild}, and its name stood under mine from then on."
+W.home[#W.home + 1] = "From that night, the stone in my pack pointed to {place}."
+W.flight[#W.flight + 1] = "I took my first flight, and the country I had walked went by under me in minutes."
+W.titles.rank = {"{what}"}
+W.titles.craftepic = {"{what}", "My Own Work"}
+W.titles.epicmount = {"A Swift Mount", "In the Saddle"}
+W.titles.gold = {"A Full Purse"}
+W.titles.talent = {"Level Ten"}
+
+-- Battlegrounds (2026-11-06, battlegrounds lane): one passage per battleground
+-- per day, from the match results the recorder keeps ("Record more moments").
+-- Tokens: {what} the place, {mySide}/{foeSide} ("the Horde"/"the Alliance"),
+-- {n}/{N} a count in words, {times} ("twice", "six times"), {ordinal} ("third"),
+-- {ordinals} ("third and fourth", "next three"), {length} ("about forty
+-- minutes"), {names}, {part} (evening), {wins}/{losses}, {k} (matches together).
+-- What the place is, the first time (Everything only). Sources: the game's own
+-- battlemaster descriptions; LorePlaces.lua battleground:darkspear-islands.
+W.bgPlace = {
+    ["Warsong Gulch"] = {
+        "The Silverwing Sentinels and the Warsong Outriders fought there over the timber of Ashenvale, and each side carried the other's flag home to score.",
+        "Two keeps faced each other across a cut of Ashenvale forest, the Warsong Outriders in one and the Silverwing Sentinels in the other, and the flag was the whole fight.",
+    },
+    ["Arathi Basin"] = {
+        "The League of Arathor and the Forsaken Defilers fought over the farm, the mine, the mill, the stables and the smithy of the basin, and the side that held more of them longer won.",
+        "Five bases lay around the basin, and whichever army held more of them drew more from the land until the other gave out.",
+    },
+    ["Alterac Valley"] = {
+        "The Stormpike dwarves and the Frostwolf orcs had fought over the valley for years, from Dun Baldar in the north to Frostwolf Keep in the south.",
+        "The valley ran the length of a day's march, bunkers, towers and graveyards between the two keeps, and a battle there could last for hours.",
+    },
+    -- (the Darkspear Islands have their own zone lines in Lore.lua)
+}
+-- The first battleground ever, one match: its result after W.battleground.
+W.bgResultWon = {"We won it.", "The {mySide} won it.", "It ended with the {mySide} ahead."}
+W.bgResultLost = {"The {foeSide} won it.", "We lost it.", "It ended with the {foeSide} ahead."}
+W.bgResultDraw = {"Neither side won it."}
+-- Every match won, and none won before that day.
+W.bgFirstWinSweep = {"I had not won a single one before that {part}.", "Before that {part} I had never won one."}
+-- A known battleground, one match.
+W.bgWon = {
+    "I went into {what} that {part}, and the {mySide} won it.",
+    "The {mySide} won in {what} that {part}, and I was part of it.",
+    "One match in {what}, and we won it.",
+    "We held {what} that {part}.",
+}
+W.bgLost = {
+    "I went into {what} that {part}, and the {foeSide} won it.",
+    "The {foeSide} took {what} from us that {part}.",
+    "One match in {what}, and we lost it.",
+    "{What} went to the {foeSide} that {part}.",
+}
+W.bgDraw = {"I fought in {what} that {part}, and neither side won.", "The match in {what} ended with neither side ahead."}
+W.bgWonAgain = {"Back in {what}, we won.", "{What} again, and this time the {mySide} won."}
+W.bgLostAgain = {"Back in {what}, the {foeSide} won.", "{What} again, and again the {foeSide} had it."}
+-- A match left before it ended (no result recorded).
+W.bgLeft = {"I went into {what} that {part}.", "I answered the call to {what} that {part}."}
+-- Several matches in one day: the opening.
+W.bgSeries = {
+    "I went into {what} {times} that {part}.",
+    "{Times} that {part} the gates of {what} opened for me.",
+    "The {part} went to {what}, {times} over.",
+    "I answered the call to {what} {times} before the {part} was done.",
+    "I went into {what} {times}.",
+    "{Times} the gates of {what} opened for me.",
+}
+W.bgSeriesBack = {
+    "Back in {what}, {n} matches.",
+    "{What} again that {part}, {times}.",
+    "I went back into {what} {times} that {part}.",
+}
+-- (the first time ever, several matches: after W.battleground and the place line; {times} is the rest)
+W.bgSeriesFirst = {
+    "I stayed for {n} matches.",
+    "{N} matches followed, one after another.",
+    "Before the {part} ended I had fought {n} matches there.",
+}
+W.bgAllWon = {"We won every one of them.", "The {mySide} won all {n}.", "All {n} were ours."}
+W.bgAllLost = {"The {foeSide} won every one of them.", "All {n} went to the {foeSide}.", "We lost all {n}."}
+W.bgBothWon = {"We won both.", "Both were ours."}
+W.bgBothLost = {"We lost both.", "Both went to the {foeSide}."}
+-- Runs of one result, by their place in the series.
+W.bgRunOpenLost = {"The {foeSide} took the {ordinals}.", "The {ordinals} went to the {foeSide}.", "We lost the {ordinals}."}
+W.bgRunOpenWon = {"We won the {ordinals}.", "The {ordinals} {were} ours.", "The {mySide} took the {ordinals}."}
+W.bgRunWon = {"the {ordinals} we won", "then we won the {ordinals}", "the {mySide} took the {ordinals} back"}
+W.bgRunLost = {"the {ordinals} went to the {foeSide}", "then the {foeSide} took the {ordinals}", "we lost the {ordinals}"}
+W.bgRunCloseWon = {"The last we won.", "We took the {ordinals} to finish.", "The {ordinals} {were} ours, and the {part} ended on that."}
+W.bgRunCloseLost = {"The last went to the {foeSide}.", "The {foeSide} took the {ordinals} to finish.", "We lost the {ordinals}, and the {part} ended on that."}
+-- (the wins that followed the first win, or the turn)
+W.bgRunMore = {"We won the {ordinals} as well.", "The {ordinals} followed it.", "The {ordinals} {were} ours too."}
+-- (two matches, one each way)
+W.bgTwoWonLost = {"We won the first and lost the second.", "The first was ours, and the second went to the {foeSide}."}
+W.bgTwoLostWon = {"We lost the first and won the second.", "The first went to the {foeSide}, and the second was ours."}
+-- (Highlights: the first win in a series)
+W.bgFirstWinBrief = {"The {ordinal} was the first battleground I had won.", "The {ordinal} was my first win."}
+W.bgTally = {"We won {wins} of them and lost {losses}.", "{Wins} of the {n} were ours, and {losses} went to the {foeSide}.", "It came to {wins} won and {losses} lost."}
+-- Highlights: the count and the result in one line.
+W.bgBrief = {"I went into {what} {times} that {part} and won {wins} of them.", "{Times} in {what} that {part}, {wins} of them won.", "I went into {what} {times} and won {wins} of them."}
+W.bgBriefAll = {"I went into {what} {times} that {part}, and we won every one.", "I went into {what} {times}, and we won every one."}
+W.bgBriefNone = {"I went into {what} {times} that {part}, and the {foeSide} won every one.", "I went into {what} {times}, and the {foeSide} won every one."}
+-- The first win ever.
+W.bgFirstWin = {
+    "It was the first battleground I had won.",
+    "Of all the matches so far, that was the first the {mySide} won with me in it.",
+    "I had lost before. This one we won.",
+    "My first win in a battleground came in {what}.",
+}
+W.bgRunFirstWin = {
+    "The {ordinal} we won, the first I had ever won.",
+    "Then came the {ordinal}, and the {mySide} won it, my first.",
+    "The {ordinal} was the first battleground I had won.",
+}
+W.bgFirstLoss = {"The {foeSide} won that first one.", "My first match went to the {foeSide}."}
+-- A win after two or more defeats in a row.
+W.bgTurn = {
+    "After {losses} defeats, the {ordinal} was ours.",
+    "The {ordinal} turned it, and the {mySide} won.",
+    "{Losses} losses, then the {ordinal}, which we won.",
+}
+-- Streaks across days (once per threshold).
+W.bgStreakWon = {"That made {n} wins in a row.", "The {mySide} had won {n} in a row with me in them."}
+W.bgStreakLost = {"That made {n} defeats in a row.", "The {foeSide} had taken {n} in a row from us."}
+-- Length.
+W.bgLong = {"The {ordinal} ran for {length}.", "One of them, the {ordinal}, went on for {length}."}
+W.bgLongOne = {"It ran for {length}.", "The match went on for {length}."}
+W.bgLongest = {"It was the longest I had fought in."}
+W.bgQuick = {"The {ordinal} was over in {length}.", "The {ordinal} lasted {length} and no more."}
+W.bgQuickOne = {"It was over in {length}.", "The whole match took {length}."}
+-- A personal mark.
+W.bgFlags = {"I carried the flag home {times}.", "{Times} I took their flag across the field.", "The flag crossed the field in my hands {times}."}
+W.bgFlag = {"I carried the flag home once.", "Once I took their flag across the field."}
+W.bgReturns = {"I returned our flag {times}.", "{Times} I brought our own flag back."}
+W.bgReturn = {"I returned our flag once.", "Once I brought our own flag back."}
+W.bgTopOne = {"No one on our side had more killing blows than I did.", "I had the most killing blows on our side.", "Of the {mySide} in that match, I struck the most killing blows."}
+W.bgTop = {"In the {ordinal}, no one on our side had more killing blows than I did.", "The {ordinal} left me with the most killing blows on our side.", "Of the {mySide} in the {ordinal}, I struck the most killing blows."}
+W.bgBases = {"I took {n} of the bases myself.", "{N} of the bases fell to me."}
+W.bgBase = {"I took one of the bases myself.", "One of the bases fell to me."}
+W.bgTowers = {"I took {n} towers.", "{N} of their towers fell to me."}
+W.bgTower = {"I took one of their towers."}
+W.bgGraveyards = {"I took {n} graveyards.", "{N} of the graveyards fell to me."}
+W.bgGraveyard = {"I took one of the graveyards."}
+-- Company ({names}; {k} of the matches).
+W.bgWith = {"{Names} was in it with me.", "{Names} fought on our side.", "{Names} was there for it."}
+W.bgWithSeries = {"{Names} was with me for {k} of them.", "{Names} fought beside me in {k} of them.", "For {k} of them, {names} was on our side."}
+W.bgWithBond = {"{Names}, {bond}, was in it with me.", "{Names}, {bond}, fought on our side."}
+W.bgWithBondSeries = {"{Names}, {bond}, was with me for {k} of them.", "{Names}, {bond}, fought beside me in {k} of them."}
+W.titles.bgFirstWin = {"A First Victory", "The First Win"}
+W.titles.bgSwept = {"Every Match", "All of Them"}
+W.titles.bgSeries = {"A Night in {what}", "{What}, {Times}"}
