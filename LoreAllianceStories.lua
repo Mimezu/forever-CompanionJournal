@@ -204,20 +204,20 @@ q(121, "Messenger to Stormwind", R, 14, K,
     "Solomon paid for the delivery and found the general's letter a mystery. Something was amiss in the kingdom, he said. He feared this was the beginning of a conflict, not its end.",
     "The general's letter reached Lakeshire without any soldiers behind it. Solomon took it as a sign that something was wrong in the kingdom.")
 q(56, "The Night Watch", D, 24, "alliance_duskwood",
-    "Stormwind's withdrawn guards had left Darkshire's defense to the Night Watch.",
-    "Skeletons in Tranquil Gardens threatened a town short of defenders.",
-    "The skeletons slain at Tranquil Gardens earned the Watch's thanks.",
-    "Darkshire received help against the undead south of town; the Watch's wider task remained.")
+    "Commander Althea Ebonlocke had sworn to protect the citizens of Darkshire. Stormwind had pulled its guards from their posts and left the Night Watch to its own devices. She wanted the skeletal warriors and mages in {p:Tranquil Gardens}, just south of town, put down.",
+    "Stormwind's commissioned guards were gone from Darkshire. Althea Ebonlocke asked anyone who felt worthy to prove it against the skeletons in Tranquil Gardens.",
+    "Althea Ebonlocke called the work in Tranquil Gardens splendid and paid for it on behalf of the people of Darkshire.",
+    "The skeletons of Tranquil Gardens were fewer, and the Commander of the Night Watch paid a reward in Darkshire's name.")
 q(57, "The Night Watch", D, 26, "alliance_duskwood",
-    "Reports of skeletal fiends and horrors kept the Night Watch occupied beyond Darkshire.",
-    "The cemeteries around Darkshire and Raven Hill remained dangerous ground.",
-    "The fighting against skeletal fiends and horrors strengthened the Watch's defense.",
-    "The Watch thanked the help against the dead that kept gathering around Darkshire.")
+    "Althea Ebonlocke was getting reports of an undead infestation in the forest. Skeletal fiends and horrors walked the {p:Raven Hill} graveyard, and more skeletons gathered around Tranquil Gardens. The dead had to be driven from Duskwood.",
+    "The graveyards of Raven Hill and Tranquil Gardens were crawling with skeletal fiends and horrors. The Night Watch could not clear them alone, and Althea asked for thirty of them dead.",
+    "The people of Darkshire gave their thanks through Althea Ebonlocke, who named the skeleton hunter a great ally of the Night Watch.",
+    "Fifteen fiends and fifteen horrors fewer walked the two graveyards. Althea counted it proof of a great ally.")
 q(58, "The Night Watch", D, 30, "alliance_duskwood",
-    "Plague Spreaders occupied Raven Hill's eastern mausoleum while the Watch struggled to protect Darkshire.",
-    "The Night Watch lacked enough people to guard the town and handle Raven Hill's mausoleum alone.",
-    "The Plague Spreaders had been thinned, and the Watch commander acknowledged the help.",
-    "Raven Hill's mausoleum had fewer Plague Spreaders, easing one part of the Watch's burden.", 4)
+    "The situation at Raven Hill was still grim, Althea said, and she did not have enough Watchers to keep Darkshire safe. Plague Spreaders held the eastern mausoleum of the cemetery, and she put the safety of the town in one more pair of hands.",
+    "The Night Watch could not guard the town and clear Raven Hill at once. Twenty Plague Spreaders in the eastern mausoleum were the next task Althea Ebonlocke handed out.",
+    "Althea gave her thanks on behalf of the people of Darkshire and as leader of the Night Watch. The bravery and dedication shown at Raven Hill had earned them, she said, and she asked the Light to shine on the roads ahead.",
+    "The eastern mausoleum had lost its Plague Spreaders. Althea Ebonlocke thanked the one who had cleared it, in Darkshire's name and her own.", 4)
 
 q(179, "Dwarven Outfitters", "Dun Morogh", 1, C,
     "Adlin offered warm gloves in exchange for wolf meat in {p:Coldridge Valley}.",
@@ -325,10 +325,10 @@ q(463, "The Greenwarden", "Wetlands", 21, V,
     "The Greenwarden offered the name Rethiel. He said the roots and ferns spoke well of his visitor, then asked for help healing the wounded land.",
     "Rethiel welcomed the visitor whom Fitzsimmons had warned away. He spoke of praise from the roots and ferns, then asked for help with the marsh's wounds.")
 q(484, "Young Crocolisk Skins", "Wetlands", 22, V,
-    "James Halloran's cured skins left Menethil by boat for distant markets.",
-    "The tanner was running short of the softer skins from young crocolisks outside town.",
-    "Halloran received skins suitable for curing and paid for the work.",
-    "The marsh supplied another batch for Menethil's trade in cured hides.")
+    "James Halloran the tanner shipped his cured crocolisk skins to ports around the world. He was short of the softer skins that came off the young, and the young crocs swam in the waters just outside {p:Menethil Harbor}.",
+    "Halloran paid top coin for a stack of young crocolisk skins. Einar brought him the big ones, and the soft ones he lacked were in the shallows outside town.",
+    "Halloran called the quality of the skins superb and wanted them in the curing as soon as he could. First, he said, there was other work that might suit.",
+    "The young crocolisk skins went to Halloran's curing. He praised them, and had already thought of another job.")
 
 local T, S, B, O, J = "Teldrassil", "alliance_shadowglen", "alliance_teldrassil", "alliance_moonwells", "alliance_darkshore"
 q(456, "The Balance of Nature", T, 2, S,
@@ -640,65 +640,65 @@ q(3741, "Hilary's Necklace", R, 15, K,
     "Hilary received her necklace back from the lake.",
     "The small keepsake returned to Hilary, who thanked the finder on behalf of herself and her cat.", 4)
 q(5, "Jitters' Growling Gut", D, 20, "alliance_duskwood",
-    "Jitters had been living on grubs and weeds while hiding in a deserted settlement.",
-    "A proper meal for Jitters meant asking about Chef Grual's crab cakes in Darkshire.",
-    "The request reached Grual, who could prepare cakes once the cooking work was arranged.",
-    "Darkshire's cook heard the request; Jitters had not yet received his meal.")
+    "Jitters had been hiding in the ghost town of {p:Raven Hill} for weeks on nothing but grubs and weeds. He would pay handsomely for a feast, and he had heard that Chef Grual at the Scarlet Raven made very good Dusky Crab Cakes.",
+    "Weeks of grubs and weeds had Jitters dreaming of Chef Grual's crab cakes. He offered good pay for anyone who fetched him a decent meal from Darkshire.",
+    "Chef Grual heard that someone wanted crab cakes, and allowed that he might be able to cook some up.",
+    "At the Scarlet Raven, Grual took the order for Dusky Crab Cakes with the air of a man who would need something first.")
 q(93, "Dusky Crab Cakes", D, 20, "alliance_duskwood",
-    "Grual's famous crab cakes used spider legs, seasoned well enough to hide their origin.",
-    "Venom Web Spiders supplied the unlikely ingredient for a Scarlet Raven specialty.",
-    "Grual received the legs and began seasoning them for the skillet.",
-    "The ingredients reached the kitchen, where the crab cakes' secret remained the cook's own.")
+    "Grual let slip his secret. Dusky Crab Cakes were made from spider legs, disgusting but tangy. He wanted gooey legs from the Venom Web Spiders that nested north of town between the foothills and the river.",
+    "The crab in Grual's crab cakes was spider. He sent for gooey legs from the Venom Web Spiders to the north and promised to whip up a batch.",
+    "Grual admired the clutch of legs, seasoned them with his secret spices where no one could look, and set them skittering on a skillet. The recipe he gave away was for a different dish, almost as good.",
+    "The spider legs went into Grual's secret seasoning and onto the skillet. He kept the crab cake recipe to himself and handed over another nearly as good.")
 q(165, "The Hermit", D, 25, HM,
-    "Elaine Carevin had not seen the old man from Raven Hill coming into town for supplies lately.",
-    "A shack overlooking the cemetery was the place to check on the missing customer.",
-    "The hermit said the roads were too dangerous for him and asked for help with errands.",
-    "The old man at Raven Hill answered Elaine's concern with a list of favors he needed.")
+    "Elaine Carevin had not seen the old man from the shack above {p:Raven Hill} cemetery in some time. He used to come into town for supplies often. She thought someone ought to see whether anything was amiss.",
+    "An old man who once shopped in Darkshire had stopped coming. Elaine Carevin remembered his shack overlooking the Raven Hill cemetery.",
+    "Nothing was wrong, the hermit said with a chuckle at the Carevins' name. The roads had grown dangerous and he was not getting younger, and perhaps an old man could be done a few favors.",
+    "The old man at Raven Hill was alive and in need of errands. He laughed softly at Elaine's concern and asked for help instead.")
 q(148, "Supplies from Darkshire", D, 24, HM,
-    "The hermit wanted Ghost Hair Thread from Madame Eva in Darkshire.",
-    "A supply request from the cemetery shack led back to a shop on the town square.",
-    "Madame Eva had no thread in stock but offered to make some if supplied with ghost hair.",
-    "The simple purchase became a search for ingredients before the thread could be made.")
+    "The hermit called himself too old and feeble for the walk to Darkshire. He wanted Ghost Hair Thread from Madame Eva, who kept her home on the town square.",
+    "The first errand was a spool of Ghost Hair Thread from Madame Eva in Darkshire. The old man said he could never make the trip himself.",
+    "Madame Eva had no Ghost Hair Thread in stock. She could make some, she said, if someone brought her the ghost hair.",
+    "Eva knew what the hermit wanted and had none of it. The thread would have to be made, and the hair found first.")
 q(149, "Ghost Hair Thread", D, 24, HM,
-    "Eva's spectral comb could gather hair from Blind Mary at the haunted farmhouse south of town.",
-    "Making the hermit's thread required help from a spirit living apart from Darkshire.",
-    "Blind Mary used the spectral comb on her hair.",
-    "The comb served its purpose with Mary; Eva still needed it back to make the thread.")
+    "A poor, sad spirit called Blind Mary haunted an old farmhouse in the hills south of Darkshire. Eva gave a Spectral Comb to offer her, with a warning that dark things now lurked near the house.",
+    "Eva's ghost hair had to come from Blind Mary, the spirit of the farmhouse south of town. The Spectral Comb was for her hair.",
+    "Blind Mary begged not to be looked at. Then she took the comb and found it lovely, gliding through hair she called a stiff and stringy horror, and she wished for a mirror.",
+    "Mary had torn out her own eyes and still felt the gaze on her. The Spectral Comb pleased her for a moment, and she wished she had a mirror.")
 q(154, "Return the Comb", D, 24, HM,
-    "Blind Mary wanted the spectral comb taken away after using it.",
-    "The comb now held the strands Madame Eva needed for her unusual spinning.",
-    "Eva received enough ghost hair for the thread and a few strands besides.",
-    "The returned comb gave Eva the material to make a spool for the hermit.")
+    "Mary's pleasure in the comb did not last. She cried out to have it taken away, calling herself a monster no one would ever think lovely again.",
+    "Blind Mary thrust the Spectral Comb back, weeping that she was a monster. It carried her hair now, and Eva was waiting for it.",
+    "Eva could make a spool of Ghost Hair Thread from the comb and had a few strands to spare. She paid some coins for the extra.",
+    "The comb came back to Madame Eva full of Blind Mary's hair. There was enough for the hermit's spool and a little over, which Eva paid for.")
 q(157, "Deliver the Thread", D, 24, HM,
-    "Eva's thread could bind spirits or sew life into lifeless things; the hermit claimed it was for his doors and windows.",
-    "A finished spool was ready for the shack, where its requested purpose was protection from spirits.",
-    "The hermit accepted the Ghost Hair Thread and paid for its delivery.",
-    "The spool reached Raven Hill; the delivery itself did not reveal what the hermit would make with it.")
+    "Eva handed over the thread and said it had a thousand uses, from binding evil spirits to sewing life into inanimate objects. The hermit wanted it strung along his door and windows against unwanted spirits.",
+    "The spool of Ghost Hair Thread was ready for the shack at Raven Hill. The old man had asked for it to keep spirits out.",
+    "The hermit called the thread delightful and said it would do splendidly. He paid for what he called an honorable deed.",
+    "Eva's spool reached Raven Hill. The hermit was delighted with it and paid at once.")
 q(158, "Zombie Juice", D, 24, HM,
-    "The hermit asked for strong liquor from Tavernkeep Smitts, claiming the nights had grown too cold.",
-    "Zombie Juice was another request from the isolated shack, this time leading to the Scarlet Raven.",
-    "Smitts received the unusual request for Zombie Juice.",
-    "The tavernkeeper knew the liquor, but a bottle had yet to be prepared for the hermit.")
+    "The hermit wanted a bottle of Zombie Juice from Tavernkeep Smitts at the Scarlet Raven. The nights got cold, he said, and he needed the drink to put fire back in his veins.",
+    "Another errand for the old man at Raven Hill, this time a liquor called Zombie Juice from the Scarlet Raven in Darkshire.",
+    "Smitts raised an eyebrow at the order. Zombie Juice was strong stuff, he said, and he did not often get requests for it.",
+    "Tavernkeep Smitts knew the liquor and rarely poured it. He would need something before he could.")
 q(156, "Gather Rot Blossoms", D, 24, HM,
-    "Smitts needed rot blossoms from the skulls of Duskwood's skeletons to brew Zombie Juice.",
-    "The graveyards supplied a grim ingredient for the hermit's requested drink.",
-    "Smitts accepted the blossoms and promised to tell the Night Watch about the help against the skeletons.",
-    "The brewing ingredients arrived, with news of fewer skeletons to pass to Althea Ebonlocke.")
+    "Smitts could brew a batch of Zombie Juice from rot blossoms, which grew in strange places. Among them were the skulls of the Skeletal Horrors and Fiends at Raven Hill and Tranquil Gardens. Killing a few skeletons on the way, he said, would please Darkshire.",
+    "The rot blossoms for Smitts's Zombie Juice grew inside the skulls of Duskwood's skeletons. He had never got close enough to look himself.",
+    "Smitts took the rot blossoms and promised to tell Althea Ebonlocke of the Night Watch about the skeletons killed. Any help stemming the tide of fiends was welcome news in Darkshire, he said.",
+    "The rot blossoms reached Smitts along with word of fewer skeletons in the graveyards. He meant to pass that on to Althea Ebonlocke.")
 q(159, "Juice Delivery", D, 24, HM,
-    "Smitts's finished liquor came with a warning about its extraordinary strength.",
-    "The bottle was ready for the hermit who had asked for something to warm his cold nights.",
-    "The hermit received the Zombie Juice and offered payment.",
-    "The liquor reached the shack, completing another of the old man's requests.")
+    "Smitts handed over the Zombie Juice with a warning. It was strong enough to raise the dead.",
+    "The bottle for the hermit was ready at the Scarlet Raven, and Smitts said to be careful with it.",
+    "The hermit gave a thousand thanks and said the kindness warmed an old man's heart, after starting to say something else. He paid a token of his gratitude.",
+    "The Zombie Juice reached the shack above the cemetery. The hermit thanked the foolish, he began, and then the kind, and paid.")
 q(133, "Ghoulish Effigy", D, 27, HM,
-    "The hermit asked for ghoul ribs to make what he described as a scarecrow against the dead.",
-    "His account of ghouls at the walls provided a reason for another unsettling shopping list.",
-    "The ribs reached the hermit, who pronounced them suitable for his purpose.",
-    "The requested bones were delivered; the claimed protection had not been demonstrated.")
+    "The hermit marveled that the ghouls and walking dead had not eaten him so far from town. A pack of Bone Chewers had pounded on his walls the day before, and he wanted ghoul ribs for an effigy, a scarecrow against ghouls.",
+    "Ghoul ribs from the Flesh Eaters, Bone Chewers, Brain Eaters, Rotted Ones and Plague Spreaders of Duskwood would build the hermit's effigy. He thought he could hear a pack behind the house already.",
+    "The hermit thanked the bearer of the ribs and said they would do just the trick.",
+    "The ghoul ribs reached the shack for the effigy, and the hermit was satisfied with them.")
 q(134, "Ogre Thieves", D, 30, HM,
-    "The hermit said ogres had driven him away from a crate of herbs and tools.",
-    "His missing crate was believed to lie near the ogre mound in southern Duskwood.",
-    "The crate returned to the hermit, who eagerly accepted it.",
-    "The tools and herbs reached the shack, adding to the supplies gathered at the old man's request.")
+    "A few weeks earlier, ogres had chased the hermit off while he picked herbs far from home. He had left behind a crate of precious tools and herbs. The ogres had swaggered back to the ogre mound in southern Duskwood, and he was sure the crate lay near it.",
+    "The hermit missed his crate sorely. It had gone with the ogres to their mound in southern Duskwood.",
+    "The hermit started to thank someone else, caught himself, and thanked the bearer instead. Happy nights lay ahead, he said, and the reward was more than earned.",
+    "The crate of tools and herbs came back from the ogre mound. The hermit's thanks slipped once before they landed, and he spoke of happy nights ahead.")
 q(160, "Note to the Mayor", D, 30, HM,
     "The hermit sent a note to Mayor Ello Ebonlocke, claiming they were old friends.",
     "After his supply errands, Abercrombie wanted a letter carried into Darkshire.",
@@ -735,10 +735,10 @@ q(418, "Thelsamar Blood Sausages", "Loch Modan", 11, L,
     "Vidra received the supplies and shared the sausage recipe along with instructions to eat them fresh.",
     "The ingredients reached Thelsamar's kitchen, where the recipe became part of the payment for gathering them.")
 q(455, "The Algaz Gauntlet", "Wetlands", 21, V,
-    "Dragonmaw orcs had moved into Dun Algaz, threatening the road between Loch Modan and Menethil Harbor.",
-    "The passage to the Wetlands needed a fighting scout to carry news through the orc foothold.",
-    "Valstag received the report of the Dragonmaw advance; its cause remained a mystery.",
-    "News reached Menethil of a threat to its inland connection, with more work against the orcs ahead.", 4)
+    "The Dragonmaw clan had a haven in the Wetlands and had now pushed into Dun Algaz. If they kept the pass, Rockgar warned, Loch Modan would be cut off from Menethil Harbor. He wanted someone to break through to the Wetlands, kill some orcs on the way and report to Valstag Ironjaw.",
+    "Rockgar's scouting mission had become a fight through Dun Algaz. Beyond it the road ran north, then west at the fork to Menethil, where Valstag Ironjaw waited for a report.",
+    "Valstag found the report full of bad news. The Dragonmaw usually hid in the hills, he said, and what had driven them into Algaz was still a mystery. He expected to want more help against them.",
+    "In Menethil, Valstag Ironjaw heard that the Dragonmaw were moving in strength into Algaz. He could not say why, and he had more work in mind against them.", 4)
 q(279, "Claws from the Deep", "Wetlands", 22, V,
     "Gobbler and the Bluegill murlocs raided merchants before withdrawing to their waterside hovels.",
     "The Merchant Marines offered payment against murlocs harassing the port's fishers and traders.",
@@ -813,25 +813,25 @@ q(217, "In Defense of the King's Lands", "Loch Modan", 17, KD,
     "Grawmug and his two guards were dead, improving the defenders' chances against the remaining troggs.",
     "The strike removed the incursion's identified leaders without ending the trogg presence around the loch.", 5)
 q(250, "A Dark Threat Looms", "Loch Modan", 18, SD,
-    "Dark Iron sappers had been seen by Stonewrought Dam after the attacks on Dun Modr and the Thandol Span.",
-    "With much of the dam's security detail reassigned, Hinderweir needed a clue to the sappers' purpose.",
-    "A suspicious barrel at the dam contained an unfamiliar powder.",
-    "The search uncovered a strange-smelling powder that still needed examination.")
+    "First the Thandol Span destroyed, then Dun Modr pillaged. Hinderweir had no doubt the {p:Stonewrought Dam} was next. Most of his security detail had gone to the Alliance Front, even his top inspector. A stranger would have to look into the Dark Iron sappers he had seen on the eastern ramp.",
+    "Hinderweir thanked the stars that someone cared about the dam. Dark Iron sappers had been milling about its eastern ramp, and he wanted a clue to what they were doing.",
+    "A suspicious barrel on the eastern ramp held a powder with a strange smell.",
+    "The sappers had left a barrel behind. The powder inside smelled of nothing Hinderweir's people had seen before.")
 q(199, "A Dark Threat Looms", "Loch Modan", 18, SD,
     "The barrel's powder offered a clue to the Dark Iron activity near the dam.",
     "A sample from the suspicious barrel needed to reach Hinderweir.",
     "Hinderweir received the sample and recognized a reason for alarm.",
     "The powder reached the dam's defender; its exact nature still needed an expert's attention.")
 q(161, "A Dark Threat Looms", "Wetlands", 18, SD,
-    "Hinderweir suspected an explosive and needed Ashlan Stonesmirk's expertise at Dun Modr.",
-    "Identifying the powder meant carrying a sample through the Wetlands to the explosives specialist.",
-    "Stonesmirk received the sample and took Hinderweir's concern seriously.",
-    "The suspicious powder reached the expert assigned to the Dun Modr regiment.")
+    "Hinderweir took the powder for an explosive and wanted an expert to say which. Ashlan Stonesmirk had been assigned to the regiment at {p:Dun Modr}, through the Algaz Gate and up the Wetlands road. Hinderweir's advice was to stick to the road and stop for nothing.",
+    "A sample of the sappers' powder had to reach Ashlan Stonesmirk at Dun Modr. Hinderweir called the journey grave and perilous and said not to leave the road.",
+    "Stonesmirk could hear nothing over the ringing in his ears, but he could see what was in the sample. Old Hinderweir was wise to be worried, he said.",
+    "At Dun Modr, Stonesmirk shouted over the ringing in his ears and took the powder. Hinderweir's worry was well placed.")
 q(274, "A Dark Threat Looms", "Loch Modan", 18, SD,
-    "Stonesmirk identified the powder as Seaforium, a danger once exposed to water.",
-    "A mixture to halt the explosive reaction required a colloid and ingredients found around the loch.",
-    "Hinderweir received Stonesmirk's warning and the disarming colloid.",
-    "The dam's defender learned what the powder was; the remaining disarming materials still had to be gathered.")
+    "Stonesmirk knew the tiny silver crystals and the smell at once. Seaforium, harmless dry, but wet it could blow Ironforge out of the mountain. The reaction could be defused with lurker venom, crushed Mo'Grosh crystal, a crocolisk tear and his disarming colloid. Hinderweir had to hear it before it was too late.",
+    "The sappers' powder was Seaforium, Stonesmirk said, and the dam stood on water. He sent his disarming colloid back to Hinderweir with the list of what else the mixture needed.",
+    "Hinderweir heard the word Seaforium and cried out to the heavens. He had Stonesmirk's colloid, and three more ingredients to find around the loch.",
+    "Stonesmirk's colloid and his warning reached the dam. Hinderweir knew now what the barrel held, and what it would take to stop it.")
 q(278, "A Dark Threat Looms", "Loch Modan", 18, SD,
     "Lurker venom, a crocolisk tear and a rare Mo'Grosh crystal were needed for Hinderweir's mixture.",
     "The answer to the Seaforium depended on materials from the loch's wildlife and the ogres' crystals.",
@@ -888,15 +888,15 @@ q(307, "Filthy Paws", "Loch Modan", 15, L,
     "The Miners' League gear was recovered while the order to clear the kobolds was still awaited.",
     "The tools were retrieved from the occupied depot; the mine's wider clearance remained ahead.")
 q(305, "In Search of the Excavation Team", "Wetlands", 24, WX,
-    "Merrin's weekly letters had stopped, leaving Tarrel without news from the Whelgar expedition.",
-    "An unexplained silence from the dig sent a search toward the excavation east of Menethil.",
-    "Merrin was found alive at the excavation.",
-    "The search reached Merrin, but Tarrel still needed word of what had happened.")
+    "Tarrel in Menethil had had a letter from his wife Merrin every week for a month, until two weeks of silence. She was with the Whelgar Excavation team to the east, and Longbraid had promised a scout.",
+    "Merrin's letters from the Whelgar Excavation Site had stopped. Her husband Tarrel took the first traveler willing as the scout Longbraid had promised.",
+    "Merrin was alive on the bluff above the dig, and thanked the heavens that someone had come.",
+    "The search found Merrin at the excavation, alive and thanking the heavens.")
 q(306, "In Search of The Excavation Team", "Wetlands", 24, WX,
-    "Raptors had overwhelmed the dig, and Merrin had a note explaining how Ormer sheltered the survivors.",
-    "Tarrel needed to know that Merrin, Ormer and the prospector had survived the attack.",
-    "Merrin's note reached Tarrel with news of the three survivors and the losses at the dig.",
-    "Tarrel learned that Merrin lived; the expedition's troubles were still unresolved.")
+    "The dig had turned up large bones, Merrin said, and then the Mottled Raptors came. Many died. Ormer had held them off while she and the Prospector ran for shelter, and now the three were trapped above their ruined work. Her note would explain it to Tarrel.",
+    "Merrin wrote it all down for her sweet Tarrel, the bones, the raptors, the dead and Ormer's courage. Someone had to carry it back to Menethil.",
+    "Tarrel read the horrible news and took what comfort there was in three survivors. He longed for the day, he said, when King Magni's subjects could live without fear.",
+    "Merrin's note reached Tarrel in Menethil. She lived, and so did two others, and Tarrel wondered when the killing would end.")
 q(294, "Ormer's Revenge", "Wetlands", 24, WX,
     "Bones uncovered at Whelgar's excavation drew raptors that killed Ormer's fellow workers. Stranded above the dig with Merrin and the Prospector, he wanted vengeance.",
     "The raptors had killed workers and trapped the survivors on a bluff above Whelgar's excavation. Ormer sent the first reprisal west of their shelter.",
@@ -913,40 +913,40 @@ q(296, "Ormer's Revenge", "Wetlands", 29, WX,
     "Sarltooth's talon reached Ormer. Remembering the dwarves killed at their work, he hoped the vengeance would make the creatures fear attacking Magni's subjects again.",
     "The talon proved Sarltooth dead. Ormer spoke of the innocent workers lost there and believed the reprisal would warn off future attacks on King Magni's people.", 4)
 q(299, "Uncovering the Past", "Wetlands", 27, WX,
-    "The Goaz Stone's interrupted text hinted at a divine plan and a doomed prophecy.",
-    "Four missing fragments lay among the artifacts and loose soil of the raptor-held excavation.",
-    "The restored stone let the prospector resume translating Titan script, including a reference to Old Gods chained beneath the land.",
-    "Ados, Modr, Golm and Neru completed the tablet; the wider meaning of its prophecy still needed translation.", 4)
+    "Just before the raptors came, Prospector Whelgar had uncovered a large tablet, the Goaz Stone. Its text broke off in four places and spoke of a divine plan and a doomed prophecy. Too old to brave the beasts below, he wanted the four fragments, Ados, Modr, Golm and Neru, found among the artifacts and the loose soil.",
+    "The Goaz Stone was missing four pieces, and they lay somewhere in the raptor-held dig. Whelgar feared time was running out on whatever the tablet foretold.",
+    "The Goaz Stone was whole again, and Whelgar went back to the delicate Titan script. He could make out new words already. Old Gods, chained beneath the land. The beginning of something epic, he said.",
+    "Ados, Modr, Golm and Neru fitted back into the Goaz Stone. Whelgar read the first new words aloud, Old Gods chained beneath the land, and called it fine work.", 4)
 q(303, "The Dark Iron War", "Wetlands", 30, DI,
-    "The Dark Irons held Dun Modr after the destruction at the Thandol Span.",
-    "The defenders needed pressure kept on the Dark Iron encampment while they waited for reserves.",
-    "The attack put pressure on the encampment, but the reserve force had still not arrived.",
-    "The defenders praised the blow struck against the Dark Iron forces at Dun Modr.", 4)
+    "While dwarven soldiers died abroad for the Alliance, Longbraid said, the Dark Irons had laid waste to the Thandol Span and taken {p:Dun Modr}. He wanted the front pushed back, fifteen Dark Irons and their tunnelers, saboteurs and demolitionists dead. Then the reserve might arrive in time to finish the drive.",
+    "Longbraid's regiment held on outside Dun Modr waiting for a reserve that Roggo could not raise. Pressure on the Dark Iron encampment was all they could do meanwhile.",
+    "Longbraid saluted a valiant soldier and loyal servant of King Magni. With the pressure put on the Dark Iron camp, he thought they stood a chance of driving the enemy off for good. If only the damned reserve would show.",
+    "The Dark Iron encampment had taken its losses, and Longbraid said Dun Modr might yet be won back. The reserve had still not arrived.", 4)
 q(304, "A Grim Task", "Wetlands", 34, DI,
     "Roggo's information named Balgaras the Foul as the elusive leader of the Dark Iron band in the Wetlands.",
     "The losses at Dun Modr and the Thandol Span had brought a bounty on the warlock directing the attackers.",
     "Balgaras was dead, leaving the remaining Dark Irons to be dealt with before another leader arrived.",
     "The warlock's ear settled the bounty without reclaiming all the ground his soldiers held.", 4)
 q(473, "Report to Captain Stoutfist", "Wetlands", 28, V,
-    "Dragonmaw activity beyond Dun Algaz had brought a request for help from Captain Stoutfist.",
-    "Menethil's war room was gathering assistance against the orcs' growing strength.",
-    "Stoutfist received the referral and had a task ready.",
-    "The report reached Menethil's captain, bringing the Dragonmaw problem into his hands.")
+    "The Dragonmaw were showing their strength beyond Algaz, Valstag said. Captain Stoutfist wanted to speak with anyone willing to help against them, in the war room of Menethil Keep.",
+    "Valstag sent the fighter from Dun Algaz on to Captain Stoutfist, inside the keep.",
+    "Stoutfist had been briefed by Valstag on the fighting at Dun Algaz and called the newcomer worth something. He had a task ready.",
+    "In the war room, Captain Stoutfist had heard about Dun Algaz from Valstag and had work waiting.")
 q(464, "War Banners", "Wetlands", 28, V,
-    "Dragonmaw survivors had gathered strength in an encampment northeast of Menethil.",
-    "Stoutfist wanted banners as evidence of a strike on the orcs who had fled Grim Batol.",
-    "The banners reached Stoutfist, who identified Nek'rosh as the clan's current leader.",
-    "Proof of the fighting brought an account of Nek'rosh's inherited feud with the red dragons.")
+    "The Dragonmaw clan had all but died at the end of the Second War, Stoutfist said, when the red dragons they had enslaved turned on them. The survivors had fled Grim Batol into the mountains east of Whelgar's dig and gathered strength again in a camp northeast of Menethil. He wanted it attacked and its war banners brought back.",
+    "What was left of the Dragonmaw had built a camp northeast of Menethil. Stoutfist asked for their war banners as proof of an attack on it.",
+    "The Dragonmaw were not the threat they had been with dragons, Stoutfist said over the banners, but fierce still. Their leader was Nek'rosh, son of Nekros, whose magic had tamed the red dragons until it failed him. The dragons had killed Nekros, and his son had sworn revenge on them.",
+    "Stoutfist took the war banners and told of Nekros, who had tamed the red dragons and died when his magic failed. His son Nek'rosh led the clan now, sworn against the dragons that killed his father.")
 q(465, "Nek'rosh's Gambit", "Wetlands", 31, V,
-    "Nek'rosh had built catapults for a siege while the fighting in Dun Algaz blocked Menethil's reinforcements.",
-    "Stoutfist supplied tinder for an attack on the siege engines in the Dragonmaw camp.",
-    "Tinder caught on the catapult and the flames spread.",
-    "The siege engine was set alight; Nek'rosh himself still remained to be dealt with.", 4)
+    "More of the Dragonmaw's plans had come to light while the fighting went on. Nek'rosh had built catapults to lay siege to Menethil, and with Dun Algaz contested no reinforcements could come. Stoutfist handed over tinder for the catapults and asked for Nek'rosh's head after.",
+    "Catapults stood in the Dragonmaw camp, aimed at Menethil. Stoutfist's tinder was for them, and his orders went on to Nek'rosh himself.",
+    "Tinder went onto the first catapult and a struck spark caught. Flame erupted and spread fast.",
+    "The first catapult took the tinder and the spark and went up in flames. Nek'rosh himself still remained.", 4)
 q(474, "Defeat Nek'rosh", "Wetlands", 32, V,
-    "With the catapults burned, the remaining task was to confront Chieftain Nek'rosh.",
-    "The threat to Menethil still had its commander after the destruction of the siege engines.",
-    "Nek'rosh's death completed the strike, and Stoutfist credited the destroyed catapults with making Menethil safe.",
-    "The captain rewarded the blow against the Dragonmaw leader and the immediate siege threat.", 5)
+    "With the catapults burning, one order remained. Find Chieftain Nek'rosh and kill him.",
+    "Stoutfist wanted the Dragonmaw beast cut down at its neck. Nek'rosh was in the camp.",
+    "Stoutly done, Stoutfist said. The Dragonmaw clan had taken a telling blow and might never recover, and with the catapults gone Menethil Harbor was safe. The kingdom of Ironforge rewarded those who served it well.",
+    "Nek'rosh was dead and his catapults ash. Stoutfist called it a telling blow to the Dragonmaw and Menethil safe, and paid in Ironforge's name.", 5)
 q(276, "Tramping Paws", "Wetlands", 21, V,
     "The Mosshides had lived peacefully in the Wetlands for years. Rethiel now saw their growing numbers trampling flowers and cutting too much living wood for their fires.",
     "Rethiel sent the hunt south toward Algaz, where the growing Mosshide camps had upset the balance he remembered.",
@@ -963,10 +963,10 @@ q(275, "Blisters on the Land", "Wetlands", 26, V,
     "The fen creepers were put down, and Rethiel judged the land soothed. He granted a boon in thanks for easing its suffering.",
     "After the hunt along the waterways, Rethiel spoke of relief for the land. He rewarded the work that had quieted its fevered creatures.")
 q(470, "Digging Through the Ooze", "Wetlands", 24, V,
-    "A visit to Ironbeard's Tomb ended with an ooze swallowing a bag thrown during an escape.",
-    "The lost bag's contents still mattered to its owner, even among the oozes near Dun Modr.",
-    "The bag was recovered, and its owner offered a salvaged item as thanks.",
-    "The belongings returned from the ooze, settling an errand born of a narrow escape.")
+    "Sida had been set on by dripping oozes on her weekly visit to Ironbeard's Tomb, northeast of Menethil near Dun Modr. In her panic she had thrown her bag at one, and the ooze had sucked it up. The bag's contents mattered, and the oozes all looked alike.",
+    "One of the oozes at Ironbeard's Tomb had Sida's bag inside it, and she could not say which. She needed what was in it.",
+    "Sida had feared the bag lost for good. She gave in thanks something from it she no longer used, with advice to wash it off first.",
+    "The bag came back from the ooze to Sida, who offered one of its contents as thanks, once it was rinsed.")
 
 -- The western routes: remedies remain attempts until their own recorded
 -- result, and a request for forest spirits does not restore the Charred Vale.
@@ -975,75 +975,75 @@ P.threads[AC] = "the search for Relara's cure"
 P.threads[AZ] = "the ruins along the Zoram Strand"
 P.threads[ST] = "the damaged forests of Stonetalon"
 q(1010, "Bathran's Hair", "Ashenvale", 20, AC,
-    "Orendil sought a plant from Bathran's Haunt to treat a child whose illness seemed more than physical.",
-    "Bathran's Hair had a reputation for easing ailments of the spirit.",
-    "Orendil received the plant and prepared to mix a possible cure.",
-    "The herb reached Orendil, along with troubling news of Forsaken at the old ruins.")
+    "Orendil Broadleaf at {p:Maestra's Post} feared that a child's sickness in Astranaar went deeper than the body. A plant called Bathran's Hair, once gathered in the ruins to the north, was known to cure ailments of the spirit.",
+    "A child in Astranaar was failing by the hour. Orendil Broadleaf wanted the herb that had grown at Bathran's Haunt, just south of the Darkshore border, before he dared to treat her.",
+    "Orendil took the strands of Bathran's Hair and set about mixing his cure, praying it would work. The news that Forsaken now camped in the haunt troubled him badly.",
+    "The herb from Bathran's Haunt went to Orendil at Maestra's Post. He had a cure to mix, and the Forsaken among the ruins to think about.")
 q(1020, "Orendil's Cure", "Ashenvale", 20, AC,
-    "Orendil's medicine needed carrying to Pelturas Whitemoon in Astranaar.",
-    "Relara's parent awaited help while the child's illness grew dangerous.",
-    "Pelturas received Orendil's medicine and placed hope in the healer's skill.",
-    "The remedy reached Relara's household, but its effect was not yet known.")
+    "Orendil's cure was ready, and the child it was meant for lay in {p:Astranaar}. Her father, Pelturas Whitemoon, had been given little reason for hope.",
+    "The road south and then east led to Astranaar, where Pelturas Whitemoon watched over his daughter Relara. He had no time to speak with anyone.",
+    "Pelturas knew Orendil's work when he saw it. He trusted the healer's skill with herbs, and the cure gave him hope where he had had little.",
+    "The cure reached Relara's father in Astranaar. Pelturas had had little hope before Orendil's remedy arrived, and now he had some.")
 q(1033, "Elune's Tear", "Ashenvale", 22, AC,
-    "Orendil's first remedy had only slowed Relara's illness, leaving Pelturas to seek a stronger treatment.",
-    "A stone called Elune's Tear lay on the isle in Iris Lake and was said to wash away corruption.",
-    "Pelturas received the stone and planned to place it in a stew for Relara.",
-    "Elune's Tear reached the household as another hoped-for remedy.")
+    "Orendil's cure had only slowed the disease in Relara. Pelturas remembered the healer's next counsel, a stone called Elune's Tear that lay on the isle in Iris Lake and was said to wash away corruption.",
+    "Relara's sickness had outlasted Orendil's remedy. Her father sent for Elune's Tear, a stone found in one place only, the island in Iris Lake east of Astranaar.",
+    "Pelturas held the Tear and planned to cook it into a stew for his daughter, praying it would end her sickness.",
+    "Elune's Tear came back from Iris Lake to Pelturas, who meant to put it in Relara's stew and pray.")
 q(1034, "The Ruins of Stardust", "Ashenvale", 23, AC,
-    "Relara's nightmares had eased after Elune's Tear, but her fever remained.",
-    "Frosted dust from the southern ruins offered the next treatment Orendil had suggested.",
-    "Pelturas received the dust and prepared to make a poultice for the fever.",
-    "The ingredients for the poultice reached Pelturas, who still had to apply the treatment.")
+    "Elune's Tear had eased Relara's nightmares, but her fever burned on. Orendil had spoken of a frosted dust among the Ruins of Stardust, south of Astranaar, that might bring it down.",
+    "Relara slept easier after the Tear, yet the fever held. Her father asked for the frosted dust of the Ruins of Stardust, the next remedy on Orendil's list.",
+    "Pelturas took the stardust to make a poultice against the fever. Without this help, he said, his child would surely have died.",
+    "The frosted dust reached Pelturas in Astranaar. He would make a poultice of it, and he said plainly that Relara would have perished without the help.")
 q(1035, "Fallen Sky Lake", "Ashenvale", 30, AC,
-    "Relara's fever had passed, but Pelturas believed a moonstone was needed to restore her strength.",
-    "A Shadethicket Oracle hoarded the fallen moonstones once gathered by the lake.",
-    "Pelturas received the moonstone and credited its recovery with saving Relara.",
-    "The moonstone reached Relara's parent, who expected its power to return her strength.", 5)
+    "Relara's fever had broken, but her strength had not come back. Pelturas believed only a moonstone could restore it, and the Shadethicket Oracle at Fallen Sky Lake hoarded every one that had fallen there.",
+    "The moonstones that Astranaar once gathered at Fallen Sky Lake now lay in the hoard of a Shadethicket Oracle. Pelturas saw no way to one except through the Oracle himself.",
+    "The Oracle's moonstone reached Pelturas with Relara down to her last breaths, he said. He gave in return the thing he held dearest after his daughter.",
+    "Pelturas took the fallen moonstone and credited it with saving his daughter. He could not repay the help, so he gave what he treasured most after Relara.", 5)
 q(1008, "The Zoram Strand", "Ashenvale", 19, AZ,
-    "Naga had returned to the coast above Zoram's drowned ruins for reasons the Sentinels did not know.",
-    "The northwestern shore held the remnants of a night elf city lost in the Sundering.",
-    "The fighting against the coastal naga earned the Sentinels' approval.",
-    "The shore's defenders acknowledged the strike without explaining why the naga had returned.")
+    "Shindrell Swiftfire of Astranaar spoke of an evil on the northwestern coast. The naga had come back to the {p:Zoram Strand}, where the city of Zoram had lain drowned since the Sundering, and no one knew why.",
+    "Zoram had been lost beneath the sea since the Sundering and nearly forgotten. Now naga crawled its strand, and Shindrell wanted them thrown back to the depths.",
+    "Shindrell called the work on the Zoram Strand commendable. The night elves knew the strength and guile of the naga from a shared history she did not care to repeat.",
+    "The naga on the strand had paid for their return. Shindrell knew what their kind could do, she said, from a history her people shared with them.")
 q(1007, "The Ancient Statuette", "Ashenvale", 20, AZ,
-    "A naga ambush had driven a traveler from his vessel and cost him a prized statuette.",
-    "The lost figure was the reason its owner had ventured among Zoram's submerged ruins.",
-    "The statuette was returned to its owner, who hoped it would unlock the old city's secrets.",
-    "The recovered figure restored the traveler's prized possession while its secrets remained closed.")
+    "Talen had been skimming Zoram's drowned ruins in a small boat when naga surged up and tore at him. He fled to the shore with what he could carry and lost the one thing he had come for, an ancient statuette.",
+    "At a meager camp on the {p:Zoram Strand}, Talen asked for a search of the beach to the north where the naga had ambushed him. The statuette he had dropped there was the whole reason he had braved the coast.",
+    "Talen had his statuette back. The old city held many secrets, he said, and this figure might be the key to them.",
+    "The statuette came out of the sand north of Talen's camp and went back to him. He believed it could unlock much of what Zoram still hid.")
 q(1009, "Ruuzel", "Ashenvale", 25, AZ,
-    "The Ring of Zoram was believed to open the statuette's ancient lock.",
-    "The naga leader Ruuzel held the ring once possessed by the drowned city's rulers.",
-    "The ring was recovered and paid for, supplying the key its seeker had requested.",
-    "The ancient ring reached the statuette's owner; what it might reveal was still ahead.", 4)
+    "The statuette's lock would stay shut without the Ring of Zoram, worn by the city's rulers before the Sundering drowned them. The naga had found it, and their leader Ruuzel kept it on an isle at Zoram's northern edge.",
+    "Talen had learned that the Ring of Zoram could open any lock in the old city. It was on Ruuzel's isle now, in naga hands.",
+    "Ruuzel was dead and the Ring of Zoram lay in Talen's palm. He paid for it, and said the deed would stay in his memory forever.",
+    "Talen paid for the ring taken from Ruuzel. With the key to the statuette's lock in hand, he could begin on Zoram's secrets.", 4)
 q(1056, "Journey to Stonetalon Peak", "Stonetalon Mountains", 18, ST,
-    "Faldreas directed aid through the Talondeep Path toward Keeper Albagorm on Stonetalon Peak.",
-    "The forest spirits' concerns led beyond Ashenvale into the damaged mountains.",
-    "Albagorm received the arrival from Faldreas and the forest spirits.",
-    "The referral reached the keeper on Stonetalon Peak, where his own requests awaited.")
+    "The forest spirits had told Faldreas of a traveler brave enough for the mountains. South of Mystral Lake the Talondeep Path ran through to Windshear Crag. Beyond Cragpool Lake a steep slope climbed to {p:Stonetalon Peak}, where Keeper Albagorm waited.",
+    "Faldreas sent word through the Talondeep Path to Keeper Albagorm on Stonetalon Peak. The way led past Cragpool Lake and up the mountainside, and he promised it would be perilous.",
+    "Keeper Albagorm's first words were that the arrival had taken a while. Faldreas had listened to the forest spirits after all, and the climb from Windshear Crag was over.",
+    "At the top of the slope, Albagorm greeted the climber as someone he had been expecting. Faldreas and the spirits had sent the right person.")
 q(1057, "Reclaiming the Charred Vale", "Stonetalon Mountains", 27, ST,
-    "Bloodfury harpies blocked access to the vale after industrialists had burned its forest.",
-    "Albagorm needed a way into the damaged land before regrowth could begin.",
-    "The Bloodfuries suffered losses, opening the possibility of beginning restoration.",
-    "The fighting reduced the harpy obstacle; restoring the forest was work still to come.", 4)
+    "From the peak Albagorm looked over the {p:Charred Vale}, set afire by a mechanized army of industrialists for nothing but greed. The Bloodfury harpies that had moved in refused the druids passage, and nothing could be replanted until they were driven out.",
+    "Greed had burned the sacred hills south of Stonetalon Peak. Albagorm wanted the Bloodfuries that nested in the ashes driven back so the regrowth could start.",
+    "The Bloodfuries had taken heavy losses in the vale. Albagorm thought the true work of restoring the land might now begin.",
+    "With the harpies thinned, Albagorm allowed himself to speak of restoration. The Charred Vale was still ash and its regrowth still to come, but the way in was open.", 4)
 q(1059, "Reclaiming the Charred Vale", "Thousand Needles", 27, ST,
-    "Albagorm sought Falfindel Waywarder's help before the Bloodfuries could regroup.",
-    "A druid near the edge of Feralas might call forest spirits to aid the Charred Vale.",
-    "Falfindel received Albagorm's urgent request and considered summoning help.",
-    "The appeal reached Falfindel; the arrival of forest spirits and the vale's recovery were still ahead.")
+    "The Bloodfuries were subdued, but Albagorm knew they would regroup. Far to the south, where Thousand Needles met the forest edge of Feralas, lived the druid Falfindel Waywarder. He could call forth spirits strong enough to help reclaim the vale.",
+    "Albagorm sent for help before the harpies could recover. Falfindel Waywarder, a druid at the western end of Thousand Needles, was said to summon great spirits of the forest.",
+    "Falfindel heard Albagorm's plea and praised the keeper's urgency. He would see whether the great forest could send aid to the Charred Vale in time.",
+    "The message reached Falfindel Waywarder at the edge of Feralas. He meant to try calling the forest's spirits to the vale before it was too late, and the vale's recovery was still ahead.")
 q(1070, "On Guard in Stonetalon", "Stonetalon Mountains", 21, ST,
-    "Tara had heard nothing from Kaela Shadowspear after the Sentinel went to investigate Stonetalon.",
-    "Kaela's mission with a gnome mage had left friends in Ashenvale waiting for news.",
-    "Kaela was found and welcomed the referral from Tara.",
-    "The search reached Kaela in Stonetalon, though she had no good news about the land yet.")
+    "Tara Thenysil in Astranaar had heard nothing from her friend Kaela Shadowspear since Sentinel Wolfrunner sent her into Stonetalon. That the Alliance had sent a gnome mage along with her worried Tara more.",
+    "Kaela Shadowspear had gone into the {p:Stonetalon Mountains} to learn what the Venture Company was doing to the land, with a gnome mage for company. Her friend Tara wanted word of her.",
+    "Kaela was alive in Stonetalon. She missed Tara and her homeland, she said, and was proud that her friend stood high enough among the Sentinels to send travelers on errands.",
+    "The search found Kaela Shadowspear well. News from Tara made her miss Ashenvale and her friends, and proud of Tara's standing with the Sentinels.")
 q(1085, "On Guard in Stonetalon", "Stonetalon Mountains", 21, ST,
-    "Kaela directed further help toward Gaxim, the gnome working beside her against the Venture Company.",
-    "The devastation in Stonetalon had brought a Sentinel and an engineer together.",
-    "Gaxim received the introduction and explained his faith in engineering, alchemy and magic.",
-    "The referral reached the gnome whose inventions were intended to help the night elves' forests.")
+    "Kaela had spent her time in Stonetalon fighting the Venture Company's destruction. She asked that the gnome working beside her, Gaxim, not be judged before he was heard. She had no good news yet to send to Tara.",
+    "For a night elf and a gnome to work together, Kaela said, the situation had to be grave. Help in Stonetalon started with speaking to Gaxim.",
+    "Gaxim called the land treacherous and meant to make it safer with engineering and a dash of magic. The night elves needed magic whether they liked it or not, he said, and with alchemy as well the possibilities were endless.",
+    "Gaxim Rustfizzle set out his creed at once. Swearing off magic would not help the night elves, and engineering, alchemy and a little magic together could not go wrong.")
 q(1071, "A Gnome's Respite", "Stonetalon Mountains", 21, ST,
-    "Gaxim needed time to plan his inventions while Venture Company goblins worked in Windshear Crag.",
-    "Keeping the goblins at bay would give the engineer room to organize his next attempt.",
-    "Gaxim thanked the fighting and began outlining a plan that would need more explosives.",
-    "The respite let Gaxim develop his next idea, with its supplies and execution still ahead.")
+    "Gaxim Rustfizzle of the Enlightened Assembly of Arcanology, Alchemy and Engineering Sciences had not had time to build his newest inventions. The goblins in {p:Windshear Crag} bred like rabbits, and he needed them held back while he planned.",
+    "Gaxim wanted a few days to plan and organize. That meant someone else keeping the Venture Company's goblins busy in Windshear Crag, east of his camp.",
+    "Gaxim had his plan when the fighting was done. Explosives were part of it. He had been herding the goblins with detonations along the mountains' edges, and his supplies had run low days ago.",
+    "The respite gave Gaxim his idea. He had scared the goblins back with high explosives before, less dangerous than people thought, he insisted, and now he had run out of them.")
 q(4761, "Thundris Windweaver", "Darkshore", 15, J,
     "Findings from the furbolg camps needed to reach Auberdine's elder, Thundris Windweaver.",
     "Thundris had ideas about the corruption troubling the forest and its people.",
@@ -1900,20 +1900,20 @@ q(288, "The Third Fleet", "Wetlands", 27, TF,
     "The drink hit the spot and loosened Fitzsimmons's tongue.",
     "Fitzsimmons had his drink, and with it the will to go on with his account.")
 q(289, "The Cursed Crew", "Wetlands", 29, TF,
-    "Something hidden aboard one of the Third Fleet's ships held the souls of Fitzsimmons's shipmates in the rotting hulls. Freeing some of them might break the curse.",
-    "His cursed brethren moaned in Fitzsimmons's dreams, and he wanted them freed.",
-    "Fitzsimmons gave thanks for himself and for his cursed brethren.",
-    "Some of the trapped crew were released, and Fitzsimmons passed on their gratitude.")
+    "Bolstered by his drink, Fitzsimmons went on. He was the only man of the Third Fleet still breathing, but not the only one still walking. A great and terrible treasure hidden on one of the ships held his brothers' souls in the rotting hulls. Freeing some of them might break the curse.",
+    "Fitzsimmons heard his drowned brethren moan in his dreams. He asked that some of them be freed from the wrecks north of Menethil.",
+    "Fitzsimmons gave his thanks, and with them the gratitude of his cursed brethren.",
+    "Some of the Third Fleet's cursed crew were put to rest. Fitzsimmons spoke for them as well as for himself.")
 q(290, "Lifting the Curse", "Wetlands", 30, TF,
-    "The thing behind the curse was locked in the strongbox of the Intrepid. Captain Halyndor still walked that ship with the key.",
-    "The key to the Intrepid's strongbox had stayed with Fitzsimmons's old captain, Halyndor.",
-    "The rusted key fit the strongbox lock neatly.",
-    "Halyndor's key opened the Intrepid's strongbox.")
+    "To free all his brothers, Fitzsimmons said, the thing stowed on his ship had to be retrieved and cleansed. It lay in the strongbox of the Intrepid, and his old captain, Halyndor, still walked the doomed ship with the key.",
+    "Captain Halyndor had never left the Intrepid, nor given up the strongbox key. Fitzsimmons wanted both taken from him.",
+    "Halyndor's key was rusted, but it fit the Intrepid's strongbox neatly.",
+    "The key taken from Captain Halyndor turned in the strongbox of the Intrepid.")
 q(292, "The Eye of Paleth", "Wetlands", 30, TF,
-    "Inside the strongbox lay a blackened orb pulsing with eerie light, a Cursed Eye of Paleth. Glorin Steelbrow might know how to lift its curse.",
-    "The cursed treasure from the Intrepid was bound for Glorin Steelbrow, the dwarven priest in Menethil.",
-    "Glorin was amazed to see an Eye of Paleth, and saw at once that something was wrong with it. No wonder Fitzsimmons was so spooked.",
-    "Glorin recognized the cursed Eye of Paleth; he had not known the Third Fleet carried one.")
+    "The strongbox held a blackened orb pulsing with an eerie light, the treasure Fitzsimmons had spoken of, a Cursed Eye of Paleth. The dwarven priest Glorin Steelbrow in Menethil might know how to lift its curse.",
+    "The Cursed Eye of Paleth came up out of the Intrepid's strongbox and went to Glorin Steelbrow in {p:Menethil Harbor}.",
+    "Glorin took the Eye of Paleth with amazement. Something was wrong with this one, he saw at once, and a shipwreck explained it. He had not known the Third Fleet carried such an Eye, and he no longer wondered why Fitzsimmons was so spooked.",
+    "Glorin Steelbrow had grumbled about the drunk Fitzsimmons and his begging. The Cursed Eye of Paleth silenced that. A cursed Eye, he said, was no cause for mirth.")
 q(293, "Cleansing the Eye", "Stormwind City", 30, TF,
     "Human priests had made the Eyes of Paleth, so Glorin could not lift the curse. Archbishop Benedictus at the Cathedral of Light could.",
     "Glorin sent the cursed Eye to Stormwind and Archbishop Benedictus.",
@@ -1940,10 +1940,10 @@ q(631, "The Thandol Span", "Wetlands", 31, DI,
     "A small dwarven body lay by the bridge, its helmet engraved Ebenezer Rustlocke.",
     "Ol' Rustlocke was found dead, his name engraved in his helmet.")
 q(632, "The Thandol Span", "Wetlands", 31, DI,
-    "Rustlocke had run into a Dark Iron ambush, and a parchment lay by his clenched fist.",
-    "The grim news of Rustlocke had to reach Rhag Garmason, along with the parchment he had died holding.",
-    "Rhag Garmason called the news grave.",
-    "The parchment and the news of Rustlocke's death reached Rhag.")
+    "Ol' Rustlocke had run into a Dark Iron ambush by the bridge. A parchment lay beside his clenched fist, and Rhag Garmason had to hear the grim news and see it.",
+    "The parchment from beside Rustlocke's body went back to Rhag Garmason at Dun Modr with the news of his death.",
+    "Rhag Garmason heard how Rustlocke had died and called the news grave. He turned to the parchment.",
+    "The news of Rustlocke reached Rhag, who called it grave and took the parchment from beside the dead scout's hand.")
 q(633, "The Thandol Span", "Wetlands", 31, DI,
     "Rustlocke's parchment showed that Kam Deepfury had arranged a cache of explosives just across the Thandol Span. If it reached the bridge, the supply line north would be cut.",
     "Rustlocke's death was not to be in vain, Rhag said. The explosives cached in the Arathi Highlands had to be destroyed.",
@@ -2332,10 +2332,10 @@ q(397, "You Have Served Us Well", SW, 30, F,
     "Zggi handed over the gift, admitting he wanted to keep it but knew better than to betray his master.",
     "Zggi gave up his master's gift, though not gladly.")
 q(468, "Report to Mountaineer Rockgar", "Loch Modan", 21, KD,
-    "Mountaineer Rockgar at Dun Algaz wanted volunteers for a scouting mission through the pass into the Wetlands.",
-    "North up the road beyond the guard tower, Rockgar was gathering scouts for the Wetlands.",
-    "Rockgar welcomed the volunteer and warned that the scouting mission had turned into something messier.",
-    "At Dun Algaz, Rockgar said the scouting had become a messier business.")
+    "Mountaineer Rockgar at Dun Algaz was looking for volunteers for a mission through the pass into the Wetlands. Anyone who wanted to get their boots wet in that soggy country could find him north up the road, beyond the guard tower.",
+    "Word went round Loch Modan that Rockgar wanted scouts for the Wetlands. He was at Dun Algaz, past the guard tower.",
+    "Rockgar was glad of a volunteer and hoped the gear was in good order. The scouting mission, he said, had turned into something messier.",
+    "At Dun Algaz, Rockgar welcomed another pair of boots and warned that scouting was no longer the right word for it.")
 P.questIDs[2520].highlight = {"Lady Sathrah's spinnerets were laid in the Temple of the Moon's fountain. The holy water there would cleanse the corruption that had maddened her.", "Sathrah's sacrifice went into the temple's waters, and A'moora hoped Elune would accept it."}
 
 -- Starters3 lane, 2026-11-05: Bishop DeLavey's missing diplomat through every
@@ -2852,6 +2852,317 @@ P.questIDs[298].highlight = {"Ironband's report brought another powder request t
 P.questIDs[294].highlight = {"Raptors drawn to Whelgar's excavation had killed Ormer's fellow workers. The first hunt brought vengeance while duty kept him beside Merrin and the Prospector.", "The raptors west of the bluff suffered Ormer's first reprisal for his fallen coworkers. He said he would have joined the fighting if duty to Merrin and the Prospector allowed it."}
 P.questIDs[295].highlight = {"The next hunt thinned the scytheclaws and razormaws below the bluff, earning Ormer's hearty praise.", "Ormer welcomed the losses among the scytheclaws and razormaws that crowded the excavation below his shelter."}
 P.questIDs[296].highlight = {"Sarltooth's talon proved Ormer's final target dead. He hoped the vengeance for the fallen workers would deter attacks on King Magni's people.", "Ormer received Sarltooth's talon and remembered the dwarves killed at their work. He believed the vengeance would make the creatures fear another attack."}
+
+-- Band 20-30 pass (2026-11-06, tests/Band2030.lua): Astranaar's arrivals and
+-- defense, Relara's neighbours, Gaxim's war on the Venture Company, Kayneth
+-- Stillwind's watch, the Howling Vale through Velinde's fate, the dryads of the
+-- Shrine of Aessina and Gerrig's manuscript. Quest text by ID; NPCs and places
+-- checked against Interface/AddOns/LoreForever/Data (facts only).
+P.threads.alliance_astranaar = "the defense of Astranaar"
+P.threads.alliance_gaxim = "Gaxim's campaign against the Venture Company"
+P.threads.alliance_kayneth = "Kayneth Stillwind's watch over Ashenvale"
+P.threads.alliance_aessina = "the dryads of the Shrine of Aessina"
+P.threads.alliance_gerrig = "Gerrig Bonegrip's collection"
+local AA, AG, AK, AD = "alliance_astranaar", "alliance_gaxim", "alliance_kayneth", "alliance_aessina"
+q(990, "Trek to Ashenvale", "Ashenvale", 19, AA,
+    "Sentinel Selarin's mistress, Raene Wolfrunner, was waiting in {p:Astranaar}. Corruption had taken hold in Ashenvale, and Selarin hoped that help from Darkshore might ease some of it.",
+    "The road south from Auberdine led into Ashenvale and on to Astranaar. Raene Wolfrunner wanted every pair of hands Selarin could send her.",
+    "Raene Wolfrunner welcomed the arrival from Darkshore and said Selarin had done well to send help so quickly. She wished the visit had come under less dire stress, and pointed to the citizens of Astranaar who needed aid.",
+    "In Astranaar, Raene said the trip had been made under dire stress and that Selarin had chosen well. The other citizens of the town could use help, she said, and that was the place to start.")
+q(1133, "Journey to Astranaar", "Ashenvale", 20, AA,
+    "Fiora Longears in Theramore had advice for anyone fresh off the boat from Menethil. The first thing to do was go north to {p:Astranaar} and offer Shindrell Swiftfire a sword, and the second was to leave Fiora's name out of it, since Shindrell did not know her.",
+    "Astranaar was where an eager member of the Alliance could do real good, Fiora Longears said. She asked that nobody mention who had sent them.",
+    "Shindrell Swiftfire welcomed the offer of service. Ashenvale kept its beauty, she said, but it was no longer the peaceful place it had been.",
+    "In Astranaar, Shindrell took the newcomer at face value and spoke of a forest that was lovely still and peaceful no more.")
+q(1134, "Pridewings of Stonetalon", "Stonetalon Mountains", 21, AA,
+    "The Alliance and the Horde were not at open war, Shindrell said, but the peace was fragile. Hidden sources in Theramore claimed that orc assassins collected venom from the pridewings near Mirkfallon Lake for their death raids, and she meant to deny them it.",
+    "Shindrell could not prove the claim from Theramore, that orcs milked the pridewings of Stonetalon for an assassin's poison. She chose to cut off the source rather than wait to find out.",
+    "Shindrell took the venom sacs with no joy. It saddened her to order the slaughter of creatures that might not willingly serve her enemies, yet it was her duty, and her allies were safer for it.",
+    "The pridewing venom reached Astranaar. Shindrell admitted the beasts might have been innocent, and said a heart could weep for them and still be glad the Alliance was safe from their poison.")
+q(945, "Therylune's Escape", "Darkshore", 18, AD,
+    "Therylune had wandered into the {p:Master's Glaive} in Darkshore and been surrounded by cultists. She had hidden well, and now wanted a way out and word carried to her sister Therysil at the Shrine of Aessina in Ashenvale.",
+    "Cultists ringed the Master's Glaive, and Therylune was hiding among them. Her sister waited far to the south at the Shrine of Aessina, knowing nothing of it.",
+    "Therysil could hardly believe where her sister had got to. Therylune never minded getting dirty, she said, but the Master's Glaive was an unwholesome place and a long way to wander.",
+    "At the Shrine of Aessina, Therysil learned that her sister was safe and where she had been found. The news was welcome, the place less so.")
+q(976, "Supplies to Auberdine", "Ashenvale", 24, "alliance_darkshore",
+    "Delgren had given Feero Ironhand messages and supplies for Sentinel Starbreeze in Auberdine, and Feero would not take the road north alone. Dangerous foes worked in the forest, and he feared the goods and the information falling into the wrong hands.",
+    "Feero Ironhand was ready to leave {p:Maestra's Post} the moment he had guards. The supplies on his back were meant to reinforce the Sentinels in Darkshore.",
+    "Feero's goods reached Auberdine with their escort, and Delgren said they would be put to use at once against the dark threats in the forest.",
+    "The supplies for Auberdine arrived with Feero. Delgren called it a good day's work and said the Sentinels would use the goods immediately.")
+q(1016, "Elemental Bracers", "Ashenvale", 24, AA,
+    "Sentinel Velene Starstrike at Silverwind Refuge wanted to know who had made the elementals fouling the pools. Her divining scroll needed something of theirs to focus on, and a few intact bracers would do.",
+    "The corrupted elementals wore bracers, and most broke when the creatures died. Velene needed a few whole ones for a divining scroll that could name their maker.",
+    "The divined paper gave Velene what she needed to find the culprit. A wizard was filling the pools with corrupt elementals on purpose, she said, and it sickened her. She wanted him to pay.",
+    "Velene read the result of the divining scroll and spoke of a mage who was corrupting Ashenvale's waters deliberately. The next step, she said, was to take him out.")
+q(1017, "Mage Summoner", "The Barrens", 25, AA,
+    "Only one undead mage in the Barrens could defile so many water elementals, Velene said, and only one was foolish enough to try. Sarilus Foulborne was probably sitting atop Dreadmist Peak laughing at her, and she wanted his head.",
+    "Velene had had enough of Sarilus Foulborne. The undead mage on Dreadmist Peak had been fouling the Sentinels' pools from inside Horde territory, where the Horde might be watching.",
+    "Sarilus Foulborne's head came back across the border to Silverwind Refuge. Velene said she could see his repugnant smile wiped away forever, and gave the Light of Elune, a draught to drink when death was near.",
+    "Velene received the head of the mage who had annoyed the Sentinels once too often. In thanks she gave the Light of Elune, to be drunk when all seemed lost.", 4)
+q(1025, "An Aggressive Defense", "Ashenvale", 24, AA,
+    "Before the trip to the moonwell, Raene Wolfrunner had another task. Furbolgs had been attacking travelers on the road east of Astranaar, short of the Falfarren River, and their camps lay south of the road.",
+    "Raene described the furbolgs east of Astranaar as minds tortured and fed on fear. She asked that they be shown the same mercy they had shown her people.",
+    "Raene said the work on the eastern road had been done well, and thanked the one who did it.",
+    "The furbolg camps south of the Falfarren road were thinned. Raene's thanks were brief.")
+q(1054, "Culling the Threat", "Ashenvale", 25, AA,
+    "Directly north of Astranaar the Thistlefur furbolg had grown in number for months. Raene feared they would soon find the courage to attack the town, and she wanted their chieftain's skull as proof that their efforts had been stifled.",
+    "Raene's scouts counted more Thistlefur every month. Their chieftain, Dal Bloodclaw, had to die before the tribe grew bold enough to march on Astranaar.",
+    "Dal Bloodclaw's skull reached Raene in Astranaar. The furbolg threat was constant, she said, and this would keep them at bay a while longer.",
+    "Raene took the chieftain's skull and hoped for a little breathing room. Astranaar lived under constant threat from the furbolg.", 4)
+q(1011, "Forsaken Diseases", "Ashenvale", 29, AK,
+    "Kayneth Stillwind believed the Forsaken who lurked in Ashenvale's ruins and barrows had come to spread disease among the night elves. A bottle from their camp south of Forest Song, near the Dor'Danil Barrow Den, would prove it.",
+    "The Forsaken had a camp near the Dor'Danil Barrow Den where they brewed poisons and bottled them. Kayneth wanted one bottle to test.",
+    "Kayneth took the bottle of disease from the Forsaken camp. By testing its contents, he said, the Forsaken's goals in Ashenvale would be revealed.",
+    "The stolen bottle reached Kayneth at Forest Song. He meant to find out what the Forsaken were brewing, and why.")
+q(4581, "Kayneth Stillwind", "Ashenvale", 29, AK,
+    "The druid Kayneth Stillwind had asked Shindrell for an account of the coast and the forests around Astranaar. He feared a corruption moving through Ashenvale, and Shindrell thought he might be right.",
+    "Shindrell's report went east to the shrine of Forest Song in the Nightsong Woods, where Kayneth Stillwind watched the forest.",
+    "Kayneth read Shindrell's report for clues of the wickedness he feared was moving through Ashenvale. He called her a fine sentinel, brave and keen.",
+    "Shindrell's report reached Forest Song. Kayneth praised the sentinel who wrote it and turned to it for signs of corruption.")
+q(1012, "Insane Druids", "Ashenvale", 32, AK,
+    "Struggling with the Forsaken's poisons, Kayneth had seen a vision of the druids of the Dor'Danil Barrow Den. The undead had poisoned and murdered them and left them as maddened ghosts. For their spirits to find peace, their leaders Taneel Darkwood, Uthil Mooncall and Mavoris Cloudsbreak had to be destroyed.",
+    "Kayneth's dreams were haunted by the anguish of the Dor'danil druids. The spirits of their three leaders, severed from their bodies and driven mad, had to be put down inside the barrow den.",
+    "Kayneth felt the anguish of the Dor'danil barrows lessen and knew the work was done. It was grim work, he said, for the spirits destroyed had been victims of the Forsaken, and he hoped the rest might now find peace.",
+    "The three druid leaders were destroyed in the barrow den. Kayneth called it grim and necessary, and hoped the other maddened spirits would find rest.", 4)
+q(1022, "The Howling Vale", "Ashenvale", 30, VL,
+    "Sentinel Melyria Frostshadow had kept most of Felwood's demons out of Ashenvale, but something new had come. Wolf-men had overrun the ruined shrine of Mel'Thandris near the Felwood border, and their calls had earned the place the name of the Howling Vale.",
+    "The Tome of Mel'Thandris, kept at the shrine in the Howling Vale, was no ordinary tome. Its leaves had been blessed by Mel'Thandris herself and showed events of import, and Melyria hoped it would explain the wolf-men.",
+    "What the Tome of Mel'Thandris showed, no one truly understood, Melyria said. But it was clear that the Scythe of Elune, given to Priestess Starsong, needed looking into.",
+    "The tome's vision pointed to a priestess named Starsong and a weapon called the Scythe of Elune. Melyria could not say why the tome showed what it did, only that the scythe bore investigation.", 4)
+q(1037, "Velinde Starsong", "Darnassus", 30, VL,
+    "Velinde Starsong had been Melyria's predecessor in Ashenvale. Her work against Felwood had faltered little by little, and one day she had simply disappeared. Thyn'tel Bladeweaver, a commander of the Sentinels, might know more.",
+    "Melyria knew nothing of the priestess whose post she had inherited. In {p:Darnassus}, Thyn'tel Bladeweaver had been party to the events around Velinde's disappearance in a way Melyria had not.",
+    "Thyn'tel Bladeweaver allowed that Velinde's disappearance was common knowledge. Anything further, she said, would take good reason to divulge.",
+    "In Darnassus, Thyn'tel confirmed that the priestess had vanished some time ago and said no more. The details would need a reason.")
+q(1040, "Passage to Booty Bay", "Stranglethorn Vale", 30, VL,
+    "Wharfmaster Dizzywig found the entry at last. Velinde had booked passage to {p:Booty Bay} on the Black Osprey and asked about overland travel on the far side of the world. He had mentioned Ruzzgot, a caravan driver based in that port.",
+    "Dizzywig's ledgers put Velinde on the Black Osprey to Booty Bay, with nothing to say the ship had failed to arrive. The next name was Ruzzgot, a goblin caravaneer there.",
+    "Caravaneer Ruzzgot sized up his visitor as someone without goods to ship. Either it was a job seeker, and there were no jobs, or the wrong goblin was being asked.",
+    "In Booty Bay, Ruzzgot saw no cargo and no reason to talk. He offered two choices, a job he did not have or the wrong goblin, and waited.")
+q(1041, "The Caravan Road", "Duskwood", 30, VL,
+    "Ruzzgot admitted he had been wrong about his visitor, and that did not happen every day. He remembered Velinde, a night elf priestess traveling with his caravan, and said they had parted on the way north when she turned for {p:Darkshire}.",
+    "A night elf priestess on a dirty old caravan was not a passenger Ruzzgot forgot. She had left him on the road north, bound for Darkshire, where the clerk kept notes on everything.",
+    "Clerk Daltry kept note of every stranger who passed through Darkshire, he said, with all the strange happenings of recent years. It was seldom pleasant business when those notes were needed, though he suggested nothing about Velinde by it.",
+    "In Darkshire, Clerk Daltry said he wrote down what he could about strangers these days. He had not meant to imply anything about the priestess.")
+q(1042, "The Carevin Family", "Duskwood", 30, VL,
+    "Daltry had nothing on a Velinde Starsong taking a room in Darkshire, and could hardly picture a night elf priestess at the inn. The wolf-men were another matter. Calor had come into town with a string of their heads, and Calor worked for the Carevin family, hunters of demons, undead and other monstrosities.",
+    "The clerk's notes held no Velinde, but the mention of wolf-men caught him. The Carevins hunted such things, and Jonathan Carevin headed the household.",
+    "Jonathan Carevin did not apologize for his suspicion. A stranger had walked into his home in dark times asking about worgen, and he meant to have answers.",
+    "In the Carevin house, Jonathan heard the question about worgen with open suspicion. Evil lay under every rock these days, he said, and he would have answers before he gave any.")
+q(1043, "The Scythe of Elune", "Duskwood", 30, VL,
+    "Jonathan Carevin did not understand the motives behind the search, but if it meant fewer worgen in Duskwood he could forgo understanding for results. The beasts had first appeared at a mine to the south, Roland's Doom, and it was overrun with them still.",
+    "The worgen had come out of nowhere, as far as Darkshire knew, and the mine south of town was where they were first seen. Jonathan asked that anything of import found there be shared with him.",
+    "Jonathan found the account from the mine interesting. The Carevin family had not the reach to find the root of the trouble and end it, he said, but it would contain the worgen in Duskwood. Calor would make that his first priority.",
+    "What came out of Roland's Doom was an interesting account, Jonathan said. His family could not finish the matter, only hold the worgen's numbers down, and he set Calor to it.", 4)
+q(1044, "Answered Questions", "Darnassus", 30, VL,
+    "Jonathan Carevin promised the worgen would be reined in. He bore Velinde no ill will for the evil she had brought into his woods. Others ought to hear, he said, what the mines of Duskwood had revealed.",
+    "What had been found in Roland's Doom belonged in {p:Darnassus}. Jonathan kept the stranger no longer.",
+    "So that was Velinde's fate, Thyn'tel said. The high priestess would be disappointed, for the two had been friends. It unsettled Thyn'tel that the Scythe of Elune, surely a boon from the goddess, had fallen out of her servants' hands.",
+    "Thyn'tel Bladeweaver heard how the search for Velinde had ended. She owed thanks for it, she said, and worried where the Scythe of Elune had gone. That was a matter for another time.", 5)
+q(1021, "Vile Satyr! Dryads in Danger!", "Ashenvale", 32, AD,
+    "Illiyana's sisters had gone to take back the Branch of Cenarius from the satyrs and had been gone two whole days. They had been looking for the ruins of a night elf temple in Xavian, to the northeast, with Anilia leading them.",
+    "At the Shrine of Aessina, Illiyana did not know what to think. Anilia had led the search for the stolen Branch of Cenarius into Xavian and had not come back.",
+    "Anilia was found in Xavian with a gaping wound in her side, on the verge of death.",
+    "The search found Anilia among the ruins of Xavian, dying of a wound in her side.")
+q(1031, "The Branch of Cenarius", "Ashenvale", 32, AD,
+    "Anilia drew her rescuer close, pointed to the arch to the north and breathed a name, Geltharis, before she died. Her last wish was plain enough. The Branch of Cenarius had to go back to dryad hands.",
+    "With her last breath Anilia named Geltharis as the thief of the Branch of Cenarius and pointed north. There was nothing to do for her but finish what she had started.",
+    "Illiyana could not believe Anilia was gone. Only yesterday they had been running and playing in the woods, she said, and those days were over now.",
+    "The Branch of Cenarius came back to Illiyana along with the news of Anilia's death. She spoke of the days they had played together in the forest, and said those days were done.", 5)
+q(1032, "Satyr Slaying!", "Ashenvale", 32, AD,
+    "Illiyana said she almost felt sad, and knew one thing that might help. The satyrs that had taken Anilia from her could die, and their horns would prove it.",
+    "Anilia's death asked for an answer, and Illiyana asked for satyr horns from Xavian.",
+    "Illiyana took the satyr horns and said her sister's spirit was gladdened.",
+    "The horns of Anilia's killers reached the Shrine of Aessina. Illiyana believed her sister's spirit was gladdened by it.")
+q(971, "Knowledge in the Deeps", "Blackfathom Deeps", 23, "alliance_gerrig",
+    "Gerrig Bonegrip in Ironforge collected old lore, the kind that opened doorways and could wake Those Who Sleep. He had heard of the Lorgalis Manuscript at the bottom of {p:Blackfathom Deeps}, the old dwelling of long-dead elves, and wanted it.",
+    "The Lorgalis Manuscript was said to lie deep in Blackfathom Deeps in Ashenvale, among the ruins of elves who had held great knowledge before their city fell. Gerrig Bonegrip promised not to forget whoever brought it to him, not even after the end days.",
+    "Gerrig called it a joyous day. Copies of the Lorgalis Manuscript would be made and spread among his brothers and sisters, and he said the service was greater than its bearer knew.",
+    "The manuscript from Blackfathom reached Gerrig Bonegrip in Ironforge. He spoke of brothers and sisters who would read it, and offered a gift as the gratitude his kind extended to their allies.", 4)
+-- Gaxim's campaign: the NG-5, the scroll, the two covert operations and the reports home.
+q(1072, "An Old Colleague", IF, 21, AG,
+    "Gaxim's most advanced device needed a special charge, Nitromirglyceronium, and only one person could make it. His old friend Lomac Gearstrip was in {p:Tinker Town}, in Ironforge.",
+    "Gaxim admitted the mission might be a last one, so he wanted the good stuff. NG-5 came from Lomac Gearstrip in Tinker Town, and someone had to talk him into making it.",
+    "Lomac Gearstrip wanted to know why he should believe that Gaxim had sent anyone. He asked twice.",
+    "In Tinker Town, Lomac greeted Gaxim's name with suspicion and demanded proof that the request was not a lie.")
+q(1073, "Ineptitude + Chemicals = Fun", IF, 21, AG,
+    "Lomac laughed at the idea of using Nitromirglyceronium to save a forest, and would gladly supply it just to see someone explode. He was out of it, though, and wanted the right potions brought before he brewed more.",
+    "NG-5 was Lomac's greatest creation, and he would not hand a sample to just anyone. The potions he needed for it would show whether the asker knew any alchemy.",
+    "The potions satisfied Lomac. The world was not all swords and sorcery, he said, and a stranger who knew alchemy was worth something.",
+    "Lomac took the potions and allowed that the bearer seemed to know something about alchemy. He could make the NG-5 now.")
+q(1074, "Ineptitude + Chemicals = Fun", "Stonetalon Mountains", 21, AG,
+    "Lomac handed over the NG-5 with a warning that it was volatile, and a greeting for Gaxim if the courier really was his friend.",
+    "The Nitromirglyceronium was ready for the crossing back to Stonetalon. Lomac's parting words were to enjoy blowing oneself up if the friendship with Gaxim was a lie.",
+    "Gaxim took the NG-5 and explained its purpose. It would ignite wagons of dynamite, the perfect distraction, he said, and the rest would follow.",
+    "The volatile charge reached Gaxim in {p:Windshear Crag}. He called it the one ingredient that could set off whole wagons of dynamite, and promised the distraction would be worth seeing.")
+q(1075, "A Scroll from Mauren", SW, 21, AG,
+    "Gaxim's next piece was remote detonation. With a little magic the NG-5 could go off at the push of a button. The spell had to come from Collin Mauren in Stormwind's {p:Mage Quarter}.",
+    "A device that set off explosives from a distance needed a mage's help. Gaxim named Collin Mauren, a human in the Mage Quarter of Stormwind.",
+    "Collin Mauren turned the request over. A spell to detonate explosives from a distance would take some thought.",
+    "In the Mage Quarter, Mauren heard what Gaxim needed and began considering how such a spell might work.")
+q(1077, "Special Delivery for Gaxim", "Stonetalon Mountains", 21, AG,
+    "Collin Mauren had his spell ready and sent his regards to Gaxim with it. He wanted to hear how the adventure ended.",
+    "The scroll from Stormwind was the last part of Gaxim's remote explosive. Mauren asked only to be told how it went.",
+    "Gaxim called Mauren's spell perfect. Mixed with the NG-5 it made a remote explosive, and the distraction it caused would cover a theft of the Venture Company's letters and engineering plans.",
+    "With the spell in hand, Gaxim had his remote explosive. The plan was now a distraction and a burglary, aimed at the Venture Company's plans and letters to slow its deforestation.")
+q(1079, "Covert Ops - Alpha", "Stonetalon Mountains", 22, AG,
+    "Gaxim's devices were done. Plan Alpha was not about the size of the blast, he said. It was about coming back with the Venture Company's engineering plans from the lumber mill south of Cragpool Lake.",
+    "Gaxim's notes explained where to place the detonators and the NG-5. The target was the lumber mill below Cragpool Lake and the plans kept inside it.",
+    "The engineering plans came out of the lumber mill. Gaxim called it a huge blow to the Venture Company, whose machines could now be studied for weaknesses and copied.",
+    "Gaxim had the Venture Company's plans in hand and called it a wonderful day. Their designs would show him their weaknesses and feed his own inventions.", 4)
+q(1080, "Covert Ops - Beta", "Stonetalon Mountains", 22, AG,
+    "Plan Beta ran like Plan Alpha, a distraction and a theft, except that the prize this time was the Venture Company's letters. Gaxim wanted them, and the thief back alive.",
+    "The explosives went where Gaxim's notes said. Beyond the distraction, only the letters mattered.",
+    "The letters reached Gaxim, who said Kaela and the Sentinels would be delighted. With his creations and a willing agent, he felt unstoppable.",
+    "Gaxim was thrilled by the stolen letters and declared the partnership unstoppable. Kaela and the Sentinels would hear of it next.", 4)
+q(1091, "Kaela's Update", "Stonetalon Mountains", 22, AG,
+    "Gaxim sent the stolen letters on to Kaela. The instructions were to say how well it had gone, and that it could not have been done without a little magic.",
+    "The letters stolen from the Venture Company were bound for Kaela, with the credit for Gaxim's magic to be mentioned.",
+    "Kaela found the letters interesting indeed, and said the work with Gaxim had been done very well.",
+    "The letters reached Kaela Shadowspear. She called their contents interesting and praised the work done beside Gaxim.")
+q(1082, "Update for Sentinel Thenysil", "Ashenvale", 22, AG,
+    "Kaela sent word back to {p:Astranaar} that she and Gaxim were alive and well on their way to stopping the Venture Company. Tara Thenysil would want to hear it.",
+    "Good news at last for Tara in Astranaar. Her friend Kaela was alive, the gnome too, and the work in Stonetalon was going forward.",
+    "Tara thanked the messenger for the service to the Sentinels. She was glad to hear Kaela was well, and even Gaxim.",
+    "The news reached Tara Thenysil in Astranaar. Kaela was safe, and Tara allowed that she was glad about Gaxim too.")
+q(1081, "Reception from Tyrande", "Darnassus", 28, AG,
+    "Tara Thenysil believed Tyrande Whisperwind herself would want to give thanks. What had begun in Stonetalon might strengthen the night elves' foothold there, and the {p:Temple of the Moon} in Darnassus waited.",
+    "The work in Stonetalon had earned an audience with the High Priestess. Tara sent the Sentinels' ally to the Temple of the Moon.",
+    "Tyrande had heard the name before. She was pleased with the path chosen by one still full of youth, she said, and gave a gift in appreciation.",
+    "In the Temple of the Moon, Tyrande Whisperwind said the name was already known to her, and offered a gift for the work in Stonetalon.", 5)
+q(1083, "Enraged Spirits", "Stonetalon Mountains", 26, AG,
+    "Kaela did not know what the Venture Company had done in the {p:Charred Vale}, only that the creatures there had overpowered them. In setting the forest aflame the goblins had freed burning spirits of flame, stone and rage, and the land had no chance while they roamed.",
+    "The first time Kaela saw the Charred Vale she had almost wept. She asked for the smoldering embers of its fire spirits as proof that their numbers were falling.",
+    "The embers of the vale's fire spirits reached Kaela. Their remains served the land well, she said.",
+    "Kaela took the smoldering embers. Fewer enraged spirits walked the Charred Vale, and she thanked the strength that had thinned them.")
+q(1084, "Wounded Ancients", "Stonetalon Mountains", 28, AG,
+    "The treants had surely helped drive the Venture Company out of the Charred Vale, Kaela thought, and now even those guardians had turned. Gaxim suspected the goblins' weapons, and wanted shrapnel from a wounded treant to study.",
+    "Something had corrupted the protectors of the vale. Gaxim's theory pointed at the weapons the goblins used in their retreat, and the proof would be the shrapnel still lodged in the treants.",
+    "Kaela took the shrapnel for Gaxim. It would be more than enough, she said, for the gnome to work out how the treants were corrupted.",
+    "The shrapnel from the wounded treants went to Kaela, who passed it on to Gaxim at once.")
+q(1078, "Retrieval for Mauren", SW, 26, AG,
+    "Travelers kept asking Collin Mauren about the Stonetalon Mountains. He had a request of his own. Basilisks had once lived in the Charred Vale whose scales, ground to dust, made a fine reagent for his spells.",
+    "Collin Mauren wanted a few basilisk scales from the Charred Vale, if the creatures still lived there. There was no rush, he said, and he paid well.",
+    "Mauren called the scales perfect and thanked their bearer greatly. One day, he hoped, he might return the help.",
+    "The basilisk scales reached Collin Mauren in the Mage Quarter. He paid, and promised to remember the favor.")
+P.questIDs[1035].highlight = {"The Shadethicket Oracle's moonstone reached Pelturas in time, he said, with Relara down to her last breaths. He gave the thing he held dearest after his daughter.", "Pelturas took the fallen moonstone and called his daughter saved. In thanks he gave what he treasured most after Relara."}
+P.questIDs[1009].highlight = {"Ruuzel died on her isle. The Ring of Zoram, the key to the statuette's lock, went to Talen, who paid for it and swore never to forget.", "Talen paid for the Ring of Zoram taken from Ruuzel. He had the key to his statuette at last."}
+P.questIDs[1017].highlight = {"Sarilus Foulborne's head came down from Dreadmist Peak to Velene Starstrike, who gave the Light of Elune in return.", "Velene received the head of the mage who had fouled her pools, and gave the Light of Elune, a draught for when death was near."}
+P.questIDs[1054].highlight = {"Dal Bloodclaw's skull reached Raene in Astranaar. She hoped it would keep the Thistlefur at bay a while longer.", "Raene took the Thistlefur chieftain's skull and hoped for a little breathing room for Astranaar."}
+P.questIDs[1012].highlight = {"The maddened spirits of Taneel Darkwood, Uthil Mooncall and Mavoris Cloudsbreak were destroyed in the barrow den. Kayneth called it grim work done to victims, and hoped the rest found peace.", "Kayneth felt the anguish of the Dor'danil barrows lessen. The three druid leaders were gone, and he hoped the other spirits could rest."}
+P.questIDs[1044].highlight = {"The search for Velinde Starsong ended before Thyn'tel in Darnassus. The high priestess would be disappointed, she said, and the Scythe of Elune was out of the goddess's servants' hands.", "Thyn'tel heard Velinde's fate and gave her thanks. The Scythe of Elune troubled her, a matter for another time."}
+P.questIDs[1031].highlight = {"The Branch of Cenarius came back to Illiyana with the news that Anilia was dead. Only yesterday they had played in the woods, she said.", "Illiyana had the Branch of Cenarius back and had lost her sister Anilia for it. Those days of playing in the forest were over, she said."}
+P.questIDs[1079].highlight = {"The Venture Company's engineering plans came out of the lumber mill under cover of Gaxim's explosives. He called it a huge blow to the company.", "Gaxim had the Venture Company's plans from the lumber mill and called it a wonderful day."}
+P.questIDs[1080].highlight = {"The Venture Company's letters reached Gaxim after the second distraction. Kaela and the Sentinels would be delighted, he said.", "Gaxim held the stolen letters and declared himself unstoppable."}
+P.questIDs[1081].highlight = {"Tyrande Whisperwind received the Sentinels' ally in the Temple of the Moon. The name was known to her, she said, and she gave a gift for the work in Stonetalon.", "In the Temple of the Moon, Tyrande gave a gift of appreciation for what had begun in Stonetalon."}
+P.questIDs[971].highlight = {"The Lorgalis Manuscript came up from Blackfathom Deeps to Gerrig Bonegrip in Ironforge, who promised copies for his brothers and sisters.", "Gerrig Bonegrip called the day joyous. The Lorgalis Manuscript would be copied and spread."}
+P.threads.alliance_boran = "the Blind Princess's lost cargo"
+P.threads.alliance_theramore = "Fiora Longears's work from Theramore"
+P.threads.alliance_kraul = "the dead of Razorfen Kraul"
+q(34, "An Unwelcome Guest", R, 24, K,
+    "Martie Jainrose's garden in {p:Lakeshire} had been trampled again, and she knew the brute. Marshal Marris called the boar Bellygrub. Her daffodils were ruined until next season, and she offered a reward for his tusk. He foraged in the field southwest of town.",
+    "A boar named Bellygrub had pillaged Martie Jainrose's garden once too often. She wanted his tusk on her table.",
+    "Martie called the menace laid to rest. Her garden would be in full bloom that season, she said.",
+    "Bellygrub's tusk reached Martie Jainrose, who looked forward to a garden in bloom.")
+q(281, "Reclaiming Goods", "Wetlands", 25, "alliance_boran",
+    "Murlocs had raided the merchant vessel Blind Princess off Menethil. The ship got away, but much of its cargo went overboard with the creatures, among it a valuable statuette of Terenas Menethil. Karl Boran wanted it back from the coastal hovels.",
+    "Karl Boran sent a search through the murloc hovels on the coast for the Blind Princess's lost cargo, and above all for the Menethil Statuette.",
+    "The first crate was clawed and water-stained. Under the rotted straw lay an armload of red bottles, and no statuette.",
+    "A scratched crate among the hovels held soggy straw and red-colored bottles. The statuette was elsewhere.")
+q(284, "The Search Continues", "Wetlands", 25, "alliance_boran",
+    "The cluster of hovels held no trace of the Menethil Statuette. Two more lay to the north and northeast.",
+    "The search for the Blind Princess's statuette went on to the next murloc hovels up the coast.",
+    "An untouched barrel gave up a pungent smell of cheese, a little wet and still tasty.",
+    "The next barrel held cheese, wet but good, and nothing of Terenas Menethil.")
+q(285, "Search More Hovels", "Wetlands", 25, "alliance_boran",
+    "Another group of hovels, another thorough inspection, nothing. One of the hovels to the north had to have the statuette.",
+    "Each empty hovel made the next one likelier. The search pushed north along the murloc coast.",
+    "A barrel lay half buried in the mud and grass of the last hovel.",
+    "The search ended at a barrel sunk halfway into the muck.")
+q(286, "Return the Statuette", "Wetlands", 25, "alliance_boran",
+    "The barrel pulled from the muck held a silvery figurine packed in fine straw, a young, long-haired paladin with hammer upraised. It had to be the Menethil Statuette, and Karl Boran in {p:Menethil Harbor} was waiting for it.",
+    "The Menethil Statuette came out of a murloc hovel's barrel, straw and all, bound for Karl Boran.",
+    "Karl Boran said the captain of the Blind Princess would be relieved to have his precious cargo back. Dependable folk were good to see in trying times, he said, and he paid for services rendered.",
+    "The statuette of Terenas Menethil reached Karl Boran in Menethil. The Blind Princess's captain would hear of it, and the finder was paid.", 4)
+q(1132, "Fiora Longears", "Dustwallow Marsh", 20, "alliance_theramore",
+    "Red Jack Flint in Menethil Harbor longed for the sea and saw it in other people's futures. His job was to tell eager souls of Kalimdor, the land of opportunity. He sent them by ship to {p:Theramore} to his partner, the elf Fiora Longears.",
+    "A ship from Menethil went to the port of Theramore, where Fiora Longears started newcomers on their Kalimdor adventure, Red Jack Flint said.",
+    "Fiora Longears welcomed anyone Mr. Flint sent. He was a strong judge of character, she said, and if he had sent them, they belonged in Kalimdor.",
+    "In Theramore, Fiora Longears took Mr. Flint's word as proof enough that the newcomer belonged in Kalimdor.")
+q(1135, "Highperch Venom", "Thousand Needles", 30, "alliance_theramore",
+    "Wyvern venom, Fiora said, was worth more in some circles than the wyvern. The Highperch wyverns of Thousand Needles, west of Theramore, carried a potent kind, and she had a job for anyone unafraid of hunting them.",
+    "Fiora Longears wanted venom sacs from the wyverns of {p:Highperch}, potent and valuable.",
+    "Most of the sacs were nearly bursting with venom, Fiora said, the kind normally taken only from young wyverns or fertile females. It must have been quite a slaughter up at Highperch.",
+    "Fiora took the venom sacs from Highperch and remarked on their fullness, and on what that said about the hunt.")
+q(1142, "Mortality Wanes", "Razorfen Kraul", 30, "alliance_kraul",
+    "Heralath Fallowbrook lay dying in {p:Razorfen Kraul}. The brave dwarf Lonebrow had been sent to warn Falfindel, he managed to say, and one of the quilboar had stolen the pendant that bound him to his wife Treshala. He asked that it be found and taken to her in Darnassus, with word of his lonely death.",
+    "A dying night elf in the Kraul had one request. His wife Treshala's pendant of bonding, stolen by the quilboar, was to go home to her in Darnassus along with the news.",
+    "Treshala cried out against a cruel and intolerable world. She would carry the grief, she said, and not let Heralath's work die with him, and then she asked to be left alone to mourn.",
+    "The pendant of bonding and the news of Heralath's death reached Treshala in Darnassus. She asked for solitude and spoke of carrying his work on.", 5)
+-- Gnomeregan: Techbot, the green glow, Castpipe's data, Kernobee and the Sparklematic.
+q(2923, "Tinkmaster Overspark", IF, 26, G,
+    "Brother Sarno in Stormwind remembered Techbot as a kind and helpful tool for the gnomes, and had heard from Tinkmaster Overspark that it had malfunctioned. Overspark was in {p:Tinker Town} in Ironforge and would welcome help.",
+    "Word of Techbot's breakdown had reached Stormwind. Brother Sarno sent help to its maker, Tinkmaster Overspark in Tinker Town.",
+    "It was true, Overspark said. Techbot had gone rogue, and he asked for help.",
+    "In Tinker Town, Overspark confirmed the worst about Techbot and accepted the offer of help.")
+q(2922, "Save Techbot's Brain!", "Gnomeregan", 26, G,
+    "When Gnomeregan fell, a rogue spark had jolted Tinkmaster Overspark's creation, Techbot, and polarized its positronic brain. Now it was negatronic, its behavior reversed, and it roamed {p:Gnomeregan} in a frenzy. Overspark wanted its memory core to find the cause.",
+    "Techbot had once aided Overspark and his associates with countless gizmos and a limitless store of information. Its memory core, salvaged from the ruined city, might let the Tinkmaster fix it.",
+    "Overspark called it wonderful and got to work at once, with a word of comfort for poor Techbot. Then he went looking for the plug for his hydro-jack swivel spanner.",
+    "Techbot's memory core reached Tinkmaster Overspark, who promised the machine it would be fixed and began hunting for a spanner plug.")
+q(2927, "The Day After", "Dun Morogh", 27, G,
+    "Gnoarn had not always been bald. The radiation leak in Gnomeregan had taken the only gnomefro in Azeroth, and he shook his fist at the troggs. It might not be too late to save the city, he said, and Ozzie Togglevolt in {p:Kharanos} and his partner Razzle were working on it.",
+    "Gnoarn's grudge against the troggs was personal and follicular. He sent help to Ozzie Togglevolt in Kharanos, who was working on a solution for Gnomeregan.",
+    "Ozzie had stood beside Gnoarn when the radiation bolt hit him and watched those brown locks hit the floor in clumps. Gnoarn had touched his bald head in disbelief, Ozzie said, and the look in his eyes had screamed revenge against the troggs.",
+    "Ozzie remembered the day Gnoarn lost his hair, clumps and clusters of it, and the moment his anger turned on the troggs. He had not thought Gnoarn would survive the loss.")
+q(2926, "Gnogaine", "Gnomeregan", 27, G,
+    "Since the accident, Gnoarn talked of nothing but cleansing Gnomeregan of troggs and curing the sickness, Ozzie Togglevolt said. He and Razzle were close to a cure, or to a very powerful rum. To test it they needed a phial of green glow from the irradiated troggs.",
+    "Ozzie Togglevolt in Kharanos needed fallout from Gnomeregan's irradiated troggs for a formula. Whether it cured gnomes or got them drunk, he could not yet say.",
+    "Ozzie called it excellent work and prepared to test the formula. If it worked, the captured leper gnome would be cured and Ozzie would have a full head of hair, and he told everyone to stand back.",
+    "The phial of green glow reached Ozzie in Kharanos, who stepped back to test his cure on a leper gnome and his own scalp.")
+q(2962, "The Only Cure is More Green Glow", "Gnomeregan", 30, G,
+    "The first sample had been too small and impure, Ozzie said. The troggs were not irradiated enough. He wanted green glow straight from the tap, from the irradiated slimes, lurkers and horrors of Gnomeregan. It might take several tries with the phial, he warned.",
+    "Ozzie's cure needed purer fallout than troggs could give. The slimes, lurkers and horrors in the city's depths were the source, and containing it was difficult.",
+    "Ozzie looked the bearer over and was impressed that all the limbs were still attached. Now, he said, it was time to see what this stuff could do.",
+    "The purer green glow reached Ozzie in Kharanos. He checked for missing limbs, found none, and turned to his test.")
+q(2931, "Castpipe's Task", IF, 28, G,
+    "Master Mechanic Castpipe was organizing bands to re-enter Gnomeregan on a data retrieval mission of top importance. He was no member of the Enlightened Assembly of Arcanology, Alchemy and Engineering Sciences, but he was a smart gnome. The odds that it mattered were put at eighty-four percent.",
+    "Castpipe needed adventurers for Gnomeregan. The errand came with a calculation, an eighty-four percent probability that the mission really was important.",
+    "Castpipe was organizing data extraction missions into Gnomeregan, and told anyone there for that to listen up.",
+    "In Ironforge, Master Mechanic Castpipe took on another volunteer for the data extraction and began his briefing.")
+q(2930, "Data Rescue", "Gnomeregan", 30, G,
+    "The gnomes had left vitally important data behind in Gnomeregan, Castpipe said. It sat on a prismatic punch card in a Matrix Punchograph 3005-D high security terminal, deep in the city. Reaching it meant clearance from the lower terminals, models A, B and C, and those needed punch cards the gnomes had also left behind, starting with white.",
+    "Castpipe's data rescue began with a white punch card and climbed terminal by terminal to the 3005-D and its prismatic card.",
+    "The prismatic punch card was found and the lost data recovered. Vitally, critically, immeasurably important data, Castpipe said, that the gnomes could not have lived another moment without. The service would be long remembered.",
+    "The prismatic punch card reached Master Mechanic Castpipe, who declared the data recovered and the service to the gnomes unforgettable.", 4)
+q(2925, "Klockmort's Essentials", IF, 30, G,
+    "Mathiel in Darnassus had word from his gnome friend Klockmort Spannerspan in Ironforge. Klockmort needed help on a dangerous mission into Gnomeregan, the once great city now contaminated and full of mad gnomes and their devices. Mathiel could not leave his post.",
+    "Mathiel's heart ached to help his friend Klockmort, and he asked someone to go in his stead to Tinkertown in Ironforge.",
+    "Klockmort did need help with a mission into Gnomeregan, and declared the newcomer just the one to do it.",
+    "In Tinkertown, Klockmort Spannerspan welcomed the help Mathiel had sent across the sea.")
+q(2924, "Essential Artificials", "Gnomeregan", 30, G,
+    "The essential artificial was a near-universal component, Klockmort Spannerspan said, and the tinkers and smiths of Gnomeregan had used it for everything. In the frantic exodus nobody had thought to take any. He needed a large supply from the artificial extrapolators deep in the city.",
+    "Klockmort's new work needed essential artificials, and they were all still in Gnomeregan, in containers in its deeper halls.",
+    "Klockmort had his essential artificials and could begin his experiments. The bravery had advanced gnomish research by a leap and a bound, he said.",
+    "The artificials from Gnomeregan's extrapolators reached Klockmort Spannerspan in Ironforge, who could not thank the bearer enough.")
+q(2928, "Gyrodrillmatic Excavationators", "Gnomeregan", 30, G,
+    "Shoni the Shilent in Stormwind's Dwarven District did not have enough parts to get her fleet of gyrodrillmatic excavationators to Dun Morogh. Gnomeregan was full of bots and mechs roaming like cattle on an open range, she said, and two dozen of their robot guts would do.",
+    "Shoni's excavationators needed spare parts, and Gnomeregan's robots had them. She wanted two dozen torn apart for their guts.",
+    "The robot guts would do nicely, Shoni said. One gyrodrillmatic excavationator fixed, three hundred and ninety-eight to go.",
+    "Two dozen robots' worth of parts reached Shoni in the Dwarven District. It fixed one excavationator out of her fleet.")
+q(2904, "A Fine Mess", "Gnomeregan", 30, G,
+    "Kernobee came to among the troggs of Gnomeregan with no idea how he had got there. Dark Iron dwarves had captured him and beaten him within an inch of his life, that much he remembered. He wanted leading to the exit. After that, Scooty in Booty Bay was to hear that he had gone to Ratchet to warn Tinkerwiz about the Dark Irons and the super rig.",
+    "A battered gnome named Kernobee needed out of Gnomeregan. If he made it, Scooty in Booty Bay was to hear where he had gone and why.",
+    "Scooty supposed a reward was in order for bringing Kernobee back in one piece. For anyone going back into Gnomeregan, he added something to give an edge against that backstabber Mekgineer Thermaplugg.",
+    "Kernobee's message reached Scooty in Booty Bay. Scooty paid for the rescue and spoke of Mekgineer Thermaplugg as a backstabber worth an edge against.", 4)
+q(2951, "The Sparklematic 5200!", "Gnomeregan", 30, G,
+    "Among the gnomes holding out against the madness in {p:Gnomeregan} stood a contraption with a plaque, the Sparklematic 5200. For a grime-encrusted item and three silver coins in the slot, it promised to put the shine back in shine-tastic.",
+    "The Sparklematic 5200 wanted two things, something grimy to clean and three silver coins.",
+    "The grime-encrusted item and three silver went in, and the Sparklematic 5200 surged to life. Loud, violent churning came from its heart and its frame creaked and lurched from side to side as it purged the grime.",
+    "Three silver coins and a filthy object set the Sparklematic 5200 churning and groaning and lurching, hard at work on the grime.")
+P.questIDs[2930].highlight = {"The prismatic punch card came out of Gnomeregan's 3005-D terminal. Castpipe called the data immeasurably important and the service unforgettable.", "Master Mechanic Castpipe had his lost data back from Gnomeregan on a prismatic punch card."}
+P.questIDs[1142].highlight = {"Heralath Fallowbrook's pendant went home to his wife Treshala in Darnassus with word of his death in Razorfen Kraul. She asked to mourn alone.", "Treshala in Darnassus received her husband's pendant and the news of his death in the Kraul, and asked for solitude."}
+P.questIDs[286].highlight = {"The Menethil Statuette, a silver paladin with hammer raised, came out of a murloc's barrel and back to Karl Boran in Menethil.", "Karl Boran had the Blind Princess's statuette back from the murloc hovels, and paid for dependable work."}
 
 -- Compact outcomes remain attached to exact quest stages.
 P.questIDs[463].highlight = {"The feared Greenwarden offered the name Rethiel. He said the roots and ferns spoke well of his visitor, and asked for help healing the land.", "Fitzsimmons's warning led to Rethiel in the marsh. He welcomed his visitor on the word of the roots and ferns, then asked that the land's wounds be healed."}

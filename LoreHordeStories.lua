@@ -374,8 +374,8 @@ Q(848, "Fungal Spores", "The Barrens", 15, "horde_apothecary",
     "Apothecary Helbrim judged the spores potent and paid as promised. The Forsaken, he said, honored their contracts.",
     "Helbrim had his spores, needed for a concoction bound for his associate in Thunder Bluff.")
 Q(868, "Egg Hunt", "The Barrens", 22, "horde_roads",
-    "Little was known about the insect-like creatures in the Field of Giants.",
-    "An observer working for Orgrimmar sought intact eggs from the southern mounds.",
+    "Korran had been sent to the Crossroads to watch the land for his masters in Orgrimmar. The insect-like creatures of the Field of Giants were his study. They seemed cleverer than any normal animal, and he lent a digging claw for taking eggs from their mounds.",
+    "Little was known of the insect creatures in the Field of Giants except that they had intelligence and attacked when alerted. Korran wanted their eggs whole, dug from the mounds with his own claw.",
     "Korran was pleased to have the eggs and his digging claw back unbroken, for his report to his masters in Orgrimmar.",
     "The eggs from the Field of Giants reached Korran, whose masters in Orgrimmar wanted to know more of the clever insect creatures.")
 Q(869, "Raptor Thieves", "The Barrens", 13, "horde_roads",
@@ -1336,25 +1336,25 @@ Q(875, "Harpy Lieutenants", "The Barrens", 16, "horde_roads",
     "The lieutenants' rings supplied proof of the strike against the Witchwing command.",
     "The six rings accounted for the lieutenants targeted in the Dry Hills.")
 Q(876, "Serena Bloodfeather", "The Barrens", 20, "horde_roads",
-    "Serena Bloodfeather's attacks on caravans were described as revenge for her sister's death.",
-    "The campaign's final target was Serena, whose sister had been killed by Rexxar.",
-    "Serena's head supplied proof that the leader of the revenge attacks was dead.",
-    "The campaign against Serena ended with her death and the promised reward.")
+    "Darsok Swiftdagger had one last task after the harpy lieutenants. Serena Bloodfeather's sister had been slain by Rexxar long ago, and the attacks on the Horde caravans were her revenge. Darsok wanted her head to send out on the next caravan.",
+    "The harpy raids on the caravans came down to one grudge. Serena Bloodfeather wanted blood for her sister, and Darsok wanted her throat slit and her head on a wagon, for the other harpies to think about.",
+    "Darsok had not been sure the task was within reach. Serena's head proved him wrong, and he called its bearer quite the cut-throat and paid the reward.",
+    "Serena Bloodfeather's head reached Darsok, who laughed and admitted his doubts. The harpy epidemic had lost its leader.")
 Q(850, "Kolkar Leaders", "The Barrens", 16, "horde_kolkar",
     "New leaders were rallying the Kolkar, turning scattered bands into a greater threat.",
     "Barak Kodobane camped near the Forgotten Pools, the first leader marked for attack.",
     "Barak's head confirmed the death of one of the Kolkar's capable leaders.",
     "The campaign against the Kolkar leadership began with Barak Kodobane's defeat.")
 Q(851, "Verog the Dervish", "The Barrens", 18, "horde_kolkar",
-    "Verog wandered widely, but the command tent at the Stagnant Oasis offered a way to draw him out.",
-    "An alarm among the Kolkar near the oasis could bring Verog to their defense.",
-    "Verog's head supplied proof that the second leader had been defeated.",
-    "The disturbance at the Stagnant Oasis ended with Verog's death.")
+    "Verog the Dervish wandered the Barrens and would be hard to find, Regthar Deathgate said. His base was the centaur command tent at the {p:Stagnant Oasis}. Kill enough centaur there and an alarm would bring him running. His head was to join Barak Kodobane's.",
+    "Regthar had a second head in mind for his collection. Verog the Dervish could be drawn out by stirring up the Kolkar around their command tent at the Stagnant Oasis.",
+    "Regthar's guards had spotted the commotion down at the Stagnant Oasis. Verog's head went up beside Barak Kodobane's, and Regthar said there was much bravery in the one who brought it.",
+    "Verog the Dervish answered the alarm at the oasis and died for it. Regthar placed the head with Barak's and spoke of a deed to be proud of.")
 Q(852, "Hezrul Bloodmark", "The Barrens", 19, "horde_kolkar",
-    "Hezrul Bloodmark led the Barrens Kolkar from the Lushwater Oasis.",
-    "The campaign now turned against the fierce leader above Barak and Verog.",
-    "Hezrul's head confirmed the defeat of the Kolkar leader.",
-    "Hezrul Bloodmark was dead, dealing the Kolkar another blow to their leadership.")
+    "Hezrul Bloodmark led the Kolkar of the Barrens from the {p:Lushwater Oasis} to the south. Regthar called him fierce, brutal and cunning, and believed his death would fracture the Kolkar and shrink their threat.",
+    "With Barak and Verog dead, Regthar named the last and highest of the Kolkar leaders. Hezrul Bloodmark held the Lushwater Oasis, and his head was wanted like the others.",
+    "Regthar commended the deed. The centaur could not focus their rage as the orcs did, he said, but they were fierce. Hezrul's death proved the valor of the one who brought his head.",
+    "Hezrul Bloodmark's head made the third beside Barak's and Verog's. Regthar spoke of valor proven against an undisciplined but fierce enemy.")
 Q(855, "Centaur Bracers", "The Barrens", 14, "horde_kolkar",
     "A bounty on Kolkar bracers supported the Horde's contested holdings in the Barrens.",
     "The centaur troops remained a threat beyond the individual leaders marked for death.",
@@ -1401,15 +1401,15 @@ Q(882, "Ishamuhale", "The Barrens", 19, "horde_hunts",
     "Ishamuhale's fang became proof of the hunt, with a reminder to temper strength.",
     "The hunt ended with Speartooth's defeat and the presentation of his fang.")
 Q(907, "Enraged Thunder Lizards", "The Barrens", 18, "horde_hunts",
-    "The southern plains held thunder lizards large enough to make the ground rumble.",
-    "Stormsnouts, Stormhides and Thunderheads presented a different danger from the smaller quarry.",
-    "Proof of victory over the thunder lizards completed the next hunting test.",
-    "The thunder lizard hunt was recognized as another completed part of the training.")
+    "Sergra Darkthorn set the next test. The thunder lizards of the southern Barrens were so large the ground rumbled under them, and one false step put a hunter beneath their feet. Stormsnouts, Stormhides and Thunderheads were all to be bested.",
+    "The great thunder lizards came after the smaller quarry in Sergra's lessons. She named the Stormsnouts, Stormhides and Thunderheads of the southern plains, and warned about their feet.",
+    "Sergra was glad to see proof of victory over the thunder lizards, and gladder still that it came back with no bones broken.",
+    "The thunder lizards were bested and the hunter's bones were whole. Sergra remarked on both.")
 Q(913, "Cry of the Thunderhawk", "The Barrens", 20, "horde_hunts",
-    "Thunderhawk wings were the proof required as the local hunting lessons approached their end.",
-    "The hunting path turned toward the thunderhawks roaming the Barrens.",
-    "The wings proved the hunt complete, and the teacher's final advice pointed beyond these lessons.",
-    "The thunderhawk hunt closed this course of teaching without ending the hunter's wider path.")
+    "The thunderhawk was a fierce beast, Sergra said, and it was time to face one. Its wings would prove the hunt, and after that her teaching would be near its end.",
+    "Sergra's last lesson in the Barrens was the thunderhawk. Find where it roamed, kill it, and bring back the wings.",
+    "Sergra said the hunter should be as proud as the thunderhawk. Every foe she had set had been bested with strength, courage and honor. Now it was time to move on, for true hunters never stopped walking their path.",
+    "The thunderhawk's wings ended Sergra Darkthorn's lessons. She spoke of pride, of honor, and of a path that went on forever.")
 
 -- The Crossroads, Camp Taurajo and the road north (overnight 2026-11-05).
 -- Thork, Gazrog, Regthar, Mangletooth's cage and Tatternack are placed from
@@ -1487,10 +1487,10 @@ Q(893, "Weapons of Choice", "The Barrens", 24, "horde_roads",
     "The quilboar weapons were better than Tatternack had expected. He warned that the Horde might have underestimated its enemy.",
     "Tatternack found the Razormane further along than he had thought, and turned to examining the weapons closely.")
 Q(3261, "Jorn Skyseer", "The Barrens", 18, "horde_hunts",
-    "Sergra Darkthorn's teaching was over. Further guidance lay south at Camp Taurajo, with Jorn Skyseer.",
-    "The hunter's lessons in the Barrens continued under Jorn Skyseer at Camp Taurajo.",
-    "Jorn Skyseer greeted the hunter and began the next lessons.",
-    "At Camp Taurajo, Jorn welcomed a new student to the hunter's path.")
+    "Sergra Darkthorn had taught all she would. To learn more, she said, the hunter had to go south to {p:Camp Taurajo} and find Jorn Skyseer, who would continue the guidance.",
+    "The Crossroads lessons were over, and Jorn Skyseer at Camp Taurajo took over from Sergra.",
+    "Jorn Skyseer greeted the young one and asked whether it was the hunter's path that had brought the visit. Very good, he said, and began.",
+    "At Camp Taurajo, Jorn welcomed Sergra's student onto the hunter's path and started the next lessons at once.")
 Q(883, "Lakota'mani", "The Barrens", 22, "horde_hunts",
     "The hoof of the great kodo Lakota'mani was a symbol of strength.",
     "Lakota'mani's hoof was carried to Jorn Skyseer at Camp Taurajo.",
@@ -1565,10 +1565,10 @@ Q(891, "The Guns of Northwatch", "The Barrens", 20, "horde_ratchet",
     "The Alliance guns at Northwatch were silent. Brightsun paid for the medals, then turned to the grim work of recovering his dead.",
     "Fairmount and her cannoneers would sink no more of Brightsun's ships. The bodies of his privateers still had to be recovered.")
 Q(898, "Free From the Hold", "The Barrens", 20, "horde_ratchet",
-    "Firebough had survived a sunken moonshine transport only to be imprisoned at Northwatch.",
-    "The captured deckhand wanted help getting back to Ratchet from the hold.",
-    "Firebough's rescue brought news of survival to people who had thought the deckhand dead.",
-    "The escape was recognized by the Thalo'dan Privateers, who had given Firebough up for lost.")
+    "Gilthares Firebough had been a deckhand on a moonshine transport between Ratchet and Booty Bay when the zealots of Theramore sank it. The only survivor, he sat in a cell at {p:Northwatch Hold}, called an enemy of the Alliance, and wanted out.",
+    "Theramore's soldiers had sunk a moonshine boat and locked up its one survivor at Northwatch. Firebough could not believe anyone had got past the guards, and asked for help breaking back to Ratchet.",
+    "Thalo'thas Brightsun had thought Firebough long dead. The rescue earned a place of honor with the Thalo'dan Privateers.",
+    "Firebough walked out of Northwatch Hold and back to Ratchet, to privateers who had given him up. Brightsun called the rescue heroics.")
 Q(894, "Samophlange", "The Barrens", 14, "horde_ratchet",
     "The Venture Company was experimenting with a samophlange near the Sludge Fen.",
     "A copied operating manual offered a way into the research facility's unfamiliar controls.",
@@ -1595,15 +1595,15 @@ Fallback("Samophlange", "horde_ratchet",
     "Another stage of the work around the samophlange was complete.",
     "The work around the samophlange moved forward.", {V .. " #894, #900, #901, #902"})
 Q(858, "Ignition", "The Barrens", 18, "horde_ratchet",
-    "Wizzlecrank had climbed into a Venture Company shredder without its ignition key.",
-    "The supervisor above the derrick held the key needed to move the stolen machine.",
-    "Wizzlecrank received the key and began working out the shredder's controls.",
-    "The key made an escape possible, but the machine still had to be brought out.")
+    "Wizzlecrank had hopped into a Venture Company shredder before realizing he needed a key to unlock its movement column. When another operator asked if everything was all right, he had panicked and claimed a mechanical problem. The supervisor in the control room at the top of the derrick had the key.",
+    "A goblin in a stolen shredder was stuck at the Sludge Fen for want of a key. Wizzlecrank wanted it fetched from the supervisor up the derrick before anyone grew suspicious.",
+    "Wizzlecrank tried the key and went through the controls, rotation, speed and stability, fine arm movement. He could not believe the Venture Company had designed something so much better than Ratchet's, and he meant to get it home.",
+    "The key fit. Wizzlecrank marveled at the shredder's controls and wanted the machine back in Ratchet.")
 Q(863, "The Escape", "The Barrens", 18, "horde_ratchet",
-    "Wizzlecrank was ready to attempt an escape in the unfamiliar shredder.",
-    "The stolen prototype had to leave Venture Company ground with its improvised pilot.",
-    "News of the wrecked prototype prompted plans for a salvage team at Wizzlecrank's location.",
-    "The escape left a damaged shredder to recover, and Ratchet arranged to salvage what remained.", nil, true)
+    "Wizzlecrank supposed he would learn the shredder as he went. A few buttons, a lever or two. The stolen prototype rolled out of the Venture Company's yard with a goblin at the sticks who had never driven one.",
+    "The shredder had to leave Venture Company ground, and Wizzlecrank was its pilot by default. He asked only whether his escort was ready.",
+    "Sputtervalve hoped something of value could be pulled from the wrecked prototype, since his time was running out. He sent a salvage team to Wizzlecrank's position on the double, and paid for the trouble.",
+    "The prototype ended the run as a wreck. Sputtervalve dispatched a salvage team to Wizzlecrank and hoped the pieces were worth something.", nil, true)
 Fallback("The Escape", nil,
     "Getting out of danger required practical help.",
     "An escape depended on assistance before the immediate difficulty could be left behind.",
@@ -1612,30 +1612,30 @@ Fallback("The Escape", nil,
 pack.quests["The Escape"].thread = false
 pack.quests["The Escape"].threadLabel = false
 Q(896, "Miner's Fortune", "The Barrens", 18, "horde_ratchet",
-    "News of a fist-sized emerald at Boulder Lode mine had reached Ratchet's wharfmaster.",
-    "Dizzywig offered a share of the value if the Venture Company miners' emerald could be obtained.",
-    "The emerald reached Dizzywig, who calculated and paid the promised share.",
-    "Dizzywig accepted the great gem and settled the bargain.")
+    "Wharfmaster Dizzywig kept his finger on the pulse of everything that moved between Ratchet and Booty Bay. His latest news was an emerald the size of a fist, found by a Venture Company miner at the {p:Boulder Lode Mine} northeast of the Sludge Fen. He offered to go halves on its sale.",
+    "A miner at the Boulder Lode had turned up a fist-sized emerald, and Dizzywig knew buyers. Which miner had it was the problem.",
+    "Dizzywig held the emerald up and declared them both rich. He worked out the cut from the rates on gems going into Undermine, fifty percent as promised, and called it a pleasure doing business.",
+    "The emerald from the Boulder Lode reached Dizzywig, who paid out half by his own reckoning of the Undermine rates.")
 Q(865, "Raptor Horns", "The Barrens", 18, "horde_ratchet",
-    "A proposed smart drink depended on the untested idea that raptor intelligence resided in the horns.",
-    "Intact scytheclaw horns were wanted for a profitable experiment in drinks.",
-    "The horns were delivered for grinding and mixing with wine; the drink's claims remained unproved.",
-    "The experiment gained its ingredients, without establishing whether they could make anyone smarter.")
+    "Mebok Mizzyrix believed the raptors of the Barrens were smarter than raptors anywhere else, and that the smarts were hiding in their horns. Ground to powder, he thought, they would make smart drinks worth a fortune. He wanted intact horns from the sunscale scytheclaws.",
+    "Mebok's fortune hinged on raptor horns. The sunscale scytheclaws roamed the southern Barrens and the north near Ashenvale, and only unbroken horns would do for his smart drinks.",
+    "Mebok took the horns and reached for his grinder and some wine. Whether the drink made anyone smarter was still to be seen.",
+    "The scytheclaw horns reached Mebok, who began grinding at once. His fortune was, in his mind, as good as made.")
 Q(866, "Root Samples", "The Barrens", 16, "horde_oases",
     "Oasis water appeared to give the Barrens' herbs slightly different properties.",
     "Root samples could be grown and compared with herbs from other regions.",
     "The roots were received for cultivation and study of their possible properties.",
     "The samples supplied the planned comparison, leaving any valuable discovery for later research.")
 Q(862, "Dig Rat Stew", "The Barrens", 23, "horde_trade",
-    "The dig rats overrunning Bael Modan could also fill a stew pot.",
-    "A promised meal depended on gathering rats from the dwarven excavation.",
-    "The gathered rats were cooked into Dig Rat Stew.",
-    "The rat hunt ended with a prepared meal as promised.")
+    "Grub at the Crossroads was starving all day long and reckoned anyone out in the Barrens must be too. He offered a stew in exchange for dig rats from {p:Bael Modan}, where the dwarves were overrun with them. Nobody was a seasoned adventurer, he said, until they had killed rats.",
+    "Grub promised a nice stew for a few dig rats. The dwarves' excavation at Bael Modan had more than enough to spare.",
+    "Grub liked his rats riper, left to rot a few weeks for flavor, but the hunger before him would not wait. He cooked the Dig Rat Stew on the spot and handed it over.",
+    "The dig rats from Bael Modan went into Grub's pot fresher than he liked. The stew came out as promised.")
 Q(899, "Consumed by Hatred", "The Barrens", 20, "horde_roads",
-    "The call for quilboar tusks came from someone whose desire for revenge had not eased.",
-    "A watcher scanned the horizon for quilboar and wanted more of them killed.",
-    "The delivered tusks were welcomed, but the demand for vengeance remained unsatisfied.",
-    "Proof of the quilboars' deaths brought thanks without ending the bitterness behind the task.")
+    "Mankrik stood at the Crossroads from sunrise to sunset scouring the horizon for quilboar. He had killed every pig man he met since, and his thirst for their blood was far from quenched. He asked for their tusks, so the deaths could be celebrated together.",
+    "Mankrik wondered aloud whether he should have gone to Taurajo instead of the Crossroads. Either way he wanted quilboar dead, as many as possible, and their tusks brought back.",
+    "Mankrik thanked the one who had taken his task seriously. His desire for revenge remained, he said, but he could at least smile to know the quilboar had felt pain themselves.",
+    "The tusks reached Mankrik at the Crossroads. They did not quench his thirst for revenge, but they let him smile for a moment.")
 
 -- Ratchet's broken samophlange, Chen's brews, Gann's revenge, the coast and
 -- Vrang's ridge (overnight 2026-11-05). Sputtervalve, Wenikee, Drohn, Mebok
@@ -1957,10 +1957,10 @@ Q(516, "Beren's Peril", "Silverpine Forest", 21, HS,
     "Ravenclaw drudgers and guardians were slain in the cave. Allister praised the scouts whose reports had led to their hiding place.",
     "Ravenclaw drudgers and guardians fell at Beren's Peril. Allister hoped more such reports would help drive the Scourge from Forsaken lands.")
 Q(493, "Journey to Hillsbrad Foothills", "Hillsbrad Foothills", 20, "horde_apothecary",
-    "Pressure to develop the New Plague made sharing research important to the Royal Apothecary Society.",
-    "Renferrel's latest findings were bound for Apothecary Lydon in Tarren Mill.",
-    "Lydon received Renferrel's research and looked forward to studying it.",
-    "The findings reached Tarren Mill, connecting the apothecaries' work across the two regions.")
+    "The Dark Lady was pressing the Royal Apothecary Society hard for a New Plague, and Apothecary Renferrel believed sharing findings would bring it sooner. His latest work was for Apothecary Lydon in {p:Tarren Mill}, a long way south by the roads and the signposts.",
+    "Renferrel's findings on the New Plague were bound for Lydon in Tarren Mill, a small town in the Hillsbrad Foothills. The journey was a long one, he warned, and the roads were the way.",
+    "Lydon called the findings most excellent. Renferrel had his utmost respect, he said, and he was anxious to study the work.",
+    "Renferrel's research reached Lydon in Tarren Mill, who spoke of his colleague with respect and could not wait to read it.")
 
 -- Silverpine: the Sepulcher's supply flights, Johaan's research and Dalaran's
 -- work at Ambermill (overnight 2026-11-05). Allister, Podrig and Ataeric are
@@ -2086,40 +2086,40 @@ end
 -- The executor's orders are attributed to him; these stages neither declare a
 -- character's allegiance nor turn assaults into a permanent conquest.
 Q(527, "Battle of Hillsbrad", "Hillsbrad Foothills", 24, HB,
-    "Tarren Mill's executor ordered attacks on the northern farms to disrupt Hillsbrad's food supply.",
-    "The first orders named Farmer Ray and Farmer Getz among the targets in Hillsbrad Fields.",
-    "The executor's sources confirmed the raid on the northern farms.",
-    "The attacks on the fields fulfilled the first orders while the campaign continued.", nil, true)
+    "High Executor Darthalia of Tarren Mill demanded that recruits stand at attention. Under Varimathras's command she meant to quell the humans until the apothecaries had their new plague. The first assignment was the northernmost farms of Hillsbrad Fields, where Farmer Ray and Farmer Getz were to be executed with their workers.",
+    "The town of Hillsbrad was vulnerable, Darthalia's information said. Its food supply came first, and the orders named the two landowners of the northern farms, Ray and Getz.",
+    "Darthalia put the recruit at ease. Her sources said the fighting on the Hillsbrad front had gone well.",
+    "The northern farms had burned and their owners were dead. Darthalia's sources had already told her so before the report came in.", nil, true)
 Q(528, "Battle of Hillsbrad", "Hillsbrad Foothills", 25, HB,
-    "Deathstalkers reported people fleeing the northern farm attacks into Hillsbrad's southern orchards.",
-    "The executor ordered the campaign extended against the peasants seeking shelter in the fields.",
-    "The executor accepted the attacks on the fleeing peasants as progress in his campaign.",
-    "The southern fields had come under attack, and Tarren Mill's commander pressed his advantage.", nil, true)
+    "Word of the attack on the northern farms had the townsfolk of Hillsbrad panicked, which pleased Darthalia. Her Deathstalkers reported peasants fleeing into the orchards of the southern fields, thinking they could hide there.",
+    "The peasants of Hillsbrad had run for the orchards. Darthalia ordered them found and killed in the Dark Lady's name, and told the recruit to quit dawdling in Tarren Mill.",
+    "The grip of death was tightening on the town of Hillsbrad, Darthalia said. The battle went well.",
+    "The peasants hiding in the southern fields were dead. Darthalia spoke of a town with death's grip closing round it.", nil, true)
 Q(529, "Battle of Hillsbrad", "Hillsbrad Foothills", 26, HB,
-    "Blacksmith Verringtan was arming Hillsbrad's resistance from the local forge.",
-    "The executor demanded the deaths of the smith and apprentices, along with a shipment of their iron.",
-    "The attack on Verringtan's forge was reported complete, with its iron shipment taken.",
-    "The smith and his apprentices were dead, and the executor accepted the seized supplies.", nil, true)
+    "Blacksmith Verringtan was arming the townsfolk of Hillsbrad, and Darthalia blamed him for a resistance harder than she had expected. He and his apprentices were to die, and a shipment of their iron was to come back for the day Tarren Mill razed Southshore.",
+    "Every supply line into Hillsbrad was to be cut, starting with Blacksmith Verringtan's forge. Darthalia wanted the smith, his apprentices and his iron.",
+    "Darthalia called the mission accomplished, and skillfully carried out at that. Verringtan's iron went to Tarren Mill's stockpile.",
+    "Verringtan and his apprentices were dead and their iron was Darthalia's. She allowed that the work had been done with skill.", nil, true)
 Q(532, "Battle of Hillsbrad", "Hillsbrad Foothills", 26, HB,
-    "Hillsbrad's people continued resisting around Magistrate Burnside and the town council.",
-    "The executor's next orders targeted the leadership, the proclamation and the town registry.",
-    "The executor received news of the strike on the magistrate and council.",
-    "The town's leadership had been attacked, its proclamation destroyed and its registry seized.", nil, true)
+    "Hillsbrad was in disarray, but its people still rallied around Magistrate Burnside and the town council. Darthalia ordered the leaders killed, the Hillsbrad Proclamation destroyed and the town registry stolen.",
+    "Darthalia meant to persist until the humans were wiped from the foothills. The magistrate, the council, their revered proclamation and their registry were the next targets.",
+    "News of the strike on Hillsbrad's leadership had traveled fast. Darthalia said the work was well done.",
+    "Magistrate Burnside and the council were dead, the proclamation destroyed and the registry in Darthalia's hands. She had heard of it before the report arrived.", nil, true)
 Q(539, "Battle of Hillsbrad", "Hillsbrad Foothills", 28, HB,
-    "The stolen registry identified Azureload Mine as a source of iron for Alliance armories.",
-    "Foreman Bonds and the miners became the next targets of the executor's campaign.",
-    "The executor welcomed the attack on Bonds and the miners as an opening to supply the Dark Lady's forces.",
-    "The mine had been struck, and the executor spoke of using its ore for Forsaken weapons.", nil, true)
+    "The stolen registry showed the Azurelode Mine south of Hillsbrad under Alliance control and supplying iron to its armories. Darthalia sent for the death of Foreman Bonds and his miners as a message to the Alliance.",
+    "Hillsbrad had taken a decisive blow, but the Alliance still guarded the Azurelode Mine. Darthalia wanted its foreman, a human named Bonds, and his miners dead.",
+    "Darthalia expected the Dark Lady to be pleased. She had a new mine to arm her soldiers from.",
+    "Bonds and his miners were dead in the Azurelode Mine. Darthalia already counted its ore as the Dark Lady's.", nil, true)
 Q(541, "Battle of Hillsbrad", "Hillsbrad Foothills", 30, HB,
-    "The executor directed the campaign toward the dwarven barracks at Dun Garok near Thoradin's Wall.",
-    "Captain Ironhill and the dwarves aiding Hillsbrad were the targets of the final assault orders.",
-    "The attack on Dun Garok and Captain Ironhill earned the executor's praise.",
-    "The commander commended the fighting at Dun Garok, another blow in his continuing campaign.", nil, true)
+    "Dwarves were helping the humans, and Darthalia cursed them as filthy little beasts. Their barracks in southeastern Hillsbrad, {p:Dun Garok} along Thoradin's Wall, was the battle's final mission, and Captain Ironhill its leader had to die.",
+    "Darthalia meant to test the strength of the Alliance at Dun Garok. If the dwarves felt the Forsaken's wrath, she thought, they would be less eager to help Hillsbrad.",
+    "Darthalia judged the fighting at Dun Garok worthy of the highest praise.",
+    "Captain Ironhill was dead in his barracks. Darthalia gave the highest praise she had.", nil, true)
 Q(550, "Battle of Hillsbrad", "Undercity", 32, HB,
-    "A sealed commendation was ready for Varimathras after the executor's Hillsbrad assignments.",
-    "The field command wanted the Undercity to recognize the service recorded in its letter.",
-    "Varimathras received the commendation and acknowledged the blows against Alliance forces in Hillsbrad.",
-    "The campaign's report reached the Undercity and earned recognition from Varimathras.", nil, true)
+    "Darthalia had written a sealed commendation extolling the valor shown in the Battle of Hillsbrad. It was for Varimathras in the {p:Undercity}, to be carried with pride.",
+    "The high command was to hear of the Battle of Hillsbrad. Darthalia's commendation went under seal to Varimathras.",
+    "Varimathras had already heard of the decisive blow struck in the Hillsbrad Foothills. The Scourge from the north remained the primary threat, he said, but the humans could fall, and this proved it. He saw a future in the Dark Lady's ranks for such leadership.",
+    "In the Undercity, Varimathras received Darthalia's commendation and said word of the exploits had traveled quickly. The human problem still impeded his plans, but the humans could be made to fall.", nil, true)
 Fallback("Battle of Hillsbrad", HB,
     "Tarren Mill's executor directed a campaign against Hillsbrad's people and their Alliance defenders.",
     "The Forsaken's orders concerned the farms, workshops and defenses of Hillsbrad.",
@@ -2133,95 +2133,95 @@ pack.threads[HT] = "the peril of Stonetalon's spirits"
 pack.threads[HN] = "the camps of Thousand Needles"
 pack.threads[HK] = "the summoning of Arikara"
 Q(1060, "Letter to Jin'Zil", "Stonetalon Mountains", 20, HT,
-    "Darsok had a letter for his old friend Jin'Zil in the mountains where the harpies originated.",
-    "News of Serena Bloodfeather's death was bound for the witch doctor in Stonetalon.",
-    "Jin'Zil received Darsok's letter and recalled the earlier fighting against the Bloodfeathers.",
-    "The message reached Jin'Zil, carrying news between friends who had not spoken for years.")
+    "Darsok called his helper a regular lucky rabbit's foot and had one more errand. The harpies of the Barrens came from Stonetalon, far to the northwest, where his old friend Jin'Zil, a witch doctor, would be glad to hear that Serena Bloodfeather was dead.",
+    "Serena Bloodfeather's death was news worth carrying to {p:Stonetalon}. Darsok's letter was for Jin'Zil, a witch doctor he had not seen in years, and he thought the mountains would prove interesting.",
+    "Jin'Zil read Darsok's letter and said he had not heard from him in many years. The last of the Bloodfeathers dead, then. He remembered his friend Rokhan going with a crazy mok'nathal to kill her older sister, and wished he were young again.",
+    "At Malaka'jin, Jin'Zil took the letter from a friend of many years' silence. The news of Serena Bloodfeather set him remembering Rokhan and the hunt for her older sister.")
 Q(1061, "The Spirits of Stonetalon", "Stonetalon Mountains", 17, HT,
-    "Seereth Stonebreak reported widespread logging while Stonetalon's spirits cried out against the destruction.",
-    "The Horde had sent Seereth to the mountains, where she requested help near Greatwood Vale.",
-    "Seereth welcomed the arrival at her camp. The Horde would need help against the plunderers of Stonetalon.",
-    "At Seereth's camp, the appeal for help became a welcome: there was work against the forest's plunderers.")
+    "The spirits of the Stonetalon Mountains were angry, for goblins and their servants were plundering and burning the land. Seereth Stonebreak, a promising shaman of the Horde, had been sent there and was asking for help from her camp near the Greatwood Vale.",
+    "Those who listened for such things had heard the land of Stonetalon cry out. Seereth Stonebreak was camped near the Greatwood Vale, west of the Crossroads, with reports of massive deforestation.",
+    "Seereth was glad of the arrival. The plunderers of Stonetalon would take some dealing with, she said, and she would need every skill on hand.",
+    "At her camp near the Greatwood Vale, Seereth Stonebreak looked over the newcomer and judged the skills useful against the goblins.")
 Q(1062, "Goblin Invaders", "Stonetalon Mountains", 19, HT,
-    "The Venture Company was cutting and burning the forest in Windshear Crag.",
-    "Seereth sought a strike against the company's workers while the land's spirits suffered.",
-    "Seereth praised the strike at the Venture Company's workers. To calm the suffering spirits, she thought the tauren elders' wisdom might be needed.",
-    "The attack cost the Venture Company workers. Seereth called it a good first move, and looked to the elders for help with the spirits.")
+    "The goblin-run Venture Company had moved into Stonetalon, felling trees and burning whole stretches of forest. The spirits of the place were nearly blind with pain and rage. Seereth wanted the goblins in {p:Windshear Crag} shown the Horde's answer in the language they understood best.",
+    "Beyond the Greatwood Vale, in Windshear Crag, the Venture Company's goblins and their servants were at work. Seereth sent violence, since that was the language they understood.",
+    "Seereth called it bravely done. Ridding the Venture Company of its workers was a good first move, she said, though calming the spirits might take the wisdom of the tauren elders.",
+    "The goblins of Windshear Crag had paid for the burning. Seereth counted it a first move, and looked to the elders of the tauren for the spirits' sake.")
 Q(1063, "The Elder Crone", "Thunder Bluff", 18, HT,
-    "Seereth believed tauren elders were needed to tend Stonetalon's wounded spirits.",
-    "Magatha on Elder Rise was the elder Seereth knew to seek for spiritual counsel.",
-    "Magatha received the request for counsel in Thunder Bluff.",
-    "The appeal from Stonetalon reached the elder, leaving her advice still to follow.")
+    "To truly tend the spirits of Stonetalon, Seereth said, the tauren elders had to be consulted. She knew one name, Magatha, who was very old and knew much, and who lived on {p:Elder Rise} in Thunder Bluff.",
+    "Seereth did not know many of the tauren leaders by name. Magatha of Elder Rise she knew, and believed that if anyone could marshal spiritual aid for Stonetalon, it was she.",
+    "Magatha greeted the visitor on Elder Rise and asked whether counsel was what was wanted.",
+    "On Elder Rise, Magatha received the plea from Stonetalon with a greeting and a question about counsel.")
 Q(1064, "Forsaken Aid", "Thunder Bluff", 18, HT,
-    "Magatha proposed turning to the Forsaken's knowledge of disease to help remove Stonetalon's affliction.",
-    "Apothecary Zamah served as a scholar and emissary beneath Thunder Bluff's Spirit Rise.",
-    "Zamah received Magatha's referral and offered the Forsaken's assistance.",
-    "The apothecary heard the request from the tauren elder, opening another avenue of help.")
+    "Magatha grieved for Stonetalon, but said the disease upon the land had to be removed before it could heal. The Forsaken knew much of disease, and helping would strengthen the trust between the peoples. Apothecary Zamah, their emissary, worked in the {p:Pools of Vision} below the Spirit Rise.",
+    "Magatha turned to the Horde's allies for Stonetalon's cure. Apothecary Zamah, a scholar of the Forsaken, kept to the Pools of Vision beneath the Spirit Rise.",
+    "Zamah had word from Magatha already. Her heart no longer beat, she said, but she felt sorrow for the spirits of Stonetalon, and the Forsaken were eager to help.",
+    "In the Pools of Vision, Apothecary Zamah offered what help the Forsaken could give. Magatha had sent word ahead of the visit.")
 Q(1065, "Journey to Tarren Mill", "Hillsbrad Foothills", 18, HT,
-    "Zamah believed her colleague Lydon could supply a means of driving out the Venture Company.",
-    "A note detailing Stonetalon's needs had to cross to Tarren Mill in Lordaeron.",
-    "Lydon received Zamah's note and said he knew how to answer it.",
-    "The request reached Tarren Mill, but Lydon's proposed remedy still needed making.")
+    "Zamah proposed extreme measures against the Venture Company, but without bloodshed. Her colleague Lydon in {p:Tarren Mill}, in the distant land of Lordaeron, might have the tool, and her note set out what was needed.",
+    "The way to Lydon ran by zeppelin to the Undercity, then through Tirisfal and Silverpine to Hillsbrad. Zamah's note explained Stonetalon's needs to him.",
+    "Lydon read Zamah's note and said her needs must be great to send word so far. Then he said he knew exactly what to do.",
+    "Zamah's note reached Lydon in Tarren Mill. He called it splendid and knew at once how to answer it.")
 Q(1066, "Blood of Innocents", "Hillsbrad Foothills", 23, HT,
-    "Lydon proposed a toxin to render Venture Company workers weak and docile.",
-    "Syndicate shadow mages at Durnholde kept the innocent blood required for his mixture.",
-    "Lydon received the blood and began preparing the toxin.",
-    "The ingredients reached the apothecary; the concoction had not yet gone to Stonetalon.")
+    "Lydon meant to make a toxin that would bleed the violence out of the Venture Company and leave them weak and docile. It needed the blood of innocents, and the Syndicate's shadow mages in {p:Durnholde Keep} collected exactly that for their own purposes.",
+    "The hard ingredient in Lydon's toxin was innocent blood. The shadow mages of the Syndicate at Durnholde Keep had already done the collecting.",
+    "Lydon had his blood and was glad the Syndicate's mages had done the difficult work for him. He asked for a moment to create his concoction.",
+    "The blood from Durnholde reached Lydon, who hoped the Syndicate had given little trouble. The toxin could be made now.")
 Q(1067, "Return to Thunder Bluff", "Thunder Bluff", 23, HT,
-    "Lydon's toxin needed Zamah's delivery method before it could be used against the Venture Company.",
-    "The finished mixture was bound for Thunder Bluff for the next part of the plan.",
-    "Zamah received Lydon's toxin and expected it to be effective against the company.",
-    "The toxin reached Zamah, with its actual use against the Venture Company still ahead.")
+    "Lydon's toxin was ready and he was excited to see his work applied in the field. Before anyone used it, Zamah in Thunder Bluff was to devise a delivery method that would make the most of it.",
+    "The toxin from Tarren Mill promised favorable, perhaps contagious, results. Zamah was to see to its delivery.",
+    "Zamah took the toxin and said that if she knew Lydon, it would be quite effective against the Venture Company.",
+    "Lydon's toxin reached Zamah in the Pools of Vision, who expected good results from it.")
 Q(1086, "The Flying Machine Airport", "Stonetalon Mountains", 23, HT,
-    "Zamah wanted the toxin placed at the small sky port she believed served the Venture Company.",
-    "The company's messages and light cargo offered a possible route for the prepared poison.",
-    "Zamah accepted the report that the port had been found and the toxin delivered.",
-    "The poison reached the flying-machine port; whether it would reach headquarters remained uncertain.")
+    "The Venture Company had to move messages and light cargo between its headquarters and Stonetalon. Zamah guessed at a small sky port, too small for a zeppelin but enough for a flying machine. The toxin was to be placed there, and then it was time to run.",
+    "Zamah's delivery plan rested on a sky port she was not sure existed. If the Venture Company's holdings in Stonetalon had one, the toxin went there.",
+    "Zamah was sure the goblins had been surprised by the delivery and hoped the toxin would find its way to their headquarters. She advised ignoring any guilt over poisoning the Venture Company, who deserved far worse.",
+    "The port existed, and the toxin was placed. Whether it would reach the goblins' headquarters remained uncertain, and Zamah offered one piece of Forsaken wisdom in return, never to shy from dark paths if they led to victory.")
 Q(4542, "Message to Freewind Post", "Thousand Needles", 25, HN,
-    "Renewed centaur attacks called for an urgent warning to Cliffwatcher Longhorn at Freewind Post.",
-    "The Great Lift's southern route led toward a settlement already troubled by caravan raids.",
-    "Longhorn received the message and reported the slaughter of one of his supply caravans.",
-    "The warning reached Freewind Post, where the centaur threat had already cost a caravan's lives.")
+    "Brave Moonhorn at the Great Lift had an urgent message for Cliffwatcher Longhorn at {p:Freewind Post}. The centaur had stepped up their attacks, and he added a warning to steer clear of the Grimtotem, who had been acting strangely of late.",
+    "The centaur were raiding harder around the Great Lift, and Freewind Post to the southeast had to know at once. Brave Moonhorn's message went by the hand of a traveler.",
+    "Longhorn read the message and called it more bad news. The centaur had raided one of his supply caravans and slaughtered the whole party, and he swore it would not go unpunished.",
+    "At Freewind Post, Cliffwatcher Longhorn took the warning on top of his own loss. A supply caravan of his lay dead to the last tauren, and he wanted it answered.")
 Q(4841, "Pacify the Centaur", "Thousand Needles", 25, HN,
-    "Longhorn demanded a retaliatory attack on the centaur camp north of Freewind Post.",
-    "The raids on the settlement's supplies had brought orders to strike at the nearby centaur.",
-    "Longhorn rewarded the attack on the centaur camp.",
-    "The requested retaliation was completed, without ending the wider conflict over the Needles.")
+    "Longhorn wanted the centaur who had slaughtered his caravan hunted down. Their camp lay north of Freewind Post, and he asked that wrath guide the hand that struck it.",
+    "The caravan's dead were to be paid for at the centaur camp north of Freewind Post. Longhorn called it revenge and did not pretend otherwise.",
+    "Longhorn paid for the dead centaur out of gratitude, and said so.",
+    "The centaur camp north of Freewind had been struck. Cliffwatcher Longhorn gave a reward and his thanks.")
 Q(4881, "Assassination Plot", "Thousand Needles", 28, HN,
-    "A captured plan called for Kanati Greycloud's death at his camp southwest of the Great Lift.",
-    "The assassins wanted to remove Kanati and discourage others from establishing hunting camps.",
-    "Kanati learned of the plot and prepared to face the attackers.",
-    "The warning reached its target before the confrontation; the assassins had not yet been held off.")
+    "Centaur orders found in the Needles named Kanati Greycloud, the tauren bold enough to set up a hunting camp there. They meant to kill him as a warning to anyone who followed, and to converge at the small post southwest of the Great Lift.",
+    "The intercepted plan was plain. The centaur would gather southwest of the Great Lift and kill Kanati Greycloud at his hunting camp.",
+    "Kanati heard that they were coming to kill him, and said he would show them how a tauren fights.",
+    "The warning reached Kanati Greycloud ahead of the assassins. He meant to meet them as a tauren should.")
 Q(4966, "Protect Kanati Greycloud", "Thousand Needles", 28, HN,
-    "More centaur assassins than Kanati expected were coming for his hunting camp.",
-    "The warned hunter asked for help defending the post against the approaching attackers.",
-    "Kanati survived the centaur attack and said he could not have held the assassins off alone.",
-    "The assassins were held back. Kanati thanked those who had stood with him when the centaur came.")
+    "Kanati thought there might be more centaur than he had reckoned on. He asked for someone to stand beside him against the assassins when they came.",
+    "The centaur were on their way to Kanati's camp, and he did not want to face them alone.",
+    "Kanati survived the assassins and thanked the help against them. He could not have held them off without it, he said.",
+    "The centaur assassins broke against Kanati's camp. He said plainly that he would not have held alone.")
 Q(4770, "Homeward Bound", "Thousand Needles", 29, HN,
-    "Pao'ka Swiftmountain had become lost in Highperch after approaching a wyvern nest too closely.",
-    "The stranded researcher needed an escort back to Motega at Whitereach Post.",
-    "Motega learned what had happened to Pao'ka and rewarded the help bringing him back.",
-    "Pao'ka returned from Highperch, ending an excursion his fellow researcher had not known about.")
+    "Pao'ka Swiftmountain had come to {p:Highperch} to study the wyverns and got too close to a nest. Chased off and lost, he had hidden for days without a friendly face, and Motega at Whitereach Post did not even know he was missing.",
+    "A young tauren was hiding among the wyverns of Highperch, afraid of the nests and of what Motega would say. Whitereach Post lay just to the east, and he asked to be taken there.",
+    "Motega said that had he known Pao'ka meant to snoop around Highperch, he would have chained him to a totem. The boy's father had been reluctant to let him come at all. He paid for the help and hoped it covered any misfortune.",
+    "Pao'ka Swiftmountain came home to Whitereach Post, where Motega swore he would have chained him to a totem. They had come to study the creatures of the Needles, not to be eaten by them.")
 Q(4904, "Free at Last", "Thousand Needles", 29, HN,
-    "Arnak had kidnapped a woman after she refused him, killing her brother when he intervened.",
-    "The captive at Darkcloud Pinnacle needed an escort back to Thalia.",
-    "The escape reached Thalia, who had heard how the captive was helped out of Darkcloud Pinnacle.",
-    "Thalia thanked the safe return and offered belongings of the captive's brother as a reward.")
+    "Lakota Windsong had refused Arnak Grimtotem's offer of marriage, and that night he came back for her. Her brother tried to stop him and died for it. She wanted out of Darkcloud Pinnacle and back to Thalia, who would be sick with worry.",
+    "A tauren woman named Lakota was held on Darkcloud Pinnacle by the Grimtotem who had killed her brother and carried her off. Thalia at Freewind Post was waiting for her.",
+    "Thalia had known in her bones that Lakota would find her way back. Lakota had told her of the escape, and Thalia gave the belongings of the dead brother in thanks, sure Lakota would want it so.",
+    "Lakota came down from Darkcloud Pinnacle to Thalia Amberhide at Freewind Post. The things Thalia gave in thanks had belonged to Lakota's brother.")
 Q(5064, "Grimtotem Spying", "Thousand Needles", 28, HN,
     "Three strangers had visited the Grimtotem, and Cliffwatcher Longhorn wanted to know what passed between them. Guarded chests on Darkcloud Pinnacle held their messages.",
     "Cliffwatcher Longhorn had learned of three mysterious visitors to the Grimtotem. Their correspondence lay in separate chests on Darkcloud Pinnacle, beyond the clan's guards.",
     "All three secret notes reached Longhorn. Alarmed by what they contained, he began planning for the danger they foretold.",
     "The messages were recovered from the pinnacle's three chests. Longhorn found their news grave enough to begin preparing for what might come.")
 Q(5062, "Sacred Fire", "Thunder Bluff", 27, HK,
-    "Motega called for Incendia agave to prepare the sacred fire that could summon Arikara.",
-    "Magatha's enchantment was needed to turn the rare plant into powder for the dormant fire.",
-    "Magatha received the agave and began enchanting it.",
-    "The plant reached the shaman in Thunder Bluff; summoning Arikara was still ahead.")
+    "Arikara was deadly and had to be dealt with swiftly, Motega said. The only way to hunt her was to light the sacred fire of life that summoned her. That took Incendia agave from the Boiling Pool and the enchantment of Magatha Grimtotem on Elder Rise.",
+    "The sacred fire of life lay dormant and only one herb could light it. Incendia agave grew at the Boiling Pool northeast of Whitereach, and Magatha in Thunder Bluff could turn it into powder.",
+    "Magatha called Motega's news of Arikara grave. She looked about her before she spoke of a creature born only to seek vengeance on those who had committed heinous acts. Then she smiled, took the agave and began to enchant it.",
+    "On Elder Rise, Magatha said Arikara came only for the guilty of heinous acts. She took the Incendia agave, the one herb that could light the fire, and set to enchanting it.")
 Q(5088, "Arikara", "Thousand Needles", 28, HK,
-    "Magatha's enchanted powder could summon Arikara at the sacred fire on Darkcloud Pinnacle.",
-    "Magatha claimed the serpent might be stalking Cairne, giving urgency to her instructions.",
-    "Motega rewarded Arikara's death but questioned why the serpent would have targeted Cairne.",
-    "The serpent was slain, while Motega remained puzzled by Magatha's explanation.")
+    "Magatha's purified Incendia powder was to be thrown on the sacred fire of life at Darkcloud Pinnacle. The fire stood on the isolated needle where the Grimtotem buried their dead. She feared Arikara was stalking Cairne Bloodhoof, angered by how much tauren lore had changed, and urged haste.",
+    "The enchanted powder would call Arikara to the fire on Darkcloud Pinnacle. Magatha said the serpent might be hunting Cairne himself, and that there was no time to lose.",
+    "Arikara was dead, and Motega could not make sense of it. Why would Arikara be after Cairne, he asked, and yet Magatha could not be wrong, being their most powerful shaman. He shook his head and gave a reward for the deed.",
+    "Motega rewarded Arikara's death and questioned Magatha's explanation. Nothing in it made sense to him, but he would not call the most powerful shaman of the tauren wrong.")
 for _, id in ipairs({1086,4966,4770,4904,5088}) do pack.questIDs[id].importance = 4 end
 
 -- Compact scenes for Mulgore's turning points (overnight 2026-11-05, same sources).
@@ -2349,7 +2349,7 @@ pack.quests["Burning Shadows"].after = {"The pendant from Skull Rock was handed 
 pack.quests["Burning Shadows"].source = {"StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #832"}
 
 -- Complete short scenes: exact recorded stages only; see editorial-20261016 author packet.
-pack.questIDs[1061].highlight = {"The shaman Seereth Stonebreak welcomed help at her camp: goblin logging had left Stonetalon's spirits crying out.", "Stonetalon's wounded spirits had brought Seereth Stonebreak into the mountains. At her camp, the shaman welcomed help against the goblin loggers."}
+pack.questIDs[1061].highlight = {"Seereth Stonebreak welcomed help at her camp near the Greatwood Vale. Goblin logging had left Stonetalon's spirits crying out, and she had work for every skill.", "Stonetalon's wounded spirits had brought Seereth Stonebreak into the mountains. At her camp, the shaman welcomed help against the goblin loggers."}
 pack.questIDs[1062].highlight = {"The strike against the Venture Company's workers earned Seereth's praise. Calming the spirits, she thought, might take the wisdom of the tauren elders.", "Seereth welcomed the losses inflicted on the Venture Company, but looked to the tauren elders for a way to calm Stonetalon's suffering spirits."}
 
 -- Uncovered classic stages in Horde regions (starters3 lane, 2026-11-05):
@@ -2456,6 +2456,211 @@ pack.questIDs[3369].highlight = {"Hamuul Runetotem looked into Falla Sagewind's 
 pack.questIDs[7783].highlight = {"Nefarian's head reached Thrall in Orgrimmar. The son of Deathwing lay dead, and Thrall said the Horde had been honored once more.", "Thrall received the head of Nefarian, and warned that the evil one surely stirred."}
 pack.questIDs[7784].highlight = {"Saurfang mounted Nefarian's head in the Valley of Strength for all of Orgrimmar to see.", "High Overlord Saurfang put the head of Nefarian up in the Valley of Strength."}
 pack.questIDs[857].highlight = {"Feegly the Exiled had the Tear of the Moons back from Twinbraid's keep, and cried that its power was his again.", "Feegly the Exiled took back the relic General Twinbraid had called cursed."}
+
+-- Band 20-30 pass (2026-11-06, tests/Band2030.lua): Makaba's village and the
+-- Grimtotem, Sun Rock Retreat's healing and bounties, Goggeroc, Braelyn's hunt
+-- for Ordanus, the Ashenvale Hunt's call, Zoram'gar and Splintertree, Ratchet's
+-- tubers and eggs, the Book of Ur, Wizlo's gizmo. Quest text by ID; NPCs and
+-- places checked against Interface/AddOns/LoreForever/Data (facts only).
+pack.threads.horde_flathoof = "the Grimtotem raid on Makaba's village"
+pack.threads.horde_sunrock = "the healing of Stonetalon from Sun Rock Retreat"
+pack.threads.horde_braelyn = "Braelyn Firehand's hunt for Ordanus"
+pack.threads.horde_zoramgar = "the Horde's foothold at Zoram'gar"
+pack.threads.horde_warsong = "the Horde's lumber camps in Ashenvale"
+local HFH, HSR, HBF, HZG, HWS = "horde_flathoof", "horde_sunrock", "horde_braelyn", "horde_zoramgar", "horde_warsong"
+local STM, ASH = "Stonetalon Mountains", "Ashenvale"
+Q(6401, "Kaya's Alive", STM, 18, HFH,
+    "Makaba Flathoof had word that his daughter Kaya was alive after the Grimtotem attack on their village, when all had thought her lost. Her aunt, Tammra Windfield, waited at {p:Sun Rock Retreat} along the path to the west and had to hear it.",
+    "Kaya Flathoof was alive. Her father wanted the good news carried west to her aunt Tammra at Sun Rock Retreat.",
+    "Tammra Windfield could hardly take it in. Her niece Kaya was alive, and that was good news indeed.",
+    "At Sun Rock Retreat, Tammra heard that Kaya had survived the Grimtotem and gave her thanks for the news.")
+Q(6523, "Protect Kaya", STM, 18, HFH,
+    "Kaya Flathoof was free of the Grimtotem who had held her and wanted away before they noticed. She asked for an escort to Camp Aparaje, from where she knew her own way. Her father Makaba would be desperate to know she was safe.",
+    "The Grimtotem had taken Kaya Flathoof from her village and would not be long in missing her. The trail to Camp Aparaje was the dangerous part.",
+    "Kaya was alive, and Makaba Flathoof had the rescuer of his daughter to thank for it.",
+    "Kaya reached Camp Aparaje and the news reached her father. Makaba Flathoof gave his thanks for her rescue.")
+Q(6548, "Avenge My Village", STM, 18, HFH,
+    "The Grimtotem had raided Makaba Flathoof's village and killed nearly everyone in it. He had killed all he could and barely escaped with his life, and now he wished only that more of them were dead. They were just to the west.",
+    "Makaba Flathoof was the survivor of a massacre. He asked for Grimtotem blood from the camp west of where he stood.",
+    "Makaba gave his thanks for the dead Grimtotem. He would never forget, he said, what they had done to his village.",
+    "More Grimtotem lay dead to the west. It did not touch Makaba's memory of his village, and he said so.")
+Q(6629, "Kill Grundig Darkcloud", STM, 18, HFH,
+    "Grundig Darkcloud and his personal band of brutes were the worst of the Grimtotem, Makaba said. It was Grundig who had led the attack on his village, and he camped at Grimtotem Post further up the path to the west.",
+    "The one who had led the raid on Makaba's village had a name, Grundig Darkcloud, and a camp at Grimtotem Post. Makaba asked for his death, if anyone dared.",
+    "Grundig Darkcloud was dead. Makaba Flathoof said he would always be grateful for what had been done that day.",
+    "The leader of the raid died at Grimtotem Post among his brutes. Makaba's gratitude, he said, would last.")
+Q(6421, "Boulderslide Ravine", STM, 18, HSR,
+    "Mor'rogal at Sun Rock Retreat felt something amiss in Stonetalon. In a deep cave in Boulderslide Ravine to the southeast, kobolds were frantically mining a rare crystal called Resonite. He wanted ore samples and a look at the bottom of the cave.",
+    "The kobolds of Boulderslide Ravine were digging for Resonite as if their lives depended on it. Mor'rogal needed to know what lay under the mountains before he could say what evil it was.",
+    "The ore told Mor'rogal what he had half remembered. Resonite carried a trace of Earthen magic, and the kobolds must have dug deep enough to uncover one of the Earthen. The Titans had made those creatures to shape the land itself. He shook his head and thought he might enchant the samples against the kobolds' plot.",
+    "Mor'rogal placed the legend at last. The Earthen were the Titans' makers of the land, and the kobolds had dug one up. He meant to enchant the Resonite samples and use them against it.")
+Q(6481, "Earthen Arise", STM, 20, HSR,
+    "The Resonite cask in the kobolds' cave housed a slumbering Earthen named Goggeroc, Mor'rogal said. He had changed the mixture of the crystals with his shamanistic powers, and the enchanted Resonite would smash the cask open. Goggeroc would wake weak from his long sleep, and that was the moment to kill him.",
+    "Mor'rogal feared that all of Stonetalon would be lost if the Earthen in the cask woke in his full strength. The enchanted crystal would rouse Goggeroc weak, and the killing had to follow at once.",
+    "Mor'rogal called the news good and the deed a hero's. He feared what an Earthen loose in Kalimdor would have meant, and said all of Stonetalon and Kalimdor stood in debt.",
+    "Goggeroc was dead in Boulderslide Ravine before his strength returned. Mor'rogal spoke of a debt owed by the whole of Kalimdor and gave a reward to the most honored one.")
+Q(6461, "Blood Feeders", STM, 19, HSR,
+    "The trolls of Malaka'jin had prospered on Stonetalon's hunting. Lately the spiders of the mountains had come raiding their camps at night to steal the kill. Xen'Zilla asked for the hairy blood feeders thinned, starting just north of the camp.",
+    "Spiders were everywhere in Stonetalon, Xen'Zilla said, and he did not walk about at night because of them. Malaka'jin would be in the debt of anyone who killed a few.",
+    "Sweet, Xen'Zilla said. With luck there would be fewer unwanted dinner guests that night, and Malaka'jin was forever in debt.",
+    "The spiders north of Malaka'jin were fewer. Xen'Zilla hoped for a quiet night and spoke of a debt the trolls would remember.")
+Q(6301, "Cycle of Rebirth", STM, 23, HSR,
+    "Industrial greed and endless war had wrecked Stonetalon, Tammra Windfield said, and only the Earthmother's blessing could heal such injury. She asked for Gaea seeds, which grew only here, at the water's edge of Mirkfallon Lake north of Sun Rock Retreat.",
+    "Tammra meant to speed the cycle of rebirth with shamanistic power. For that she needed the Gaea seeds that grew along Mirkfallon Lake.",
+    "Tammra took the Gaea seeds and blessed them. Under the Earthmother's blessing, she said, even these small kernels of life would bloom and flourish.",
+    "The Gaea seeds from Mirkfallon Lake went into Tammra's hands and took the Earthmother's blessing.")
+Q(6381, "New Life", STM, 25, HSR,
+    "Tammra's enchanted Gaea seeds were for the center of the destruction, the {p:Charred Vale} to the west. Harpies and angry fire elementals still plagued the scarred land there. The seeds were to be planted in whatever fertile mounds of soil remained.",
+    "The cycle of life had to be helped along, Tammra said. The blessed seeds went west into the Charred Vale, to be planted among harpies and fire spirits.",
+    "Tammra called it a great victory for the land. In time, she said, the Venture Company would pack up its buzz saws and axes, the fire spirits would calm and the land would push the harpies out. Only then would Stonetalon be truly at peace.",
+    "The Gaea seeds were in the ground of the Charred Vale. Tammra spoke of the forest that would one day stand there again, and of the peace that would come with it.")
+Q(6393, "Elemental War", STM, 25, HSR,
+    "Tsunaman at Sun Rock Retreat had been sent by the Tribunal of the Tides to wage war on the fire elementals of Stonetalon. Neptulon the Tidehunter himself wished them extinguished, and the Incendrites they left behind when destroyed in the Charred Vale would win Tsunaman favor with the Tribunal.",
+    "The war between water and fire had raged across all dimensions for eons, Tsunaman said. The fire elementals of the Charred Vale were its latest front, and their Incendrites were wanted as proof.",
+    "The water spirits within Tsunaman bubbled with excitement. The Incendrites meant a glorious victory to report to the Tribunal of the Tides.",
+    "The Incendrites from the Charred Vale reached Sun Rock Retreat, and the Tribunal of the Tides would hear of a victory over its fiery cousins.")
+Q(6282, "Harpies Threaten", STM, 26, HSR,
+    "Maggran Earthbinder of Sun Rock Retreat called the tauren the protectors of the land, and the harpies in Stonetalon alarmed him. The Bloodfuries of the Charred Vale were the source of the harpies spreading across Kalimdor, and he wanted them culled.",
+    "The Bloodfury harpies held the Charred Vale and kept the innocent from leaving their boundaries. Maggran asked for a cull.",
+    "Maggran called it most excellent news and wanted to hear again how fear had been cast into the harpies' cold hearts. The Bloodfuries had been dealt a serious blow.",
+    "The Bloodfuries had lost many in the Charred Vale, and Maggran asked for the account twice.")
+Q(6283, "Bloodfury Bloodline", STM, 26, HSR,
+    "Culling the Bloodfuries would not be enough, Maggran said. Their queen in all but name, Bloodfury Ripper, roosted along the western hills of the Charred Vale, and only her death would truly thin the harpies.",
+    "Maggran wanted the Bloodfury bloodline cut at its head. Bloodfury Ripper would not be easy to kill, he warned, but the reward would be great.",
+    "Maggran felt the anger leave him and did not know what he would do with his time. Knowing evil moved near his land had kept his thoughts moving, and now they were silent. Perhaps, he said, he could focus on the good, as all tauren should.",
+    "Bloodfury Ripper was dead on the western hills, and Maggran Earthbinder found himself at a loss without his anger. He thought that might be a good thing.")
+Q(6284, "Arachnophobia", STM, 21, HSR,
+    "A warning near Sishir Canyon said to enter at one's own risk. Besseleth and her eight-legged children had claimed the canyon, and Maggran Earthbinder at Sun Rock Retreat had put a bounty on her.",
+    "Besseleth hunted the Webwinder Path at night with her brood, and Maggran wanted proof of her death. Her fang would do.",
+    "Maggran called it good hunting and would not miss Besseleth, an old predator in those parts. With her gone, he hoped, more travelers would reach Sun Rock Retreat without fearing the dark.",
+    "Besseleth's fang reached Maggran, who named the hunter the forest champion and paid the bounty.")
+Q(5881, "Calling in the Reserves", "The Barrens", 28, HSR,
+    "Maggran had a favor to ask. Grish Longrunner had been guarding the {p:Great Lift} in the southern Barrens a long while and had asked to see his family. Maggran's letter told him a reserve warrior was coming to relieve him.",
+    "A letter from Maggran Earthbinder was bound for Grish Longrunner at the Great Lift. The Horde kept its troops fresh, Maggran said, and Grish was due his turn home.",
+    "Grish Longrunner read the letter and whooped. He had been guarding that hunk of wood too long, he said, and now he could spend time with his family.",
+    "The letter reached Grish at the Great Lift. His relief was coming, and he was going home.")
+Q(1087, "Cenarius' Legacy", STM, 25, HBF,
+    "Braelyn Firehand at Sun Rock Retreat hated Stonetalon. The children of Cenarius and the druids on the peak stifled the flow of magic, she said. Her master in Jaedenar would not let her return until her work was done, and she wanted them culled.",
+    "Channeling magic in Stonetalon was like drawing water with a bucket full of holes, Braelyn complained. The keepers and druids of Stonetalon Peak were to blame, and she wanted them dead.",
+    "Braelyn felt the power rushing back already and called it sweet. The kaldorei were fools, she said, to spurn magic's burning embrace.",
+    "With the peak's druids thinned, Braelyn Firehand spoke of magic flooding back through her veins. Life without it, she said, was a pale mockery.")
+Q(1088, "Ordanus", ASH, 29, HBF,
+    "Braelyn's true sight had found Keeper Ordanus, one of the eldest sons of the forest god. The druids had spirited him from the peak to the top of a great tree at Raynewood in Ashenvale. She wanted his head and promised a mighty gift for it.",
+    "The druids had thought they could hide Ordanus from Braelyn. She saw him at a crossroads in Ashenvale, atop the great tree of Raynewood, and his time was short.",
+    "Braelyn had known Ordanus long ago, she said, and he had held himself above even the Highborne. His head did not rise so high now. She gave the reward she had promised.",
+    "Ordanus's head reached Braelyn Firehand at Sun Rock Retreat. She remembered his arrogance, and paid as promised.")
+Q(1089, "The Den", STM, 29, HBF,
+    "The druids kept many powerful things in the Talon Den on Stonetalon Peak behind a complex scheme of keys. Braelyn had extracted the details from one of them. A Gatekeeper's Key in a lantern at the entrance opened caches around the den, and their contents opened the hoard in the middle.",
+    "Braelyn Firehand wanted the druids' hoard in the Talon Den. The way in began with a key hidden in a small lantern by the door.",
+    "Three keys slid into three keyholes carved in the stone, and in the glowing light between them a number of items appeared.",
+    "The three keys from the den's caches opened the druids' hoard. Items appeared in the light.")
+Q(742, "The Ashenvale Hunt", "Thunder Bluff", 20, HWS,
+    "A call went out to young adventurers. The Horde had two outposts north of the Barrens, Splintertree Post and the one on the Zoram Strand. Senani Thunderheart at Splintertree wanted hunters for a great hunt of Ashenvale.",
+    "The wilds of Ashenvale awaited, the notice said. Senani Thunderheart at {p:Splintertree Post}, straight north of the Barrens, would explain the hunt.",
+    "Senani Thunderheart welcomed the newcomer to the frontier. Ashenvale was a land of opportunity for a young fighter, she said, with a second outpost out at the Zoram Strand worth seeing. She was glad to explain the hunt.",
+    "At Splintertree Post, Senani called Ashenvale the new frontier and began to tell what the hunt required.", nil, true)
+Q(235, "The Ashenvale Hunt", "Orgrimmar", 20, HWS,
+    "Notices called young adventurers north to Ashenvale. The Horde held Splintertree Post and an outpost on the Zoram Strand, and Senani Thunderheart at Splintertree was gathering hunters for a great hunt of Ashenvale.",
+    "The Horde's new frontier lay north of the Barrens, and Senani Thunderheart at {p:Splintertree Post} wanted those who would prove themselves there.",
+    "Senani welcomed the arrival to the new frontier and spoke of boundless chances for a young fighter in Ashenvale. Then she explained the hunt.",
+    "At Splintertree Post, Senani Thunderheart said to look around the outpost and to see the Zoram Strand too, and began on what the hunt required.", nil, true)
+Q(6382, "The Ashenvale Hunt", "The Barrens", 20, HWS,
+    "Jorn Skyseer was impressed, and thought the hunter ready for bigger game. The forests of Ashenvale were an untamed wild the Horde meant to bend to its will, he said, and Senani Thunderheart at {p:Splintertree Post} offered the proving.",
+    "Jorn Skyseer's lessons at Camp Taurajo ended with a direction. North of the Barrens road lay Splintertree Post, and Senani Thunderheart's hunt.",
+    "Senani Thunderheart welcomed Jorn's student to the frontier. Ashenvale was a land of opportunity, she said, with a second outpost on the Zoram Strand, and the hunt was hers to explain.",
+    "At Splintertree Post, Senani greeted the hunter from Camp Taurajo and began to describe the great hunt of Ashenvale.", nil, true)
+Q(6442, "Naga at the Zoram Strand", ASH, 19, HZG,
+    "Marukai at {p:Zoram'gar Outpost} spoke of evil along the coast. Zoram lay drowned beneath the sea, and the naga had come back to it for reasons no one knew. The Horde had worked hard to claim this land, and Marukai wanted twenty naga heads.",
+    "The naga were growing in number on the Zoram Strand. Marukai asked for them thrown back to the depths and their heads brought to Zoram'gar.",
+    "Marukai took the heads and said the outpost could use more of that kind of help.",
+    "Twenty naga heads reached Zoram'gar. Marukai wished he had more fighters like the one who brought them.")
+Q(6641, "Vorsha the Lasher", ASH, 23, HZG,
+    "Vorsha the Lasher, a hydra of the seas, had attacked Zoram'gar unprovoked more than once and laid waste to whatever she met. Muglash had a plan. The naga kept a brazier lit to her on an island off the coast, and putting it out would bring her ashore in anger. He wanted strong allies along.",
+    "Muglash of Zoram'gar meant to end Vorsha's attacks by dousing the naga's brazier and fighting the hydra when she came. It was no task for one.",
+    "Muglash had seen many naga attacks since coming to Zoram'gar, and it put his mind at ease that Vorsha would roam free no more. The outpost was in debt, he said.",
+    "Vorsha the Lasher was dead off the Zoram Strand. Muglash spoke of a debt owed by Zoram'gar.")
+Q(216, "Between a Rock and a Thistlefur", ASH, 24, HZG,
+    "Thistlefur Village east of Zoram'gar blocked the way to Splintertree Post that would skirt Astranaar, Karang Amakkar said. He would not allow an expansion path gap. The furbolgs were to be thinned, for pay and for the Horde.",
+    "Karang wanted a road between Zoram'gar and Splintertree free of Alliance entanglements. The Thistlefur in the village to the east stood in the way.",
+    "Karang would keep sending forces against the furbolg, but he could count now on a path clear of the Alliance. The Horde's conquest of Ashenvale was in full swing, he declared, and the pay was earned.",
+    "Karang Amakkar saluted the work in Thistlefur Village. He had his second road to Splintertree, or the beginnings of one.")
+Q(6462, "Troll Charm", ASH, 24, HZG,
+    "Mitsuwa's kinfolk had been carrying sacred troll charms to Zoram'gar when the Thistlefur killed them on the way. She would see her brothers and sisters again in the afterlife, she said, but the charms belonged in this world. They sat in chests in Thistlefur Hold, the cave at the end of Thistlefur Village.",
+    "The Thistlefur furbolgs had the charms of Mitsuwa's dead kin, and every moment they kept them made her blood boil.",
+    "Mitsuwa thanked the one who brought the charms back, twice over. A troll without his charm was like an orc without his battle scars, she said. Worthless.",
+    "The sacred charms came out of Thistlefur Hold and back to Mitsuwa at Zoram'gar. She could not say how great a thing it was to her.")
+Q(6482, "Freedom to Ruul", ASH, 24, HWS,
+    "Ruul Snowhoof sat in a cage in Thistlefur Hold. The furbolgs had taken him for a bear and were starving him, and his strength was failing. He asked for help out and word to his sister Yama at Splintertree Post.",
+    "A tauren mistaken for a bear by the Thistlefur was starving in their hold. Ruul wanted out, and his sister Yama at Splintertree would want to know.",
+    "Yama was shocked to hear her brother had been held by the Thistlefur. Many furbolgs were noble, she said, but the Thistlefur were corrupt, and she did not want to think how they had treated poor Ruul. He would sleep long after this.",
+    "Ruul came home from Thistlefur Hold to his sister Yama at Splintertree Post. She expected him to sleep for a long while.")
+Q(6503, "Ashenvale Outrunners", ASH, 24, HWS,
+    "Reports had reached Kuray'bin that Ashenvale outrunners had left Silverwing Outpost and were sneaking near the Horde's territories, gathering word of its defenses. They were in the forests south of Splintertree and east of Silverwing, and Kuray'bin wanted them dead.",
+    "Kuray'bin would not have the Alliance scouting Splintertree's defenses. The outrunners from Silverwing were to be hunted down in the forest.",
+    "Kuray'bin called the hunting impressive. Losing the outrunners helped blind the Alliance, he said, and a blind enemy attacked less.",
+    "The outrunners from Silverwing were dead in the forest. Kuray'bin counted the Alliance blinder for it.")
+Q(6544, "Torek's Assault", ASH, 24, HWS,
+    "Torek and his raiders were about to attack Silverwing Outpost to the west, and their target was its leader, Duriel Moonfire. The scouts said the place was heavily defended, and Torek called the coming battle glorious. Whoever shared in it could report the success to Ertog Ragetusk at Splintertree.",
+    "Torek wanted company for his raid on Silverwing Outpost and the death of Duriel Moonfire. The report afterward went to Ertog Ragetusk.",
+    "Ertog Ragetusk was pleased that Torek's attack had succeeded. Night elves were decent foes, he said, skinny but strong and fierce, and he hoped the fight had left a scar or two.",
+    "Word of Torek's success at Silverwing reached Ertog Ragetusk at Splintertree. He thought it must have been something to see.")
+Q(6441, "Satyr Horns", ASH, 26, HWS,
+    "Pixel had stopped at Splintertree on her way to Ratchet and smelled an opportunity. Satyr horns were in high demand there, and the satyrs of Night Run, Satyrnaar and Xavian had the right kind. She was no match for satyrs herself.",
+    "A goblin passing through Splintertree wanted satyr horns before she went on to Ratchet. Night Run, Satyrnaar and Xavian were where they grew.",
+    "Pixel called the horns perfect and paid for the time.",
+    "The satyr horns reached Pixel before she left for Ratchet, and she paid up.")
+Q(6621, "King of the Foulweald", ASH, 26, HZG,
+    "The Foulweald southeast of Astranaar were fewer than the Thistlefur but fierce, Karang said, and a show of force would remove the threat. A Horde banner planted on their totem mound would bring Chief Murgut out to save face, and Karang wanted the totem he carried.",
+    "Karang Amakkar's challenge to the Foulweald was a banner on their sacred mound. It was no task for one fighter, he warned, and the prize was Chief Murgut's totem.",
+    "Karang called it good work. The challenge and the death of their chief sent the Foulweald a strong message, that the Horde was not to be trifled with. He did not expect trouble from that tribe for a long time.",
+    "Murgut's totem reached Zoram'gar. Karang thought the Foulweald would give the Horde little trouble for a long while.")
+Q(6571, "Warsong Supplies", ASH, 27, HWS,
+    "The Warsong lumber camp was short of a few things, Locke Okarr said. Pixel at Splintertree had the saw blades and Wharfmaster Lozgil in Booty Bay the crate of axes. The Thistlefur and Foulweald furbolgs had pilfered the rope, and the satyrs of Night Run, Satyrnaar and Xavian had taken the oil for their rituals.",
+    "Locke Okarr was in big trouble if the Warsong camp's supplies did not arrive soon. Saw blades, axes, rope and oil were scattered from Splintertree to Booty Bay and the satyr ruins.",
+    "Locke called it excellent and said it had saved him a lot of work, and that he was grateful all the same.",
+    "Saw blades, axes, rope and oil reached Locke Okarr for the Warsong lumber camp. He was out of trouble.")
+Q(6504, "The Lost Pages", ASH, 30, HWS,
+    "Gurda Ragescar had picked up a shredder in Ratchet and was due back on duty at the {p:Warsong Lumber Camp}. On the way a gust of wind tore the pages of its manual from her hands. All she had left was the cover, and she did not know how to run the machine without the rest.",
+    "The pages of a shredder manual lay scattered across Ashenvale, and Gurda Ragescar could not get back to work without them.",
+    "Gurda admitted reading was not her strong point, but with the pages back she could get to work.",
+    "The lost pages reached Gurda Ragescar, who could now take her shredder on to the lumber camp.")
+Q(1013, "The Book of Ur", "Shadowfang Keep", 26, "horde_apothecary",
+    "Keeper Bel'dugur in the Undercity's Apothecarium prized the writings of Ur, a great mage of Dalaran before the Scourge came. Ur's studies of other worlds were of value to certain parties among the Forsaken. One of them lay in {p:Shadowfang Keep}, and Bel'dugur promised to report the service to the Dark Lady.",
+    "Ur's writings on other worlds were somewhere in Shadowfang Keep. Keeper Bel'dugur wanted them for his collection.",
+    "Bel'dugur added Ur's work to his collection. Ur's knowledge had been great, he said, but his conscience had held him from true power, and when the Scourge tested his strength it failed. The Forsaken could afford no such weakness, if they were to survive, and to conquer.",
+    "Ur's writings came out of Shadowfang Keep to Bel'dugur. He spoke of a mage whose conscience had failed him, and of a people who could not afford one.")
+Q(1361, "Regthar Deathgate", "The Barrens", 32, "horde_kolkar",
+    "Regthar Deathgate, a warrior of the Horde, was recruiting agents for a mission into Desolace from his bunkers west of the Crossroads. Desolace was a place torn by war, the word went, and weapons should be sharpened first.",
+    "Volunteers for Desolace were to find Regthar Deathgate in the bunkers west of the Crossroads.",
+    "Regthar was recruiting, he confirmed, for a mission into Desolace against the centaur there. He kept it brief so the work could start.",
+    "In the bunkers west of the Crossroads, Regthar Deathgate took on another volunteer against the centaur of Desolace and wasted no words.")
+Q(5151, "Hypercapacitor Gizmo", "Thousand Needles", 30, HN,
+    "Wizlo Bearingshiner was the only survivor of a caravan the centaur had attacked north of Whitereach Post. They had taken everything but a caged panther that wore his best gizmo, a hypercapacitor, around its neck, and he handed over the cage key.",
+    "A rare panther in a cage at the wrecked caravan wore Wizlo's hypercapacitor. Even the centaur trembled at the beast, he said, and left it alone.",
+    "Wizlo had his hypercapacitor back. It would keep him busy a while, he said, until he worked out what it did.",
+    "The hypercapacitor came off the panther's neck and back to Wizlo, who still had to discover its purpose.")
+Q(1069, "Deepmoss Spider Eggs", STM, 20, "horde_ratchet",
+    "Spider egg omelettes were the new fad in Booty Bay, and Booty Bay had no eggs. Mebok Mizzyrix smelled an opportunity. Deepmoss spiders laid in {p:Windshear Crag} under what trees remained, and in Sishir Canyon for those with strong stomachs.",
+    "Mebok had a shipping deal with Wharfmaster Dizzywig before he had a single egg. The deepmoss spiders of Stonetalon were to supply them.",
+    "Mebok could already taste the profits. The eggs would go to Dizzywig and on to Booty Bay, and he paid out a cut for a deal he could not have made alone.",
+    "The deepmoss eggs reached Mebok in Ratchet, bound for Booty Bay's omelettes. He shared the proceeds.")
+Q(1221, "Blueleaf Tubers", "Razorfen Kraul", 26, "horde_ratchet",
+    "Blueleaf tubers were a delicacy the world over and grew in one place, deep in the earth of {p:Razorfen Kraul}. Mebok Mizzyrix had trained snufflenose gophers to smell them out at fifty paces, and he lent them for the hunt.",
+    "Mebok's gophers could find the blueleaf tubers of Razorfen Kraul that no one else could. Getting them out of the quilboar warren was the hard part.",
+    "Mebok could sell the tubers to his contacts for a bundle, and called the deliverer a great partner.",
+    "The blueleaf tubers came out of Razorfen Kraul to Mebok, who was already counting the sale.")
+Q(1144, "Willix the Importer", "Razorfen Kraul", 30, "horde_ratchet",
+    "Willix the Importer had been held in {p:Razorfen Kraul} so long he could not remember the outside. He had heard Mebok Mizzyrix paid well for tubers from the pig pen and expected an easy in and out. He asked for help getting out and promised to make it worth the trouble.",
+    "An entrepreneur named Willix sat prisoner in the Kraul after a tuber run gone wrong. He wanted an escort out.",
+    "Willix was free of the Kraul and kept his word. He had said he would make it worth the trouble, and he did.",
+    "Willix the Importer walked out of Razorfen Kraul and paid as promised.")
+for _, id in ipairs({6629, 6481, 6283, 1088, 6641, 6621}) do pack.questIDs[id].importance = 4 end
+pack.questIDs[6629].highlight = {"Grundig Darkcloud, who led the Grimtotem raid on Makaba Flathoof's village, died at Grimtotem Post. Makaba said his gratitude would last always.", "Makaba Flathoof's village was avenged on Grundig Darkcloud at Grimtotem Post."}
+pack.questIDs[6481].highlight = {"Goggeroc the Earthen woke weak from his Resonite cask in Boulderslide Ravine and died there. Mor'rogal called it a hero's deed and said all Kalimdor was in debt.", "The Earthen Goggeroc died in Boulderslide Ravine before his strength returned. Mor'rogal spoke of a debt owed by all of Kalimdor."}
+pack.questIDs[6283].highlight = {"Bloodfury Ripper, queen of the Charred Vale's harpies, was dead. Maggran Earthbinder felt his anger leave and wondered what to do with his time.", "Maggran Earthbinder had Bloodfury Ripper's remains and no anger left. He thought that might be a good thing."}
+pack.questIDs[1088].highlight = {"Keeper Ordanus, an elder son of Cenarius, died atop the great tree at Raynewood. Braelyn Firehand remembered his arrogance and paid for his head.", "Ordanus's head went to Braelyn Firehand at Sun Rock Retreat, who said it did not rise so high now."}
+pack.questIDs[6641].highlight = {"Vorsha the Lasher came ashore when the naga's brazier went out and died there. Muglash said Zoram'gar was in debt.", "The hydra Vorsha was dead off the Zoram Strand, and Muglash's mind was at ease."}
+pack.questIDs[6621].highlight = {"A Horde banner on the Foulweald's totem mound drew out Chief Murgut, who died defending it. Karang Amakkar expected no trouble from the tribe for a long time.", "Chief Murgut's totem reached Karang at Zoram'gar. The Foulweald had their message."}
 
 -- Forever additions outside Zephras carry the Forever label in the compendium
 -- (factcheck lane, 2026-11-05; explicit list, never inferred from the ID range).
