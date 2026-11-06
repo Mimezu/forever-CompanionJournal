@@ -86,8 +86,16 @@ for retell = 0, 7 do
     local stories = Stories(p, retell, "we", players.elder, true)
     local returned = Text(stories, 25)
     if retell == 0 then examples.returned = returned end
-    Check(returned:find("fire", 1, true) and returned:find("March", 1, true), "return recalls the actual earlier shared scene: " .. returned)
+    -- (a memory from the same month is counted in days, 2026-11-06 review: March 2 to 27)
+    Check(returned:find("fire", 1, true) and returned:lower():find("four weeks before", 1, true), "return recalls the actual earlier shared scene: " .. returned)
     Check(not returned:find("remembered", 1, true) and not returned:find("missed", 1, true), "callback does not assign feelings")
+    -- (from another month it names the month: March 2 to April 6)
+    p = Person()
+    Group(p, 0, "Silverpine Forest", {{"campfire"}})
+    for day = 1, 8 do Group(p, day, "The Barrens", {{"quest", "Raptor Thieves"}}) end
+    Group(p, 35, "Silverpine Forest", {{"quest", "Maps and Runes"}})
+    returned = Text(Stories(p, retell, "we", players.elder, true), 35)
+    Check(returned:find("fire", 1, true) and returned:find("in March", 1, true), "a return from another month names the month: " .. returned)
 
     p = Person()
     for day = 0, 3 do Group(p, day, "Stranglethorn Vale", {{"quest", "Raptor Mastery"}}) end
@@ -139,7 +147,12 @@ for retell = 0, 7 do
     Check(Text(stories, 0):find("I spoke with Lady Sylvanas", 1, true), "an actual personal interaction may be stated")
     own.journal[1].t = At(0) - 7200
     stories = Stories(p, retell, "we", players.chronicler, true)
-    Check(not Text(stories, 0):find("Lady Sylvanas", 1, true), "observation outside group time is not included")
+    -- (the Undercity's own scene may name its ruler, 8b75117; the sighting and its lore may not)
+    local outside = Text(stories, 0)
+    Check(not outside:find("saw Lady Sylvanas", 1, true) and not outside:find("spoke with Lady Sylvanas", 1, true), "observation outside group time is not included: " .. outside)
+    for _, line in ipairs(A.SelfWords.notableNPCs["Lady Sylvanas Windrunner"]) do
+        Check(not outside:find(line, 1, true), "a sighting outside group time brings no lore line: " .. outside)
+    end
     own.journal = {}
 end
 

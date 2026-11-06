@@ -1512,6 +1512,12 @@ function T.Tell(person, days, voice, player, brief)
             for _, d in ipairs(f.dungeons) do if d.t and (not firstWork or d.t < firstWork) then firstWork = d.t end end
             for _, q in ipairs(f.quests) do if q.t and (not firstWork or q.t < firstWork) then firstWork = q.t end end
             for _, x in ipairs(f.deaths) do if x.t and (not firstWork or x.t < firstWork) then firstWork = x.t end end
+            -- (a shared moment told further down, the herbs, a sunset, a crossing, is the day's
+            -- work too: a first that came after it keeps its recorded place behind it)
+            for _, e in ipairs(sceneMoments) do
+                local arrival = e.k == "first" and (e.d == "zone" or e.d == "continent" or e.d == "landmark")
+                if not arrival and e.t and (not firstWork or e.t < firstWork) then firstWork = e.t end
+            end
             for _, e in ipairs(sceneMoments) do
                 if e.k == "first" and (e.d == "zone" or e.d == "continent" or e.d == "landmark") and e.z and not e.u
                     and (e.z == mainZone or not firstWork or (e.t or 0) <= firstWork) then
