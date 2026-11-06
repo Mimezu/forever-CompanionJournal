@@ -33,77 +33,77 @@ end
 local W, PW, PF, PN = "class_warrior_training", "class_paladin_divinity", "class_paladin_forsaken", "class_paladin_nobility"
 q(1505, "Veteran Uzzek", "WARRIOR", "The Barrens", 10, W,
     "Veteran Uzzek taught young warriors near the border between the Barrens and Durotar.", "The Horde valued experienced fighters who could pass their knowledge on.",
-    "Uzzek received the new arrival for instruction.", "The referral reached the veteran; his practical test was still ahead.")
+    "Uzzek greeted the young one and guessed at once that instruction was wanted.", "Hello, young one, said the veteran, and asked whether instruction was the reason for the visit.")
 q(1498, "Path of Defense", "WARRIOR", "Durotar", 10, W,
     "Uzzek required singed scales from Thunder Ridge's lizards as proof of endurance.", "The defensive lesson began with surviving the assaults of lightning hides and thunder lizards.",
-    "The scales earned Uzzek's instruction in defense.", "The trial against the thunder lizards was complete, and the veteran began his lesson.")
+    "Uzzek took the singed scales as proof that the thunder lizards had been withstood, and began to show how tough skin and shrewd movement made a wall of defense.", "Surviving the thunder lizards proved the warrior tough, Uzzek said, and the lesson in defense began.")
 q(1638, "A Warrior's Training", "WARRIOR", "Stormwind City", 10, W,
     "Harry Burlguard offered a veteran's instruction at the Pig and Whistle.", "Old Town's tavern held a teacher whose experience could keep a young warrior alive.",
-    "Harry received the referral at the tavern.", "The training errand reached Harry, with the actual test still to come.")
+    "Harry offered a drink first. The newcomer looked tough on the outside, he said, but he wanted to see whether that gut could handle a few mugs of the Pig and Whistle's strongest.", "At the Pig and Whistle, Harry offered a few mugs of the tavern's strongest before any talk of a lesson.")
 q(1640, "Beat Bartleby", "WARRIOR", "Stormwind City", 10, W,
     "Bartleby refused to part with his mug without a fight.", "A tavern brawl stood between the pupil and Bartleby's drinking mug.",
-    "Bartleby conceded the fight and acknowledged the strength brought against him.", "The brawl was won; taking the mug back for instruction was a separate errand.")
+    "Bartleby conceded the fight and acknowledged the strength brought against him.", "Bartleby lost the brawl and allowed that the newcomer was a lot tougher than they looked.")
 q(1665, "Bartleby's Mug", "WARRIOR", "Stormwind City", 10, W,
     "Harry wanted Bartleby's mug as proof that the tavern challenge was finished.", "Bartleby had finally agreed to surrender his mug, after finishing its contents.",
-    "Harry received the mug and moved on to the promised lesson.", "The mug completed the practical test Harry had set before instruction.")
+    "Harry had Bartleby's mug. Its owner had not wanted to part with it, he said, but the persuasion had worked.", "Bartleby's mug went to Harry, and the tavern test gave way to the lesson.")
 q(1719, "The Affray", "WARRIOR", "The Barrens", 30, W,
     "Fray Island tested warriors against successive challengers before Big Will entered the fight.", "Klannoc required the Affray to be won within the allotted time before he would teach.",
-    "The challengers and Big Will were defeated, and Klannoc agreed to teach.", "The Affray was passed, earning instruction from the island's veteran.", 5)
+    "The challengers and Big Will were defeated, and Klannoc agreed to teach.", "Well done, said Klannoc. The Affray was passed, and he was honored to teach so worthy a warrior.", 5)
 q(1712, "Cyclonian", "WARRIOR", "Alterac Mountains", 40, "class_warrior_wind",
     "Bath'rah needed materials before he could call the wind lord Cyclonian.", "The Windwatcher offered to put a whirlwind heart's power into a weapon, if the summoning and battle succeeded.",
     "The ritual materials were gathered; Cyclonian still had to be faced.", "Bath'rah had the components for his spell, not yet the wind lord's heart.")
 q(1713, "The Summoning", "WARRIOR", "Alterac Mountains", 40, "class_warrior_wind",
     "Bath'rah was ready to summon Cyclonian and needed the wind lord's heart.", "The ritual would call forth a dangerous opponent whose power could be worked into a weapon.",
-    "Cyclonian fell, and the Whirlwind Heart was recovered.", "Bath'rah received the heart needed for his promised weapon.", 5)
+    "Cyclonian fell, and the Whirlwind Heart was recovered.", "Bath'rah had the Whirlwind Heart for his promised weapon, and Cyclonian was no more.", 5)
 q(8425, "Voodoo Feathers", "WARRIOR", "Blasted Lands", 52, W,
     "The warrior's honor had brought the Fallen Hero some peace, and he meant to offer something in return. His weapons and armor had been splendid in life and were no use to him now. Magic feathers carried by the troll guardians of the sunken temple could reform his physical body long enough to grant them. The trolls were Gasher, Mijan, Zolo, Hukku, Zul'lor and Loro.", "The Fallen Hero's splendid arms of life could pass to a warrior. First the voodoo feathers of six named trolls in the sunken temple had to give him a body for a moment.",
     "At last the Hero could feel the cold touch of steel again, if only for a moment.", "For a moment the feathers gave the Fallen Hero back the feel of steel, and he kept his promise.", 5)
 
 q(1642, "The Tome of Divinity", "PALADIN", "Stormwind City", 12, PW,
     "The Tome of Divinity placed compassion and patience beside strength in battle.", "Paladin instruction treated helping those in need as a practical duty.",
-    "The discussion of the tome led to a test of charitable service.", "The lesson's principles had been set out; an act of service was still required.")
+    "Back at the cathedral, Duthorian asked how the study of the tome was going. A test of patience in helping the less fortunate would follow, he said.", "Duthorian had set out the principle, that a paladin strove to be good in all actions, and asked how the studies went.")
 q(1643, "The Tome of Divinity", "PALADIN", "Stormwind City", 12, PW,
     "The test called for finding someone with a worthy need in Stormwind.", "Stephanie struggled to obtain cloth for children at the orphanage.",
-    "Stephanie's need for clothing materials became clear.", "The search found a charitable household short of supplies; the cloth had yet to be gathered.")
+    "Stephanie Turner greeted the paladin as luv. Leather and cloth were scarce these days, she said, and the orphanage children still needed clothes.", "The search for someone of noble intent ended with Stephanie Turner, who was glad to hear the paladin was doing well.")
 q(1644, "The Tome of Divinity", "PALADIN", "Stormwind City", 13, PW,
     "Stephanie needed linen to sew clothing for orphaned children.", "Food and shelter had consumed the time and means available for the children's clothes.",
-    "The linen supplied Stephanie's sewing and freed time for the children's other needs.", "The cloth reached the charitable household, turning the lesson into useful aid.")
+    "The linen supplied Stephanie's sewing and freed time for the children's other needs.", "Stephanie thanked the paladin twice over for the linen she needed for the orphans' clothes.")
 q(1781, "The Tome of Divinity", "PALADIN", "Stormwind City", 13, PW,
     "The Symbol of Life was entrusted for a new task involving the wounded Gazin.", "Gazin rested by the cathedral altar after a disastrous encounter at Heroes' Vigil.",
-    "Gazin explained what had happened to Henze; the Symbol had not yet been used.", "The inquiry reached the survivor at the altar, opening the task of helping his friend.")
+    "Gazin explained what had happened to Henze; the Symbol had not yet been used.", "Gazin, coughing by the cathedral altar, was the man to ask about Henze.")
 q(1786, "The Tome of Divinity", "PALADIN", "Elwynn Forest", 13, PW,
     "Henze had fallen holding off Defias spellcasters while Gazin escaped Heroes' Vigil.", "The Symbol of Life offered a chance to help the paladin left on Stone Cairn Lake's island.",
-    "Henze was brought back through the Symbol of Life.", "The fallen paladin returned to life, though the Defias documents still needed recovering.", 5)
+    "Henze was brought back through the Symbol of Life.", "Henze lived again, and thanked the paladin as a brother.", 5)
 q(1787, "The Tome of Divinity", "PALADIN", "Elwynn Forest", 13, PW,
     "Henze was too weak to recover the Defias papers from the island himself.", "The documents could establish the Defias presence and reveal something of their plans.",
-    "Gazin received the papers and confirmation that Henze was safe.", "The evidence came back from Heroes' Vigil, ready for examination by the kingdom's advisers.")
+    "Gazin had the Defias papers and the news that Henze was saved. The Light was with the paladin for sure, he said.", "The evidence came back from Heroes' Vigil, ready for examination by the kingdom's advisers.")
 q(1788, "The Tome of Divinity", "PALADIN", "Stormwind City", 13, PW,
     "Duthorian awaited the report after the Symbol of Life had brought Henze back.", "The trial's final return concerned a power beyond the borrowed Symbol.",
-    "Duthorian taught the power to resurrect fallen companions.", "The completed trial earned instruction in resurrection.", 6)
+    "Duthorian taught the power to resurrect fallen companions.", "The day's work had been done well, Duthorian said, and the power of resurrection was its reward.", 6)
 q(94427, "A Lesson in Divinity", "PALADIN", "Undercity", 12, PF,
     "Tyr's Watch urged service to fellow Forsaken, beginning with Tanis Alderwood in the Trade Quarter.", "Tanis's need offered a practical test of charity amid distrust of the paladins.",
     "Tanis was found, frightened by the approach of a paladin.", "Tanis Alderwood, a beggar in the Trade Quarter, pleaded with the paladin to leave him be.")
 q(94434, "A Lesson in Divinity", "PALADIN", "Undercity", 12, PF,
     "Tanis needed fresh cloth to hold his wife together until an apothecary could tend to her.", "The apothecaries' other duties had left one Forsaken household waiting for help.",
-    "Tanis received cloth for his wife's wrappings.", "The fresh cloth let Tanis wrap his wife while they waited for the apothecaries.")
+    "Very kind, Tanis said of the cloth, very kind indeed.", "The fresh cloth let Tanis wrap his wife while they waited for the apothecaries.")
 q(94435, "A Lesson in Divinity", "PALADIN", "Tirisfal Glades", 12, PF,
     "Tanis wanted his thanks carried back to the paladin who had sent help.", "The order sought to answer Forsaken suspicion through practical service.",
-    "The paladins' mentor praised the small act of service and handed over a symbol needed for the next task.", "The report earned a Symbol of Life, with a further test still ahead.")
+    "The paladins' mentor praised the small act of service and handed over a symbol needed for the next task.", "A small thing, the mentor said, but even small acts of service strengthened the connection to the Light, and a Symbol of Life came with the next task.")
 q(94436, "A Lesson in Divinity", "PALADIN", "Tirisfal Glades", 12, PF,
     "Deathguard Billmuth had petitioned the paladins for aid after the priests waved him away.", "The Symbol of Life was to be carried to a deathguard seeking aid for a friend.",
-    "Billmuth admitted he was not proud of asking paladins for aid, but the priests had turned him away.", "The errand reached the deathguard, who admitted how much depended on the offered help.")
+    "Billmuth admitted he was not proud of asking paladins for aid, but the priests had turned him away.", "The priests had waved Billmuth away, he admitted, and a paladin might be his friend's only chance.")
 q(94438, "A Lesson in Divinity", "PALADIN", "Tirisfal Glades", 12, PF,
     "Falgan had told Billmuth to run when the Scarlets discovered the two deathguards near their camp in Venomweb Vale.", "Billmuth feared for Falgan, who he thought had stayed behind so he could flee a Scarlet camp.",
     "The Symbol of Life restored Falgan, who confirmed plans for a Scarlet attack.", "Falgan was back on his feet and said there might yet be more work to do for the Forsaken.", 5)
 q(94440, "A Lesson in Divinity", "PALADIN", "Tirisfal Glades", 12, PF,
     "Scarlet deployment orders could give the Deathguard warning of the planned attack.", "Falgan asked for orders carried in the Crusaders' satchels to be taken to Billmuth.",
-    "Billmuth received the plans and intended to prepare an ambush with his commander.", "Billmuth took the Crusaders' orders and promised to make sure others heard what a Forsaken paladin had done.")
+    "Billmuth thanked the paladin for his friend's life and took the plans to his commander, promising the crusaders a welcome they would not forget.", "Billmuth took the Crusaders' orders and promised to make sure others heard what a Forsaken paladin had done.")
 q(94441, "A Lesson in Divinity", "PALADIN", "Tirisfal Glades", 12, PF,
     "Billmuth sent thanks to Danitha Morr for the service rendered by Tyr's Watch.", "Billmuth promised the Deathguard would hear of the service the paladins of Tyr's Watch had done.",
-    "Danitha bestowed redemption, teaching the resurrection of fallen companions.", "The completed service earned the gift of redemption from Tyr's Watch.", 6)
+    "Danitha bestowed redemption, teaching the resurrection of fallen companions.", "Proud to count the paladin among Tyr's Watch, Danitha bestowed the gift of redemption, the power to raise fallen companions.", 6)
 q(4485, "The Tome of Nobility", "PALADIN", "Stormwind City", 40, PN,
     "Further lessons awaited with Duthorian Rall at the Cathedral of Light.", "The summons directed an experienced paladin back to Stormwind's cathedral.",
-    "Duthorian received the arrival and spoke of further threats requiring aid.", "The referral reached Duthorian; no mount or completed trial was part of this exchange.")
+    "A lot had happened lately, Duthorian said, and he would seek the paladin's aid if they proved worthy.", "Duthorian welcomed the paladin back to the cathedral. Treacherous enemies were about, he said, and he would ask for help once worth was proven.")
 
 -- Hunting lessons differ by creature and by stage. A rod trial never proves
 -- that a permanent pet was chosen, named, or present on another adventure.
@@ -136,10 +136,10 @@ tame(94978, "Zephras Isle", "a Windsong Crawler", "beside Zephras's rivers and l
 tame(94979, "Zephras Isle", "a Galestrider", "in the lowlands")
 q(94007, "Taming the Beast", "HUNTER", "Zephras Isle", 10, HT,
     "Quel'ana Quickgale taught beast taming at the port of Valanaar.", "The next hunting lesson required finding the trainer in Valanaar.",
-    "Quel'ana welcomed the arrival and prepared to begin instruction.", "At the port of Valanaar, Quel'ana Quickgale was glad the hunter had come, and the taming lessons began.")
+    "Quel'ana was most glad the hunter had come, and the lessons began.", "At the port of Valanaar, the time had come for a hunter's very own animal companion, and Quel'ana Quickgale began the instruction in beast taming.")
 q(94013, "Taming the Beast", "HUNTER", "Zephras Isle", 10, HT,
     "The final Zephras trial called for a Vuldren Alpha in the Gustberry Lowlands.", "After two beasts, the trainer set a last practical test with a Vuldren Alpha.",
-    "The alpha trial was complete, and the trainer offered instruction in a lasting animal bond.", "The final practice earned the next lesson in keeping an animal companion.", 5)
+    "A fast learner, Quel'ana said. With the basics known, the lasting bond with an animal companion could be taught.", "The last trial done, Quel'ana moved on to the lasting bond with a companion.", 5)
 local function train(id, zone, teacher)
     q(id, "Training the Beast", "HUNTER", zone, 10, HT,
         teacher .. " offered the skills needed to care for and train a tamed animal.",
@@ -163,51 +163,51 @@ q(8232, "The Green Drake", "HUNTER", "Azshara", 52, "class_hunter_ogtinc",
 local RS, RT, RZ = "class_rogue_si7", "class_rogue_training", "class_rogue_zanzil"
 q(2205, "Seek out SI: 7", "ROGUE", "Stormwind City", 10, RS,
     "A package for Mathias Shaw served as an introduction to SI:7.", "The intelligence service had work for a recruit who could find its contact in Stormwind.",
-    "The package reached Mathias, opening the possibility of an assignment.", "The introduction was made; a field operation was still to come.")
+    "Mathias took the package and remarked that the run and the search looked to have been a strain.", "Keryn's package found Mathias Shaw, who looked the new arrival over and judged the run had taken its toll.")
 q(2206, "Snatch and Grab", "ROGUE", "Elwynn Forest", 10, RS,
     "Defias smugglers used Jerod's Landing to move contraband between Redridge and Westfall.", "SI:7 wanted the dockmaster's shipping schedule from the dock house.",
-    "The schedule reached SI:7 and earned a blade from Mathias.", "The recovered shipping information gave the service evidence of the Defias route.")
+    "Mathias was astonished that Keryn had finally found a recruit with the makings of a proper rogue. He gave a blade and said SI:7 would call again one day.", "The recovered shipping information gave the service evidence of the Defias route.")
 q(2282, "Alther's Mill", "ROGUE", "Redridge Mountains", 20, RT,
     "Lucius kept a training chest at Alther's Mill with a token inside.", "The test required opening a lock at a mill where orcs had recently been seen.",
-    "The token proved that the chest's lock had been opened.", "Lucius accepted the successful lock exercise as proof of practical skill.")
+    "Lucius saw the token, knew the chest was cracked open, and called it nice work.", "The token from Alther's Mill told Lucius the lock had given way, orcs or no orcs.")
 q(2360, "Mathias and the Defias", "ROGUE", "Westfall", 20, RS,
     "Agent Kearnen watched the Defias supply operation at an abandoned watchtower.", "Mathias needed another agent to make contact near the tower southeast of Sentinel Hill.",
-    "Kearnen received the backup and prepared to explain the troubling operation.", "The contact was made outside the tower; the guarded chest still needed investigating.")
+    "Kearnen guessed Mathias had finally sent backup, and hoped the newcomer was ready for bad news.", "Outside the tower, Agent Kearnen had bad news waiting for whoever Mathias sent.")
 q(2359, "Klaven's Tower", "ROGUE", "Westfall", 24, RS,
     "A strange shipment from Duskwood had arrived with inhuman guards at the Defias tower.", "Kearnen needed the key and the contents of the chest under the abominations' guard.",
-    "The recovered book linked the Defias drones to Zanzil's poisonous means of raising the dead.", "Mathias received evidence connecting the strange shipments with a recipe for undeath.", 5)
+    "The recovered book linked the Defias drones to Zanzil's poisonous means of raising the dead.", "To Mathias the book explained the Defias drones outside the tower, the Venture Company's hand in it, and the strange shipments out of Duskwood.", 5)
 q(2607, "The Touch of Zanzil", "ROGUE", "Stormwind City", 20, RZ,
     "The investigation had brought back a poisonous affliction along with its information.", "Mathias referred the search for a cure to Doc Mixilpixil in the cellar.",
-    "The referral reached the doctor, who initially mistook the visitor for a delivery.", "The doctor was found; examination and a remedy were still ahead.")
+    "Doc Mixilpixil took the visitor for the cheese delivery and said to put it on the table.", "In the cellar, the doctor's first words were about the cheese and where to put it.")
 q(2608, "The Touch of Zanzil", "ROGUE", "Stormwind City", 20, RZ,
     "Doc Mixilpixil required a blood sample before treating the affliction.", "The cellar examination began with the doctor's plan to draw blood.",
-    "The examination was complete, and the doctor conferred with his colleagues.", "The examination ended in a consultation among Doc Mixilpixil and his colleagues.")
+    "The phlebotomy done, Doc Mixilpixil called Dr. Montgomery and Mr. Noarm into conference.", "Blood drawn, the doctor asked for a moment to confer with his colleagues.")
 q(2609, "The Touch of Zanzil", "ROGUE", "Stormwind City", 20, RZ,
     "The doctor's formula required wildflowers, a vial, a bronze tube and chartreuse thread.", "The unusual remedy depended on supplies from Stormwind's tradespeople.",
-    "The reagents became a medicine the doctor handed over with instructions to apply it.", "The doctor prepared the remedy; its use was left to the recipient.")
+    "With the reagents in hand, Doc Mixilpixil prepared the remedy for the itis.", "The doctor took the reagents and told his patient not to get indignant while he devised the cure.")
 q(8236, "The Azure Key", "ROGUE", "Alterac Mountains", 52, "class_rogue_ravenholdt",
     "Deciphering the fragments and removing the enchantment would take time, Xylem said, and he would deliver the bag to Lord Ravenholdt himself. There was still the matter of the key. A green drake named Morphaz was said to hold it, deep in the Temple of Atal'Hakkar in the Swamp of Sorrows. Friends were to be gathered for it, and Lord Ravenholdt would await the key.", "The bag's key lay with the green drake Morphaz in the Temple of Atal'Hakkar, and Lord Ravenholdt wanted it back.",
     "Ravenholdt had thought the key lost forever. His thanks was an enchanted garment from his stores, reserved for rogues of exceptional skill and loyalty. It should be known, he said, that its bearer was not to be trifled with.", "Ravenholdt had his key back and gave an enchanted garment reserved for rogues of exceptional skill, declaring its wearer not to be trifled with.", 5)
 
 local PS, PC = "class_priest_service", "class_priest_salve"
 q(5622, "In Favor of Elune", "PRIEST", "Teldrassil", 4, PS,
-    "Laurna Morninglight in Dolanaar was ready to continue a young priest's instruction.", "The referral from Shadowglen concerned the path toward the order's first garments.",
-    "Laurna welcomed the arrival for instruction.", "The referral reached Dolanaar; earning the robes still required service.")
+    "Laurna Morninglight in Dolanaar was ready to continue a young priest's instruction.", "From Shadowglen, Shanda sent the young priest on to Laurna, with whom the order's first garments were to be earned.",
+    "Laurna was happy Shanda had sent the young priest to her. Teaching the ways of Elune gave her great satisfaction, she said.", "In Dolanaar, Laurna said teaching young priests the ways of Elune was a satisfaction to her.")
 q(5621, "Garments of the Moon", "PRIEST", "Teldrassil", 4, PS,
     "Sentinel Shaya had been hurt patrolling south of Dolanaar.", "Laurna could not leave her students and asked for healing and fortification for the injured Sentinel.",
-    "Shaya was healed and fortified, and the service earned a robe from Laurna.", "The Sentinel received aid, completing the practical test for the order's garments.")
+    "Shaya was healed and fortified, and the service earned a robe from Laurna.", "Shaya was mended south of Dolanaar, and Laurna said Elune had been served.")
 q(5624, "Garments of the Light", "PRIEST", "Elwynn Forest", 4, PS,
     "Guard Roberts lay injured near the lake east of Goldshire.", "Josetta made helping the wounded guard the test for a priest's first robes.",
-    "Roberts was healed and fortified, restoring a defender to the town.", "The completed aid earned Josetta's robe and recognition of the practical test.")
+    "Roberts was healed and fortified, restoring a defender to the town.", "One more healthy guard made Goldshire safer, Josetta said, and she gave the robe of the order.")
 q(5625, "Garments of the Light", "PRIEST", "Dun Morogh", 4, PS,
     "Mountaineer Dolf was injured just south of Kharanos.", "Maxan placed the mountaineer's immediate need ahead of a formal test.",
-    "Dolf received healing and Fortitude, and Maxan awarded the robe.", "A wounded mountaineer was helped, fulfilling the test for the church's garments.")
+    "Dolf was healed and fortified, and Maxan said the Light was inside the priest for sure.", "A wounded mountaineer was helped, fulfilling the test for the church's garments.")
 q(5650, "Garments of Darkness", "PRIEST", "Tirisfal Glades", 4, PS,
     "Deathguard Kel needed healing after defending the settlement from gnolls.", "The lesson required fortifying the wounded deathguard as well as mending his injuries.",
-    "Kel was healed and fortified, completing the test for a robe of the order.", "The deathguard received the requested aid, and the successful service was recognized.")
+    "Kel was healed and fortified, completing the test for a robe of the order.", "The deathguard was mended and fortified, and the trainer said the test had been passed with ease.")
 q(94774, "Divine Grace", "PRIEST", "Stormwind City", 10, PS,
     "The priest's superiors asked for a journey to the Cathedral of Light, where High Priestess Laurena would guide further training.", "The summons called a developing priest back to Stormwind's cathedral.",
-    "Laurena welcomed the arrival and prepared to begin further lessons.", "Laurena said there were lessons all servants of the Light had to learn, and offered to begin.")
+    "Laurena was glad of the arrival. There was much to discuss, she said, but training in the Light came first.", "Laurena said there were lessons all servants of the Light had to learn, and offered to begin.")
 q(8254, "Cenarion Aid", "PRIEST", "Azshara", 52, PC,
     "It was the way of the divine to help those in need, the priest's trainer said. The how was insignificant, and only the why mattered. Now the Cenarion Circle had such a need. Atop the cliffs northeast of the Ruins of Eldarath in Azshara, Ogtinc would say where aid was wanted.", "The Cenarion Circle needed help, and a priest was sent to Ogtinc on the cliffs of Azshara to give it.",
     "A weight lifted from Ogtinc's shoulders at the arrival, he said. There was much to do.", "Ogtinc said a weight had lifted from his shoulders, and that much remained to do.")
@@ -224,19 +224,19 @@ q(8257, "Blood of Morphaz", "PRIEST", "Felwood", 52, PC,
 local MS = "class_mage_study"
 q(1860, "Speak with Jennea", "MAGE", "Stormwind City", 10, MS,
     "Jennea Cannon needed help with a matter affecting Stormwind and Elwynn.", "The task's details awaited in the Wizard's Sanctum.",
-    "Jennea received the offer of help and prepared to explain the work.", "The referral reached the sanctum, before any field investigation had begun.")
+    "Jennea found it heartening to see a young mage eager to help the cause.", "In the Wizard's Sanctum, Jennea welcomed an eager young mage to her task.")
 q(1861, "Mirror Lake", "MAGE", "Elwynn Forest", 10, MS,
     "Disturbed magical currents raised fears about the water below Mirror Lake's waterfall.", "Jennea needed a water sample before she could test for magical contamination.",
-    "The water from below Mirror Lake's falls reached Jennea for tests of magical contamination.", "Mirror Lake's water was collected for study and earned a choice of an orb or staff.")
+    "Jennea took the water from below the falls to test. She hoped it held nothing, for the sake of anyone who drank from Mirror Lake.", "Jennea had her sample of Mirror Lake, and the young mage a choice of an orb or a staff.")
 q(1880, "Mage-tastic Gizmonitor", "MAGE", "Dun Morogh", 10, MS,
     "A knowledge-storing gizmonitor had been left behind during the flight from Gnomeregan.", "The device lay in a chest outside the lost city, among leper gnomes.",
-    "The recovered gizmonitor allowed its owner's studies to resume.", "The stored knowledge came back from the abandoned hut before the device's power was lost.")
+    "Splendid day, said Bink, who had never guessed how dependent on the gizmonitor she would become. Her studies could begin anew.", "The gizmonitor came back before its energy ran out, and Bink's studies could begin anew.")
 q(1882, "The Balnir Farmstead", "MAGE", "Tirisfal Glades", 10, MS,
     "Forsaken mages wanted to measure the plague's spread through magically receptive snapdragons.", "Flowers at Balnir Farmstead could supply evidence of the taint reaching eastern Tirisfal.",
-    "The snapdragons were collected for the apothecaries to study.", "A suitable specimen reached the mage, leaving the extent of the contamination for testing to establish.")
+    "The snapdragons were collected for the apothecaries to study.", "The mage called the snapdragon a fine specimen and sent it on to the apothecaries, who would measure how far the taint had spread.")
 q(1884, "Ju-Ju Heaps", "MAGE", "Durotar", 10, MS,
     "Zalazane's fetishes disrupted magical currents around the Echo Isles.", "The tainted heaps strengthened hostile magic and corrupted the wildlife.",
-    "The ju-ju heaps were destroyed, giving Durotar's magical currents a chance to recover.", "The fetishes' destruction removed a source of disruption, though recovery still required time.")
+    "The ju-ju heaps were destroyed, giving Durotar's magical currents a chance to recover.", "The trainer sensed the ju-ju heaps were gone. With time and luck, the flow of magic in Durotar would return to normal.")
 q(1952, "Mage's Wand", "MAGE", "Dustwallow Marsh", 40, MS,
     "The preparations had reached the point where the promised wands could be made.", "A choice of crafted wands awaited at the end of the work.",
     "The finished wands were offered for a choice of reward.", "The crafting was complete, and one of the prepared wands could be taken.")
@@ -250,28 +250,28 @@ q(7463, "Arcane Refreshment", "MAGE", "Dire Maul", 60, MS,
 local WB = "class_warlock_binding"
 q(1470, "Piercing the Veil", "WARLOCK", "Tirisfal Glades", 3, WB,
     "Three rattlecage skulls were required before instruction in binding a servant.", "The skeletons near the abandoned smithy supplied the trainer's test of practical ability.",
-    "The skulls earned a lesson in summoning and binding an imp.", "The completed errand led to instruction in commanding an imp.")
+    "Untested as the pupil still was, the trainer judged the ability enough to summon and bind an imp. Small as an imp was, the trainer warned, it had powers and a cleverness that would serve well.", "The skulls proved ability enough, young as the warlock was, and the lesson in binding an imp followed.")
 q(1598, "The Stolen Tome", "WARLOCK", "Elwynn Forest", 4, WB,
     "A novice who joined the Defias had stolen Powers of the Void from the abbey.", "The trainer wanted a protected library text now hidden in a vineyard tent.",
-    "The recovered tome earned instruction in summoning an imp.", "The book reached the trainer, who judged the successful errand enough for the imp lesson.")
+    "With the tome back, the trainer saw no reason not to show how to summon an imp.", "Powers of the Void came back from the vineyard. The trainer admitted she had never reached it herself; loitering in the abbey's protected wing would have looked suspicious.")
 q(1478, "Halgar's Summons", "WARLOCK", "Undercity", 10, WB,
     "Carendin Halgar requested further training near the Temple of the Damned.", "The next warlock lesson awaited in the Undercity's Magic Quarter.",
-    "Halgar received the summons' recipient and turned to the training still required.", "Halgar received the summons' recipient in the Magic Quarter and turned at once to further training.")
+    "Halgar was glad Ageron had found his pupil, and wasted no time on pleasantries. There was still much to learn, he said.", "In the Magic Quarter, Halgar skipped the small talk and went straight to the lesson.")
 q(1506, "Gan'rul's Summons", "WARLOCK", "Orgrimmar", 10, WB,
     "Gan'rul wanted an immediate visit among the senior warlocks in the Cleft of Shadow.", "A summons interrupted other business for further warlock instruction.",
-    "Gan'rul received the arrival and announced further training.", "The summons was answered, with the actual trial still ahead.")
+    "Gan'rul had feared his messenger Ophek would never find his pupil, and was glad to be wrong.", "Ophek's summons brought the warlock to Gan'rul in the Cleft of Shadow, where the next lesson waited.")
 q(1685, "Gakin's Summons", "WARLOCK", "Stormwind City", 10, WB,
     "Master Gakin taught discreetly beneath the Slaughtered Lamb.", "The summons directed a pupil to the tavern's basement for further training.",
-    "Gakin received the arrival and pressed the need for more instruction.", "The referral reached the hidden training place before the next summoning trial.")
+    "About time, said Gakin, and wondered aloud whether he should have sent someone more capable than Remen.", "Beneath the Slaughtered Lamb, Gakin blamed the delay on Remen, the messenger he had sent.")
 q(1473, "Creature of the Void", "WARLOCK", "Tirisfal Glades", 10, WB,
     "A Scarlet agent had stolen Egalin's grimoire describing the first voidwalker summoning.", "The missing book lay at a tower west of the warlocks' contact.",
-    "The grimoire was recovered for study; the voidwalker still had to be subdued.", "Egalin's writing returned to the warlocks, supplying the spell's structure for the coming trial.")
+    "The grimoire was recovered for study; the voidwalker still had to be subdued.", "Egalin's musty book came back. Perrine, who stole it, had likely never known its true power, the trainer said.")
 q(1501, "Creature of the Void", "WARLOCK", "Durotar", 11, WB,
     "Burning Blade warlocks kept the stolen Tablet of Verga in Skull Rock.", "The tablet's glyphs were needed before a voidwalker could be summoned for the trial.",
-    "The Tablet of Verga was recovered from the Burning Blade.", "The summoning text returned, but the trial against the voidwalker remained ahead.")
+    "The Tablet of Verga came back from the Burning Blade, and the trainer hoped the cult had suffered other losses in the taking.", "The Burning Blade lost the Tablet of Verga, and the Horde's few warlocks had their summoning text back.")
 q(1688, "Surena Caledon", "WARLOCK", "Elwynn Forest", 10, WB,
     "Gakin wanted the bloodstone choker he had given his former student Surena.", "Surena had left with a Defias companion and could be found at Brackwell Pumpkin Patch.",
-    "The choker was recovered, establishing readiness for Gakin's next test.", "Surena was bested and the bloodstone returned; the voidwalker trial was still to come.")
+    "Surena had talent, Gakin said, but not enough to master warlock magic on her own. A shame to waste it, but sometimes necessary.", "Surena was bested and her bloodstone choker returned. Gakin called the waste of her talent a shame, if a necessary one.")
 local function binding(id, zone, level, demon, implement, lesson)
     q(id, "The Binding", "WARLOCK", zone, level, WB,
         "The summoning circle required " .. implement .. " to call forth " .. demon .. ".",
@@ -290,7 +290,7 @@ binding(65603, "Stormwind City", 20, "an incubus", "the figurine placed at its c
 binding(65604, "Orgrimmar", 20, "an incubus", "the scarf carrying its owner's feelings", true)
 q(1738, "Heartswood", "WARLOCK", "Ashenvale", 20, WB,
     "The heartswood at Ordil'Aran had grown where two lovers fell in the War of the Ancients.", "Its association with enduring love made the tree's core a lure for a succubus.",
-    "The heartswood core was delivered for preparation.", "The summoning material was gathered; the succubus had yet to be called and challenged.")
+    "The heartswood core would do nicely, Gakin said, and he asked for a moment to work with it.", "Gakin judged the heartswood core fit for the work and began on it at once.")
 q(7631, "Dreadsteed of Xoroth", "WARLOCK", "Dire Maul", 60, "class_warlock_dreadsteed",
     "All the preparations were made. Now the ritual to create a Circle of Greater Summoning had to be performed. The parchment infused with Xorothian stardust would then open a portal to Xoroth. Its instructions were on a scroll, and each step had to be performed exactly. Mor'zul wished fortune, and that the souls of enemies would swiftly find their way into the shard pouch.", "The Circle of Greater Summoning and the stardust-infused parchment would open the portal to Xoroth, if every step of the scroll was followed exactly.",
     "Beaten at last, the Xorothian Dreadsteed's spirit still pulsed with rage through its ghostly flanks. Its soul was won, and it whispered dark magic into the warlock's mind and instilled the knowledge to summon a dreadsteed.", "Its soul won, the dreadsteed's spirit whispered dark magic into the warlock's mind, and with it the knowledge to summon its kind.", 6)
@@ -298,49 +298,49 @@ q(7631, "Dreadsteed of Xoroth", "WARLOCK", "Dire Maul", 60, "class_warlock_dread
 local DC, DW, DP = "class_druid_claw", "class_druid_water", "class_druid_poison"
 q(6001, "Body and Heart", "DRUID", "Darkshore", 10, DC,
     "Cenarion Moondust would call Lunaclaw at the Moonkin Stone east of Auberdine.", "The Claw's trial required facing the defender of a moonkin cave's sacred stone.",
-    "The challenge was passed, and the trainer offered the teaching of the Claw.", "Lunaclaw's test was complete, clearing the way for the trainer's instruction.", 5)
+    "Mathrengyl sensed Lunaclaw's strength in the druid, and the teaching of the Great Bear Spirit with it. A large step into a much larger world, he called it.", "Mathrengyl sensed Lunaclaw's strength in the druid and called it a large step into a much larger world.", 5)
 q(6002, "Body and Heart", "DRUID", "The Barrens", 10, DC,
     "Cenarion Lunardust would call Lunaclaw at the stone west of Taurajo.", "The stone near Mulgore's border held a test of the strength required by the Claw.",
-    "The trial was passed, and the trainer offered the teaching of the Claw.", "The challenge at the Moonkin Stone was complete, opening the next lesson.", 5)
+    "Turak sensed the Great Bear Spirit's teaching and Lunaclaw's strength in the druid, and called it a large step into a much larger world.", "After the Moonkin Stone, Turak sensed Lunaclaw's strength in the young druid.", 5)
 q(28, "Trial of the Lake", "DRUID", "Moonglade", 16, DW,
     "A rapidly fading bauble had to be carried from Lake Elune'ara to the Shrine of Remulos.", "The lake's trial tested speed and endurance before the bauble lost its power.",
-    "The bauble was used at the shrine, and Tajarri acknowledged the completed trial.", "The lake trial was passed; the sea lion's other lessons still lay ahead.")
+    "The bauble was used at the Shrine of Remulos before it could decay, and Tajarri counted yet another druid through the Trial of the Lake.", "Tajarri greeted the newest druid to pass the Trial of the Lake with a well done, twice over.")
 q(30, "Trial of the Sea Lion", "DRUID", "Moonglade", 16, DW,
     "The pendant's two halves represented the sea lion's agility and endurance.", "The trial required gathering both halves and joining them before Dendrite's inspection.",
-    "The completed pendant passed Dendrite's inspection, finishing the trial.", "The sea lion's pendant was assembled, leaving the final instruction to the trainer.")
+    "Dendrite inspected the joined pendant, agility and endurance in one piece, and congratulated the druid on the Trial of the Sea Lion.", "Both halves made the Pendant of the Sea Lion, and Dendrite called the second trial complete.")
 q(31, "Aquatic Form", "DRUID", "Thunder Bluff", 16, DW,
     "Turak Runetotem awaited the pendant as evidence of the lessons completed in Moonglade.", "The final return to Thunder Bluff would turn the trials' preparation into aquatic instruction.",
-    "Turak accepted the pendant and taught the aquatic form.", "The return completed the training, earning the ability to take an aquatic aspect.", 6)
+    "Turak found the pendant very impressive and said the druid's ancestors would be pleased. It was his pleasure, he said, to teach the aquatic form.", "In Thunder Bluff, Turak took the pendant as proof of Moonglade's lessons and taught the aquatic form.", 6)
 q(5061, "Aquatic Form", "DRUID", "Darnassus", 16, DW,
     "Mathrengyl Bearwalker awaited the pendant as proof of the Moonglade trials.", "The final lesson in the aquatic aspect required returning to the trainer in Darnassus.",
-    "Mathrengyl accepted the pendant and taught the aquatic form.", "The return to Darnassus completed the aquatic training.", 6)
+    "Mathrengyl called the pendant very impressive and taught the aquatic form with pleasure.", "In Darnassus, Mathrengyl took the pendant as proof of Moonglade's lessons and taught the aquatic form.", 6)
 q(6123, "Gathering the Cure", "DRUID", "Darkshore", 14, DP,
     "Earthroot and lunar fungus were needed for a salve to treat Darkshore's sick deer.", "The cure needed herbs and fungus from the moonkin caves, in addition to its water base.",
-    "The ingredients supplied enough material to begin making the salve.", "The remedy could be prepared, but the deer still needed treatment.")
+    "The water, earthroot and lunar fungus were enough for ample doses of salve, Alanndarian said, enough to start making a difference.", "Alanndarian judged the reagents good enough for ample doses of the salve.")
 q(6124, "Curing the Sick", "DRUID", "Darkshore", 14, DP,
     "Ten doses of salve were ready for Darkshore's afflicted deer.", "The practical lesson called for administering a prepared remedy to the sick wildlife.",
-    "The deer were treated, and Dendrite acknowledged the service to Darkshore.", "Dendrite praised the care given to Darkshore's deer and warned of the corruption spreading through the land.")
+    "The deer were treated, and Dendrite called them unwitting victims of a taint spreading through the whole land. Some in Darnassus saw it, he said, and some put on blinders.", "Dendrite praised the care given to Darkshore's deer and warned of the corruption spreading through the land.")
 q(6125, "Power over Poison", "DRUID", "Darnassus", 14, DP,
     "The work with ordinary antidotes was preparation for Mathrengyl's lesson in curing poison.", "The final return concerned a lasting power beyond gathering ingredients for each remedy.",
-    "Mathrengyl taught the power to cure poison after the practical service.", "The completed lesson earned permanent instruction against poisonous afflictions.", 5)
+    "Mathrengyl had followed the lesson from afar and was surprised by the situation in Auberdine. Such poisons in the land upset the balance, he said, and bore investigating.", "The lesson ended with the power to cure poison, and with Mathrengyl's worry about what had been loosed in Auberdine.", 5)
 q(6128, "Gathering the Cure", "DRUID", "The Barrens", 14, DP,
     "Tonga needed earthroot and intact kodo horns for the gazelles' salve.", "The sampled water required curative ingredients before it could become a useful remedy.",
-    "The gathered materials allowed Tonga to prepare the salve.", "The ingredients were ready; the sick gazelles had yet to receive treatment.")
+    "Tonga called the reagents good, enough for ample doses of the salve and a start on saving the gazelles.", "With water, earthroot and kodo horn in hand, Tonga could make enough salve to start making a difference.")
 q(6129, "Curing the Sick", "DRUID", "The Barrens", 14, DP,
     "Ten doses of salve were available for the sick gazelles of the northern Barrens.", "The Circle's practical lesson required treating afflicted wildlife beyond the Crossroads.",
-    "The gazelles were treated, earning Dendrite's acknowledgment of the service.", "The salve relieved sick animals while the greater source of corruption remained.")
+    "The gazelles were tended. Dendrite called them victims of a taint spreading through the land, and said the druid's people, like their elders in Thunder Bluff, were proving that the need for balance crossed racial barriers.", "The salve relieved sick animals while the greater source of corruption remained.")
 q(6130, "Power over Poison", "DRUID", "Thunder Bluff", 14, DP,
     "Turak awaited the return from the practical work against the gazelles' poisoning.", "The antidote lesson was to end with permanent instruction at Thunder Bluff.",
-    "Turak taught the power to cure poison after the work at the Crossroads.", "The final return earned instruction beyond the use of prepared salves.", 5)
+    "Turak had followed the lesson from Thunder Bluff and was surprised by the situation at the Crossroads. Poison in the land upset the balance, he said, and bore investigating.", "The lesson ended with the power to cure poison, and with Turak's worry about what had been loosed near the Crossroads.", 5)
 q(94006, "The Great Ursera Spirit", "DRUID", "Zephras Isle", 10, DC,
     "Urs'endris taught the ursera shape near the waterfall below the Shrine of Akir.", "The great spirit's domain was withering along with other parts of Zephras.",
-    "Urs'endris welcomed the inquiry and began a discussion of the Claw.", "Urs'endris agreed to speak about the way of the Claw.")
+    "So the child wished to embrace the way of the claw, said Urs'endris. Very well, then they would speak.", "Urs'endris, the spirit who had taught druids the ursera shape for generations, agreed to speak of the way of the claw.")
 q(94911, "Child of Nature", "DRUID", "Thunder Bluff", 10, DC,
-    "Turak Runetotem in Thunder Bluff could show a druid from Zephras the way to Moonglade.", "The referral pointed toward Thunder Bluff before the journey to Moonglade.",
-    "Turak welcomed the visitor to Azeroth and spoke of the Circle's wisdom.", "Turak Runetotem marveled at a high elf speaking with him in Thunder Bluff.")
+    "Turak Runetotem in Thunder Bluff could show a druid from Zephras the way to Moonglade.", "The stronghold of the Cenarion Circle lay at Moonglade, and Turak in Thunder Bluff could teach the way to reach it.",
+    "Turak Runetotem wondered whether wonders would ever cease, with a high elf speaking to him in Thunder Bluff.", "Turak Runetotem marveled at a high elf speaking with him in Thunder Bluff.")
 q(94912, "Child of Nature", "DRUID", "Stormwind City", 10, DC,
-    "Sheldras Moontree in Stormwind could show a Skyborne druid the way to Moonglade.", "The referral led to Stormwind for guidance toward Moonglade.",
-    "Sheldras welcomed the visitor and described the Circle's knowledge.", "The introduction was made in Stormwind, before the further journey to Moonglade.")
+    "Sheldras Moontree in Stormwind could show a Skyborne druid the way to Moonglade.", "The Cenarion Circle, an ancient order of druids, kept its stronghold at Moonglade, and a night elf in Stormwind knew the way.",
+    "Sheldras was pleased to meet a fellow druid from among the Skyborne, and to be among the first to welcome them to Azeroth.", "In Stormwind, Sheldras counted himself among the first to welcome a Skyborne druid to Azeroth.")
 
 -- Additional staged source review: the level-52 temple requests begin with
 -- errands in the open world; finding an instructor is not passing the trial.
@@ -349,7 +349,7 @@ P.threads.class_paladin_mightstone = "the forging of a Holy Mightstone"
 P.threads.class_warlock_impsy = "Impsy's own pet"
 q(1740, "The Orb of Soran'ruk", "WARLOCK", "The Barrens", 25, WB,
     "Doan sought pieces of a demon-spirit orb from Blackfathom Deeps and Shadowfang Keep.", "Even broken, Soran'ruk's orb retained power that Doan believed he could restore.",
-    "The recovered pieces were sufficient for Doan to reconstruct the orb in a chosen form.", "The two dungeon searches supplied Doan's study and the promised restoration of Soran'ruk's orb.")
+    "Almost every piece of Soran'ruk's orb was there, Doan said, and making it whole again was a simple thing.", "The orb had not been greatly fragmented, and Doan could make Soran'ruk whole again.")
 q(8417, "A Troubled Spirit", "WARRIOR", "Blasted Lands", 52, W,
     "In the Blasted Lands was a troubled spirit who had once been a great hero of the Horde, the warrior's trainer said. A warrior's honor did not die with the body, and it would serve well to speak with him.", "A great hero of the Horde lingered in the Blasted Lands as a troubled spirit, and a warrior was sent to speak with him.",
     "So someone had come to alleviate his pain, the spirit said. He wished he could simply be struck down, but it was not that simple.", "The spirit wished it were as simple as being struck down. It was not, he said.")
@@ -386,7 +386,7 @@ q(8250, "Magecraft", "MAGE", "Azshara", 52, "class_mage_xylem",
     "Archmage Xylem awaited, Sanath said with a sneer.", "With a sneer, Sanath said the Archmage was waiting.")
 q(8251, "Magic Dust", "MAGE", "Azshara", 52, "class_mage_xylem",
     "The blood elves in Azshara had developed a method for pulverizing the magical items they acquired, Xylem said. Their glittering dust differed from the components of an ordinary disenchantment. When he sent his apprentice to trade for it, the apprentice was killed without hesitation, and for that they would pay. Now the time for talk was over, and more persuasive methods were to be used along the cliffs.", "Xylem's apprentice had died trying to trade for the blood elves' glittering dust, and Xylem wanted it taken from them instead, along the cliffs of Azshara.",
-    "Well done, Xylem said, and it never ceased to amaze him how persuasive a volley of arcane missiles could be.", "The dust reached Xylem, who remarked on the persuasiveness of arcane missiles.")
+    "Well done, Xylem said, and it never ceased to amaze him how persuasive a volley of arcane missiles could be.", "With the glittering dust in hand, Xylem remarked on how persuasive arcane missiles could be.")
 q(8252, "The Siren's Coral", "MAGE", "Azshara", 52, "class_mage_xylem",
     "The ruins and beaches around Xylem's tower were overrun with spitelash. They had recently learned to recognize the rare components of Azshara, and enchanted coral drew them for reasons unknown to him. Little was left in the bay. The coral was vital to his research, and the spitelash sirens were to be parted from some of it.", "The spitelash sirens had taken most of the bay's enchanted coral, and Xylem's research needed it back.",
     "It was a superb specimen of coral, Xylem said, and the mage's skills were unquestionably precise and deadly. The efforts had not gone unnoticed, and perhaps a true test of skill was deserved.", "Xylem praised the coral and the precision behind it, and hinted at a true test of skill.")
@@ -433,7 +433,7 @@ q(7563, "Rage of Blood", "WARLOCK", "Burning Steppes", 58, WD,
     "Binding a dreadsteed meant invoking glyphs on a parchment, and Mor'zul needed a special ink to scribe them. It came from the blood of Winterspring's owl beasts, driven mad by the demonic emanations of Darkwhisper Gorge.",
     "The owl beasts of Winterspring had once been pure creatures. Maddened by Darkwhisper Gorge, their blood carried the magic Mor'zul wanted for his ink.",
     "Mor'zul took the blood to be distilled into ink for the parchment, and admitted he might keep a little for himself.",
-    "The maddened owl beasts' blood reached Mor'zul. He would have it made into ink, and had heard its taste was euphoric.", 3)
+    "Mor'zul would have the maddened owl beasts' blood made into ink, and he had heard its taste was euphoric.", 3)
 q(7564, "Wildeyes", "WARLOCK", "Burning Steppes", 58, WD,
     "Mor'zul's servant Gorzeeki, an alchemist of some skill, was to prepare the ink from the blood Mor'zul had gathered.",
     "Gorzeeki Wildeyes would turn the owl beast blood into the ink for Mor'zul's glyph parchment.",
@@ -453,12 +453,12 @@ q(7625, "Xorothian Stardust", "WARLOCK", "Burning Steppes", 60, WD,
     "Banehollow knew the stardust was wanted to open a portal to Xoroth, the domain of his rival Hel'nurath. His servant Ur'dan would provide it, if the price was paid.",
     "Lord Banehollow guessed the stardust was meant for stealing a dreadsteed from Hel'nurath. He sent the buyer to his servant Ur'dan, who kept a supply of Xorothian stardust.",
     "Gorzeeki could hardly believe the stardust had been obtained. Now Mor'zul could finish the glyph parchment that would open a portal to Xoroth.",
-    "The Xorothian stardust reached Gorzeeki, who guessed it had cost a large sum, a bargain with the dreadlord, or both.", 4)
+    "Gorzeeki guessed the Xorothian stardust had cost a large sum, a bargain with the dreadlord, or both.", 4)
 q(7626, "Bell of Dethmoora", "WARLOCK", "Burning Steppes", 60, WD,
     "A Circle of Greater Summoning needed three tools. One, a bell named for the late warlock Dethmoora Darkeyes, could be built by Gorzeeki only from a large supply of elixirs of shadow power.",
     "Gorzeeki could make a Bell of Dethmoora to conduct the circle's arcane power, but it took many elixirs of shadow power from an alchemist.",
     "Gorzeeki took the elixirs and set about making the bell, to keep until the ritual.",
-    "The elixirs of shadow power reached Gorzeeki, who grumbled about miserly alchemists and began the Bell of Dethmoora.", 3)
+    "With the elixirs of shadow power, Gorzeeki began the Bell of Dethmoora, grumbling about miserly alchemists.", 3)
 q(7627, "Wheel of the Black March", "WARLOCK", "Burning Steppes", 60, WD,
     "The Wheel of the Black March would contain and direct the circle's violent energies. Gorzeeki needed large brilliant shards from an enchanter and dark iron ore from a master miner.",
     "For the second tool of the circle, Gorzeeki asked for large brilliant shards and dark iron ore.",
@@ -468,7 +468,7 @@ q(7628, "Doomsday Candle", "WARLOCK", "Burning Steppes", 60, WD,
     "A Doomsday Candle would burn any wayward demon that disrupted the ritual. Containing its fire required the essence in black dragon scales.",
     "The third tool of the circle stored fire. Gorzeeki needed black dragonscales from a skinner before he dared start it.",
     "Gorzeeki had his dragonscales and could make the candle without blowing up the camp.",
-    "The black dragonscales reached Gorzeeki, who would contain the candle's fire with them and keep it until the ritual.", 3)
+    "With the black dragonscales, Gorzeeki could contain the candle's fire, and he would keep it until the ritual.", 3)
 q(7629, "Imp Delivery", "WARLOCK", "Burning Steppes", 60, WD,
     "Mor'zul's parchment needed paper infused with Xorothian stardust, and only the alchemy lab in Scholomance had the equipment. Gorzeeki lent a jar holding a clever imp to do the work there.",
     "Gorzeeki could not travel to Caer Darrow himself. The imp in his jar could infuse the parchment, once released in Scholomance's alchemy lab.",
@@ -478,7 +478,7 @@ q(7630, "Arcanite", "WARLOCK", "Burning Steppes", 60, WD,
     "With the bell, wheel and candle made, Gorzeeki wanted a black lodestone to sustain them if they failed during the ritual. The lodestone required arcanite.",
     "A black lodestone would keep the ritual from fizzling out. Gorzeeki could make one, given arcanite from an alchemist.",
     "Gorzeeki had his arcanite and could make the lodestone that would keep the ritual from failing.",
-    "Once the arcanite reached him, Gorzeeki could make the lodestone, so the ritual for the Circle of Greater Summoning would not fizzle out.", 3)
+    "Once the arcanite was his, Gorzeeki could make the lodestone, so the ritual for the Circle of Greater Summoning would not fizzle out.", 3)
 q(7601, "What Niby Commands", "WARLOCK", "Felwood", 50, WN,
     "Niby the Almighty would teach the summoning of an infernal servant once he had the infernal core of Kroshius. Kroshius had all but burned out and had to be raised from the rubble first; Niby's imp, Impsy, would explain.",
     "To learn the infernal summoning, Niby wanted Kroshius destroyed. That meant first reigniting the demon's burned-out corpse, and Impsy knew how.",
@@ -488,22 +488,22 @@ q(7602, "Flawless Fel Essence", "WARLOCK", "Felwood", 55, WN,
     "Reanimating Kroshius needed fel fire, and Impsy could make it from three flawless fel essences. They came from the Legashi satyrs of Azshara, the legionnaires of Jaedenar and the felguard sentries of the Blasted Lands.",
     "Impsy's fel fire called for essences from three distinct regions. He also confided that Niby was daft.",
     "Impsy took the three essences and asked for a minute to combine them into fel fire.",
-    "The three essences reached Impsy, who began making fel fire.", 3)
+    "With three essences in hand, Impsy began making fel fire.", 3)
 q(7603, "Kroshius' Infernal Core", "WARLOCK", "Felwood", 55, WN,
     "Fel fire set on the remains of Kroshius in Shatter Scar Vale would reanimate the fallen infernal. Impsy fully expected him to kill whoever tried, and advised bringing friends.",
     "Kroshius lay in a heap to the northeast. Raised with fel fire, he would have to be killed again for his infernal core.",
-    "Kroshius's infernal core reached Niby. A deal was a deal, he said, and he hurried to hand over the knowledge before his own greatest conjuration began.",
-    "Niby received the core and kept his side of the bargain, though he was in a great hurry.", 5)
+    "Niby had the infernal core of Kroshius. A deal was a deal, he said, and he hurried to hand over the knowledge before his own greatest conjuration began.",
+    "Niby kept his side of the bargain for the core, though he was in a great hurry.", 5)
 q(7581, "The Prison's Bindings", "WARLOCK", "Blasted Lands", 60, WG,
     "A Doomguard could be held only by a crystal prison of special make. Its bindings had to come from lesser demons, the Wildspawn satyrs of Dire Maul, whose blood would bond the Hederine shards.",
     "Daio the Decrepit needed coagulated blood from the Wildspawn satyrs of Dire Maul to bind his crystal prison.",
     "Daio judged the blood an excellent recovery. It would suppress the Doomguard's magical defenses.",
-    "The Wildspawn blood reached Daio, who meant to use it against the Doomguard's magic.", 3)
+    "With the Wildspawn blood, Daio meant to turn the Doomguard's own magic against it.", 3)
 q(7582, "The Prison's Casing", "WARLOCK", "Blasted Lands", 60, WG,
     "The Hederine of Darkwhisper Gorge in Winterspring secreted fel poisons that hardened into anti-magic crystals, the Tears of the Hederine. Not even a Doomguard could break a prison made of them.",
     "Daio's prison needed walls of the Tears of the Hederine, crystals the demons of Darkwhisper Gorge would not give up without a fight.",
     "Daio had the Tears and needed only to combine them with the Wildspawn blood for the prison to be ready.",
-    "The Tears of the Hederine reached Daio. With the satyr blood, they would make the crystal prison.", 3)
+    "With the Tears of the Hederine and the satyr blood, Daio could make the crystal prison.", 3)
 q(7583, "Suppression", "WARLOCK", "Blasted Lands", 60, WG,
     "The prison was ready. A Doomguard Commander in the Tainted Scar had to be captured in it, and Daio warned that the demon would turn all its fury on the one performing the ritual.",
     "Daio called the capture the hardest part. A cornered Doomguard Commander would flail and strike at its captor, and companions would be needed to stay alive.",
@@ -512,7 +512,7 @@ q(7583, "Suppression", "WARLOCK", "Blasted Lands", 60, WG,
 P.questIDs[7583].highlight = {"A Doomguard Commander was captured in Daio's crystal prison, and Daio offered the knowledge to conjure and control one.",
     "Daio's prison held a Doomguard Commander from the Tainted Scar. The warlock, he said, was now ready to command such a beast."}
 P.questIDs[7603].highlight = {"Kroshius was raised with fel fire and destroyed. Niby took the infernal core and, in a hurry, kept his side of the bargain.",
-    "The infernal core of Kroshius reached Niby, who handed over the promised knowledge before his own conjuration."}
+    "For the infernal core of Kroshius, Niby handed over the promised knowledge before his own conjuration began."}
 for _, id in ipairs({7562, 7563, 7564, 7623, 7624, 7625, 7626, 7627, 7628, 7629, 7630, 7601, 7602, 7603, 7581, 7582, 7583}) do
     P.questIDs[id].source[2] = "https://classicdb.ch/?quest=" .. id
 end
@@ -543,7 +543,7 @@ q(7639, "To Show Due Judgment", "PALADIN", "Stormwind City", 60, PC2,
     "Rohan gave his censer with his blessing. He had used it in several exorcisms himself, and Grayson was waiting for it in Stormwind.",
     "With Rohan's exorcism censer in hand, the next step lay with Lord Grayson Shadowbreaker in Stormwind.",
     "Grayson accepted the censer as proof of sacrifice. Next would come judgment, and the censer would carry it to the tortured spirits of lost lands.",
-    "The censer reached Grayson, who called sacrifice a key part of a paladin's duty and named judgment as the next test.", 3)
+    "Grayson took the censer, called sacrifice a key part of a paladin's duty, and named judgment as the next test.", 3)
 q(7640, "Exorcising Terrordale", "PALADIN", "Stormwind City", 60, PC2,
     "Grayson added a pinch of tainted earth from Terrordale to the censer. Green auras in the Eastern Plaguelands marked where tormented spirits troubled the ground, and the censer would drive them out.",
     "In Terrordale, the physical world buckled under the torment of the spirit realm. Rohan's censer would pass judgment there.",
@@ -558,7 +558,7 @@ q(7642, "Collection of Goods", "PALADIN", "Stormwind City", 60, PC2,
     "Grimand's barding needed runecloth for the lining, arcanite bars for the plating, Arthas' Tears and Stratholme holy water. His fee in gold also covered the saddle and stirrups.",
     "Five things stood between Grimand and finished barding, four rare materials and the gold for his fee.",
     "Grimand found everything he had asked for and set to finishing the barding.",
-    "The runecloth, arcanite, Arthas' Tears, holy water and gold reached Grimand, who admired the resourcefulness and went to work.", 3)
+    "Runecloth, arcanite, Arthas' Tears, holy water and gold were all there, and Grimand admired the resourcefulness and went to work.", 3)
 q(7648, "Grimand's Finest Work", "PALADIN", "Stormwind City", 60, PC2,
     "Grimand wiped his brow and called the barding some of his finest work, as good as the set he had made for Grayson's own charger. He sent it to Grayson with his thanks.",
     "The finished barding was ready. Grimand wanted Grayson to see it for himself.",
@@ -573,12 +573,12 @@ q(7645, "Manna-Enriched Horse Feed", "PALADIN", "Hillsbrad Foothills", 60, PC2,
     "Merideth Carlson of Southshore had been called mad by the Silver Hand for claiming spirit horses could be fed. The price was Enriched Manna Biscuits from the Argent Dawn, plus gold for the misery endured.",
     "Merideth Carlson could nourish spirit horses and wanted the paladins to pay for the old mockery. The price was Argent Dawn biscuits and gold.",
     "Payment for wrongs others had committed took Merideth by surprise. An offer of free feed in future followed, though the gold stayed in Southshore.",
-    "The biscuits and gold reached Merideth Carlson, who answered the sacrifice with a promise of free feed in future and kept the money.", 3)
+    "For the biscuits and gold, Merideth Carlson answered the sacrifice with a promise of free feed in future, and kept the money.", 3)
 q(7644, "Blessed Arcanite Barding", "PALADIN", "Stormwind City", 60, PC2,
     "On the Ancient Equine Spirit's back the barding glowed, and the air thickened with power. Then it was blessed and ready to return to Grayson.",
     "The horse spirit's blessing had passed into the barding. Grayson wanted it brought back to Stormwind.",
     "Grayson declared the barding ready to harness the charger once its redemption was done. One last item remained to be made before the struggle ahead.",
-    "The blessed barding reached Grayson. A great trial was near, he said, with one more thing still to make.", 4)
+    "Back in Stormwind, the blessed barding went to Grayson. A great trial was near, he said, with one more thing still to make.", 4)
 q(7646, "The Divination Scryer", "PALADIN", "Stormwind City", 60, PC2,
     "The censer from Terrordale would be the heart of a Divination Scryer, and Grayson would build its housing. Two diamonds, an Azerothian and a Pristine Black, would let the scryer pierce the shadows.",
     "Grayson called the diamonds the last worldly sacrifice before the trial. One bright and one black, they would complete the scryer.",
@@ -608,7 +608,7 @@ q(7635, "A Proper String", "HUNTER", "Felwood", 60, HA,
     "Stoma alone could enchant the string for a bow of Ancients. He wanted sinew from a mature black dragon.",
     "Vartrus could give the stave, but the bowstring was Stoma's to make. Its sinew had to come from a slain black dragon.",
     "Stoma found the black dragon's sinew foul with evil, and set to cleansing it and laying on the enchantments.",
-    "The sinew reached Stoma, who began making it into a nearly indestructible bowstring.", 4)
+    "Stoma began making the sinew into a nearly indestructible bowstring.", 4)
 q(7634, "Ancient Sinew Wrapped Lamina", "HUNTER", "Felwood", 60, HA,
     "Hastat, Ancient of Lore, could bind one of his leaves into a quiver not seen in ten thousand years. He needed sinew from an adult blue dragon.",
     "A quiver to accompany a bow of Ancients could be made from Hastat's leaf, if bound with blue dragon sinew.",
@@ -646,8 +646,8 @@ q(1821, "Agamand Heirlooms", "WARRIOR", "Tirisfal Glades", 11, WBR,
     "Coleman said the Agamands, his employers in life, had caused his death. Now mindless servants of the Lich King, they kept a sword, an axe, a dagger and a mace in their crypt at the north end of the mills.",
     "Coleman wanted the last vestiges of the Agamands' honor. Their crypt held four heirloom weapons among lurking Scourge and dead Agamands.",
     "Coleman had the four heirlooms. The last semblance of honor had been stripped from the cursed Agamand lands, he said, and the family was truly no more.",
-    "The Agamand sword, axe, dagger and mace reached Coleman Farthing, who declared that the family was finished.", 4)
-P.questIDs[1821].highlight = {"The Agamand heirlooms reached Coleman Farthing, whose employers had caused his death. He said the family was truly no more.",
+    "Sword, axe, dagger and mace went to Coleman Farthing, and with them, he said, the last memory of the Agamands.", 4)
+P.questIDs[1821].highlight = {"Coleman Farthing had the Agamand heirlooms, taken from the employers who had caused his death. The family, he said, was truly no more.",
     "Coleman took the sword, axe, dagger and mace from the Agamand crypt as the end of the family that had killed him."}
 q(92481, "A Student of the Arcane", "MAGE", "Zephras Isle", 2, ZT,
     "With the vuldren dealt with, a recall crystal from Dorii Brightwhisper, Thendal Grove's mage trainer, carried a message.",
@@ -696,8 +696,8 @@ q(1485, "Vile Familiars", "WARLOCK", "Durotar", 4, "class_warlock_binding",
 q(1499, "Vile Familiars", "WARLOCK", "Durotar", 4, "class_warlock_binding",
     "Zureetha Fargaze was sending novices to cull the creatures in a cave near where the familiars were fought. Ruzan thought helping her would be good experience.",
     "Ruzan sent the novice to Zureetha Fargaze with word of the help given against the imps.",
-    "Word of the culled imps pleased Zureetha, who rewarded Ruzan's novice and foresaw greater deeds.",
-    "Zureetha Fargaze heard about the help against the imps and gave a reward.", 3)
+    "Zureetha Fargaze heard that the cave's creatures were culled and said the novice had done well.",
+    "Well done, Zureetha said of the culling, and she gave the novice a reward.", 3)
 for _, id in ipairs({1485, 1499}) do
     P.questIDs[id].source[2] = "https://classicdb.ch/?quest=" .. id
     P.questIDs[id].source[3] = "LoreHordeStories.lua 792 and the Vile Familiars fallback; hand-off 2026-11-05"
@@ -779,7 +779,7 @@ q(1701, "Fire Hardened Mail", "WARRIOR", "Stormwind City", 28, W,
     "Furen knew the secret of a very hard mail, made from rare materials. He would make a piece for anyone willing to gather them.",
     "Fire hardened mail needed rare materials from far away, and Furen Longbeard would make it if they were found.",
     "Furen was amazed, having feared the chimaeras would eat the gatherer, and started on the armor.",
-    "Every material for the fire hardened mail reached Furen, who set to work.", 3)
+    "Furen had every rare material for the mail, though he had feared the chimaeras would eat the warrior first.", 3)
 q(1700, "Grimand Elmore", "WARRIOR", "Stormwind City", 28, W,
     "Furen had copied his notes on the techniques he learned making armor, and wanted them sent to Grimand Elmore in the Dwarven District's weapon shop. He advised ducking, since Grimand was proud of his skill.",
     "Furen Longbeard's armor notes were meant for Grimand Elmore, who would hate to learn anything from him.",
@@ -789,7 +789,7 @@ q(1705, "Burning Blood", "WARRIOR", "Stormwind City", 28, W,
     "Grimand grudgingly admitted Furen might have found something. To test the technique on new armor, he needed burning blood from the Nightbane worgen of Roland's Doom in Duskwood, and a burning rock from their leader, Gutspill.",
     "Grimand Elmore's armor called for burning blood and a burning rock. Both were to be found with the Nightbane worgen in Duskwood.",
     "Pleased with the materials, Grimand went off to his own work.",
-    "The burning blood and the rock reached Grimand, who excused himself to get to work.", 3)
+    "Nice work, said Grimand of the burning blood and rock, and excused himself to his own.", 3)
 
 q(2998, "Tome of Divinity", "PALADIN", "Stormwind City", 12, PW,
     "Brother Wilhelm had overheard Duthorian Rall speaking well of a young paladin, and saying it was time for a test.",
@@ -885,12 +885,12 @@ q(1681, "Ironband's Compound", "WARRIOR", "Ironforge", 11, W,
     "Muren's mentor, Sturgy Ironband, had taught blacksmithing at a compound south of Helm's Bed Lake. Soon after a student brought him strange umbral ore, Dark Iron dwarves attacked and killed everyone there.",
     "His master had to be avenged, Muren said, and he wanted the load of umbral ore that had brought the Dark Irons to Ironband's compound.",
     "Muren Stormpike had the umbral ore and was eager to learn its properties. He feared the compound would not be the last place the Dark Irons struck.",
-    "The umbral ore from his master's compound reached Muren, who hoped many Dark Irons had fallen there.", 4)
+    "Muren had the umbral ore from his master's compound, and hoped a host of Dark Irons had fallen in the search.", 4)
 q(1718, "The Islander", "WARRIOR", "The Barrens", 30, W,
     "A warrior's growing renown needed testing against peers. Fray Island, south of Ratchet, was where warriors met and fought, and Klannoc Macleod led them.",
     "The chief warrior of Fray Island, Klannoc Macleod, would judge whether the newcomer was worthy of the path ahead.",
     "Klannoc Macleod welcomed the warrior to Fray Island and hoped it would suit.",
-    "Klannoc greeted the arrival on Fray Island.", 3)
+    "Klannoc Macleod was glad to see the warrior had made it to Fray Island.", 3)
 q(1840, "Orm Stonehoof and the Brutal Helm", "WARRIOR", "Thunder Bluff", 30, W,
     "Orm Stonehoof was greatly respected for his skill and could make the brutal helm. He worked in Thunder Bluff, near the pool by the great central totem.",
     "Thun'grim sent word to Orm Stonehoof in Thunder Bluff about a helm.",
@@ -900,7 +900,7 @@ q(1844, "Chimaeric Horn", "WARRIOR", "Thunder Bluff", 30, W,
     "Orm would make the helm only for the worthy. A chimaera matriarch in the ashen Charred Vale of Stonetalon was mad with pain, and her galvanized horn would be the proof.",
     "To earn the brutal helm, Orm wanted the matriarch of the Charred Vale's chimaeras freed from her misery.",
     "Orm Stonehoof saw the horn as proof of worth and resolve. The helm would be made.",
-    "Orm accepted the galvanized horn and promised the helm.", 4)
+    "Worth and resolve were shown, Orm said, and the helm would be made.", 4)
 q(1879, "Speak with Bink", "MAGE", "Ironforge", 10, MS,
     "A gnome mage in Ironforge's Hall of Mysteries, Bink, had a task that only a mage could be trusted with.",
     "A fellow mage passed on word from Bink in Ironforge, who needed a mage for her task.",
@@ -915,7 +915,7 @@ q(27, "A Lesson to Learn", "DRUID", "Moonglade", 16, DW,
     "A young druid was ready to learn of a form that gave mastery of the water, and Dendrite Starblaze of the Cenarion Circle waited in Nighthaven.",
     "The next animal aspect concerned water, and Dendrite Starblaze in Moonglade would guide the lesson.",
     "Dendrite Starblaze explained that the aquatic form had to be earned through two trials. The first would test work under water, the second understanding of the form.",
-    "Dendrite announced two trials before the aquatic form could be earned.", 3)
+    "In the aquatic form a druid moved freely through water, Dendrite said, but the form had to be earned before it was mastered.", 3)
 q(6126, "Lessons Anew", "DRUID", "Moonglade", 14, DP,
     "Druids could purge poison with an incantation, but this lesson began with treating poisonings as a layman would, under Dendrite Starblaze.",
     "The lesson on poison and its cure would begin in Moonglade, with Dendrite Starblaze.",
@@ -1155,7 +1155,7 @@ q(4975, "The Completed Orb of Noh'Orahil", "WARLOCK", "The Barrens", 40, WO,
     "It was done, Menara said, and the choice was a staff for both hands or an orb that left room for a dagger or sword. Tackling the infernal had been a great feat, and the reward would fit nicely. She wished further success in the arts.", "Finished, the Orb of Noh'Orahil came with Menara's praise for the infernal's defeat and a wish for success in the arts.", 5)
 q(1920, "Investigate the Blue Recluse", "MAGE", "Stormwind City", 16, MS,
     "A disturbance had been reported at the Blue Recluse tavern in the Mage Quarter, where strange invisible creatures wandered and a mana rift was feared. The tavern was to be investigated and the creatures captured. Made visible with the cantation of manifestation and subdued, they were to be taken in containment coffers. Coffers full and empty, and the cantation, were to come back.", "Invisible creatures haunted the Blue Recluse in the Mage Quarter, and a mage was sent to capture them in containment coffers.",
-    "Very well done, the trainer said. The creatures would be studied, and with diligence and luck it would be learned how they had slipped into the world. Such work raised the mage's value to the society of mages.", "For study went the captured creatures, and the society of mages took note of the young mage's value.")
+    "Very well done, the trainer said. The creatures would be studied, and with diligence and luck it would be learned how they had slipped into the world. Such work raised the mage's value to the society of mages.", "The captured creatures went to the trainer for study, and the young mage's value to the society of mages grew.")
 q(1921, "Gathering Materials", "MAGE", "Stormwind City", 15, MS,
     "The mage had served fellow mages well, and it was time to don the wizard's robe. Wynne Larson could make it from linen, which was easy to find, and charged rift gems. The gems were known only from the dwarven workings at Silver Stream in Loch Modan, left in crates by the dwarven miners' league. Everything was to go to Larson Clothiers in the Mage District.", "A wizard's robe from Wynne Larson needed linen and charged rift gems from the miners' league crates at Silver Stream in Loch Modan.",
     "Great pieces of linen, Wynne said, and a fine robe could be made from them. Once the rift gems were woven in, it would be a garment fit for a mage.", "Linen and gems in hand, Wynne Larson promised a garment fit for a mage.")
@@ -1170,7 +1170,7 @@ q(1947, "Journey to the Marsh", "MAGE", "Dustwallow Marsh", 38, MW,
     "Quiet, Tabetha said, for she was at a delicate juncture and must not be disturbed. She asked for one moment.", "Tabetha asked for a moment's quiet at a delicate juncture before anything else.")
 q(1948, "Items of Power", "MAGE", "Dustwallow Marsh", 40, MW,
     "Building a mage's wand was not easy, Tabetha said. Rare substances were required, and a vessel that could store great quantities of magical energy. A parchment listed what was needed and how to get it. Everything had to be followed to the letter, or things might go badly when they made the wand.", "Tabetha's parchment listed the rare substances for the wand and the instructions that had to be followed exactly, or the making might go badly.",
-    "Aha, Tabetha said, the jade was found and the bramble made, and well done. She noticed smoke rising from the mage's ears. Perhaps the mage had been too close when the lightning struck the totem sticks, but being hit by lightning was good luck.", "Jade and bramble reached Tabetha, who noticed the smoke from the mage's ears and called a lightning strike good luck.")
+    "Aha, Tabetha said, the jade was found and the bramble made, and well done. She noticed smoke rising from the mage's ears. Perhaps the mage had been too close when the lightning struck the totem sticks, but being hit by lightning was good luck.", "Smoke was rising from the mage's ears, Tabetha noticed; a lightning strike, she said, was good luck.")
 q(1951, "Rituals of Power", "MAGE", "Dustwallow Marsh", 40, MW,
     "Now that she thought about it, Tabetha did not have her copy of Rituals of Power. Gambling debts had made her sell the last one to a member of the clergy, of the Scarlet Brotherhood. He must have taken it to the library in the Scarlet Monastery in Tirisfal Glades. Anyone who wanted it would have to go there, and she was sorry for the trouble. She was not herself those days.", "Tabetha had sold her last copy of Rituals of Power to pay gambling debts, and it had gone to the Scarlet Monastery's library in Tirisfal.",
     "That was it, Tabetha said, just what she needed to prepare the ritual for the wand. She hoped it had not been too much trouble to find.", "Rituals of Power came back from the monastery, and Tabetha could prepare the ritual.")
