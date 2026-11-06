@@ -187,10 +187,31 @@ end
 for name in ([[Gorzeeki Mor'zul Impsy Rethiel Ormer Bath'rah Mok'thardin Tor'gan Erlgadin Wizbang
     Derrington Vandis Darthalia Myzrael Bel'dugur Reethe Velinde Pozzik Razzeric Lotwil Gwennyth Wrenix
     Rynthariel Ridgewell Fitzsimmons Shadowvale Windshaper]]):gmatch("%S+") do singleNames[name] = true end
+-- notes4 2026-11-06: distinctive short forms of new notes (Ordanus is also a quest title
+-- naming the same keeper; Braelyn and Tammra stay out as ordinary-sounding given names).
+for name in ([[Makaba Maggran Jin'Zil Ordanus Malaka'Jin Raynewood]]):gmatch("%S+") do singleNames[name] = true end
+-- notes4 batch 2 (Lakota, Burnside and Ironhill stay out: Lakota'mani, an English surname, a plausible player name).
+for name in ([[Motega Pao'ka Wizlo Verringtan]]):gmatch("%S+") do singleNames[name] = true end
+-- notes4 batch 3 (Velene stays out: it could be a given name).
+for name in ([[Pelturas Kayneth Sarilus Melyria]]):gmatch("%S+") do singleNames[name] = true end
+-- notes4 batch 4 (Kaela, Tara, Duriel, Mauren and Torek stay out: given names, a surname,
+-- and a word that would open the raider inside the quest title "Torek's Assault").
+for name in ([[Gaxim Vorsha Ertog Murgut Karang Lomac]]):gmatch("%S+") do singleNames[name] = true end
+-- notes4 batch 5 (Thorsen stays out: an ordinary surname).
+for name in ([[Revilgaz Zanzil Ajeck Oglethorpe Talonaxe Kravel]]):gmatch("%S+") do singleNames[name] = true end
+-- notes4 batch 6.
+for name in ([[Islen Longbraid Hadoken Belgrom Nazz Fizzlebub Mukla Hinderweir]]):gmatch("%S+") do singleNames[name] = true end
 -- "Windshaper Boro" is a shaman trainer's title, not the Skyborne faction.
 for _, title in ipairs({"Ormer's Revenge", "Mok'thardin's Enchantment", "Myzrael's Allies", "Questioning Reethe",
     "Windshaper Boro", "Velinde's Effects", "Wrenix of Ratchet", "Razzeric's Tweaking", "Delivery to Ridgewell",
     "In Search of Menara Voidrender", "Vrang's Game", "That Shadowvale Green Elixir"}) do
+    knownNames[title] = {plain = true}
+end
+-- notes4: quest titles that hold a new note's name stay plain too (tests/LoreNotes4.lua).
+for _, title in ipairs({"Jin'Zil's Forest Magic", "Letter to Jin'Zil", "Special Delivery for Gaxim", "The Howling Vale",
+    "The Ruins of Stardust", "Trial at the Field of Giants", "Waters of Xavian", "Favor for Krazek", "Krazek's Cookery",
+    "Parts for Kravel", "Rumors for Kravel", "Saving Sharpbeak", "Supplies to Private Thorsen", "The Touch of Zanzil",
+    "Zanzil's Mixture and a Fool's Stout", "Zanzil's Secret", "Report Back to Fizzlebub"}) do
     knownNames[title] = {plain = true}
 end
 local V ="StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"

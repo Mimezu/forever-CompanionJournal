@@ -2370,3 +2370,188 @@ do
                 body = "The search for her ends at Roland's Doom in Duskwood, where her specter laments the worgen running loose and the loss of the Scythe.",
                 sources = {V .. " #1044 Answered Questions"}}}}}})
 end
+
+-- notes4 2026-11-06: what lies under Boulderslide Ravine is Mor'rogal's finding on
+-- turning in #6421 (and is told outright in #6481's description). Kaya Flathoof's
+-- survival is learned when she asks for an escort (#6523). Before that, the ravine and
+-- Mor'rogal say nothing of the Earthen, Goggeroc's own note stays hidden, and Makaba
+-- still believes his daughter lost.
+do
+    local V = "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"
+    local STM = "region:53746f6e6574616c6f6e204d6f756e7461696e73"
+    local LFR = "LoreForever subzone:boulderslide-ravine (wiki: https://warcraft.wiki.gg/wiki/Boulderslide_Ravine)"
+    A.RegisterLoreDiscovery({facts = {
+        ["goggeroc.earthen"] = {presented = {6481}, completed = {6421, 6481}},
+        ["kaya.alive"] = {presented = {6523}, completed = {6523, 6401}},
+    }, notes = {
+        ["place:boulderslide-ravine"] = {public = {
+            body = "Boulderslide Ravine is a pass off the Webwinder Path in the central Stonetalon Mountains, southeast of Sun Rock Retreat. Kobolds have dug a deep cave there and mine a rare crystal called Resonite in a frenzy. Mor'rogal of Sun Rock Retreat feels that something is amiss in Stonetalon and wants to know what lies at the bottom of their cave.",
+            sources = {V .. " #6421 Boulderslide Ravine (description)", LFR}, related = {"npc:morrogal", "place:sun-rock", STM}},
+            blocks = {{requires = {"goggeroc.earthen"},
+                body = "The Resonite carries a trace of Earthen magic. Deep in the cave the kobolds have uncovered a Resonite cask in which an Earthen named Goggeroc lies asleep, and Mor'rogal fears what an Earthen would mean for Kalimdor.",
+                sources = {V .. " #6421 Boulderslide Ravine (completion); #6481 Earthen Arise"}, related = {"npc:goggeroc"}}}},
+        ["npc:morrogal"] = {public = {
+            body = "Mor'rogal is a tauren of Sun Rock Retreat who watches over the caves and crevices of the Stonetalon Mountains. He feels a tension in the land and sends adventurers into the kobold cave of Boulderslide Ravine, where the kobolds frantically mine a rare crystal called Resonite. He also has a use for the golden sunstones that the Bloodfury harpies hoard.",
+            sources = {V .. " #6421 Boulderslide Ravine (description); #86576 Bloodfury Trinkets (Forever)"}, related = {"place:sun-rock", "place:boulderslide-ravine", STM}},
+            blocks = {{requires = {"goggeroc.earthen"},
+                body = "In the Resonite he finds a trace of Earthen magic. Earthen, he says, are creatures of the Titans who shaped the land, and he enchants the ore against the one the kobolds have uncovered.",
+                sources = {V .. " #6421 Boulderslide Ravine (completion); #6481 Earthen Arise"}, related = {"npc:goggeroc"}}}},
+        ["npc:goggeroc"] = {public = false, visibleRequires = {"goggeroc.earthen"}, canonicalRequires = {"goggeroc.earthen"}},
+        ["npc:makaba-flathoof"] = {public = {
+            body = "Makaba Flathoof is a tauren of the eastern Stonetalon Mountains. The Grimtotem raided his village near the Barrens border and killed nearly everyone in it, and he fought until he barely escaped with his life. He asks the Horde for Grimtotem blood, above all that of Grundig Darkcloud, who led the raid from Grimtotem Post. He will never forget, he says, what the clan did to his village.",
+            sources = {V .. " #6548 Avenge My Village; #6629 Kill Grundig Darkcloud", "LoreForever npc:makaba-flathoof (wiki: https://warcraft.wiki.gg/wiki/Makaba_Flathoof)"},
+            related = {"place:grimtotem-post", "faction:grimtotem", "npc:tammra-windfield"}},
+            blocks = {
+                {unless = {"kaya.alive"}, body = "He believes his daughter, Kaya, was lost in the attack."},
+                {requires = {"kaya.alive"},
+                    body = "His daughter Kaya survived the raid as a Grimtotem captive. She escaped and made her way out through Camp Aparaje, and her aunt Tammra Windfield at Sun Rock Retreat has the news.",
+                    sources = {V .. " #6523 Protect Kaya; #6401 Kaya's Alive"}, related = {"place:camp-aparaje"}}}},
+    }})
+end
+
+-- notes4 2026-11-06: Ashenvale. Anilia is found dying on turning in #1021 and names
+-- Geltharis in #1031; Kayneth Stillwind's vision of the murdered Dor'Danil druids follows
+-- his test of the Forsaken bottle (#1011, told in #1012); Velene Starstrike's divination
+-- names Sarilus Foulborne on turning in #1016 (told in #1017). Before that the public
+-- notes keep the dryads missing, the barrow merely threatened and the summoner unnamed.
+do
+    local V = "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"
+    local ASH, BAR = "region:417368656e76616c65", "region:5468652042617272656e73"
+    local function LF(id, article) return "LoreForever " .. id .. " (wiki: https://warcraft.wiki.gg/wiki/" .. article .. ")" end
+    A.RegisterLoreDiscovery({facts = {
+        ["anilia.dead"] = {presented = {1031, 1032}, completed = {1021, 1031, 1032}},
+        ["dordanil.vision"] = {presented = {1012}, completed = {1011, 1012}},
+        ["sarilus.summoner"] = {presented = {1017}, completed = {1016, 1017}},
+    }, notes = {
+        ["npc:illiyana"] = {public = {
+            body = "Illiyana is a dryad of Ashenvale, one of the daughters of Cenarius, who keeps to the woods near the Shrine of Aessina. Her sisters, led by Anilia, went to the satyr ruins of Xavian to take back the Branch of Cenarius, and after two days without word she began asking travelers to find them.",
+            sources = {V .. " #1021 Vile Satyr! Dryads in Danger! (description)", LF("npc:illiyana", "Illiyana")}, related = {"npc:anilia", "place:xavian", ASH}},
+            blocks = {{requires = {"anilia.dead"},
+                body = "Anilia did not come back. Illiyana can hardly believe that her sister is gone, since they were playing together in the woods only the day before, and she asks that the satyrs who took Anilia be slain.",
+                sources = {V .. " #1031 The Branch of Cenarius; #1032 Satyr Slaying!"}}}},
+        ["npc:anilia"] = {public = {
+            body = "Anilia is a dryad of Ashenvale and a sister of Illiyana. She led the dryads who went into the satyr ruins of Xavian to take back the Branch of Cenarius.",
+            sources = {V .. " #1021 Vile Satyr! Dryads in Danger! (description)"}, related = {"npc:illiyana", "place:xavian", ASH}},
+            blocks = {{requires = {"anilia.dead"},
+                body = "She was found in Xavian near death from a wound in her side. With her last breath she pointed to an arch to the north and named Geltharis as the one who took the Branch.",
+                sources = {V .. " #1021 (completion); #1031 The Branch of Cenarius"}, related = {"npc:geltharis"}}}},
+        ["npc:geltharis"] = {public = false, visibleRequires = {"anilia.dead"}, canonicalRequires = {"anilia.dead"}},
+        ["place:dordanil"] = {public = {
+            body = "The Dor'Danil Barrow Den is a barrow in eastern Ashenvale, south of Splintertree Post, where night elf druids slept while their spirits walked the Emerald Dream. The Forsaken have a camp near it where they make poisons and diseases and bottle them, and the druid Kayneth Stillwind of Forest Song fears they mean to spread sickness through the night elves' lands.",
+            sources = {V .. " #1011 Forsaken Diseases", LF("subzone:dor-danil-barrow-den", "Dor%27Danil_Barrow_Den")}, related = {"npc:kayneth", "place:emerald-dream", ASH}},
+            blocks = {{requires = {"dordanil.vision"},
+                body = "In a vision Kayneth has seen that the druids of the barrow were poisoned and murdered by the undead. Their spirits are errant ghosts, severed from their bodies and driven mad, and he wants their once great leaders, Taneel Darkwood, Uthil Mooncall and Mavoris Cloudsbreak, destroyed so that the others may one day find peace.",
+                sources = {V .. " #1012 Insane Druids"}}}},
+        ["npc:kayneth"] = {public = {
+            body = "Kayneth Stillwind is a night elf druid who keeps the shrine of Forest Song in eastern Ashenvale. He fears that a corruption is moving through the forest and reads the Sentinels' reports for signs of it. The Forsaken who have crept into Ashenvale's ruins and barrows worry him most. He believes they mean to spread disease through the night elves' lands, and he wants a bottle from their camp near the Dor'Danil Barrow Den to test. Spirits freed from Felwood's suffering are sent to him.",
+            sources = {V .. " #4581 Kayneth Stillwind; #1011 Forsaken Diseases; #4261 Ancient Spirit"}, related = {"place:forest-song", "place:dordanil", "npc:shindrell-swiftfire"}},
+            blocks = {{requires = {"dordanil.vision"},
+                body = "While he struggled with the Forsaken's poisons, Kayneth saw in a vision that the druids of Dor'Danil had been poisoned and murdered by the undead and driven mad as ghosts.",
+                sources = {V .. " #1012 Insane Druids"}}}},
+        ["npc:velene"] = {public = {
+            body = "Velene Starstrike is a Sentinel at Silverwind Refuge in Ashenvale. Water elementals have been filling the pools near Mystral Lake with corruption, and she has a divining scroll that can name their creator once it is focused through bracers taken from the elementals themselves.",
+            sources = {V .. " #1016 Elemental Bracers", LF("npc:sentinel-velene-starstrike", "Sentinel_Velene_Starstrike")}, related = {"place:silverwind-refuge", "place:mystral-lake", ASH}},
+            blocks = {{requires = {"sarilus.summoner"},
+                body = "The divination points to Sarilus Foulborne, the only undead mage in the Barrens able to defile so many elementals, and she wants his head brought back from Dreadmist Peak.",
+                sources = {V .. " #1017 Mage Summoner"}, related = {"npc:sarilus"}}}},
+        ["npc:sarilus"] = {public = {
+            body = "Sarilus Foulborne is an undead mage who has made his camp at the top of Dreadmist Peak in the Barrens.",
+            sources = {V .. " #1017 Mage Summoner (location)"}, related = {"place:dreadmist-peak", BAR}},
+            blocks = {{requires = {"sarilus.summoner"},
+                body = "He is the summoner who fills the pools of Ashenvale near Mystral Lake with corrupt water elementals, and Sentinel Velene Starstrike of Silverwind Refuge wants him dead.",
+                sources = {V .. " #1017 Mage Summoner"}, related = {"npc:velene"}}}},
+    }})
+end
+
+-- notes4 2026-11-06: Yenniku's fate. Nezzliok tells who holds him in #588 The Fate of
+-- Yenniku; until then the search is all a reader knows. Nimboya's promise follows the
+-- rescue (#592). This also brings the older Yenniku and Nimboya notes, which named
+-- Zanzil in public, under the same rule.
+do
+    local V = "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"
+    local STV = "region:537472616e676c6574686f726e2056616c65"
+    A.RegisterLoreDiscovery({facts = {
+        ["yenniku.zanzil"] = {presented = {588, 592}, completed = {588, 592}},
+        ["yenniku.saved"] = {completed = {592}},
+    }, notes = {
+        ["npc:zanzil"] = {public = {
+            body = "Zanzil the Outcast is a troll witch doctor who dwells with his followers in the Jubuwai and Aboraz Ruins, northeast of Booty Bay. His own tribe exiled him because his leaders fear him. He bends the minds of others with a mixture of jungle plants that suppresses the will and strengthens the body, and those who would control others will pay well for it.",
+            sources = {V .. " #621 Zanzil's Secret"}, related = {"faction:darkspear", STV}},
+            blocks = {{requires = {"yenniku.zanzil"},
+                body = "Zanzil holds Yenniku, the young son of the Darkspear chief, at the Ruins of Aboraz and controls him body and soul.",
+                sources = {V .. " #588 The Fate of Yenniku; #592 Saving Yenniku"}, related = {"npc:yenniku"}}}},
+        ["npc:yenniku"] = {public = {
+            body = "Yenniku is the youngest son of the Darkspear chief. As is the custom of his people, he was given to the Gurubashi trolls of Zul'Gurub, and he was lost to the tribe when the Darkspear left Stranglethorn with Thrall. The Darkspear have sent a searcher from Orgrimmar back to the jungle to find him.",
+            sources = {V .. " (quest 581)"}, related = {"faction:darkspear", "npc:nimboya", STV}},
+            blocks = {{requires = {"yenniku.zanzil"},
+                body = "The search places him with Zanzil at the Ruins of Aboraz, where freeing his soul from another's will requires Kin'weelay's specially prepared gem.",
+                sources = {V .. " (quest 588)", V .. " (quest 592)"}, related = {"npc:kinweelay", "npc:zanzil"}}}},
+        ["npc:nimboya"] = {public = {
+            body = "Nimboya is the Darkspear troll sent from Orgrimmar back to Stranglethorn to search for Yenniku, the chief's youngest son, who was lost to the tribe when it left with Thrall.",
+            sources = {V .. " (quest 581)"}, related = {"npc:yenniku", "faction:darkspear", STV}},
+            blocks = {
+                {requires = {"yenniku.zanzil"},
+                    body = "He waits for the soul gem meant to release Yenniku from Zanzil's control.",
+                    sources = {V .. " (quest 592)"}, related = {"npc:kinweelay"}},
+                {requires = {"yenniku.saved"},
+                    body = "The rescue is a matter of tribal memory as well as family loss, and Nimboya promises that the Darkspear will preserve the deed in stone."}}},
+    }})
+end
+
+-- notes4: Kin'weelay's older note also told how Yenniku is freed from Zanzil; it now
+-- waits for the same discovery.
+do
+    local V = "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"
+    A.RegisterLoreDiscovery({notes = {["npc:kinweelay"] = {public = {
+        body = "Kin'weelay is the most powerful witch doctor of the Darkspear trolls, at Grom'gol Base Camp in Stranglethorn. Those who need the witch-magic of trolls, to speak with an angry spirit or to wrest a relic such as the Mind's Eye from the ogre mage Mai'Zoth, come to him.",
+        sources = {V .. " (quest 1240)", V .. " (quest 591)"}, related = {"faction:darkspear", "place:gromgol"}},
+        blocks = {{requires = {"yenniku.zanzil"},
+            body = "He prepares the means to free Yenniku by reshaping the Mind's Eye into a soul gem. The magic must first stun the captive and then draw out his soul, breaking Zanzil's control without treating the boy as merely another enemy.",
+            sources = {V .. " (quest 592)"}, related = {"npc:yenniku", "npc:nimboya"}}}}}})
+end
+
+-- notes4 2026-11-06: Deliah. Her name is first read on the ring in #439 (the item's
+-- own quest); Magistrate Sevren's records and her husband follow on turning in #440;
+-- her murder is Raleigh's charge in #530, offered once #441 is done. Before the ring is
+-- found there is no note at all. Belnistrasz's true form shows only in the brazier
+-- left behind when #3525 is completed.
+do
+    local V = "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"
+    A.RegisterLoreDiscovery({facts = {
+        ["deliah.ring"] = {presented = {439}, completed = {439, 440}},
+        ["deliah.raleigh"] = {presented = {441}, completed = {440, 441}},
+        ["deliah.murder"] = {presented = {530}, completed = {441, 530}},
+        ["belnistrasz.dragon"] = {completed = {3525}},
+    }, notes = {
+        ["npc:deliah"] = {visibleRequires = {"deliah.ring"}, canonicalRequires = {"deliah.ring", "deliah.raleigh", "deliah.murder"},
+            public = {
+                body = "Deliah is the name engraved on a ring found on a woman's hand among the corpse piles of the Rot Hide gnolls in Silverpine Forest. The body bore the marks of the plague but was not long dead, and the Forsaken of the Sepulcher believe the gnolls took it from the mass graves of Tirisfal Glades.",
+                sources = {V .. " #439 Rot Hide Clues"}, related = {"group:rot-hides", "place:sepulcher"}},
+            blocks = {
+                {requires = {"deliah.raleigh"},
+                    body = "A Deliah lived in Brill not long ago and was buried in its mass grave. Her husband, Raleigh, now dwells in the Trade Quarter of the Undercity, and the ring was hers. He feels nothing for her death any more, he says.",
+                    sources = {V .. " #440 The Engraved Ring; #441 Raleigh and the Undercity"}, related = {"place:brill", "place:undercity"}},
+                {requires = {"deliah.murder"},
+                    body = "She was murdered. Raleigh names her killer as Valdred, once his good friend, who was last heard of at the Greymane Wall in southern Silverpine, trying to flee into Gilneas.",
+                    sources = {V .. " #530 A Husband's Revenge"}}}},
+        ["npc:belnistrasz"] = {public = {
+            body = "Belnistrasz is a prisoner in Razorfen Downs, held among the quilboar in the Murder Pens. He opposes the danger growing within the thorny stronghold and seeks help from either Horde or Alliance adventurers. He says that protecting all peoples from a shared threat matters more to him than faction politics.\n\nBelnistrasz reports that the quilboar have made an agreement with the Scourge. Even after an opportunity to escape, his stated aim is to stop what is happening in the Downs, rather than simply leave its other captives to their fate.",
+            sources = {V .. " #3523 Scourge of the Downs", "https://classicdb.ch/?quest=3523"}, related = {"dungeon:razorfen-downs", "faction:scourge"}},
+            blocks = {{requires = {"belnistrasz.dragon"},
+                body = "When the quilboar idol at the entrance is shut down, Belnistrasz is gone and a burning brazier is left in his place. In its flame appears a great red dragon, and his voice, deeper now, speaks from it to thank the heroes who stopped the butchery.",
+                sources = {V .. " #3525 Extinguishing the Idol (completion)"}}}},
+    }})
+end
+
+-- notes4: the older Trade Quarter note told the Deliah chain (the ring, her body's
+-- abduction, Raleigh's revenge); it now waits for the same discovery.
+do
+    local V = "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"
+    A.RegisterLoreDiscovery({notes = {["place:trade-quarter"] = {public = {
+        body = "The Trade Quarter is one of the quarters of the Undercity, where traders and craftsmen serve the Forsaken and their visitors.",
+        sources = {"https://warcraft.wiki.gg/wiki/Undercity (opening, Legacy of the Damned and original World of Warcraft sections only)", V .. " #441 (location)"},
+        related = {"place:undercity"}},
+        blocks = {{requires = {"deliah.raleigh"},
+            body = "Raleigh lives there. He recognized a ring brought from Brill as his wife Deliah's, professed no grief for her death or the abduction of her body, but still desired revenge.",
+            sources = {V .. " #441"}, related = {"npc:deliah"}}}}}})
+end

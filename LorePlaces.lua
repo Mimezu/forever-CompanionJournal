@@ -864,3 +864,152 @@ A.RegisterLoreNotes({
         {V .. " #745 Sharing the Land", LF("subzone:palemane-rock", "Palemane_Rock")},
         nil, {"place:bloodhoof", "region:4d756c676f7265"}),
 })
+
+-- Fourth notes lane (notes4), 2026-11-06. Places the new 20-30 scenes name without
+-- a note (the band2030 lane had to leave them plain). Facts from the vanilla quest
+-- corpus; Lore Forever (CC BY-SA, adapted from warcraft.wiki.gg) only confirms or
+-- locates. The wording is ours. Batch 1: the Stonetalon Mountains. What lies under
+-- Boulderslide Ravine is a discovery ("goggeroc", LoreDiscoveryData.lua).
+do
+    local STM, BAR, ASH = "region:53746f6e6574616c6f6e204d6f756e7461696e73", "region:5468652042617272656e73", "region:417368656e76616c65"
+    A.RegisterLoreNotes({
+        Place("place:talon-den", "Talon Den",
+            "The Talon Den is a stronghold the druids built on Stonetalon Peak, in the north of the Stonetalon Mountains. They keep many powerful things there and guard them with a scheme of keys. A Gatekeeper's Key hidden in a small lantern at the entrance opens caches around the den, and what lies in the caches opens the hoard at its center. The dryad Rynthariel is the den's Keymaster, and her outrunners carry messages south across the Barrens, where the Horde treats them as a threat.",
+            {V .. " #1089 The Den; #3514 Horde Presence"},
+            {"the Talon Den"}, {"place:stonetalon-peak", "npc:rynthariel", "npc:braelyn-firehand"}),
+        Place("place:sishir-canyon", "Sishir Canyon",
+            "Sishir Canyon is a gorge in the Stonetalon Mountains on the way to the ancient Ruins of Eldre'thar, choked with webs and Deepmoss spiders. A warning at its mouth tells travelers to go on at their own risk. The great spider Besseleth and her brood have made the canyon their lair and hunt the Webwinder Path at night, and Maggran Earthbinder of Sun Rock Retreat, who once survived her fang, has put a bounty on her. Deepmoss eggs from the canyon are also wanted in Booty Bay, where spider egg omelettes have become a fad.",
+            {V .. " #6284 Arachnophobia; #1069 Deepmoss Spider Eggs", LF("subzone:sishir-canyon", "Sishir_Canyon")},
+            nil, {"npc:maggran", "place:sun-rock", STM}),
+        Place("place:boulderslide-ravine", "Boulderslide Ravine",
+            "Boulderslide Ravine is a pass off the Webwinder Path in the central Stonetalon Mountains, southeast of Sun Rock Retreat. Kobolds have dug a deep cave there and mine a rare crystal called Resonite in a frenzy. Mor'rogal of Sun Rock Retreat feels that something is amiss in Stonetalon and wants to know what lies at the bottom of their cave.\n\nThe Resonite carries a trace of Earthen magic. Deep in the cave the kobolds have uncovered a Resonite cask in which an Earthen named Goggeroc lies asleep, and Mor'rogal fears what an Earthen would mean for Kalimdor.",
+            {V .. " #6421 Boulderslide Ravine; #6481 Earthen Arise", LF("subzone:boulderslide-ravine", "Boulderslide_Ravine")},
+            nil, {"npc:morrogal", "npc:goggeroc", STM}),
+        Place("place:greatwood-vale", "Greatwood Vale",
+            "The Greatwood Vale is a forested valley in eastern Stonetalon, where the road west from the Crossroads climbs out of the Barrens. The Grimtotem have moved into it in force under Grundig Darkcloud and raid the camps around it. The shaman Seereth Stonebreak keeps her camp near the vale, watching the Venture Company strip and burn the forest of Windshear Crag beyond it to the northwest.",
+            {V .. " #1061 The Spirits of Stonetalon; #1062 Goblin Invaders; #1068 Shredding Machines", LF("subzone:greatwood-vale", "Greatwood_Vale")},
+            {"the Greatwood Vale"}, {"place:windshear-crag", "faction:grimtotem", STM}),
+        Place("place:malakajin", "Malaka'jin",
+            "Malaka'jin is a troll camp at the foot of the Stonetalon Mountains, near the border of the Barrens. Its hunters live well on Stonetalon's game, but spiders from the mountains to the north raid the camp at night to steal the kill, and Xen'Zilla does not walk about after dark. The witch doctor Jin'Zil lives there as well, and Horde camps in the Barrens send to the trolls of Malaka'jin for healing draughts.",
+            {V .. " #6461 Blood Feeders; #1060 Letter to Jin'Zil; #1510 News of Dogran", LF("subzone:malaka-jin", "Malaka%27jin")},
+            {"Malaka'Jin"}, {"npc:xenzilla", "npc:jinzil", STM}),
+        Place("place:mirkfallon-lake", "Mirkfallon Lake",
+            "Mirkfallon Lake lies at the heart of the Stonetalon Mountains, north of Sun Rock Retreat and below Windshear Crag. Thunder lizards come down to drink at its banks, and wyverns roost above it. Gaea seeds grow only at the water's edge, and Tammra Windfield of Sun Rock Retreat blesses them to help the war-torn land grow back. The pods of mirkweed, a plant that grows in its water, dry to a vivid red that painters prize. Alliance sources in Theramore claim that orc assassins take venom from the pridewings near the lake for their raids.",
+            {V .. " #6301 Cycle of Rebirth; #1134 Pridewings of Stonetalon; #97538 Pigments for Paints (Forever)", LF("subzone:mirkfallon-lake", "Mirkfallon_Lake")},
+            nil, {"npc:tammra-windfield", "place:sun-rock", STM}),
+        Place("place:grimtotem-post", "Grimtotem Post",
+            "Grimtotem Post is a camp of the Grimtotem clan in the eastern Stonetalon Mountains, up the mountain road to the west of the trail where Makaba Flathoof waits. Grundig Darkcloud and his personal band of brutes keep it. Grundig led the raid that destroyed Makaba's village, and Makaba wants him dead above all the others.",
+            {V .. " #6629 Kill Grundig Darkcloud; #6548 Avenge My Village"},
+            nil, {"faction:grimtotem", "npc:makaba-flathoof", STM}),
+        Place("place:camp-aparaje", "Camp Aparaje",
+            "Camp Aparaje is a camp in the eastern Stonetalon Mountains, near the trails the Grimtotem watch above the Barrens border. Grimtotem raiders under Grundig Darkcloud have struck the tauren of this corner of the mountains, and Makaba Flathoof is one of the few who escaped them. Those who escape Grimtotem ground make for it, since the way home is clear from there.",
+            {V .. " #6523 Protect Kaya; #6548 Avenge My Village", LF("subzone:camp-aparaje", "Camp_Aparaje")},
+            nil, {"npc:makaba-flathoof", "place:grimtotem-post", STM}),
+        Place("place:raynewood-retreat", "Raynewood Retreat",
+            "Raynewood Retreat is a great tree at a crossroads in the heart of Ashenvale, near the moonwell of the dryad Shael'dryn. Cenarion guards, faerie dragons and the dryads called laughing sisters gather around it, and the dryads there carry the phials used to draw moonwell water. Keeper Ordanus, one of the eldest sons of Cenarius, lives at the top of the tree. Braelyn Firehand, who wants his head, says the druids spirited him there from Stonetalon Peak before she could find him.",
+            {V .. " #1088 Ordanus; #1195 The Sacred Flame; #1945 Laughing Sisters", LF("subzone:raynewood-retreat", "Raynewood_Retreat")},
+            {"Raynewood"}, {"npc:ordanus", "npc:shael-dryn", ASH}),
+    })
+end
+
+-- notes4 batch 2: the Barrens, Thousand Needles and the Battle of Hillsbrad.
+do
+    local BAR, TN, HB = "region:5468652042617272656e73", "region:54686f7573616e64204e6565646c6573", "region:48696c6c736272616420466f6f7468696c6c73"
+    A.RegisterLoreNotes({
+        Place("place:whitereach-post", "Whitereach Post",
+            "Whitereach Post is a small Horde camp on the road through Thousand Needles, northwest of Freewind Post. The tauren Motega Firemane keeps it, studying the creatures of the canyons with his young assistant Pao'ka Swiftmountain, and travelers bring him word of signs they do not understand. The goblin Wizlo Bearingshiner waits there as well, the only survivor of a caravan the centaurs attacked just to the north.",
+            {V .. " #4770 Homeward Bound; #4865 Serpent Wild; #5151 Hypercapacitor Gizmo", LF("subzone:whitereach-post", "Whitereach_Post")},
+            nil, {"npc:motega-firemane", "place:freewind", TN}),
+        Place("place:darkcloud-pinnacle", "Darkcloud Pinnacle",
+            "Darkcloud Pinnacle is the Grimtotem stronghold in Thousand Needles, east of the Great Lift, a group of mesas joined by rope bridges above the canyon. The clan's sacred fire of life burns on an isolated needle where they bury their dead. The Freewind Post tauren suspect the Grimtotem of secret dealings, since three agents of unknown origin have been seen visiting the clan and their messages are kept in guarded chests on the pinnacle. Arnak the outcast, wanted at Freewind for murder and kidnapping, was last seen on the cliffs near it.",
+            {V .. " #5064 Grimtotem Spying; #5088 Arikara; #5147 Wanted - Arnak Grimtotem; #4904 Free at Last", LF("subzone:darkcloud-pinnacle", "Darkcloud_Pinnacle")},
+            nil, {"faction:grimtotem", "place:freewind", TN}),
+        Place("place:boiling-pool", "Boiling Pool",
+            "The Boiling Pool is a steaming lake beneath Darkcloud Pinnacle in Thousand Needles, northeast of Whitereach Post. Incendia agave, a rare plant, grows in and around its water, guarded by wandering steam elementals. A powerful shaman such as Magatha Grimtotem can enchant the agave into a powder that lights the sacred fire of life and calls the serpent Arikara to it.",
+            {V .. " #5062 Sacred Fire; #5088 Arikara", "LoreForever item:incendia-agave (wiki: https://warcraft.wiki.gg/wiki/Incendia_Agave)"},
+            {"the Boiling Pool"}, {"place:darkcloud-pinnacle", "npc:magatha", TN}),
+        Place("place:azurelode-mine", "Azurelode Mine",
+            "The Azurelode Mine lies in the hills due south of the town of Hillsbrad and is one of the Alliance's main sources of iron ore for its armories. Human miners work it under a foreman named Bonds, and the Alliance guards it closely. The Forsaken at Tarren Mill want it for the Dark Lady, so that its ore will arm her own soldiers.",
+            {V .. " #539 Battle of Hillsbrad (the Azureload Mine)", LF("subzone:azurelode-mine", "Azurelode_Mine")},
+            {"Azureload Mine", "the Azurelode Mine"}, {"place:tarren-mill", "npc:darthalia", HB}),
+        Place("place:field-of-giants", "Field of Giants",
+            "The Field of Giants is the open grassland of the southern Barrens, south of Camp Taurajo, where great beasts graze. Silithid hives have broken through the ground there, the northernmost sign of the insects in Kalimdor. They seem cleverer than any normal animal and attack when alerted, and Korran at the Crossroads studies their eggs for his masters in Orgrimmar. The Razormane quilboar hold the land beyond it to the south.",
+            {V .. " #868 Egg Hunt; #893 Weapons of Choice; #1145 The Swarm Grows", LF("subzone:field-of-giants", "Field_of_Giants")},
+            {"the Field of Giants"}, {"group:silithid", "npc:korran", BAR}),
+        Place("place:sludge-fen", "Sludge Fen",
+            "The Sludge Fen in the northeastern Barrens was once a clear pool fed by springs. The Venture Company has covered it with drilling platforms and pumps oil from it day and night, and the water is thick with grease. Its machines draw thieves from Ratchet's Tinkers' Union. The company also keeps a tower to the north of the fen, the Boulder Lode Mine to the northeast and a research site to the southwest, where it experiments with a device called a samophlange.",
+            {V .. " #858 Ignition; #894 Samophlange; #896 Miner's Fortune; #2458 Deep Cover", LF("subzone:sludge-fen", "Sludge_Fen")},
+            {"the Sludge Fen"}, {"faction:venture-company", "npc:wizzlecrank", BAR}),
+        Place("place:hillsbrad-fields", "Hillsbrad Fields",
+            "Hillsbrad Fields is the human town of Hillsbrad with its farms and orchards, in the western Hillsbrad Foothills. The farms feed the town, and its own blacksmith, Verringtan, arms the townsfolk. Under Magistrate Burnside and the town council they resist the Forsaken of Tarren Mill, who strike at the farms, the smithy and the town hall in the hope of breaking Hillsbrad before they turn on Southshore.",
+            {V .. " #527 Battle of Hillsbrad; #528 Battle of Hillsbrad; #529 Battle of Hillsbrad; #532 Battle of Hillsbrad", LF("subzone:hillsbrad-fields", "Hillsbrad_Fields")},
+            nil, {"place:tarren-mill", "place:southshore", HB}),
+    })
+end
+
+-- notes4 batch 3: Ashenvale for the Alliance, and Dreadmist Peak. What Kayneth
+-- Stillwind sees of the Dor'Danil druids is a discovery ("dordanil", LoreDiscoveryData.lua).
+do
+    local ASH, BAR = "region:417368656e76616c65", "region:5468652042617272656e73"
+    A.RegisterLoreNotes({
+        Place("place:ruins-of-stardust", "Ruins of Stardust",
+            "The Ruins of Stardust are an ancient night elf holy place in southwestern Ashenvale, south of Astranaar, under the mountains that divide Ashenvale from Stonetalon and beyond Mystral Lake. A small fountain stands at the center of their lake, and the shamans of the Barrens send their students there for its water. The herbalist Orendil Broadleaf knows of a frosted dust found among the stones that can bring down a fever. Corruption from Felwood has reached the ruins, and bog beasts prowl them.",
+            {V .. " #1034 The Ruins of Stardust; #1534 Call of Water", LF("subzone:ruins-of-stardust", "Ruins_of_Stardust")},
+            {"the Ruins of Stardust"}, {"place:astranaar", "place:mystral-lake", ASH}),
+        Place("place:iris-lake", "Iris Lake",
+            "Iris Lake lies in central Ashenvale, east of Astranaar. Elune's Tear, a stone that the herbalist Orendil Broadleaf says will wash away corruption, rests on the isle in the lake and nowhere else. The dryad Shael'dryn keeps her moonwell to the east of the lake. Fel corruption has stained its water a sickly yellow-green, and bog beasts prowl its shores.",
+            {V .. " #1033 Elune's Tear; #1024 Raene's Cleansing", LF("subzone:iris-lake", "Iris_Lake")},
+            nil, {"npc:shael-dryn", "place:astranaar", ASH}),
+        Place("place:fallen-sky-lake", "Fallen Sky Lake",
+            "Fallen Sky Lake lies in southeastern Ashenvale, between Silverwing Outpost and the Horde's lumber camps. The people of Astranaar used to gather fallen moonstones there until the Shadethicket bog beasts came. Their leader, a Shadethicket Oracle, has gathered up all the moonstones and hoards them.",
+            {V .. " #1035 Fallen Sky Lake", LF("subzone:fallen-sky-lake", "Fallen_Sky_Lake")},
+            nil, {"place:astranaar", "npc:pelturas", ASH}),
+        Place("place:forest-song", "Forest Song",
+            "Forest Song is a night elf shrine among old kaldorei ruins in the Nightsong Woods of eastern Ashenvale, not far from Satyrnaar. The druid Kayneth Stillwind keeps it. He gathers reports from the Sentinels on a corruption he fears is moving through Ashenvale, and he watches the Forsaken who have crept into the forest's ruins and barrows. Spirits released from the corruption of Felwood are sent to him as well.",
+            {V .. " #4581 Kayneth Stillwind; #1011 Forsaken Diseases; #4261 Ancient Spirit", LF("subzone:forest-song", "Forest_Song")},
+            nil, {"npc:kayneth", "place:satyrnaar", ASH}),
+        Place("place:howling-vale", "Howling Vale",
+            "The Howling Vale lies in northern Ashenvale near the Felwood border. The ruined shrine of Mel'Thandris there has been overrun by wolf-men, and their chilling calls gave the vale its name. The Tome of Mel'Thandris kept at the shrine is no ordinary book. Its leaves were blessed by Mel'Thandris herself and show events of importance, and Sentinel Melyria Frostshadow hopes it will explain why the wolf-men have come.",
+            {V .. " #1022 The Howling Vale", LF("subzone:howling-vale", "Howling_Vale")},
+            {"the Howling Vale"}, {"npc:melyria", "group:worgen", ASH}),
+        Place("place:xavian", "Xavian",
+            "Xavian is a fabled night elf city deep in eastern Ashenvale, its temple now in ruins and held by satyrs. Scholars say its waters hold great magical power, and mages send for samples drawn from the foot of its highest waterfall, though the satyrs do not like them prying. The satyrs use oil stolen from the Warsong lumber camp in their rites there. The dryad sisters of Illiyana went into the ruins to take back the Branch of Cenarius from the satyrs.",
+            {V .. " #1944 Waters of Xavian; #1021 Vile Satyr! Dryads in Danger!; #6571 Warsong Supplies", LF("subzone:xavian", "Xavian")},
+            nil, {"group:satyrs", "npc:illiyana", ASH}),
+        Place("place:silverwind-refuge", "Silverwind Refuge",
+            "Silverwind Refuge is a Sentinel post in south-central Ashenvale, just north of Mystral Lake, where travelers on the forest trails find shelter. Sentinel Velene Starstrike keeps watch there over the lake, whose pools have filled with corrupt water elementals.",
+            {V .. " #1016 Elemental Bracers", LF("subzone:silverwind-refuge", "Silverwind_Refuge")},
+            nil, {"npc:velene", "place:mystral-lake", ASH}),
+        Place("place:dordanil", "Dor'Danil Barrow Den",
+            "The Dor'Danil Barrow Den is a barrow in eastern Ashenvale, south of Splintertree Post, where night elf druids slept while their spirits walked the Emerald Dream. The Forsaken have a camp near it where they make poisons and diseases and bottle them, and the druid Kayneth Stillwind of Forest Song fears they mean to spread sickness through the night elves' lands.\n\nIn a vision Kayneth has seen that the druids of the barrow were poisoned and murdered by the undead. Their spirits are errant ghosts, severed from their bodies and driven mad, and he wants their once great leaders, Taneel Darkwood, Uthil Mooncall and Mavoris Cloudsbreak, destroyed so that the others may one day find peace.",
+            {V .. " #1011 Forsaken Diseases; #1012 Insane Druids", LF("subzone:dor-danil-barrow-den", "Dor%27Danil_Barrow_Den")},
+            {"the Dor'Danil Barrow Den", "Dor'danil Barrow Den", "the Dor'danil Barrow Den"}, {"npc:kayneth", "place:emerald-dream", ASH}),
+        Place("place:dreadmist-peak", "Dreadmist Peak",
+            "Dreadmist Peak rises northwest of the Crossroads in the northern Barrens, under a red haze. The demon-worshipping Burning Blade keep a refuge on it. Pools near its summit shape the weather of the northern Barrens, and the Cenarion Circle suspects that the Burning Blade have tainted them and that the poisoned water is sickening the gazelles of the plains. The undead mage Sarilus Foulborne has made his camp at the top.",
+            {V .. " #6127 The Principal Source; #1017 Mage Summoner", LF("subzone:dreadmist-peak", "Dreadmist_Peak")},
+            nil, {"faction:burning-blade", "npc:tonga", BAR}),
+    })
+end
+
+-- notes4 batch 4: the Horde's Ashenvale and the Alliance's Windshear Crag.
+do
+    local ASH, STM = "region:417368656e76616c65", "region:53746f6e6574616c6f6e204d6f756e7461696e73"
+    A.RegisterLoreNotes({
+        Place("place:silverwing-outpost", "Silverwing Outpost",
+            "Silverwing Outpost is a night elf post in south-central Ashenvale, on the bank of the Falfarren River and west of Splintertree Post. Duriel Moonfire leads it, and it is heavily defended by Sentinels and warriors. Its outrunners slip out through the forest to gather word of the Horde's camps and defenses, and the Horde at Splintertree hunts them and plans raids against the outpost itself.",
+            {V .. " #6503 Ashenvale Outrunners; #6544 Torek's Assault", LF("subzone:silverwing-outpost", "Silverwing_Outpost")},
+            nil, {"npc:duriel-moonfire", "place:splintertree", ASH}),
+        Place("place:thistlefur-hold", "Thistlefur Hold",
+            "Thistlefur Hold is the cave at the end of Thistlefur Village, north of Astranaar, where the corrupted Thistlefur furbolgs keep their den. They store what they take from travelers there, among it the sacred charms of a band of trolls they killed on the road to Zoram'gar.",
+            {V .. " #6462 Troll Charm", LF("subzone:thistlefur-hold", "Thistlefur_Hold")},
+            nil, {"npc:dal-bloodclaw", "race:furbolgs", ASH}),
+        Place("place:falfarren-river", "Falfarren River",
+            "The Falfarren River runs through central Ashenvale, east of Astranaar, between the night elves' lands and the Horde's outposts. Corrupted furbolgs attack travelers on the road that runs east to it, and Silverwing Outpost stands on its bank.",
+            {V .. " #1025 An Aggressive Defense", LF("subzone:falfarren-river", "Falfarren_River")},
+            {"the Falfarren River", "the Falfarren"}, {"place:silverwing-outpost", "place:astranaar", ASH}),
+        Place("place:cragpool-lake", "Cragpool Lake",
+            "Cragpool Lake lies in Windshear Crag in the Stonetalon Mountains, under the Venture Company's timberworks. The company's lumber mill stands south of the lake, where it keeps the engineering plans for the machines it uses to strip the forest.",
+            {V .. " #1079 Covert Ops - Alpha", LF("subzone:cragpool-lake", "Cragpool_Lake")},
+            nil, {"place:windshear-crag", "faction:venture-company", STM}),
+    })
+end
