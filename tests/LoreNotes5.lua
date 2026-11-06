@@ -27,7 +27,7 @@ end
 
 -- 1. The new and deepened notes, and the names that must open them.
 local notes = {
-    ["npc:bilgewhizzle"] = {"Chief Engineer Bilgewhizzle", "Bilgewhizzle", "Security Chief Bilgewhizzle"},
+    ["npc:bilgewhizzle"] = {"Chief Engineer Bilgewhizzle", "Bilgewhizzle"},
     ["npc:greta-mosshoof"] = {"Greta Mosshoof"},
     ["npc:marvon"] = {"Marvon Rivetseeker", "Marvon"},
     ["npc:bijou"] = {"Operative Bijou", "Operative Bijou"},

@@ -1632,7 +1632,7 @@ do
     local RoL = "https://warcraft.wiki.gg/wiki/Ruins_of_Lordaeron_(instance) (boss list, added in patch 1.60.1)"
     local othmar = {requires = {"baron.othmar"},
         body = "The head once belonged to Othmar, a Grand Marshal of the Alliance whom the Dark Lady killed herself. The apothecaries of the Undercity mean to wake it on a new body and bend it to her will.",
-        sources = {V .. " #97289 Unending Torment (description)"}, related = {"place:apothecarium", "npc:sylvanas"}}
+        sources = {V .. " #97289 Unending Torment (description)"}, related = {"npc:garithos", "place:apothecarium", "npc:sylvanas"}}
     local notes = {}
     notes["npc:the-baron"] = {public = {
         body = "The Baron is an abomination in the Ruins of Lordaeron, above the Undercity. Its head has been sewn back onto its body several times, and each new stitching holds a little less well than the last.",
@@ -2530,7 +2530,7 @@ do
             blocks = {
                 {requires = {"deliah.raleigh"},
                     body = "A Deliah lived in Brill not long ago and was buried in its mass grave. Her husband, Raleigh, now dwells in the Trade Quarter of the Undercity, and the ring was hers. He feels nothing for her death any more, he says.",
-                    sources = {V .. " #440 The Engraved Ring; #441 Raleigh and the Undercity"}, related = {"place:brill", "place:undercity"}},
+                    sources = {V .. " #440 The Engraved Ring; #441 Raleigh and the Undercity"}, related = {"npc:raleigh", "place:brill", "place:undercity"}},
                 {requires = {"deliah.murder"},
                     body = "She was murdered. Raleigh names her killer as Valdred, once his good friend, who was last heard of at the Greymane Wall in southern Silverpine, trying to flee into Gilneas.",
                     sources = {V .. " #530 A Husband's Revenge"}}}},
@@ -2553,7 +2553,7 @@ do
         related = {"place:undercity"}},
         blocks = {{requires = {"deliah.raleigh"},
             body = "Raleigh lives there. He recognized a ring brought from Brill as his wife Deliah's, professed no grief for her death or the abduction of her body, but still desired revenge.",
-            sources = {V .. " #441"}, related = {"npc:deliah"}}}}}})
+            sources = {V .. " #441"}, related = {"npc:deliah", "npc:raleigh"}}}}}})
 end
 
 -- notes5 2026-11-06: the Fallen Hero's account. He tells it himself in #2784 Fall From
@@ -2645,5 +2645,115 @@ do
             blocks = {{requires = {"abyssal.control"},
                 body = "Her disguises are meant for the Abyssal Council, the elemental nobility that commands the Twilight's Hammer through those stones.",
                 sources = {V .. " #8331 Aurel Goldleaf"}, related = {"group:abyssal-council"}}}},
+    }})
+end
+
+-- notes6 2026-11-06: Mai'Zoth's part in Kurzen's fall is Brother Nimetz's finding, told
+-- when he offers #206 after his studies (#207, #205); before it the ogre is Kin'weelay's
+-- foe and the keeper of the Mind's Eye. What Vaelan is shows only when the Seal of
+-- Ascension is finished (#4743 completion); the earlier stage and the shared title prove
+-- nothing. Raleigh of the Undercity has no note until #441 names him as Deliah's husband,
+-- and his charge against Valdred waits for #530, as in the Deliah policy above.
+do
+    local V = "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"
+    local STV = "region:537472616e676c6574686f726e2056616c65"
+    A.RegisterLoreDiscovery({facts = {
+        ["maizoth.kurzen"] = {presented = {206}, completed = {206}},
+        ["vaelan.red"] = {completed = {4743}},
+    }, notes = {
+        ["npc:maizoth"] = {canonicalRequires = {"maizoth.kurzen", "yenniku.zanzil"}, public = {
+            body = "Mai'Zoth is an ogre mage who dwells deep in the Mosh'Ogg Ogre Mound in the eastern mountains of Stranglethorn. The Darkspear witch doctor Kin'weelay knows him from the years when his tribe lived in the jungle and calls him vicious, with strong magic made stronger by the artifact he holds, the Mind's Eye.",
+            sources = {V .. " #591 The Mind's Eye (description)"}, related = {"place:moshogg", "npc:kinweelay", STV}},
+            blocks = {{requires = {"maizoth.kurzen"},
+                body = "Brother Nimetz of the Rebel Camp has found that Mai'Zoth is said to use mind-controlling magic, and he is certain the ogre corrupted Colonel Kurzen with the Mind's Eye. While Mai'Zoth lives, Nimetz fears, his evil may raise another Kurzen.",
+                sources = {V .. " #206 Mai'Zoth"}, related = {"npc:nimetz", "npc:kurzen"}},
+                {requires = {"yenniku.zanzil"},
+                body = "Kin'weelay needs the jewel to free Yenniku, and calls it the only hope of saving him.",
+                sources = {V .. " #591 The Mind's Eye"}, related = {"npc:yenniku"}}}},
+        ["npc:vaelan"] = {canonicalRequires = {"vaelan.red"}, public = {
+            body = "Vaelan waits in Lower Blackrock Spire and shows those who would enter the upper citadel how to make the Seal of Ascension. The unadorned seal has three sockets, each for a gemstone that stands for the command of one of the three generals of the lower citadel, and the generals seldom carry them. The seal must then be forged in the flame of a black dragon. Overlord Wyrmthalak could do it, but his will cannot be broken, so Vaelan sends the seekers to Emberstrife, an ancient drake in the Wyrmbog of Dustwallow Marsh, with an orb that holds the drake's mind for a few seconds once his will is broken. Nefarian, he warns, works feverishly to unleash his evil.",
+            sources = {V .. " #4742 Seal of Ascension (description); #4743 Seal of Ascension (description)"}, related = {"dungeon:blackrock-spire", "npc:wyrmthalak", "npc:emberstrife"}},
+            blocks = {{requires = {"vaelan.red"},
+                body = "When the seal is finished, Vaelan's eyes turn to twin orbs of flame. He sets protective wards in it and promises that in the darkest hour the might of the red flight will be at its bearer's disposal.",
+                sources = {V .. " #4743 Seal of Ascension (completion)"}, related = {"npc:nefarian"}}}},
+        ["npc:raleigh"] = {visibleRequires = {"deliah.raleigh"}, canonicalRequires = {"deliah.raleigh", "deliah.murder"}, public = {
+            body = "Raleigh is one of the Forsaken and lives in the Trade Quarter of the Undercity. His wife, Deliah, lived in Brill and was buried in the town's mass grave. When her engraved ring was brought to him he knew it, but he says he feels nothing for her death or for the theft of her body.",
+            sources = {V .. " #441 Raleigh and the Undercity"}, related = {"npc:deliah", "place:trade-quarter", "place:brill"}},
+            blocks = {{requires = {"deliah.murder"},
+                body = "He still wants revenge. Raleigh names Valdred, once his good friend, as Deliah's murderer, and wants his hands. Valdred was last heard of at the Greymane Wall in southern Silverpine, trying to flee into Gilneas.",
+                sources = {V .. " #530 A Husband's Revenge"}}}},
+    }})
+end
+
+-- notes6 batch 2: Othmar Garithos's history is public; that his head is the Baron's waits
+-- for the existing "baron.othmar" fact (#97289), and how he wakes, refuses and is bound
+-- follows from #97291 on. Walton is a watcher on a ridge until #95621 is turned in, when
+-- he learns the Kul Tirans hunt a deserter and owns it; #95508 tells his navy past. Why
+-- Linken came to Un'Goro is J.D.'s discovery in #3961 and his own memory in #3962; until
+-- then Blazerunner is only the elemental at the heart of the crater.
+do
+    local P1 = "StorageInvestigation/journal-voice/part1_corpus.txt"
+    local V = "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"
+    A.RegisterLoreDiscovery({facts = {
+        ["othmar.bound"] = {presented = {97291, 97292}, completed = {97291, 97292}},
+        ["walton.deserter"] = {presented = {95508}, completed = {95621, 95508}},
+        ["linken.blazerunner"] = {presented = {3961, 3962}, completed = {3961, 3962}},
+    }, notes = {
+        ["npc:garithos"] = {canonicalRequires = {"baron.othmar", "othmar.bound"}, public = {
+            title = "Grand Marshal Garithos",
+            body = "Garithos was a Grand Marshal of the Alliance who commanded its remaining forces in Lordaeron after the Third War. He held the high elves in contempt and turned on Prince Kael'thas and his people when they took help from the naga. Later he allied himself with Sylvanas Windrunner to take back the capital of Lordaeron from the dreadlords. Once the city had fallen she broke the alliance and had him put to death.",
+            sources = {"https://warcraft.wiki.gg/wiki/Garithos (Third War and Lordaeron sections)"}, related = {"npc:sylvanas"}},
+            blocks = {{requires = {"baron.othmar"},
+                body = "Othmar Garithos's head is now that of the Baron, the abomination of the Ruins of Lordaeron, sewn back onto it many times. The apothecaries of the Undercity remember him as a particularly unpleasant Grand Marshal whom the Dark Lady dispatched herself, and they believe the head could tell many secrets if it could talk.",
+                sources = {P1 .. " #97289 Unending Torment", "LoreForever quest:97289 (wiki: https://warcraft.wiki.gg/wiki/Othmar_Garithos)"}, related = {"npc:the-baron", "place:apothecarium"}},
+                {requires = {"othmar.bound"},
+                body = "Set beside a new body, the head brings it twitching to life, and Othmar relives his final moments. He refuses to serve his keepers. Master Apothecary Faranell welcomes the challenge and means to bind him to the Dark Lady's will with a serum fed into the workings above the body, and he speaks of many plans for Othmar's future.",
+                sources = {P1 .. " #97290 Unending Torment; #97291 Unending Torment; #97292 Unending Torment"}, related = {"npc:faranell"}}}},
+        ["npc:walton"] = {canonicalRequires = {"walton.deserter"}, public = {
+            body = "Walton keeps watch over a valley of the Barrens from his ridge, with a rifle and its scope. He has seen soldiers in the livery of Kul Tiras searching the valley and camping by a wrecked caravan to the south. The remnants of Daelin Proudmoore's fleet who still fly his banner, he says, are as rotten and barbaric as the admiral was before he died.",
+            sources = {P1 .. " #95621 Trouble in the Valley (description)", "LoreForever quest:95621 (wiki: https://warcraft.wiki.gg/wiki/World_of_Warcraft:_Forever)"},
+            related = {"region:5468652042617272656e73", "region:kul-tiras", "npc:daelin-proudmoore"}},
+            blocks = {{requires = {"walton.deserter"},
+                body = "The soldiers are hunting a deserter, and Walton knows that it is him. He served in the Kul Tiras navy, and when the Lord Admiral took Theramore and began his campaign in Durotar he objected to his methods, above all the executing of civilians.",
+                sources = {P1 .. " #95621 Trouble in the Valley (completion); #95508 Unwelcome Guests"}}}},
+        ["npc:blazerunner"] = {canonicalRequires = {"linken.blazerunner"}, public = {
+            body = "Blazerunner is a fire elemental who dwells in the heart of Un'Goro Crater, an evil, in the words of those who know of it, of the purest form. An aura that no one can dispel protects it, except those given the power to do so.",
+            sources = {V .. " #4084 Silver Heart (description)"}, related = {"region:556e27476f726f20437261746572", "place:fire-plume"}},
+            blocks = {{requires = {"linken.blazerunner"},
+                body = "Blazerunner guards the Golden Flame, an artifact of vast power that is dangerous in the hands of one with an evil heart. Linken came to Un'Goro to destroy it, as the last step of a long journey, before he lost his memory. Its aura is broken with a totem shaped by the water spirit Aquementas, called up from a circle of stones on the coast of Tanaris.",
+                sources = {V .. " #3961 Linken's Adventure; #3962 It's Dangerous to Go Alone; #4005 Aquementas"}, related = {"npc:linken"}}}},
+    }})
+end
+
+-- notes6 batch 3: the dead druid in #4987 is named only when his branch reaches Elder Rise.
+do
+    local V = "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"
+    A.RegisterLoreDiscovery({facts = {
+        ["mulgris.named"] = {completed = {4987}},
+    }, notes = {
+        ["npc:mulgris"] = {visibleRequires = {"mulgris.named"}, public = {
+            body = "Mulgris was a tauren druid of the Cenarion Circle and a good friend of the druids at Elder Rise in Thunder Bluff. He went to minister to the creatures suffering in the Plaguelands and died there. The healthy, warm oaken branch found in his hand is carved with druidic glyphs and holds much lore about the plague the Scourge spreads, which the druids of Elder Rise mean to study.",
+            sources = {V .. " #4987 Glyphed Oaken Branch (completion)"}, related = {"place:elder-rise", "faction:cenarion-circle", "faction:scourge"}}},
+    }})
+end
+
+-- notes6: the Greymane Wall and Gilneas notes named Valdred as Deliah's murderer for every
+-- reader. That is Raleigh's charge in #530 ("deliah.murder" above); until then both notes
+-- are geography only.
+do
+    local V = "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"
+    A.RegisterLoreDiscovery({notes = {
+        ["place:greymane-wall"] = {canonicalRequires = {"deliah.murder"}, public = {
+            body = "The Greymane Wall stands in southern Silverpine Forest, on the border of the kingdom of Gilneas.",
+            sources = {"https://warcraft.wiki.gg/wiki/Greymane_Wall"}, related = {"region:gilneas"}},
+            blocks = {{requires = {"deliah.murder"},
+                body = "Valdred, whom Raleigh of the Undercity names as the murderer of his wife, Deliah, was last heard of at the wall, trying to flee into Gilneas.",
+                sources = {V .. " (quest 530)"}, related = {"npc:raleigh"}}}},
+        ["region:gilneas"] = {canonicalRequires = {"deliah.murder"}, public = {
+            body = "The kingdom of Gilneas lies beyond the Greymane Wall in southern Silverpine Forest.",
+            sources = {"https://warcraft.wiki.gg/wiki/Gilneas"}, related = {"place:greymane-wall"}},
+            blocks = {{requires = {"deliah.murder"},
+                body = "Valdred, whom Raleigh of the Undercity names as the murderer of his wife, Deliah, was last heard of trying to flee into Gilneas.",
+                sources = {V .. " (quest 530)"}, related = {"npc:raleigh"}}}},
     }})
 end

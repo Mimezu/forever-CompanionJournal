@@ -256,6 +256,44 @@ for _, title in ipairs({"WANTED: Caliph Scorpidsting", "Cuergo's Gold", "Scaring
     "Silver Skeleton Key", "Golden Skeleton Key", "Truesilver Skeleton Key", "Arcanite Skeleton Key"}) do
     knownNames[title] = {plain = true}
 end
+-- notes6 2026-11-06: distinctive short forms of new notes (Mai'Zoth and Vaelan carry
+-- discovery policies; Jaron, Daltry, Biggs and Raleigh stay out as given names, surnames
+-- or a name two men share). Kindal is the one Moonweaver of that name.
+for name in ([[Mebok Smitts Niby Daio Vaelan Mai'Zoth Rau Nezzliok Gan'zulah Lethlor Emberstrife
+    Kindal]]):gmatch("%S+") do singleNames[name] = true end
+for _, title in ipairs({"What Niby Commands", "Speaking with Nezzliok", "Speaking with Gan'zulah",
+    "Raleigh and the Undercity"}) do
+    knownNames[title] = {plain = true}
+end
+-- notes6 batch 2 (Garithos, Walton and Blazerunner carry discovery policies; Othmar, Ott,
+-- Walton, Jemma, Ozzie and Quentin stay out as given names or surnames).
+for name in ([[Norric Byancie Yorana Elaadrin Yelmak Thra Thesten Belgrum Stoutfist Roetten Salfa Erelas
+    Gnoarn Blazerunner Garithos]]):gmatch("%S+") do singleNames[name] = true end
+for _, title in ipairs({"Yelmak's Medley", "Report to Captain Stoutfist", "Speak to Salfa", "Ott's Masterwork"}) do
+    knownNames[title] = {plain = true}
+end
+-- notes6 batch 3 (Mulgris carries a discovery policy; Fiora, Veren, Laris, Ozzie, Mary and
+-- Flint stay out as given names or words).
+for name in ([[Ruzzgot Castpipe Kernobee Shoni Tsunaman Willix Feegly Tatternack Bellygrub Geardawdle
+    Heralath Treshala Sparklematic Mulgris]]):gmatch("%S+") do singleNames[name] = true end
+for _, title in ipairs({"Castpipe's Task", "Speak with Shoni", "The Sparklematic 5200!"}) do
+    knownNames[title] = {plain = true}
+end
+-- notes6 batch 4 (Sigrun, Shay, Korin, Roon, Fin, Slim and Nials stay out: given names,
+-- a word, and a name Lore Forever gives a second bearer).
+for name in ([[Unbagwa Mokk Poobah Bloads Groy Or'Kalar Phizzlethorpe Draxlegauge Tosselwrench Tho'grun
+    Rockbiter Luglunket]]):gmatch("%S+") do singleNames[name] = true end
+for _, title in ipairs({"Whiskey Slim's Lost Grog"}) do knownNames[title] = {plain = true} end
+-- notes6 batch 5 (Galen, Goodward, Andi, Gurda, Tooga and Torta stay out as given names,
+-- a surname and short words; "Gurda" also names Gurda Ragescar).
+for name in ([[Curgle Gor'marok Malcin Rimtori Ag'tor Zamael Aldamort Magtoor Lungertz Gizzmick Slagtree
+    Fraggar Burninate]]):gmatch("%S+") do singleNames[name] = true end
+-- notes6 batch 6 ("Security Chief Bilgewhizzle" now opens his own note; the short
+-- "Bilgewhizzle" stays with the chief engineer of Gadgetzan, the only one the scenes call so).
+for name in ([[Garek Gorn Blacklash Hematus Nafien Krakle Tinkee Albagorm Do'gol]]):gmatch("%S+") do
+    singleNames[name] = true
+end
+for _, title in ipairs({"Speak to Nafien", "Return to Tinkee"}) do knownNames[title] = {plain = true} end
 local V ="StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"
 local Q = "StorageInvestigation/journal-voice/quests_corpus.txt"
 local N = "StorageInvestigation/journal-voice/npc_corpus.txt"

@@ -1051,3 +1051,40 @@ do
             {"the Argent Hold"}, {"place:lights-hope", "npc:maxwell-tyrosus", "faction:argent-dawn", EPL}),
     })
 end
+
+-- Sixth notes lane (notes6), 2026-11-06. Batch 1: places the 30-60 scenes name without a
+-- note. What the black drakes of Lethlor Ravine become, and Garek's own errand, stay out.
+do
+    A.RegisterLoreNotes({
+        Place("place:mannoroc-coven", "Mannoroc Coven",
+            "Mannoroc Coven is a demon-haunted ruin in southern Desolace, south of Ghost Walker Post and east of Shadowprey Village. Warlocks of the Burning Blade hold it, and through portals kept open with the Hand of Iruxos, a relic stored in a demon box at Thunder Axe Fortress, they bring demons into the world. Lesser infernals walk among the ruins, the Burning Blade summoners carry orbs with demons bound inside them, and the demon lord Azrethoc, served by the warlock Jugkar Grim'rod, is feared to be seeking influence over the cult. The Gizelton caravan's kodos pass the ruins on the road, and the demons usually ignore them.",
+            {V .. " #5381 Hand of Iruxos; #5581 Portals of the Legion; #1488 The Corrupter; #1954 The Infernal Orb; #4783 Components for the Enchanted Gold Bloodrobe; #5943 Gizelton Caravan", LF("subzone:mannoroc-coven", "Mannoroc_Coven")},
+            {"the Mannoroc Coven"}, {"faction:burning-blade", "place:shadowprey", "place:ghost-walker", "region:4465736f6c616365"}),
+        Place("place:lethlor-ravine", "Lethlor Ravine",
+            "Lethlor Ravine lies in the far east of the Badlands, where black dragons roost and black drake whelps are reared. The orcs of Kargath remember from the Second War, when the Horde was allied with Deathwing, that two of his lieutenants, the drakes Blacklash and Hematus, were imprisoned in the ravine. The prison is held shut by the Seal of the Earth, bound by three runestones in the Pillars of Diamond, Opal and Amethyst, and only the Sign of the Earth can loosen them. Ogres stole the Sign, and Garek, sent by his master Krasus of the Kirin Tor, has come to the Badlands to end the trouble brewing in the ravine.",
+            {V .. " #706 Fiery Blaze Enchantments; #732 Tremors of the Earth; #782 Broken Alliances; #793 Broken Alliances", LF("subzone:lethlor-ravine", "Lethlor_Ravine")},
+            {"Lethlor"}, {"region:4261646c616e6473", "place:kargath", "faction:kirin-tor"}),
+        Place("place:grizzled-den", "Grizzled Den",
+            "The Grizzled Den is a cave in Dun Morogh, west of Kharanos, where wendigos make their lair. Their thick manes are prized; Pilot Stonegear of the Ironforge Siege Brigade wants a rug of them for the deck of his siege engine, Trollplow. Couriers on the road give the den a wide berth, and one left a crate of Hegnar Rumbleshot's ammunition behind when the wendigos chased him off. The beasts have lately filled the cave and spread into the mountains around it.",
+            {V .. " #313 The Grizzled Den; #317 Stocking Jetsteam; #5541 Ammo for Rumbleshot; #98319 Secure the Mountain", LF("subzone:grizzled-den", "Grizzled_Den")},
+            {"the Grizzled Den"}, {"region:44756e204d6f726f6768", "place:kharanos", "place:steelgrills-depot", "npc:hegnar-rumbleshot"}),
+        Place("place:cenarion-enclave", "Cenarion Enclave",
+            "The Cenarion Enclave is the seat of the Cenarion Circle in Darnassus, set in the boughs above the capital's Temple Gardens. Arch Druid Fandral Staghelm leads the night elf druids from there, and his direct assistant, Mathrengyl Bearwalker, trains young druids in the ways of their animal forms. The Enclave also gathers the Circle's research, and its elder druids receive what the Circle's agents find in the wider world. Darnassus's rogues meet there too, where Erion Shadewhisper calls promising students from Teldrassil.",
+            {V .. " #5923 Heeding the Call; #26 A Lesson to Learn; #3763 Assisting Arch Druid Staghelm; #3370 In Nightmares; #2259 Erion Shadewhisper", LF("subzone:cenarion-enclave", "Cenarion_Enclave")},
+            {"the Cenarion Enclave"}, {"region:4461726e6173737573", "faction:cenarion-circle", "npc:fandral"}),
+        Place("place:scarlet-raven", "Scarlet Raven Tavern",
+            "The Scarlet Raven Tavern is the inn of Darkshire in Duskwood. It does not see the business it used to, but travelers still take rooms there. Tavernkeep Smitts keeps the bar and brews a liquor called Zombie Juice, and Chef Grual is known for his Dusky Crab Cakes, whose secret, by his own admission, is that they are made from spider legs.",
+            {V .. " #158 Zombie Juice; #266 Inquire at the Inn; #5 Jitters' Growling Gut; #93 Dusky Crab Cakes"},
+            {"Scarlet Raven", "the Scarlet Raven", "the Scarlet Raven Tavern"}, {"place:darkshire", "npc:smitts", "region:4475736b776f6f64"}),
+    })
+end
+
+-- notes6 batch 5: the draenei refuge the Swamp of Sorrows scenes name.
+do
+    A.RegisterLoreNotes({
+        Place("place:harborage", "The Harborage",
+            "The Harborage is a small refuge of draenei in the Swamp of Sorrows. Its people came to Azeroth on a hard journey, and some of their brethren, driven mad by it, now live as the lost ones of the Fallow Sanctuary to the east, catching or killing any who come near. The Harborage lacks the strength to face them. Magtoor is among its people, who hold sacred the draenethyst crystals the lost ones have stolen.",
+            {V .. " #1389 Draenethyst Crystals; #1392 Noboru the Cudgel", LF("subzone:harborage", "Harborage")},
+            {"Harborage", "the Harborage"}, {"npc:magtoor", "place:fallow-sanctuary", "region:5377616d70206f6620536f72726f7773"}),
+    })
+end
