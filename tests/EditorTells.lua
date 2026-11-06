@@ -119,8 +119,12 @@ do
     Stretch(j2, At(1), 90, "The Barrens", 13, Q({"Kolkar Leaders"}))
     Stretch(j2, At(20), 90, "The Barrens", 14, Q({"Lost in Battle"}))
     local p2 = {self = true, charKey = "gap", name = "Zuni", race = "Troll", faction = "Horde", class = "HUNTER", startLevel = 12, journal = j2}
+    -- (since 2026-11-06 the gap opens as a game master would: the elapsed time is in the first sentence,
+    -- not always in front of it)
     for retell, chapters in pairs(Tellings(p2, false)) do
-        check(DayLed(chapters[3].plain), "a long gap keeps its day (" .. retell .. "): " .. chapters[3].plain)
+        local first = chapters[3].plain:match("^[^%.]*%.")
+        check(DayLed(chapters[3].plain) or first:find("weeks") or first:find("days") or first:find("month"),
+            "a long gap keeps its time (" .. retell .. "): " .. chapters[3].plain)
     end
 end
 

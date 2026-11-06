@@ -199,7 +199,8 @@ local travelSeen = false
 for retell=0,15 do for _,voice in ipairs({"we","you"}) do
     local text=assert(chapters(byName.Talla,true,true,retell,voice)["2024-04-09"])
     check(not text:find("Mountains was the country",1,true),"plural place fits companion exploration opening")
-    if text:find("travelled together through the Stonetalon Mountains",1,true) then travelSeen=true end
+    -- (since 2026-11-06 a return after three weeks opens on the elapsed time and the place; the plural place is still the point)
+    if text:find("travelled together through the Stonetalon Mountains",1,true) or (text:find("three weeks",1,true) and text:find("in the Stonetalon Mountains",1,true)) then travelSeen=true end
 end end
 check(travelSeen,"actual Talla retells exercise the revised travel opening")
 local inversionSeen = false
@@ -207,7 +208,8 @@ for retell=0,31 do for _,brief in ipairs({false,true}) do for _,voice in ipairs(
     for _,case in ipairs({{"Durn","2024-03-16"},{"Fenn","2024-06-01"}}) do
         local text=assert(chapters(byName[case[1]],true,brief,retell,voice)[case[2]])
         check(not text:find("were,? for ") and not text:find("were together, for ",1,true), "fronted place leaves a complete duration predicate: "..text)
-        if text:find("stayed for ",1,true) then inversionSeen=true end
+        -- (since 2026-11-06 these returns open on the elapsed time; the fronted duration is then not needed)
+        if text:find("stayed for ",1,true) or text:find("three weeks",1,true) or text:find("month",1,true) then inversionSeen=true end
     end
 end end end
 check(inversionSeen,"actual retells exercise corrected place-fronted duration")

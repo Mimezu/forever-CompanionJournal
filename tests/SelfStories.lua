@@ -353,7 +353,7 @@ do
             "a life begun together opens as theirs, Ragh named once (" .. retell .. "): " .. one)
         check(chapters[2] and chapters[2].plain:find("Warsong Gulch twice", 1, true), "a battleground day is a chapter: " .. tostring(chapters[2] and chapters[2].plain))
         local three = chapters[3].plain
-        check(not three:find("again", 1, true) and (three:find("three times", 1, true)), "three deaths, counted once: " .. three)
+        check(not three:find("%f[%a]again%f[%A]") and (three:find("three times", 1, true)), "three deaths, counted once: " .. three)
     end
     A.db = nil
 end

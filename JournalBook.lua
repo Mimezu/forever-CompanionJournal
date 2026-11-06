@@ -574,7 +574,8 @@ local function Deeds(scene, name, v, inside)
             local names = {}
             for _, spell in ipairs(event.m or {}) do names[#names + 1] = spell end
             local what = event.c == 1 and "one spell" or (Words(event.c) .. " spells")
-            clauses[#clauses + 1] = "learned " .. what .. " from the trainer" .. (#names > 0 and ((event.c == 1 and ", " or ", among them ") .. List(names)) or "")
+            -- ("among them" only when the names are a part of the count)
+            clauses[#clauses + 1] = "learned " .. what .. " from the trainer" .. (#names > 0 and ((event.c > #names and ", among them " or ", ") .. List(names)) or "")
         elseif event.k == "rep" and event.d then
             Flush()
             sentences[#sentences + 1] = "I became " .. (STANDING_WORDS[tonumber(event.s) or 0] or "known") .. " with " .. P(event.d) .. "."
@@ -1208,4 +1209,17 @@ function A.JournalColored(text, colors)
         local shown = color and string.format("|cff%02x%02x%02x%s|r", Hex(color[1]), Hex(color[2]), Hex(color[3]), value) or value
         return shown
     end))
+end
+
+-- The final boss of a dungeon, as a list (a place with wings has one per wing): from
+-- Lore's `last` field, or the lord among its bosses when a pack has none (2026-11-06).
+function A.DungeonLast(name)
+    local L = A.Lore
+    if not L or not name then return nil end
+    local story = L.DungeonStory and L.DungeonStory(name)
+    local info = L.Dungeon and L.Dungeon(name)
+    local last = (story and story.last) or (info and info.last)
+    if type(last) == "string" then return {last} end
+    if type(last) == "table" and #last > 0 then return last end
+    return nil
 end

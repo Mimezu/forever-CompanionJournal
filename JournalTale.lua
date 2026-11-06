@@ -124,6 +124,26 @@ local function Later(days, rng)
     if days <= 13 then return One({"nearly two weeks later", "some " .. Words(days) .. " days later"}) end
     return Span(days) .. " later"
 end
+-- A gap in words, as a game master says it ("a week", "two months", "half a year").
+-- n alternates the near forms by a counter, never by a draw.
+local function SinceWords(days, n)
+    local alt = (n or 0) % 2 == 1
+    if days <= 10 then return days == 7 and "a week" or (Words(days) .. " days") end
+    if days <= 13 then return Words(days) .. " days" end
+    if days <= 16 then return "two weeks" end
+    if days <= 20 then return alt and "nearly three weeks" or (Words(days) .. " days") end
+    if days <= 24 then return "three weeks" end
+    if days <= 27 then return alt and "nearly a month" or "four weeks" end
+    if days <= 33 then return alt and "four weeks" or "a month" end
+    if days <= 38 then return alt and "a month" or "five weeks" end
+    if days <= 45 then return alt and "a month and a half" or "six weeks" end
+    if days <= 165 then return Words(math.floor(days / 30 + 0.5)) .. " months" end
+    if days <= 200 then return alt and "six months" or "half a year" end
+    if days <= 330 then return Words(math.floor(days / 30 + 0.5)) .. " months" end
+    if days <= 400 then return "a year" end
+    if days <= 540 then return "more than a year" end
+    return Words(math.floor(days / 365 + 0.5)) .. " years"
+end
 -- "The dunes of Tanaris were", "the green hell of Stranglethorn was".
 -- Names that are plural too: "the Wailing Caverns were", "Blackfathom Deeps were".
 local PLURAL_NAMES = {Caverns = true, Deeps = true, Downs = true, Deadmines = true, Barrens = true, Wetlands = true,
@@ -446,6 +466,16 @@ local function Teller(person, voice, player)
             if text then self.ownCount, self.lastOwn = (self.ownCount or 0) + 1, self.day end
         end
         if not text then text = self:Pick(key, list, rng, nil, nil, Avoid) end
+        -- (a template said word for word earlier in the book gives way to another while the pool has
+        -- one; the tokens are the same in most chapters, so the template is the shape: 2026-11-06)
+        self.saidTemplates = self.saidTemplates or {}
+        if text and self.saidTemplates[key .. "|" .. text] and #list > 1 and not self.ownLine then
+            for _ = 1, math.min(4, #list) do
+                local other = self:Pick(key, list, rng, nil, nil, Avoid)
+                if other and not self.saidTemplates[key .. "|" .. other] then text = other; break end
+            end
+        end
+        if text then self.saidTemplates[key .. "|" .. text] = true end
         for _, joke in ipairs(JOKES) do if text and text:find(joke, 1, true) then self.jokes[joke] = true end end
         if text and Once()[text] then self.onceUsed[text] = true end
         self.sayLine = text
@@ -719,7 +749,22 @@ function T.Tell(person, days, voice, player, brief)
     end
     local history = {days = 0, hours = 0, lastDay = nil, gaps = {}, dungeons = {}, dungeonRuns = 0, bosses = {}, beaten = {},
         zones = {}, fires = 0, rests = 0, rez = 0, deaths = 0, streak = 0, firstDay = nil, firstZone = nil, memories = {}, zoneSetting = {},
+        lordDone = {}, unfinishedLast = {}, zoneLinesSaid = {},
         seenDays = 0, lastSeen = nil, firstSeen = nil, months = {}, zoneLastT = {}, diedIn = {}, questLore = {}, questThreads = {}, questSetups = {}}
+    -- (the longest gap between two outings together: the first return after it opens as one)
+    local maxGap = 0
+    do
+        local prev
+        for _, day in ipairs(days) do
+            local outing = false
+            for _, scene in ipairs(day.scenes or {}) do if scene.kind == "outing" then outing = true end end
+            if outing then
+                local n = DayNumber(day.t)
+                if prev and n - prev > maxGap then maxGap = n - prev end
+                prev = n
+            end
+        end
+    end
     -- Started out together: the tale begins where your people begin.
     local startedTogether = person.origin == "together"
     local START = {Scourge = "Tirisfal Glades", Human = "Elwynn Forest", Dwarf = "Dun Morogh", Gnome = "Dun Morogh",
@@ -807,6 +852,7 @@ function T.Tell(person, days, voice, player, brief)
         -- or the companion whom you brought back from death.
         local sceneLimit = quietDay and f.together >= 3600 and 3 or 2
         local candidates = {}
+        local strongCount = 0 -- (three strong moments in one day: a rescue, a duel, a rare; all three are told)
         -- (your own firsts that fell on a day together: a first zone or continent, a first mount,
         -- raid, epic or honorable kill; caves and battlegrounds entered together)
         local firstRanks = {notable = 8, rezother = 7, landmark = 6, sunset = 6, snow = 5, rarebeast = 5, foeseen = 5,
@@ -836,7 +882,9 @@ function T.Tell(person, days, voice, player, brief)
             elseif e.k == "explore" and not exploreRanked then exploreRanked = true; rank = 2
             elseif e.k == "read" then rank = 2 end
             if rank then candidates[#candidates + 1] = {entry = e, rank = rank, ordinal = i} end
+            if rank and rank >= 6 then strongCount = strongCount + 1 end
         end
+        if strongCount >= 3 then sceneLimit = math.max(sceneLimit, 3) end
         table.sort(candidates, function(a, b)
             if a.rank ~= b.rank then return a.rank > b.rank end
             return a.ordinal < b.ordinal
@@ -1039,6 +1087,22 @@ function T.Tell(person, days, voice, player, brief)
         local mergeToday = history.merged and not brief and gap == 1 and history.merged.zone == mainZone
         if mergeToday then implicit = false end
 
+        -- A line of what a known country is like, not said before in this book (a return after
+        -- four weeks or more draws a second sight or stake from Lore; 2026-11-06).
+        local function FreshZoneLine(zone)
+            local zs = L.ZoneStory and L.ZoneStory(zone)
+            if not zs then return nil end
+            local pool = {}
+            for _, list in ipairs({zs.sight or {}, zs.stakes or {}}) do
+                for _, line in ipairs(list) do
+                    if not history.zoneLinesSaid[line] and not (A.SelfTale and A.SelfTale.NamesFoeTown and A.SelfTale.NamesFoeTown(line, player.faction)) then pool[#pool + 1] = line end
+                end
+            end
+            if #pool == 0 then return nil end
+            local line = pool[rng(#pool)]
+            history.zoneLinesSaid[line] = true
+            return line
+        end
         -- 1. How the day opens.
         if not gap and history.firstDay then tokens.later = Later(today - history.firstDay, rng) end
         if startedTogether and index == 1 then
@@ -1073,7 +1137,17 @@ function T.Tell(person, days, voice, player, brief)
                 if firstOuting and firstOuting.zone and ((firstOuting.e or 0) - (firstOuting.t or 0)) >= 300 then
                     tokens.zoneE, tokens.zoneD = Place(firstOuting.zone), Place(firstOuting.zone)
                 end
-                Add(teller:Say("meetGroup", PB.meetGroup, rng, tokens))
+                -- (a configured bond is said on the first day: "Dahlia, your wife,")
+                local meetLine = teller:Say("meetGroup", PB.meetGroup, rng, tokens)
+                local at = meetLine and meetLine:find(teller.base.name, 1, true)
+                if at and teller.base.bondWord then
+                    local stop = at + #teller.base.name - 1
+                    local tail = meetLine:sub(stop + 1)
+                    -- ("Dahlia, a Forsaken warlock," becomes "Dahlia, your wife, a Forsaken warlock,")
+                    meetLine = meetLine:sub(1, stop) .. ", " .. teller.base.bondWord .. (tail:match("^[,%.]") and "" or ",") .. tail
+                end
+                Add(meetLine)
+                if not at and teller.base.bondWord then Add(teller:Say("bondLine", PB.bondLine, rng, tokens)) end
             else Add(teller:Say("meetAdded", PB.meetAdded, rng, tokens)) end
             TitleFrom(100, "meet")
         elseif together and gap and gap >= 4 then
@@ -1088,7 +1162,70 @@ function T.Tell(person, days, voice, player, brief)
                 if #placed > 0 then intervalPool = placed end
                 majorOpen = true -- This is the field location, not an optional greeting.
             end
-            local interval = teller:Say("recordedInterval", intervalPool, rng, tokens)
+            -- A week or more since the last outing together: the opening of a new night at
+            -- the table (PB.absence, 2026-11-06). The gap in words, the place now against the
+            -- place then, the hour; the level climbed in between or the fall of a lord last
+            -- time as a second sentence on the long gaps (not in Highlights).
+            local absence
+            if gap >= 7 and PB.absence then
+                local longest = gap >= 21 and gap >= maxGap and not history.longestSaid
+                local bucket = (gap >= 166 or longest) and "longest" or (gap >= 21 and "long") or "short"
+                if longest then history.longestSaid = true end
+                history.absenceN = (history.absenceN or 0) + 1
+                local n = history.absenceN
+                tokens.since = SinceWords(gap, n)
+                tokens.lastZone = history.lastMain and history.lastMain ~= mainZone and Place(history.lastMain) or false
+                local shape = (mainZone and history.lastMain == mainZone) and "same" or "else"
+                if gap >= 21 and shape == "else" and mainZone and history.firstZone == mainZone and history.days >= 2 then shape = "met" end
+                if gap >= 21 and teller.base.bondWord and n % 3 == 1 and PB.absence[bucket].bond then shape = "bond" end
+                local list = PB.absence[bucket][shape] or PB.absence[bucket]["else"]
+                -- (the opening names the companion: a line without them would be replaced by a greeting below)
+                do
+                    local named = {}
+                    for _, line in ipairs(list) do
+                        if line:find("{pair}", 1, true) or line:find("{name}", 1, true) or line:find("{bondWord}", 1, true) or line:find("{Bond}", 1, true) then named[#named + 1] = line end
+                    end
+                    if #named > 0 then list = named end
+                end
+                if not tokens.lastZone then
+                    local kept = {}
+                    for _, line in ipairs(list) do if not line:find("{lastZone}", 1, true) then kept[#kept + 1] = line end end
+                    list = kept
+                end
+                if not placeCanLead then
+                    local placed = {}
+                    for _, line in ipairs(list) do if line:find("{zoneD}", 1, true) then placed[#placed + 1] = line end end
+                    if #placed > 0 then list = placed end
+                end
+                if #list > 0 then absence = {bucket = bucket, shape = shape, n = n, list = list} end
+            end
+            local function AbsenceRecap()
+                if not absence or gap < 11 or not PB.absenceRecap then return end
+                if gap < 21 and absence.n % 2 == 0 then return end
+                local options = {}
+                local lordName = history.lastLord and Place((L.Short and L.Short(history.lastLord)) or history.lastLord)
+                if lordName and history.lastDungeonName then options[#options + 1] = "lord"
+                elseif history.lastDungeonName then options[#options + 1] = "dungeon" end
+                -- (levels: a climb of three or more, and not after every gap: accounting is not the point)
+                local theirsUp = theirLevel and history.lastTheirLevel and theirLevel - history.lastTheirLevel >= 3
+                local mineUp = level and history.lastMyLevel and level > history.lastMyLevel
+                if theirsUp and (absence.n % 2 == 1 or absence.bucket == "longest") then
+                    if mineUp and level == theirLevel then options[#options + 1] = "bothSame"
+                    elseif mineUp then options[#options + 1] = "both"
+                    else options[#options + 1] = "theirs" end
+                end
+                if #options == 0 then return end
+                local pick = options[(absence.n % #options) + 1]
+                tokens.theirsThen, tokens.mineThen = history.lastTheirLevel, history.lastMyLevel
+                tokens.lastLord, tokens.lastDungeon = lordName or false, history.lastDungeonName and Place(history.lastDungeonName) or false
+                local was = beat
+                beat = "recap"
+                Add(teller:Say("absenceRecap" .. pick, PB.absenceRecap[pick], rng, tokens))
+                beat = was
+            end
+            local interval = absence and teller:Say("absence" .. absence.bucket .. absence.shape, absence.list, rng, tokens)
+                or teller:Say("recordedInterval", intervalPool, rng, tokens)
+            if absence and gap >= 21 then majorOpen = true end
             local sceneLed = #f.dungeons > 0
             for _, quest in ipairs(f.quests) do
                 local story = L.QuestStory and L.QuestStory(quest.title, quest.qid)
@@ -1111,10 +1248,16 @@ function T.Tell(person, days, voice, player, brief)
                     Add(teller:Say(cadence == "weekly" and "returnInterval" or cadence, PB[cadence], rng, tokens))
                 end
                 history.intervalOpen = index -- (the rhythm holds: a deviation from it is the next news)
-            elseif not (sceneLed and placeCanLead and history.intervalOpen == index - 1) then
+            elseif (absence and gap >= 21) or not (sceneLed and placeCanLead and history.intervalOpen == index - 1) then
                 if interval and tokens.zoneD and interval:find(tokens.zoneD, 1, true) then placeSaid = true end
                 Add(interval)
                 history.intervalOpen = index
+                AbsenceRecap()
+                -- (back in a country the book knows, four weeks on: one more thing about it, not in Highlights)
+                if absence and gap >= 28 and mainZone and history.zones[mainZone] and placeCanLead then
+                    local line = FreshZoneLine(mainZone)
+                    if line then local was = beat; beat = "again"; Add(line); beat = was end
+                end
             end
         elseif together then
             local key
@@ -1261,8 +1404,8 @@ function T.Tell(person, days, voice, player, brief)
                     return #kept > 0 and kept or nil
                 end
                 local sight, stakes = zs and Ours(zs.sight), zs and Ours(zs.stakes)
-                if sight then Add(sight[rng(#sight)]); f.zoneLore = (f.zoneLore or 0) + 1 end
-                if stakes and rng() < 0.6 then Add(stakes[rng(#stakes)]); f.zoneLore = (f.zoneLore or 0) + 1 end
+                if sight then local line = sight[rng(#sight)]; history.zoneLinesSaid[line] = true; Add(line); f.zoneLore = (f.zoneLore or 0) + 1 end
+                if stakes and rng() < 0.6 then local line = stakes[rng(#stakes)]; history.zoneLinesSaid[line] = true; Add(line); f.zoneLore = (f.zoneLore or 0) + 1 end
             elseif kind ~= "city" and history.zoneLastT[mainZone] and PB.zoneReturn and not cooldown and rng() < 0.6 then
                 -- Back after a long while: "for the first time since March".
                 local away = today - DayNumber(history.zoneLastT[mainZone])
@@ -1289,7 +1432,9 @@ function T.Tell(person, days, voice, player, brief)
                 end
                 if pool and #pool > 0 then
                     beat = "land"
-                    Add(pool[rng(#pool)])
+                    local line = pool[rng(#pool)]
+                    history.zoneLinesSaid[line] = true
+                    Add(line)
                     f.zoneLore = 1
                     beat = "travel"
                 end
@@ -1989,6 +2134,34 @@ function T.Tell(person, days, voice, player, brief)
             tokens.dungeonE = dungeonE or Place(name)
             tokens.dungeonWas = Plural(tokens.dungeonE) and "were" or "was"
             local visits = history.dungeons[name] or 0
+            -- The run's place in this book's history of the place (2026-11-06): the lord of the
+            -- place (Lore's `last`), whether this run reached it, the run before, the last kill.
+            local lordList = A.DungeonLast and A.DungeonLast(name) or nil
+            local lordSet = {}
+            for _, l in ipairs(lordList or {}) do lordSet[l] = true end
+            local lordHere = lordList and lordList[1]
+            do
+                local wing = L.DungeonSight and L.DungeonSight(name, d.events)
+                if wing and wing.bosses and lordSet[wing.bosses[#wing.bosses]] then lordHere = wing.bosses[#wing.bosses] end
+            end
+            local reached, lastKill, killCount = false, nil, 0
+            for _, ev in ipairs(d.events) do
+                if ev.k == "boss" then killCount = killCount + 1; lastKill = ev.d; if lordSet[ev.d] then reached = true; lordHere = ev.d end end
+            end
+            local left = false
+            for _, scene in ipairs(day.scenes) do
+                if scene.kind == "outing" and scene.zone and scene.zone ~= name and (scene.t or 0) > (d.t or 0) then left = true end
+            end
+            local lordBeat
+            for _, ev in ipairs(d.events) do
+                if (ev.k == "wipe" and lordSet[ev.d]) or (ev.k == "death" and ev.e and lordSet[ev.e.boss or ev.e.d]) then lordBeat = ev.k == "wipe" and ev.d or (ev.e.boss or ev.e.d) end
+            end
+            local unfinished = killCount > 0 and lordHere and not reached or false
+            d.reached, d.unfinished = reached, unfinished
+            local unfinishedBefore = history.unfinishedLast[name]
+            local lordDoneBefore = history.lordDone[name]
+            tokens.lord = lordHere and Place(lordHere) or false
+            tokens.nth = Ordinal(visits + 1)
             local decorated = dungeonE ~= nil and dungeonE ~= Place(name)
             tokens.lore = (not decorated and visits == 0 and info and info.lore) and info.lore[rng(#info.lore)] or false
             local grief = history.diedIn[name]
@@ -2048,10 +2221,13 @@ function T.Tell(person, days, voice, player, brief)
                 -- Back where one of you died the last time.
                 history.diedIn[name] = nil
                 Add(teller:Say("dungeonGrief" .. grief, PB.dungeonGrief[grief], rng, tokens))
-            elseif visits >= 2 and PB.dungeonRegular and rng() < 0.4 then
-                tokens.nth = Ordinal(visits + 1)
-                Add(teller:Say("dungeonRegular", PB.dungeonRegular, rng, tokens))
-            elseif visits > 0 and danger ~= "revisit" and rng() < 0.6 then
+            elseif visits >= 2 and PB.dungeonRegular then
+                -- (the third run and after: the plain count and the familiar place take turns; a return
+                -- is never told with the first-visit line)
+                history.knownN = (history.knownN or 0) + 1
+                local known = PB.dungeonKnown and history.knownN % 2 == 0
+                Add(teller:Say(known and "dungeonKnown" or "dungeonRegular", known and PB.dungeonKnown or PB.dungeonRegular, rng, tokens))
+            elseif visits > 0 then
                 tokens.nth = Ordinal(visits + 1)
                 Add(teller:Say("dungeonAgain", PB.dungeonAgain, rng, tokens))
             else
@@ -2063,6 +2239,26 @@ function T.Tell(person, days, voice, player, brief)
                 for n2 = goingIn + 1, #out do out[n2] = out[n2]:gsub(" down into ", " into ") end
             end
             if whyLine then Add(whyLine) end
+            -- A return: what the last run left (the lord unbeaten), and now and then a line of
+            -- what the place is like on a return (Lore's `again`, every other return; not in Highlights).
+            if visits > 0 and killCount > 0 and not fled then
+                if unfinishedBefore and reached and PB.dungeonReturnUnfinished then
+                    Add(teller:Say("dungeonReturnUnfinished", PB.dungeonReturnUnfinished, rng, tokens))
+                    d.atLast = true
+                end
+                if story and story.again then
+                    history.againN = (history.againN or 0) + 1
+                    if history.againN % 2 == 1 then
+                        local bossesHere = {}
+                        for _, ev in ipairs(d.events) do if ev.k == "boss" then bossesHere[#bossesHere + 1] = ev.d end end
+                        local lines = (L.WithoutBosses and L.WithoutBosses(story.again, bossesHere)) or story.again
+                        local was = beat
+                        beat = "again"
+                        Add(lines[rng(#lines)])
+                        beat = was
+                    end
+                end
+            end
             -- what it was like inside (a first visit): the concrete thing seen there by preference
             -- (your own book tells this dungeon this day: one lore line here, the why)
             local ownTells = false
@@ -2363,6 +2559,41 @@ function T.Tell(person, days, voice, player, brief)
             end
             end -- (not told as one sentence)
             Flush()
+            -- The run that stopped short of the lord: the lord beat you, a veteran fell short, or the
+            -- run simply ended; then what still holds the deeper halls (Lore's `unfinished`).
+            if unfinished and lordHere and PB.dungeonUnfinished then
+                beat = "climax"
+                tokens.short = Short(lordHere)
+                tokens.lastKill = lastKill and Place(lastKill) or tokens.lord
+                tokens.they = (L.Boss and L.Boss(lordHere) and L.Boss(lordHere).she) and "she" or "he"
+                if lordBeat and PB.dungeonFellShort then
+                    Add(teller:Say("dungeonFellShort", PB.dungeonFellShort, rng, tokens))
+                    TitleFrom(72, "fellShort")
+                elseif lordDoneBefore and PB.dungeonShortVeteran then
+                    Add(teller:Say("dungeonShortVeteran", PB.dungeonShortVeteran, rng, tokens))
+                    TitleFrom(70, "unfinished")
+                else
+                    Add(teller:Say(left and "dungeonUnfinishedLeft" or "dungeonUnfinishedEnded", left and PB.dungeonUnfinished.left or PB.dungeonUnfinished.ended, rng, tokens))
+                    TitleFrom(70, "unfinished")
+                end
+                mood.triumph = false
+                if story and story.unfinished then
+                    history.unfinishedLoreN = (history.unfinishedLoreN or 0) + 1
+                    if history.unfinishedLoreN % 2 == 1 then
+                        local bossesHere = {}
+                        for _, ev in ipairs(d.events) do if ev.k == "boss" then bossesHere[#bossesHere + 1] = ev.d end end
+                        local lines = (L.WithoutBosses and L.WithoutBosses(story.unfinished, bossesHere)) or story.unfinished
+                        local was = beat
+                        beat = "again"
+                        Add(lines[rng(#lines)])
+                        beat = was
+                    end
+                end
+            elseif d.atLast and reached and PB.lordAtLast then
+                beat = "climax"
+                tokens.short = Short(lordHere)
+                Add(teller:Say("lordAtLast", PB.lordAtLast, rng, tokens))
+            end
             local afterConflicts = #out
             -- What it was like inside (a first visit), how you split the work, and
             -- now and then a deed worth saying.
@@ -2376,8 +2607,11 @@ function T.Tell(person, days, voice, player, brief)
             local function AddBeforeConsequence(line)
                 if not line then return end
                 local last = out[#out]
+                local before = #out
                 Add(line)
-                if questConflicts and last and aftersNow[last] and #out >= 2 then
+                -- (only when the line was written: Highlights drop a role line, and the swap would then
+                -- put the lord's consequence before the kill)
+                if #out > before and questConflicts and last and aftersNow[last] and #out >= 2 then
                     out[#out], out[#out - 1] = out[#out - 1], out[#out]
                     outBeat[#out], outBeat[#out - 1] = outBeat[#out - 1], outBeat[#out]
                     for _, anchor in ipairs(temporalAnchors) do if anchor.last == #out - 1 then anchor.last = #out end end
@@ -3100,7 +3334,13 @@ function T.Tell(person, days, voice, player, brief)
                 if PB.title.days and PB.title.days[count] then Title(60, PB.title.days[count]) end
             end
             local runs = history.dungeonRuns + #f.dungeons
-            local countList = (tokens.firstDungeon and PB.dungeonCountBack and PB.dungeonCountBack[runs]) or PB.dungeonCount[runs]
+            -- (every run the same place: "five runs through the Deadmines"; counting back to the first
+            -- dungeon only when it was another place)
+            local sameRuns = #f.dungeons == 1 and (history.dungeons[f.dungeons[1].name] or 0) + 1 == runs
+            local firstDiffers = tokens.firstDungeon and tokens.firstDungeon ~= (f.dungeons[1] and Place(f.dungeons[1].name))
+            local countList = (sameRuns and PB.dungeonCountSame and PB.dungeonCountSame[runs])
+                or (firstDiffers and PB.dungeonCountBack and PB.dungeonCountBack[runs]) or PB.dungeonCount[runs]
+            if sameRuns then tokens.dungeonE = Place(f.dungeons[1].name) end
             if #f.dungeons > 0 and countList and trailing == 0 and not streakSaid then Add(teller:Say("runs" .. runs, countList, rng, tokens)); trailing = trailing + 1 end
             if history.firstDay then
                 for _, months in ipairs({1, 3, 6, 12}) do
@@ -3216,7 +3456,9 @@ function T.Tell(person, days, voice, player, brief)
             for _, line in ipairs(PB[key]) do if line:find("{name}", 1, true) then naming[#naming + 1] = line end end
             local greeting = teller:Say(key, #naming > 0 and naming or PB[key], rng, tokens)
             -- an opening that names no one gives way to it
-            if greeting and outBeat[1] == "open" and not out[1]:find("{n:", 1, true) then out[1] = greeting
+            -- (an opening that measures the time since the last outing is kept; the greeting follows it)
+            if greeting and outBeat[1] == "open" and not out[1]:find("{n:", 1, true) and history.intervalOpen ~= index then out[1] = greeting
+            elseif greeting and history.intervalOpen == index then table.insert(out, 2, greeting); table.insert(outBeat, 2, "open")
             elseif greeting then table.insert(out, 1, greeting); table.insert(outBeat, 1, "open") end
             -- ("back to the party. Shael made one more in the party.": the other one just came along)
             if greeting and out[2] and greeting:find("party", 1, true) and out[2]:find("in the party", 1, true) then
@@ -3467,6 +3709,18 @@ function T.Tell(person, days, voice, player, brief)
             history.firstDay = history.firstDay or today
             history.firstZone = history.firstZone or mainZone
             history.hours = history.hours + f.together / 3600
+            -- (what the next opening after a gap may recall: the place, the levels, a dungeon, a lord)
+            history.lastMain = mainZone or history.lastMain
+            history.lastTheirLevel = theirLevel or history.lastTheirLevel
+            history.lastMyLevel = level or history.lastMyLevel
+            history.lastDungeonName, history.lastLord = nil, nil
+            for _, d in ipairs(f.dungeons) do
+                history.lastDungeonName = d.name
+                for _, ev in ipairs(d.events) do
+                    local lore = ev.k == "boss" and L.Boss and L.Boss(ev.d)
+                    if lore and lore.last then history.lastLord = ev.d end
+                end
+            end
         elseif f.met or f.added then
             history.firstDay = history.firstDay or today
             history.firstZone = history.firstZone or mainZone
@@ -3508,6 +3762,8 @@ function T.Tell(person, days, voice, player, brief)
         for _, d in ipairs(f.dungeons) do if not history.firstDungeonName then history.firstDungeonName = d.name end end
         for _, d in ipairs(f.dungeons) do
             history.dungeons[d.name] = (history.dungeons[d.name] or 0) + 1
+            if d.reached then history.lordDone[d.name] = true end
+            history.unfinishedLast[d.name] = d.unfinished or nil
             for _, ev in ipairs(d.events) do
                 if ev.k == "boss" then history.bosses[ev.d] = true; history.beaten[ev.d] = nil end
                 if ev.k == "death" and ev.e then history.diedIn[d.name] = ev.e.w == "you" and "you" or "them" end

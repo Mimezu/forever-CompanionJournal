@@ -617,6 +617,58 @@ PB.dungeonBrief = {
     "There was a short visit to {dungeonE} as well.",
     "{pair} looked in at {dungeonE}, too.",
 }
+---------------------------------------------------------------------------
+-- The same dungeon again (2026-11-06): each run told by its place in the
+-- book's history of it. Tokens: {dungeonE} {lord} {short} (the lord of the
+-- place, from Lore, and its short name), {lastKill} (the last boss killed this
+-- run), {nth}. Facts only: never why anyone left.
+---------------------------------------------------------------------------
+PB.dungeonReturnUnfinished = {
+    "The last run there had stopped short of {lord}.",
+    "The time before, {we} had come out with {lord} unbeaten.",
+    "{lord} had been left standing the time before.",
+    "The first run had not gone as deep as {lord}.",
+}
+PB.lordAtLast = {
+    "This time the run reached {short}.",
+    "What the earlier run had left standing, this one finished.",
+    "{short} did not outlast the second visit.",
+    "The place had kept {short} from {us} once, and did not again.",
+}
+PB.dungeonKnown = {
+    "{pair} went into {dungeonE} for the {nth} time.",
+    "It was {our} {nth} run through {dungeonE}.",
+    "By the {nth} run, {dungeonE} {dungeonWas} familiar ground to {pairObj}.",
+    "{pair} went down into {dungeonE} again, the {nth} time.",
+}
+PB.dungeonUnfinished = {
+    left = {
+        "{lord} was still down there when {pair} came back out.",
+        "{we} came back out with {lord} unbeaten.",
+        "{lastKill} was as far as {pair} got, and {we} came out again.",
+        "Past {lastKill}, {we} went no further, and left {lord} where {they} stood.",
+    },
+    ended = {
+        "{we} did not go as deep as {lord} that time.",
+        "The run ended before {lord}.",
+        "{lastKill} was as far as {pair} got.",
+        "Past {lastKill}, {we} went no further that day.",
+    },
+}
+PB.dungeonShortVeteran = {
+    "{pair} had been to the bottom of {dungeonE} before. This time the run ended at {lastKill}.",
+    "It was the first time {pair} had left {dungeonE} without {short}'s fall.",
+    "{we} had reached {lord} in {dungeonE} before, and this time {we} stopped at {lastKill}.",
+    "For once {dungeonE} kept {short} from {us}.",
+}
+PB.dungeonFellShort = {
+    "{short} beat {us}, and the run ended there.",
+    "{short} stopped {us}, and {we} went no further.",
+    "{short} held the end of {dungeonE} against {us}.",
+    "{short} was the end of the run, and {we} were the ones beaten.",
+}
+PB.title.unfinished = {"Short of the Bottom", "Not All the Way", "Half Done"}
+PB.title.fellShort = {"Beaten at the Last", "The Last Door", "Stopped Short"}
 
 ---------------------------------------------------------------------------
 -- 7. BOSSES
@@ -760,11 +812,18 @@ PB.alsoThere = {
     "{others} went with {pairObj}.",
     "{others} made one more in the party.",
     "{others} was in the party as well.",
+    "{others} was there too.",
+    "{others} joined {pairObj} for the day.",
+    "{others} made a third.",
+    "With {pairObj} went {others}.",
 }
 PB.alsoTherePlural = {
     "{others} came along too.",
     "{others} went with {pairObj}.",
     "{others} were in the party as well.",
+    "{others} were there too.",
+    "{others} filled out the party.",
+    "With {pairObj} went {others}.",
 }
 -- The first of the other side you ever saw, while together ({aFoe}: "an orc shaman", {side}).
 PB.sharedFoeSeen = {
@@ -1138,6 +1197,12 @@ PB.anniversaryOrigin = {
 -- PB.dungeonCountBack, the dungeon counts that remember the first dungeon
 -- ({firstDungeon} = the first recorded dungeon visit). The engine prefers it over
 -- PB.dungeonCount ("That made ten dungeons together.") once {firstDungeon} is known.
+-- (every run so far the same place: {dungeonE})
+PB.dungeonCountSame = {
+    [5] = {"That made five runs through {dungeonE} together."},
+    [10] = {"That made ten runs through {dungeonE} together."},
+    [25] = {"That made twenty-five runs through {dungeonE} together."},
+}
 PB.dungeonCountBack = {
     [5] = {"That made five dungeons together, counting from {firstDungeon}."},
     [10] = {"That made ten dungeons together. The first had been {firstDungeon}."},
@@ -1352,12 +1417,129 @@ PB.recordedIntervalBond = {
     "{gap} on, {pair} were out together, in {zoneD}.",
 }
 
+---------------------------------------------------------------------------
+-- A chapter a week or more after the last outing together (2026-11-06): how a
+-- game master opens a new night at the table. The gap in words ({since}: "a
+-- week", "two months", "half a year"), the place now ({zoneD}) against the
+-- place then ({lastZone}), the hour and the weekday, and on the long gaps one
+-- sentence of what the last outing recorded (their level then and now, a lord's
+-- fall, a dungeon). Elapsed time between recorded outings only: nothing here
+-- says what either of you did in between, nor why. Buckets: short (a week to
+-- under three weeks), long (three weeks to five months), longest (about half a
+-- year or more, or the longest gap of the book). Shapes: same (the zone of the
+-- last outing), else (another zone), met (back where the companion first
+-- joined), bond (a spouse, sibling or oldest friend, one time in three).
+---------------------------------------------------------------------------
+PB.absence = {
+    short = {
+        same = {
+            "{since} later, {pair} were back in {zoneD}.",
+            "{since} on, {pair} were in {zoneD} again, that {weekday} {part}.",
+            "It was {since} before {name} and {I} were back in {zoneD}.",
+            "{name} was back {since} later, and {zoneD} again was where {we} went.",
+            "{since} passed before {pair} went out together again, and {zoneD} was where {we} did.",
+            "{since} after the last time, {pair} were in {zoneD} once more.",
+        },
+        ["else"] = {
+            "{since} after {lastZone}, {pair} were out in {zoneD}.",
+            "{since} on from {lastZone}, {name} was back in {my} party, in {zoneD}.",
+            "The next time {pair} went out, {since} later, it was in {zoneD}.",
+            "{since} had passed since {lastZone}. That {weekday} {part}, {pair} set out in {zoneD}.",
+            "{name} joined {me} again {since} later, in {zoneD} this time.",
+            "{lastZone} had been the last place. {since} later, {pair} were in {zoneD}.",
+        },
+    },
+    long = {
+        same = {
+            "{since} had gone by when {pair} were next out together, in {zoneD} again.",
+            "{since} later, on {weekday} {part}, {name} was back in {my} party, and {zoneD} was the place again.",
+            "It had been {since} since {pair} had last gone out, and that too had been in {zoneD}.",
+            "{pair} were back in {zoneD} after {since}.",
+            "After {since}, {name} and {I} were in {zoneD} once more, that {weekday} {part}.",
+            "{since} had passed. {pair} were in {zoneD} again, the same ground as the last time.",
+        },
+        ["else"] = {
+            "{since} had passed since {lastZone}. {pair} set out again in {zoneD}.",
+            "When {pair} next went out, {since} later, it was in {zoneD}.",
+            "{since} after {lastZone}, {name} was in {my} party again, this time in {zoneD}.",
+            "{lastZone} had been the last place. {since} later {pair} were in {zoneD}.",
+            "{since} on from {lastZone}, {pair} went out into {zoneD} on {weekday} {part}.",
+            "It had been {since}. {name} was back beside {me}, and the place was {zoneD}.",
+            "{since} lay between {lastZone} and that {weekday} {part} in {zoneD}.",
+        },
+        met = {
+            "{since} later, {pair} were back in {zoneD}, where {name} had first joined {my} party.",
+            "{since} on, it was {zoneD} again, where {pair} had first met.",
+            "After {since}, {pair} were in {zoneD} once more, the place where it had begun.",
+        },
+        bond = {
+            "{Bond} was back at {my} side after {since}, in {zoneD}.",
+            "{since} had passed. Then {name}, {bondWord}, was in {my} party again, in {zoneD}.",
+            "After {since}, {name}, {bondWord}, was with {me} again in {zoneD}.",
+            "{since} on, {bondWord} was with {me} in {zoneD} once more.",
+        },
+    },
+    longest = {
+        same = {
+            "{since} had passed since {pair} had last been out together, and {zoneD} was where {we} met again.",
+            "{since} later, {name} was back at {my} side, in {zoneD} as before.",
+            "{since} went by. Then, on {weekday} {part}, {pair} were in {zoneD} again.",
+            "It had been {since}, and the place was the same, {zoneD}, with {name} beside {me}.",
+        },
+        ["else"] = {
+            "{since} had gone by since {pair} had last been out together, in {lastZone}. On {weekday} {part}, {we} set out again in {zoneD}.",
+            "After {since}, {name} was in {my} party again. The last time had been {lastZone}, and this time it was {zoneD}.",
+            "{since} lay between {lastZone} and that {weekday} {part} in {zoneD}.",
+            "{since} had passed since {lastZone}. {pair} went out again, in {zoneD}.",
+            "{since} later, {pair} were out together again, in {zoneD}. The last time had been {lastZone}.",
+        },
+        met = {
+            "{since} later, {pair} were back in {zoneD}, where {name} had first joined {my} party.",
+            "After {since}, it was {zoneD} again, where it had all begun.",
+        },
+        bond = {
+            "{since} had passed. Then {name}, {bondWord}, was at {my} side again, in {zoneD}.",
+            "After {since}, {name}, {bondWord}, was with {me} again, in {zoneD}.",
+            "{since} later, on {weekday} {part}, {bondWord} was back in {my} party, in {zoneD}.",
+        },
+    },
+}
+-- The second sentence of such an opening, from what the last outing recorded
+-- ({theirs} {theirsThen} {mine} {mineThen} {lastLord} {lastDungeon}). Told on
+-- the long gaps, not in Highlights.
+PB.absenceRecap = {
+    theirs = {
+        "{name} was level {theirs} by then, up from {theirsThen}.",
+        "{name} had been level {theirsThen} the last time, and was {theirs} now.",
+        "Since then {name} had gone from level {theirsThen} to {theirs}.",
+    },
+    both = {
+        "{name} was level {theirs} by then, up from {theirsThen}, and {Iwas} level {mine}.",
+        "Since then {name} had gone from level {theirsThen} to {theirs}, and {I} from {mineThen} to {mine}.",
+        "Both of {us} had climbed in the meantime, {name} to level {theirs} and {me} to {mine}.",
+    },
+    bothSame = {
+        "Both of {us} were level {theirs} by then.",
+        "{name} and {I} were both level {theirs} by then, up from {theirsThen}.",
+        "Since then both of {us} had climbed to level {theirs}.",
+    },
+    lord = {
+        "The last time out had ended with {lastLord} dead in {lastDungeon}.",
+        "{lastLord} had fallen to {us} in {lastDungeon} the last time.",
+        "The time before, {lastDungeon} had been the end of the day, and {lastLord} with it.",
+    },
+    dungeon = {
+        "The last time out had taken {pairObj} into {lastDungeon}.",
+        "{lastDungeon} had been the last place {we} went down into together.",
+    },
+}
+
 -- More moments shared with a companion (your own journal saw them while you
 -- were together; 2026-11-05). Tokens: {I} {me} {my} {we} {our} {pair} {name} and
 -- the moment's own ({who} {outcome} {what} {places} {faction} {standing}).
 PB.shared.duelWith = {
     "{pair} duelled, and {winner} won.",
-    "{pair} crossed blades in a duel, and {winner} won it.",
+    "{pair} tried each other in a duel, and {winner} won it.",
     "There was a duel between the two of {us}, and {winner} won.",
 }
 PB.shared.duel = {
@@ -1479,6 +1661,23 @@ do
     you.reunionBond = {"After {gap}, {bondWord} was back at {my} side.", "{gap} had passed. Then {name}, {bondWord}, was in {my} party again."}
     we.openPlace = {"{name} and I went out into {zoneD} that {part}.", "That {part} took {name} and me to {zoneD}."}
     you.openPlace = {"That {part} {my} party went into {zoneD}.", "{zoneD} was where the {part} took {me} and {name}."}
+    -- After a week or more apart (PB.absence; the keys are absence + bucket + shape).
+    we.absenceshortsame = {"{since} later, {name} and I were back in {zoneD}.", "{name} and I were in {zoneD} again {since} on."}
+    you.absenceshortsame = {"{since} later, {my} party, {me} and {name}, was back in {zoneD}.", "{since} on, {zoneD} had {me} and {name} again."}
+    we.absenceshortelse = {"{since} after {lastZone}, {name} and I were out in {zoneD}.", "{name} and I next went out {since} later, in {zoneD}."}
+    you.absenceshortelse = {"{since} after {lastZone}, {my} party, {me} and {name}, was in {zoneD}.", "{since} later, {name} was with {me} in {zoneD}."}
+    we.absencelongsame = {"{since} had passed when {name} and I were next in {zoneD}.", "After {since}, {name} and I were in {zoneD} again, the two of us."}
+    you.absencelongsame = {"{since} had passed when you and {name} were next in {zoneD}.", "After {since}, {name} was with {me} in {zoneD} again."}
+    we.absencelongelse = {"{since} had passed since {lastZone}. {name} and I set out in {zoneD}.", "After {since}, {name} and I were out together again, in {zoneD}."}
+    you.absencelongelse = {"{since} had passed since {lastZone}. You and {name} set out in {zoneD}.", "After {since}, {my} party was {me} and {name} again, in {zoneD}."}
+    we.absencelongestelse = {"{since} had gone by since {lastZone}. {name} and I set out again in {zoneD}, on {weekday} {part}."}
+    you.absencelongestelse = {"{since} had gone by since {lastZone}. On {weekday} {part}, {my} party was {me} and {name} again, in {zoneD}."}
+    we.absencelongestsame = {"{since} had passed, and {zoneD} was where {name} and I met again."}
+    we.absencelongbond = {"{since} on, {bondWord} and I were out together again, in {zoneD}."}
+    you.absencelongbond = {"After {since}, you and {bondWord} set out together in {zoneD}."}
+    we.absencelongestbond = {"After {since}, {bondWord} and I set out together again, in {zoneD}."}
+    you.absencelongestbond = {"{since} had passed before you and {bondWord} were out together again, in {zoneD}."}
+    you.absencelongestsame = {"{since} had passed, and {zoneD} was where you and {name} met again."}
     -- The land, and returns.
     we.explore = {"{name} and I went into {zoneD} together for the first time.", "It was the first time {pair} had been in {zoneD} together."}
     we.zoneReturn = {"{name} and I were back in {zoneD}."}

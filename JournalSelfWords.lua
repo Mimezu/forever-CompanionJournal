@@ -217,6 +217,10 @@ W.openWithBare = {
     "{names} and I set out in {zoneE}.",
     "I was in {zoneE} with {names}.",
     "{names} and I took to {zoneE}.",
+    "I set out with {names} in {zoneE}.",
+    "{names} came along, and {zoneE} was where we went.",
+    "{names} and I were out in {zoneE}.",
+    "The {part} had me in {zoneE}, with {names}.",
 }
 W.openPerilBare = {
     "I was in {zoneD}, dangerous country for someone of my experience.",
@@ -501,6 +505,14 @@ W.dungeonFled = {
 W.dungeonAgain = {
     "{We} went back into {dungeonE}.",
     "It was another visit to {dungeonE}.",
+    "{We} went down into {dungeonE} a second time.",
+    "{DungeonE} again, and {we} went in.",
+}
+-- A companion joined, and it was not the first run ({names} {nth}).
+W.dungeonWithAgain = {
+    "{names} and I went back into {dungeonE}, {our} {nth} run.",
+    "With {names}, I went down into {dungeonE} for the {nth} time.",
+    "{names} joined me, and we went back into {dungeonE}.",
 }
 W.dungeonRegular = {
     "{dungeonE} again, after the earlier visits.",
@@ -511,6 +523,68 @@ W.firstDungeonEnd = {
     "It was the first time I had gone into such a place.",
     "I had never been inside a dungeon before.",
     "It was my first time in such a place, and I came out again.",
+}
+---------------------------------------------------------------------------
+-- The same dungeon again (2026-11-06): each run told by its place in the
+-- book's history of it. Tokens: {dungeonE} {DungeonE} {lord} {Lord} (the lord
+-- of the place, from Lore), {lastKill} (the last boss killed this run),
+-- {nth}, and {We} {we} {us} {our} {were}. Facts only: the record says which
+-- bosses fell, who died and when the run ended; never why anyone left.
+---------------------------------------------------------------------------
+-- A return after a run that stopped short of the lord (said after the entry line).
+W.dungeonReturnUnfinished = {
+    "The last run there had stopped short of {lord}.",
+    "The time before, {we} had come out with {lord} unbeaten.",
+    "{Lord} had been left standing the time before.",
+    "The first run had not gone as deep as {lord}.",
+}
+-- Then the lord fell (said after the kills and their consequence).
+W.lordAtLast = {
+    "This time the run reached {short}.",
+    "What the earlier run had left standing, this one finished.",
+    "{Short} did not outlast the second visit.",
+    "The place had kept {short} from {us} once, and did not again.",
+}
+-- Back in a place where the last run killed me (after the entry line).
+W.dungeonDiedBefore = {
+    "I had died in there the time before.",
+    "The last run through it had cost me a death.",
+}
+-- A place known well (the third run and after; alternates with W.dungeonRegular).
+W.dungeonKnown = {
+    "{We} went into {dungeonE} for the {nth} time.",
+    "It was {our} {nth} run through {dungeonE}.",
+    "{We} went down into {dungeonE} again, {our} {nth} time there.",
+    "{We} knew the way through {dungeonE} by the {nth} run.",
+}
+-- The run ended before the lord: left (something was recorded outside it afterwards) or ended (the day ended there).
+W.dungeonUnfinished = {
+    left = {
+        "{Lord} was still down there, and {we} were not.",
+        "{We} left {lord} unbeaten at the bottom of it.",
+        "{LastKill} was as far as {we} got that time.",
+        "Past {lastKill}, {we} went no further, and left {lord} where {they} stood.",
+    },
+    ended = {
+        "{We} did not go as deep as {lord} that time.",
+        "The run ended before {lord}.",
+        "{LastKill} was as far as {we} got.",
+        "Past {lastKill}, {we} went no further that day.",
+    },
+}
+-- A veteran of the place falling short of its lord.
+W.dungeonShortVeteran = {
+    "{We} had been to the bottom of {dungeonE} before. This time the run ended at {lastKill}.",
+    "It was the first time {we} had left {dungeonE} without {short}'s fall.",
+    "{We} had reached {lord} in {dungeonE} before, and this time {we} stopped at {lastKill}.",
+    "For once {dungeonE} kept {short} from {us}.",
+}
+-- The lord beat us, and the run ended there.
+W.dungeonFellShort = {
+    "{Short} beat {us}, and the run ended there.",
+    "{Short} stopped {us}, and {we} went no further.",
+    "{Short} held the end of {dungeonE} against {us}.",
+    "{Short} was the end of the run, and {we} were the ones beaten.",
 }
 -- Your part in it, once per visit.
 W.role = {
@@ -1250,6 +1324,8 @@ W.boast.healer = {
     "I did more of the healing than anyone else in the company.",
 }
 W.titles.firstDungeon = {"The First Dungeon", "Past the Gate"}
+W.titles.unfinished = {"Short of the Bottom", "Not All the Way", "Half Done"}
+W.titles.fellShort = {"Beaten at the Last", "The Last Door", "Stopped Short"}
 W.voyageFirstLand = {
     zeppelin = {
         "For the first time, I rode a zeppelin, and it carried me over the sea to {to}, where I had never been.",
@@ -1405,7 +1481,7 @@ W.joinedNewMany = {
 W.leaveDungeon = {
     "{We} came back out into {zoneD}.",
     "{We} came out of the dark into {zoneD} again.",
-    "Then {we} were back out in {zoneD}.",
+    "Then {we} {were} back out in {zoneD}.",
 }
 -- Ore smelted at the forge ({count}, {made}).
 W.smelt = W.smelt or {
@@ -2564,8 +2640,8 @@ W.exploreOne = {
 W.explore = {
     "I found my way to {places}.",
     "{Places} were new ground to me.",
-    "I came upon {places}, none of which I had seen before.",
-    "My way took me through {places}, all new to me.",
+    "I came upon {places} for the first time.",
+    "My way took me through {places}, which I had not seen before.",
 }
 W.exploreMore = {
     "I found my way to {places} and {rest} other places I had not seen before.",
@@ -2582,9 +2658,10 @@ W.taxi = {
     "The flight master at {place} would carry me from then on.",
     "From then on I could fly out of {place}.",
 }
+-- (the town was named a sentence or two earlier: no "there", which would point at the last place said)
 W.taxiHere = {
-    "I learned the flight path there.",
-    "The flight master there would carry me from then on.",
+    "I learned the flight path while I was in town.",
+    "The flight master in town would carry me from then on.",
 }
 -- ({names}: one to three spells; {rest}: how many more)
 W.learn = {
@@ -2607,7 +2684,7 @@ W.rep = {
 }
 -- ({who}: the other duellist; {count} {wins} for a series)
 W.duelWon = {"I duelled {who} and won.", "I beat {who} in a duel.", "A duel with {who} went my way.", "{Who} and I duelled, and I won."}
-W.duelLost = {"I duelled {who} and lost.", "{Who} beat me in a duel.", "A duel with {who} did not go my way.", "{Who} and I duelled, and {who} won."}
+W.duelLost = {"I duelled {who} and lost.", "{Who} beat me in a duel.", "A duel with {who} did not go my way.", "{Who} and I duelled, and I came off worse."}
 W.duelWonFled = {"{Who} and I duelled, and {who} left the ring before it was done.", "I duelled {who}, who stepped out of bounds before the end."}
 W.duelLostFled = {"I duelled {who}, and left the ring before it was done.", "{Who} and I duelled, and I was the one who stepped out of bounds."}
 W.duelSeries = {"{Who} and I duelled {count} times, and I won {wins} of them.", "I duelled {who} {count} times that day and won {wins}."}
@@ -2623,7 +2700,7 @@ W.skill = {
 W.hk = {"{Count} of the {side} fell to me in {zoneD}.", "I killed {count} of the {side} that day.", "{Count} of the {side} died by my hand there."}
 W.hkOne = {"One of the {side} fell to me in {zoneD}.", "I killed one of the {side} there.", "One of the {side} died by my hand in {zoneD}."}
 W.hkAfterFirst = {"{Count} of them fell to me before the day was out.", "By the end of the day, {count} of them had died by my hand."}
-W.rareKilled = {"I killed {what}, a creature few ever see.", "{What} crossed my path, and I killed it.", "I brought down {what}, and not many can say that."}
+W.rareKilled = {"I killed {what}, a creature few ever see.", "{What} crossed my path, and I killed it, rare as it was.", "I brought down {what}, and not many can say that."}
 W.titles.read = {"{what}"}
 W.titles.explore = {"New Ground", "Unmapped Ground"}
 W.titles.duel = {"A Duel", "A Challenge"}
@@ -2665,6 +2742,134 @@ W.backMemory = {
 W.deathAfterLong = {
     "It was my first death in {span}.",
     "I had not died in {span}.",
+}
+
+---------------------------------------------------------------------------
+-- A chapter after days apart from the last recorded one (2026-11-06): how a
+-- game master opens a new night at the table. Keyed to the real gap, built
+-- from what the book recorded last (the place, who was there, a dungeon, a
+-- lord's fall, the level) and what is true now (the place, the hour, the
+-- weekday). Elapsed time only: nothing here says what the writer did in
+-- between, nor why. Buckets: short (a week to under three weeks), long (three
+-- weeks to five months), longest (half a year or more, or the longest gap of
+-- the book). Shapes: same (the same zone as the last chapter), else (another
+-- zone the book knows), new (a first visit). Tokens: {since} ("a week", "two
+-- months"), {zoneD}, {lastZone}, {part}, {weekday}.
+---------------------------------------------------------------------------
+W.absence = {
+    short = {
+        same = {
+            "{Since} later, I was back in {zoneD}.",
+            "{Since} went by. Then, on {weekday} {part}, I was in {zoneD} again.",
+            "I came back to {zoneD} after {since}, on a {weekday} {part}.",
+            "On {weekday} {part}, {since} on, I took up {zoneD} where I had left it.",
+            "I saw {zoneD} again {since} later.",
+            "{Since} had passed when I was next in {zoneD}.",
+        },
+        ["else"] = {
+            "{Since} after {lastZone}, I was in {zoneD}.",
+            "{Since} had passed since {lastZone}. On {weekday} {part} I set out in {zoneD}.",
+            "When I next set out, {since} later, it was in {zoneD}.",
+            "The next time out, {since} on, was in {zoneD}.",
+            "{Since} on from {lastZone}, I went out into {zoneD}.",
+            "I had been in {lastZone} the last time. {Since} later it was {zoneD}, on {weekday} {part}.",
+        },
+        new = {
+            "{Since} after {lastZone}, I came to {zoneD} for the first time.",
+            "When I next set out, {since} later, it was into {zoneD}, where I had never been.",
+            "{Since} on, I went somewhere new, {zoneD}.",
+        },
+        with = {
+            "{Since} later, {names} and I were out in {zoneD}.",
+            "{Since} on, I set out with {names} in {zoneD}, on {weekday} {part}.",
+            "{names} and I took to {zoneD}, {since} after the last time.",
+        },
+    },
+    long = {
+        same = {
+            "{Since} had passed, and {zoneD} was where I began again.",
+            "{Since} later, on {weekday} {part}, I was back in {zoneD}, where I had left off.",
+            "I had last been in {zoneD} {since} before. On {weekday} {part} I was there again.",
+            "{Since} had gone by when I next set out, and {zoneD} was where I did.",
+            "It had been {since}. I was in {zoneD} again.",
+            "The {weekday} {part} that brought me back to {zoneD} came {since} after the last.",
+            "After {since}, {zoneD} had me again.",
+        },
+        ["else"] = {
+            "{Since} after {lastZone}, I set out in {zoneD}.",
+            "{Since} had passed since {lastZone}. Now it was {zoneD}, on {weekday} {part}.",
+            "When I next went out, {since} later, {lastZone} was behind me and the place was {zoneD}.",
+            "{Since} on from {lastZone}, I was in {zoneD}.",
+            "It had been {since} since {lastZone}. I went out into {zoneD} that {weekday} {part}.",
+            "I had been in {lastZone} the last time out. {Since} later I was in {zoneD}.",
+            "{Since} lay between {lastZone} and this {weekday} {part} in {zoneD}.",
+        },
+        new = {
+            "{Since} after {lastZone}, I came to {zoneD} for the first time.",
+            "It had been {since}. I set out somewhere new, {zoneD}.",
+            "When I next set out, {since} on, it was into {zoneD}, where I had never been.",
+            "{Since} later, {zoneD} was new ground for me.",
+        },
+        with = {
+            "{Since} had passed when {names} and I set out in {zoneD}.",
+            "After {since}, {names} and I were out together in {zoneD}.",
+            "{Since} later, {names} and I took to {zoneD}.",
+            "It had been {since} when {names} and I set out in {zoneD}, on {weekday} {part}.",
+        },
+    },
+    longest = {
+        same = {
+            "{Since} had passed since I had last been in {zoneD}. On {weekday} {part}, I was there again.",
+            "{Since} went by. Then, on {weekday} {part}, I was back in {zoneD}.",
+            "It was {since} later that I stood in {zoneD} once more, on a {weekday} {part}.",
+            "{Since} after the last time, {zoneD} was where I began again.",
+        },
+        ["else"] = {
+            "{Since} had passed since {lastZone}. I set out again in {zoneD}, on {weekday} {part}.",
+            "{Since} after {lastZone}, I set out in {zoneD}.",
+            "It had been {since} since {lastZone}, and {zoneD} was where I went out next.",
+            "{Since} lay between {lastZone} and that {weekday} {part} in {zoneD}.",
+            "{Since} later, on {weekday} {part}, I was out in {zoneD}. The last place had been {lastZone}.",
+        },
+        new = {
+            "{Since} after {lastZone}, I saw {zoneD} for the first time.",
+            "After {since}, I came somewhere new, {zoneD}.",
+            "{Since} had passed since {lastZone}. {ZoneD} was new to me.",
+        },
+        with = {
+            "{Since} had gone by when {names} and I set out in {zoneD}, on {weekday} {part}.",
+            "After {since}, I was out again, with {names}, in {zoneD}.",
+            "{Since} later, {names} and I were in {zoneD}.",
+        },
+    },
+}
+-- The second sentence of such an opening, from what the last chapter recorded
+-- ({lastZone} {names} {lastDungeon} {lastLord} {level} {lastLevel} {up}). Told
+-- on the long gaps, not in Highlights.
+W.absenceRecap = {
+    company = {
+        "The last time out, {names} had been with me, in {lastZone}.",
+        "{names} had been with me that last time.",
+        "{lastZone} had been the last place, with {names}.",
+    },
+    lord = {
+        "The last time out had ended with {lastLord} dead in {lastDungeon}.",
+        "{lastLord} had fallen in {lastDungeon} the last time out.",
+        "The time before, {lastDungeon} had been the end of the day, and {lastLord} with it.",
+    },
+    dungeon = {
+        "The last time out had taken me into {lastDungeon}.",
+        "{lastDungeon} had been the last place I went down into.",
+    },
+    levelUp = {
+        "I was level {level} by then, up from {lastLevel}.",
+        "Since then I had gone from level {lastLevel} to {level}.",
+        "I had been level {lastLevel} the last time, and was {level} now.",
+    },
+    levelSame = {
+        "I was still level {level}.",
+        "I was level {level}, as I had been.",
+    },
 }
 -- ({thread} {span}: a thread taken up again after a week or more)
 W.threadSince = {

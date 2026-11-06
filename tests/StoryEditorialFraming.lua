@@ -54,5 +54,5 @@ for _,entry in ipairs({false,true}) do for _,bond in ipairs({false,'spouse'}) do
     end end
 end end
 local n=0;for _ in pairs(openings) do n=n+1 end
-check(n==8,'all field/dungeon and bonded/unbonded opening alternatives exercised: '..n)
+check(n>=8,'all field/dungeon and bonded/unbonded opening alternatives exercised: '..n) -- (eight before the absence openings of 2026-11-06; more now)
 print('StoryEditorialFraming: '..checks..' checks passed; '..n..' distinct openings')
