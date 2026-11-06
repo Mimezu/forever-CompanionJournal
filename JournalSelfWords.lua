@@ -8,7 +8,7 @@ A.SelfWords = W
 W.originBridge = {
     "Later, {we} {were} in {zoneD}.",
     "Later came {zoneD}. That was where this part of the journey began.",
-    "After that came {zoneD}, and this part of the way begins there.",
+    "After that came {zoneD}, where this part of the journey began.",
 }
 W.townBackdrop = {"{Town} was {lore}."}
 W.questReturn = {
@@ -216,7 +216,7 @@ W.openBackBare = {
 W.openWithBare = {
     "{names} and I set out in {zoneE}.",
     "I was in {zoneE} with {names}.",
-    "{names} and I took to {zoneE}.",
+    "{names} and I set out into {zoneE}.",
     "I set out with {names} in {zoneE}.",
     "{names} came along, and {zoneE} was where we went.",
     "{names} and I were out in {zoneE}.",
@@ -504,7 +504,7 @@ W.dungeonFled = {
 -- Going back ({We}, {dungeonE}).
 W.dungeonAgain = {
     "{We} went back into {dungeonE}.",
-    "It was another visit to {dungeonE}.",
+    "{We} {were} back in {dungeonE}.",
     "{We} went down into {dungeonE} a second time.",
     "{DungeonE} again, and {we} went in.",
 }
@@ -515,8 +515,8 @@ W.dungeonWithAgain = {
     "{names} joined me, and we went back into {dungeonE}.",
 }
 W.dungeonRegular = {
-    "{dungeonE} again, after the earlier visits.",
-    "{We} went down into {dungeonE} once more, as {we} had before.",
+    "Back {we} went into {dungeonE}.",
+    "{We} went down into {dungeonE} once more.",
 }
 -- The very first dungeon of your life, after it.
 W.firstDungeonEnd = {
@@ -637,7 +637,9 @@ W.death = {
     SLIME = {"The slime killed me.", "I died in the slime. There are better ways to go."},
     plain = {"I died.", "I did not survive it.", "I was killed."},
 }
-W.deathIn = {"{Foe} killed me in {sub}.", "I died in {sub}, at the hands of {foe}."}
+W.deathIn = {"{Foe} killed me {inSub}.", "I died {inSub}, at the hands of {foe}."}
+-- (the killer fell later in the same run: no second mention in the kill roll)
+W.deathInAvenged = {"{Foe} killed me {inSub}, and died for it before the run was over.", "{Foe} killed me {inSub}, and did not outlive the run."}
 W.deaths = {"I died {count} times.", "I died {count} times before it was done."}
 -- The same bad end twice in one day ({count}: "twice", "three times").
 W.deathsSame = {
@@ -668,7 +670,6 @@ W.firstDeath = {
 }
 W.firstDeathRez = {
     "It was the first time I died.",
-    "It was my first death, and not my last.",
     "It was the first time I died, and I did not have to walk back.",
     "I had never died before.",
 }
@@ -1393,7 +1394,7 @@ W.aucSale = {
 W.swim = {
     "I swam across {place} rather than walk around it.",
     "It was a long swim in {place}, and I made it without drowning.",
-    "I swam a long way through {place}.",
+    "I swam a long way in the waters of {place}.",
     "I took to the water in {place} and swam a long way.",
     "I swam a long way out into {place}.",
 }
@@ -1897,7 +1898,6 @@ W.oncePerBook[#W.oncePerBook + 1] = "Before the day was out, I fell to my death,
 -- back." ("back" twice). The new line says the same with what was not seen.
 W.firstDeathRez = {
     "It was the first time I died.",
-    "It was my first death, and not my last.",
     "It was the first time I died, and I never saw the graveyard.",
     "I had never died before.",
 }
@@ -2228,7 +2228,7 @@ W.levelEarlyDungeon = {"I had reached level {level} down in {where}.", "Level {l
 W.levelEarlyIn = {"I had reached level {level} in {where}, earlier that day.", "Level {level} had come in {where}, earlier that day."}
 
 -- A long swim that nearly drowned you ({place}).
-W.swimNearly = {"I swam a long way through {place}, and very nearly drowned.", "I swam out into {place} and came up for air just in time."}
+W.swimNearly = {"I swam a long way in the waters of {place}, and very nearly drowned.", "I swam out into {place} and came up for air just in time."}
 
 -- What a skinner took, by name ({names}: "Thick Leather"; {work}).
 W.gatherNamesHides = {"Most of it was {names}.", "Most of what I took was {names}."}
@@ -2827,7 +2827,7 @@ W.absence = {
         with = {
             "{Since} later, {names} and I were out in {zoneD}.",
             "{Since} on, I set out with {names} in {zoneD}, on {weekday} {part}.",
-            "{names} and I took to {zoneD}, {since} after the last time.",
+            "{names} and I went out into {zoneD}, {since} after the last time.",
         },
     },
     long = {
@@ -2843,7 +2843,7 @@ W.absence = {
         ["else"] = {
             "{Since} after {lastZone}, I set out in {zoneD}.",
             "{Since} had passed since {lastZone}. Now it was {zoneD}, on {weekday} {part}.",
-            "When I next went out, {since} later, {lastZone} was behind me and the place was {zoneD}.",
+            "When I next went out, {since} later, it was in {zoneD}, with {lastZone} behind me.",
             "{Since} on from {lastZone}, I was in {zoneD}.",
             "It had been {since} since {lastZone}. I went out into {zoneD} that {weekday} {part}.",
             "I had been in {lastZone} the last time out. {Since} later I was in {zoneD}.",
@@ -2858,7 +2858,7 @@ W.absence = {
         with = {
             "{Since} had passed when {names} and I set out in {zoneD}.",
             "After {since}, {names} and I were out together in {zoneD}.",
-            "{Since} later, {names} and I took to {zoneD}.",
+            "{Since} later, {names} and I set out in {zoneD}.",
             "It had been {since} when {names} and I set out in {zoneD}, on {weekday} {part}.",
         },
     },
@@ -3256,8 +3256,8 @@ W.bgFlags = {"I carried the flag home {times}.", "{Times} I took their flag acro
 W.bgFlag = {"I carried the flag home once.", "Once I took their flag across the field."}
 W.bgReturns = {"I returned our flag {times}.", "{Times} I brought our own flag back."}
 W.bgReturn = {"I returned our flag once.", "Once I brought our own flag back."}
-W.bgTopOne = {"No one on our side had more killing blows than I did.", "I had the most killing blows on our side.", "Of the {mySide} in that match, I struck the most killing blows."}
-W.bgTop = {"In the {ordinal}, no one on our side had more killing blows than I did.", "The {ordinal} left me with the most killing blows on our side.", "Of the {mySide} in the {ordinal}, I struck the most killing blows."}
+W.bgTopOne = {"No one on our side had more killing blows than I did.", "I had the most killing blows on our side.", "I struck more killing blows in that match than anyone else on our side."}
+W.bgTop = {"In the {ordinal}, no one on our side had more killing blows than I did.", "The {ordinal} left me with the most killing blows on our side.", "I struck more killing blows in the {ordinal} than anyone else on our side."}
 W.bgBases = {"I took {n} of the bases myself.", "{N} of the bases fell to me."}
 W.bgBase = {"I took one of the bases myself.", "One of the bases fell to me."}
 W.bgTowers = {"I took {n} towers.", "{N} of their towers fell to me."}

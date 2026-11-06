@@ -272,7 +272,7 @@ PB.travelWork = {
     "{pair} spent {length} in {zoneD} and finished {qcount} quests.",
     "In {zoneD}, {pair} turned in {qcount} quests in {length}.",
     "The work that day was in {zoneD}, {qcount} quests in {length}.",
-    "During {length} in {zoneE}, {pair} finished {qcount} quests.",
+    "{Length} in {zoneE} brought {pairObj} {qcount} quests.",
     "{Qcount} quests were finished during {our} {length} in {zoneD}.",
     "{pair} were in {zoneD} for {length} and finished {qcount} quests there.",
 }
@@ -646,7 +646,7 @@ PB.dungeonUnfinished = {
         "{lord} was still down there when {pair} came back out.",
         "{we} came back out with {lord} unbeaten.",
         "{lastKill} was as far as {pair} got, and {we} came out again.",
-        "Past {lastKill}, {we} went no further, and left {lord} where {they} stood.",
+        "Past {lastKill}, {we} went no further, and left {lord} where {lordThey} stood.",
     },
     ended = {
         "{we} did not go as deep as {lord} that time.",
@@ -706,8 +706,8 @@ PB.killLast = {
 
 -- PB.killLastOnly (the lord, with no other kills that day)
 PB.killLastOnly = {
-    "It came down to {boss}, {bossE}. {bossFell}",
-    "{boss}, {bossE}, was waiting. {bossFell}",
+    "It came down to {boss}, {bossE}, and {shortRaw} fell.",
+    "{boss}, {bossE}, was waiting, and {shortRaw} fell.",
     "{we} killed {boss}, {bossE}.",
     "Inside waited {boss}, {bossE}. {bossFell}",
 }
@@ -1177,7 +1177,7 @@ PB.dayShortAgain = {
 PB.dayLead = {"{lead}, {pair} {day}."}
 -- the deed first, on a day of six quests or more (and no fire or inn folded in).
 PB.dayDeed = {
-    "During {length} together {inZone}, {we} finished {count} quests.",
+    "{Length} together {inZone} came to {count} quests.",
     "{pair} spent {length} {inZone} and turned in {count} quests.",
 }
 -- the same inn again (the engine counts visits per inn).
@@ -1237,11 +1237,11 @@ PB.levelThenOrigin = {
 PB.dayAlt = {
     none = {"{Length} went to {zoneD}.", "{zoneD} took {length} of {our} {part}."},
     nonePlain = {"The {part} went to {zoneD}."},
-    one = {"During {length} together in {zoneD}, {we} finished {quest}.", "{we} spent {length} in {zoneD}, where {we} also completed {quest}."},
+    one = {"{Length} together in {zoneD} went to {quest}.", "{we} spent {length} in {zoneD}, where {we} also completed {quest}."},
     onePlain = {"The {part} in {zoneD} included {quest}.", "{we} completed {quest} during {our} time in {zoneD}."},
-    two = {"During {length} in {zoneD}, {we} finished {quest} and {questB}.", "{we} spent {length} together in {zoneD} and completed {quest} and {questB}."},
+    two = {"{Length} in {zoneD} went to {quest} and {questB}.", "{we} spent {length} together in {zoneD} and completed {quest} and {questB}."},
     twoPlain = {"The {part} in {zoneD} included {quest} and {questB}.", "{we} finished {quest} and {questB} during {our} time in {zoneD}."},
-    few = {"During {length} together in {zoneD}, {we} completed {count} quests.", "{we} spent {length} in {zoneD} and completed {count} quests there."},
+    few = {"{Length} together in {zoneD} came to {count} quests.", "{we} spent {length} in {zoneD} and completed {count} quests there."},
     fewPlain = {"{we} completed {count} quests in {zoneD} that {part}.", "The {part} in {zoneD} included {count} completed quests.",
         "{Count} quests were completed during {our} time in {zoneD}."},
 }
@@ -1360,7 +1360,7 @@ PB.knownBeginning = {
 -- Contextual callbacks refer only to an actual earlier scene in this region.
 PB.sceneMemory = {
     fire = {
-        "Here in {zoneD}, {we} had shared a fire {memoryWhen}.",
+        "In {zoneD}, {we} had shared a fire {memoryWhen}.",
         "An earlier visit to {zoneD} had included a fire together, {memoryWhen}.",
         "{zoneD} had been a place of shared firelight {memoryWhen}.",
     },
@@ -1572,7 +1572,9 @@ PB.shared.read = {
 PB.shared.zoneFirst = {
     "{I} had never set foot in {zoneD} before that day.",
     "For {me}, it was the first time in {zoneD}.",
-    "{zoneD} was new ground to {me}, and {name} was there for it.",
+    "{zoneD} {zoneDWas} new ground to {me}, and {name} was there for it.",
+    "Until that day {I} had never been in {zoneD}.",
+    "It was {my} first time in {zoneD}, with {name} along.",
 }
 PB.shared.continent = {
     "It was the first time {I} had stood on {to}, and {name} was there for it.",
@@ -1752,8 +1754,8 @@ do
     you.killMany = {"{my} party killed {bosses}.", "{bosses} fell to the pair of {us}."}
     we.killLast = {"Last of all, {name} and I killed {boss}, {bossE}."}
     you.killLast = {"Last of all, {my} party killed {boss}, {bossE}."}
-    we.killLastOnly = {"{name} and I killed {boss}, {bossE}.", "It came down to {boss}, {bossE}, and the two of us. {bossFell}"}
-    you.killLastOnly = {"{my} party killed {boss}, {bossE}.", "It came down to {boss}, {bossE}, and the pair of {us}. {bossFell}"}
+    we.killLastOnly = {"{name} and I killed {boss}, {bossE}.", "It came down to {boss}, {bossE}, and the two of us, and {shortRaw} fell."}
+    you.killLastOnly = {"{my} party killed {boss}, {bossE}.", "It came down to {boss}, {bossE}, and the pair of {us}, and {shortRaw} fell."}
     we.killNamed = {"{name} and I killed {boss}, {bossE}."}
     you.killNamed = {"{my} party killed {boss}, {bossE}."}
     we.revenge = {"{short} had beaten {name} and me before. This time {we} won."}
@@ -1823,8 +1825,8 @@ do
     -- Milestones.
     -- (lines a reader remembers: once in a book)
     for _, line in ipairs({"{my} party that {part} was the usual one, {me} and {name}.", "{my} party was whole again {later}, {name} and {me}.",
-        "{name} and I went out together, as we did most days.", "It came down to {boss}, {bossE}, and the two of us. {bossFell}",
-        "It came down to {boss}, {bossE}, and the pair of {us}. {bossFell}"}) do
+        "{name} and I went out together, as we did most days.", "It came down to {boss}, {bossE}, and the two of us, and {shortRaw} fell.",
+        "It came down to {boss}, {bossE}, and the pair of {us}, and {shortRaw} fell."}) do
         PB.oncePerBook[#PB.oncePerBook + 1] = line
     end
     we.days10 = {"That was the tenth day {name} and I had been out together."}

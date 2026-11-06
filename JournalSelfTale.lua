@@ -498,7 +498,11 @@ local function ZoneSight(Say, teller, zone, Pick, avoid, short, brief, faction)
         for _, line in ipairs(list) do
             local repeatsTown = false
             for _, town in ipairs(avoid or {}) do if line:find(town, 1, true) then repeatsTown = true end end
-            if not repeatsTown and not NamesFoeTown(line, faction) then kept[#kept + 1] = line end
+            -- (a sight that says the epithet over again, "Tanaris, all sand and sun. Sand and sun covered
+            -- the land": two of the epithet's words in the line, and it waits for another day)
+            local echoes = 0
+            for word in pairs(teller.epithetWords or {}) do if line:lower():find("%f[%a]" .. word .. "%f[%A]") then echoes = echoes + 1 end end
+            if not repeatsTown and echoes < 2 and not NamesFoeTown(line, faction) then kept[#kept + 1] = line end
         end
         if #kept == 0 then return nil end
         if Pick then return Pick(kept, avoid) end
@@ -676,6 +680,8 @@ function ST.Tell(person, days, brief, retell)
             history.describedZones[zone or "?"] = true
             -- (the lines said are remembered: a return after weeks draws another)
             history.zoneLinesSaid = history.zoneLinesSaid or {}
+            local saidSoFar = table.concat(out, " "):gsub("{%a:([^}]*)}", "%1")
+            teller.epithetWords = (teller.epithetPhrase and saidSoFar:find(teller.epithetPhrase, 1, true)) and teller.epithetWordsAll or {}
             ZoneSight(function(text, ...)
                 if text then history.zoneLinesSaid[text] = true end
                 return SayLine(text, ...)
@@ -794,6 +800,13 @@ function ST.Tell(person, days, brief, retell)
             end
             local tokens = {zoneE = ZoneE(first.zone), zoneD = Place(first.zone), zoneLore = ZoneLore(first.zone), when = Lower(When) or "the day",
                 When = When, WhenBare = When and (When:gsub("^On ", "")), part = part}
+            -- (the epithet's own words, for the sight lines to steer clear of once the opening has said it)
+            teller.epithetWords, teller.epithetPhrase, teller.epithetWordsAll = {}, nil, {}
+            if tokens.zoneE ~= tokens.zoneD then
+                local STOP = {the = true, ["and"] = true, all = true, of = true, where = true, its = true, old = true, among = true}
+                teller.epithetPhrase = tokens.zoneE:gsub("{%a:([^}]*)}", "%1")
+                for word in teller.epithetPhrase:lower():gmatch("%a%a%a+") do if not STOP[word] then teller.epithetWordsAll[word] = true end end
+            end
             -- The chapter header carries the date. After a chapter that opened on
             -- the day ("On Thursday, I..."), a chapter a week or less later opens on
             -- the place or the company instead; every fourth such chapter keeps the
@@ -933,7 +946,9 @@ function ST.Tell(person, days, brief, retell)
                 end
                 if #others > 0 and tokens.lastZone then options[#options + 1] = "company" end
                 local levelNow = first.level or person.startLevel
-                if levelNow and history.lastLevel and levelNow > history.lastLevel then options[#options + 1] = "levelUp" end
+                -- (levels: a climb of three or more, and not after every gap; the thirty-journey study opened every
+                -- monthly chapter with "I had been level 28 the last time, and was 31 now", 2026-11-06 review)
+                if levelNow and history.lastLevel and levelNow - history.lastLevel >= 3 and (absence.n % 2 == 1 or absence.bucket == "longest") then options[#options + 1] = "levelUp" end
                 -- (an unchanged level is said only when nothing else is there to say, after six weeks or more)
                 if #options == 0 and levelNow and history.lastLevel and levelNow == history.lastLevel and gap >= 46 then options[1] = "levelSame" end
                 if #options == 0 then return end
@@ -1269,6 +1284,23 @@ function ST.Tell(person, days, brief, retell)
             end
             local quiet = f.quests <= 1 and f.dungeons == 0 and deathsToday == 0 and fights == 0
                 and (sunsetToday or (f.gather > 0 and newPlaces > 0))
+            -- (a day with a level, a first of any kind but the sunset, a near thing, a rare met or a
+            -- heavy bag of ore is not "an otherwise quiet day": the line fired on most single-quest
+            -- days, 2026-11-06 review; and the one-errand line rests four chapters between uses)
+            if quiet then
+                if #f.levels > 0 then quiet = false end
+                local LOUD = {mount = true, epicmount = true, epic = true, legendary = true, famous = true, raid = true, pvp = true,
+                    continent = true, worldboss = true, setfull = true, tier = true, class = true, battleground = true}
+                for _, s in ipairs(stretches) do
+                    for _, e in ipairs(s.events) do
+                        if (e.k == "first" and LOUD[e.d or ""]) or e.k == "close" or e.k == "rarekill" or e.k == "rank"
+                            or e.k == "duel" or e.k == "bg" then quiet = false end
+                    end
+                end
+                if quiet and f.quests == 1 and history.quietOneAt and index - history.quietOneAt < 5 then quiet = false end
+            end
+            -- (a day with no fight in it ends on its sunset, quiet or not: the hand-ins and the ore go before)
+            local sunsetEnds = quiet or (f.dungeons == 0 and deathsToday == 0 and fights == 0)
             -- (the land itself was the danger: falls, the water, again and again)
             local clumsy = envToday >= 2
             -- (a day with a crossing, a new land or a capital's first sight is not a quiet one)
@@ -1302,6 +1334,7 @@ function ST.Tell(person, days, brief, retell)
                 end
                 Say(teller:Say(f.quests == 1 and "quietDayOne" or "quietDay", pool, tokens), true, "mood")
                 history.quietDay = index
+                if f.quests == 1 then history.quietOneAt = index end
                 Title(52, teller:Pick("tQuiet", W.titles.quiet))
             end
             local sunsetLater, wandered
@@ -2152,7 +2185,7 @@ function ST.Tell(person, days, brief, retell)
                     local eventStart = #out
                     if e.skip then
                         e.skip = nil
-                    elseif e.k == "first" and e.d == "sunset" and quiet and not sunsetLater then
+                    elseif e.k == "first" and e.d == "sunset" and sunsetEnds and not sunsetLater then
                         -- (a quiet day ends on it)
                         sunsetLater = e
                     elseif e.k == "first" and e.d == "worldboss" and e.z and W.worldbossDied then
@@ -2722,6 +2755,8 @@ function ST.Tell(person, days, brief, retell)
                             local lord = L.Boss(e.d)
                             Say(teller:Say("lordFell", W.lordFell, {boss = Place((L.Short and L.Short(e.d)) or e.d), epithet = lord.e}), true, "kill")
                             Title(89, (L.Short and L.Short(e.d)) or Clean(e.d))
+                        elseif st.avengedHere and st.avengedHere[e.d] then
+                            st.avengedHere[e.d] = nil -- (told with the death it cost)
                         else
                             pendingKills[#pendingKills + 1] = Place(e.d)
                         end
@@ -2851,12 +2886,30 @@ function ST.Tell(person, days, brief, retell)
                     elseif e.k == "death" and deathsHere <= 2 and not e.told then
                         local foe = e.d and ((e.a and ((Clean(e.d):match("^[AEIOUaeiou]") and "an " or "a ")) or "") .. Place(e.d))
                         st.foe, st.sub = foe, e.sz and Place(e.sz)
+                        st.inSub = st.sub and ("in " .. st.sub) or nil
                         local pool = foe and W.death.foe or W.death[e.env or ""] or W.death.plain
                         if e.env == "FALLING" and history.swimDay == index and W.deathFallIrony and not history.fallIrony then
                             history.fallIrony = true
                             pool = W.deathFallIrony
                         end
-                        if foe and e.sz and A.SelfUnderground and A.SelfUnderground(e.sz) then pool = W.deathIn end
+                        if foe and e.sz and A.SelfUnderground and A.SelfUnderground(e.sz) then
+                            pool = W.deathIn
+                            -- (the place just told: "there", not "in the Deadmines" over again)
+                            local saidText = table.concat(out, " "):gsub("{%a:([^}]*)}", "%1"):lower()
+                            if saidText:find(Clean(e.sz):lower(), 1, true) then st.inSub = "there" end
+                            -- (the killer fell later in the same run: said with the death, and left out of the kill roll
+                            -- that followed it, "Mr. Smite killed me in the Deadmines. Mr. Smite, Captain Greenskin and
+                            -- Edwin VanCleef fell": 2026-11-06 review)
+                            if W.deathInAvenged and not (L.Boss and L.Boss(e.d) and L.Boss(e.d).last) then
+                                for _, x in ipairs(s.events) do
+                                    if x.k == "boss" and x.d == e.d and (x.t or 0) > (e.t or 0) then
+                                        pool = W.deathInAvenged
+                                        st.avengedHere = st.avengedHere or {}
+                                        st.avengedHere[e.d] = true
+                                    end
+                                end
+                            end
+                        end
                         -- far below your level: the one place for a joke
                         local zl = L and L.ZoneLevels and L.ZoneLevels(e.z or s.zone)
                         if foe and W.deathShameful and not (L.Boss and L.Boss(e.d)) and ((zl and s.level and s.level >= zl[2] + 8) or (L.Humble and L.Humble(Clean(e.d)))) then
@@ -2943,6 +2996,7 @@ function ST.Tell(person, days, brief, retell)
                                 .. (theirRace and "" or (" of the " .. (faction == "Horde" and "Alliance" or "Horde")))
                         end
                         st.foe, st.sub = foe, e.sz and Place(e.sz)
+                        st.inSub = st.sub and ("in " .. st.sub) or nil
                         local pool = foe and W.close.foe or W.close[e.env or ""] or W.close.plain
                         if foe and e.sz and A.SelfUnderground and A.SelfUnderground(e.sz) then pool = W.closeIn end
                         Say(teller:Say("close", pool, st), true, "death")
@@ -3052,9 +3106,21 @@ function ST.Tell(person, days, brief, retell)
                             if lore.after:lower():find(word:gsub("s$", ""), 1, true) then epithetSaid = true end
                         end
                     end
-                    if lore and lore.after and not history.bosses[b] and not epithetSaid then
+                    -- (Kel'Thuzad's "Naxxramas had lost its master" after "the lich lord of Naxxramas": one of the
+                    -- other consequence lines says it without the echo, 2026-11-06 review)
+                    local afterLine = lore and lore.after
+                    if epithetSaid and lore.afterMore then
+                        for _, more in ipairs(lore.afterMore) do
+                            local clash = false
+                            for word in lore.e:lower():gmatch("%a%a%a%a%a+") do
+                                if more:lower():find(word:gsub("s$", ""), 1, true) then clash = true end
+                            end
+                            if not clash then afterLine = more; epithetSaid = false; break end
+                        end
+                    end
+                    if lore and afterLine and not history.bosses[b] and not epithetSaid then
                         local countBefore = #out
-                        Say((not st.raceSaid and lore.afterRace and lore.afterRace[race]) or lore.after, true, "lore")
+                        Say((not st.raceSaid and lore.afterRace and lore.afterRace[race]) or afterLine, true, "lore")
                         if #out > countBefore then consequenceAt = #out end
                         consequence = true
                     end
@@ -3093,10 +3159,17 @@ function ST.Tell(person, days, brief, retell)
                             history.unfinishedLoreN = (history.unfinishedLoreN or 0) + 1
                             if history.unfinishedLoreN % 2 == 1 then
                                 local lines = (L.WithoutBosses and L.WithoutBosses(dn.story.unfinished, bosses)) or dn.story.unfinished
-                                Say(PickLore(lines), false, "lore")
+                                -- (not two sentences running that open on the same word, "Past Garr... Past the halls")
+                                local prevWord = (out[#out] or ""):gsub("{%a:([^}]*)}", "%1"):match("^(%a+)")
+                                local kept = {}
+                                for _, line in ipairs(lines) do
+                                    if line:gsub("{%a:([^}]*)}", "%1"):match("^(%a+)") ~= prevWord then kept[#kept + 1] = line end
+                                end
+                                if #kept > 0 then Say(PickLore(kept), false, "lore") end
                             end
                         end
-                    elseif dn.atLast and dn.reached and W.lordAtLast then
+                    elseif dn.atLast and dn.reached and W.lordAtLast
+                        and not (history.lordFellDay and dn.lord and history.lordFellDay[Clean(dn.lord)] == index) then
                         Say(teller:Say("lordAtLast", W.lordAtLast, {short = st.short, Short = st.short, us = st.us, we = st.we}), true)
                     end
                     if dn.reached then history.dungeonLordDone[dn.name] = true end
@@ -3133,6 +3206,19 @@ function ST.Tell(person, days, brief, retell)
                             and (not dungeon or event.t >= dungeon.t) then dungeon = event end
                     end
                     if not dungeon or not zone or dungeon.zone == zone or questPlaces[dungeon] == zone then return end
+                    -- (a setup that itself names the dungeon just left takes no place in front of it: "In
+                    -- Orgrimmar, the Searing Blade made its home in Ragefire Chasm" put two places in one
+                    -- sentence. The return is said on its own instead, 2026-11-06 review)
+                    do
+                        local firstSentence = (out[start + 1] or ""):gsub("{%a:([^}]*)}", "%1"):match("^[^%.]*")
+                        local dungeonName = dungeon.zone and Clean(dungeon.zone)
+                        if dungeonName and firstSentence:find(dungeonName, 1, true) then
+                            local subject = (st and st.We) or "I"
+                            out[start + 1] = subject .. " " .. (subject == "We" and "were" or "was") .. " back in " .. Place(zone) .. " by then. " .. out[start + 1]
+                            questPlaces[dungeon] = zone
+                            return
+                        end
+                    end
                     -- The record places this work outside the just-narrated
                     -- dungeon. Establish that fact, without inventing a return.
                     local line = out[start + 1]
@@ -3548,7 +3634,9 @@ function ST.Tell(person, days, brief, retell)
                 local countBefore = #out
                 LevelsLineNow()
                 -- (said right after a lord's consequence: the level goes before it, the consequence stays last)
-                if consequenceAt and consequenceAt == countBefore and #out > countBefore then
+                -- (one level sentence goes before the lord's consequence; the sixty look-back, several
+                -- sentences, ends the chapter instead, and the consequence keeps to its kills: 2026-11-06)
+                if consequenceAt and consequenceAt == countBefore and #out > countBefore and #out - countBefore == 1 then
                     local last, k = #out, #out - countBefore
                     for _, arr in ipairs({out, majors, kinds, times, scenes}) do
                         local consequenceLine = arr[countBefore]
