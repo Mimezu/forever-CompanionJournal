@@ -2555,3 +2555,95 @@ do
             body = "Raleigh lives there. He recognized a ring brought from Brill as his wife Deliah's, professed no grief for her death or the abduction of her body, but still desired revenge.",
             sources = {V .. " #441"}, related = {"npc:deliah"}}}}}})
 end
+
+-- notes5 2026-11-06: the Fallen Hero's account. He tells it himself in #2784 Fall From
+-- Grace (Horde) and #2801 A Tale of Sorrow (Alliance); the stones of #2681 and Kirith's
+-- cell in #2721 follow from it. Before that a reader knows only the spirit on the road
+-- who waits for orders. Kalaran Windblade's true form shows once the towers burn
+-- (#3463); before that his note keeps to his own account. Bijou's double dealing is the
+-- premise Lexlort gives in #4981. The Fallen Hero's name, Trebor, is first spoken by Kirith on
+-- turning in #2721; no alias carries it, so the name never opens his note early.
+do
+    local V = "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"
+    local BL, SOS = "region:426c6173746564204c616e6473", "region:5377616d70206f6620536f72726f7773"
+    local GORGE = "region:53656172696e6720476f726765"
+    A.RegisterLoreDiscovery({facts = {
+        ["fallenhero.account"] = {presented = {2681, 2721}, completed = {2784, 2801, 2681, 2702, 2721}},
+        ["fallenhero.trebor"] = {presented = {2743, 2744}, completed = {2721, 2743}},
+        ["kalaran.deceiver"] = {completed = {3463}},
+        ["bijou.kibler"] = {presented = {4981}, completed = {4981, 4982, 4983}},
+    }, notes = {
+        ["npc:fallen-hero"] = {canonicalRequires = {"fallenhero.account", "fallenhero.trebor"}, public = {
+            body = "The Fallen Hero of the Horde is a spirit who keeps watch on the southern road of the Swamp of Sorrows, at the threshold of the Blasted Lands. He is bound there by regret over one bad decision and by the orders he never received, and he waits for word of them still. He knows the truth of the Blasted Lands, and some of the Alliance who fight there urge their own to set old enmity aside and hear him.",
+            sources = {V .. " #2621 The Disgraced One (description); #2783 Petty Squabbles", "LoreForever npc:fallen-hero-of-the-horde (wiki: https://warcraft.wiki.gg/wiki/Fallen_Hero_of_the_Horde)"},
+            related = {SOS, "place:stonard", BL}},
+            blocks = {{requires = {"fallenhero.account"},
+                body = "In life he commanded a Horde regiment, Thrall's Grasp, sent into the Blasted Lands. He led it south without waiting for the orders, which never reached him because the Swamp Talker's murlocs ambushed the soldiers carrying them. The regiment was destroyed. He and his lieutenant, Kirith, were imprisoned and tortured by Archmage Allistarj, and the souls of his men were bound in stones held by Razelikh and his servants. As a spirit he is powerless, and he asks others to free his men and win back his honor.",
+                sources = {V .. " #2784 Fall From Grace; #2801 A Tale of Sorrow; #2681 The Stones That Bind Us; #2721 Kirith"}},
+                {requires = {"fallenhero.trebor"}, body = "His name is Trebor. Kirith knows him by it.",
+                    sources = {V .. " #2721 Kirith (completion); #2743 The Cover of Darkness"}}}},
+        ["npc:kalaran"] = {canonicalRequires = {"kalaran.deceiver"}, public = {
+            body = "Kalaran Windblade keeps a camp in the Searing Gorge, southeast of Thorium Point. By his own account he seeks vengeance on the Dark Iron dwarves for the death of his father, and Stormwind would not hear his plea. He means to strike where it will hurt most, at the four sentry towers of the Dark Irons. To set them ablaze he has a torch made from hearts of flame, golem oil, the thorium of Dark Iron daggers and the magic of a Twilight's Hammer symbol of Ragnaros. His envoy, Squire Maltrake, explains its use.",
+            sources = {V .. " #3441 Divine Retribution; #3442 The Flawless Flame; #3443 Forging the Shaft; #3452 The Flame's Casing; #3462 Squire Maltrake", "LoreForever quest:3441 (wiki: https://warcraft.wiki.gg/wiki/Kalaran_Windblade)"},
+            related = {"npc:maltrake", "faction:dark-iron", GORGE}},
+            blocks = {{requires = {"kalaran.deceiver"},
+                body = "Kalaran is not what he claims. The account of his father was a lie. Once the towers burn, he takes his true form, a black drake, and flies off toward Blackrock Mountain, leaving Squire Maltrake to hand out his reward.",
+                sources = {V .. " #3463 Set Them Ablaze!", "https://warcraft.wiki.gg/wiki/Kalaran_Windblade (the false account and his true form after #3463)"}}}},
+        ["npc:bijou"] = {canonicalRequires = {"bijou.kibler"}, public = {
+            body = "Operative Bijou is a goblin agent of the Kargath Expeditionary Force, the Horde's force at Kargath in the Badlands. She works inside Blackrock Spire, sneaking through the orc city at night while the guard is light and writing down anything of strategic value to the K.E.F. Her reports go to Grandmaster Lexlort, head of its reconnaissance division.",
+            sources = {V .. " #4982 Bijou's Belongings; #4983 Bijou's Reconnaissance Report"},
+            related = {"npc:lexlort", "dungeon:blackrock-spire", "place:kargath"}},
+            blocks = {{requires = {"bijou.kibler"},
+                body = "Lexlort has learned that she also works for Kibler, a dealer in exotic pets from the Burning Steppes, and pays for her operations with Horde funds. Bijou admits that she needed the money and that Kibler pays far better than the K.E.F., but she insists that her loyalty never wavered, and she means to redeem her name with her reconnaissance report.",
+                sources = {V .. " #4981 Operative Bijou"}, related = {"npc:kibler"}}}},
+    }})
+end
+
+-- notes5 2026-11-06: Kirith, Trey Lightforge and the Abyssal Council. Kirith is named only
+-- by the Fallen Hero's account (#2721 continues it); that his soul became Kirith the Damned
+-- is learned in the Serpent's Coil on turning in #2721, and his spirit's words follow in
+-- #2743. Trey's death is what Arko'narin tells once she is free (#5203, then #5204 and
+-- #5385). Huum's word that the Abyssal Council commands the Twilight's Hammer opens #8331;
+-- before it, the Council is the cult's summoned nobility and Aurel and Huum are craftsmen
+-- and officers of Cenarion Hold.
+do
+    local V = "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"
+    local SIL, BL = "region:53696c6974687573", "region:426c6173746564204c616e6473"
+    A.RegisterLoreDiscovery({facts = {
+        ["kirith.damned"] = {presented = {2743, 2744}, completed = {2721, 2743}},
+        ["trey.dead"] = {presented = {5203, 5204, 5385}, completed = {5203, 5204, 5385}},
+        ["abyssal.control"] = {presented = {8331, 8343, 8538}, completed = {8331, 8332, 8343}},
+    }, notes = {
+        ["npc:kirith"] = {visibleRequires = {"fallenhero.account"}, canonicalRequires = {"fallenhero.account", "kirith.damned"}, public = {
+            body = "Lieutenant Kirith served under the Fallen Hero of the Horde in the regiment Thrall's Grasp. When the regiment was destroyed in the Blasted Lands, Kirith and his commander were imprisoned and tortured by Archmage Allistarj in a cave of the Serpent's Coil, and Kirith's strength of will faltered. His commander heard the experiments from his own cage and never saw him again.",
+            sources = {V .. " #2721 Kirith (description)"}, related = {"npc:fallen-hero", BL}},
+            blocks = {{requires = {"kirith.damned"},
+                body = "Kirith did not survive Allistarj. His soul was twisted into a demon, Kirith the Damned, which haunts the Serpent's Coil. When that form is destroyed his spirit lingers for a short time, long enough to tell how Razelikh's three lieutenants are protected by the amulet each of them wears.",
+                sources = {V .. " #2721 Kirith (completion); #2743 The Cover of Darkness", "https://warcraft.wiki.gg/wiki/Kirith_the_Damned (the felhound at the Serpent's Coil; his soul twisted under Allistarj's torture)"},
+                related = {"npc:razelikh"}}}},
+        ["npc:trey-lightforge"] = {canonicalRequires = {"trey.dead"}, public = {
+            body = "Trey Lightforge is a paladin who went into Jaedenar in Felwood with Arko'narin, one of her best friends. His sword, named Lightforge, lies with their confiscated gear in Shadow Hold.",
+            sources = {V .. " #5203 Rescue From Jaedenar (description)"}, related = {"npc:arkonarin", "npc:jessir", "place:shadow-hold"}},
+            blocks = {{requires = {"trey.dead"},
+                body = "Trey died in Shadow Hold, tortured by the Shadow Council. Arko'narin escaped with his sword, and his remains were carried out to their friend Jessir Moonbow so that he could be given proper respect.",
+                sources = {V .. " #5204 Retribution of the Light; #5385 The Remains of Trey Lightforge"}}}},
+        ["group:abyssal-council"] = {canonicalRequires = {"abyssal.control"}, public = {
+            body = "The Abyssal Council is a hierarchy of elemental nobles in Silithus, its Templars, its Dukes and above them its Lords. The Twilight's Hammer speaks with them through the wind stones in the cult's camps, and only the highest ranks of the cult may address the Lords through the greater stones.",
+            sources = {V .. " #8332 Dukes of the Council; #8341 Lords of the Council"}, related = {"group:twilights-hammer", "place:cenarion-hold", SIL}},
+            blocks = {{requires = {"abyssal.control"},
+                body = "The Council commands the Twilight's Hammer through those stones, and the Abyssal Dukes are among the main forces organizing the cultists. The Cenarion Circle at Cenarion Hold works to lure the Dukes and Lords into the world and destroy them.",
+                sources = {V .. " #8331 Aurel Goldleaf; #8538 The Four Dukes; #8352 Scepter of the Council"}, related = {"npc:huum"}}}},
+        ["npc:huum"] = {canonicalRequires = {"abyssal.control"}, public = {
+            body = "Huum Wildmane is a tauren of the Cenarion Circle at Cenarion Hold in Silithus who directs its effort against the Twilight's Hammer. He sends the Hold's champions to the craftswoman Aurel Goldleaf and to Bor Wildmane.",
+            sources = {V .. " #8343 Goldleaf's Discovery; #8348 Signet of the Dukes"}, related = {"place:cenarion-hold", "npc:bor-wildmane", "npc:aurel-goldleaf", SIL}},
+            blocks = {{requires = {"abyssal.control"},
+                body = "Forays against the cult have shown him that a darker power commands it through the wind stones in its camps, the Abyssal Council. Aurel's disguises can lure its Dukes and Lords out, and Bor pays for their defeat.",
+                sources = {V .. " #8331 Aurel Goldleaf; #8352 Scepter of the Council"}, related = {"group:abyssal-council"}}}},
+        ["npc:aurel-goldleaf"] = {canonicalRequires = {"abyssal.control"}, public = {
+            body = "Aurel Goldleaf is a craftswoman in the eastern part of Cenarion Hold in Silithus, and her skill serves the Cenarion Circle's fight against the Twilight's Hammer. From brilliant shards and the crests and signets of the cult's own officers she makes copies of its insignia, a medallion of station and a ring of lordship, so that the wearer can pass for a ranking member of the Twilight's Hammer at the wind stones in its camps. She also makes the colors of a twilight emissary, in the hope that the stones can carry someone to the place where the cult's plans are made.",
+            sources = {V .. " #8332 Dukes of the Council; #8341 Lords of the Council; #8829 The Ultimate Deception"}, related = {"place:cenarion-hold", "group:twilights-hammer", "npc:bor-wildmane", SIL}},
+            blocks = {{requires = {"abyssal.control"},
+                body = "Her disguises are meant for the Abyssal Council, the elemental nobility that commands the Twilight's Hammer through those stones.",
+                sources = {V .. " #8331 Aurel Goldleaf"}, related = {"group:abyssal-council"}}}},
+    }})
+end

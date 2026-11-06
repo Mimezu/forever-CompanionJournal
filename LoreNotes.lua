@@ -201,6 +201,15 @@ for name in ([[Gaxim Vorsha Ertog Murgut Karang Lomac]]):gmatch("%S+") do single
 for name in ([[Revilgaz Zanzil Ajeck Oglethorpe Talonaxe Kravel]]):gmatch("%S+") do singleNames[name] = true end
 -- notes4 batch 6.
 for name in ([[Islen Longbraid Hadoken Belgrom Nazz Fizzlebub Mukla Hinderweir]]):gmatch("%S+") do singleNames[name] = true end
+-- notes5 2026-11-06: distinctive short forms of new notes (Greta, Aurel, Bijou, Katar,
+-- Viktori and Rall stay out as words or given names; "Fizzle" and "Brassbolts" each name
+-- two people).
+for name in ([[Bilgewhizzle Marvon Lexlort Kalaran Maltrake Goldleaf Dithers Arbington Araj Valorfist
+    Maleb Latronicus Strahad Kum'isha Razelikh]]):gmatch("%S+") do singleNames[name] = true end
+for _, title in ipairs({"Marvon's Workshop", "Goldleaf's Discovery", "Araj's Scarab", "Seeking Strahad",
+    "Kum'isha's Endeavors", "To Serve Kum'isha", "The Brassbolts Brothers"}) do
+    knownNames[title] = {plain = true}
+end
 -- "Windshaper Boro" is a shaman trainer's title, not the Skyborne faction.
 for _, title in ipairs({"Ormer's Revenge", "Mok'thardin's Enchantment", "Myzrael's Allies", "Questioning Reethe",
     "Windshaper Boro", "Velinde's Effects", "Wrenix of Ratchet", "Razzeric's Tweaking", "Delivery to Ridgewell",
@@ -212,6 +221,39 @@ for _, title in ipairs({"Jin'Zil's Forest Magic", "Letter to Jin'Zil", "Special 
     "The Ruins of Stardust", "Trial at the Field of Giants", "Waters of Xavian", "Favor for Krazek", "Krazek's Cookery",
     "Parts for Kravel", "Rumors for Kravel", "Saving Sharpbeak", "Supplies to Private Thorsen", "The Touch of Zanzil",
     "Zanzil's Mixture and a Fool's Stout", "Zanzil's Secret", "Report Back to Fizzlebub"}) do
+    knownNames[title] = {plain = true}
+end
+-- notes5 batch 2 (Marin, Goodsteel, MacKinley, O'Breen, Martek and Thornhoof stay out as
+-- given names or surnames; "Torntusk" names both the Primal and the Elder).
+for name in ([[Noggenfogger Krinkle Smotts Barnil Nimetz Yohwa Kryten Zardeth Furen Klockmort Fel'zerul
+    Ryedol Karnik Goretooth Jarkal Lydros]]):gmatch("%S+") do singleNames[name] = true end
+for _, title in ipairs({"Noggenfogger Elixir", "Delivery for Marin", "Sprinkle's Secret Ingredient", "Stoley's Debt",
+    "Stoley's Shipment", "Deliver to MacKinley", "Return to MacKinley", "Klockmort's Essentials", "Return to Fel'Zerul",
+    "Kidnapped Elder Torntusk!", "Return to Primal Torntusk"}) do
+    knownNames[title] = {plain = true}
+end
+-- notes5 batch 3 (Arko, Kariel and Lightforge stay out: a short form a player could carry,
+-- a given name, and the name of Trey's sword and of an iron).
+for name in ([[Marduke Zverenhoff Huum Ortell Kirith Jessir Mayara Kromcrush Winthalus Hinott Failbane]]):gmatch("%S+") do
+    singleNames[name] = true
+end
+for _, title in ipairs({"Ramaladni's Icy Grasp", "The Fate of Ramaladni", "Hinott's Assistance", "The Remains of Trey Lightforge",
+    "Vivian Lagrave and the Darkstone Tablet", "Shards of the Felvine", "Cache of Mau'ari"}) do
+    knownNames[title] = {plain = true}
+end
+-- notes5 batch 4.
+for name in ([[Alzzin]]):gmatch("%S+") do singleNames[name] = true end
+for _, title in ipairs({"The Human, Ras Frostwhisper", "The Dying, Ras Frostwhisper", "The Lich, Ras Frostwhisper"}) do
+    knownNames[title] = {plain = true}
+end
+-- notes5 batch 5 (Phillipe and Agnar stay out as given names). The engineers' skeleton keys
+-- are other objects than the key to Scholomance and stay plain.
+for name in ([[Scorpidsting Cuergo Proudhorn Gilveradin Falfindel Wastewander Hatecrest Zukk'ash Shadowforge
+    Reclaimers]]):gmatch("%S+") do singleNames[name] = true end
+for _, title in ipairs({"WANTED: Caliph Scorpidsting", "Cuergo's Gold", "Scaring Shaky", "Facing Negolash",
+    "Against the Hatecrest", "Zukk'ash Infestation", "Zukk'ash Report", "Reagents for Reclaimers Inc.",
+    "Reclaimers' Business in Desolace", "Wastewander Justice", "More Wastewander Justice", "WANTED: Andre Firebeard",
+    "Silver Skeleton Key", "Golden Skeleton Key", "Truesilver Skeleton Key", "Arcanite Skeleton Key"}) do
     knownNames[title] = {plain = true}
 end
 local V ="StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"
@@ -630,7 +672,7 @@ Curated("place:lights-hope",
     "Place",
     "Light's Hope Chapel is an Argent Dawn refuge in the Eastern Plaguelands. As the Scourge gathers strength, the order calls for volunteers to defend the land and directs them to the Keeper of the Rolls. The chapel is also a meeting place for those still trying to understand what the plague has taken from them: Carlin Redpath examines the history of ruined Darrowshire here, searching for the truth about his family.\n\nThe work reaches beyond the chapel grounds. Leonid Barthalomew diverts dragon eggs away from the Scourge, while Commander Eligor Dawnbringer calls for attacks on the forces inside Naxxramas. In that campaign, he offers the combined support of the Dawn and the Crusade. Amid hostile territory, the chapel gathers recruits, information and aid for the struggle against Kel'Thuzad's army.",
     {"StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #9154 Light's Hope Chapel; #5210 Brother Carlin; #5522 Leonid Barthalomew; #5531 Betina Bigglezink; #9033 Echoes of War", "https://classicdb.ch/?quest=9154", "https://classicdb.ch/?quest=9033"},
-    {"the Light's Hope Chapel"},
+    {"the Light's Hope Chapel", "Light's Hope"},
     {"faction:argent-dawn", "dungeon:naxxramas", "region:4561737465726e20506c616775656c616e6473"},
     "Classic / Forever")
 
@@ -1662,7 +1704,9 @@ Encounter("pusillin", "Pusillin", "An imp in Dire Maul East carrying the Crescen
 Encounter("zevrim", "Zevrim Thornhoof", "A satyr whose defeat opened the way toward the Lower Conservatory.", DE, "dire-maul")
 Encounter("hydrospawn", "Hydrospawn", "A water elemental inhabiting a pool in Dire Maul East.", DE, "dire-maul")
 Encounter("pimgib", "Pimgib", "The imp accompanying Lethtendris in Dire Maul East.", DE, "dire-maul")
-Encounter("alzzin", "Alzzin the Wildshaper", "A demon able to change shape in Dire Maul's Lower Conservatory.", DE, "dire-maul")
+Curated("npc:alzzin", "Alzzin the Wildshaper", "Person",
+    "Alzzin the Wildshaper is a demon able to change his shape who holds corrupt dominion over the eastern part of Dire Maul, the Lower Conservatory of Eldre'Thalas. The Fruit of Fertility grows near him, corrupted now as the Felvine.",
+    {DE .. " (Alzzin the Wildshaper)", V .. " #5526 Shards of the Felvine"}, {"Alzzin"}, {"dungeon:dire-maul", "item:felvine"})
 Encounter("lethtendris", "Lethtendris", "A blood elf mage hiding near Dire Maul's satyrs, Lethtendris built a web to trap the ruined city's magical energies. Her pursuers feared the damage such concentrated power might cause.", V .. " #7488 and #7489 Lethtendris's Web", "dire-maul")
 Encounter("tendris", "Tendris Warpwood", "Tendris guarded Dire Maul's western wing.", DW, "dire-maul")
 Encounter("kalendris", "Magister Kalendris", "A wielder of shadow magic within Dire Maul West.", DW, "dire-maul")
@@ -1676,9 +1720,15 @@ Encounter("moldar", "Guard Mol'dar", "An ogre guarding Dire Maul North.", DN, "d
 Encounter("kreeg", "Stomper Kreeg", "An ogre within Dire Maul's northern wing.", DN, "dire-maul")
 Encounter("fengus", "Guard Fengus", "An ogre patrolling the Gordok courtyard.", DN, "dire-maul")
 Encounter("slipkik", "Guard Slip'kik", "An ogre patrolling the Halls of Destruction.", DN, "dire-maul")
-Encounter("kromcrush", "Captain Kromcrush", "A Gordok captain in Dire Maul North.", DN, "dire-maul")
+-- notes5 2026-11-06: the encounter entry, with what the Gordok quests say of him.
+Curated("npc:kromcrush", "Captain Kromcrush", "Person",
+    "Captain Kromcrush is an ogre captain of the Gordok in Dire Maul North who guards the way to their king. When the king falls and the title passes, he calls the new king boss, and he hopes the new king can win back the Gauntlet of Gordok Might, which Prince Tortheldrin stole from a Gordok king long ago.",
+    {DN .. " (Captain Kromcrush)", V .. " #5518 The Gordok Ogre Suit; #7703 Unfinished Gordok Business; #1318 Unfinished Gordok Business"},
+    {"Kromcrush"}, {"dungeon:dire-maul", "npc:king-gordok", "item:gauntlet-gordok-might"})
 Encounter("chorush", "Cho'Rush the Observer", "Cho'Rush accompanied King Gordok in Dire Maul North.", DN, "dire-maul")
-Encounter("king-gordok", "King Gordok", "The ogre king at the heart of Dire Maul North.", DN, "dire-maul")
+Curated("npc:king-gordok", "King Gordok", "Person",
+    "King Gordok is the ogre king of the Gordok, who rules from the heart of Dire Maul North with Cho'Rush the Observer at his side. Among the Gordok the title passes to whoever kills the king, and every king since an old Gordok king lost the Gauntlet of Gordok Might to Prince Tortheldrin has failed to win it back.",
+    {DN .. " (King Gordok)", V .. " #5518 The Gordok Ogre Suit; #7703 Unfinished Gordok Business; #1318 Unfinished Gordok Business"}, nil, {"dungeon:dire-maul", "npc:kromcrush", "item:gauntlet-gordok-might"})
 Encounter("razza", "The Razza", "One of the rare opponents in Dire Maul's outdoor arena.", DO, "dire-maul")
 Encounter("skarr", "Skarr the Unbreakable", "One of the rare opponents in Dire Maul's outdoor arena.", DO, "dire-maul")
 Encounter("mushgog", "Mushgog", "One of the rare opponents in Dire Maul's outdoor arena.", DO, "dire-maul")
@@ -1770,7 +1820,9 @@ Curated("npc:krastinov",
     "Classic / Forever",
     true)
 Encounter("kirtonos", "Kirtonos the Herald", "Krastinov's master could be summoned to Scholomance's porch with the Blood of Innocents. Eva Sarkhoff saw that lure as a chance to avenge the victims whose blood sustained him.", V .. " #5384 Kirtonos the Herald", "scholomance")
-Encounter("ras", "Ras Frostwhisper", "Once a mortal of Stromgarde, Ras willingly pledged himself to the Lich King. Leonid Barthalomew witnessed his transformation into a lich; a keepsake from his former life offered a means of restoring his mortality.", V .. " #5461 The Human, Ras Frostwhisper; #5463 Menethil's Gift; #5466 The Lich, Ras Frostwhisper", "scholomance")
+Curated("npc:ras", "Ras Frostwhisper", "Person",
+    "Ras Frostwhisper is a lich of Scholomance, once a human mage of Stromgarde. He gave his life freely to the Lich King on the ground in Stratholme that the Scourge calls Menethil's Gift, cutting his own throat inside a pentagram, and the Lich King raised him there as a lich. Leonid Barthalomew of the Argent Dawn watched it happen. Magistrate Marduke, a ghost of Caer Darrow, seeks to make him mortal again with a keepsake of his living years and then see him killed.",
+    {V .. " #5461 The Human, Ras Frostwhisper; #5463 Menethil's Gift; #5466 The Lich, Ras Frostwhisper (Ras Frostwhisper)"}, nil, {"dungeon:scholomance", "place:menethils-gift", "npc:marduke", "npc:leonid-barthalomew"})
 
 -- Remaining rare and quest-summoned dungeon encounters.
 local CR = "https://www.wowhead.com/classic/guide/classic-dungeons-overview"
@@ -1860,7 +1912,7 @@ Curated("npc:ragnaros",
     "Person",
     "Ragnaros the Firelord is the elemental master of Molten Core beneath Blackrock Mountain. His power reaches beyond the fiery cavern: Franclorn Forgewright describes King Dagran Thaurissan and the Dark Iron nation falling under his control, while the Tablet of Kurniya reveals him as the power behind Lord Incendius. Thunderheart recognizes the name as that of a general of the Old Gods.\n\nWithin the Core, Majordomo Executus serves as his chief intermediary. Defeated by intruders, Executus agrees to summon the Firelord, warning that Ragnaros is weakened away from his own fiery realm. Ragnaros erupts in fury at being awakened prematurely. He kills Executus for allowing the intruders into his sanctum, then turns his power against them; when he withdraws beneath the lava, his Sons of Flame rise to defend him.",
     {"https://warcraft.wiki.gg/wiki/Dark_Iron_Legacy", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt (quests 3907)", "https://wowpedia.fandom.com/wiki/Ragnaros_%28tactics%29", "https://warcraft.wiki.gg/wiki/Ragnaros_%28tactics%29"},
-    {},
+    {"the Firelord", "Ragnaros the Firelord"},
     {"dungeon:molten-core", "npc:executus", "faction:dark-iron"},
     "Classic / Forever")
 Curated("npc:razorgore",
@@ -4068,7 +4120,7 @@ Curated("place:whelgars-excavation-site",
     "Place",
     "Whelgar's Excavation Site is a dwarven dig in the Wetlands, east of Menethil Harbor. The team had been uncovering rare artifacts and enormous bones when mottled raptors overran the excavation, killing many of the workers.\n\nOrmer Ironbraid helped Prospector Whelgar and Merrin Rockweaver escape. The three survivors remain stranded on a ridge above their ruined work. Merrin seeks to send word to her husband, Tarrel, so that he will at least know she is alive; the discoveries below now lie among the creatures that drove the expedition into hiding.",
     {"https://classic-wow-archive.fandom.com/wiki/Whelgar%27s_Excavation_Site (original geography, ridge and named survivors)", "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt #305 In Search of The Excavation Team; #306 In Search of The Excavation Team"},
-    {"Whelgar's Excavation"},
+    {"Whelgar's Excavation", "Whelgar Excavation Site", "the Whelgar Excavation Site"},
     {"region:5765746c616e6473", "place:menethil"},
     "Classic / Forever",
     true)

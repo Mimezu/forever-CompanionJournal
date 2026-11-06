@@ -1013,3 +1013,41 @@ do
             nil, {"place:windshear-crag", "faction:venture-company", STM}),
     })
 end
+
+-- Fifth notes lane (notes5), 2026-11-06. Places the scenes name without a note: the
+-- Wetlands road and harbor, a Duskwood mine, a wreck of the Third Fleet, and two places of
+-- the Ras Frostwhisper and Argent Dawn chains. What lies in Roland's Doom (Velinde's fate)
+-- and what the Intrepid's strongbox holds stay out of these notes.
+do
+    local WET, EPL = "region:5765746c616e6473", "region:4561737465726e20506c616775656c616e6473"
+    A.RegisterLoreNotes({
+        Place("place:dun-algaz", "Dun Algaz",
+            "Dun Algaz is the pass through the mountains between Loch Modan and the Wetlands, and the road through it is the dwarves' overland way to Menethil Harbor, their port and stronghold on the western sea. Orcs of the Dragonmaw clan, who keep a haven in the Wetlands, have pushed into the pass, and if they hold it Loch Modan is cut off from the harbor. Mountaineer Rockgar's men watch the southern end, and the dwarves still keep to its upper tunnels.",
+            {V .. " #455 The Algaz Gauntlet; #468 Report to Mountaineer Rockgar; #473 Report to Captain Stoutfist", LF("subzone:dun-algaz", "Dun_Algaz")},
+            {"Algaz"}, {"faction:dragonmaw", "region:4c6f6368204d6f64616e", "place:menethil", WET}),
+        Place("place:menethil-keep", "Menethil Keep",
+            "Menethil Keep is the fortress of Menethil Harbor in the Wetlands. Four watchtowers rise over the town and bay, and from the war room inside it Captain Stoutfist leads the militia that guards the port and sets its patrols against the Dragonmaw orcs and the other dangers of the marsh.",
+            {V .. " #473 Report to Captain Stoutfist", LF("subzone:menethil-keep", "Menethil_Keep")},
+            nil, {"place:menethil", "faction:dragonmaw", WET}),
+        Place("place:ironbeards-tomb", "Ironbeard's Tomb",
+            "Ironbeard's Tomb is a dwarven burial ground beside the road north to Dun Modr in the Wetlands, watched over by a great stone statue. Dreadful oozes now fill the crypt below, and the few who still visit it risk having their belongings swallowed.",
+            {V .. " #470 Digging Through the Ooze", LF("subzone:ironbeard-s-tomb", "Ironbeard%27s_Tomb")},
+            nil, {"place:dun-modr", WET}),
+        Place("place:intrepid", "Intrepid",
+            "The Intrepid is one of the wrecked ships of the Third Fleet of Kul Tiras off the northern coast of the Wetlands. Its captain, Halyndor, still walks the doomed ship with the key to its strongbox, and Fitzsimmons, the fleet's only survivor, believes that what was stowed in that strongbox keeps his drowned comrades cursed.",
+            {V .. " #290 Lifting the Curse"},
+            {"the Intrepid"}, {"npc:fitzsimmons", "region:kul-tiras", WET}),
+        Place("place:rolands-doom", "Roland's Doom",
+            "Roland's Doom is a mine in southeastern Duskwood, east of the Rotting Orchard. It has long stood idle, and Nightbane worgen now overrun it. The worgen of the forest were first found there, appearing as if from nowhere, and their chieftains, among them Gutspill, keep to its tunnels.",
+            {V .. " #1043 The Scythe of Elune; #1705 Burning Blood", LF("subzone:roland-s-doom", "Roland%27s_Doom")},
+            nil, {"place:rotting-orchard", "region:4475736b776f6f64"}),
+        Place("place:menethils-gift", "Menethil's Gift",
+            "Menethil's Gift is ground in Stratholme blessed by the Lich King and held holy by the Scourge. It is bitterly cold. Leonid Barthalomew of the Argent Dawn saw the human mage Ras Frostwhisper give his life there, freely, to become a lich in the Lich King's service, and a keepsake of a soul's former life can be attuned on its tainted soil.",
+            {V .. " #5462 The Dying, Ras Frostwhisper; #5463 Menethil's Gift; #5464 Menethil's Gift"},
+            nil, {"npc:ras", "npc:leonid-barthalomew", "dungeon:stratholme", "npc:lich-king"}),
+        Place("place:argent-hold", "Argent Hold",
+            "The Argent Hold is the Argent Dawn's locked store at Light's Hope Chapel in the Eastern Plaguelands. It has stayed shut for years, and only those whom Lord Maxwell Tyrosus judges worthy may take from it the power of the Dawn.",
+            {V .. " #5264 Lord Maxwell Tyrosus; #5265 The Argent Hold"},
+            {"the Argent Hold"}, {"place:lights-hope", "npc:maxwell-tyrosus", "faction:argent-dawn", EPL}),
+    })
+end
