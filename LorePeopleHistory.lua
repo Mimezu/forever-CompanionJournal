@@ -3254,3 +3254,234 @@ do
             {"Do'gol"}, {"place:brackenwall", "npc:krog", "region:4475737477616c6c6f77204d61727368"}),
     })
 end
+
+-- Seventh notes lane (notes7), 2026-11-06. Batch 1: the people the scan still ranked
+-- highest. Talen of the Zoram Strand, Piznik of Windshear Crag, Drum Fel of Hammerfall,
+-- Booty Bay's Scooty, Seereth Stonebreak and Marukai of Stonetalon and Ashenvale, Daryn
+-- Lightwind of Rut'theran and Forever's Trevan Rol. "Trevan" and "Daryn" stay out as given
+-- names; their full names link. Nothing here says how Natalia, Tyranis or Anilia fare.
+do
+    local ASH, HIN = "region:417368656e76616c65", "region:5468652048696e7465726c616e6473"
+    local ARA, STO = "region:41726174686920486967686c616e6473", "region:53746f6e6574616c6f6e204d6f756e7461696e73"
+    A.RegisterLoreNotes({
+        Note("npc:talen", "Talen", "Person",
+            "Talen is a night elf scholar camped on the Zoram Strand, the northwestern coast of Ashenvale, where the city of Zoram was drowned in the Sundering. He was skimming over its submerged ruins in a small boat when naga surged from the water and clawed at him, and he fled ashore with what supplies he could carry. On the way he lost his prized possession, an ancient statuette that he believes may be the key to many of the old city's secrets, and the reason he braved the coast at all.\n\nThe statuette has a lock of its own. Its key, Talen holds, is the Ring of Zoram, which belonged to the city's rulers and is said to open any lock within it. The ring was lost for years until the naga found it, and their leader, Ruuzel, keeps it on an isle at Zoram's northern edge.",
+            {V .. " #1007 The Ancient Statuette; #1009 Ruuzel", LF("npc:talen", "Talen")},
+            {"Talen"}, {"place:zoram-strand", "relic:ring-zoram", ASH}),
+        Note("npc:piznik", "Piznik", "Person",
+            "Piznik is a goblin of the Venture Company at Windshear Crag in the Stonetalon Mountains. He was once the second most important person at the site, until Gerenzo Wrenchwhistle took over, fired his boss, Ziz Fizziks, and sent him down to work in the mines. Ziz told him to stay and gather what he could of Gerenzo's plans, since Ziz's new employer will pay them both well to learn them.\n\nWhat Piznik knows so far is that Gerenzo has ordered large amounts of a gold-green ore to be mined. He can dig out a sample, though patrols and workers pass his spot constantly, and he expects the company's higher-ups to take a dim view of him once word of it spreads.",
+            {V .. " #1090 Gerenzo's Orders; #1092 Gerenzo's Orders", LF("npc:piznik", "Piznik")},
+            {"Piznik"}, {"npc:ziz-fizziks", "npc:gerenzo", "place:windshear-crag", STO}),
+        Note("npc:drum-fel", "Drum Fel", "Person",
+            "Drum Fel commands Hammerfall, the Horde's outpost in the Arathi Highlands, which is under constant attack. The Witherbark trolls and the Boulderfist ogres of Arathi have joined to drive the Horde out. In his words the trolls turned their backs on the Horde and the ogres would use its people for food and bedding, and he means to show both that the Horde has a home in the Highlands too. He strikes first at the Witherbark camps south of the outpost, then at the Boulderfist lair toward the dwarven bridge, and last at the Boulderfist lords and their shaman in the ruins of Stromgarde, where the attacks are led from.\n\nNew fighters reach him from Tarren Mill, where Tallow first sends them to test themselves on a Boulderfist ogre mound. Drum is not sure whether Tallow hopes they will die there. His wife, Korin Fel, has hidden from him the signs of the ogre Or'Kalar, who hates Drum for defeating him years ago and has laid a trap for him.",
+            {V .. " #676 The Hammer May Fall; #677 Call to Arms; #678 Call to Arms; #679 Call to Arms; #680 The Real Threat", LF("npc:drum-fel", "Drum_Fel")},
+            nil, {"place:hammerfall", "npc:korin-fel", "faction:boulderfist", ARA}),
+        Note("npc:scooty", "Chief Engineer Scooty", "Person",
+            "Chief Engineer Scooty is a goblin engineer at the wind rider roost of Booty Bay. When Kernobee sent word of a new gnomish rig at Gnomeregan, Scooty and his partner Sovik set to work on the Transpolyporter 6000, which they call the fastest and most reliable way to Gnomeregan, and its passengers board with Scooty. He calls it the pinnacle of goblin transport technology and admits that it has only exploded a dozen or so times. The alternative is a run to the gnome city through the dwarf-held mountains of Dun Morogh. To Scooty, Mekgineer Thermaplugg is a good-for-nothing backstabber.",
+            {V .. " #2842 Chief Engineer Scooty; #2904 A Fine Mess", LF("npc:scooty", "Scooty")},
+            {"Scooty"}, {"place:booty-bay", "npc:kernobee", "dungeon:gnomeregan", "npc:thermaplugg"}),
+        Note("npc:seereth", "Seereth Stonebreak", "Person",
+            "Seereth Stonebreak is a promising orc shaman whom the Horde sent to the Stonetalon Mountains when the land's spirits cried out against the goblins plundering and burning it. She camps near the Greatwood Vale, at the end of the road west from the Crossroads of the Barrens, and reports massive deforestation by the Venture Company. The spirits there, she says, are nearly blind with pain and rage, and she wants the company's workers in Windshear Crag shown the Horde's answer in the language they understand best, which is violence.\n\nShamans can hear the plea of those spirits, Seereth explains, because their spiritual magic is related to the natural magic of druids. Many of the whispers are lost to her, but one vision is clear, of two man-shaped machines marked with strange symbols felling the trees of Windshear Crag with impossible speed. She believes the wisdom of the tauren elders may be needed to calm the spirits, and the one elder she knows by name is Magatha of Elder Rise in Thunder Bluff.",
+            {V .. " #1061 The Spirits of Stonetalon; #1062 Goblin Invaders; #1068 Shredding Machines; #1063 The Elder Crone", LF("npc:seereth-stonebreak", "Seereth_Stonebreak")},
+            {"Seereth"}, {"place:greatwood-vale", "place:windshear-crag", "faction:venture-company", "npc:magatha"}),
+        Note("npc:marukai", "Marukai", "Person",
+            "Marukai is a Darkspear troll who holds Zoram'gar Outpost for the Horde on the Zoram Strand, the northwestern coast of Ashenvale. Beneath the sea there lies the doomed city of Zoram, long destroyed and nearly forgotten, and now the naga have returned to it for reasons no one knows. The reason matters little to Marukai. The Horde has worked hard to claim this land, and he wants the naga thrown back to the depths, with their heads brought to him as proof.",
+            {V .. " #6442 Naga at the Zoram Strand", LF("npc:marukai", "Marukai")},
+            {"Marukai"}, {"place:zoramgar", "place:zoram-strand", ASH}),
+        Note("npc:daryn-lightwind", "Daryn Lightwind", "Person",
+            "Daryn Lightwind is a night elf historian of Rut'theran Village, at the foot of Teldrassil, who has studied many subjects in her time. On her shelves is an old, worn history of Feralas, which she lends only in return for a favor. Troyas Moonbreeze of Feathermoon Stronghold counts her a colleague and sends her his questions. She, for her part, thinks he always believes he has found something important, and that anything of real value in the ruins of Feralas was hoarded long ago by the ogres or the harpies who live there now.\n\nHer latest fascination is the snapjaws of the beach in the Hinterlands, above all a giant one named Gammerita. Her research keeps her at home, so Curgle Cranklehop of Tanaris, who calls her quite a knowledgeable historian, built her a device that takes pictures, the Super Snapper FX. Her studies also keep her from the elven ruins of Winterspring, and she sends students there to Wynd Nightchaser at Starfall, who knows the area well.",
+            {V .. " #2939 In Search of Knowledge; #2940 Feralas: A History; #2941 The Borrower; #2944 The Super Snapper FX; #2943 Return to Troyas; #5250 Starfall", LF("quest:2941", "Daryn_Lightwind")},
+            nil, {"npc:troyas", "npc:curgle", "place:ruttheran", HIN}),
+        ForeverNote("npc:trevan-rol", "Trevan Rol", "Person",
+            "Trevan Rol is a paladin of Bandarion Keep and its man at the Sepulcher in Silverpine Forest. When two dignitaries of the Earthen Ring went missing in Silverpine on their way to Tarren Mill, rumor called it a diplomatic incident, and Danitha Morr saw in it a chance for the keep's paladins to prove their worth in the eyes of the Horde. Trevan says the pair were no ordinary diplomats. One was a tauren, and the other, cloaked, was a high elf, he would swear, for he has seen quel'dorei before. Why an elf would travel with a tauren through Horde lands he cannot say, and he sends those who ask to Deathguard Baldren near the entrance.\n\nThe worgen of Silverpine can be killed despite their strength, in Trevan's view, all but Old Fire-Eye, the biggest of them, who never seems to stay dead. Trevan has a list of what is needed to forge a blade that can put the beast down. For the smith he chose Ott of Tarren Mill, an orc who sells plain blades to travelers. Trevan once bought a sword from him, and the smiths of the Undercity who later saw it took it for the work of a known master.",
+            {P1 .. " #91858 Diplomatic Incident; #91859 A Curious Pair; #95036 A Moon-Kissed Blade; #95111 An Underrated Talent; #95126 The Moonsilver Blade"},
+            nil, {"place:sepulcher", "npc:danitha", "npc:ott", "place:bandarion"}),
+    })
+end
+
+-- notes7 batch 2: Prospector Agmond and the word beside his hand, Ironband who sent him,
+-- Arikara and the Magatha question, and the people of the 20-50 scenes still unnamed in the
+-- catalogue (Nek'rosh, Valstag Ironjaw, Karl Boran, Darsok Swiftdagger, Orendil Broadleaf,
+-- Sanath Lim-yo, J.D. Collie, Cliffwatcher Longhorn, Xavathras, Hagar Lightninghoof).
+-- Agmond's death, his last report and his last word, Murdaloc as a name at all, and
+-- Magatha's claim about Cairne with Motega's doubt are discoveries (LoreDiscoveryData.lua,
+-- "agmond.*" and "arikara.*"). Hagar, Karl and the one-word "Longhorn" stay out as a given
+-- name and a word; their full names link.
+do
+    local BAD, LOCH = "region:4261646c616e6473", "region:4c6f6368204d6f64616e"
+    local TN, WET = "region:54686f7573616e64204e6565646c6573", "region:5765746c616e6473"
+    local BAR, FEL = "region:5468652042617272656e73", "region:46656c776f6f64"
+    A.RegisterLoreNotes({
+        Note("npc:agmond", "Prospector Agmond", "Person",
+            "Prospector Agmond is a dwarf in charge of the excavation sites in the Badlands that Prospector Ironband of Loch Modan oversees. His last known post was the southernmost dig site in the Badlands, a tiny operation past Angor Fortress. Ironband has not heard from him in weeks and wants his report.\n\nAgmond is dead, and his broken, battered bones lie picked clean at the southern dig.\n\nHis last report to Ironband told of ancient urns his diggers had uncovered at the dig site outside Uldaman. Ironband fears that the urns stirred up the troggs, just as the idols found at his own excavation did, and wants them gathered for study.\n\nBloody smears across rock and sand show that Agmond crawled some distance from the west before he died. Beside his dead hand the word Murdaloc is scrawled in a patch of sandstone.\n\nIronband takes it as sobering news. He believes the troggs killed Agmond, and he is sure that a dwarf with so strong an arm, so fierce a hammer swing and so thick a skull took a lot of them down with him.",
+            {V .. " #738 Find Agmond; #704 Agmond's Fate; #739 Murdaloc", LF("subzone:agmond-s-end", "Agmond%27s_End")},
+            {"Agmond"}, {"npc:ironband", "place:angor-fortress", "dungeon:uldaman", BAD}),
+        Note("npc:murdaloc", "Murdaloc", "Person",
+            "Murdaloc is the word scrawled in the sandstone of the southern Badlands beside the dead hand of Prospector Agmond, at the end of the bloody trail he crawled from the west. Prospector Ironband of Loch Modan wants Agmond's killer slain.\n\nIronband holds that the troggs killed Agmond, and he is sure the prospector took a lot of them down with him.",
+            {V .. " #739 Murdaloc"},
+            {"Murdaloc"}, {"npc:agmond", "faction:stonevault", BAD}),
+        Note("npc:ironband", "Prospector Ironband", "Person",
+            "Prospector Ironband heads an excavation of ancient ruins east of the lake in Loch Modan, at Ironband's Excavation. Jern Hornhelm of Thelsamar calls him a stout, honest dwarf who values results, which is why the slow progress of the dig worries Jern, given all the supplies sent to it. The trouble is the troggs. Ironband asks Thelsamar for more blastpowder, though Jern sent him plenty weeks ago and does not know where it went. Ironband believes the idols found at his excavation have stirred the troggs up.\n\nHis work reaches beyond Loch Modan. Prospector Agmond runs the excavation sites in the Badlands for him, and Ironband's reports go to Prospector Stormpike in Ironforge, who sends help when Ironband has legwork to be done.",
+            {V .. " #436 Ironband's Excavation; #298 Excavation Progress Report; #302 Powder to Ironband; #707 Ironband Wants You!; #738 Find Agmond; #704 Agmond's Fate", LF("npc:prospector-ironband", "Prospector_Ironband")},
+            {"Ironband"}, {"place:ironbands-excavation", "place:thelsamar", "npc:agmond", "npc:prospector-stormpike"}),
+        Note("npc:arikara", "Arikara", "Person",
+            "Arikara is a serpent of vengeance from an old tauren legend. Hagar Lightninghoof of Freewind Post saw something in Thousand Needles he could hardly believe, and to Motega Firemane of Whitereach Post it proved the legend true. Arikara cannot be hunted like an ordinary beast. She is summoned by lighting the sacred fire of life on Darkcloud Pinnacle, an isolated needle where the tauren bury their dead, and the fire is lit with a powder made from the rare Incendia agave of the Boiling Pool and enchanted by a shaman as powerful as Magatha Grimtotem.\n\nMagatha, who enchants the powder, calls Arikara a deadly creature born only to seek vengeance against those who have committed heinous acts.\n\nMagatha fears that Arikara may be stalking Cairne Bloodhoof, the High Chieftain, because too much tauren lore has changed and the change has angered the serpent.\n\nOnce Arikara is dead, Motega cannot see why she would have been after Cairne. Magatha could not be wrong, he reasons, for she is the tauren's most powerful shaman, and yet her explanation makes no sense to him.",
+            {V .. " #4865 Serpent Wild; #5062 Sacred Fire; #5088 Arikara", LF("item:arikara-serpent-skin", "Arikara")},
+            {"Arikara"}, {"npc:motega-firemane", "place:darkcloud-pinnacle", "npc:magatha", "npc:cairne"}),
+        Note("npc:nekrosh", "Nek'rosh", "Person",
+            "Nek'rosh is the chieftain of the Dragonmaw orcs in the Wetlands and the son of Nekros, who led the clan years ago. Nekros used powerful magic to tame the red dragons, and when that magic failed him the dragons killed him. His son has sworn revenge against them.\n\nThe Dragonmaw were all but destroyed by the end of the Second War, after they lost control of their dragons, and the few who were left fled from Grim Batol into the mountains east of Whelgar's Excavation. Under Nek'rosh they have gained strength again. They hold an encampment northeast of Menethil Harbor and have pushed into Dun Algaz, and in the encampment Nek'rosh has had catapults built to lay siege to Menethil, which the fighting in Dun Algaz has cut off from reinforcements.",
+            {V .. " #464 War Banners; #465 Nek'rosh's Gambit; #474 Defeat Nek'rosh; #455 The Algaz Gauntlet", LF("item:nek-rosh-s-head", "Nek%27rosh")},
+            {"Chieftain Nek'rosh"}, {"faction:dragonmaw", "place:menethil", "place:dun-algaz", "place:grim-batol"}),
+        Note("npc:valstag", "Valstag Ironjaw", "Person",
+            "Valstag Ironjaw takes the reports on the Dragonmaw orcs at Menethil Harbor, the Alliance's port and stronghold in the Wetlands. The orcs have spread from their haven in the Wetlands into Dun Algaz, and if they hold it, Loch Modan will be cut off from Menethil. The Dragonmaw usually hide in the hills, Valstag says, and what made them surge into Algaz is still a mystery to him.",
+            {V .. " #455 The Algaz Gauntlet", LF("npc:valstag-ironjaw", "Valstag_Ironjaw")},
+            {"Valstag"}, {"place:menethil", "place:dun-algaz", "faction:dragonmaw", WET}),
+        Note("npc:karl-boran", "Karl Boran", "Person",
+            "Karl Boran of Menethil Harbor wants back the cargo that murlocs dragged overboard when they raided the merchant vessel Blind Princess. The ship escaped intact, but among the lost cargo was the Menethil Statuette, a valuable statuette of Terenas Menethil. It is a silvery figure of a young, long-haired paladin with his hammer upraised, packed in fine straw. The murlocs carried the crates and barrels of the cargo to their hovels along the coast.",
+            {V .. " #281 Reclaiming Goods; #286 Return the Statuette"},
+            nil, {"place:menethil", WET}),
+        Note("npc:darsok", "Darsok Swiftdagger", "Person",
+            "Darsok Swiftdagger is an orc of the Crossroads in the Barrens who wants the Witchwing harpies of the Dry Hills cut down. They have ravaged the Horde's caravan supplies for too long. Darsok has snooped around their nests to learn who leads whom, so that the Horde can work its way up their chain of command from the bottom. Only Witchwing Slayers serve as lieutenants, and they are known by the rings they carry.\n\nAt the top stands Serena Bloodfeather, the sister of a harpy named Bloodfeather whom Rexxar slew long ago. Darsok believes the attacks on the caravans are her revenge for her sister's death. He wants her head placed on the next caravan the Horde sends out, to give the harpies something to think about.",
+            {V .. " #867 Harpy Raiders; #875 Harpy Lieutenants; #876 Serena Bloodfeather", LF("npc:darsok-swiftdagger", "Darsok_Swiftdagger")},
+            {"Darsok"}, {"place:crossroads", "npc:rexxar", BAR}),
+        Note("npc:orendil", "Orendil Broadleaf", "Person",
+            "Orendil Broadleaf tends the sick at Maestra's Post in western Ashenvale, and his skill with herbs and healing is great, in the words of those he has helped. A child of Astranaar, Relara, the daughter of Pelturas Whitemoon, grows weaker by the hour, and Orendil believes her illness is more than physical. To treat it he seeks Bathran's Hair, a plant once found in the old ruins of Bathran's Haunt, north of Maestra's Post and just south of the Darkshore border, which was known to cure ailments of the spirit.",
+            {V .. " #1010 Bathran's Hair; #1020 Orendil's Cure", LF("npc:orendil-broadleaf", "Orendil_Broadleaf")},
+            {"Orendil"}, {"place:maestras-post", "npc:pelturas", "place:bathrans-haunt", "region:417368656e76616c65"}),
+        Note("npc:sanath", "Sanath Lim-yo", "Person",
+            "Sanath Lim-yo serves Archmage Xylem in Azshara, whose tower stands high on the cliffs. He does not like adventurers and tells them so, with sarcasm first and plain words after. His master has asked him to send on anyone who proves worthy, and Sanath's price for leave to see Xylem is a couple of hippogryph feathers for his arrows.",
+            {V .. " #3381 A Meeting with the Master"},
+            {"Sanath"}, {"npc:xylem", "region:417a7368617261"}),
+        Note("npc:jd-collie", "J.D. Collie", "Person",
+            "J.D. Collie studies the crystals that lie all over Un'Goro Crater. Most people ignore them, but she has a strange feeling that they hold power, though her experiments have not found it yet, and she keeps running low on crystals. She has also heard rumors of crystal pylons in the crater, one of them somewhere in the north, and she cannot get them out of her head. By her own account she will usually believe anything people tell her.",
+            {V .. " #4284 Crystals of Power; #4285 The Northern Pylon"},
+            nil, {"region:556e27476f726f20437261746572"}),
+        Note("npc:cliffwatcher-longhorn", "Cliffwatcher Longhorn", "Person",
+            "Cliffwatcher Longhorn keeps watch at Freewind Post in Thousand Needles. The centaur have stepped up their attacks in the area, and they raided one of his supply caravans and slaughtered the whole party. Longhorn calls it an outrage that will not go unpunished, and he wants the centaur camp north of Freewind Post attacked. From the Great Lift comes a warning as well, that the Grimtotem nearby have been acting strangely toward the post's people.",
+            {V .. " #4542 Message to Freewind Post; #4841 Pacify the Centaur", LF("npc:cliffwatcher-longhorn", "Cliffwatcher_Longhorn")},
+            nil, {"place:freewind", "place:great-lift", "faction:galak", TN}),
+        Note("npc:xavathras", "Xavathras", "Person",
+            "Xavathras is a particularly cruel satyr who leads the Jadefire satyrs at the Ruins of Constellas in Felwood, northwest of the Emerald Sanctuary. The Jadefire spread the corruption to any creature they meet. Eridan Bluewind of the Emerald Circle, who seeks to heal the land the night elves once held, wants Xavathras slain and his minions destroyed, though she senses that something larger than the satyrs is at work in Felwood.",
+            {V .. " #4421 The Corruption of the Jadefire", LF("npc:xavathras", "Xavathras")},
+            {"Xavathras"}, {"npc:eridan", FEL}),
+        Note("npc:hagar", "Hagar Lightninghoof", "Person",
+            "Hagar Lightninghoof of Freewind Post in Thousand Needles has heard a rumor of an alien egg in the canyons. Those who claim to have seen it could not get close enough to examine it, for serpents guard it as if it were one of their own, in one of the serpent dens along the base of the cliffs south and northeast of the post. Hagar wants the egg brought to him so that he can learn what will hatch from it. When he sees something he can hardly believe, it is Motega Firemane of Whitereach Post he sends for.",
+            {V .. " #4821 Alien Egg; #4865 Serpent Wild", LF("npc:hagar-lightninghoof", "Hagar_Lightninghoof")},
+            nil, {"place:freewind", "npc:motega-firemane", TN}),
+    })
+end
+
+-- notes7 batch 4: the shaman's teachers the class scenes name, Durotar's and the Barrens'
+-- of the vanilla trials and Forever's dwarven ones in Dun Morogh, Loch Modan and the
+-- Wetlands; Darnassus's druid trainer; Tinker Town's Overspark; the naga of Zoram and the
+-- harpy matriarch of the Dry Hills. "Serena" stays out as a given name.
+do
+    local DUR, BAR, TN = "region:4475726f746172", "region:5468652042617272656e73", "region:54686f7573616e64204e6565646c6573"
+    local DM, LOCH, WET = "region:44756e204d6f726f6768", "region:4c6f6368204d6f64616e", "region:5765746c616e6473"
+    A.RegisterLoreNotes({
+        Note("npc:canaga", "Canaga Earthcaller", "Person",
+            "Canaga Earthcaller guides the young shaman of the Horde in the Valley of Trials in Durotar toward their first element, earth. Patience, he teaches, is earth's greatest virtue. The earth witnesses the cycle of all things, mountains becoming deserts and rivers becoming canyons, and it does not tolerate impatience. It calls now, Canaga says, because a time of conflict draws near.\n\nThose who bring him two hooves of the felstalkers to the north receive a sapta, a drink that binds the spirit to an element and is only ever drunk in a holy place, and only a select few shaman know how to make one. This one is drunk at Spirit Rock, at the end of the Hidden Path southwest of the valley. The earth spirit there gives a rough quartz to carry back, and around it Canaga crafts the shaman's first totem.",
+            {V .. " #1516 Call of Earth; #1517 Call of Earth; #1518 Call of Earth", LF("npc:canaga-earthcaller", "Canaga_Earthcaller")},
+            {"Canaga"}, {"place:spirit-rock", "place:valley-trials", DUR}),
+        Note("npc:kranal", "Kranal Fiss", "Person",
+            "Kranal Fiss teaches the young shaman of the Horde the way of fire from a small dwelling north of the Crossroads in the Barrens, short of the night elves' lands. Trainers such as Searn and Xanis send their students to him once they are strong in the ways of earth. He warns them that power and destruction will come easily, and that they must still know when to stay their hand, as earth taught them.\n\nHis trial sends them with a torch to Telf Joolam at the Shrine of the Dormant Flame in Durotar. The torch must come back lit at the shrine's brazier before Kranal gives them the totem of fire.",
+            {V .. " #1522 Call of Fire; #1523 Call of Fire; #1524 Call of Fire; #1527 Call of Fire"},
+            {"Kranal"}, {"npc:telf-joolam", "place:dormant-flame", "place:crossroads", BAR}),
+        Note("npc:prate", "Prate Cloudseer", "Person",
+            "Prate Cloudseer teaches the element of air, the hardest of the four to control, from a hiding place far in the east of Thousand Needles. Horde shaman who have made headway on their path are sent to her for their air totem. She expects to be treated with respect. A troll trainer who sends students her way jokes that she hides in a hole with her boyfriend, and warns them not to repeat it, since she would not take it kindly.",
+            {V .. " #1531 Call of Air; #1532 Call of Air"},
+            {"Prate"}, {"npc:kranal", TN}),
+        ForeverNote("npc:bruegs", "Bruegs Kindleborn", "Person",
+            "Bruegs Kindleborn is a dwarf shaman who lives in a cave in the mountains above South Gate Outpost, in the far east of Dun Morogh. Dwarven shaman who have learned patience from the stone come to him for the sapta of fire. Fire is easy to wield, he warns them, but harder to master, and a shaman must know when to hold back.\n\nHis trial sends them with a torch beyond the Valley of Kings in Loch Modan, up a hidden path to a sacred peak where Braldir Ashmantle keeps the Shrine of the Dormant Flame. Those who bring the torch back burning from the shrine's brazier receive their totem of fire, with the praise of Bruegs, who swears by Madoran's beard.",
+            {P1 .. " #94449 Call of Fire; #94465 Call of Fire; #94468 Call of Fire"},
+            {"Bruegs"}, {"npc:braldir", DM, LOCH}),
+        ForeverNote("npc:braldir", "Braldir Ashmantle", "Person",
+            "Braldir Ashmantle keeps the Shrine of the Dormant Flame in Loch Modan, on a sacred peak reached by a hidden path in the crags beyond the Valley of Kings. Few climb that far. Wanderers who come chasing rumors of treasure or beasts find only stone and silence, and Braldir lets no one about the shrine who does not carry the torch of a fire trial. To the dwarven shaman the shrine holds a sacred flame that waits to be awakened, a truth deeper than the Alliance can fathom.\n\nBraldir makes the fire sapta from fire tar carried by the Tunnel Rat geomancers in the kobold caves to the north and a reagent pouch from a Stonesplinter seer in the southern hills. Fire, he teaches, is not only fury and ruin but life, the forge and the breath of creation, and true wisdom in magic lies in knowing when to blend, not only how to burn.",
+            {P1 .. " #94465 Call of Fire; #94466 Call of Fire; #94467 Call of Fire"},
+            {"Braldir"}, {"npc:bruegs", LOCH}),
+        ForeverNote("npc:hervdana", "Hervdana Saegrund", "Person",
+            "Hervdana Saegrund is a dwarf shaman whose family lives in a cave beneath the southern falls of the Wetlands, with Dark Iron dwarves about and no guard in sight. Norric Lochthane of Loch Modan sends shaman who seek the water sapta to her. Water means rebirth, she teaches. It carves stone, cleanses filth and heals the weary when it is pure, and ruins all it touches when it is tainted.\n\nHer students gather water in its different forms. They fill skins at the foot of the falls, where the fresh water meets the brackish marsh, at Stonewatch Falls in Redridge, where she judges that the magic of the shadowseers is changing the murlocs, and at the lake beside Astranaar in Ashenvale. From the three she brews a vial of pure water for the last rite, which Norric oversees. The Dark Irons have crept so far north, she says, that it makes her wonder what dwarfkind could do if the clans ever stopped squabbling and worked as one.",
+            {P1 .. " #94495 Call of Water; #94497 Call of Water; #94499 Call of Water; #94500 Call of Water; #94501 Call of Water"},
+            {"Hervdana"}, {"npc:norric", "place:stendels-pond", WET}),
+        Note("npc:mathrengyl", "Mathrengyl Bearwalker", "Person",
+            "Mathrengyl Bearwalker is a druid of the Cenarion Circle in Darnassus who trains its young druids. Students come back to him from their lessons, from facing Lunaclaw at the Moonkin Stone east of Auberdine and from the trials of Moonglade, to learn what they have earned, among it the aquatic form and the power over poison.\n\nHe also hands out the Tharlendris seeds that the Circle grows in soil from Un'Goro Crater with what it calls an Evergreen Pouch, on a voucher from Arch Druid Fandral Staghelm. The seeds blossom into an array of potent herbs, among them morrowgrain, a mysterious herb the Arch Druid means to understand. When Falla in Ashenvale found a shard of the Emerald Dream that held a nightmare, it was to Mathrengyl that she sent it.",
+            {V .. " #6001 Body and Heart; #5061 Aquatic Form; #6125 Power over Poison; #3781 Morrowgrain Research; #3370 In Nightmares"},
+            {"Mathrengyl"}, {"place:cenarion-enclave", "faction:cenarion-circle", "npc:fandral", "region:4461726e6173737573"}),
+        Note("npc:overspark", "Tinkmaster Overspark", "Person",
+            "Tinkmaster Overspark is a gnome tinker in Tinker Town in Ironforge. When Gnomeregan fell, he believes, a rogue spark must have jolted his creation Techbot, which once helped him and his associates with its countless gizmos and limitless store of information. Its positronic brain has polarized and turned negatronic, and now Techbot's behaviors are reversed and it roams Gnomeregan in a frenzy. Overspark hopes its memory core will show him the cause, so that he can fix it.\n\nHe also needs a large supply of essential artificials, a nigh-universal component of Gnomeregan's tinkers and smiths that no one remembered to take in the frantic exodus. They are still in the deeper parts of the city, in containers called artificial extrapolators.",
+            {V .. " #2923 Tinkmaster Overspark; #2922 Save Techbot's Brain!; #2924 Essential Artificials"},
+            {"Overspark"}, {"npc:techbot", "place:tinker-town", "dungeon:gnomeregan"}),
+        Note("npc:ruuzel", "Ruuzel", "Person",
+            "Ruuzel leads the naga of the Zoram Strand in Ashenvale and dwells on an isle at the northern edge of drowned Zoram. The naga found the Ring of Zoram after it had been lost for years. It belonged to the rulers of the city before the waves of the Sundering drowned it and is said to open any lock within it, and Ruuzel keeps it.",
+            {V .. " #1009 Ruuzel"},
+            {"Ruuzel"}, {"place:zoram-strand", "relic:ring-zoram", "npc:talen"}),
+        Note("npc:serena-bloodfeather", "Serena Bloodfeather", "Person",
+            "Serena Bloodfeather leads the Witchwing harpies of the Dry Hills in the Barrens, above the lieutenants who carry rings. She is the sister of a harpy named Bloodfeather, whom Rexxar slew long ago, and Darsok Swiftdagger of the Crossroads believes the harpies' attacks on the Horde's caravans are her revenge for her sister's death.",
+            {V .. " #876 Serena Bloodfeather; #875 Harpy Lieutenants"},
+            nil, {"npc:darsok", "npc:rexxar", BAR}),
+    })
+end
+
+-- notes7 batch 5: smaller people of the 15-50 scenes with no note yet. Menethil's Tarrel and
+-- Dun Algaz's Rockgar, Dun Modr's explosives expert, Thousand Needles' Kanati, the lost one
+-- Noboru, Thorium Point's Oilfist and Hansel, Bashana of Elder Rise, the banshee Nightlash,
+-- Desolace's kodo goblins, Winterspring's medium and the Grimtotem who sacked Makaba's
+-- village. Kanati, Noboru and Hansel stay out as given names; their full names link.
+do
+    local TN, DES, SG = "region:54686f7573616e64204e6565646c6573", "region:4465736f6c616365", "region:53656172696e6720476f726765"
+    local WET, STO = "region:5765746c616e6473", "region:53746f6e6574616c6f6e204d6f756e7461696e73"
+    A.RegisterLoreNotes({
+        Note("npc:tarrel", "Tarrel Rockweaver", "Person",
+            "Tarrel Rockweaver waits at Menethil Harbor in the Wetlands for news of his wife, Merrin, who works with the team at the Whelgar Excavation Site to the east. She sent him a letter every week for a month, and then nothing for nearly two weeks. Longbraid promised to send a scout if the team stayed silent. Tarrel was quick at all things excavation in his school days, when Hollee of Auberdine was his classmate. She has long been fond of him, and he admits there was a time he would have returned it, but he is married, happily, he says.",
+            {V .. " #305 In Search of the Excavation Team; #306 In Search of The Excavation Team; #98461 Unrequited Love", LF("npc:tarrel-rockweaver", "Tarrel_Rockweaver")},
+            {"Tarrel"}, {"npc:merrin", "place:menethil", "place:whelgars-excavation-site", "npc:hollee"}),
+        Note("npc:rockgar", "Mountaineer Rockgar", "Person",
+            "Mountaineer Rockgar commands the dwarves at Dun Algaz, the pass between Loch Modan and the Wetlands. He called for volunteers for a scouting mission into the Wetlands, but the mission has turned messier. The Dragonmaw orcs have spread from their haven in the Wetlands into Dun Algaz, and if they keep their foothold there, he warns, Loch Modan will be cut off from Menethil Harbor. He wants a fighter to break through the pass, kill some orcs on the way and report to Valstag Ironjaw at Menethil.",
+            {V .. " #468 Report to Mountaineer Rockgar; #455 The Algaz Gauntlet", LF("quest:468", "Mountaineer_Rockgar")},
+            {"Rockgar"}, {"place:dun-algaz", "faction:dragonmaw", "npc:valstag", "region:4c6f6368204d6f64616e"}),
+        Note("npc:ashlan", "Ashlan Stonesmirk", "Person",
+            "Ashlan Stonesmirk is an explosives expert assigned to the regiment that guards Dun Modr and the Thandol Span in the Wetlands. His ears ring so that he can hardly hear a thing. When Chief Engineer Hinderweir the Seventh of the Stonewrought Dam found a strange powder, it was Ashlan who knew it by its tiny silver crystals and its smell for Seaforium Powder. Seaforium is harmless enough, he says, but once it is wet it could blow Ironforge out of the mountain. The reaction can be defused with four components, lurker venom, a crushed Mo'Grosh crystal, a crocolisk tear and a disarming colloid of his own.",
+            {V .. " #161 A Dark Threat Looms; #274 A Dark Threat Looms", LF("npc:ashlan-stonesmirk", "Ashlan_Stonesmirk")},
+            {"Stonesmirk"}, {"place:dun-modr", "npc:hinderweir", "place:stonewrought-dam", WET}),
+        Note("npc:kanati", "Kanati Greycloud", "Person",
+            "Kanati Greycloud is a tauren hunter who has boldly set up a hunting camp in Thousand Needles, near Whitereach Post. The Galak centaur want him dead, and orders found on them call for a gathering at the small post southwest of the Great Lift to kill him and rid the Needles of his camp and of all who might follow him. Kanati means to show them how a tauren fights, though he fears there may be more centaur than he thought.",
+            {V .. " #4881 Assassination Plot; #4966 Protect Kanati Greycloud", LF("npc:kanati-greycloud", "Kanati_Greycloud")},
+            nil, {"place:whitereach-post", "faction:galak", "place:great-lift", TN}),
+        Note("npc:noboru", "Noboru the Cudgel", "Person",
+            "Noboru the Cudgel is one of the lost ones, the draenei of the Swamp of Sorrows who were driven mad, and he and his gang have plagued the draenei of the Harborage for months. They wander the swamp and kill any draenei who cross their path. His cudgel has become a symbol of the brutality the Harborage suffers at the hands of the lost ones, and its people count him a direct threat to their survival that they lack the strength to face.",
+            {V .. " #1392 Noboru the Cudgel"},
+            nil, {"place:harborage", "place:fallow-sanctuary", "region:5377616d70206f6620536f72726f7773"}),
+        Note("npc:oilfist", "Overseer Oilfist", "Person",
+            "Overseer Oilfist commands the Thorium Brotherhood at Thorium Point in the Searing Gorge, his eminence in the words of its bounties. By his order a price stands on the head of Overseer Maltorius, the rogue Brotherhood agent who now commands the Dark Iron crew of the Slag Pit. The greater lava spiders of the Gorge trouble him as well, since by his account they shoot fire from an unfortunate place.",
+            {V .. " #7701 WANTED: Overseer Maltorius; #7724 Fiery Menace!"},
+            {"Oilfist"}, {"faction:thorium-brotherhood", "place:thorium-point", "place:slag-pit", SG}),
+        Note("npc:hansel", "Hansel Heavyhands", "Person",
+            "Hansel Heavyhands is a huge Dark Iron dwarf of the Thorium Brotherhood at Thorium Point in the Searing Gorge. He is given the dangerous work below the outpost and passes it on, with complaints. The climate and the thin air of the Gorge, he says, make his fingers swell like Thelsamar blood sausages, his bunions have bunions, and the cold gives him sniffles. His jobs include pounding the heavy war golems of the Gorge, killing the greater lava spiders, and clearing the incendosaurs from the lava pools of the Slag Pit so that Scrange and Burninate can send expeditionary teams down.",
+            {V .. " #7723 Curse These Fat Fingers; #7724 Fiery Menace!; #7727 Incendosaurs? Whateverosaur is More Like It", LF("npc:hansel-heavyhands", "Hansel_Heavyhands")},
+            nil, {"place:thorium-point", "faction:thorium-brotherhood", "place:slag-pit", SG}),
+        Note("npc:bashana", "Bashana Runetotem", "Person",
+            "Bashana Runetotem is a tauren of Elder Rise in Thunder Bluff who aids the Cenarion Circle, the daughter of Arch Druid Hamuul Runetotem. Word from Blackfathom Deeps is meant for her. The Twilight's Hammer cultists there, allied with the naga and led by Kelris, sacrifice innocents to Aku'mai, servant of an Old God, and the wounded scout who calls for help wants Kelris slain and his head brought to Bashana. Peace between the earth and all her people should be the goal, Bashana says, for the Earth Mother has a grand plan for nature in which all have a role.",
+            {V .. " #6561 Blackfathom Villainy", LF("npc:bashana-runetotem", "Bashana_Runetotem")},
+            {"Bashana"}, {"place:elder-rise", "npc:hamuul", "dungeon:blackfathom", "npc:kelris"}),
+        Note("npc:nightlash", "Nightlash", "Person",
+            "Nightlash is a banshee who reinforces the rot hide gnolls at the Dead Fields, an old farm in northern Silverpine Forest. Every small assault the Forsaken sent against the rot hides there was routed by her magic, and High Executor Hadrec at the Sepulcher wants her destroyed. When she falls, her essence turns to dust.",
+            {V .. " #437 The Dead Fields", LF("item:essence-of-nightlash", "Nightlash")},
+            {"Nightlash"}, {"place:dead-fields", "group:rot-hides", "npc:hadrec"}),
+        Note("npc:smeed", "Smeed Scrabblescrew", "Person",
+            "Smeed Scrabblescrew is a goblin of Desolace who has learned to rejuvenate and control aged and dying kodos with his kodo kombobulator, which jolts such a beast into a tamed kodo that follows its handler. That made him a partner of Cork and Rigger Gizelton, whose caravan is the only one brave enough to travel those parts, and he supplies it with tamed kodos. He thinks little of Bibbly F'utzbuckle, who believes he is the only goblin in Desolace who knows how to make money.",
+            {V .. " #5561 Kodo Roundup", LF("quest:5561", "Smeed_Scrabblescrew")},
+            {"Smeed"}, {"npc:bibbly", "place:kodo-graveyard", DES}),
+        Note("npc:bibbly", "Bibbly F'utzbuckle", "Person",
+            "Bibbly F'utzbuckle is a goblin at Kormek's Hut in Desolace who trades in bones from the kodo graveyard to the south. Kodo bones, he says, will change the world. His customers make furniture, musical instruments and even blasting powder from them, and a caravan carries them to Shadowprey Village to be sold. He means to reach a career high, become the richest goblin in the world and see his face on the cover of Goblin'preneur.",
+            {V .. " #5501 Bone Collector", LF("quest:5501", "Bibbly_F%27utzbuckle")},
+            {"Bibbly"}, {"place:kodo-graveyard", "place:shadowprey", "npc:smeed", DES}),
+        Note("npc:umbranse", "Umbranse the Spiritspeaker", "Person",
+            "Umbranse the Spiritspeaker is a human medium in the east of Winterspring who speaks for the dead. Itharius of the green dragonflight counts him among the dragons' mortal allies, and when the voice of one who is not truly dead is sought, Umbranse lends his skill.",
+            {V .. " #3512 In Eranikus' Own Words"},
+            {"Umbranse"}, {"npc:itharius", "region:57696e746572737072696e67"}),
+        Note("npc:grundig", "Grundig Darkcloud", "Person",
+            "Grundig Darkcloud leads a personal band of Grimtotem brutes, by far the worst of the lot, at Grimtotem Post in the southeast of the Stonetalon Mountains. He led the brutal attack on the village of Makaba Flathoof, in which the Grimtotem killed most everyone. Makaba fought, barely escaped with his life, and wants Grundig and his brutes dead.",
+            {V .. " #6548 Avenge My Village; #6629 Kill Grundig Darkcloud"},
+            {"Grundig"}, {"place:grimtotem-post", "npc:makaba-flathoof", "faction:grimtotem", STO}),
+    })
+end

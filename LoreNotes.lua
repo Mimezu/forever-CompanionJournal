@@ -294,6 +294,36 @@ for name in ([[Garek Gorn Blacklash Hematus Nafien Krakle Tinkee Albagorm Do'gol
     singleNames[name] = true
 end
 for _, title in ipairs({"Speak to Nafien", "Return to Tinkee"}) do knownNames[title] = {plain = true} end
+-- notes7 2026-11-06: distinctive short forms of new notes (Trevan and Daryn stay out as given
+-- names; "Drum" is a word). Quest titles that hold a new place's name stay plain.
+for name in ([[Talen Piznik Scooty Seereth Marukai]]):gmatch("%S+") do singleNames[name] = true end
+for _, title in ipairs({"Hive'Regal Scout Report", "Hive'Zora Scout Report", "Hive'Ashi Scout Report",
+    "Target: Hive'Regal Ambushers", "Target: Hive'Regal Burrowers", "Target: Hive'Regal Slavemakers", "Target: Hive'Regal Spitfires",
+    "Target: Hive'Zora Hive Sisters", "Target: Hive'Zora Reavers", "Target: Hive'Zora Tunnelers", "Target: Hive'Zora Waywatchers",
+    "Target: Hive'Ashi Defenders", "Target: Hive'Ashi Sandstalkers", "Target: Hive'Ashi Stingers", "Target: Hive'Ashi Workers"}) do
+    knownNames[title] = {plain = true}
+end
+-- notes7 batch 2 (Agmond, Murdaloc and Arikara carry discovery policies; Hagar, Karl and
+-- Longhorn stay out as a given name and a word).
+for name in ([[Agmond Murdaloc Ironband Arikara Nek'rosh Valstag Darsok Orendil Sanath Xavathras]]):gmatch("%S+") do
+    singleNames[name] = true
+end
+for _, title in ipairs({"Agmond's Fate", "Find Agmond", "Agmond's End", "Ironband Wants You!", "Powder to Ironband",
+    "Ironband's Compound", "Nek'rosh's Gambit", "Defeat Nek'rosh", "Orendil's Cure"}) do
+    knownNames[title] = {plain = true}
+end
+-- notes7 batch 3.
+for name in ([[Constellas Foulweald]]):gmatch("%S+") do singleNames[name] = true end
+for _, title in ipairs({"King of the Foulweald"}) do knownNames[title] = {plain = true} end
+-- notes7 batch 4 ("Prate" is a word and "Serena" a given name; both stay out).
+for name in ([[Canaga Kranal Bruegs Braldir Hervdana Mathrengyl Overspark Ruuzel]]):gmatch("%S+") do singleNames[name] = true end
+-- notes7 batch 5 (Kanati, Noboru and Hansel stay out as given names).
+for name in ([[Tarrel Rockgar Stonesmirk Oilfist Bashana Nightlash Smeed Bibbly Umbranse Grundig]]):gmatch("%S+") do
+    singleNames[name] = true
+end
+for _, title in ipairs({"Report to Mountaineer Rockgar", "Protect Kanati Greycloud", "Kill Grundig Darkcloud"}) do
+    knownNames[title] = {plain = true}
+end
 local V ="StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"
 local Q = "StorageInvestigation/journal-voice/quests_corpus.txt"
 local N = "StorageInvestigation/journal-voice/npc_corpus.txt"

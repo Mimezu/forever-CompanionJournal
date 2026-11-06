@@ -2757,3 +2757,59 @@ do
                 sources = {V .. " (quest 530)"}, related = {"npc:raleigh"}}}},
     }})
 end
+
+
+-- notes7 2026-11-06: Prospector Agmond. Until a quest shows him dead (the existing
+-- "agmond.dead") he is only a prospector Ironband has not heard from. His last report of the
+-- urns is Ironband's word in #704; the bloody trail and the word Murdaloc are what #739
+-- shows at his remains; Ironband's verdict on the troggs is its completion. Murdaloc has no
+-- note at all before #739, since even the name answers who killed him.
+-- Arikara: the legend, the fire and the powder are public. Magatha's "heinous acts" is her
+-- word at the #5062 turn-in, her fear for Cairne is #5088's offer, and Motega's doubt of her
+-- explanation is the #5088 completion. Nothing here says more than Motega does.
+do
+    local V = "StorageInvestigation/journal-voice/review/corpus_vanilla_quests.txt"
+    local BAD = "region:4261646c616e6473"
+    A.RegisterLoreDiscovery({facts = {
+        ["agmond.urns"] = {presented = {704}, completed = {704}},
+        ["agmond.murdaloc"] = {presented = {739}, completed = {739}},
+        ["agmond.avenged"] = {completed = {739}},
+        ["arikara.heinous"] = {completed = {5062}},
+        ["arikara.cairne"] = {presented = {5088}, completed = {5088}},
+        ["arikara.doubt"] = {completed = {5088}},
+    }, notes = {
+        ["npc:agmond"] = {canonicalRequires = {"agmond.dead", "agmond.urns", "agmond.murdaloc", "agmond.avenged"}, public = {
+            body = "Prospector Agmond is a dwarf in charge of the excavation sites in the Badlands that Prospector Ironband of Loch Modan oversees. His last known post was the southernmost dig site in the Badlands, a tiny operation past Angor Fortress. Ironband has not heard from him in weeks and wants his report.",
+            sources = {V .. " #738 Find Agmond (description)"}, related = {"npc:ironband", "place:angor-fortress", BAD}},
+            blocks = {{requires = {"agmond.dead"},
+                body = "Agmond is dead, and his broken, battered bones lie picked clean at the southern dig.",
+                sources = {V .. " #738 Find Agmond (completion)"}, related = {"faction:stonevault"}},
+            {requires = {"agmond.urns"},
+                body = "His last report to Ironband told of ancient urns his diggers had uncovered at the dig site outside Uldaman. Ironband fears that the urns stirred up the troggs, just as the idols found at his own excavation did, and wants them gathered for study.",
+                sources = {V .. " #704 Agmond's Fate"}, related = {"dungeon:uldaman"}},
+            {requires = {"agmond.murdaloc"},
+                body = "Bloody smears across rock and sand show that Agmond crawled some distance from the west before he died. Beside his dead hand the word Murdaloc is scrawled in a patch of sandstone.",
+                sources = {V .. " #739 Murdaloc (description)"}, related = {"npc:murdaloc"}},
+            {requires = {"agmond.avenged"},
+                body = "Ironband takes it as sobering news. He believes the troggs killed Agmond, and he is sure that a dwarf with so strong an arm, so fierce a hammer swing and so thick a skull took a lot of them down with him.",
+                sources = {V .. " #739 Murdaloc (completion)"}, related = {}}}},
+        ["npc:murdaloc"] = {visibleRequires = {"agmond.murdaloc"}, canonicalRequires = {"agmond.murdaloc", "agmond.avenged"}, public = {
+            body = "Murdaloc is the word scrawled in the sandstone of the southern Badlands beside the dead hand of Prospector Agmond, at the end of the bloody trail he crawled from the west. Prospector Ironband of Loch Modan wants Agmond's killer slain.",
+            sources = {V .. " #739 Murdaloc (description)"}, related = {"npc:agmond", "faction:stonevault", BAD}},
+            blocks = {{requires = {"agmond.avenged"},
+                body = "Ironband holds that the troggs killed Agmond, and he is sure the prospector took a lot of them down with him.",
+                sources = {V .. " #739 Murdaloc (completion)"}, related = {}}}},
+        ["npc:arikara"] = {canonicalRequires = {"arikara.heinous", "arikara.cairne", "arikara.doubt"}, public = {
+            body = "Arikara is a serpent of vengeance from an old tauren legend. Hagar Lightninghoof of Freewind Post saw something in Thousand Needles he could hardly believe, and to Motega Firemane of Whitereach Post it proved the legend true. Arikara cannot be hunted like an ordinary beast. She is summoned by lighting the sacred fire of life on Darkcloud Pinnacle, an isolated needle where the tauren bury their dead, and the fire is lit with a powder made from the rare Incendia agave of the Boiling Pool and enchanted by a shaman as powerful as Magatha Grimtotem.",
+            sources = {V .. " #4865 Serpent Wild; #5062 Sacred Fire (description)"}, related = {"npc:motega-firemane", "place:darkcloud-pinnacle", "place:boiling-pool"}},
+            blocks = {{requires = {"arikara.heinous"},
+                body = "Magatha, who enchants the powder, calls Arikara a deadly creature born only to seek vengeance against those who have committed heinous acts.",
+                sources = {V .. " #5062 Sacred Fire (progress)"}, related = {"npc:magatha"}},
+            {requires = {"arikara.cairne"},
+                body = "Magatha fears that Arikara may be stalking Cairne Bloodhoof, the High Chieftain, because too much tauren lore has changed and the change has angered the serpent.",
+                sources = {V .. " #5088 Arikara (description)"}, related = {"npc:cairne"}},
+            {requires = {"arikara.doubt"},
+                body = "Once Arikara is dead, Motega cannot see why she would have been after Cairne. Magatha could not be wrong, he reasons, for she is the tauren's most powerful shaman, and yet her explanation makes no sense to him.",
+                sources = {V .. " #5088 Arikara (completion)"}, related = {}}}},
+    }})
+end

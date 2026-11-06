@@ -1088,3 +1088,168 @@ do
             {"Harborage", "the Harborage"}, {"npc:magtoor", "place:fallow-sanctuary", "region:5377616d70206f6620536f72726f7773"}),
     })
 end
+
+-- notes7 batch 1: Silithus's three hives, Ashenvale's Shrine of Aessina, Felwood's Irontree
+-- Woods, Sorrow Hill, Strahnbrad, and Desolace's Thunder Axe Fortress and Ethel Rethor.
+-- What became of Natalia in Hive'Regal and of the Malem siblings in the fortress stays out.
+do
+    local SIL, ASH, FEL = "region:53696c6974687573", "region:417368656e76616c65", "region:46656c776f6f64"
+    local WPL, ALT, DES = "region:5765737465726e20506c616775656c616e6473", "region:416c7465726163204d6f756e7461696e73", "region:4465736f6c616365"
+    A.RegisterLoreNotes({
+        Place("place:hive-regal", "Hive'Regal",
+            "Hive'Regal is one of the three great silithid hives of Silithus, in the south of the desert, with Hive'Ashi and Hive'Zora to the north and west. All three swarm with activity, and the Brood of Nozdormu counts them a threat to its existence. Cenarion Hold keeps scouts deep inside them, and Scout Landion has watched the silithid movements at Hive'Regal for days.\n\nThe Horde's volunteers in the war against the silithid camp outside Hive'Regal as Captain Skullsplit's Orgrimmar Legion. Tensions run high between them and the Alliance's Ironforge Brigade at Hive'Zora, and the two forces are kept well apart.",
+            {V .. " #8301 The Path of the Righteous; #8738 Hive'Regal Scout Report; #8731 Field Duty; #8507 Field Duty", LF("subzone:hive-regal", "Hive%27Regal")},
+            {"Hive'Regal"}, {"place:hive-zora", "place:hive-ashi", "place:cenarion-hold", SIL}),
+        Place("place:hive-zora", "Hive'Zora",
+            "Hive'Zora is the silithid hive of western Silithus, one of the desert's three great hives with Hive'Ashi and Hive'Regal. Cenarion Hold's Scout Azenel watches it from inside, and Commander Mar'alith calls reinforcements to the assault on its hive sisters, tunnelers, waywatchers and reavers. Without their tunnelers, he says, the silithid will have a hard time repairing their hive.\n\nOutside Hive'Zora camps Captain Blackanvil's Ironforge Brigade, the Alliance's volunteers in the war, with his lieutenant Janela Stouthammer. Many of the Brigade's supplies were lost on the way to Silithus, so armor kits and weapons are sent on to Janela at the outpost. Because of the animosity between them, the Brigade is kept well apart from the Horde's Orgrimmar Legion.",
+            {V .. " #8301 The Path of the Righteous; #8534 Hive'Zora Scout Report; #8687 Target: Hive'Zora Tunnelers; #8507 Field Duty; #8780 Armor Kits for the Field; #8781 Arms for the Field", LF("subzone:hive-zora", "Hive%27Zora")},
+            {"Hive'Zora"}, {"place:hive-ashi", "place:hive-regal", "npc:maralith", SIL}),
+        Place("place:hive-ashi", "Hive'Ashi",
+            "Hive'Ashi is the silithid hive of northern Silithus, one of the desert's three great hives with Hive'Zora and Hive'Regal. Its castes include workers, defenders, sandstalkers and airborne stingers. As the war effort mounts, the silithid threaten the operations of Cenarion Hold more and more, and Commander Mar'alith sends volunteers to assault Hive'Ashi, aiming at one caste at a time. Without their workers, he says, the silithid will struggle to repair their hive. Scout Jalia watches the hive's movements from inside.",
+            {V .. " #8301 The Path of the Righteous; #8501 Target: Hive'Ashi Stingers; #8502 Target: Hive'Ashi Workers; #8739 Hive'Ashi Scout Report", LF("subzone:hive-ashi", "Hive%27Ashi")},
+            {"Hive'Ashi"}, {"place:hive-zora", "place:hive-regal", "place:cenarion-hold", SIL}),
+        Place("place:shrine-aessina", "Shrine of Aessina",
+            "The Shrine of Aessina is a sacred place of the night elves in western Ashenvale, west of Astranaar, where they honor Aessina, a spirit of the deep forest. Dryads, daughters of Cenarius, keep to the woods around it. Therysil waits there for word of her sister Therylune, who wanders far from home, as far as the Master's Glaive in Darkshore. Illiyana waits there too, for the sisters who went with Anilia to the satyr ruins of Xavian to take back the Branch of Cenarius.",
+            {V .. " #945 Therylune's Escape; #1021 Vile Satyr! Dryads in Danger!", LF("subzone:shrine-of-aessina", "Shrine_of_Aessina")},
+            {"the Shrine of Aessina"}, {"npc:therysil", "npc:illiyana", "place:astranaar", ASH}),
+        Place("place:irontree-woods", "Irontree Woods",
+            "Irontree Woods lies in the north of Felwood and is as blighted as the rest of the forest. Corrupted treants, the irontree folk, walk among its trees, along with the toxic horrors, tainted elementals that Donova Snowden takes for a source of the poison the Deadwood furbolgs gather. She warns that the woods are very dangerous. Impsy, the imp who serves Niby the Almighty, prizes the irontree folk's rotting wood for carving eyes.\n\nIn the south of the woods lie ruins where many corrupted treants once lived. Their spirits may linger there still, and a flute carved from one of the ancients, once cleansed with the blessed water of Elune, might summon them.",
+            {V .. " #5086 Toxic Horrors; #8421 The Wrong Stuff; #4441 Felbound Ancients; #4442 Purified!", LF("subzone:irontree-woods", "Irontree_Woods")},
+            {"the Irontree Woods"}, {"faction:deadwood", "npc:donova", "npc:impsy", FEL}),
+        Place("place:sorrow-hill", "Sorrow Hill",
+            "Sorrow Hill is a burial ground in the Western Plaguelands, on the eastern road into Andorhal. Uther the Lightbringer lies there in his tomb, which High Priest Thel'danis guards. He dispels the evil from scourgestones brought by those who hold an Argent Dawn commission, though doing so draws the undead from countless miles around. During the Harvest Festival the Alliance honors Uther with an offering placed at his statue. A lake beside the hill feeds the river that runs south through Hillsbrad.\n\nSkeletons and ghouls infest the hill, and the Scourge relies on them as a buffer before Andorhal. The city's western and northern roads are well fortified, so Commander Ashlam Valorfist of Chillwind Camp means to advance by the eastern road through Sorrow Hill, once the undead there are thinned.",
+            {V .. " #5092 Clear the Way; #8414 Dispelling Evil; #8149 Honoring a Hero", LF("subzone:sorrow-hill", "Sorrow_Hill")},
+            nil, {"npc:uther", "place:andorhal", "npc:valorfist", WPL}),
+        Place("place:strahnbrad", "Strahnbrad",
+            "Strahnbrad is a ruined town in the Alterac Mountains, north of Southshore, that the Syndicate uses as its headquarters. It belonged to the kingdom of Alterac. On the eve of the Third War, Blackrock orcs raided it for sacrifices, and Prince Arthas rode to its defense with the Knights of the Silver Hand.\n\nThe Syndicate is run by former nobles of Alterac, who hide among its ordinary agents and are known by the signet rings they wear. Magistrate Henry Maleb of Southshore believes its leaders are bent on his town's ruin. Among them is Baron Vardus, known for his cold heart and brutal practices, who may be found at Strahnbrad or in the valley north of it. The Syndicate holds captives in the town as well, among them Gol'dir, who led an expedition from Durotar under the Warchief's orders and is made to haul burdens and dig. North of the ruins lie the Uplands, where the Syndicate is strongest.",
+            {V .. " #512 Noble Deaths; #523 Baron's Demise; #503 Gol'dir; #537 Dark Council", LF("subzone:strahnbrad", "Strahnbrad")},
+            nil, {"faction:syndicate", "npc:maleb", "npc:gol-dir", ALT}),
+        Place("place:thunder-axe-fortress", "Thunder Axe Fortress",
+            "Thunder Axe Fortress is the Burning Blade's stronghold in northern Desolace, east of the ruins of Ethel Rethor, with stone barracks and watchtowers. The cult keeps its Demon Box there behind a red crystal. Within the box lies the Hand of Iruxos, which the Burning Blade uses to open the demon portals of Mannoroc Coven. The cult is also rumored to have taken the Sceptre of Light from the naga, a sceptre that legend says can sink whole cities beneath the sea, and a Burning Blade seer studies it from atop one of the fortress's watchtowers.",
+            {V .. " #5381 Hand of Iruxos; #5741 Sceptre of Light", LF("subzone:thunder-axe-fortress", "Thunder_Axe_Fortress")},
+            nil, {"faction:burning-blade", "place:mannoroc-coven", "place:ethel-rethor", DES}),
+        Place("place:ethel-rethor", "Ethel Rethor",
+            "Ethel Rethor is a ruin on the northwestern coast of Desolace, the remains of a night elf settlement from before the Sundering, much of it now beneath the sea. From its one standing tower Azore Aldamort watches the naga, who hold the waters nearby, and the Burning Blade of Thunder Axe Fortress to the east. On Ranazjar Isle, a small island northwest of the tower, stands the Serpent Statue that summons the guardian of the Book of the Ancients, which holds the secrets the naga have kept for centuries.\n\nSea giants roam the coast as well. Off the northwest of Desolace they attacked the ship of Karnitol, a mage and noble of Stormwind, who teleported himself and his servants to safety and abandoned a valuable chest.",
+            {V .. " #5741 Sceptre of Light; #6027 Book of the Ancients; #1454 The Karnitol Shipwreck", LF("subzone:ethel-rethor", "Ethel_Rethor")},
+            nil, {"npc:azore", "place:thunder-axe-fortress", "book:ancients", DES}),
+    })
+end
+
+-- notes7 batch 3: the 40-60 places and groups the scenes name without a note. Felwood's
+-- Ruins of Constellas and its Emerald Circle, Winterfall Village, the High Wilderness of
+-- Feralas, the Slag Pit, Ashenvale's Night Run and the Foulweald, the Uplands of Alterac,
+-- Camp Kosh, Dire Maul's Warpwood Quarter and the Tainted Scar. What drives the Winterfall,
+-- whose soulgems lie in Night Run and what became of Arko stay with their own discoveries.
+do
+    local FEL, WIN, FER = "region:46656c776f6f64", "region:57696e746572737072696e67", "region:466572616c6173"
+    local SG, ASH, ALT = "region:53656172696e6720476f726765", "region:417368656e76616c65", "region:416c7465726163204d6f756e7461696e73"
+    local BAD, BL = "region:4261646c616e6473", "region:426c6173746564204c616e6473"
+    A.RegisterLoreNotes({
+        Place("place:ruins-constellas", "Ruins of Constellas",
+            "The Ruins of Constellas lie in Felwood, northwest of the Emerald Sanctuary and south of Bloodvenom Post, on land that once belonged to the night elves. The Jadefire satyrs hold them under Xavathras, a particularly cruel satyr, and from there they spread the corruption to any creature they meet. The moonwell of the ruins, once a symbol of renewal for the night elves, is corrupted now and used to bring forth more satyrs.\n\nThe Forsaken of Bloodvenom Post see a use in that water. One of them, who wants the Horde to gain an advantage over the Alliance in any way possible, watched a kitten double in size and grow stronger after drinking a little of it.",
+            {V .. " #4421 The Corruption of the Jadefire; #4505 Well of Corruption; #4506 Corrupted Sabers", LF("subzone:ruins-of-constellas", "Ruins_of_Constellas")},
+            {"the Ruins of Constellas", "Constellas"}, {"npc:xavathras", "place:bloodvenom", "faction:emerald-circle", FEL}),
+        Place("place:winterfall-village", "Winterfall Village",
+            "Winterfall Village is the home of the Winterfall furbolgs in Winterspring, east of Everlook and far to the east of Timbermaw Hold, and High Chief Winterfall leads the tribe from there. The Timbermaw keep to themselves and avoid other furbolg tribes where they can, but the Winterfall have grown more and more hostile toward them, in a rage the Timbermaw take for fear and hatred of anything the Winterfall do not understand. Donova Snowden, who studies the hot springs of Winterspring, says the Winterfall are not normally an aggressive tribe.",
+            {V .. " #8464 Winterfall Activity; #5121 High Chief Winterfall", LF("subzone:winterfall-village", "Winterfall_Village")},
+            nil, {"faction:winterfall", "faction:timbermaw", "place:everlook", WIN}),
+        Place("place:high-wilderness", "High Wilderness",
+            "The High Wilderness is the western part of Feralas, running from the Verdantis River to the Forgotten Coast. Ruined structures stand there on land that once belonged to the night elves, and the Gordunni ogres have taken the ruins over. Around them the trees are withered and the ground desecrated, and the ogres' magic seems to wreak havoc on the land they stand on. Rok Orhan of Camp Mojache warns that these Gordunni are much stronger than the ones nearer his camp.\n\nTroyas Moonbreeze has taken to going into the High Wilderness alone to study its ruins, which worries Angelas Moonbreeze, who would rather he never heard that she asked for the ogres there to be thinned. Frayfeather hippogryphs roam the area as well, and Uzer'i of Camp Mojache wants their spirits captured in a muisek vessel before they can escape.",
+            {V .. " #2980 The Ogres of Feralas; #2982 The High Wilderness; #3124 Hippogryph Muisek", LF("subzone:high-wilderness", "High_Wilderness")},
+            {"the High Wilderness"}, {"faction:gordunni", "npc:troyas", "place:camp-mojache", FER}),
+        Place("place:slag-pit", "Slag Pit",
+            "The Slag Pit is a Dark Iron mine in the Cauldron of the Searing Gorge, with lava pools deep inside it where incendosaurs live. Its crew answers to Overseer Maltorius, a rogue agent of the Thorium Brotherhood whom the Dark Irons have newly hired to command it, and the Brotherhood's Overseer Oilfist wants him killed. Master Smith Burninate holds that when Maltorius left the clan he took something more valuable than a pristine arcane crystal, its secret recipe for fiery flux, and that the recipe was part of the price of his promotion. Scrange and Burninate want the incendosaurs cleared so that expeditionary teams can explore the lava pools.",
+            {V .. " #7701 WANTED: Overseer Maltorius; #7722 What the Flux?; #7727 Incendosaurs? Whateverosaur is More Like It", LF("subzone:slag-pit", "Slag_Pit")},
+            {"the Slag Pit"}, {"faction:thorium-brotherhood", "npc:burninate", "place:thorium-point", SG}),
+        Place("place:night-run", "Night Run",
+            "Night Run is a satyr-held place in northeastern Ashenvale, like Satyrnaar and Xavian, where the satyrs keep blood-soaked temples. Its satyrs carry the kind of horns in high demand in Ratchet, which the goblin trader Pixel buys at Splintertree Post on his way there. When oil meant for the Warsong lumber camp was intercepted by satyrs, it ended up in their detestable rituals at Night Run, Satyrnaar and Xavian.",
+            {V .. " #6441 Satyr Horns; #6571 Warsong Supplies; #1140 The Tower of Althalaxx", LF("subzone:night-run", "Night_Run")},
+            nil, {"place:satyrnaar", "place:xavian", "place:splintertree", ASH}),
+        Place("place:uplands", "Uplands",
+            "The Uplands lie in the Alterac Mountains, north of Strahnbrad and of Tarren Mill, and there the Syndicate is strongest. Baron Vardus, a human and a high-ranking member of the Syndicate whom High Executor Darthalia of Tarren Mill wants dead for crimes against the Forsaken, was last seen there. So were the shadow mages of the Argus Wake, whose envoy Nagaz wrote to the Syndicate. Magistrate Henry Maleb of Southshore does not know what the Argus Wake is, but he judges any ally of the Syndicate a threat.",
+            {V .. " #537 Dark Council; #566 WANTED: Baron Vardus", LF("subzone:uplands", "Uplands")},
+            {"the Uplands"}, {"place:strahnbrad", "faction:syndicate", "npc:darthalia", ALT}),
+        Place("place:camp-kosh", "Camp Kosh",
+            "Camp Kosh is an ogre camp in the Badlands. When the dwarves of the Uldaman excavation fled the dig in a hurry, they left wagons and crates of supplies along the way, and the ogres of Camp Kosh fell on the abandoned equipment like vultures, in Sigrun Ironhew's words. They took the cart that carried the dwarves' weapons, and without it Sigrun's camp has gone hungry.",
+            {V .. " #718 Mirages", LF("subzone:camp-kosh", "Camp_Kosh")},
+            nil, {"npc:sigrun", "dungeon:uldaman", BAD}),
+        Place("place:warpwood-quarter", "Warpwood Quarter",
+            "The Warpwood Quarter is the eastern district of Dire Maul, the ruins of the Highborne city of Eldre'Thalas in Feralas, overrun now by corrupted plants and satyrs. The imp Pusillin hides there with what he stole from the elder Azj'Tordin, a book of incantations and the key to the city's halls. Azj'Tordin is one of the Shen'dralar who exchanged his immortality for freedom from the madness of Prince Tortheldrin, and he no longer cares for the key, only for the book. The blood elf mage Lethtendris has fled into Dire Maul as well, and she is likely near the satyrs of the Warpwood Quarter, with a web of her own making that ensnares the magical energies of the place.",
+            {V .. " #7441 Pusillin and the Elder Azj'Tordin; #7488 Lethtendris's Web", LF("subzone:warpwood-quarter", "Warpwood_Quarter")},
+            {"the Warpwood Quarter"}, {"dungeon:dire-maul", "npc:pusillin", "npc:lethtendris", FER}),
+        Place("place:tainted-scar", "Tainted Scar",
+            "The Tainted Scar is a demon-held valley in the southwest of the Blasted Lands, where demons gather under the command of Lord Kazzak. Doomguard commanders are found there, cunning and lethal adversaries. A warlock who would learn to conjure and control a doomguard must first capture one of them there in a crystal prison, and the demon fights the ritual of imprisonment wildly, attacking the one who performs it.",
+            {V .. " #7583 Suppression", LF("subzone:tainted-scar", "Tainted_Scar")},
+            {"the Tainted Scar"}, {"npc:daio", BL}),
+        {id = "faction:foulweald", title = "Foulweald", kind = "Faction",
+            body = "The Foulweald are a tribe of furbolgs who live southeast of Astranaar in Ashenvale. They are fewer than the Thistlefur but fierce, and the Horde counts them a threat to come. Their village has a totem mound, and when an enemy banner is planted on it the tribe tries to destroy it until their chief, Murgut, comes out to save face for the tribe. The Foulweald and the Thistlefur have pilfered rope meant for the Warsong lumber camp.",
+            sources = {V .. " #6621 King of the Foulweald; #6571 Warsong Supplies", LF("quest:6621", "Foulweald_tribe")},
+            names = {"Foulweald furbolgs", "the Foulweald"}, related = {"npc:murgut", "npc:karang", ASH}, setting = "Classic / Forever"},
+        {id = "faction:emerald-circle", title = "Emerald Circle", kind = "Faction",
+            body = "The Emerald Circle is a group of druids committed to their work in Felwood, healing the land from its corruption. They are friendly to all who come to them. Greta Mosshoof works against the Shadow Council from the Emerald Sanctuary in the south of the forest, Eridan Bluewind fights the Jadefire satyrs of the Ruins of Constellas, and Kelek Skykeeper has much experience with the furbolgs of Felwood. The Circle also keeps a camp near the Ashenvale border.",
+            sources = {V .. " #4421 The Corruption of the Jadefire; #5128 Words of the High Chief; #5155 Forces of Jaedenar; #5203 Rescue From Jaedenar"},
+            names = {"the Emerald Circle"}, related = {"npc:greta-mosshoof", "npc:eridan", "place:ruins-constellas", FEL}, setting = "Classic / Forever"},
+    })
+end
+
+-- notes7 batch 4: the two holy places of the shaman trials that had no note.
+do
+    A.RegisterLoreNotes({
+        Place("place:spirit-rock", "Spirit Rock",
+            "Spirit Rock is a holy place of the shaman above the Valley of Trials in Durotar, at the end of the Hidden Path southwest of the valley. Young Horde shaman drink their first sapta there, the sapta of earth, since a sapta is only ever drunk in a holy place. Those who do meet the earth spirit, who tells them that the mountains are their strength, the plains their patience and the world itself their essence, and who gives them a rough quartz to be the heart of their first totem.",
+            {V .. " #1517 Call of Earth; #1518 Call of Earth", LF("subzone:spirit-rock", "Spirit_Rock")},
+            nil, {"npc:canaga", "place:valley-trials", "region:4475726f746172"}),
+        Place("place:stendels-pond", "Stendel's Pond",
+            "Stendel's Pond lies in Westfall outside Moonbrook. It was once a pure spring and is now touched by dark forces, and the water spirits there have gone silent. Beside it stands an aged shrine, forgotten and cloaked in dust and cobwebs. The water lies eerily still, and the bones of beasts once burdened by labor are scattered along its shore. Dwarven shaman of Loch Modan come there for the last rite of water, to face the corruption that fouls the pond and to call forth a cleansed spirit at the shrine with Hervdana Saegrund's water.",
+            {"StorageInvestigation/journal-voice/part1_corpus.txt #94501 Call of Water; #94502 Call of Water"},
+            nil, {"place:moonbrook", "npc:norric", "npc:hervdana", "region:5765737466616c6c"}),
+    })
+end
+
+-- notes7 batch 6: places the 20-60 scenes name that had no note. Ashenvale's Thistlefur
+-- Village, Desolace's Valley of Spears, the Pool of Tears, Boulderfist Hall, the Stonemaul
+-- Ruins, the Fungal Vale, the Northridge Lumber Mill, Rage Scar Hold and Grommash Hold.
+-- What the Atal'ai exile knows and how the termites fare stay with their quests.
+do
+    local ASH, DES, SOS = "region:417368656e76616c65", "region:4465736f6c616365", "region:5377616d70206f6620536f72726f7773"
+    local ARA, DWM, FER = "region:41726174686920486967686c616e6473", "region:4475737477616c6c6f77204d61727368", "region:466572616c6173"
+    local EPL, WPL = "region:4561737465726e20506c616775656c616e6473", "region:5765737465726e20506c616775656c616e6473"
+    A.RegisterLoreNotes({
+        Place("place:thistlefur-village", "Thistlefur Village",
+            "Thistlefur Village is the home of the Thistlefur furbolgs in Ashenvale, north of Astranaar, with Thistlefur Hold, a cave, at its far end. It lies between Zoram'gar on the coast and Splintertree Post, and to the Horde it blocks a path between their bases that would go around Astranaar. The Thistlefur attack those who come near. They killed a band of trolls who were carrying sacred charms to Zoram'gar and keep the charms in chests in Thistlefur Hold.",
+            {V .. " #216 Between a Rock and a Thistlefur; #6462 Troll Charm", LF("subzone:thistlefur-village", "Thistlefur_Village")},
+            nil, {"place:thistlefur-hold", "place:zoramgar", "place:splintertree", ASH}),
+        Place("place:valley-of-spears", "Valley of Spears",
+            "The Valley of Spears is the stronghold of the Maraudine centaur in western Desolace. On a high bluff there stands the Maraudine War Horn, which only a warhorn mouthpiece carried by trusted Maraudine can sound, and its call brings centaur and in the end their khan, Hratha. The Maraudine do not care to talk business. A goblin who went up to the valley to trade with them came to believe they meant to put her in their cookpot.",
+            {V .. " #1380 Khan Hratha; #6132 Get Me Out of Here!", LF("subzone:valley-of-spears", "Valley_of_Spears")},
+            nil, {"faction:maraudine", "dungeon:maraudon", "faction:gelkis", DES}),
+        Place("place:pool-of-tears", "Pool of Tears",
+            "The Pool of Tears is a lake in the Swamp of Sorrows where the Temple of Atal'Hakkar lies sunk. The Atal'ai trolls who built it are a tribe of dark casters known for forbidden magic. The Horde, sent by the Warchief to look into strange happenings there, was astonished to find the temple sunk and the site guarded by green dragons, who call themselves the protectors of Azeroth. Atal'ai artifacts lie around the pool, and from them the Horde's investigators hope to piece the puzzle together.",
+            {V .. " #1424 Pool of Tears; #1429 The Atal'ai Exile", LF("subzone:pool-of-tears", "Pool_of_Tears")},
+            {"the Pool of Tears"}, {"dungeon:atalhakkar", SOS}),
+        Place("place:boulderfist-hall", "Boulderfist Hall",
+            "Boulderfist Hall is a hall of the Boulderfist ogres in the southern hills of the Arathi Highlands, near the Thandol Span. The ogre Kor'gresh holds a wand there that Trelane once owned, and by the way he throws blasts of ice at his own kin to keep them in line, he must be close to mastering its powers.",
+            {V .. " #693 Wand over Fist", LF("subzone:boulderfist-hall", "Boulderfist_Hall")},
+            nil, {"faction:boulderfist", "npc:trelane", "place:thandol-span", ARA}),
+        Place("place:stonemaul-ruins", "Stonemaul Ruins",
+            "The Stonemaul Ruins in the south of Dustwallow Marsh are the old home of the Stonemaul ogres. Black dragons came and burned it, and many ogres died. Overlord Mok'Morokk, whom Rexxar made leader of the clan, told the ogres to run and led them north to Brackenwall Village, leaving his grog, his snuff and his strongbox behind. Tharg, whose wife the dragons killed, says ogres are not good at running, and he wants revenge on the army of the black dragon and his home back.",
+            {V .. " #1166 Overlord Mok'Morokk's Concern; #1168 Army of the Black Dragon", LF("subzone:stonemaul-ruins", "Stonemaul_Ruins")},
+            {"the Stonemaul Ruins"}, {"npc:mokmorokk", "npc:tharg", "place:brackenwall", DWM}),
+        Place("place:fungal-vale", "Fungal Vale",
+            "The Fungal Vale lies in the south of the Eastern Plaguelands, a vale of Scourge horrors under a murky haze. Scourge champions roam it, and among them may be some who took part in the battle of Darrowshire, whose skulls Chromie needs for a powerful spell.",
+            {V .. " #5206 Marauders of Darrowshire", LF("subzone:fungal-vale", "Fungal_Vale")},
+            {"the Fungal Vale"}, {"place:darrowshire", EPL}),
+        Place("place:northridge-lumber-mill", "Northridge Lumber Mill",
+            "The Northridge Lumber Mill stands in the Western Plaguelands, south of Hearthglen and west of the road up to the town. The Scarlet Crusade uses it, and those who would hurt the Crusade mean to make it useless to them by setting termites loose inside.",
+            {V .. " #5902 A Plague Upon Thee; #5904 A Plague Upon Thee"},
+            {"the Northridge Lumber Mill"}, {"place:hearthglen", "group:scarlet-crusade", WPL}),
+        Place("place:rage-scar-hold", "Rage Scar Hold",
+            "Rage Scar Hold is a cave of yetis in the north of Feralas, not far from Feathermoon Stronghold. Its yetis are much tougher than those of the Feral Scar, and their hides are prized by Pratt McGrubben at Feathermoon, who trades in yeti hides.",
+            {V .. " #7733 Improved Quality; #7734 Improved Quality; #7735 Pristine Yeti Hide", LF("subzone:rage-scar-hold", "Rage_Scar_Hold")},
+            {"Rage Scar"}, {"place:feathermoon", FER}),
+        Place("place:grommash-hold", "Grommash Hold",
+            "Grommash Hold is Thrall's seat in the Valley of Wisdom in Orgrimmar, named for Grommash Hellscream, and the political heart of the Horde. Behind it the children of Orgrimmar gather to play, and Migi, who often forgets to pick up his lunch at Borstan's Firepit, is usually among them.",
+            {V .. " #97246 Meal Appeal; #97326 Rocks to Rests", LF("subzone:grommash-hold", "Grommash_Hold")},
+            nil, {"npc:thrall", "place:valley-of-wisdom", "region:4f726772696d6d6172"}),
+    })
+end
