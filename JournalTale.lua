@@ -276,6 +276,7 @@ local function Teller(person, voice, player)
         I = we and "I" or "you", me = we and "me" or "you", my = we and "my" or "your", Iwas = we and "I was" or "you were",
         bondWord = bondWord, Bond = bondWord and Cap(bondWord), Name = name, yours = we and "mine" or "yours",
         friend = bondWord or "an old friend", possessive = pro.theirs,
+        pairNamed = we and (name .. " and I") or ("you and " .. name),
     }
     function teller:Pair(rng)
         if self.crowd then return self.base.we end
@@ -440,7 +441,7 @@ local function Teller(person, voice, player)
             -- (a voice's own line names the companion only before the chapter has; "the two of us",
             -- "the pair of you" and "your party" once a chapter: after that, the common lines)
             if voicedAll and voicedAll[line] then
-                if self.named and line:find("{name}", 1, true) then hard = true end
+                if self.named and (line:find("{name}", 1, true) or line:find("{pairNamed}", 1, true)) then hard = true end
                 if self.twoSaid and (line:find("the two of ", 1, true) or line:find("the pair of ", 1, true)) then hard = true end
                 if self.partySaid and line:find("{my} party", 1, true) then hard = true end
             end
@@ -535,7 +536,7 @@ local function Teller(person, voice, player)
                 if before == "was" or before == "were" then return before .. " there" end
                 -- ("set foot in X", "the first time in X" keep their place as "there": without it
                 -- the sentence lost its point, "You had never set foot before that day", 2026-11-06)
-                if before == "foot" or before == "time" or before == "stood" or before == "day" then return before .. " there" end
+                if before == "foot" or before == "time" or before == "stood" or before == "day" or before == "been" then return before .. " there" end
                 return before
             end)
         end
@@ -673,8 +674,9 @@ function T.Paragraphs(lines, beats)
         if beat == "rest" or beat == "milestone" or beat == "close" or beat == "consequence" then return "aftermath" end
         return "setting"
     end
+    local phases = {}
     local function Flush()
-        if #current > 0 then paragraphs[#paragraphs + 1] = table.concat(current, " ") end
+        if #current > 0 then paragraphs[#paragraphs + 1] = table.concat(current, " "); phases[#paragraphs] = previous end
         current, words = {}, 0
     end
     for i, line in ipairs(lines) do
@@ -688,6 +690,18 @@ function T.Paragraphs(lines, beats)
         previous = phase
     end
     Flush()
+    -- (a last paragraph of one short sentence, "You reached level 32.", joins the one before it;
+    -- never the backstory of a prologue)
+    if #paragraphs >= 2 and phases[#paragraphs - 1] ~= "prologue" then
+        local last = paragraphs[#paragraphs]
+        local n = 0
+        for _ in last:gsub("{%a:", ""):gmatch("%S+") do n = n + 1 end
+        local sentences = select(2, last:gsub("[%.!%?]%s", "")) + 1
+        if n <= 9 and sentences <= 1 then
+            paragraphs[#paragraphs - 1] = paragraphs[#paragraphs - 1] .. " " .. last
+            paragraphs[#paragraphs] = nil
+        end
+    end
     return table.concat(paragraphs, "\n\n")
 end
 
@@ -1023,7 +1037,13 @@ function T.Tell(person, days, voice, player, brief)
         local class = ClassWord(person.class)
         local who = (people and class and (people .. " " .. class)) or class or people or "fellow adventurer"
         local mainZone
-        for _, zone in ipairs(f.zones) do if not mainZone or f.zoneTime[zone] > f.zoneTime[mainZone] then mainZone = zone end end
+        -- (a dungeon is told by its own beat: the chapter opens on the country above it when the
+        -- day recorded any, "in Westfall ... Then you went down into the Deadmines", 2026-11-06)
+        local aboveGround
+        for _, zone in ipairs(f.zones) do if not (L.Dungeon and L.Dungeon(zone)) and (f.zoneTime[zone] or 0) >= 300 then aboveGround = true end end
+        for _, zone in ipairs(f.zones) do
+            if not (aboveGround and L.Dungeon and L.Dungeon(zone)) and (not mainZone or f.zoneTime[zone] > f.zoneTime[mainZone]) then mainZone = zone end
+        end
         mainZone = mainZone or (f.met and f.met.zone) or (f.seen and f.seen.zone) or f.fires[1] or f.rests[1]
         local zoneInfo = L.Zone and L.Zone(mainZone)
         local function Epithet(info, allowLong)
@@ -1198,7 +1218,7 @@ function T.Tell(person, days, voice, player, brief)
                 do
                     local named = {}
                     for _, line in ipairs(list) do
-                        if line:find("{pair}", 1, true) or line:find("{name}", 1, true) or line:find("{bondWord}", 1, true) or line:find("{Bond}", 1, true) then named[#named + 1] = line end
+                        if line:find("{pair}", 1, true) or line:find("{name}", 1, true) or line:find("{pairNamed}", 1, true) or line:find("{bondWord}", 1, true) or line:find("{Bond}", 1, true) then named[#named + 1] = line end
                     end
                     if #named > 0 then list = named end
                 end
@@ -1835,7 +1855,7 @@ function T.Tell(person, days, voice, player, brief)
                 -- "With Kael, you ..." only names; "On Monday ..." only opens a chapter.
                 local dayList = {}
                 for _, line in ipairs(PB.day) do
-                    if not ((teller.named or implicit) and line:find("{name}", 1, true)) and not (#out > 0 and line:find("{weekday}", 1, true)) then
+                    if not ((teller.named or implicit) and (line:find("{name}", 1, true) or line:find("{pairNamed}", 1, true))) and not (#out > 0 and line:find("{weekday}", 1, true)) then
                         dayList[#dayList + 1] = line
                     end
                 end
@@ -2016,6 +2036,17 @@ function T.Tell(person, days, voice, player, brief)
         local pending = {}
         local loneBoss -- (the only boss of a visit: said with what it was)
         -- What a lord's fall meant: in a companion's book, another of its versions (your own book says the first).
+        -- (the epithet lives in the consequence line too: "Archaedas, the ancient stone watcher. ...
+        -- The ancient stone watcher no longer barred the way": then the kill says the name alone)
+        local function EpithetInAfter(lore)
+            if not lore or not lore.e or not lore.after then return false end
+            local core = lore.e:gsub("{%a:([^}]*)}", "%1"):gsub("^[Tt]he ", ""):lower()
+            if #core < 6 then return false end
+            local function Has(line) return line and line:gsub("{%a:([^}]*)}", "%1"):lower():find(core, 1, true) ~= nil end
+            if Has(lore.after) then return true end
+            for _, more in ipairs(lore.afterMore or {}) do if Has(more) then return true end end
+            return false
+        end
         local function After(lore)
             if not lore or not lore.after then return nil end
             local choice = lore.after
@@ -2054,7 +2085,7 @@ function T.Tell(person, days, voice, player, brief)
                 local lord = pendingLord
                 pendingLord = nil
                 local lo = L.Boss and L.Boss(lord)
-                local epithet = lo and lo.e and not history.bosses[lord] and Fresh(lo.e) and lo.e
+                local epithet = lo and lo.e and not history.bosses[lord] and Fresh(lo.e) and not EpithetInAfter(lo) and lo.e
                 local lordAt
                 for i, b in ipairs(pending) do if b == lord then lordAt = i end end
                 local function Names(a, b) local t = {} for i = a, b do t[#t + 1] = Place(pending[i]) end return List(t) end
@@ -2435,7 +2466,7 @@ function T.Tell(person, days, voice, player, brief)
                 else
                     local lo = L.Boss(kills[lordAt])
                     -- (no epithet when the chapter already named what it says: "the felguard who led the Searing Blade")
-                    local epithet = lo.e and not history.bosses[kills[lordAt]] and Fresh(lo.e) and lo.e
+                    local epithet = lo.e and not history.bosses[kills[lordAt]] and Fresh(lo.e) and not EpithetInAfter(lo) and lo.e
                     local lord = Place(kills[lordAt]) .. (epithet and (", " .. epithet) or "")
                     if lordAt == #kills then
                         local join = #kills == 2 and ", and then " or (rng() < 0.5 and ", and last of all " or ", and finally ")
@@ -2473,7 +2504,7 @@ function T.Tell(person, days, voice, player, brief)
                     if named then Flush() end
                     tokens.boss, tokens.short = Place(ev.d), Short(ev.d)
                     tokens.shortRaw = ShortRaw(ev.d) ~= Place(ev.d) and ShortRaw(ev.d) or false
-                    tokens.bossE = (lore and lore.e and not history.bosses[ev.d] and Fresh(lore.e)) and lore.e or false
+                    tokens.bossE = (lore and lore.e and not history.bosses[ev.d] and Fresh(lore.e) and not EpithetInAfter(lore)) and lore.e or false
                     if lore and lore.victory then
                         Flush()
                         Add(teller:Say("bossVictory", lore.victory, rng, tokens))
@@ -2507,7 +2538,7 @@ function T.Tell(person, days, voice, player, brief)
                         local names = {}
                         for _, boss in ipairs(pending) do names[#names + 1] = Place(boss) end
                         pending = {}
-                        local ep = lore and lore.e and Fresh(lore.e) and lore.e
+                        local ep = lore and lore.e and Fresh(lore.e) and not EpithetInAfter(lore) and lore.e
                         tokens.roll = List(names) .. ", and last of all " .. Place(ev.d) .. (ep and (", " .. ep) or "")
                         beat = "climax"
                         Add(teller:Say("killRollAfter", PB.killRollAfter, rng, tokens))
@@ -3072,7 +3103,8 @@ function T.Tell(person, days, voice, player, brief)
                                 tokens.quest = Q(quest.title)
                                 local completion = teller:Say("questDepth", PB.questDepth, rng, tokens)
                                 if changedPlace and quest.scene.zone and not T.PlaceLed(completion) then
-                                    completion = "In " .. Place(quest.scene.zone) .. ", " .. completion:gsub("^%u", string.lower)
+                                    completion = (A.JournalPlaceLead and A.JournalPlaceLead(Place(quest.scene.zone), completion))
+                                        or ("In " .. Place(quest.scene.zone) .. ", " .. completion:gsub("^%u", string.lower))
                                 end
                                 if changedPlace and quest.scene.zone then
                                     -- Keep the recorded place on the outcome when
@@ -3099,8 +3131,20 @@ function T.Tell(person, days, voice, player, brief)
                             -- (the arrival goes in front of the whole scene, never between the setup and what came of
                             -- it: "A camping teacher knew someone... You had come to Tirisfal by then. A First Aid Kit
                             -- could now be made" read as an interruption, 2026-11-06 review)
-                            if articled or placed then table.insert(passage, 1, Cap(teller.base.we) .. " had come to " .. Place(passage.outcomePlace) .. " by then.")
-                            else outcome = "In " .. Place(passage.outcomePlace) .. ", " .. outcome end
+                            -- (three shapes in turn, by a counter: "You had come to Tirisfal Glades by then. ... You
+                            -- had come to Orgrimmar by then." twice in one chapter, 2026-11-06)
+                            -- (the prefix lowers a common first word and keeps a name's capital; an outcome that
+                            -- opens on speech, "Finally, said Lydon", takes the arrival in front instead)
+                            local prefixed = not (articled or placed) and A.JournalPlaceLead
+                                and A.JournalPlaceLead(Place(passage.outcomePlace), outcome, table.concat(passage, " ") .. " " .. table.concat(out, " "))
+                            if articled or placed or not prefixed then
+                                teller.arrivedN = (teller.arrivedN or 0) + 1
+                                local shape = teller.arrivedN % 3
+                                local arrived = shape == 1 and (Cap(teller.base.we) .. " had come to " .. Place(passage.outcomePlace) .. " by then.")
+                                    or shape == 2 and ("The day went on in " .. Place(passage.outcomePlace) .. ".")
+                                    or (Cap(teller.base.we) .. " were in " .. Place(passage.outcomePlace) .. " after that.")
+                                table.insert(passage, 1, arrived)
+                            else outcome = prefixed end
                         end
                         passage[#passage + 1] = outcome
                         if brief and not keep[chosen] then

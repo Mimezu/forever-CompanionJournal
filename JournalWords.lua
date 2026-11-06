@@ -290,7 +290,7 @@ PB.travelWork = {
 PB.day = {
     "{pair} {day}.",
     "That {part} {pair} {day}.",
-    "{name} and {I} {day}.",
+    "{pairNamed} {day}.",
     "On {weekday} {pair} {day}.",
     "{pair} {day}.",
 }
@@ -326,8 +326,8 @@ PB.dayWork = {
     few = {"turned in {count} quests", "finished {count} quests", "saw {count} quests through"},
     many = {"worked through {count} quests", "turned in {count} quests"},
     -- A hard or group quest is the day's work, named, and the chapter's title (engine R2-1b).
-    hard = {"took on {quest}, well above {our} level", "finished {quest}, though it was well above {our} level"},
-    elite = {"saw {quest} through, a quest meant for a group", "finished {quest}, work meant for a full party"},
+    hard = {"finished {quest}, which was above {our} level", "turned in {quest}, work meant for more seasoned adventurers"},
+    elite = {"finished {quest}, work meant for a full party", "turned in {quest}, a job for a whole party"},
 }
 PB.dayRest = {
     fire = {"made camp{inPlace}", "stopped for a fire{inPlace}", "sat by a fire{inPlace} a while"},
@@ -339,7 +339,8 @@ PB.dayRest = {
 -- The note follows a sentence that opens on "You"/"We", so the opening guard steers it away
 -- from "{we} ..." lines: each pool needs a third opening, "That was ...".)
 PB.fireFirstNote = {"{we} had never shared a fire before.", "It was the first fire {we} had shared.", "That was {our} first campfire together."}
-PB.fireFirstAhead = {"There would be many more fires after that one.", "It was the first fire {we} had shared, and far from the last."}
+-- (PB.fireFirstAhead and PB.closeForeshadow.later were hindsight, "far from the last", "It would not be the
+-- last time you went out together": removed 2026-11-06. A first fire gets its note; a chapter ends on its day.)
 PB.innFirstNote = {"{we} had not rested under one roof before.", "That was the first inn {we} had shared.", "It was the first inn {we} had stopped at together."}
 
 -- PB.travelMany
@@ -366,7 +367,7 @@ PB.home = {
 }
 PB.homeNostalgic = {
     "{pair} were in {zoneD}, the homeland of {my} people, above its usual dangers now.",
-    "{zoneD} was the homeland of {my} people, and its common dangers were for younger adventurers.",
+    "{zoneD} was the homeland of {my} people, and {pair} had outgrown its dangers.",
 }
 PB.homeBoth = {
     "{zoneD} was home to both of {us}.",
@@ -380,28 +381,29 @@ PB.theirHome = {
 -- PB.nostalgic (far above the zone's level)
 PB.nostalgic = {
     "{pair} travelled through {zoneD}, with more experience than its usual dangers called for.",
-    "{pair} had outgrown the common dangers of {zoneD}.",
+    "{pair} had outgrown {zoneD}.",
     "{zoneD} was country for younger adventurers than {us}.",
+    "{zoneD} held little danger for {us} any more.",
 }
 
 -- PB.perilous (below the zone's level)
 PB.perilous = {
     "{pair} entered {zoneE}, country for more seasoned adventurers.",
-    "The common dangers of {zoneD} outmatched {our} experience.",
-    "{pair} were in {zoneD} earlier than its dangers advised.",
-    "{zoneD} was hard country for adventurers of {our} experience.",
+    "{zoneD} was a few levels above {us}, and {pair} went in anyway.",
+    "{pair} were in {zoneD} early, with its dangers still above {us}.",
+    "{zoneD} was hard country at {our} level.",
 }
 
 -- PB.explore (first time in the zone together)
 PB.explore = {
     "{pair} went into {zoneE} together.",
     "The day's travels brought {pairObj} to {zoneD}.",
-    "That day, {pair} travelled together through {zoneD}.",
+    "{pair} had not been in {zoneD} together before.",
 }
 
 -- PB.zoneReturn (back after months)
 PB.zoneReturn = {
-    "{pair} visited {zoneD} again.",
+    "{pair} came back to {zoneD} after a long time away.",
     "{pair} were back in {zoneD}.",
 }
 
@@ -471,8 +473,8 @@ PB.questHard = {
 
 -- PB.questElite
 PB.questElite = {
-    "{quest} was meant for a group, and {we} finished it.",
-    "{we} finished {quest}, a quest meant for a group.",
+    "{quest} was work for a full party, and {we} finished it.",
+    "{we} finished {quest}, a job for a whole party.",
     "{quest} called for a full party, and {we} saw it through.",
 }
 
@@ -530,13 +532,16 @@ PB.dungeon.daring = {
     "{pair} entered {dungeonE}, {lore}. Its dangers called for more experienced adventurers.",
     "{dungeonE} {dungeonWas} a hard venture for {us}. {pair} went inside.",
     "{pair} went into {dungeonE}, a place meant for stronger adventurers.",
+    "{dungeonE} {dungeonWas} a few levels above {us}, and {pair} went in anyway.",
+    "{pair} went into {dungeonE}, {lore}, with its dangers still above {us}.",
 }
 
 -- PB.dungeon.reckless
 PB.dungeon.reckless = {
-    "{dungeonE} {dungeonWas} meant for far more seasoned adventurers. {pair} went in.",
+    "{dungeonE} {dungeonWas} meant for adventurers far stronger than {us}. {pair} went in anyway.",
     "The dangers inside {dungeonE} far outmatched {our} experience.",
     "{pair} entered {dungeonE}, {lore}, before {our} strength matched its dangers.",
+    "{dungeonE} {dungeonWas} well above {our} level, and {pair} went in all the same.",
 }
 
 -- PB.dungeon.easy (four near-duplicates of "made short work of")
@@ -556,12 +561,12 @@ PB.dungeon.revisit = {
 -- PB.dungeonAgain / PB.dungeonRegular
 PB.dungeonAgain = {
     "{pair} went back to {dungeonE}.",
-    "{pair} went back into {dungeonE} for the {nth} time.",
+    "{pair} went into {dungeonE} for the {nth} time.",
     "{pair} returned to {dungeonE}, a place {we} had seen before.",
-    "Once more {pair} went into {dungeonE}.",
+    "{pair} knew {dungeonE} from an earlier visit.",
 }
 PB.dungeonRegular = {
-    "{pair} went back to {dungeonE} for the {nth} time.",
+    "{pair} were in {dungeonE} for the {nth} time.",
     "{pair} were back in {dungeonE}. By now {we} knew the way.",
 }
 
@@ -811,7 +816,7 @@ PB.alsoThere = {
     "{others} came along too.",
     "{others} went with {pairObj}.",
     "{others} made one more in the party.",
-    "{others} was in the party as well.",
+    "{others} was along as well.",
     "{others} was there too.",
     "{others} joined {pairObj} for the day.",
     "{others} made a third.",
@@ -857,7 +862,7 @@ PB.dieEnv.SLIME = {"{I} died in the slime.", "Slime killed {me}. There are bette
 -- PB.theyDie / PB.theyDieBoss
 PB.theyDie = {"{name} died in {place}.", "{name} was killed in {place}.", "{name} died there."}
 -- (the same companion, twice or more in a day, no boss to blame: {count})
-PB.theyDieTimes = {"{name} died {count} that day.", "{name} died in {place}, {count}.", "{count} that day, {name} was killed."}
+PB.theyDieTimes = {"{name} died {count} that day.", "{name} died {count} in {place}.", "{count} that day, {name} was killed."}
 PB.theyDieBoss = {"{boss} killed {name}.", "{name} died fighting {boss}.", "{name} fell to {boss}.", "{name} was cut down by {boss}."}
 
 -- PB.rez. Truth: the engine picks "close" when the tier is close even if nobody was ever
@@ -867,8 +872,8 @@ PB.rez.new = {"{name} raised {me} from death, a stranger's kindness.", "{name}, 
 PB.rez.companion = {"{name} brought {me} back from death.", "{name} raised {me} from death.", "{name} was there to bring {me} back."}
 PB.rez.close = {
     "{name} brought {me} back, {countTimes} now.",
-    "{name} raised {me} from death, as {they} had before.",
-    "Once more {name} brought {me} back from death.",
+    "{name} raised {me}, as {they} had before.",
+    "Death did not keep {me}, with {name} there.",
 }
 PB.rezClass.PRIEST = {"{name} prayed {me} back from death.", "{name}'s prayers brought {me} back."}
 PB.rezClass.PALADIN = {"{name} called on the Light, and {I} rose.", "The Light answered {name}, and brought {me} back."}
@@ -922,9 +927,9 @@ PB.soloBefore = {
 -- Moments from your own journal while you were together ({pair}, {what}, {to}, {killer}).
 PB.shared = {
     sunset = {
-        "At {what}, the sun went down while {pair} were together.",
+        "{pair} were at {what} when the sun went down.",
         "{pair} were at {what} as the sun went down.",
-        "The sun went down at {what} during {our} time together.",
+        "The sun went down on {pairObj} at {what}.",
     },
     voyage = {
         zeppelin = {
@@ -942,7 +947,7 @@ PB.shared = {
     },
     landmark = {
         "{pair} came to {what} together.",
-        "{what} was among the places {pair} reached together that day.",
+        "Before the day was out, {pair} stood at {what}.",
         "That day brought {pairObj} to {what}.",
     },
     -- ("along the way" had become the book's tic; one line keeps it.)
@@ -1089,14 +1094,10 @@ PB.close.grim = {"Not {our} finest day.", "It was not a good day."}
 -- the "you" voice only once the engine can tell the voices apart.)
 PB.close.triumph = {"It had been a good day's work.", "Few days went better than that one."}
 
--- PB.closeForeshadow. A game master knows how the campaign goes on; the
--- engine tells the whole book at once, so it knows too. Use a line only when it is true:
--- later = a later day with this companion exists; longWait = the next day together is 30+
--- days away. Never on the newest chapter, and never more than one chapter in ten.
-PB.closeForeshadow = {
-    later = {"{name} would be back.", "{pair} would travel together again.", "It would not be the last time {pair} went out together."},
-    longWait = {"It would be a long while before {name} was back.", "{name} would not be back for a long while."},
-}
+-- PB.closeForeshadow (a first outing closed on what came later: "It would not be the last time
+-- you went out together") was hindsight and a stock ending: removed 2026-11-06. The engine's
+-- hook stays and is skipped while the pool is absent.
+PB.closeForeshadow = nil
 
 -- PB.blessing. These are added raw (no tokens), so the diary voice currently gets
 -- "Dark Lady watch over you both." Every line below works in both voices (no "you").
@@ -1237,7 +1238,7 @@ PB.levelThenOrigin = {
 PB.dayAlt = {
     none = {"{Length} went to {zoneD}.", "{zoneD} took {length} of {our} {part}."},
     nonePlain = {"The {part} went to {zoneD}."},
-    one = {"{Length} together in {zoneD} went to {quest}.", "{we} spent {length} in {zoneD}, where {we} also completed {quest}."},
+    one = {"{Length} together in {zoneD} went to {quest}.", "{we} spent {length} in {zoneD} and finished {quest} there."},
     onePlain = {"The {part} in {zoneD} included {quest}.", "{we} completed {quest} during {our} time in {zoneD}."},
     two = {"{Length} in {zoneD} went to {quest} and {questB}.", "{we} spent {length} together in {zoneD} and completed {quest} and {questB}."},
     twoPlain = {"The {part} in {zoneD} included {quest} and {questB}.", "{we} finished {quest} and {questB} during {our} time in {zoneD}."},
@@ -1340,7 +1341,7 @@ PB.rezClass.SHAMAN = {"{name} called {my} spirit back.", "{name} called on the s
 
 -- PB.dayWork.hard  ({quest} {our}). "took on Lost in Battle, well above your level": "took on" reads as
 -- "accepted", and the record is a turn-in.
-PB.dayWork.hard = {"finished {quest}, work meant for more seasoned adventurers", "turned in {quest}, despite its difficulty for {us}"}
+PB.dayWork.hard = {"finished {quest}, work meant for more seasoned adventurers", "turned in {quest}, which was above {our} level"}
 
 -- Round 8c (writer).
 -- PB.infamous["Bhag'thera"]  (chapter tokens; {Iwas} is "you were" / "I was"). One sentence of twelve
@@ -1384,8 +1385,8 @@ PB.dayWork.sceneOne = {"finished {quest}", "completed {quest}", "turned in {ques
 PB.questDepth = {"{we} completed {quest}.", "{we} finished {quest}."}
 PB.questThreadReturn = {
     "There was more to {threadLabel} after {previousQuest}.",
-    "{our} work on {threadLabel} continued after {previousQuest}.",
-    "{our} earlier work on {threadLabel} included {previousQuest}.",
+    "{previousQuest} had not been the end of {threadLabel}.",
+    "{we} took up {threadLabel} where {previousQuest} had left off.",
 }
 PB.sharedNotableSeen = {
     "While travelling with {name}, {I} saw {notable} in {place}.",
@@ -1396,8 +1397,8 @@ PB.sharedNotableSpoke = {
     "{I} spoke with {notable} in {place} during {our} time together.",
 }
 PB.sharedGatherQuiet = {
-    "{I} {work} during {our} time there.",
-    "While {we} were together, {I} {work}.",
+    "{I} {work} while {we} were out.",
+    "{I} {work} on the side.",
     "{I} also {work}.",
 }
 
@@ -1435,7 +1436,7 @@ PB.absence = {
         same = {
             "{since} later, {pair} were back in {zoneD}.",
             "{since} on, {pair} were in {zoneD} again, that {weekday} {part}.",
-            "It was {since} before {name} and {I} were back in {zoneD}.",
+            "It was {since} before {pairNamed} were back in {zoneD}.",
             "{name} was back {since} later, and {zoneD} again was where {we} went.",
             "{since} passed before {pair} went out together again, and {zoneD} was where {we} did.",
             "{since} after the last time, {pair} were in {zoneD} once more.",
@@ -1455,7 +1456,7 @@ PB.absence = {
             "{since} later, on {weekday} {part}, {name} was back in {my} party, and {zoneD} was the place again.",
             "It had been {since} since {pair} had last gone out, and that too had been in {zoneD}.",
             "{pair} were back in {zoneD} after {since}.",
-            "After {since}, {name} and {I} were in {zoneD} once more, that {weekday} {part}.",
+            "After {since}, {pairNamed} were in {zoneD} once more, that {weekday} {part}.",
             "{since} had passed. {pair} were in {zoneD} again, the same ground as the last time.",
         },
         ["else"] = {
@@ -1520,7 +1521,7 @@ PB.absenceRecap = {
     },
     bothSame = {
         "Both of {us} were level {theirs} by then.",
-        "{name} and {I} were both level {theirs} by then, up from {theirsThen}.",
+        "{pairNamed} were both level {theirs} by then, up from {theirsThen}.",
         "Since then both of {us} had climbed to level {theirs}.",
     },
     lord = {
@@ -1571,10 +1572,10 @@ PB.shared.read = {
 -- Tokens: {I} {me} {my} {we} {our} {pair} {name} and the moment's own.
 PB.shared.zoneFirst = {
     "{I} had never set foot in {zoneD} before that day.",
-    "For {me}, it was the first time in {zoneD}.",
+    "{zoneD} {zoneDWas} new to {me} that day.",
     "{zoneD} {zoneDWas} new ground to {me}, and {name} was there for it.",
     "Until that day {I} had never been in {zoneD}.",
-    "It was {my} first time in {zoneD}, with {name} along.",
+    "It was {my} first time in {zoneD}.",
 }
 PB.shared.continent = {
     "It was the first time {I} had stood on {to}, and {name} was there for it.",
@@ -1668,57 +1669,57 @@ PB.voice = {we = {}, you = {}}
 do
     local we, you = PB.voice.we, PB.voice.you
     -- Openings: the rhythm of meeting.
-    we.daily = {"{name} and I were out again that {part}.", "That {part}, {name} and I went out again.", "{name} and I went out together, as we did most days."}
-    you.daily = {"{name} was at {my} side again that {part}.", "{my} party that {part} was the usual one, {me} and {name}.", "{I} and {name} set out together again that {part}."}
-    we.often = {"{name} and I were out together again that {part}.", "That {weekday}, {name} and I set out together."}
-    you.often = {"{name} was back in {my} party that {weekday}.", "That {part} {my} party was {me} and {name} again."}
-    we.oftenGap = {"{later}, {name} and I were out together again.", "{name} and I took up {our} travels again {later}."}
+    we.daily = {"That {part}, {name} was beside me.", "Most days now, {name} came out with me, and that {part} was one of them.", "{name} and I went out together, as we did most days."}
+    you.daily = {"{name} was at {my} side that {part}.", "{my} party that {part} was the usual one, {me} and {name}.", "Most days now, {name} was in {my} party, and that {part} was no different."}
+    we.often = {"{name} came out with me that {part}.", "That {weekday}, {name} and I set out."}
+    you.often = {"{name} was back in {my} party that {weekday}.", "That {part}, {my} party was {me} and {name}."}
+    we.oftenGap = {"{later}, {name} and I went out.", "{name} and I took up {our} travels {later}."}
     you.oftenGap = {"{later}, {name} was back in {my} party.", "{my} party was whole again {later}, {name} and {me}."}
-    we.returnInterval = {"{name} and I set out together again that {weekday}.", "That {weekday}, {name} and I went out again."}
-    you.returnInterval = {"{name} was back in {my} party that {weekday}.", "That {weekday} {my} party was {me} and {name} again."}
-    we.fortnightly = {"After {gap}, {name} and I were out together again."}
+    we.returnInterval = {"{name} and I set out that {weekday}.", "That {weekday}, {name} was with me."}
+    you.returnInterval = {"{name} was back in {my} party that {weekday}.", "That {weekday}, {my} party was {me} and {name}."}
+    we.fortnightly = {"After {gap}, {name} was back at my side."}
     you.fortnightly = {"After {gap}, {name} was back in {my} party."}
-    we.monthly = {"After {gap}, {name} and I set out together again.", "It had been {gap}. {name} and I were out together again."}
-    you.monthly = {"{gap} had passed. {name} was back in {my} party.", "After {gap}, {my} party was {me} and {name} once more."}
-    we.rare = {"After {gap}, {name} and I were out together again."}
+    we.monthly = {"After {gap}, {name} and I set out.", "It had been {gap}. Then {name} was with me in the field."}
+    you.monthly = {"{gap} had passed. {name} was back in {my} party.", "After {gap}, {my} party was {me} and {name}."}
+    we.rare = {"{gap} had passed before {name} came out with me."}
     you.rare = {"{name} was back in {my} party after {gap}."}
-    we.second = {"{later}, {name} and I went out together again."}
+    we.second = {"{later}, {name} and I went out a second time."}
     you.second = {"{later}, {name} was in {my} party a second time."}
-    we.early = {"{later}, {name} and I were out together again."}
+    we.early = {"{later}, {name} and I went out."}
     you.early = {"{later}, {name} was back in {my} party."}
-    we.bondOpen = {"{bondWord} and I set out that {part}.", "That {part} {bondWord} and I were out together."}
-    you.bondOpen = {"{Bond} was with {me} again that {part}.", "{name}, {bondWord}, was in {my} party that {part}."}
-    we.recordedInterval = {"{gap} later, {name} and I were out together again, in {zoneD}.", "After {gap}, {name} and I took to {zoneD}."}
-    you.recordedInterval = {"{gap} later, {name} was back in {my} party, in {zoneD}.", "{gap} on, {my} party was {me} and {name} again, in {zoneD}."}
-    we.reunionBond = {"After {gap}, {bondWord} was at my side again.", "{gap} had passed before {name} and I were out together again."}
-    you.reunionBond = {"After {gap}, {bondWord} was back at {my} side.", "{gap} had passed. Then {name}, {bondWord}, was in {my} party again."}
+    we.bondOpen = {"{bondWord} and I set out that {part}.", "That {part}, {bondWord} was with me."}
+    you.bondOpen = {"{Bond} was with {me} that {part}.", "{name}, {bondWord}, was in {my} party that {part}."}
+    we.recordedInterval = {"{gap} later, {name} and I were out in {zoneD}.", "After {gap}, {name} and I took to {zoneD}."}
+    you.recordedInterval = {"{gap} later, {name} was back in {my} party, in {zoneD}.", "{gap} on, {name} joined {me} in {zoneD}."}
+    we.reunionBond = {"After {gap}, {bondWord} was at my side again.", "{gap} had passed before {name} and I set out."}
+    you.reunionBond = {"After {gap}, {bondWord} was back at {my} side.", "{gap} had passed. Then {name}, {bondWord}, was back in {my} party."}
     we.openPlace = {"{name} and I went out into {zoneD} that {part}.", "That {part} took {name} and me to {zoneD}."}
-    you.openPlace = {"That {part} {my} party went into {zoneD}.", "{zoneD} was where the {part} took {me} and {name}."}
+    you.openPlace = {"That {part} {my} party went into {zoneD}.", "The {part} found {me} and {name} in {zoneD}."}
     -- After a week or more apart (PB.absence; the keys are absence + bucket + shape).
     we.absenceshortsame = {"{since} later, {name} and I were back in {zoneD}.", "{name} and I were in {zoneD} again {since} on."}
-    you.absenceshortsame = {"{since} later, {my} party, {me} and {name}, was back in {zoneD}.", "{since} on, {zoneD} had {me} and {name} again."}
+    you.absenceshortsame = {"{since} later, {name} was back in {my} party, in {zoneD} as before.", "{since} on, {pairNamed} were back in {zoneD}."}
     we.absenceshortelse = {"{since} after {lastZone}, {name} and I were out in {zoneD}.", "{name} and I next went out {since} later, in {zoneD}."}
-    you.absenceshortelse = {"{since} after {lastZone}, {my} party, {me} and {name}, was in {zoneD}.", "{since} later, {name} was with {me} in {zoneD}."}
-    we.absencelongsame = {"{since} had passed when {name} and I were next in {zoneD}.", "After {since}, {name} and I were in {zoneD} again, the two of us."}
+    you.absenceshortelse = {"{since} after {lastZone}, {pairNamed} were in {zoneD}.", "{since} later, {name} was with {me} in {zoneD}."}
+    we.absencelongsame = {"{since} had passed when {name} and I were next in {zoneD}.", "After {since}, {name} and I were back in {zoneD}."}
     you.absencelongsame = {"{since} had passed when you and {name} were next in {zoneD}.", "After {since}, {name} was with {me} in {zoneD} again."}
-    we.absencelongelse = {"{since} had passed since {lastZone}. {name} and I set out in {zoneD}.", "After {since}, {name} and I were out together again, in {zoneD}."}
-    you.absencelongelse = {"{since} had passed since {lastZone}. You and {name} set out in {zoneD}.", "After {since}, {my} party was {me} and {name} again, in {zoneD}."}
-    we.absencelongestelse = {"{since} had gone by since {lastZone}. {name} and I set out again in {zoneD}, on {weekday} {part}."}
-    you.absencelongestelse = {"{since} had gone by since {lastZone}. On {weekday} {part}, {my} party was {me} and {name} again, in {zoneD}."}
+    we.absencelongelse = {"{since} had passed since {lastZone}. {name} and I set out in {zoneD}.", "After {since}, {name} and I were out in {zoneD}."}
+    you.absencelongelse = {"{since} had passed since {lastZone}. You and {name} set out in {zoneD}.", "After {since}, {name} was back in {my} party, this time in {zoneD}."}
+    we.absencelongestelse = {"{since} had gone by since {lastZone}. {name} and I set out in {zoneD}, on {weekday} {part}."}
+    you.absencelongestelse = {"{since} had gone by since {lastZone}. On {weekday} {part}, {name} was back in {my} party, in {zoneD}."}
     we.absencelongestsame = {"{since} had passed, and {zoneD} was where {name} and I met again."}
-    we.absencelongbond = {"{since} on, {bondWord} and I were out together again, in {zoneD}."}
+    we.absencelongbond = {"{since} on, {bondWord} and I were out in {zoneD}."}
     you.absencelongbond = {"After {since}, you and {bondWord} set out together in {zoneD}."}
-    we.absencelongestbond = {"After {since}, {bondWord} and I set out together again, in {zoneD}."}
-    you.absencelongestbond = {"{since} had passed before you and {bondWord} were out together again, in {zoneD}."}
+    we.absencelongestbond = {"After {since}, {bondWord} and I set out into {zoneD}."}
+    you.absencelongestbond = {"{since} had passed before you and {bondWord} were out in {zoneD}."}
     you.absencelongestsame = {"{since} had passed, and {zoneD} was where you and {name} met again."}
     -- The land, and returns.
     we.explore = {"{name} and I went into {zoneD} together for the first time.", "It was the first time {pair} had been in {zoneD} together."}
     we.zoneReturn = {"{name} and I were back in {zoneD}."}
     you.zoneReturn = {"{my} party was back in {zoneD}.", "The pair of {us} returned to {zoneD}."}
     we.whereStarted = {"{name} and I were back in {zoneD}, where we had begun together."}
-    you.whereStarted = {"{zoneD} again, where the pair of {us} had begun."}
+    you.whereStarted = {"{my} party was back in {zoneD}, where {me} and {name} had begun."}
     we.whereItBegan = {"{name} and I were back in {zoneD}, where we had first met."}
-    you.whereItBegan = {"{zoneD} again, where {name} had first joined {my} party."}
+    you.whereItBegan = {"{my} party was back in {zoneD}, where {name} had first joined {me}."}
     we.travel = {"{name} and I spent {length} in {zoneD}."}
     you.travel = {"{my} party spent {length} in {zoneD}.", "The pair of {us} were in {zoneD} for {length}."}
     we.travelWork = {"{name} and I spent {length} in {zoneD} and finished {qcount} quests between us."}
@@ -1731,8 +1732,8 @@ do
     -- Dungeons.
     we.dungeonfair = {"{name} and I went down into {dungeonE}.", "Down into {dungeonE} {pair} went, {lore}."}
     you.dungeonfair = {"{my} party went down into {dungeonE}.", "The pair of {us} went into {dungeonE}, {lore}."}
-    we.dungeondaring = {"{dungeonE} {dungeonWas} a hard venture for two of {our} experience, and {name} and I went in."}
-    you.dungeondaring = {"{dungeonE} {dungeonWas} a hard venture for a party of {our} experience. {pair} went in."}
+    we.dungeondaring = {"{dungeonE} {dungeonWas} a hard venture for two of {our} experience, and {name} and I went in.", "{dungeonE} {dungeonWas} a few levels above {name} and me, and we went in anyway."}
+    you.dungeondaring = {"{dungeonE} {dungeonWas} a hard venture for a party of {our} experience. {pair} went in.", "{dungeonE} {dungeonWas} a few levels above {my} party, and {pair} went in anyway."}
     we.dungeonreckless = {"{dungeonE} {dungeonWas} meant for far stronger adventurers than {name} and me. {we} went in."}
     you.dungeonreckless = {"{dungeonE} {dungeonWas} meant for a far stronger party than {me} and {name}. {we} went in."}
     we.dungeonAgain = {"{name} and I went back into {dungeonE}.", "The two of us went back to {dungeonE}."}
@@ -1740,17 +1741,17 @@ do
     we.dungeonRegular = {"{name} and I were back in {dungeonE}, for the {nth} time."}
     you.dungeonRegular = {"{my} party was back in {dungeonE} for the {nth} time."}
     we.dungeonFirst = {"It was the first dungeon {name} and I had been in together.", "That was {our} first dungeon together, {name}'s and mine."}
-    you.dungeonFirst = {"It was the first dungeon {my} party had run together.", "{name} and {I} had never been in a dungeon together before that."}
+    you.dungeonFirst = {"It was the first dungeon {my} party had run together.", "{pairNamed} had never been in a dungeon together before that."}
     we.dungeonLater = {"Later that {part}, {name} and I went down into {dungeonE}."}
     you.dungeonLater = {"Later that {part}, {my} party went down into {dungeonE}."}
     -- Bosses.
-    we.killRoll = {"Between {us}, {pair} killed {roll}.", "{name} and I killed {roll}."}
+    we.killRoll = {"Between {us}, {we} killed {roll}.", "{name} and I killed {roll}."}
     you.killRoll = {"{my} party killed {roll}.", "The pair of {us} killed {roll}."}
     we.killOne = {"{name} and I killed {boss}.", "{boss} fell to the two of us."}
     you.killOne = {"{my} party killed {boss}.", "{boss} fell to the pair of {us}."}
     we.killTwo = {"{name} and I killed {bosses}.", "{bosses} fell to the two of us."}
     you.killTwo = {"{my} party killed {bosses}.", "{bosses} fell to the pair of {us}."}
-    we.killMany = {"{name} and I killed {bosses}.", "Between {us}, {pair} killed {bosses}."}
+    we.killMany = {"{name} and I killed {bosses}.", "Between {us}, {we} killed {bosses}."}
     you.killMany = {"{my} party killed {bosses}.", "{bosses} fell to the pair of {us}."}
     we.killLast = {"Last of all, {name} and I killed {boss}, {bossE}."}
     you.killLast = {"Last of all, {my} party killed {boss}, {bossE}."}
@@ -1779,8 +1780,8 @@ do
     you.theyDieBossCostly = {"{boss} killed {name} before it fell to {my} party."}
     we.rezcompanion = {"It was {name} who brought me back.", "{name} had me on my feet again."}
     you.rezcompanion = {"{name} had {me} back on {my} feet.", "It was {name} who raised {me}.", "{name} brought {me} back, and the party was whole again."}
-    we.rezclose = {"{name} brought me back, as {they} had so often before.", "Once again it was {name} who raised me."}
-    you.rezclose = {"{name} brought {me} back, as {they} had so often before.", "Once again {name} had {me} back on {my} feet."}
+    we.rezclose = {"{name} brought me back, as {they} had so often before.", "It was {name} who raised me, as before."}
+    you.rezclose = {"{name} brought {me} back, as {they} had so often before.", "{name} had {me} back on {my} feet, as before."}
     we.rezGiven = {"This time I was the one who brought {name} back.", "I had {name} on {their} feet again."}
     you.rezGiven = {"This time it was {I} who raised {name}.", "{I} had {name} back on {their} feet."}
     we.sharedZoneFirst = {"It was my first time in {zoneD}, and {name} was with me for it."}
@@ -1817,7 +1818,7 @@ do
     we.sharedLandmark = {"{name} and I came to {what} together."}
     you.sharedLandmark = {"{my} party reached {what} that day."}
     we.sharedSnow = {"{name} and I walked through snow in {zoneD}, the first I had ever seen."}
-    you.sharedSnow = {"In {zoneD}, {name} and {I} walked through snow, the first {I} had ever seen."}
+    you.sharedSnow = {"In {zoneD}, {pairNamed} walked through snow, the first {I} had ever seen."}
     we.sharedVoyagezeppelin = {"{name} and I took the zeppelin across the sea to {to}."}
     you.sharedVoyagezeppelin = {"{my} party took the zeppelin across the sea to {to}."}
     we.sharedVoyageboat = {"{name} and I took the boat across to {to}."}
@@ -1825,6 +1826,9 @@ do
     -- Milestones.
     -- (lines a reader remembers: once in a book)
     for _, line in ipairs({"{my} party that {part} was the usual one, {me} and {name}.", "{my} party was whole again {later}, {name} and {me}.",
+        "{dungeonE} {dungeonWas} a hard venture for a party of {our} experience. {pair} went in.", "{dungeonE} {dungeonWas} a hard venture for {us}. {pair} went inside.",
+        "{dungeonE} {dungeonWas} a hard venture for two of {our} experience, and {name} and I went in.",
+        "{dungeonE} {dungeonWas} meant for adventurers far stronger than {us}. {pair} went in anyway.",
         "{name} and I went out together, as we did most days.", "It came down to {boss}, {bossE}, and the two of us, and {shortRaw} fell.",
         "It came down to {boss}, {bossE}, and the pair of {us}, and {shortRaw} fell."}) do
         PB.oncePerBook[#PB.oncePerBook + 1] = line

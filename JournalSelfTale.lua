@@ -681,7 +681,10 @@ function ST.Tell(person, days, brief, retell)
             -- (the lines said are remembered: a return after weeks draws another)
             history.zoneLinesSaid = history.zoneLinesSaid or {}
             local saidSoFar = table.concat(out, " "):gsub("{%a:([^}]*)}", "%1")
-            teller.epithetWords = (teller.epithetPhrase and saidSoFar:find(teller.epithetPhrase, 1, true)) and teller.epithetWordsAll or {}
+            teller.epithetWords = {}
+            for phrase, words in pairs(teller.epithetPhrases or {}) do
+                if saidSoFar:find(phrase, 1, true) then for word in pairs(words) do teller.epithetWords[word] = true end end
+            end
             ZoneSight(function(text, ...)
                 if text then history.zoneLinesSaid[text] = true end
                 return SayLine(text, ...)
@@ -801,11 +804,18 @@ function ST.Tell(person, days, brief, retell)
             local tokens = {zoneE = ZoneE(first.zone), zoneD = Place(first.zone), zoneLore = ZoneLore(first.zone), when = Lower(When) or "the day",
                 When = When, WhenBare = When and (When:gsub("^On ", "")), part = part}
             -- (the epithet's own words, for the sight lines to steer clear of once the opening has said it)
-            teller.epithetWords, teller.epithetPhrase, teller.epithetWordsAll = {}, nil, {}
-            if tokens.zoneE ~= tokens.zoneD then
+            teller.epithetWords, teller.epithetPhrases = {}, {}
+            do
                 local STOP = {the = true, ["and"] = true, all = true, of = true, where = true, its = true, old = true, among = true}
-                teller.epithetPhrase = tokens.zoneE:gsub("{%a:([^}]*)}", "%1")
-                for word in teller.epithetPhrase:lower():gmatch("%a%a%a+") do if not STOP[word] then teller.epithetWordsAll[word] = true end end
+                -- (the opening may say either form: "Tanaris, all sand and sun" came from {zoneLore}, 2026-11-06)
+                for _, form in ipairs({tokens.zoneE, tokens.zoneLore}) do
+                    if form and form ~= tokens.zoneD then
+                        local phrase = form:gsub("{%a:([^}]*)}", "%1")
+                        local words = {}
+                        for word in phrase:lower():gmatch("%a%a%a+") do if not STOP[word] then words[word] = true end end
+                        teller.epithetPhrases[phrase] = words
+                    end
+                end
             end
             -- The chapter header carries the date. After a chapter that opened on
             -- the day ("On Thursday, I..."), a chapter a week or less later opens on
@@ -851,6 +861,14 @@ function ST.Tell(person, days, brief, retell)
                 history.leftHome = true
                 -- (a crossing the same day: the sea lies between)
                 local pool = (crossed and W.leaveHomeFirstSea and W.leaveHomeFirstSea[race]) or Fresh(W.leaveHomeFirst[race])
+                -- ("Silverpine Forest, where I had never been. It was the first time I had gone beyond Tirisfal."
+                -- says the first twice: after such a line, the home is what lies behind)
+                local before = (out[#out] or ""):lower()
+                if before:find("never been", 1, true) or before:find("first time", 1, true) or before:find("new to me", 1, true) or before:find("never seen", 1, true) then
+                    local kept = {}
+                    for _, line in ipairs(pool) do if not line:find("first time", 1, true) then kept[#kept + 1] = line end end
+                    if #kept > 0 then pool = kept end
+                end
                 Say(teller:Say("leaveHomeFirst", pool, {}), true)
             end
             -- A first visit, told by what the record holds: who came with you, your level against the
@@ -1315,7 +1333,11 @@ function ST.Tell(person, days, brief, retell)
             local companyToday, companyNames = false, {}
             for _, w in ipairs(first.with) do if history.companions[w.name] then companyToday = true; companyNames[#companyNames + 1] = w.name end end
             local honest = not quiet and not bigDay and (f.gather >= 15 or f.crafts >= 10) and f.quests <= 3 and f.dungeons == 0
-            if honest then Say(teller:Say("honestDay", W.honestDay, tokens), true, "mood"); Title(50, teller:Pick("tHonest", W.titles.honest)) end
+            -- (the mood line one chapter in three at most: "honest work" headed three chapters of seven, 2026-11-06)
+            if honest and index - (history.honestSaidAt or -9) >= 3 then
+                Say(teller:Say("honestDay", W.honestDay, tokens), true, "mood"); Title(50, teller:Pick("tHonest", W.titles.honest))
+                history.honestSaidAt = index
+            end
             if quiet and W.quietDay then
                 local pool = (f.quests == 1 and W.quietDayOne) or W.quietDay
                 if companyToday then
@@ -1883,6 +1905,7 @@ function ST.Tell(person, days, brief, retell)
                         for _, name in ipairs(mostKind and s.gatherNames[mostKind] or {}) do if #names < 2 then names[#names + 1] = Q(name) end end
                         -- (two herbs are not "Peacebloom for the most part": names from five on)
                         st.names = #names > 0 and most >= 5 and List(names) or nil
+                        st.kindNoun = mostKind == "mining" and "veins" or mostKind == "skinning" and "hides" or "herbs"
                         local fishingOnly = s.gather.fishing and not s.gather.herbs and not s.gather.mining and not s.gather.skinning
                         local dock = s.gatherPlace.fishing
                         if dock and not (Town(dock) or dock:find("Harbor") or dock:find("Dock") or dock:find("Pier") or dock:find("Port") or dock:find("Bay")) then dock = nil end
@@ -1916,7 +1939,9 @@ function ST.Tell(person, days, brief, retell)
                             local namesPool = (mostKind == "skinning" and W.gatherNamesHides) or W.gatherNames
                             if st.names and namesPool and teller.rng() < 0.8 then Say(teller:Say("gatherNames", namesPool, st), profile.gatherer or false, "lore") end
                         elseif st.names and W.gatherNamed and teller.rng() < (profile.gatherer and 0.85 or 0.6) then
-                            Say(teller:Say("gatherNamed", (mostKind == "skinning" and W.gatherNamedHides) or W.gatherNamed, st), gatherMajor, "gather")
+                            -- (two kinds of work in the sentence: the names go with their kind, "the veins were mostly Copper Ore")
+                            local pool = (#work > 1 and W.gatherNamedMixed) or (mostKind == "skinning" and W.gatherNamedHides) or W.gatherNamed
+                            Say(teller:Say("gatherNamed", pool, st), gatherMajor, "gather")
                         else
                             -- ("There," only after the town or the zone was said)
                             local lead = W.gatherLead
@@ -3240,13 +3265,21 @@ function ST.Tell(person, days, brief, retell)
                         corpus = corpus .. " " .. table.concat(list, " ")
                     end
                     corpus = corpus:gsub("{%a:([^}]*)}", "%1")
-                    line = line:gsub("^(%a+) ", function(word)
+                    -- (the shared rule, A.JournalPlaceLead: a common first word goes to lower case, a name
+                    -- keeps its capital, and a line that opens on speech, "Finally, said Lydon", takes the
+                    -- arrival on its own in front instead of "In X, Finally, said")
+                    local prefixed = A.JournalPlaceLead and A.JournalPlaceLead(Place(zone), line, corpus)
+                    if not prefixed and A.JournalPlaceLead then
+                        out[start + 1] = ((st and st.We) or "I") .. " had come to " .. Place(zone) .. " by then. " .. line
+                        questPlaces[dungeon] = zone
+                        return
+                    end
+                    out[start + 1] = prefixed or ("In " .. Place(zone) .. ", " .. line:gsub("^(%a+) ", function(word)
                         if lowerLead[word] then return lowerLead[word] .. " " end
                         local low = word:lower()
                         if low ~= word and corpus:find("%f[%a]" .. low .. "%f[%A]") then return low .. " " end
                         return word .. " "
-                    end)
-                    out[start + 1] = "In " .. Place(zone) .. ", " .. line
+                    end))
                     questPlaces[dungeon] = zone
                 end
                 local function PlaceQuestPassage(start, quest)

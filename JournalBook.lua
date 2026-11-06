@@ -348,6 +348,51 @@ function A.JournalIslands(text)
     return text
 end
 
+-- "In <place>, " in front of a sentence that does not open on a place (both storytellers, when
+-- the work moved). The sentence's first word goes to lower case unless it is a name ("I", a
+-- person, a place): "In the Barrens, Whatever Sputtervalve..." kept a capital it should not
+-- have. A sentence that opens on speech ("Finally, said Lydon, ...", "Well done, Kryten said")
+-- takes no prefix at all: nil, and the caller says the place on its own (2026-11-06).
+-- corpus (optional): other prose of the scene; a word seen there in lower case is a common word.
+local LEAD_LOWER = {}
+for word in ([[The A An It Its Our Your My His Her Their They We You He She This That These Those There Here Other Others
+    Another Some Most Many Few Every Each All No None Nothing Something Someone Somebody Anyone Everyone Whatever Whoever
+    Whichever Whether When While Where Once Only Even Still Finally Soon Later Then Now So Yet But And Or If Though Although
+    Since Until Because As At In On Before After With Without From Beyond Within Inside Word News Reports Seeking One Two Three
+    Four Five Six Both Half Several Enough More Fewer Less Such What Which Who Whose]]):gmatch("%S+") do
+    LEAD_LOWER[word] = true
+end
+function A.JournalSpeechLead(line)
+    if type(line) ~= "string" then return false end
+    local plain = line:gsub("{%a:([^}]*)}", "%1")
+    if plain:match("^[\"']") then return true end
+    local head = plain:match("^[^%.%?]*") or plain
+    local rest = head:match("^[^,!]+[,!]%s+(.*)$")
+    if not rest then return false end
+    rest = rest:lower()
+    for _, shape in ipairs({"^said ", "^asked ", "^%S+ said", "^%S+ %S+ said", "^%S+ asked", "^%S+ %S+ asked"}) do
+        if rest:match(shape) then return true end
+    end
+    return false
+end
+function A.JournalPlaceLead(place, line, corpus)
+    if type(line) ~= "string" or line == "" or not place then return nil end
+    if A.JournalSpeechLead(line) then return nil end
+    local prefix = "In " .. place .. ", "
+    local word, tail = line:match("^(%a+)(.*)$")
+    -- (a marked lead, "{n:Dalar} ...", a capital run, "I": as written)
+    if not word or word == "I" or word:match("^%u%u") or word:lower() == word then return prefix .. line end
+    local low = word:lower()
+    local lower = LEAD_LOWER[word] or (#word >= 6 and word:match("ly$") ~= nil)
+    if not lower and corpus then
+        lower = (corpus:gsub("{%a:([^}]*)}", "%1")):find("%f[%a]" .. low .. "%f[%A]") ~= nil
+    end
+    -- (a place or a dungeon of that name keeps its capital)
+    local L = A.Lore
+    if lower and not LEAD_LOWER[word] and L and ((L.Zone and L.Zone(word)) or (L.Dungeon and L.Dungeon(word))) then lower = false end
+    return prefix .. (lower and low or word) .. tail
+end
+
 -- Everything: one paragraph per scene -------------------------------------------
 local function QuestList(scene)
     local titles = {}

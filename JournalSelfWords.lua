@@ -197,7 +197,7 @@ W.openStillBare = {
 W.openStillWorkBare = {
     "There was more work for me in {zoneD}.",
     "I went back to work in {zoneD}.",
-    "{ZoneD} still had work for me, and I took it up again.",
+    "I picked up the work in {zoneD} where I had left it.",
 }
 W.openSameBare = {
     "I went back to {zoneD}, where I had left off.",
@@ -343,7 +343,7 @@ W.questsChapter = {
 -- invent a road, mode of travel, or reason for leaving.
 W.moveBetween = {
     "From {from}, {we} went on to {zoneD}.",
-    "After {from}, {zoneD} was the next stop.",
+    "After {from} came {zoneD}.",
     "{We} left {from} for {zoneD}.",
     "The next part of the day took {us} from {from} to {zoneD}.",
 }
@@ -354,7 +354,7 @@ W.questsFew = {
     "{We} took care of {quests}.",
     "{We} turned in {quests} while {we} {were} there.",
     "{We} finished {quests} there.",
-    "The work there came to {quests}, and {we} finished all of it.",
+    "{We} finished {quests}, one after the other.",
     "{quests} were among the work {we} finished.",
 }
 W.questOne = {
@@ -385,9 +385,16 @@ W.gatherLead = {
 W.gatherNamed = {
     "I {work}, most of them {names}.",
     "I {work}, {names} for the most part.",
+    "I {work}, and {names} made up most of the haul.",
+    "I {work}, mostly {names}.",
+}
+-- Two kinds of work in one sentence: the names go with their kind ({kindNoun}: "veins", "herbs", "hides").
+W.gatherNamedMixed = {
+    "I {work}, and the {kindNoun} were mostly {names}.",
+    "I {work}. The {kindNoun} were {names}, for the most part.",
 }
 -- What was gathered, by name, after the line that says how much ({names}).
-W.gatherNames = {"Most of them were {names}.", "They were {names}, mostly.", "Most were {names}."}
+W.gatherNames = {"Most of them were {names}.", "They were {names}, mostly.", "Most were {names}.", "{names} made up most of the haul."}
 -- The end of a day: the hearthstone home ({place}: where it is bound).
 W.hearthHome = {
     "At the end of it, I used my hearthstone and went back to {place}.",
@@ -421,7 +428,7 @@ W.quietFish = {
 W.quietDay = {
     "It was a quiet stretch of the journey.",
     "The day passed quietly.",
-    "For a time, the pace was quieter.",
+    "It was a day without errands.",
 }
 -- Walking off the road with the gathering ({work}, {zoneShort}).
 W.quietWander = {
@@ -886,7 +893,7 @@ W.milestone = {
         "Level twenty came that day, and with it the roads of the middle country.",
         "I made level twenty. The middle country was open to me now."},
     [30] = {"I reached level thirty, halfway to the top.",
-        "Level thirty came that day. Half the climb was done.",
+        "Level thirty came that day, and half the climb was done.",
         "I made level thirty. The second half of the climb began."},
     [40] = {"I reached level forty, the level at which an adventurer may ride.",
         "Level forty came that day, and with it the right to a mount of my own.",
@@ -1299,7 +1306,7 @@ W.openStillWork = {
     "{When}, I went back to work in {zoneD}.",
     "{When}, {zoneD} had more work for me.",
     "{When}, there was still work for me in {zoneD}.",
-    "{When}, I took up the work in {zoneD} again.",
+    "{When}, the work in {zoneD} went on.",
 }
 W.openSame = {
     "{When}, I went back to {zoneD}, where I had left off.",
@@ -1327,7 +1334,7 @@ W.questsMoreRepeat = {
 W.quietDayOne = {
     "One errand marked an otherwise quiet day.",
     "I finished a single quest that day.",
-    "There was one errand amid the quieter hours.",
+    "One quest was all I turned in that day.",
 }
 W.sunsetAfter.plain = {
     "The sea went red, then grey, then dark.",
@@ -1439,7 +1446,7 @@ W.oncePerBook = {
     "Horde and Alliance alike passed through {town}, {lore}, and so did we.",
     "I came to {town}, {lore}, and my own people were there.",
     "Between {quests}, {we} had enough to do.",
-    "The work there came to {quests}, and {we} finished all of it.",
+    "{We} finished {quests}, one after the other.",
     "Somebody bought my {what} at the auction house. I never learned who.",
     "It was a long swim in {place}, and I made it without drowning.",
     "The guards of {place} killed me, as guards will.",
@@ -2187,7 +2194,7 @@ W.craftBy = {
 W.milestone[20] = {"I reached level twenty, a third of the way to the top.", "By the end of it I was level twenty, a third of the way to the top.",
     "Level twenty came that day, and with it the roads of the middle country.", "I made level twenty. The middle country was open to me now."}
 W.milestone[30] = {"I reached level thirty, halfway to the top.", "By the end of it I was level thirty, halfway to the top.",
-    "Level thirty came that day. Half the climb was done.", "I made level thirty. The second half of the climb began."}
+    "Level thirty came that day, and half the climb was done.", "I made level thirty. The second half of the climb began."}
 
 -- PB.rolesPair["healer+damage"]  ({I} {name} {they}). "High Inquisitor Whitemane killed Nyx...
 -- You kept Nyx alive while she fought." (Nyx I). No line here claims they lived.
@@ -2212,12 +2219,12 @@ W.questRevenge = {"This time it was {foe} who died.", "{foe} did not get the bet
 W.quietDayOneWeBare = {
     "One errand marked an otherwise quiet day.",
     "We finished a single quest that day.",
-    "There was one errand amid the quieter hours.",
+    "One quest was all we turned in that day.",
 }
 W.quietDayWeBare = {
     "It was a quiet stretch of our journey.",
     "The day passed quietly.",
-    "For a time, the pace was quieter.",
+    "It was a day without errands.",
 }
 
 -- A book begun late, at home ({level}, {zoneE}).
@@ -3115,7 +3122,7 @@ W.exaltedBy = {
 -- The first of the other side ever to kill me (once a book, a book kept from the start)
 W.deathPvpFirst = {
     "{ARace} {class} of the {side} killed me, the first of them ever to do it.",
-    "For the first time, one of the {side} killed me, {aRace} {class}.",
+    "It was {aRace} {class} who killed me, the first of the {side} to manage it.",
     "I had died to beasts and bandits before that day. {ARace} {class} of the {side} was the first of them to kill me.",
 }
 -- A warlock's first demon

@@ -363,7 +363,7 @@ do
             label .. ": the first dungeon that killed me once: " .. (dungeon and dungeon.plain or "none"))
         local pvp = Chapter(own, "Gorna", true)
         check(pvp and (pvp.plain:find("other side", 1, true) or pvp.plain:find("Alliance", 1, true)), label .. ": the first honorable kill")
-        check(pvp and (pvp.plain:find("first of them", 1, true) or pvp.plain:find("For the first time, one of the", 1, true)),
+        check(pvp and (pvp.plain:find("first of them", 1, true) or pvp.plain:find("For the first time, one of the", 1, true) or pvp.plain:find("the first of the", 1, true)),
             label .. ": the first death to another player: " .. (pvp and pvp.plain or "none"))
         check(not (pvp and pvp.plain:find(", but A ", 1, true)), label .. ": a joined rescue keeps its case: " .. (pvp and pvp.plain or "none"))
         check(pvp and (pvp.plain:find("stranger", 1, true) or pvp.plain:find("never met", 1, true)), label .. ": a stranger's rez")

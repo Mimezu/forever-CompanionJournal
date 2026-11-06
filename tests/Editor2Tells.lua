@@ -293,7 +293,8 @@ do
                     or raise:find("feet", 1, true) or raise:find("came back", 1, true), "your raise of her is told (" .. voice .. "): " .. raise)
                 check(not raise:find("Dahlia brought", 1, true) and not raise:find("Dahlia raised", 1, true), "not as hers of you: " .. raise)
                 local first = out[2].plain
-                check(first:find("Hillsbrad", 1, true) and (first:find("first time", 1, true) or first:find("never", 1, true) or first:find("new ground", 1, true)),
+                check(first:find("Hillsbrad", 1, true) and (first:find("first time", 1, true) or first:find("never", 1, true) or first:find("new ground", 1, true)
+                    or first:find("new to", 1, true)),
                     "your own first time in the country, while together (" .. voice .. "): " .. first)
                 check(brief or first:find("Azurelode Mine", 1, true), "the cave entered together: " .. first)
                 check(not brief or not first:find("Azurelode Mine", 1, true), "Highlights leaves the cave out: " .. first)

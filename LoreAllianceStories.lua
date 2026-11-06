@@ -305,8 +305,8 @@ q(267, "The Trogg Threat", "Loch Modan", 12, L,
     "Eight trogg teeth were brought back to Rugelfuss. He praised the defense of dwarven lands and declared that King Magni himself would be proud.",
     "Rugelfuss accepted the trogg teeth with thanks for the defense of his people's lands. Such work, he said, would make King Magni proud.")
 q(436, "Ironband's Excavation", "Loch Modan", 18, L,
-    "Jern Hornhaller in Thelsamar had sent supply after supply to Prospector Ironband's dig at the ancient ruins east of the loch, yet the work had slowed. Ironband was a stout, honest dwarf who valued results, so Jern suspected that something was working against him.",
-    "Jern Hornhaller worried that forces were at work against Ironband's excavation. Magmar Fellhew, who managed the details of the site, would know the cause.",
+    "Jern Hornhelm in Thelsamar had sent supply after supply to Prospector Ironband's dig at the ancient ruins east of the loch, yet the work had slowed. Ironband was a stout, honest dwarf who valued results, so Jern suspected that something was working against him.",
+    "Jern Hornhelm worried that forces were at work against Ironband's excavation. Magmar Fellhew, who managed the details of the site, would know the cause.",
     "Magmar Fellhew said the prospector was writing up a full progress report. For Jern, though, he had the short answer, and it was troggs.",
     "Troggs were behind the slowdown at Ironband's dig, Magmar Fellhew said, and a full report from the prospector was on its way.")
 q(298, "Excavation Progress Report", "Loch Modan", 15, L,
