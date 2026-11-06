@@ -369,6 +369,19 @@ local function Underground(name)
     return false
 end
 local function SubZone() return Text(Ask(GetSubZoneText)) end
+-- A line of this kind already in the open stretch (the journal's own entries after
+-- the stretch's play line): what a /reload forgets, the journal still knows, so a
+-- town, a plaque or a trainer visit is not written a second time after one.
+local function InStretch(kind, field, value)
+    local journal = stretch and Journal()
+    if not journal then return nil end
+    for i = #journal, 1, -1 do
+        local entry = journal[i]
+        if entry == stretch then return nil end
+        if entry.k == kind and (field == nil or entry[field] == value) then return entry end
+    end
+    return nil
+end
 local underAt = setmetatable({}, {__mode = "k"})
 local townAt = setmetatable({}, {__mode = "k"})
 local function CheckTown()
@@ -382,6 +395,7 @@ local function CheckTown()
     townAt[stretch] = seen
     if seen[name] then return end
     seen[name] = true
+    if InStretch("town", "d", name) then return end
     Add({k = "town", d = name})
 end
 local function CheckUnderground()
@@ -392,6 +406,7 @@ local function CheckUnderground()
     underAt[stretch] = seen
     if seen[sub] then return end
     seen[sub] = true
+    if InStretch("cave", "d", sub) then return end
     Add({k = "cave", d = sub})
 end
 A.SelfUnderground = Underground
@@ -505,6 +520,10 @@ local function CloseCall()
         if call.d and Ask(UnitIsPlayer, "target") ~= true and (not rank or rank == "normal" or rank == "minus" or rank == "trivial") then call.a = true end
         -- one of the other side: kept as what they were, not their name
         if call.d and Ask(UnitIsPlayer, "target") == true then
+            -- (a player of your own side you can attack is your duel partner: a duel
+            -- ends at the last hit point, and nobody nearly died)
+            local theirs, mine = Text(Ask(UnitFactionGroup, "target")), Text(Ask(UnitFactionGroup, "player"))
+            if theirs and mine and theirs == mine then return end
             call.pr, call.pc = Text(Ask(UnitRace, "target")), Text(Ask(UnitClass, "target"))
             call.d = nil
         end
@@ -550,47 +569,42 @@ local function ReadText()
     readAt[stretch] = seen
     if seen[title] then return end
     seen[title] = true
+    if InStretch("read", "d", title) then return end
     local material = Text(Ask(ItemTextGetMaterial))
     Add({k = "read", d = title, m = material and material:lower() or nil})
 end
--- Areas discovered and flight paths learned come through the game's own info
--- messages; the type is named by GetGameMessageInfo, the area by the message.
-local explorePatterns
-local function InfoMessage(errorType, message)
-    if not Public(errorType) or not GetGameMessageInfo then return end
-    local name = Text(Ask(GetGameMessageInfo, errorType))
-    if name == "ERR_NEWTAXIPATH" then
-        local place = SubZone() or Zone()
-        if place then Add({k = "taxi", d = place}) end
-    elseif name == "ERR_ZONE_EXPLORED" or name == "ERR_ZONE_EXPLORED_XP" then
-        if explorePatterns == nil then
-            explorePatterns = {}
-            for _, key in ipairs({"ERR_ZONE_EXPLORED_XP", "ERR_ZONE_EXPLORED"}) do
-                local pattern = Pattern(key)
-                if pattern then explorePatterns[#explorePatterns + 1] = pattern end
-            end
-        end
-        local area
-        if type(message) == "string" and Public(message) then
-            for _, pattern in ipairs(explorePatterns) do area = area or message:match(pattern) end
-        end
-        area = Text(area) or SubZone() or Zone()
-        if area then Add({k = "explore", d = area}) end
-    end
+-- A message as the game printed it, without colour codes ("|cffffff00...|r")
+-- and with a link ("|Hplayer:Dahlia|h[Dahlia]|h") reduced to its text.
+local function Plain(message)
+    if type(message) ~= "string" or not Public(message) then return nil end
+    return (message:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""):gsub("|H[^|]*|h%[?(.-)%]?|h", "%1"))
 end
-A.SelfInfoMessage = InfoMessage
 -- Spells bought from a trainer, one line per stretch ({k = "learn", c = count, m = {up to three names}}).
+-- A purchase comes as LEARNED_SPELL_IN_SKILL_LINE and as the game's "You have
+-- learned a new spell" message (the yellow one, and its echo in chat): the same
+-- name within a breath is one purchase, whichever of them arrives, or all three.
 local trainerOpen = false
 local learned = setmetatable({}, {__mode = "k"})
-local function Learned(spellID)
-    if not stretch or not trainerOpen or not Public(spellID) then return end
-    local name = (C_Spell and C_Spell.GetSpellName and Text(Ask(C_Spell.GetSpellName, spellID))) or (GetSpellInfo and Text(Ask(GetSpellInfo, spellID)))
-    local entry = learned[stretch]
+local recentLearn = {}
+local function Learned(spellID, spellName)
+    if not stretch or not trainerOpen then return end
+    local name = spellName
+    if not name then
+        if not Public(spellID) then return end
+        name = (C_Spell and C_Spell.GetSpellName and Text(Ask(C_Spell.GetSpellName, spellID))) or (GetSpellInfo and Text(Ask(GetSpellInfo, spellID)))
+    end
+    if name then
+        -- (the event comes first and always counts; a message within a breath of
+        -- it, or of another message with the same name, is the same purchase)
+        if spellName and recentLearn[name] and Now() - recentLearn[name] <= 3 then return end
+        recentLearn[name] = Now()
+    end
+    local entry = learned[stretch] or InStretch("learn")
     if not entry then
         entry = Add({k = "learn", c = 0, m = {}})
-        learned[stretch] = entry
         if not entry then return end
     end
+    learned[stretch] = entry
     entry.c, entry.e = (entry.c or 0) + 1, Now()
     entry.m = type(entry.m) == "table" and entry.m or {}
     if name and #entry.m < 3 then
@@ -599,6 +613,43 @@ local function Learned(spellID)
         if not known then entry.m[#entry.m + 1] = name end
     end
 end
+-- Areas discovered and flight paths learned come through the game's own info
+-- messages; the type is named by GetGameMessageInfo, the area by the message.
+-- Without a type name (the function missing, or failing on the value, or the
+-- message arriving through chat) the message itself is held against the game's
+-- strings, and anything else is let be. An echo of a message already kept in
+-- this stretch writes nothing.
+local explorePatterns, learnPatterns
+local function InfoMessage(errorType, message)
+    local name = Public(errorType) and GetGameMessageInfo and Text(Ask(GetGameMessageInfo, errorType)) or nil
+    local text = Plain(message) or (name == nil and Plain(errorType)) or nil
+    if explorePatterns == nil then
+        explorePatterns, learnPatterns = {}, {}
+        for _, key in ipairs({"ERR_ZONE_EXPLORED_XP", "ERR_ZONE_EXPLORED"}) do
+            local pattern = Pattern(key)
+            if pattern then explorePatterns[#explorePatterns + 1] = pattern end
+        end
+        for _, key in ipairs({"ERR_LEARN_SPELL_S", "ERR_LEARN_ABILITY_S"}) do
+            local pattern = Pattern(key)
+            if pattern then learnPatterns[#learnPatterns + 1] = pattern end
+        end
+    end
+    local area, spell
+    if text then
+        for _, pattern in ipairs(explorePatterns) do area = area or text:match(pattern) end
+        for _, pattern in ipairs(learnPatterns) do spell = spell or text:match(pattern) end
+    end
+    if name == "ERR_NEWTAXIPATH" or (name == nil and text and type(ERR_NEWTAXIPATH) == "string" and text == ERR_NEWTAXIPATH) then
+        local place = SubZone() or Zone()
+        if place and not InStretch("taxi", "d", place) then Add({k = "taxi", d = place}) end
+    elseif name == "ERR_ZONE_EXPLORED" or name == "ERR_ZONE_EXPLORED_XP" or (name == nil and area) then
+        area = Text(area) or SubZone() or Zone()
+        if area and not InStretch("explore", "d", area) then Add({k = "explore", d = area}) end
+    elseif Text(spell) and (name == nil or name == "ERR_LEARN_SPELL_S" or name == "ERR_LEARN_ABILITY_S") then
+        Learned(nil, spell)
+    end
+end
+A.SelfInfoMessage = InfoMessage
 -- A standing reached with a faction (friendly 5, honored 6, revered 7, exalted 8):
 -- the standings are kept on the character; the first look only seeds them.
 local STANDINGS = {[5] = "friendly", [6] = "honored", [7] = "revered", [8] = "exalted"}
@@ -640,7 +691,8 @@ local function DuelMessage(message)
         end
     end
     local me = Text(Ask(UnitName, "player"))
-    if not me then return false end
+    message = Plain(message)
+    if not me or not message then return false end
     for _, dp in ipairs(duelPatterns) do
         local a, b = message:match(dp.pattern)
         if a and b then
@@ -698,9 +750,10 @@ local function HonorChanged()
     if gained <= 0 or not stretch then return end
     local okInst, _, kind = pcall(IsInInstance or function() return false end)
     if okInst and kind == "pvp" then return end
-    local entry = hkAt[stretch]
+    local entry = hkAt[stretch] or InStretch("hk")
     if entry then entry.c, entry.e = (entry.c or 0) + gained, Now()
-    else hkAt[stretch] = Add({k = "hk", c = gained}) end
+    else entry = Add({k = "hk", c = gained}) end
+    hkAt[stretch] = entry
 end
 -- A rare creature you targeted and fought, dead ({k = "rarekill", d = name, sz = zone}):
 -- watched only while one is targeted (UNIT_HEALTH for "target" alone), and let go after ten minutes.
@@ -751,8 +804,10 @@ local function MoreEvent(event, ...)
         -- (the standings and skills are seeded once the game has filled them in)
         C_Timer.After(20, function() ScanReputation(); ScanSkills() end)
     elseif event == "CHAT_MSG_SYSTEM" then
+        -- (a duel's end; or a discovery, a flight path or a trainer's spell that
+        -- reached chat alone, in the game's own words)
         local message = ...
-        if type(message) == "string" and Public(message) then DuelMessage(message) end
+        if type(message) == "string" and Public(message) and not DuelMessage(message) then InfoMessage(nil, message) end
     elseif event == "PLAYER_TARGET_CHANGED" then
         RareTargeted()
     elseif event == "PLAYER_PVP_KILLS_CHANGED" then
