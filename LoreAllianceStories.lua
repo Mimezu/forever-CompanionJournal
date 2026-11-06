@@ -305,10 +305,10 @@ q(267, "The Trogg Threat", "Loch Modan", 12, L,
     "Eight trogg teeth were brought back to Rugelfuss. He praised the defense of dwarven lands and declared that King Magni himself would be proud.",
     "Rugelfuss accepted the trogg teeth with thanks for the defense of his people's lands. Such work, he said, would make King Magni proud.")
 q(436, "Ironband's Excavation", "Loch Modan", 18, L,
-    "Supplies had gone to Ironband's dig, but progress at the ancient ruins remained slow.",
-    "Thelsamar needed an explanation from the excavation east of the loch.",
-    "Magmar Fellhew identified troggs as the cause of the delay.",
-    "The troubles at the dig explained why the expedition had fallen behind.")
+    "Jern Hornhaller in Thelsamar had sent supply after supply to Prospector Ironband's dig at the ancient ruins east of the loch, yet the work had slowed. Ironband was a stout, honest dwarf who valued results, so Jern suspected that something was working against him.",
+    "Jern Hornhaller worried that forces were at work against Ironband's excavation. Magmar Fellhew, who managed the details of the site, would know the cause.",
+    "Magmar Fellhew said the prospector was writing up a full progress report. For Jern, though, he had the short answer, and it was troggs.",
+    "Troggs were behind the slowdown at Ironband's dig, Magmar Fellhew said, and a full report from the prospector was on its way.")
 q(298, "Excavation Progress Report", "Loch Modan", 15, L,
     "Ironband's progress report renewed his request for blastpowder.",
     "The excavation needed Thelsamar to understand its troubles with troggs and supplies.",
@@ -690,7 +690,7 @@ q(159, "Juice Delivery", D, 24, HM,
     "The hermit gave a thousand thanks and said the kindness warmed an old man's heart, after starting to say something else. He paid a token of his gratitude.",
     "The Zombie Juice reached the shack above the cemetery. The hermit started to call the errand foolish and changed it to kind before he paid.")
 q(133, "Ghoulish Effigy", D, 27, HM,
-    "The hermit marveled that the ghouls and walking dead had not eaten him so far from town. A pack of Bone Chewers had pounded on his walls the day before, and he wanted ghoul ribs for an effigy, a scarecrow against ghouls.",
+    "The hermit marveled that the ghouls and walking dead had not eaten him so far from town. A pack of Bone Chewers had pounded on his walls the day before. He wanted ghoul ribs for an effigy, a scarecrow against ghouls.",
     "Ghoul ribs from the Flesh Eaters, Bone Chewers, Brain Eaters, Rotted Ones and Plague Spreaders of Duskwood would build the hermit's effigy. He thought he could hear a pack behind the house already.",
     "The hermit thanked the bearer of the ribs and said they would do just the trick.",
     "The ghoul ribs reached the shack for the effigy, and the hermit was satisfied with them.")
@@ -2905,7 +2905,7 @@ q(1025, "An Aggressive Defense", "Ashenvale", 24, AA,
     "Raene said the work on the eastern road had been done well, and thanked the one who did it.",
     "The furbolg camps south of the Falfarren road were thinned. Raene's thanks were brief.")
 q(1054, "Culling the Threat", "Ashenvale", 25, AA,
-    "Directly north of Astranaar the Thistlefur furbolg had grown in number for months. Raene feared they would soon find the courage to attack the town, and she wanted their chieftain's skull as proof that their efforts had been stifled.",
+    "Directly north of Astranaar the Thistlefur furbolg had grown in number for months. Raene feared they would soon find the courage to attack the town. She wanted their chieftain's skull as proof that their efforts had been stifled.",
     "Raene's scouts counted more Thistlefur every month. Their chieftain, Dal Bloodclaw, had to die before the tribe grew bold enough to march on Astranaar.",
     "Dal Bloodclaw's skull reached Raene in Astranaar. The furbolg threat was constant, she said, and this would keep them at bay a while longer.",
     "Raene took the chieftain's skull and hoped for a little breathing room. Astranaar lived under constant threat from the furbolg.", 4)
@@ -2922,10 +2922,10 @@ q(4581, "Kayneth Stillwind", "Ashenvale", 29, AK,
 q(1012, "Insane Druids", "Ashenvale", 32, AK,
     "Struggling with the Forsaken's poisons, Kayneth had seen a vision of the druids of the Dor'Danil Barrow Den. The undead had poisoned and murdered them and left them as maddened ghosts. For their spirits to find peace, their leaders Taneel Darkwood, Uthil Mooncall and Mavoris Cloudsbreak had to be destroyed.",
     "Kayneth's dreams were haunted by the anguish of the Dor'danil druids. The spirits of their three leaders, severed from their bodies and driven mad, had to be put down inside the barrow den.",
-    "Kayneth felt the anguish of the Dor'danil barrows lessen and knew the work was done. It was grim work, he said, for the spirits destroyed had been victims of the Forsaken, and he hoped the rest might now find peace.",
+    "Kayneth felt the anguish of the Dor'danil barrows lessen and knew the work was done. It was grim work, he said, for the spirits destroyed had been victims of the Forsaken. He hoped the rest might now find peace.",
     "The three druid leaders were destroyed in the barrow den. Kayneth called it grim, and hoped the other maddened spirits would find rest.", 4)
 q(1022, "The Howling Vale", "Ashenvale", 30, VL,
-    "Sentinel Melyria Frostshadow had kept most of Felwood's demons out of Ashenvale, but something new had come. Wolf-men had overrun the ruined shrine of Mel'Thandris near the Felwood border, and their calls had earned the place the name of the Howling Vale.",
+    "Sentinel Melyria Frostshadow had kept most of Felwood's demons out of Ashenvale, but something new had come. Wolf-men had overrun the ruined shrine of Mel'Thandris near the Felwood border. Their calls had earned the place the name of the Howling Vale.",
     "The Tome of Mel'Thandris, kept at the shrine in the Howling Vale, was no ordinary tome. Its leaves had been blessed by Mel'Thandris herself and showed events of import, and Melyria hoped it would explain the wolf-men.",
     "What the Tome of Mel'Thandris showed, no one truly understood, Melyria said. But it was clear that the Scythe of Elune, given to Priestess Starsong, needed looking into.",
     "The tome's vision pointed to a priestess named Starsong and a weapon called the Scythe of Elune. Melyria could not say why the tome showed what it did, only that the scythe bore investigation.", 4)
@@ -2940,7 +2940,7 @@ q(1040, "Passage to Booty Bay", "Stranglethorn Vale", 30, VL,
     "Caravaneer Ruzzgot sized up his visitor as someone without goods to ship. Either it was a job seeker, and there were no jobs, or the wrong goblin was being asked.",
     "In Booty Bay, Ruzzgot saw no cargo to ship. He offered two choices, a job he did not have or the wrong goblin, and asked which it was.")
 q(1041, "The Caravan Road", "Duskwood", 30, VL,
-    "Ruzzgot admitted he had been wrong about his visitor, and that did not happen every day. He remembered Velinde, a night elf priestess traveling with his caravan, and said they had parted on the way north when she turned for {p:Darkshire}.",
+    "Ruzzgot admitted he had been wrong about his visitor, and that did not happen every day. He remembered Velinde, a night elf priestess who had traveled with his caravan. They had parted on the way north, he said, when she turned for {p:Darkshire}.",
     "A night elf priestess on a dirty old caravan was not a passenger Ruzzgot forgot. She had left him on the road north, bound for Darkshire, where the clerk kept notes on everything.",
     "Clerk Daltry kept note of every stranger who passed through Darkshire, he said, with all the strange happenings of recent years. It was seldom pleasant business when those notes were needed, though he suggested nothing about Velinde by it.",
     "In Darkshire, Clerk Daltry said he wrote down what he could about strangers these days. He had not meant to imply anything about the priestess.")
@@ -3003,7 +3003,7 @@ q(1075, "A Scroll from Mauren", SW, 21, AG,
 q(1077, "Special Delivery for Gaxim", "Stonetalon Mountains", 21, AG,
     "Collin Mauren had his spell ready and sent his regards to Gaxim with it. He wanted to hear how the adventure ended.",
     "The scroll from Stormwind was the last part of Gaxim's remote explosive. Mauren asked only to be told how it went.",
-    "Gaxim called Mauren's spell perfect. Mixed with the NG-5 it made a remote explosive, and the distraction it caused would cover a theft of the Venture Company's letters and engineering plans.",
+    "Gaxim called Mauren's spell perfect. Mixed with the NG-5 it made a remote explosive. The distraction it caused would cover a theft of the Venture Company's letters and engineering plans.",
     "With the spell in hand, Gaxim had his remote explosive. The plan was now a distraction and a burglary, aimed at the Venture Company's plans and letters to slow its deforestation.")
 q(1079, "Covert Ops - Alpha", "Stonetalon Mountains", 22, AG,
     "Gaxim's devices were done. Plan Alpha was not about the size of the blast, he said. It was about coming back with the Venture Company's engineering plans from the lumber mill south of Cragpool Lake.",
@@ -3031,7 +3031,7 @@ q(1081, "Reception from Tyrande", "Darnassus", 28, AG,
     "Tyrande had heard the name before. She was pleased with the path chosen by one still full of youth, she said, and gave a gift in appreciation.",
     "In the Temple of the Moon, Tyrande Whisperwind said the name was already known to her, and offered a gift for the work in Stonetalon.", 5)
 q(1083, "Enraged Spirits", "Stonetalon Mountains", 26, AG,
-    "Kaela did not know what the Venture Company had done in the {p:Charred Vale}, only that the creatures there had overpowered them. In setting the forest aflame the goblins had freed burning spirits of flame, stone and rage, and the land had no chance while they roamed.",
+    "Kaela did not know what the Venture Company had done in the {p:Charred Vale}, only that the creatures there had overpowered them. In setting the forest aflame the goblins had freed burning spirits of flame, stone and rage. The land had no chance while they roamed.",
     "The first time Kaela saw the Charred Vale she had almost wept. She asked for the smoldering embers of its fire spirits as proof that their numbers were falling.",
     "The embers of the vale's fire spirits reached Kaela. She called them the remains of the enemy, and said the strength that won them served her people well.",
     "Kaela took the smoldering embers. Fewer enraged spirits walked the Charred Vale, and she thanked the strength that had thinned them.")
@@ -3111,7 +3111,7 @@ q(2922, "Save Techbot's Brain!", "Gnomeregan", 26, G,
     "Overspark called it wonderful and got to work at once, with a word of comfort for poor Techbot. Then he went looking for the plug for his hydro-jack swivel spanner.",
     "Techbot's memory core reached Tinkmaster Overspark, who promised the machine it would be fixed and began hunting for a spanner plug.")
 q(2927, "The Day After", "Dun Morogh", 27, G,
-    "Gnoarn had not always been bald. The radiation leak in Gnomeregan had taken the only gnomefro in Azeroth, and he shook his fist at the troggs. It might not be too late to save the city, he said, and Ozzie Togglevolt in {p:Kharanos} and his partner Razzle were working on it.",
+    "Gnoarn had not always been bald. The radiation leak in Gnomeregan had taken the only gnomefro in Azeroth, and he shook his fist at the troggs. It might not be too late to save the city, he said. Ozzie Togglevolt in {p:Kharanos} and his partner Razzle were working on it.",
     "Gnoarn blamed the troggs for the loss of his hair and damned them all. He sent help to Ozzie Togglevolt in Kharanos, who was working on a solution for Gnomeregan.",
     "Ozzie had stood beside Gnoarn when the radiation bolt hit him and watched those brown locks hit the floor in clumps. Gnoarn had touched his bald head in disbelief, Ozzie said, and the look in his eyes had screamed revenge against the troggs.",
     "Ozzie remembered the day Gnoarn lost his hair, clumps and clusters of it, and the moment his anger turned on the troggs. He had not thought Gnoarn would survive the loss.")
@@ -3146,7 +3146,7 @@ q(2924, "Essential Artificials", "Gnomeregan", 30, G,
     "Klockmort had his essential artificials and could begin his experiments. The bravery had advanced gnomish research by a leap and a bound, he said.",
     "The artificials from Gnomeregan's extrapolators reached Klockmort Spannerspan in Ironforge, who could not thank the bearer enough.")
 q(2928, "Gyrodrillmatic Excavationators", "Gnomeregan", 30, G,
-    "Shoni the Shilent in Stormwind's Dwarven District did not have enough parts to get her fleet of gyrodrillmatic excavationators to Dun Morogh. Gnomeregan was full of bots and mechs roaming like cattle on an open range, she said, and two dozen of their robot guts would do.",
+    "Shoni the Shilent in Stormwind's Dwarven District did not have enough parts to get her fleet of gyrodrillmatic excavationators to Dun Morogh. Gnomeregan was full of bots and mechs roaming like cattle on an open range, she said. Two dozen of their robot guts would do.",
     "Shoni's excavationators needed spare parts, and Gnomeregan's robots had them. She wanted two dozen torn apart for their guts.",
     "The robot guts would do nicely, Shoni said. That made one gyrodrillmatic excavationator fixed, with three hundred and ninety-eight to go.",
     "Two dozen robots' worth of parts reached Shoni in the Dwarven District. It fixed one excavationator out of her fleet.")

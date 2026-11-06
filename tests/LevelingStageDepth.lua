@@ -60,7 +60,7 @@ excludes(428, {"drank", "ivar's death", "potion reached"})
 excludes(429, {"drank", "felt it working"})
 check(words(430):find("drank", 1, true), "potion delivery supports Quinn's treatment")
 for _, id in ipairs({422,423,424,99,98298}) do excludes(id, {"arugal was killed", "curse was cured", "curse was lifted"}) end
-check(words(98298):find("search for a remedy unfinished", 1, true), "Forever study has no cure")
+check(words(98298):find("search for a cure went on", 1, true), "Forever study has no cure")
 excludes(443, {"thule", "bethor"})
 excludes(444, {"thule"})
 excludes(446, {"thule's death", "thule was dead"})
