@@ -63,6 +63,39 @@ The user reads the output closely, on his phone, and notices machine tells immed
 
 ## 3. The writing standard
 
+### 3.0 The character's story first (the user's rules, 2026-11-07; they override anything below)
+
+After playing the live realm the user found the books "overwhelming, weirdly impersonal:
+too long on too many lore elements, not enough personal storytelling", and the English
+"not fluid". The new rules:
+
+1. **Point of view: always the character** (and their companion when grouped). Every quest,
+   place and event is told as *my* (our) experience, never as the quest-giver's exposition.
+   NPCs are people I met, worked for or fought; notable figures of Warcraft (Sylvanas,
+   Thrall, Cairne, Bolvar...) matter, but still as I met or served them.
+2. **The shape of a told moment:** me (or me and my companion) → the adventure (where I
+   went, what I faced) → the discovery (what I found, saw, learned) → the effect on me (what
+   I learned, met, felt) → my reward and where it leads me next.
+3. **Not every quest.** The storyteller chooses: a worth score (a chain's ending or turning
+   point, the stage's importance, a dungeon or boss, a death or rescue, a first in a new zone,
+   the companion's presence, a notable figure, a named foe) decides which few quests a
+   chapter tells; the rest fold into a light line or are left out. Highlights keeps one or two.
+4. **Lore colours the story, it is not the story.** A clause or a few words woven into the
+   character's sentences ("the Mindless Ones, Deathknell's dead still bound to the Lich
+   King"), occasionally a fuller moment where the story turns. Never a run of sentences
+   about NPCs. There is no lore-heavy mode.
+5. **Perception and feeling, grounded.** The character may perceive and feel: what a place or
+   creature truly is (a spider cave is dark and full of spiders), and a reaction that fits
+   the recorded fact (a first death, a hard fight, a long road). Never invent an event, an
+   outcome, another person's speech, or weather; one perceptive or felt touch per moment.
+6. **The hero's journey by level.** Low levels: a fledgling, novice adventurer, things new
+   and big. Middle levels: a seasoned traveller, surer. High levels and the end game: a
+   strong, known figure, the last part of the hero's journey; the voice grows with them.
+7. **Plain, fluid English.** Read aloud; no log-speak, no stiff or old-fashioned phrasing.
+
+Rules 3.2-3.4 still hold where they do not conflict (no meta words, no colons or questions
+in prose, plain verbs, deterministic variety).
+
 ### 3.1 The reference
 
 Vanilla quest text (IDs below 10000). The critic measured 265 quests across every level
