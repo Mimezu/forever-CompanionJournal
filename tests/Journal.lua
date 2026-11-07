@@ -185,6 +185,12 @@ units.nameplate1 = {"Aeryn", "MAGE", 22, "Horde"}
 clock = clock + 400
 A.UpdatePersonFromUnit(aeryn, "nameplate1", true)
 check(aeryn.level == 22 and aeryn.journal[#aeryn.journal].k == "level" and aeryn.journal[#aeryn.journal].d == 22, "level-up noted")
+-- A lower level is a new character with the same name: the card follows it, no level line.
+local lines = #aeryn.journal
+A.NotePersonLevel(aeryn, 4)
+check(aeryn.level == 4 and #aeryn.journal == lines, "a lower level replaces the card's level without a journal line")
+A.NotePersonLevel(aeryn, 5)
+check(aeryn.level == 5 and aeryn.journal[#aeryn.journal].k == "level" and aeryn.journal[#aeryn.journal].d == 5, "levels climb again from there")
 
 -- 8. Your own lines, and removing a line.
 local line = A.JournalWrite(aeryn, "  She saved me from the Defias.  ")

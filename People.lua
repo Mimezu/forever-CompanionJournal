@@ -509,13 +509,15 @@ function A.UpdatePersonFromUnit(person, unit, force)
     level = okLevel and Public(level) and tonumber(level)
     if level and level > 0 then A.NotePersonLevel(person, level) end
 end
--- Level only grows; the journal notes the levels you witnessed.
+-- The journal notes the levels you witnessed going up. A lower level than the card
+-- holds means a new character with the same name (a card from the beta, a reroll):
+-- the card takes the level it sees, and no level line is written.
 function A.NotePersonLevel(person, level)
     level = tonumber(level)
     if not level or level <= 0 then return end
     local old = tonumber(person.level)
     if old and level > old and A.JournalLevel then A.JournalLevel(person, level) end
-    if not old or level >= old then person.level = level end
+    person.level = level
 end
 -- Pronouns for the journal's storyteller: "they" unless you choose "he" or
 -- "she" for them (People > their card).

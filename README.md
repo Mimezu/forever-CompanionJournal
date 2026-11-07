@@ -4,6 +4,13 @@ The players and NPCs you want to remember, and a journal of what you lived
 through together. It came out of Forever Names 1.10: the People list, the
 journal, the group popup and the campfire now live here, in their own window.
 
+## 1.14.1: a new character with an old name
+
+- **A card follows the character it sees.** A companion re-added on the live realm kept
+  the level of their old beta character (a card only ever went up). A lower level now
+  means a new character with the same name: the card takes it, without a level line in
+  the journal.
+
 ## 1.14.0: a game master at the table
 
 - **Chapter openings after time away.** A chapter opens by how long it has been (a
