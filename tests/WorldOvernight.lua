@@ -276,7 +276,7 @@ for _,s in ipairs(scenarios) do
                     check(out==render(p,player,companion,brief,retell,voice),s.name.." nondeterministic retell")
                     check(not out:find("{%a+}"),s.name.." unresolved placeholder")
                     check(not out:lower():find("%f[%a]the the%f[%A]"),s.name.." doubled article")
-                    check(not out:find("%.%."),s.name.." doubled stop")
+                    check(not out:gsub("%.%.%.",""):find("%.%."),s.name.." doubled stop")
                     if arg[1]=="--review" and retell==0 then
                         print("\n"..s.name.." / "..(companion and ("COMPANION "..voice) or "SOLO").." / "..(brief and "HIGHLIGHTS" or "FULL").."\n"..out)
                     end

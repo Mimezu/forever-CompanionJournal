@@ -73,6 +73,11 @@ local function Cap(text)
     if text:match("^{%a:") then return text:sub(1, 3) .. text:sub(4):gsub("^%l", string.upper) end
     return (text:gsub("^%l", string.upper))
 end
+-- A title that ends in a full stop ("Reagents for Reclaimers Inc.") takes no second one.
+local function OneStop(text)
+    text = tostring(text or ""):gsub("%.(})%.", ".%1"):gsub("([^%.])%.%.([^%.])", "%1.%2"):gsub("([^%.])%.%.$", "%1.")
+    return text
+end
 local function Clean(text) return (tostring(text or ""):gsub("[{}]", "")) end
 -- A place's name in a sentence: "the {p:Barrens}", "{p:Durotar}", "the {p:Arathi Highlands}".
 local ARTICLE = {["Eastern Kingdoms"] = true, ["Arathi Highlands"] = true, ["Eastern Plaguelands"] = true, ["Western Plaguelands"] = true,
@@ -4096,7 +4101,7 @@ function ST.Tell(person, days, brief, retell)
         if chapterWhen and out[1] and out[1]:find(chapterWhen, 1, true) == 1 then history.whenLedAt = index end
         if text ~= "" or #f.quotes > 0 then
             history.chapter = history.chapter + 1
-            stories[day.key] = {text = text, title = title and title:gsub("^%l", string.upper) or nil, chapter = history.chapter, quotes = f.quotes}
+            stories[day.key] = {text = OneStop(text), title = title and title:gsub("^%l", string.upper) or nil, chapter = history.chapter, quotes = f.quotes}
         else
             stories[day.key] = {text = "", title = nil, chapter = history.chapter, quotes = {}}
         end

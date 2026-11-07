@@ -90,6 +90,11 @@ local function List(items)
     if #items <= 1 then return items[1] or "" end
     return table.concat(items, ", ", 1, #items - 1) .. " and " .. items[#items]
 end
+-- A title that ends in a full stop ("Reagents for Reclaimers Inc.") takes no second one.
+local function OneStop(text)
+    text = tostring(text or ""):gsub("%.(})%.", ".%1"):gsub("([^%.])%.%.([^%.])", "%1.%2"):gsub("([^%.])%.%.$", "%1.")
+    return text
+end
 local function Clean(text) return (tostring(text or ""):gsub("[{}%[%]|]", "")) end
 local function Q(text) return "{q:" .. Clean(text) .. "}" end
 local function About(seconds)
@@ -3999,7 +4004,7 @@ function T.Tell(person, days, voice, player, brief)
                 or Place(mainZone):gsub("{p:the ", "{p:The "))) or nil
         -- (a title begins with a capital: "The Hillsbrad Foothills", not "the Hillsbrad Foothills")
         if chapterTitle then chapterTitle = chapterTitle:gsub("^the ", "The "):gsub("^{p:the ", "{p:The ") end
-        stories[day.key] = {text = T.Paragraphs(out, outBeat), quotes = f.quotes, chapter = chapter, two = tellsTwo or nil, title = chapterTitle}
+        stories[day.key] = {text = OneStop(T.Paragraphs(out, outBeat)), quotes = f.quotes, chapter = chapter, two = tellsTwo or nil, title = chapterTitle}
 
         -- remember the last three kinds of title.
         if title then
