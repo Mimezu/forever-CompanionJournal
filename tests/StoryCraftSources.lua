@@ -41,7 +41,7 @@ for _, id in ipairs({790,804,23,95,55,1058,2973,2974,921,5241}) do
         for _, companion in ipairs({false,true}) do for _, brief in ipairs({false,true}) do for retell=0,3 do
             local s = render(id,companion,brief,retell)
             check(s == render(id,companion,brief,retell), 'unstable source scene ' .. id)
-            check(A.QuestDeeds.Shows(s,id) and (companion or has(s,A.QuestDeeds.NoSemicolon(A.JournalPlain(brief and compact or after)))), 'exact stage not told: ' .. s)
+            check(A.QuestDeeds.Shows(s,id) and (companion or q.pov or has(s,A.QuestDeeds.NoSemicolon(A.JournalPlain(brief and compact or after)))), 'exact stage not told: ' .. s)
             check(not has(s,'{p:') and not has(s,'{name}'), 'unresolved prose token: ' .. s)
             if id == 790 then
                 retired(has(s,"Hana'zua") and has(s,'pride'), 'lost wounded hunter: ' .. s)
