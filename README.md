@@ -4,6 +4,26 @@ The players and NPCs you want to remember, and a journal of what you lived
 through together. It came out of Forever Names 1.10: the People list, the
 journal, the group popup and the campfire now live here, in their own window.
 
+## 1.15.0: your story, told from your side
+
+- **The book is about you.** Every quest stage in the packs (about 2,700) now has lines
+  told from your character's side, with your companion when grouped: where you went, what
+  you found, what it meant to you, where it led next. Lore stays as colour in a line, never
+  a run of exposition.
+- **A few quests worth telling, not all of them.** Each chapter picks its most worthy quests
+  (chain finales, dungeons, deaths and rescues, notable figures, first work in a new zone)
+  and tells them as scenes; the rest are folded into one or two short lines.
+- **Your voice grows with you.** Under level 20 you write as a fledgling, from 20 a
+  seasoned traveller, from 45 someone people send for: in the quest lines, level lines,
+  openings and grouped lines.
+- **Smoother reading.** Events in a day keep their order; a quest done twice is told as an
+  "again", not the same scene twice; the companion book no longer counts quests or repeats
+  the companion's name; odd filler lines are gone; "a week" instead of "one weeks".
+- **Fixes.** The full edition no longer drops a level line Highlights keeps; a companion's
+  stale level is no longer compared with yours; toggling Find Minerals no longer reads as
+  smelting.
+- Every new line was checked against its quest text by an independent read.
+
 ## 1.14.1: a journal from the first login
 
 - **A card follows the character it sees.** A companion re-added on the live realm kept
