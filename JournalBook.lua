@@ -97,6 +97,10 @@ local VOICES = {
 local function NewScene(kind, t)
     return {kind = kind, t = t, entries = {}, events = {}, quests = {}, questCount = 0, dungeons = {}, bosses = {}, levels = {}}
 end
+-- Spells cast in a profession window that make nothing (opening the window, tracking).
+local CRAFT_NOT_MADE = {["Smelting"] = true, ["Find Minerals"] = true, ["Find Herbs"] = true, ["Find Treasure"] = true,
+    ["Find Fish"] = true, ["Disenchant"] = true, ["Prospecting"] = true}
+A.CraftNotMade = CRAFT_NOT_MADE
 local function Add(scene, entry)
     scene.entries[#scene.entries + 1] = entry
     local k = entry.k
@@ -143,12 +147,20 @@ local function Add(scene, entry)
             -- (a battleground match's end: result, length, score line, marks, the most blows, listed people)
             r = entry.r, dur = entry.dur, kb = entry.kb, hk = entry.hk, dt = entry.dt, hon = entry.hon, m = entry.m, top = entry.top, c = entry.c}
     elseif k == "craft" and entry.d then
-        scene.craft = scene.craft or {}
-        local line = scene.craft[entry.d] or {count = 0, made = {}}
-        scene.craft[entry.d] = line
-        line.count = line.count + (tonumber(entry.c) or 0)
+        -- (older records counted opening the window and tracking spells as things made:
+        -- "Smelting", "Find Minerals"; those are dropped here, and a line left empty is not told)
+        local count, made = tonumber(entry.c) or 0, {}
         for _, name in ipairs(type(entry.m) == "table" and entry.m or {}) do
-            if #line.made < 3 then line.made[#line.made + 1] = name end
+            if name == entry.d or CRAFT_NOT_MADE[name] then count = count - 1 else made[#made + 1] = name end
+        end
+        if count > 0 or #made > 0 then
+            scene.craft = scene.craft or {}
+            local line = scene.craft[entry.d] or {count = 0, made = {}}
+            scene.craft[entry.d] = line
+            line.count = line.count + math.max(count, #made)
+            for _, name in ipairs(made) do
+                if #line.made < 3 then line.made[#line.made + 1] = name end
+            end
         end
     elseif k == "gather" and entry.d then
         scene.gather = scene.gather or {}

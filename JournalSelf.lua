@@ -490,11 +490,23 @@ local function ProfessionName()
     return nil
 end
 local crafted = setmetatable({}, {__mode = "k"}) -- stretch -> profession -> entry
+-- Casts made while a profession window is open that are not things made: opening the
+-- window itself ("Smelting" opens Mining's) and the tracking spells (2026-11-07: "I
+-- smelted two bars of smelting and find minerals" after opening Smelting and turning
+-- on Find Minerals).
+local NOT_MADE = {["Smelting"] = true, ["Find Minerals"] = true, ["Find Herbs"] = true, ["Find Treasure"] = true,
+    ["Find Fish"] = true, ["Disenchant"] = true, ["Prospecting"] = true}
 local function Crafted(spellID)
     if not stretch or not profession then return end
     local made
     if C_Spell and C_Spell.GetSpellName then made = Text(Ask(C_Spell.GetSpellName, spellID))
     elseif GetSpellInfo then made = Text(Ask(GetSpellInfo, spellID)) end
+    if made and (made == profession or NOT_MADE[made]) then return end
+    -- Where the client can say so, only a recipe of the open window counts.
+    if C_TradeSkillUI and C_TradeSkillUI.GetRecipeInfo then
+        local info = Ask(C_TradeSkillUI.GetRecipeInfo, spellID)
+        if type(info) ~= "table" then return end
+    end
     local lines = crafted[stretch] or {}
     crafted[stretch] = lines
     local entry = lines[profession]
