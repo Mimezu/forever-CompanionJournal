@@ -30,23 +30,16 @@ end
 -- Where a stage is told (2026-11-07, DESIGN §3.0): the companion book tells the pair's day,
 -- by the stage's own point of view, act or name, no longer by its authored outcome prose.
 local function outcome(text, id)
-    local found, count
-    count = 0
-    local s = A.Lore.questStoryIDs[id]
+    -- (2026-11-07: by the stage's own words, its point of view, act or outcome, through the
+    -- engine's QD.ToldAt; a folded act counts, a summary line that only names it does not lead)
+    local kind, at = A.QuestDeeds.ToldAt(text, id)
     -- (a title several stages share does not say which stage was told)
-    local shared = 0
-    for _, other in pairs(A.Lore.questStoryIDs) do if other.title == s.title then shared = shared + 1 end end
-    local marks = shared == 1 and {s.title} or {}
-    for _, line in ipairs(s.after) do marks[#marks + 1] = A.JournalPlain(line) end
-    for _, line in ipairs(marks) do
-        local start = 1
-        while true do
-            local at, last = text:find(A.JournalPlain(line), start, true)
-            if not at then break end
-            found, count, start = found or at, count + 1, last + 1
-        end
+    if kind == "title" then
+        local s, shared = A.Lore.questStoryIDs[id], 0
+        for _, other in pairs(A.Lore.questStoryIDs) do if other.title == s.title then shared = shared + 1 end end
+        if shared > 1 then return nil end
     end
-    return found, count
+    return at, kind
 end
 -- A stage's own authored outcome prose, where it appears.
 local function prose(text, id)
@@ -76,6 +69,7 @@ for _, fixture in ipairs(fixtures) do
                 previous, toldAny = at, true
             end
         end
+        -- (a shared title, "We saw Call of Earth through", tells the work without saying which stage)
         for _, id in ipairs(fixture.ids) do if text:find(A.Lore.questStoryIDs[id].title, 1, true) then toldAny = true end end
         check(toldAny, "the outings tell some of their work\n" .. text)
         check(tell(p, brief, voice, retell) == text, "deterministic multi-outing narrative")

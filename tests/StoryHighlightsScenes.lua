@@ -202,7 +202,25 @@ end end end
 for retell=0,7 do
     local full=chapters(byName.Elandra,false,false,retell)
     local short=chapters(byName.Elandra,false,true,retell)
-    check(short["2024-01-02"]==full["2024-01-02"],"unauthored compact beginning retains full formative scenes")
+    -- (2026-11-07, DESIGN §3.0 rule 3: Highlights keeps one or two of the day's stages, so it is no
+    -- longer the whole Everything chapter. Everything never tells less: every stage Highlights tells
+    -- in its own words, and its level line, are in Everything too, in the same order)
+    local f1,s1=assert(full["2024-01-02"]),assert(short["2024-01-02"])
+    local previous=0
+    for _,id in ipairs({458,456,459}) do
+        local kind,at=A.QuestDeeds.ToldAt(s1,id)
+        if kind and kind~="title" then
+            local kindF,atF=A.QuestDeeds.ToldAt(f1,id)
+            check(kindF and kindF~="title","Everything tells every stage Highlights tells ("..id.."): "..f1.."\n--\n"..s1)
+            check(atF>=previous,"Everything keeps the formative stages in order: "..f1); previous=atF
+        end
+    end
+    check(A.QuestDeeds.ToldAt(s1,459),"the first day's last stage is told in Highlights: "..s1)
+    check(s1:find("level 1",1,true) and f1:find("level 1",1,true),"both editions keep the first day's level line:\n"..f1.."\n--\n"..s1)
+    -- (and Highlights says nothing Everything does not: its sentences are Everything's)
+    for sentence in (s1.." "):gmatch("(.-[%.!])%s+") do
+        check(f1:find(sentence,1,true),"Highlights sentence is in Everything: "..sentence)
+    end
     local moon=assert(short["2024-01-11"])
     -- (2026-11-07, DESIGN §3.0: Highlights keeps one or two stages, so "every cultural detail of
     -- the day" is retired: the storyteller may choose another stage of the day)
@@ -215,6 +233,28 @@ for retell=0,7 do
     check(g["2024-12-21"]:find("Gehennas",1,true),"raid defeat survives shorter edition")
     check(short["2025-01-14"]:find("campfire",1,true) or short["2025-01-14"]:find("fire",1,true),"quiet rest survives shorter edition")
 end
+-- Everything never tells less than Highlights, on every saved journey (2026-11-07): a stage
+-- Highlights tells in its own words is in Everything, and so is its level line (the everyday
+-- level is left out on a busy day by the day's record, in both editions alike; Gromm's
+-- 2024-01-11 once lost "level 9" in Everything only, by the chapter's length).
+for retell=0,1 do for _,row in ipairs(rows) do
+    local full=chapters(row,false,false,retell)
+    local short=chapters(row,false,true,retell)
+    for key,s in pairs(short) do
+        local f=full[key] or ""
+        for _,e in ipairs(row.person.journal) do
+            if e.k=="quest" and e.qid and os.date("%Y-%m-%d",e.t)==key then
+                local kind=A.QuestDeeds.ShowsAt(s,e.qid,e.d)
+                if kind and kind~="title" then
+                    check(A.QuestDeeds.Shows(f,e.qid,e.d),"Everything tells what Highlights tells ("..row.spec.name.." "..key.." "..e.qid.."):\n"..f.."\n--\n"..s)
+                end
+            end
+        end
+        check(not f:find("one weeks",1,true) and not f:find("zero weeks",1,true),"an elapsed week reads \"a week\": "..f)
+        local level=s:match("level %d+")
+        if level then check(f:find(level,1,true),"Everything keeps Highlights' level line ("..row.spec.name.." "..key.."):\n"..f.."\n--\n"..s) end
+    end
+end end
 local travelSeen = false
 for retell=0,15 do for _,voice in ipairs({"we","you"}) do
     local text=assert(chapters(byName.Talla,true,true,retell,voice)["2024-04-09"])

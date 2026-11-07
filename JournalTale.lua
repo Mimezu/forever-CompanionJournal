@@ -3058,6 +3058,10 @@ function T.Tell(person, days, voice, player, brief)
                 return {We = Cap(b.we), we = b.we, us = b.us, our = b.our, Our = Cap(b.our), I = b.I, me = b.me, my = b.my, My = Cap(b.my)}
             end
             local rest, told = {}, {}
+            -- (the folded work is cut into runs by the moments told between them: one grouped line
+            -- never joins work done before a told moment with work done after it, which read as if
+            -- the hides were taken to the wind rider after the flight they were flown on)
+            local runs, run = {}, {}
             local was = beat
             beat = "questKey"
             for _, e in ipairs(plan.entries) do
@@ -3082,7 +3086,24 @@ function T.Tell(person, days, voice, player, brief)
                 end
             end
             if #rest >= 2 then
-                local lines = QD.Folds({rest[1], rest[2], rest[3]}, Tok(false), 1, {}, QD.Band(rest[1].quest.pl))
+                -- (plan.entries is in worth order; the runs follow the record)
+                local moments = {}
+                for _, item in ipairs(told) do moments[#moments + 1] = item.t end
+                table.sort(rest, function(x, y) return (x.quest.t or 0) < (y.quest.t or 0) end)
+                for _, e in ipairs(rest) do
+                    local prev = run[#run]
+                    local split = false
+                    for _, mt in ipairs(moments) do
+                        if prev and mt > (prev.quest.t or 0) and mt < (e.quest.t or 0) then split = true end
+                    end
+                    if split then runs[#runs + 1] = run; run = {} end
+                    run[#run + 1] = e
+                end
+                runs[#runs + 1] = run
+                -- (still one light line: the run with the most work, the earlier on a tie)
+                local pick = runs[1]
+                for _, r in ipairs(runs) do if #r > #pick then pick = r end end
+                local lines = QD.Folds({pick[1], pick[2], pick[3]}, Tok(false), 1, {}, QD.Band(pick[1].quest.pl))
                 if lines[1] then told[#told + 1] = {t = lines[1].last.t or 0, text = lines[1].text} end
             end
             table.sort(told, function(x, y) return x.t < y.t end)

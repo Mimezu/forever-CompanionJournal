@@ -1793,8 +1793,16 @@ end
 function QD.ShowsAt(text, qid, title)
     local plain = A.JournalPlain(text or "")
     local bestKind, bestAt
+    -- (a line led by a place has its first word lowercased, "In the Alterac Mountains, four...",
+    -- and a line moved to a sentence's start has it raised: the first letter matches either case; a
+    -- title only as written)
     local function Mark(kind, piece)
-        local at = piece and #piece > 0 and plain:find(piece, 1, true)
+        if not piece or #piece == 0 then return end
+        local at = plain:find(piece, 1, true)
+        for _, other in ipairs(kind == "title" and {} or {(piece:gsub("^%u", string.lower)), (piece:gsub("^%l", string.upper))}) do
+            local at2 = other ~= piece and plain:find(other, 1, true)
+            if at2 and (not at or at2 < at) then at = at2 end
+        end
         if at and (not bestAt or at < bestAt) then bestKind, bestAt = kind, at end
     end
     local L = A.Lore
@@ -1817,4 +1825,28 @@ function QD.ShowsAt(text, qid, title)
         end
     end
     return bestKind, bestAt
+end
+-- Where a stage is told in its own words (its point of view, act, outcome, setup or scene),
+-- for order checks: a day line that only names the quest ("finished The Forgotten Pools, work
+-- meant for more seasoned adventurers") is a summary, not the moment. The title's place only
+-- when nothing else of the stage is there.
+function QD.ToldAt(text, qid, title)
+    local kind, at = QD.ShowsAt(text, qid, title)
+    if kind ~= "title" then return kind, at end
+    local L = A.Lore
+    local name = title or (qid and L and L.questStoryIDs and L.questStoryIDs[qid] and L.questStoryIDs[qid].title)
+    -- (the same text with the title blanked out, the positions unchanged)
+    local plain = A.JournalPlain(text or "")
+    local bare = A.JournalPlain(name or "")
+    if bare == "" then return kind, at end
+    local masked, start = plain, 1
+    while true do
+        local s, e = masked:find(bare, start, true)
+        if not s then break end
+        masked = masked:sub(1, s - 1) .. ("#"):rep(e - s + 1) .. masked:sub(e + 1)
+        start = e + 1
+    end
+    local kind2, at2 = QD.ShowsAt(masked, qid, title)
+    if kind2 and kind2 ~= "title" then return kind2, at2 end
+    return kind, at
 end

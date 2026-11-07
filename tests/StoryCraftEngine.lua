@@ -43,7 +43,8 @@ local function lineAt(text, lines)
 end
 local function outcomeAt(text, id) return lineAt(text, A.Lore.questStoryIDs[id].after) end
 -- Where a stage is told in its own words (2026-11-07, DESIGN §3.0), and the order of the told ones.
-local function toldAt(text, id) local _, at = A.QuestDeeds.ShowsAt(text, id); return at end
+-- (by the stage's own words: a day line that only names a quest is a summary, not its moment)
+local function toldAt(text, id) local _, at = A.QuestDeeds.ToldAt(text, id); return at end
 local function ordered(text, ids, why)
     local previous, n = 0, 0
     for _, id in ipairs(ids) do
@@ -161,6 +162,17 @@ for retell = 0, 15 do for _, brief in ipairs({false, true}) do
     end
     check(found, "the reported Gromm chapter is exercised")
 end end
+-- A point-of-view line led by a place has its first word lowercased ("In Teldrassil, a hard
+-- lesson..."); QD.Shows still knows the stage by that line (2026-11-07).
+do
+    local QD = A.QuestDeeds
+    local line = QD.Story({qid = 456, title = A.Lore.questStoryIDs[456].title}).pov[2]
+    check(line and line:find("^A hard lesson"), "fixture pov line: " .. tostring(line))
+    local led = "In Teldrassil, " .. QD.Fill(line, {We = "I", we = "I", us = "me", our = "my", Our = "My"}):gsub("^%u", string.lower)
+    check(QD.Shows(led, 456) == "pov", "a place-led pov line is still that stage's: " .. led)
+    check(QD.Shows("We saw The Balance of Nature through.", 456) == "title", "a title still shows as written")
+    check(not QD.Shows("We saw the balance of nature through.", 456), "a title is matched only as written")
+end
 -- Milestone wording distinguishes accumulated shared days from elapsed gaps.
 local card = person(true); card.origin = nil
 for day = 0, 9 do outing(card, day * 30 * 86400, "Westfall", {}) end

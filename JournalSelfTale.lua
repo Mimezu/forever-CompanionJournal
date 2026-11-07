@@ -1025,7 +1025,10 @@ function ST.Tell(person, days, brief, retell)
             end
             local function Ago(n)
                 if n >= 60 then return Words(math.floor(n / 30 + 0.5)) .. " months" end
-                return Words(math.floor(n / 7 + 0.5)) .. " weeks"
+                -- (never "one weeks" or "zero weeks": ten days is a week, five days is days)
+                if n < 7 then return n <= 1 and "a day" or (Words(n) .. " days") end
+                local weeks = math.floor(n / 7 + 0.5)
+                return weeks <= 1 and "a week" or (Words(weeks) .. " weeks")
             end
             -- A chapter a week or more after the last recorded one opens as a game master
             -- opens a new night at the table (W.absence, 2026-11-06): the gap in words, the
@@ -3656,6 +3659,12 @@ function ST.Tell(person, days, brief, retell)
             end
             local levelsDone = false
             local LevelsLineNow
+            -- (a full day by its record: six turn-ins and more; the same in both editions)
+            local function BusyDay()
+                local n = 0
+                for _, s in ipairs(stretches) do n = n + (s.questCount or #(s.quests or {})) end
+                return n >= 6
+            end
             local function LevelsLine()
                 local countBefore = #out
                 LevelsLineNow()
@@ -3756,8 +3765,11 @@ function ST.Tell(person, days, brief, retell)
                     elseif W.levelsFast and (lt.from or 0) >= 20 and top - (lt.from or top) >= 3 then
                         -- (three levels and more in one day: the speed is the news)
                         Say(teller:Say("levelsFast", W.levelsFast, lt), true, "level")
-                    elseif #out >= 8 or (consequenceAt and consequenceAt == #out) or kinds[#out] == "lore" then
-                        -- (an everyday level is not news in a full chapter, or after a lord's fall or a story line)
+                    elseif BusyDay() then
+                        -- (an everyday level is not news on a full day. Judged by the day's record, never by
+                        -- how long this edition's chapter came out: Everything and Highlights say the same
+                        -- level line, so Everything never drops one Highlights tells (2026-11-07). After a
+                        -- lord's fall the line goes before the consequence, LevelsLine above.)
                         history.levelsUnsaid = (history.levelsUnsaid or 0) + 1
                     elseif #f.levels > 1 then
                         Say(teller:Say("levels", W.levels, lt), false, "level")
