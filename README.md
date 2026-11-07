@@ -4,12 +4,15 @@ The players and NPCs you want to remember, and a journal of what you lived
 through together. It came out of Forever Names 1.10: the People list, the
 journal, the group popup and the campfire now live here, in their own window.
 
-## 1.14.1: a new character with an old name
+## 1.14.1: a journal from the first login
 
 - **A card follows the character it sees.** A companion re-added on the live realm kept
   the level of their old beta character (a card only ever went up). A lower level now
   means a new character with the same name: the card takes it, without a level line in
   the journal.
+- **The journal is on from the first login.** "Record our adventures" (Settings >
+  Recording) now starts on; before, a new install recorded nothing until it was turned on.
+
 
 ## 1.14.0: a game master at the table
 

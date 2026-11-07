@@ -75,7 +75,7 @@ for _, file in ipairs({"People.lua", "Characters.lua", "GroupPrompt.lua", "Journ
     assert(loadfile(root .. file))("ForeverNames", A)
 end
 A.Refresh = function() end
-local db = {enabled = true, colors = {people = {1, 1, 1}, groupmate = {0.5, 0.8, 1}}}
+local db = {enabled = true, peopleJournal = false, colors = {people = {1, 1, 1}, groupmate = {0.5, 0.8, 1}}}
 for key, value in pairs(A.defaults) do if db[key] == nil then db[key] = value end end
 A.db = db
 A.InitPeople()
@@ -100,6 +100,7 @@ members = {{"Aeryn", "MAGE", 20, "Horde"}, {"Brom", "WARRIOR", 21, "Horde"}, {"S
 inGroup = true
 A.UpdatePeopleHooks()
 check(Events() == nil or not Events().events.ENCOUNTER_END, "no journal events while off")
+check(A.defaults.peopleJournal == true, "the journal is on by default for a new install")
 A.JournalGroupChanged(); A.JournalBoss("Hogger"); A.JournalQuest(7)
 check(aeryn.journal == nil and db.journalAside == nil, "nothing recorded while off")
 

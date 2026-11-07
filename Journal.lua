@@ -12,7 +12,8 @@ local function Text(value)
     return Public(value) and type(value) == "string" and value ~= "" and value or nil
 end
 
-A.defaults.peopleJournal = false
+-- On from the first login: the journal is the heart of the addon (2026-11-06).
+A.defaults.peopleJournal = true
 -- Sub-option: "crossed paths" lines from plates (only while the journal is on).
 A.defaults.journalSeen = true
 
