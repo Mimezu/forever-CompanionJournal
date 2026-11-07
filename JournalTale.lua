@@ -590,7 +590,7 @@ local function DayFacts(day)
             if entry.ol then f.ol = math.max(f.ol or 0, entry.ol) end
             -- (their level at the latest entry, and after a level of theirs its new level: the two
             -- levels are compared at the same moment, the end of the day; a stale higher level read
-            -- at the first sighting once said "Dahlia was level 16, well ahead of me at 7" of two
+            -- at the first sighting once said "Mira was level 16, well ahead of me at 7" of two
             -- characters who levelled side by side, 2026-11-07)
             do
                 local theirs = (entry.k == "level" and tonumber(entry.d)) or tonumber(entry.ol)
@@ -4052,8 +4052,8 @@ function T.Tell(person, days, voice, player, brief)
         -- (a title begins with a capital: "The Hillsbrad Foothills", not "the Hillsbrad Foothills")
         if chapterTitle then chapterTitle = chapterTitle:gsub("^the ", "The "):gsub("^{p:the ", "{p:The ") end
         -- (the companion's name opening the sentence right after the opening that named them: the
-        -- pronoun instead, "I met Morammon at a campfire. He was level 15 then", never "Dahlia, my
-        -- wife, was at my side. Dahlia was level 16"; a "they" keeps the name, 2026-11-07)
+        -- pronoun instead, "I met Morammon at a campfire. He was level 15 then", never "Mira, my
+        -- wife, was at my side. Mira was level 16"; a "they" keeps the name, 2026-11-07)
         do
             local nm, b = teller.base.name, teller.base
             for n = 2, #out do

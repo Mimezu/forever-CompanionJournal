@@ -1956,7 +1956,7 @@ function ST.Tell(person, days, brief, retell)
                 if #bonded > 0 and W.joinedBond then
                     st.names, st.bond = bonded[1].name, bonded[1].word
                     -- (the life began with them: one sentence, "My second life began at Deathknell, with
-                    -- Dahlia, my wife, at my side.", 2026-11-07; the lore clause of the origin gives way)
+                    -- Mira, my wife, at my side.", 2026-11-07; the lore clause of the origin gives way)
                     local head = kinds[#out] == "origin" and #out <= 2 and out[#out]:match("^(.-), ")
                     if head and not head:find(",", 1, true) then
                         out[#out] = head .. ", with " .. st.names .. ", " .. st.bond .. ", at my side."
