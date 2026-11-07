@@ -2046,7 +2046,7 @@ pack.questIDs[480].highlight = {"Archmage Ataeric was killed at Ambermill and hi
 pack.questIDs[6324].highlight = {"Deathguard Podrig's weapons order went to the Undercity by bat and came back as a crate from Gordon Wendham. The Sepulcher's Deathguards would not be caught unprepared.", "The weapons from the Undercity reached Deathguard Podrig at the Sepulcher. He called the errand a valuable service to the Dark Lady."}
 pack.questIDs[98299].highlight = {"Human refugees had gathered at the Greymane Wall, where the Forsaken feared Arugal's curse would take them. They were put down, and Gilneas kept its gate shut.", "To keep Arugal's curse from spreading, the refugees at the Greymane Wall were killed. The Gilneans let no one through their wall."}
 
--- Quests recorded in Alberich's and Dahlia's beta journals that still had no
+-- Quests recorded in the beta test journals that still had no
 -- scene (Migration/ancestor-journals-20261105), plus Forever's Camping 101
 -- family. Camping titles repeat across professions, races and zones, so they
 -- stay title contexts with no zone or thread; each names only its own fixture.

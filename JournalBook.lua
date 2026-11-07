@@ -685,7 +685,7 @@ local function Deeds(scene, name, v, inside)
             if line then Flush(); sentences[#sentences + 1] = line end
         elseif event.k == "level" or event.k == "mylevel" then
             Flush()
-            -- Theirs and yours within ten minutes: one sentence ("Dahlia and I both reached level 16.").
+            -- Theirs and yours within ten minutes: one sentence ("Mira and I both reached level 16.").
             local other = events[i + 1]
             local paired = other and (other.k == "level" or other.k == "mylevel") and other.k ~= event.k
                 and (other.t or 0) - (event.t or 0) <= 600
@@ -1188,7 +1188,7 @@ end
 -- Short forms (the Margins and Ledger styles) ------------------------------------
 -- A scene's deeds as short items {glyph, text}, in the order they happened,
 -- quests last: "Shared a campfire", "Shadowfang Keep", "Defeated X and Y",
--- "Dahlia reached level 16", "Six quests: ...".
+-- "Mira reached level 16", "Six quests: ...".
 local MOMENT_GLYPHS = {met = "heart", added = "heart", seen = "person", level = "star", mylevel = "star", campfire = "fire",
     quest = "note", boss = "swords", dungeon = "shield", custom = "note", death = "skull", wipe = "swords", rez = "sun", rest = "moon"}
 function A.JournalSceneGlyph(scene) return MOMENT_GLYPHS[scene.kind] or "dot" end

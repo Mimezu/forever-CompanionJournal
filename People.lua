@@ -568,7 +568,7 @@ function A.DescribeMet(person)
     local how = person.metHow == "campfire" and " (by the campfire)" or " (grouped)"
     return "Met " .. when .. (person.metZone and (", " .. person.metZone) or "") .. how
 end
--- "Alberich's companion": someone another character of yours knows.
+-- "Kael's companion": someone another character of yours knows.
 local CIRCLE_WORDS = {acquaintance = "acquaintance", campfire = "campfire acquaintance", rival = "rival"}
 function A.RecognizedLabel(person)
     local by = person.recognizedBy

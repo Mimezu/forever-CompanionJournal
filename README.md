@@ -54,7 +54,7 @@ journal, the group popup and the campfire now live here, in their own window.
   dungeons, exploring, duels, night play) shifts what the book dwells on; it never
   calls you anything.
 - **Companion books are a shared history.** The diary voice reads as two people's
-  record ("Dahlia and I", "between us"); the game-master voice recaps your party.
+  record ("Mira and I", "between us"); the game-master voice recaps your party.
   Your own firsts on a day together (a new zone, a continent, a first mount) reach
   their book too. Highlights now make a real cut.
 - **Record more moments** (Settings > Recording, off by default): books and plaques
@@ -123,12 +123,12 @@ journal, the group popup and the campfire now live here, in their own window.
   Esc cancels, and clearing the text asks before removing the note. No more
   right-click menu.
 - **Skin B: no header over the pages.** The window's title names the journal
-  ("Alberich's journal"), and the journal's first page is its title page: the
+  ("Kael's journal"), and the journal's first page is its title page: the
   name in large lettering, who they are (and, for a companion, when you met), the
   quest log's flourish, then the portrait and the first chapter. Its top margin
   grows with the book's size.
 - **Last names:** click the name on the title page to give it a last name
-  ("Alberich Noir"). Yours is kept with your character, a companion's with their
+  ("Kael Ashford"). Yours is kept with your character, a companion's with their
   card.
 - **Skin B, a companion's journal:** Pin is a cloth bookmark hanging from the top
   of the left page (full length when pinned, a faded stub when not); the quill
@@ -291,7 +291,7 @@ art still need an in-game check after reload.
   quest stages and 276 title contexts across Horde, Alliance, later regions,
   and the nine classes. Forever material includes Zephras and supported class
   variants. A tauren shaman now has authored Mulgore work, rites and individual
-  totem stages; this expansion is not restricted to Alberich's history.
+  totem stages; this expansion is not restricted to Kael's history.
 - **Evidence before atmosphere.** New quest records retain IDs. Exact stages
   get their own consequences; ambiguous old titles use conservative context.
   Race and class do not invent a first hunt, learned spell or completed trial.
@@ -370,7 +370,7 @@ encounters from that point onward. Everything remains local to the addon.
   **silver** for an acquaintance, **red** for a rival (on either side: meet
   your old Horde rival on a new Alliance character). When your characters
   disagree, gold wins over red, red over silver. Campfire people: nothing.
-  Their tooltip says whose they are ("Alberich's companion"). Click a link in
+  Their tooltip says whose they are ("Kael's companion"). Click a link in
   the legend to change its color.
 - **People > My characters:** everyone your other characters know that this
   one does not. Add someone (their icon, name and note come along; this
@@ -576,7 +576,7 @@ game:
   you were before they joined you ("Before that, you had spent a long day
   alone in Desolace.").
 - **Your level-ups** are now kept in the journals of the people you travel
-  with too ("Dahlia and I both reached level 16.").
+  with too ("Mira and I both reached level 16.").
 - **Journals are kept whole**: no limit on days or lines.
 
 ## What it does

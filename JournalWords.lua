@@ -62,7 +62,7 @@ PB.firstRoad = {
     "The first real outing with {name} came {later}.",
 }
 
--- PB.origin: started together. The Scourge lines open the player's own book (Dahlia).
+-- PB.origin: started together. The Scourge lines open the player's own book (Mira).
 PB.origin = {
     Scourge = {
         "{pair} rose from the grave together in Deathknell and walked out into the grey light of Tirisfal.",
@@ -502,7 +502,7 @@ PB.routeVia = {"Later {pair} went through {via}, and on to {zoneTo}.", "From the
 -- The one quest turned in after the dungeon ({quest}; {zoneTo} where).
 PB.questAfterOne = {"Afterwards, {we} turned in {quest}.", "Then {we} turned in {quest}."}
 -- PB.questsMore. Truth: the engine counts quests after the FIRST dungeon but says it after
--- the LAST one (Dahlia: "nine more quests after that" were done before Ragefire). CRITIQUE 6.4.
+-- the LAST one (Mira: "nine more quests after that" were done before Ragefire). CRITIQUE 6.4.
 PB.questsMore = {
     "{we} finished {count} more quests afterwards.",
     "There were {count} more quests after that.",
@@ -609,7 +609,7 @@ PB.dungeonGrief = {
 }
 
 -- PB.dungeonBrief. A dungeon with no bosses, deaths or lost fights
--- (Dahlia's two-minute Shadowfang Keep) should get this, never daring/reckless rhetoric.
+-- (Mira's two-minute Shadowfang Keep) should get this, never daring/reckless rhetoric.
 -- PB.dungeonFled. The same empty visit, above your level, and the next thing
 -- recorded was outside it within minutes: {above} "far above" or "above",
 -- {quick} "within a minute" or "a few minutes later". Only what was recorded.
@@ -736,7 +736,7 @@ PB.killRoll = {
 -- PB.killCostly
 PB.killCostly = {"{short} died all the same.", "{short} still went down, in the end.", "{short} did not live out the fight."}
 
--- PB.killCraft: DROP. "Taragaman met Dahlia's curses and your hammer" says who did what in
+-- PB.killCraft: DROP. "Taragaman met Mira's curses and your hammer" says who did what in
 -- the fight, which the journal does not know. Also empty P.crafts below.
 PB.killCraft = {}
 
@@ -1658,7 +1658,7 @@ PB.rezGivenClass = {
 ---------------------------------------------------------------------------
 -- 15. TWO VOICES (2026-11-05, editor2)
 -- The diary ("we") is one of the two writing down what both lived through:
--- "Dahlia and I", "the two of us", "between us", our firsts, our returns, who
+-- "Mira and I", "the two of us", "between us", our firsts, our returns, who
 -- carried whom. The game master ("you") recaps a campaign: "your party", "the
 -- pair of you", what the run came to. The engine (teller:Say) merges these
 -- behind the common lines by Say key and prefers them every other time.

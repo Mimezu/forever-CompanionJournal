@@ -390,7 +390,7 @@ local function Teller(person, voice, player)
         if not list or #list == 0 then return nil end
         self.sayKey = key
         -- The two voices have lines of their own for many moments (PB.voice.we: the
-        -- diary one of the two keeps, "Dahlia and I", "between us", our firsts;
+        -- diary one of the two keeps, "Mira and I", "between us", our firsts;
         -- PB.voice.you: a game master's recap, "your party", "the pair of you").
         -- They sit behind the common lines and are preferred every other time
         -- (a counter, not a draw: the stream stays where it was).
@@ -1172,13 +1172,13 @@ function T.Tell(person, days, voice, player, brief)
                 if firstOuting and firstOuting.zone and ((firstOuting.e or 0) - (firstOuting.t or 0)) >= 300 then
                     tokens.zoneE, tokens.zoneD = Place(firstOuting.zone), Place(firstOuting.zone)
                 end
-                -- (a configured bond is said on the first day: "Dahlia, your wife,")
+                -- (a configured bond is said on the first day: "Mira, your wife,")
                 local meetLine = teller:Say("meetGroup", PB.meetGroup, rng, tokens)
                 local at = meetLine and meetLine:find(teller.base.name, 1, true)
                 if at and teller.base.bondWord then
                     local stop = at + #teller.base.name - 1
                     local tail = meetLine:sub(stop + 1)
-                    -- ("Dahlia, a Forsaken warlock," becomes "Dahlia, your wife, a Forsaken warlock,")
+                    -- ("Mira, a Forsaken warlock," becomes "Mira, your wife, a Forsaken warlock,")
                     meetLine = meetLine:sub(1, stop) .. ", " .. teller.base.bondWord .. (tail:match("^[,%.]") and "" or ",") .. tail
                 end
                 Add(meetLine)
@@ -3343,7 +3343,7 @@ function T.Tell(person, days, voice, player, brief)
                     if tokens.work then line = teller:Say("sharedFish", PB.shared.fish, rng, tokens) end
                 elseif e.k == "duel" and e.d and PB.shared.duel then
                     if Clean(e.d) == companionShort and PB.shared.duelWith then
-                        -- ("you and Dahlia duelled, and Dahlia won" / "Dahlia and I duelled, and I won")
+                        -- ("you and Mira duelled, and Mira won" / "Mira and I duelled, and I won")
                         tokens.winner = e.w == "won" and teller.base.I or teller.base.name
                         line = teller:Say("sharedDuelWith", PB.shared.duelWith, rng, tokens)
                     else
@@ -3764,7 +3764,7 @@ function T.Tell(person, days, voice, player, brief)
                     if (ba == "death" or ba == "climax") and a:sub(-1) == "." and not a:find(" and ", 1, true) and not a:find("%. ") and not b:find("%. ")
                         and not b:find(" and ", 1, true) and Count(a) + Count(b) <= 24 then
                         if bb == "rez" then
-                            -- ("..., and it was Dahlia who raised you": the joined clause loses its capital, a name or "I" keeps it)
+                            -- ("..., and it was Mira who raised you": the joined clause loses its capital, a name or "I" keeps it)
                             local rest = (b:match("^I ") or b:match("^{")) and b or (b:sub(1, 1):lower() .. b:sub(2))
                             out[k] = a:sub(1, -2) .. ", and " .. rest
                             table.remove(out, k + 1); table.remove(outBeat, k + 1)

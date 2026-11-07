@@ -592,7 +592,7 @@ local function ReadText()
     Add({k = "read", d = title, m = material and material:lower() or nil})
 end
 -- A message as the game printed it, without colour codes ("|cffffff00...|r")
--- and with a link ("|Hplayer:Dahlia|h[Dahlia]|h") reduced to its text.
+-- and with a link ("|Hplayer:Mira|h[Mira]|h") reduced to its text.
 local function Plain(message)
     if type(message) ~= "string" or not Public(message) then return nil end
     return (message:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""):gsub("|H[^|]*|h%[?(.-)%]?|h", "%1"))

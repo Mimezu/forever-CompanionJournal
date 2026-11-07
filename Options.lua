@@ -793,7 +793,7 @@ function A.CreateOptions()
         Tooltip(prevChar, "Your other characters (or all of them).")
         Tooltip(nextChar, "Your other characters (or all of them).")
         local recognize = Check(listCard, "peopleRecognize", "Show their people on this character too", 10, -40, 330)
-        Tooltip(recognize, "Your other characters' people get a chain link beside their name on plates: gold for companions, silver for acquaintances, red for rivals (on either side: an old rival met on a new character). Their tooltip says whose they are (\"Alberich's companion\"). Campfire people: nothing. Off: each character's world is their own.")
+        Tooltip(recognize, "Your other characters' people get a chain link beside their name on plates: gold for companions, silver for acquaintances, red for rivals (on either side: an old rival met on a new character). Their tooltip says whose they are (\"Kael's companion\"). Campfire people: nothing. Off: each character's world is their own.")
         -- The chain links: gold for companions, silver for acquaintances (click to change).
         local links = {}
         for i, link in ipairs({{"recognizedCompanion", "Companions"}, {"recognizedAcquaintance", "Acquaintances"}, {"recognizedRival", "Rivals"}}) do
@@ -997,7 +997,7 @@ function A.CreateOptions()
                 who:SetText(icon .. (card.display and (card.display .. "  |cff9d9d9d" .. (card.name or row.key) .. "|r") or (card.name or row.key)))
                 summary:SetText(A.PersonSummary and A.PersonSummary(card) or "")
                 local lines = {}
-                -- "Alberich's companion since 2026-09-26 (34 lines in his journal)"
+                -- "Kael's companion since 2026-09-26 (34 lines in his journal)"
                 for _, knower in ipairs(row.knowers) do
                     local rel = knower.rel
                     local word = CIRCLE_WORDS[rel.circle or "companion"] or "companion"
