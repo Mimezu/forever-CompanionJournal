@@ -1022,7 +1022,7 @@ PB.fire.new = {
     "{we} made camp in {place}.",
     "{we} rested by a fire in {place}.",
     "{we} stopped for a fire in {place}.",
-    "There was a fire in {place}, and {we} sat by it a while.",
+    "{we} found a fire in {place} and sat by it a while.",
 }
 PB.fire.close = {
     "{we} made camp in {place}, as {we} had many times before.",
@@ -1052,9 +1052,9 @@ PB.earlyStart = {"{pair} were out before the sun was properly up.", "It was bare
 PB.milestoneDays = {
     [5] = {},
     [10] = {"It was {our} tenth day out together."},
-    [25] = {"That made twenty-five days together, counting from the first in {firstZone}."},
-    [50] = {"That made fifty days together, counting from the first in {firstZone}."},
-    [100] = {"It was {our} hundredth day together, counting from the first in {firstZone}."},
+    [25] = {"That made twenty-five days together since the first one in {firstZone}."},
+    [50] = {"That made fifty days together since the first one in {firstZone}."},
+    [100] = {"It was {our} hundredth day together since the first one in {firstZone}."},
 }
 PB.anniversary = {
     [1] = {"It had been a month since the day {I} met {name} in {firstZone}.", "A month had passed since {firstZone}, where {name} first joined {my} party."},
@@ -1205,9 +1205,9 @@ PB.dungeonCountSame = {
     [25] = {"That made twenty-five runs through {dungeonE} together."},
 }
 PB.dungeonCountBack = {
-    [5] = {"That made five dungeons together, counting from {firstDungeon}."},
+    [5] = {"That made five dungeons together since {firstDungeon}."},
     [10] = {"That made ten dungeons together. The first had been {firstDungeon}."},
-    [25] = {"That made twenty-five dungeons together, counting from {firstDungeon}."},
+    [25] = {"That made twenty-five dungeons together since {firstDungeon}."},
 }
 -- shared fires, counted.
 PB.fireCount = {
@@ -1280,7 +1280,7 @@ PB.oncePerBook = {
 PB.fireMeet = {
     "{we} made camp in {place} before the day was out.",
     "{we} sat by a fire in {place} a while.",
-    "There was a fire in {place}, and {we} stopped by it.",
+    "{we} found a fire in {place} and rested by it.",
 }
 PB.boastYou.damage = {"{I} did more than anyone to bring {boss} down.", "{boss} fell mostly to {my} {weapon}."}
 PB.boastThem.damage = {"{name} did more than anyone to bring {boss} down.", "{boss} fell mostly to {name}'s {theirWeapon}."}

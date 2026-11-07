@@ -588,6 +588,14 @@ local function DayFacts(day)
                 f.plEnd = math.max(f.plEnd or 0, entry.pl)
             end
             if entry.ol then f.ol = math.max(f.ol or 0, entry.ol) end
+            -- (their level at the latest entry, and after a level of theirs its new level: the two
+            -- levels are compared at the same moment, the end of the day; a stale higher level read
+            -- at the first sighting once said "Dahlia was level 16, well ahead of me at 7" of two
+            -- characters who levelled side by side, 2026-11-07)
+            do
+                local theirs = (entry.k == "level" and tonumber(entry.d)) or tonumber(entry.ol)
+                if theirs and (entry.t or 0) >= (f.olT or 0) then f.olLast, f.olT = theirs, entry.t or 0 end
+            end
             local k = entry.k
             local function Dungeon(name, t, pl)
                 local d = f.byDungeon[name]
@@ -1027,7 +1035,7 @@ function T.Tell(person, days, voice, player, brief)
         local gap = history.lastDay and (today - history.lastDay) or nil
         local cadence, usual = Cadence(history.gaps)
         local level = f.plEnd or f.plStart
-        local theirLevel = f.ol or f.levels[#f.levels]
+        local theirLevel = f.olLast or f.ol or f.levels[#f.levels]
         -- Older lines have no level of yours: judge the danger by theirs.
         local judged = level or theirLevel
         local stage = Stage(level or theirLevel)
@@ -1083,6 +1091,16 @@ function T.Tell(person, days, voice, player, brief)
         tokens.zoneL = mainZone and (Epithet(zoneInfo, true) or Place(mainZone)) or "the wilds"
         tokens.zoneWas = Plural(tokens.zoneE) and "were" or "was"
         tokens.qcount, tokens.Qcount = Words(#f.quests), Cap(Words(#f.quests))
+        -- (the day's work told as deeds below, from our side: then no line counts the quests,
+        -- "We were out for nearly four hours and cleared seventeen quests" read as a log, 2026-11-07)
+        local deedsToday = false
+        if A.QuestDeeds then
+            for _, quest in ipairs(f.quests) do
+                local story = A.QuestDeeds.Story(quest)
+                local act = story and A.QuestDeeds.Act(quest, story)
+                if (act and act.act) or (story and story.pov) then deedsToday = true; break end
+            end
+        end
         tokens.firstDungeon = history.firstDungeonName and Place(history.firstDungeonName) or false
         -- the same zone as yesterday?
         local zoneRun = (mainZone and history.lastZone == mainZone and gap == 1) and ((history.zoneRunN or 1) + 1) or 1
@@ -1657,7 +1675,8 @@ function T.Tell(person, days, voice, player, brief)
                 local pl = quest.pl or level
                 -- ("work meant for more seasoned adventurers" is said once in a book, for a quest
                 -- four levels or more above you; "work meant for a full party" one chapter in four)
-                if ql and pl and ql - pl >= 4 and not history.hardSaid then notableQuest, notableKind = quest, "hard"
+                if deedsToday then -- (the deeds below tell the work by what was done, not by its title)
+                elseif ql and pl and ql - pl >= 4 and not history.hardSaid then notableQuest, notableKind = quest, "hard"
                 elseif not notableQuest and (kind == 1 or kind == 81 or kind == 62) and (index - (history.eliteSaid or -99)) >= 4 then notableQuest, notableKind = quest, "elite" end
             end
             -- A documented purpose makes a better scene than a level comparison.
@@ -1669,7 +1688,7 @@ function T.Tell(person, days, voice, player, brief)
                     local importance = story and story.importance or 0
                     -- A quiet authored errand is still a complete scene; otherwise
                     -- dayAlt can announce its title before the later scene does.
-                    if story and story.after and #story.after > 0 and importance > best and not history.questLore[quest.qid or quest.title] then
+                    if not deedsToday and story and story.after and #story.after > 0 and importance > best and not history.questLore[quest.qid or quest.title] then
                         notableQuest, notableKind, best = quest, "scene", importance
                     end
                 end
@@ -1738,7 +1757,7 @@ function T.Tell(person, days, voice, player, brief)
                 history.workSaid = index
                 tokens.questFolded = true
                 Title(25, Q(notableQuest.title))
-            elseif n > 0 and not notableQuest and PB.dayWork then
+            elseif n > 0 and not notableQuest and PB.dayWork and not deedsToday then
                 local key = n == 1 and "one" or n == 2 and "two" or n <= 5 and "few" or "many"
                 -- on a routine day the count need not be exact every time.
                 if routine and n >= 3 and rng() < 0.4 and PB.dayWork[key .. "Vague"] then key = key .. "Vague" end
@@ -1903,7 +1922,7 @@ function T.Tell(person, days, voice, player, brief)
                 local duration = teller:Say("travelLong", PB.travelLong, rng, tokens)
                 if history.days == 0 or #f.dungeons == 0 or f.together >= 6 * 3600 then Add(duration) end
             elseif not said and #f.dungeons == 0 and not (kind == "city" and #f.rests > 0) then
-                if kind ~= "city" and #f.quests >= 2 and #f.quests <= 5 and PB.travelWork and rng() < 0.45 then
+                if not deedsToday and kind ~= "city" and #f.quests >= 2 and #f.quests <= 5 and PB.travelWork and rng() < 0.45 then
                     -- The road and the work in one breath.
                     Add(teller:Say("travelWork", PB.travelWork, rng, tokens))
                     history.workSaid = index
@@ -1967,6 +1986,9 @@ function T.Tell(person, days, voice, player, brief)
             if same then
                 history.fireSameSaid = index
                 Add(teller:Say("fireSame", PB.fireSame, rng, tokens))
+            elseif key == "Meet" and table.concat(out, " "):lower():find("campfire", 1, true) then
+                -- (met at the campfire: the meeting said the fire already; "I met Mortinna at a campfire
+                -- in Tirisfal. There was a fire, and we stopped by it." told it twice, 2026-11-07)
             else
                 Add(teller:Say("fire" .. key, (key == "Meet" and PB.fireMeet) or PB.fire[key], rng, tokens))
             end
@@ -2996,7 +3018,7 @@ function T.Tell(person, days, voice, player, brief)
                 if kind == 1 or kind == 81 or kind == 62 then elite = elite or quest end
             end
             local notable = false
-            if tokens.questFolded or multiQuestPlan then notable = true
+            if tokens.questFolded or multiQuestPlan or deedsToday then notable = true
             elseif hardest and hardestDiff >= 4 and not history.hardSaid then
                 -- (once a book: the reader knows this character takes on work above their level)
                 tokens.quest = Q(hardest.title)
@@ -3017,7 +3039,7 @@ function T.Tell(person, days, voice, player, brief)
                 local lastD = f.dungeons[#f.dungeons] -- only quests after the last dungeon
                 local after = 0
                 for _, quest in ipairs(f.quests) do if quest.t > (lastD and lastD.t or 0) then after = after + 1 end end
-                if after >= 3 and PB.questsMore and rng() < 0.6 then
+                if after >= 3 and not deedsToday and PB.questsMore and rng() < 0.6 then
                     tokens.count, tokens.Count = Words(after), Cap(Words(after))
                     Add(teller:Say("questsMore", PB.questsMore, rng, tokens))
                 elseif after == 1 and PB.questAfterOne and rng() < 0.7 then
@@ -3030,12 +3052,12 @@ function T.Tell(person, days, voice, player, brief)
                     tokens.quest, tokens.zoneTo = Q(last.title), host and Place(host) or Place(mainZone or "")
                     Add(teller:Say("questAfterOne", PB.questAfterOne, rng, tokens))
                 end
-            elseif #f.quests >= 6 and history.workSaid ~= index and (quiet or rng() < 0.6) then
+            elseif not deedsToday and #f.quests >= 6 and history.workSaid ~= index and (quiet or rng() < 0.6) then
                 Add(teller:Say("questsMany", PB.questsMany, rng, tokens))
-            elseif #f.quests == 1 and not notable and (quiet or rng() < 0.4) then
+            elseif not deedsToday and #f.quests == 1 and not notable and (quiet or rng() < 0.4) then
                 tokens.quest = Q(f.quests[1].title)
                 Add(teller:Say("questOne", PB.questOne, rng, tokens))
-            elseif #f.quests >= 2 and not notable and (quiet and rng() < 0.7 or rng() < 0.3) then
+            elseif not deedsToday and #f.quests >= 2 and not notable and (quiet and rng() < 0.7 or rng() < 0.3) then
                 Add(teller:Say("questsFew", PB.questsFew, rng, tokens))
             end
         end
@@ -3077,7 +3099,8 @@ function T.Tell(person, days, voice, player, brief)
                 end
                 if e.mention and ((e.story and (e.story.pov or (e.act and e.act.act)))
                     or (#told == 0 and not table.concat(out, " "):find("{q:" .. tostring(e.quest.title):gsub("[{}]", "") .. "}", 1, true))) then
-                    told[#told + 1] = {t = e.quest.t or 0, text = QD.Moment(e, Tok(e.act and e.act.solo), QD.Variant(QD.Key(e.quest), nil, true), true),
+                    told[#told + 1] = {t = e.quest.t or 0, text = QD.Moment(e, Tok(e.act and e.act.solo), QD.Variant(QD.Key(e.quest), nil, true), true, nil,
+                        history.questLore[QD.Key(e.quest)] == true),
                         zone = e.quest.scene and e.quest.scene.zone}
 
                     history.questLore[QD.Key(e.quest)] = true
@@ -3103,7 +3126,10 @@ function T.Tell(person, days, voice, player, brief)
                 -- (still one light line: the run with the most work, the earlier on a tie)
                 local pick = runs[1]
                 for _, r in ipairs(runs) do if #r > #pick then pick = r end end
-                local lines = QD.Folds({pick[1], pick[2], pick[3]}, Tok(false), 1, {}, QD.Band(pick[1].quest.pl))
+                local earlier = false
+                for _, item in ipairs(told) do if item.t < (pick[1].quest.t or 0) then earlier = true end end
+                -- (a lead, "After that", only after a moment told before it; never "also" first)
+                local lines = QD.Folds({pick[1], pick[2], pick[3]}, Tok(false), earlier and 2 or 0, {}, QD.Band(pick[1].quest.pl))
                 if lines[1] then told[#told + 1] = {t = lines[1].last.t or 0, text = lines[1].text} end
             end
             table.sort(told, function(x, y) return x.t < y.t end)
@@ -4025,6 +4051,20 @@ function T.Tell(person, days, voice, player, brief)
                 or Place(mainZone):gsub("{p:the ", "{p:The "))) or nil
         -- (a title begins with a capital: "The Hillsbrad Foothills", not "the Hillsbrad Foothills")
         if chapterTitle then chapterTitle = chapterTitle:gsub("^the ", "The "):gsub("^{p:the ", "{p:The ") end
+        -- (the companion's name opening the sentence right after the opening that named them: the
+        -- pronoun instead, "I met Morammon at a campfire. He was level 15 then", never "Dahlia, my
+        -- wife, was at my side. Dahlia was level 16"; a "they" keeps the name, 2026-11-07)
+        do
+            local nm, b = teller.base.name, teller.base
+            for n = 2, #out do
+                local prev = out[n - 1] or ""
+                if b.they ~= "they" and out[n]:sub(1, #nm + 1) == nm .. " " and outBeat[n - 1] == "open" and prev:find(nm, 1, true)
+                    and not prev:gsub(nm, "", 1):find("{n:", 1, true) and not prev:find("%. ") then
+                    local rest = out[n]:sub(#nm + 2)
+                    out[n] = b.They .. " " .. rest
+                end
+            end
+        end
         stories[day.key] = {text = OneStop(T.Paragraphs(out, outBeat)), quotes = f.quotes, chapter = chapter, two = tellsTwo or nil, title = chapterTitle}
 
         -- remember the last three kinds of title.

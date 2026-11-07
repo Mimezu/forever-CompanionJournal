@@ -222,7 +222,8 @@ for retell = 0, 7 do
 end
 -- The `pov` field: format, tokens, words.
 local TOKENS = {We = true, we = true, us = true, our = true, Our = true, I = true, me = true, my = true, My = true}
-local META = {"journal", "chronicle", "legend", " tale", " song", " verse", " bard", "chapter", " story", " page", " book"}
+-- (whole words, with their plurals: "talents" and "pages of a ledger" are not "tale" and "page", 2026-11-07)
+local META = {"journals?", "chronicles?", "legends?", "tales?", "songs?", "verses?", "bards?", "chapters?", "story", "pages?", "books?"}
 local povs = 0
 local function Pov(id, pov)
     povs = povs + 1
@@ -233,7 +234,7 @@ local function Pov(id, pov)
         check(line:match("^[%u{]") and line:match("%.$"), "pov " .. id .. " is a sentence: " .. line)
         check(not line:find(":", 1, true) and not line:find("?", 1, true) and not line:find(";", 1, true), "pov " .. id .. " has no colon, question or semicolon")
         local low = " " .. line:lower()
-        for _, word in ipairs(META) do check(not low:find(word, 1, true), "pov " .. id .. " uses meta word" .. word) end
+        for _, word in ipairs(META) do check(not low:find("%f[%a]" .. word .. "%f[%A]"), "pov " .. id .. " uses meta word " .. word .. ": " .. line) end
         check(line:find("{%a+}") ~= nil, "pov " .. id .. " is told from the character's side: " .. line)
         check(not line:find("{I} was ", 1, true) and not line:find("{we} were ", 1, true) and not line:find("{We} were ", 1, true),
             "pov " .. id .. " avoids I/we verb agreement")

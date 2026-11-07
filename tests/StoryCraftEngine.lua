@@ -138,8 +138,10 @@ for retell = 0, 15 do for _, brief in ipairs({false, true}) do
     outing(p, 7200, "Elwynn Forest", {783, 3904, 3905})
     local text = tell(p, brief, retell, "we")
     -- (2026-11-07: the companion book no longer splits the day into authored scenes per place, so
-    -- the Westfall scene's own count is retired; the day's work is still told, by name or count)
-    check(text:find("Goretusk Liver Pie", 1, true) or text:find(" quests", 1, true), "the day's work is told: " .. text)
+    -- the Westfall scene's own count is retired; the day's work is still told, by name, count or deed;
+    -- 2026-11-07: a day told by its deeds counts no quests)
+    check(text:find("Goretusk Liver Pie", 1, true) or text:find(" quests", 1, true) or A.QuestDeeds.Shows(text, 22) or A.QuestDeeds.Shows(text, 783)
+        or A.QuestDeeds.Shows(text, 3904) or A.QuestDeeds.Shows(text, 3905), "the day's work is told: " .. text)
 end end
 -- A first selected setup is required narrative, even when a town's name
 -- already appeared twice in the opener and arrival.

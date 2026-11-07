@@ -1588,8 +1588,17 @@ local function Low(S) return S == "I" and "I" or S:lower() end
 function QD.NoSemicolon(line)
     return (tostring(line or ""):gsub("; (%l)", function(c) return ". " .. c:upper() end))
 end
-function QD.Moment(e, tokens, variant, plainOnly, brief)
+function QD.Moment(e, tokens, variant, plainOnly, brief, again)
     local pov = e.story and e.story.pov
+    -- (the same quest completed again after the book told it: an honest "again" turn by name,
+    -- never its point-of-view scene a second time, 2026-11-07)
+    if again and e.quest and e.quest.title then
+        local title = "{q:" .. tostring(e.quest.title):gsub("[{}]", "") .. "}"
+        local S = (e.act and e.act.solo or (pov and pov.solo)) and "I" or tokens.We
+        local AGAIN = {S .. " saw " .. title .. " through again.",
+            "Once more " .. Low(S) .. " saw " .. title .. " through."}
+        return AGAIN[((variant or 1) - 1) % #AGAIN + 1], false, "again"
+    end
     if pov and #pov > 0 then
         return QD.Fill(pov[((variant or 1) - 1) % #pov + 1], tokens), true
     end
@@ -1661,8 +1670,20 @@ local function JoinActs(acts)
 end
 QD.JoinActs = JoinActs
 -- The connective of a grouped line grows with the journey (DESIGN §3.0 rule 6): a novice's
--- "After that", a traveller's "Along the way", a known figure's "In between".
-local FOLD_LEADS = {novice = "After that", seasoned = "Along the way", known = "In between"}
+-- "After that", a traveller's "Along the way", a known figure's "In between". The first grouped
+-- line of a chapter, one chapter in three or so (by its first act), says what the work was to
+-- the character at that stage: new to a novice, surer to a traveller, long practice to a
+-- known figure (one felt touch, never a claim about a recorded past, 2026-11-07).
+local FOLD_LEADS = {novice = {"After that", "Then"}, seasoned = {"Along the way", "On the way"}, known = {"In between", "Besides that"}}
+local FOLD_TAILS = {novice = ", all of it still new to {us}", seasoned = ", surer of {our} way by then",
+    known = ", with long practice behind {us}"}
+QD.foldLeads, QD.foldTails = FOLD_LEADS, FOLD_TAILS
+local function Hash(text)
+    local h = 5381
+    text = tostring(text or "")
+    for i = 1, #text do h = (h * 33 + text:byte(i)) % 2147483647 end
+    return h
+end
 function QD.Folds(run, tokens, shape, named, band)
     local lines, group = {}, {}
     local function Short(giver) return giver and (giver:match("(%S+)$")) or nil end
@@ -1677,9 +1698,15 @@ function QD.Folds(run, tokens, shape, named, band)
         if giver then named[Short(giver)] = true end
         shape = shape + 1
         local joined, text = JoinActs(acts)
+        local leads = FOLD_LEADS[band or "novice"] or FOLD_LEADS.novice
+        local tail = shape == 1 and #acts >= 2 and Hash(acts[1]) % 3 == 0 and FOLD_TAILS[band or "novice"]
+        if tail then tail = tail:gsub("{us}", solo and "me" or (tokens.us or "us")):gsub("{our}", solo and "my" or (tokens.our or "our")) end
         if who and shape % 2 == 1 then text = "For " .. who .. ", " .. Low(S) .. " " .. joined .. "."
         elseif who then text = S .. " " .. joined .. " for " .. who .. "."
-        elseif shape % 3 == 0 then text = (FOLD_LEADS[band or "novice"] or "After that") .. ", " .. Low(S) .. " " .. joined .. "."
+        elseif tail then text = S .. " " .. joined .. tail .. "."
+        elseif shape % 3 == 0 then
+            local lead = leads[math.floor(shape / 3) % #leads + 1]
+            text = lead .. (lead == "Then" and " " or ", ") .. Low(S) .. " " .. joined .. "."
         elseif shape % 3 == 1 then text = S .. " " .. joined .. "."
         else text = S .. " also " .. joined .. "." end
         lines[#lines + 1] = {text = text, quest = group[1].quest, last = group[#group].quest}

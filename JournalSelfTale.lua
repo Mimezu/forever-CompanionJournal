@@ -79,6 +79,13 @@ local function OneStop(text)
     return text
 end
 local function Clean(text) return (tostring(text or ""):gsub("[{}]", "")) end
+-- Words that stand before a name as a rank or office: the short form of "Executor Zygand" is "Zygand".
+local TITLE_WORDS = {}
+for w in ("Executor Novice Apothecary Deathguard Priest Captain Magistrate Commander Lieutenant Sergeant Marshal Guard Mayor "
+    .. "Farmer Lord Lady King Queen Prince Princess Archmage Brother Sister Father Mother High Overlord Warlord Chief Elder Keeper "
+    .. "Ranger Scout Sentinel Watcher Warden Grunt Shaman Seer Mystic Trainer Baron Duke Count Admiral General Major Private Officer "
+    .. "Foreman Overseer Supervisor Master Grand Apprentice Junior Senior Initiate Acolyte Bishop Abbot Deputy Sheriff Constable "
+    .. "Thane Mountaineer Rifleman Huntsman Tracker Ambassador Emissary Envoy Herald Inquisitor Dark Shadow Arch"):gmatch("%a+") do TITLE_WORDS[w] = true end
 -- A place's name in a sentence: "the {p:Barrens}", "{p:Durotar}", "the {p:Arathi Highlands}".
 local ARTICLE = {["Eastern Kingdoms"] = true, ["Arathi Highlands"] = true, ["Eastern Plaguelands"] = true, ["Western Plaguelands"] = true,
     ["Badlands"] = true, ["Blasted Lands"] = true, ["Burning Steppes"] = true, ["Searing Gorge"] = true, ["Wetlands"] = true,
@@ -1150,12 +1157,12 @@ function ST.Tell(person, days, brief, retell)
                 history.introduced = history.introduced or {}
                 history.introduced[N(beganWith.w.name)] = index
                 history.originTown = W.originTowns and W.originTowns[race]
-                Title(40, teller:Pick("tOrigin", W.titles.origin))
+                Title(64, teller:Pick("tOrigin", (W.titles.originRace and W.titles.originRace[race]) or W.titles.origin))
             elseif origin then
                 Say(teller:Say("origin", origin, tokens), true, "origin")
                 history.originSaid = true
                 history.originTown = W.originTowns and W.originTowns[race]
-                Title(40, teller:Pick("tOrigin", W.titles.origin))
+                Title(64, teller:Pick("tOrigin", (W.titles.originRace and W.titles.originRace[race]) or W.titles.origin))
             elseif reunion and When and W.reunion and (not absence or dungeonOpen) then
                 tokens.names, tokens.ago = N(reunion.name), Ago(dayNumber - history.companionLast[reunion.name])
                 tokens.When = "On " .. weekday
@@ -1248,6 +1255,10 @@ function ST.Tell(person, days, brief, retell)
                         key, pool = "openFirstLateSixty", W.openFirstLateSixty
                     elseif CITY_ZONE[first.zone] and not atHome and W.openFirstLateCity then
                         key, pool = "openFirstLateCity", W.openFirstLateCity
+                    elseif not atHome and W.openFirstLateBand and Hash(person.charKey or person.name or "") % 2 == 0 then
+                        -- (one book in two opens on where the character stood on the climb, 2026-11-07)
+                        local band = A.QuestDeeds and A.QuestDeeds.Band(first.level or person.startLevel)
+                        if band and W.openFirstLateBand[band] then key, pool = "openFirstLateBand", W.openFirstLateBand[band] end
                     end
                     Say(teller:Say(key, pool, tokens), true, "open")
                 else
@@ -3167,7 +3178,10 @@ function ST.Tell(person, days, brief, retell)
                             end
                         end
                         if not (e.k == "boss" and nextEvent and nextEvent.k == "boss") or handInBetween then FlushKills() end
-                        if #out > eventStart and (e.k == "death" or e.k == "wipe" or e.k == "boss" or e.k == "dungeon") then
+                        -- (a rest, a new home or a trainer visit is an anchor too: work done before it is
+                        -- told before it, so the day reads in the order it happened, 2026-11-07)
+                        if #out > eventStart and (e.k == "death" or e.k == "wipe" or e.k == "boss" or e.k == "dungeon"
+                            or (eventStart >= 1 and (e.k == "campfire" or e.k == "rest" or e.k == "home" or e.k == "learn"))) then
                             questAnchors[#questAnchors + 1] = {first = eventStart + 1, last = #out, t = e.t or 0, kind = e.k, zone = e.d}
                         end
                     end
@@ -3491,6 +3505,37 @@ function ST.Tell(person, days, brief, retell)
                     return {We = solo and "I" or st.We, we = we, us = solo and "me" or st.us, our = solo and "my" or st.our,
                         Our = Cap(solo and "my" or st.our), I = "I", me = "me", my = "my", My = "My"}
                 end
+                -- A grouped line names people and towns the chapter has named already by their short
+                -- form: "Executor Zygand" is "Zygand" the second time, "Eleanor Shackleton" "Eleanor",
+                -- and "in Brill" is dropped when one of the last two sentences said Brill
+                -- ("...from Eleanor Shackleton... to Eleanor Shackleton's camp", 2026-11-07).
+                local function ShortNames(text)
+                    local said = A.JournalPlain(table.concat(out, " "))
+                    local recent = A.JournalPlain(table.concat(out, " ", math.max(1, #out - 1)))
+                    local givers = {}
+                    for _, e in ipairs(dayPlan.entries or {}) do
+                        local g = (e.act and e.act.giver) or (e.story and e.story.pov and e.story.pov.giver)
+                        if g then givers[g] = true end
+                    end
+                    for _, e in ipairs(dayPlan.entries or {}) do
+                        local act = e.act and e.act.act
+                        for full in tostring(act or ""):gmatch("%u[%a']+ %u[%a']+") do givers[full] = givers[full] or "act" end
+                    end
+                    for full in pairs(givers) do
+                        local first, last = full:match("^(%u[%a']+) .- ?(%u[%a']+)$")
+                        if first and said:find(full, 1, true) and text:find(full, 1, true) then
+                            local short = TITLE_WORDS[first] and last or (givers[full] == true and first) or nil
+                            if short and not text:find(full .. " " .. "%u") then
+                                local at = text:find(full, 1, true)
+                                text = text:sub(1, at - 1) .. short .. text:sub(at + #full)
+                            end
+                        end
+                    end
+                    text = text:gsub(" in (%u[%a']+)([%.,])", function(town, stop)
+                        if Town(town) and recent:find(town, 1, true) then return stop end
+                    end)
+                    return text
+                end
                 local function FlushRun()
                     if #run == 0 then return end
                     local pending = run
@@ -3504,7 +3549,7 @@ function ST.Tell(person, days, brief, retell)
                         foldLines = foldLines + 1
                         local start = #out
                         sayTime = line.last.t
-                        Say(line.text, false, "quests")
+                        Say(ShortNames(line.text), false, "quests")
                         PlaceQuestPassage(start, line.quest)
                     end
                 end
@@ -3533,7 +3578,8 @@ function ST.Tell(person, days, brief, retell)
                         local variant = QD.Variant(QD.Key(q))
                         -- (never two of a stage's own outcome lines in a row: the second is told plainly)
                         -- (work told before in this book is said plainly the second time, never its scene again)
-                        local line, own, from = QD.Moment(e, Tokens(solo), variant, dayPlan.npcLast or history.questLore[QD.Key(q)] == true, brief)
+                        local line, own, from = QD.Moment(e, Tokens(solo), variant, dayPlan.npcLast or history.questLore[QD.Key(q)] == true, brief,
+                            history.questLore[QD.Key(q)] == true)
                         dayPlan.npcLast = from == "after"
                         Say(line, true, from == "after" and "questOutcome" or "questStart", true)
                         if e.act and e.act.giver then giversNamed[(e.act.giver:match("(%S+)$"))] = true end
@@ -3772,9 +3818,11 @@ function ST.Tell(person, days, brief, retell)
                         -- lord's fall the line goes before the consequence, LevelsLine above.)
                         history.levelsUnsaid = (history.levelsUnsaid or 0) + 1
                     elseif #f.levels > 1 then
-                        Say(teller:Say("levels", W.levels, lt), false, "level")
+                        local band = A.QuestDeeds and A.QuestDeeds.Band(top)
+                        Say(teller:Say("levels", (band and W.levelsBand and W.levelsBand[band]) or W.levels, lt), false, "level")
                     else
-                        Say(teller:Say("level", W.level, lt), false, "level")
+                        local band = A.QuestDeeds and A.QuestDeeds.Band(top)
+                        Say(teller:Say("level", (band and W.levelBand and W.levelBand[band]) or W.level, lt), false, "level")
                     end
                     -- (eight levels and more in a week, once a book: the pace, said once)
                     history.levelStarts = history.levelStarts or {}
@@ -3907,6 +3955,15 @@ function ST.Tell(person, days, brief, retell)
                 end
                 return false
             end
+            -- (a line that opens on the place the sentence before just named drops it: "We came to
+            -- Brill, the Forsaken town. In Brill, we handed..." reads "...We handed...", 2026-11-07)
+            for n = 2, #out do
+                local place, rest = out[n]:match("^In ([^,]+), (%l.*)$")
+                if place and kinds[n] ~= "lore" and A.JournalPlain(out[n - 1]):find(A.JournalPlain(place), 1, true)
+                    and (rest:match("^we ") or rest:match("^i ") or rest:match("^my ") or rest:match("^our ")) then
+                    out[n] = Cap(rest)
+                end
+            end
             for n = 2, #out do
                 if kinds[n] ~= "lore" and Locative(out[n - 1]) then
                     local text = out[n]
@@ -4008,7 +4065,7 @@ function ST.Tell(person, days, brief, retell)
                 i = i + 2
             elseif b and kinds[i] == "quests" and kinds[i + 1] == "level" and a:match("%.$") and not a:find("%. ") and wa + wb <= 26
                 and (a:match("^I ") or a:match("^We ")) and (times[i + 1] or 0) >= (times[i] or 0)
-                and b:match("^I (%a+) ") and LEVEL_ING[b:match("^I (%a+) ")] and (a:find(" and ", 1, true) or teller.rng() < 0.5) then
+                and b:match("^I (%a+) ") and LEVEL_ING[b:match("^I (%a+) ")] and not b:find("[,%.] ") and (a:find(" and ", 1, true) or teller.rng() < 0.5) then
                 -- ("I turned in A and B, reaching level 4.")
                 local verb = b:match("^I (%a+) ")
                 joinedOut[#joinedOut + 1] = a:gsub("%.$", "") .. ", " .. LEVEL_ING[verb] .. b:sub(#verb + 3)
@@ -4056,6 +4113,14 @@ function ST.Tell(person, days, brief, retell)
                 and (teller.rng() < 0.6 or nextShort) then
                 -- ("Five quests kept me busy, and I made level 6.")
                 joinedOut[#joinedOut + 1] = a:gsub("%.$", "") .. ", and " .. b
+                joinedMajors[#joinedOut] = majors[i] or majors[i + 1]
+                i = i + 2
+            elseif b and kinds[i] == "rest" and kinds[i + 1] == "rest" and a:match("%.$") and not a:find("[,%.] ") and not b:find("%. ")
+                and not a:find(" and ", 1, true) and not b:find(" and ", 1, true) and wa + wb <= 22
+                and ((a:match("^We ") and b:match("^We ")) or (a:match("^I ") and b:match("^I "))) then
+                -- (two rests in a row, one sentence: "We sat by a campfire for a while, then stopped at
+                -- the Gallows' End Tavern to rest." instead of two sentences opening on "We", 2026-11-07)
+                joinedOut[#joinedOut + 1] = a:gsub("%.$", "") .. ", then " .. b:gsub("^%a+ ", "")
                 joinedMajors[#joinedOut] = majors[i] or majors[i + 1]
                 i = i + 2
             else

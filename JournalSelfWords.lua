@@ -681,7 +681,7 @@ W.firstDeathRez = {
     "I had never died before.",
 }
 W.firstDeathScourge = {
-    "It was my first death since I rose, and dying had not changed much.",
+    "It was my first death since I rose, and it felt strangely familiar.",
     "I had died once before, long ago. This time I walked back from the graveyard.",
     "It was my second death, if the first one counts.",
     "It was my first death since I rose. I walked back from the graveyard and found my body where it fell.",
@@ -1132,7 +1132,7 @@ W.titles = {
     death = {"A Hard Day", "Hard Lessons", "A Bad Day", "Back on My Feet"},
     fall = {"A Bad Fall", "A Long Way Down"},
     close = {"A Near Thing", "A Narrow Escape"},
-    firstDeath = {"The First Death", "The Graveyard"},
+    firstDeath = {"The First Death", "Death and Back"},
     origin = {"The Beginning", "Where It Began", "First Steps"},
     reunion = {"{names} Again", "An Old Friend"},
     quiet = {"A Quiet Day", "No Hurry"},
@@ -2932,8 +2932,8 @@ W.threadSince = {
 W.companionDays = {
     [10] = {"That made ten days {names} and I had been out together.", "It was the tenth day {names} and I had spent out together."},
     [25] = {"That made twenty-five days out with {names}.", "Twenty-five days {names} and I had been out together by then."},
-    [50] = {"Fifty days {names} and I had travelled together, counting from the first.", "That made fifty days out with {names}."},
-    [100] = {"A hundred days {names} and I had been out together, counting from the first."},
+    [50] = {"{names} and I had been out together on fifty days by then.", "That made fifty days out with {names}."},
+    [100] = {"{names} and I had been out together on a hundred days by then."},
 }
 W.titles.companionDays = {[10] = "Ten Days Together", [25] = "Twenty-Five Days Together", [50] = "Fifty Days Together", [100] = "A Hundred Days Together"}
 -- Tallies of a life, once each.
@@ -2943,7 +2943,7 @@ W.questTally = {
     [500] = {"Five hundred quests lay behind me by then, and the askers had not run out."},
 }
 W.dungeonTally = {
-    [10] = {"That was my tenth dungeon.", "Ten dungeons now, counting from the first."},
+    [10] = {"That was my tenth dungeon.", "That made ten dungeons since my first."},
     [25] = {"That made twenty-five dungeons."},
     [50] = {"Fifty dungeons lay behind me by then."},
 }
@@ -3308,9 +3308,9 @@ W.pov = {
         "{We} punished the Deathguards on Executor Zygand's ledger. It pleased him, and so, he said, it pleased the Dark Lady."},
     [99144] = {title = "Seeking Refuge", act = "freed Bareth Dawnstone from the zealots who held him",
         "{We} found Bareth Dawnstone, a risen paladin, held by zealots who wielded the Light with hatred, and helped him escape. His order at Bandarion Keep, northwest of the Solliden Farmstead, welcomed any who sought the Light.",
-        "Zealots had captured Bareth Dawnstone on his way from Bandarion Keep to Shari Stilwell in Brill. {We} got him away, and his order thanked {us} for saving one so promising."},
+        "{We} got Bareth Dawnstone away from the zealots who had caught him on his way from Bandarion Keep to Shari Stilwell in Brill. His order thanked {us} for saving one so promising."},
     -- (#96607, corpus_vanilla_quests.txt; no pack stage yet)
-    [96607] = {title = "The Great Outdoors", act = "learned the basics of camping from Eleanor Shackleton", importance = 3,
+    [96607] = {title = "The Great Outdoors", act = "learned the basics of camping from Eleanor Shackleton", giver = "Eleanor Shackleton", importance = 3,
         "Eleanor Shackleton sat {us} by her fire and walked {us} through the basics of living in the wilds, then sent {us} to the trainers in the village nearby to learn a trade.",
         "By Eleanor's fire {we} learned how to rest and prepare out in the wilds, as an adventurer must."},
 }
@@ -3319,3 +3319,67 @@ W.innNamed = {"{We} rested at {place}.", "{We} took a room at {place}.", "{We} s
 W.homeNamed = {"I made {place} my home.", "I set my hearthstone at {place}.", "From then on, my hearthstone took me back to {place}."}
 W.homeNamedHere = {"I made it my home, and set my hearthstone there.", "I set my hearthstone there, and made it my home."}
 W.sleepInnNamed = {"That night I took a room at {place} and slept there.", "I slept at {place} that night."}
+
+-- The hero's journey by level in the engine's own lines (DESIGN §3.0 rule 6, 2026-11-07): the
+-- level lines, and the first page of a book begun late, by the stage of the climb. A novice
+-- (under 20) finds it all new, a seasoned traveller (20-44) is surer, a known figure (45 and up)
+-- has most of the climb behind them. Plain lines stay in each pool, so the voice is heard, not
+-- hammered. One felt touch at most; never a claim about the past.
+W.levelBand = {
+    novice = {
+        "I reached level {level}, and felt a little stronger for it.",
+        "I made level {level}, still learning as I went.",
+        "I reached level {level}.",
+        "I climbed to level {level}, a little surer of myself.",
+        "By the end of the day I was level {level}.",
+    },
+    seasoned = {
+        "I reached level {level}.",
+        "I made level {level} somewhere along the way.",
+        "I went up to level {level}, more at home on the road by now.",
+        "I climbed to level {level} and took it in my stride.",
+    },
+    known = {
+        "I reached level {level}, with the top of the climb in sight.",
+        "I made level {level}, another step near the end of the climb.",
+        "I reached level {level}.",
+        "By the end of the day I was level {level}, well up the climb.",
+    },
+}
+W.levelsBand = {
+    novice = {
+        "I went from level {from} to {level}, and each one felt like a big step.",
+        "I climbed from level {from} to {level}, learning as I went.",
+        "I went from level {from} to {level}.",
+    },
+    seasoned = {
+        "I went from level {from} to {level}.",
+        "I climbed from level {from} to {level}, steadily now.",
+        "By the end of the day I had gone from level {from} to {level}.",
+    },
+    known = {
+        "I went from level {from} to {level}, closer to the top.",
+        "I climbed from level {from} to {level}, and the end of the climb was nearer.",
+        "I went from level {from} to {level}.",
+    },
+}
+-- The first page of a book begun after level ten: where the character stood on the climb. The
+-- engine takes these one book in two (the race's own lines the other), by the stage.
+W.openFirstLateBand = {
+    novice = {
+        "Still new to all of it at level {level}, I had come as far as {zoneE}.",
+        "I was still finding my feet at level {level}, out in {zoneE}.",
+    },
+    seasoned = {
+        "By level {level} I knew how to look after myself, and my travels had brought me to {zoneE}.",
+        "At level {level}, no longer new to any of this, I was in {zoneE}.",
+    },
+    known = {
+        "At level {level}, with most of the climb behind me, I was in {zoneE}.",
+        "Most of the climb lay behind me at level {level}, and my travels had brought me to {zoneE}.",
+    },
+}
+-- The first chapter's title, by the people a life begins among (2026-11-07).
+W.titles.originRace = {
+    Scourge = {"A Second Life", "The Waking"},
+}
