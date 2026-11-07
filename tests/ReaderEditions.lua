@@ -41,7 +41,9 @@ for _, companion in ipairs({false, true}) do
             text[#text + 1] = story(chapter.day).text
         end
         text = table.concat(text, "\n\n")
-        check(outcome(text, 1519) and outcome(text, 1520) and outcome(text, 1521), "recorded rite retained in every edition")
+        -- (2026-11-07, DESIGN §3.0: every edition tells the rite, in its stages' own words or by name;
+        -- not necessarily each stage's authored outcome)
+        check(A.QuestDeeds.Shows(text, 1519) or A.QuestDeeds.Shows(text, 1520) or A.QuestDeeds.Shows(text, 1521), "recorded rite told in every edition")
         check(not text:find("{%a+}"), "no unresolved tokens")
         if companion then check(not text:find("wife", 1, true) and not text:find("husband", 1, true), "neutral relationship preserved") end
         if edition == "fire" then check(#chapters == 4, "fireside keeps individual sessions")

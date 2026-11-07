@@ -710,7 +710,9 @@ end
 function T.Tell(person, days, voice, player, brief)
     player = player or T.Player()
     local teller = Teller(person, voice, player)
-    local L = A.Lore or {}
+    -- (the pack's setup and outcome prose belongs to the own book; this book tells the pair's
+    -- side through A.QuestDeeds below, 2026-11-07)
+    local L = setmetatable({QuestStory = function() return nil end, QuestBeats = function() return {} end}, {__index = A.Lore or {}})
     local function Place(name)
         local shown = Clean(L.Display and L.Display(name) or name)
         if A.SelfTale and A.SelfTale.Place and not shown:find("^[Tt]he ") and A.SelfTale.Article and A.SelfTale.Article(shown) then
@@ -817,10 +819,10 @@ function T.Tell(person, days, voice, player, brief)
     -- the last recorded stage of each quest chain in the whole book (Highlights keeps
     -- it: a chain's resolution, or how far it got).
     local threadLast = {}
-    if brief and L.QuestStory then
+    if brief and A.Lore and A.Lore.QuestStory then
         for _, d in ipairs(days) do
             for _, quest in ipairs(DayFacts(d).quests) do
-                local story = L.QuestStory(quest.title, quest.qid)
+                local story = A.Lore.QuestStory(quest.title, quest.qid)
                 if story and story.thread then threadLast[story.thread] = quest.qid or quest.title end
             end
         end
@@ -1173,7 +1175,10 @@ function T.Tell(person, days, voice, player, brief)
                     tokens.zoneE, tokens.zoneD = Place(firstOuting.zone), Place(firstOuting.zone)
                 end
                 -- (a configured bond is said on the first day: "Mira, your wife,")
-                local meetLine = teller:Say("meetGroup", PB.meetGroup, rng, tokens)
+                -- (a wife or a sworn friend is not "met": she was there, 2026-11-07)
+                local meetLine = (teller.base.bondWord and PB.meetBond) and teller:Say("meetBond", PB.meetBond, rng, tokens)
+                    or teller:Say("meetGroup", PB.meetGroup, rng, tokens)
+                if teller.base.bondWord and PB.meetBond then Add(meetLine); meetLine = nil end
                 local at = meetLine and meetLine:find(teller.base.name, 1, true)
                 if at and teller.base.bondWord then
                     local stop = at + #teller.base.name - 1
@@ -1181,8 +1186,8 @@ function T.Tell(person, days, voice, player, brief)
                     -- ("Mira, a Forsaken warlock," becomes "Mira, your wife, a Forsaken warlock,")
                     meetLine = meetLine:sub(1, stop) .. ", " .. teller.base.bondWord .. (tail:match("^[,%.]") and "" or ",") .. tail
                 end
-                Add(meetLine)
-                if not at and teller.base.bondWord then Add(teller:Say("bondLine", PB.bondLine, rng, tokens)) end
+                if meetLine then Add(meetLine) end
+                if meetLine and not at and teller.base.bondWord then Add(teller:Say("bondLine", PB.bondLine, rng, tokens)) end
             else Add(teller:Say("meetAdded", PB.meetAdded, rng, tokens)) end
             TitleFrom(100, "meet")
         elseif together and gap and gap >= 4 then
@@ -2426,7 +2431,8 @@ function T.Tell(person, days, voice, player, brief)
             -- A selected hand-in can fall between encounters. Keep individual
             -- conflict anchors so its whole quest passage stays on the right
             -- side of each recorded kill, death or wipe.
-            local questConflicts = multiQuestPlan and #d.events > 0
+            -- (recorded work on either side of a dungeon's fights keeps them as anchors, 2026-11-07)
+            local questConflicts = (multiQuestPlan or #f.quests > 0) and #d.events > 0
             -- A kill is flushed on its own only when a turn-in really falls between it and
             -- the next recorded event; otherwise the kills stay one sentence, as the own
             -- journal tells them, and the anchor of the later event carries them.
@@ -3028,11 +3034,92 @@ function T.Tell(person, days, voice, player, brief)
                 Add(teller:Say("questsFew", PB.questsFew, rng, tokens))
             end
         end
+        local questLoreToday = false
+        -- The quests worth telling in this book (DESIGN §3.0, 2026-11-07): the pair's day, not
+        -- a second copy of the own book. The same worth chooses one or two (one in Highlights),
+        -- told in the stage's point of view, the variant the own book did not take, in "we" or
+        -- "you"; the stage's own setup and outcome prose is never told here. With more work
+        -- done side by side, one light line of short acts says what else the two of you did.
+        if #f.quests > 0 and A.QuestDeeds then
+            local QD = A.QuestDeeds
+            local events = {}
+            for _, x in ipairs(f.deaths or {}) do events[#events + 1] = x end
+            local plan = QD.Plan({{quests = f.quests, events = events, zone = mainZone, with = {true}, t = f.quests[1].t}},
+                {threadCount = {}, threadLast = {}, told = function(key) return history.questLore[key] == true end,
+                 zonesSeen = history.questZonesSeen or {}, limit = brief and 1 or 2, floor = 7, brief = true})
+            history.questZonesSeen = history.questZonesSeen or {}
+            local b = teller.base
+            local function Tok(solo)
+                return {We = Cap(b.we), we = b.we, us = b.us, our = b.our, Our = Cap(b.our), I = b.I, me = b.me, my = b.my, My = Cap(b.my)}
+            end
+            local rest, told = {}, {}
+            local was = beat
+            beat = "questKey"
+            for _, e in ipairs(plan.entries) do
+                -- (Highlights keeps a day whose work is a real moment, told here or named by the day's
+                -- line: a stage told from our side, an exact or weighty stage, a chain's beginning or
+                -- where it got to)
+                if e.mention and history.questLore[QD.Key(e.quest)] == nil then
+                    local s = e.story
+                    local exact = e.quest.qid and A.Lore.questStoryIDs and A.Lore.questStoryIDs[tonumber(e.quest.qid)] ~= nil
+                    if s and (s.pov or exact or (s.importance or 1) >= 4 or (s.thread and (threadLast[s.thread] == QD.Key(e.quest)
+                        or not history.questThreads[s.thread]))) then questLoreToday = true end
+                    history.questLore[QD.Key(e.quest)] = "named"
+                end
+                if e.mention and ((e.story and (e.story.pov or (e.act and e.act.act)))
+                    or (#told == 0 and not table.concat(out, " "):find("{q:" .. tostring(e.quest.title):gsub("[{}]", "") .. "}", 1, true))) then
+                    told[#told + 1] = {t = e.quest.t or 0, text = QD.Moment(e, Tok(e.act and e.act.solo), QD.Variant(QD.Key(e.quest), nil, true), true),
+                        zone = e.quest.scene and e.quest.scene.zone}
+
+                    history.questLore[QD.Key(e.quest)] = true
+                elseif e.act and e.act.act and not brief then
+                    rest[#rest + 1] = e
+                end
+            end
+            if #rest >= 2 then
+                local lines = QD.Folds({rest[1], rest[2], rest[3]}, Tok(false), 1, {}, QD.Band(rest[1].quest.pl))
+                if lines[1] then told[#told + 1] = {t = lines[1].last.t or 0, text = lines[1].text} end
+            end
+            table.sort(told, function(x, y) return x.t < y.t end)
+            for _, item in ipairs(told) do
+                local before = #out
+                -- (work done somewhere the chapter has not named says where: "In the Barrens, ...")
+                local said = A.JournalPlain(table.concat(out, " "))
+                if item.zone and item.zone ~= mainZone and not said:find((Clean(item.zone):gsub("^The ", "")), 1, true) and not T.PlaceLed(item.text) then
+                    item.text = (A.JournalPlaceLead and A.JournalPlaceLead(Place(item.zone), item.text, said))
+                        or ("In " .. Place(item.zone) .. ", " .. item.text:gsub("^%u", string.lower))
+                end
+                Add(Cap(item.text))
+                -- (told on its own side of a death: work done before it goes before it)
+                if #out == before + 1 then
+                    local at = before
+                    for _, list in ipairs({deathAnchors or {}, temporalAnchors or {}}) do
+                        for _, death in ipairs(list) do
+                            if item.t < (death.t or 0) then at = math.min(at, death.first - 1) end
+                        end
+                    end
+                    if at < before then
+                        local text, kind = table.remove(out), table.remove(outBeat)
+                        table.insert(out, at + 1, text)
+                        table.insert(outBeat, at + 1, kind)
+                        for _, list in ipairs({deathAnchors, temporalAnchors or {}}) do
+                            for _, death in ipairs(list) do
+                                if death.first > at then death.first = death.first + 1 end
+                                if death.last > at then death.last = death.last + 1 end
+                            end
+                        end
+                    end
+                end
+            end
+            beat = was
+            if mainZone then history.questZonesSeen[mainZone] = true end
+        end
+
 
         if not restDone and not restFolded then RestBeat() end
 
         -- A quest named today that has a story (Lore): what came of it, once a companionship.
-        local questLoreToday = false
+        questLoreToday = questLoreToday or false
         if #f.quests > 0 and L.QuestStory then
             local said = table.concat(out, " ")
             local plan = multiQuestPlan or f.storyBeats or L.QuestBeats(f.quests, history.questLore, 1,
@@ -3804,6 +3891,8 @@ function T.Tell(person, days, voice, player, brief)
                 local z = L.Zone and L.Zone(g.zones[1])
                 if z and z.kind == "city" then return false end
                 for _, quest in ipairs(g.quests) do
+                    -- (work with a story of its own is not a quiet day: it is told on its day)
+                    if A.Lore and A.Lore.QuestStory and A.Lore.QuestStory(quest.title, quest.qid) then return false end
                     local lore = L.Quest and L.Quest(quest.title)
                     local ql, kind = quest.level or (lore and lore.level), quest.kind or (lore and lore.kind)
                     if (ql and quest.pl and ql - quest.pl >= 3) or kind == 1 or kind == 81 or kind == 62 then return false end
@@ -3951,7 +4040,7 @@ function T.Tell(person, days, voice, player, brief)
         end
         for _, zone in ipairs(f.zones) do history.zones[zone] = true end
         for _, quest in ipairs(f.quests) do
-            local story = L.QuestStory and L.QuestStory(quest.title, quest.qid)
+            local story = A.Lore and A.Lore.QuestStory and A.Lore.QuestStory(quest.title, quest.qid)
             if story and story.thread then history.questThreads[story.thread] = {title = quest.title, t = quest.t} end
         end
         for _, zone in ipairs(f.fires) do

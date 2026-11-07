@@ -86,11 +86,13 @@ local function Companion(after)
 end
 for _, text in ipairs(Companion("Whatever Sputtervalve had wanted, he had it now.")) do
     check(not text:find(", Whatever Sputtervalve", 1, true), "no capital after the place prefix: " .. text)
-    check(text:find("Sputtervalve had wanted", 1, true), "the outcome is told: " .. text)
+    -- (2026-11-07, DESIGN §3.0: the companion book tells the second outing's stage by its name,
+    -- act or point of view, not by its authored outcome, and says where it was)
+    check(A.QuestDeeds.Shows(text, second), "the second outing is told: " .. text)
 end
 for _, text in ipairs(Companion("Finally, said Lydon, the work was done.")) do
     check(not text:find("[Ii]n [^%.]-, Finally, said") and not text:find("[Ii]n [^%.]-, finally, said"), "no place in front of speech: " .. text)
-    check(text:find("Finally, said Lydon", 1, true), "the speech keeps its own opening: " .. text)
+    check(A.QuestDeeds.Shows(text, second), "the second outing is told: " .. text)
 end
 s.after, s.afterMore, s.highlight = savedAfter, savedMore, savedHighlight
 

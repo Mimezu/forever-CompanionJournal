@@ -39,9 +39,9 @@ for _, sample in ipairs(examples) do
             local p = person(sample[1], sample[2], sample[3], sample[4], {sample[5]})
             local text = tell(p, brief, retell)
             local q = A.Lore.questStoryIDs[sample[5]]
-            local hasOutcome = false
-            for _, line in ipairs(q.after) do if text:find(A.JournalPlain(line), 1, true) then hasOutcome = true end end
-            check(hasOutcome, "source outcome survives place-name repetition: " .. text)
+            -- (2026-11-07, DESIGN §3.0: the stage is told in its own words, its point of view when written)
+            local kind = A.QuestDeeds.Shows(text, sample[5])
+            check(kind and kind ~= "title", "source stage survives place-name repetition: " .. text)
             -- (an authored outcome carries the completed work in both editions: no quest-log title)
             check(not text:find(q.title, 1, true), "supported detail does not repeat quest-log title")
             for _, filler in ipairs({"had a part in", "work concerned", "took on work tied to"}) do check(not text:find(filler, 1, true), "no vague filler: " .. text) end
@@ -58,12 +58,12 @@ for _, brief in ipairs({false, true}) do
     for retell = 0, 7 do
         local p = person("Human", "WARRIOR", "Alliance", "Elwynn Forest", {783, 3904, 3905})
         local text = tell(p, brief, retell)
-        for _, id in ipairs({783, 3904, 3905}) do
-            local q, found = A.Lore.questStoryIDs[id], false
-            for _, line in ipairs(q.after) do if text:find(A.JournalPlain(line), 1, true) then found = true end end
-            check(found, "parallel early outcome retained: " .. q.title .. " in " .. text)
-            -- (titles are carried by the authored outcomes in both editions; the outcome check above covers them)
-        end
+        -- (2026-11-07, DESIGN §3.0, rule 3: the storyteller chooses which stages to tell; the old
+        -- rule that every parallel stage keeps its outcome is retired. The stretch tells its best
+        -- stage at least, never more than three in Everything and two in Highlights.)
+        local told = 0
+        for _, id in ipairs({783, 3904, 3905}) do if A.QuestDeeds.Shows(text, id) then told = told + 1 end end
+        check(told >= 1 and told <= (brief and 2 or 3), "the stretch tells its best work: " .. told .. " in " .. text)
         check(#p.journal == 4 and p.journal[2].qid == 783 and p.journal[3].qid == 3904, "rendering does not remove or change events")
     end
 end

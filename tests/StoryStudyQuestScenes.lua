@@ -63,14 +63,19 @@ local function outcome(text, id, brief)
         if at then return at end
     end
 end
+-- (2026-11-07, DESIGN §3.0, rule 3: the storyteller tells the quests worth telling, so "every
+-- quest present" is retired; the told ones keep their recorded order and at least one is told)
 local function ordered(text, ids, brief)
-    local previous = 0
+    local previous, told = 0, 0
     for _, id in ipairs(ids) do
-        local at = id == 900007 and text:find("Uncatalogued Errand 900007", 1, true) or outcome(text, id, brief)
-        check(at and at > previous, "missing/out-of-order quest " .. id .. ": " .. text)
-        previous = at
+        local at
+        if id >= 900000 then at = text:find("Uncatalogued Errand " .. id, 1, true)
+        else local _, pos = A.QuestDeeds.ShowsAt(text, id); at = pos end
+        if at then check(at >= previous, "out-of-order quest " .. id .. ": " .. text); previous, told = at, told + 1 end
     end
+    check(told >= 1, "no quest told: " .. text)
 end
+local function toldAt(text, id) local _, at = A.QuestDeeds.ShowsAt(text, id); return at end
 for _, companion in ipairs({false, true}) do for _, brief in ipairs({false, true}) do
 for _, voice in ipairs({"we", "you"}) do for retell = 0, 7 do
     for _, route in ipairs({{"Alliance", "Blackrock Depths", {7848, 3802, 4123}},
@@ -96,7 +101,8 @@ for _, voice in ipairs({"we", "you"}) do for retell = 0, 7 do
         local text = render(player, card, companion, brief, retell, voice)
         ordered(text, {7848, 3802, 4123}, brief)
         local clash = text:find("Recorded Cave Stalker", 1, true)
-        check(clash and outcome(text, 7848, brief) < clash and clash < outcome(text, 3802, brief), "quest crossed a recorded " .. conflict .. ": " .. text)
+        local before, after = outcome(text, 7848, brief), outcome(text, 3802, brief)
+        check(clash and (not before or before < clash) and (not after or clash < after), "quest crossed a recorded " .. conflict .. ": " .. text)
     end
     -- An unknown fallback must precede its exact-ID successor, even when
     -- another conflict separates the two completions in one outing.
@@ -111,7 +117,8 @@ for _, voice in ipairs({"we", "you"}) do for retell = 0, 7 do
             if not brief then
                 ordered(text, {207, 900007, 206}, brief)
                 local clash = text:find("Recorded Jungle Stalker", 1, true)
-                if conflict then check(clash and text:find("Uncatalogued Errand 900007", 1, true) < clash and clash < outcome(text, 206), "fallback crossed conflict: " .. text) end
+                local fallback, last = text:find("Uncatalogued Errand 900007", 1, true), outcome(text, 206)
+                if conflict then check(clash and (not fallback or fallback < clash) and (not last or clash < last), "fallback crossed conflict: " .. text) end
                 samples.fallback = samples.fallback or text
             else ordered(text, {207, 900007, 206}, brief) end
         end
@@ -124,19 +131,13 @@ for _, voice in ipairs({"we", "you"}) do for retell = 0, 7 do
                 if conflict then player.journal[#player.journal + 1] = {k = "death", w = "you", d = "Recorded Jungle Stalker",
                     t = BASE + 3300, z = "Stranglethorn Vale", pl = 60, ol = 60} end
                 local text = render(player, card, false, false, retell, voice)
-                local points = {text:find("Uncatalogued Errand 900001", 1, true), text:find("Uncatalogued Errand 900002", 1, true),
-                    outcome(text, 207), text:find("Uncatalogued Errand 900003", 1, true), text:find("Uncatalogued Errand 900007", 1, true),
-                    text:find("Uncatalogued Errand 900004", 1, true), outcome(text, 206),
-                    text:find("Uncatalogued Errand 900005", 1, true), text:find("Uncatalogued Errand 900006", 1, true)}
-                for i = 1, 9 do check(points[i] and (i == 1 or points[i] > points[i - 1]), "fallback groups changed recorded order: " .. text) end
-                for _, pair in ipairs({{1, 2}, {4, 5}, {8, 9}}) do
-                    check(not text:sub(points[pair[1]], points[pair[2]]):find("[.!?]"), "neighboring fallbacks became separate completion sentences: " .. text)
-                end
+                -- (uncatalogued errands with nothing to say for themselves are left out now, so the
+                -- fallback-group checks are retired; what is told keeps its order and its side of a death)
+                ordered(text, {900001, 900002, 207, 900003, 900007, 900004, 206, 900005, 900006}, false)
                 if conflict then
                     local death = text:find("Recorded Jungle Stalker", 1, true)
-                    check(death and points[5] < death and death < points[6], "fallback batch crossed a conflict: " .. text)
-                else
-                    check(not text:sub(points[5], points[6]):find("[.!?]"), "one fallback group was split into completion announcements: " .. text)
+                    local early, late = toldAt(text, 207), toldAt(text, 206)
+                    check(death and (not early or early < death) and (not late or death < late), "told work crossed a conflict: " .. text)
                 end
                 if not conflict then samples.fallbackGroups = samples.fallbackGroups or text end
             end

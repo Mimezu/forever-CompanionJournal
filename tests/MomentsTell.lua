@@ -89,8 +89,9 @@ do
     Clean(p)
     for retell, chapters in pairs(Tellings(p)) do
         local one = chapters[1].plain
-        check(one:find("Raven Hill", 1, true) and one:find("Rotting Orchard", 1, true) and (one:find("two other places", 1, true) or one:find("two more places", 1, true)),
-            "five areas: three named, the rest counted (" .. retell .. "): " .. one)
+        -- (2026-11-07: three named, no counter of the rest; the user found "six more places" log-speak)
+        check(one:find("Raven Hill", 1, true) and one:find("Rotting Orchard", 1, true) and not one:find("other places", 1, true)
+            and not one:find("more places", 1, true), "five areas: three named, no count (" .. retell .. "): " .. one)
         check(one:find("read The Story of Morgan Ladimore", 1, true) or one:find("The Story of Morgan Ladimore, and I read it", 1, true)
             or one:find("The Story of Morgan Ladimore and read it", 1, true), "the book read: " .. one)
         check(one:find("Grave of Tirion's Son", 1, true) and (one:find("cut into", 1, true) or one:find("written on it", 1, true) or one:find("inscription", 1, true)),
@@ -98,8 +99,9 @@ do
         local flight = one:match("[^%.]*flight[^%.]*%.")
         check(flight and not flight:find("Darkshire", 1, true), "Darkshire already named: the flight path without it: " .. one)
         local two = chapters[2].plain
-        check(two:find("Shadow Word: Pain, Renew and Inner Fire", 1, true) and (two:find("among other things", 1, true) or two:find("and more", 1, true) or two:find("one more", 1, true)),
-            "the trainer's spells, three named, one more counted: " .. two)
+        -- (2026-11-07: the spells by name, without "and more" or a count; the user found it log-speak)
+        check(two:find("Shadow Word: Pain, Renew and Inner Fire", 1, true) and not two:find("and more", 1, true) and not two:find("one more", 1, true),
+            "the trainer's spells, named, nothing counted: " .. two)
         check(two:find("The Story of Morgan Ladimore again", 1, true) or two:find("Morgan Ladimore again, and read it once more", 1, true), "a book read again says so: " .. two)
         local three = chapters[3].plain
         check(three:find("Lake Everstill was new ground", 1, true) or three:find("found my way to Lake Everstill", 1, true) or three:find("came upon Lake Everstill", 1, true),

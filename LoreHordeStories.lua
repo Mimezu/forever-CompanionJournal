@@ -2667,4 +2667,58 @@ pack.questIDs[6621].highlight = {"A Horde banner on the Foulweald's totem mound 
 for _, id in ipairs({86784, 91921, 92706, 93739, 94373, 94374, 94375, 94449, 94465, 94466, 94467, 94468, 94495, 94497, 94499, 94500, 94501, 94502, 94503, 94505, 95314, 95349, 95350, 95494, 95495, 95507, 95508, 95981, 96652, 96656, 96659, 96821, 96822, 96825, 96876, 97279, 97558, 98024, 98298, 98299, 98424, 98427, 98430, 98435, 99048, 99049, 99051, 99052, 99079, 99080, 99081, 99082, 99101, 99142, 99156}) do
     if pack.questIDs[id] then pack.questIDs[id].setting = "Forever" end
 end
+
+-- The character's side of a stage (DESIGN §3.0; format in JournalBook.lua, QD.Story):
+-- `act` folds into a grouped line, the numbered lines tell the moment. Written from the
+-- same quest text as why/after (balance lane, 2026-11-07): Deathknell and Brill first.
+local POV = {
+    [363] = {act = "rose in the crypt and went down to Shadow Priest Sarvis", solo = true,
+        "{I} woke on the cold stone of a crypt, and Mordo sent {me} down the hill to Shadow Priest Sarvis. In the chapel {I} learned what {I} had become, one of the Forsaken, free of the Lich King, with the Scourge and the last humans of Lordaeron as enemies.",
+        "Mordo had been ready to burn {me} for a corpse when {I} stirred in the crypt. He sent {me} to Shadow Priest Sarvis instead, and Sarvis told {me} that Sylvanas had set the Forsaken free."},
+    [364] = {act = "cut down the Mindless Ones in the north of the village", giver = "Shadow Priest Sarvis",
+        "Sarvis sent {us} into the north of the village, where the Mindless Ones shambled among the houses, still slaves of the Lich King. {We} cut them down, and Sarvis only wished they could have joined the Forsaken instead.",
+        "{We} cut down the Mindless Ones in the north of the village. They had been brothers and sisters to the Forsaken once, Sarvis said, but the Lich King still held them."},
+    [376] = {act = "hunted wolves and bats for Novice Elreth", giver = "Novice Elreth",
+        "South of the village {we} hunted wolves and bats for their paws and wings, and Novice Elreth gave {us} armor for them, hoping it would serve better than it had served its last wearer.",
+        "Novice Elreth was short of wolf paws and bat wings for the wounded she tended. {We} brought her what she needed, and she found {us} armor in return."},
+    [3901] = {act = "thinned the Rattlecage skeletons", giver = "Shadow Priest Sarvis",
+        "The Rattlecage skeletons were a harder fight than the zombies, and {we} thinned them as Sarvis asked. When {we} came back he declared his lessons finished, and told {us} the Forsaken would never be shackled again.",
+        "Sarvis tested {us} against the Rattlecage skeletons, bones that rattled among the graves. {We} thinned them, and he judged {us} worthy of the freedom the Forsaken had been given."},
+    [3902] = {act = "searched the village crates for the recruits still rising", giver = "Deathguard Saltain",
+        "{We} went through the crates and boxes of the village for gear the newly risen could wear, and Deathguard Saltain kept one of the better finds back for {us}.",
+        "Deathguard Saltain wanted no recruit stumbling about naked, so {we} searched the village crates for anything to wear. He kept back one of the better finds as {our} reward."},
+    [381] = {act = "struck the Scarlet camp outside the village", giver = "Executor Arren",
+        "Scarlet zealots had made camp southeast of the village, and Executor Arren wanted them hit before they could strike first. {We} fell on the camp, and Arren called the dead crusaders Light-blinded fools.",
+        "{We} struck the Scarlet Crusade's camp southeast of the village, zealots who hunted every undead they found. Arren said they had sent themselves to their own graves."},
+    [6395] = {act = "laid Samuel Fipps in his wife's grave", giver = "Novice Elreth",
+        "Novice Elreth told {us} of Marla Fipps, killed by her own husband once the plague had made him Scourge, and of her last wish. {We} found Samuel at a ruined camp northeast of the village, destroyed him, and laid his remains in her grave.",
+        "{We} granted Marla Fipps her last wish. Her husband Samuel, who had killed her as one of the Scourge, still roamed a ruined camp beyond the village, and {we} laid what was left of him in her grave, where Elreth hoped the two would find peace."},
+    [382] = {act = "took the papers of a Scarlet messenger", giver = "Executor Arren",
+        "A Scarlet messenger was carrying word from the monastery, and {we} took his papers for Executor Arren. Among them Arren found the positions of the Crusade's commanders and agents.",
+        "{We} took the documents a Scarlet courier carried and brought them to Executor Arren, who found a useful map among the orders."},
+    [365] = {act = "stole pumpkins from a farm under a Scarlet tower", giver = "Deathguard Simmer",
+        "Deathguard Simmer sent {us} to rob a human farm under the eye of a Scarlet tower. {We} came away with ten pumpkins, and Apothecary Johaan in Brill took them for his reagents and called {us} an asset to the Dark Lady.",
+        "{We} stole ten pumpkins from a farm the Scarlet Crusade watched over and carried them to Apothecary Johaan in Brill, who needed them for his work."},
+    [383] = {act = "carried the Scarlet papers to Executor Zygand in Brill",
+        "{We} carried the captured Scarlet papers to Executor Zygand in Brill. He read out the names of the Crusade's officers in Tirisfal and spoke of what one swift strike against them all would do to the zealots.",
+        "In Brill, {we} handed Executor Zygand the papers taken from the Scarlet courier. With the names of every Scarlet officer in Tirisfal, he said, the zealots could be shaken in a single blow."},
+    [427] = {act = "fought the Scarlet warriors at the tower past the Solliden Farmstead", giver = "Executor Zygand",
+        "With the Crusade's positions known at last, Executor Zygand sent {us} west past the Solliden Farmstead to its tower. {We} cut down the Scarlet warriors there, and Zygand called {our} skill in combat undeniable.",
+        "{We} went west to the Scarlet tower beyond the Solliden Farmstead and killed the warriors who held it, as Executor Zygand had asked."},
+    [5481] = {act = "picked gloom weed for Gordo",
+        "On the road out of Brill an abomination named Gordo asked {us} to pick weeds for his master, his own hands being too big for it. {We} brought the gloom weed to Junior Apothecary Holland, who had wanted doom weed instead.",
+        "{We} picked gloom weed for Gordo, an abomination with hands too big for picking, and carried it to Junior Apothecary Holland by the Brill graveyard. It was the wrong weed."},
+    [86784] = {act = "carried firewood to Eleanor Shackleton's camp",
+        "{We} carried a basket of firewood from Deathguard Bartholomew to Eleanor Shackleton, camped in the hills to the west. She welcomed it for the cold nights of the Glades and let {us} keep the basket.",
+        "Eleanor Shackleton lived off the wilds, and {we} brought her a basket of firewood at her camp in the western hills. She already had a sling for wood, so the basket stayed with {us}."},
+    [96656] = {act = "looked into a stranger camped down the road by Brill",
+        "A stranger had made camp down the road by Brill, and with Scarlet Crusaders about, {we} went to see what she was doing. She was Eleanor Shackleton, an adventurer with no ties to the Crusade, and she offered to teach {us} camping.",
+        "{We} went down the road by Brill to look into a stranger's camp. Eleanor Shackleton was only an adventurer between ventures, and she offered {us} lessons in camping."},
+    [407] = {act = "fed Johaan's pumpkin to the zealot in the tavern cellar", giver = "Apothecary Johaan",
+        "Apothecary Johaan had laced a pumpkin with his latest formula, and {we} took it down to the Scarlet zealot locked in the tavern cellar. The starving man cursed {us}, then saw the pumpkin and ate it gladly.",
+        "{We} carried Johaan's treated pumpkin down to the captive zealot under the Gallows' End Tavern. He was too hungry to ask what was in it."},
+}
+for id, pov in pairs(POV) do
+    if pack.questIDs[id] then pack.questIDs[id].pov = pov end
+end
 A.Lore.RegisterStoryPack("horde-and-zephras", pack)

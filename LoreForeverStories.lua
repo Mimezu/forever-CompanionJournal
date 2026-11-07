@@ -627,7 +627,7 @@ q(91208, "Coming to Terms", "Tirisfal Glades", 4, "risen", 4,
     false, {"LoreForever quest:91208 (wiki: World of Warcraft: Forever)"})
 q(98389, "A Light in the Darkness", "Tirisfal Glades", 4, "risen", 3,
     "Some Forsaken feared their paladins would smite them as monsters, and Aramis meant to show otherwise.",
-    "Freshly raised Forsaken were trapped by the spiders of Night's Web Hollow. Freeing them would prove what the paladins were for.",
+    "Freshly raised Forsaken were trapped by the spiders of Night Web's Hollow. Freeing them would prove what the paladins were for.",
     "The webbed Forsaken were freed. Aramis hoped Executor Arren and the others would see that the paladins lived to protect their people, as in life.",
     "Aramis believed the paladins would in time be seen as just as valuable to the Dark Lady as any other Forsaken.",
     false, {"LoreForever quest:98389 (wiki: World of Warcraft: Forever; Webbed Forsaken)"})

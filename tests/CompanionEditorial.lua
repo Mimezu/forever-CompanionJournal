@@ -40,7 +40,9 @@ for key,player in pairs(players) do for _,voice in ipairs({"we","you"}) do for _
     local p=person()
     outing(p,0,"Mulgore",1,{{k="quest",d="Call of Earth",qid=1519}})
     local out=render(p,player,voice,brief,retell)
-    check(out:find("salve",1,true) or out:find("sapta",1,true),"curated purpose lost to difficulty: "..out)
+    -- (2026-11-07, DESIGN §3.0: the companion book tells the pair's side, not the stage's exposition;
+    -- the stage is still told, in its own words or by name, and difficulty never replaces it)
+    check(A.QuestDeeds.Shows(out,1519),"curated stage lost to difficulty: "..out)
     check(not out:find("granted the earth totem",1,true),"early errand completed rite: "..out)
     check(not out:find("above your level",1,true) and not out:find("above our level",1,true),"metagame difficulty leaked: "..out)
     check(not out:find("husband",1,true) and not out:find("wife",1,true),"neutral spouse changed")

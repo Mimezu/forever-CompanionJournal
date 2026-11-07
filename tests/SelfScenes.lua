@@ -52,7 +52,12 @@ check(snapshot(short) == snapshot(A.SelfTale.Tell(p, days, true, 0)), "Highlight
 local first = short[days[1].key].text
 check(first:find("\n\n", 1, true), "a change of place creates a scene paragraph")
 check(first:find("Silverpine", 1, true) < first:find("Hillsbrad", 1, true), "recorded region order survives Highlights")
-check(first:find("Arugal", 1, true) or first:find("Ambermill", 1, true), "formative work retains a meaningful quest thread")
+-- (2026-11-07, DESIGN §3.0: Highlights tells the stretch's work worth telling, whichever stage that is)
+local toldOne = false
+for _, title in ipairs({"Arugal's Folly", "Prove Your Worth", "Border Crossings", "The Decrepit Ferry"}) do
+    if A.QuestDeeds.Shows(first, nil, title) then toldOne = true end
+end
+check(toldOne, "formative work tells one of its stages")
 check(first:find("Tarren Mill", 1, true), "first ally town survives Highlights")
 check(not first:find("other quests", 1, true), "a singular remaining quest is grammatical")
 check(not first:find("Deathknell", 1, true), "missing levels do not fabricate an origin visit")
@@ -105,7 +110,9 @@ do
     local ds = A.JournalBook(routine)
     local fullText = A.SelfTale.Tell(routine, ds, false, 0)[ds[1].key].text
     local briefText = A.SelfTale.Tell(routine, ds, true, 0)[ds[1].key].text
-    check(#briefText < #fullText * 0.75, "Highlights bound repeated quiet chatter within a scene: " .. fullText .. " / " .. briefText)
+    -- (2026-11-07: Everything itself now tells a rest at one inn once a chapter)
+    local _, inns = fullText:gsub("Quiet Inn", "")
+    check(#briefText <= #fullText and inns <= 1, "repeated quiet chatter is bounded within a scene: " .. fullText .. " / " .. briefText)
     check(briefText:find("Quiet Inn", 1, true), "condensing repeats preserves the actual quiet activity")
 end
 for _, interaction in ipairs({false, true}) do

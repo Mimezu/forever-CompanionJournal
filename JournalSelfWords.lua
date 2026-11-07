@@ -684,7 +684,7 @@ W.firstDeathScourge = {
     "It was my first death since I rose, and dying had not changed much.",
     "I had died once before, long ago. This time I walked back from the graveyard.",
     "It was my second death, if the first one counts.",
-    "Death was nothing new to me. I walked back from the graveyard and found my body where it fell.",
+    "It was my first death since I rose. I walked back from the graveyard and found my body where it fell.",
     "I had been dead before, in Lordaeron. This time it only lasted as long as the walk back.",
 }
 -- A world boss you died to, and saw fall ({what}).
@@ -1532,7 +1532,6 @@ W.titles.classBy = W.titles.classBy or {
 }
 -- Someone close, the first time the book names them ({names}, {bond}: "my wife").
 W.joinedBond = W.joinedBond or {
-    "{names}, {bond}, was beside me from the first day.",
     "{names}, {bond}, was with me.",
     "I had {names}, {bond}, at my side.",
 }
@@ -3279,3 +3278,44 @@ W.bgWithBondSeries = {"{Names}, {bond}, was with me for {k} of them.", "{Names},
 W.titles.bgFirstWin = {"A First Victory", "The First Win"}
 W.titles.bgSwept = {"Every Match", "All of Them"}
 W.titles.bgSeries = {"A Night in {what}", "{What}, {Times}"}
+
+-- The character's side of stages whose pack this file does not own, by exact quest ID
+-- (DESIGN §3.0; format in JournalBook.lua, QD.Story). `title` must match the record.
+-- Forever's risen paladins of Tirisfal (LoreForeverStories.lua stages) and #380, which no
+-- pack covers yet (Executor Arren's spider cull in Night Web's Hollow, written from the
+-- classic quest; its text is not in the captured corpus, so check it in game).
+W.pov = {
+    [98601] = {title = "A Difficult Path", solo = true, act = "took a scroll of the Light to Aramis Hammerhand",
+        "Shadow Priest Sarvis handed {me} a scroll that reeked of the Light and wanted it read well away from him. It sent {me} to Aramis Hammerhand, who began {my} training as a paladin and warned that the Light would hurt now.",
+        "A scroll for a risen paladin had come to the village, and it was for {me}. Aramis Hammerhand began {my} training, and told {me} the pain of the Light was a crucible."},
+    [90902] = {title = "Rediscovering the Light", solo = true, act = "healed the injured Deathguards by the chapel",
+        "{I} healed the injured Deathguards by the chapel, and the Light burned as it went, as Aramis had warned. He called the pain a badge of honor.",
+        "Aramis set {me} to heal the wounded Deathguards near the chapel. It hurt, as he had said it would, and he told {me} the pain was proof of still serving the Light."},
+    [91208] = {title = "Coming to Terms", solo = true, act = "went after a frightened paladin in the hills",
+        "A newly risen paladin had fled into the hills west of the chapel, unable to bear what she had become. {I} went after her, but she could not be brought back, and Aramis prayed to the Light for her.",
+        "{I} found the frightened paladin in the hills west of the chapel. There was no bringing her back, and Aramis called her end a clean one."},
+    [98389] = {title = "A Light in the Darkness", act = "freed the newly risen webbed in Night Web's Hollow", giver = "Aramis Hammerhand",
+        "{We} went down into Night Web's Hollow, dark and thick with spiders, and cut free the newly risen Forsaken caught in their webs. Aramis hoped it would show the others what paladins were for.",
+        "In the dark of Night Web's Hollow, spiders had webbed freshly raised Forsaken. {We} freed them, as Aramis Hammerhand wanted, to show that the paladins lived to protect their people."},
+    [91209] = {title = "Continue Your Training", solo = true, act = "went on to Shari Stilwell in Brill",
+        "Aramis sent {me} on to Shari Stilwell in Brill to go on with {my} training, and warned that many in the Dark Lady's service distrusted those close to the Light.",
+        "{My} training passed from Aramis to Shari Stilwell in Brill, who had work for any paladin willing."},
+    [380] = {title = "Night Web's Hollow", act = "thinned the spiders of Night Web's Hollow", giver = "Executor Arren", importance = 3,
+        "Executor Arren wanted the spiders of Night Web's Hollow thinned. {We} went into the dark among them, where their legs scratched over the stone, and came out with far fewer left.",
+        "{We} thinned the spiders of Night Web's Hollow for Executor Arren, in a cave so dark that {we} heard them before {we} saw them."},
+    [99134] = {title = "Discipline", act = "punished the Deathguards on Executor Zygand's ledger",
+        "Executor Zygand kept a ledger of Deathguards who had disappointed him, and since {we} had not yet, he had {us} punish them. Pain, he said, was one of the few delights left to the dead.",
+        "{We} punished the Deathguards on Executor Zygand's ledger. It pleased him, and so, he said, it pleased the Dark Lady."},
+    [99144] = {title = "Seeking Refuge", act = "freed Bareth Dawnstone from the zealots who held him",
+        "{We} found Bareth Dawnstone, a risen paladin, held by zealots who wielded the Light with hatred, and helped him escape. His order at Bandarion Keep, northwest of the Solliden Farmstead, welcomed any who sought the Light.",
+        "Zealots had captured Bareth Dawnstone on his way from Bandarion Keep to Shari Stilwell in Brill. {We} got him away, and his order thanked {us} for saving one so promising."},
+    -- (#96607, corpus_vanilla_quests.txt; no pack stage yet)
+    [96607] = {title = "The Great Outdoors", act = "learned the basics of camping from Eleanor Shackleton", importance = 3,
+        "Eleanor Shackleton sat {us} by her fire and walked {us} through the basics of living in the wilds, then sent {us} to the trainers in the village nearby to learn a trade.",
+        "By Eleanor's fire {we} learned how to rest and prepare out in the wilds, as an adventurer must."},
+}
+-- An inn that has a name of its own ({place} = "the Gallows' End Tavern"), 2026-11-07.
+W.innNamed = {"{We} rested at {place}.", "{We} took a room at {place}.", "{We} stopped at {place} to rest."}
+W.homeNamed = {"I made {place} my home.", "I set my hearthstone at {place}.", "From then on, my hearthstone took me back to {place}."}
+W.homeNamedHere = {"I made it my home, and set my hearthstone there.", "I set my hearthstone there, and made it my home."}
+W.sleepInnNamed = {"That night I took a room at {place} and slept there.", "I slept at {place} that night."}

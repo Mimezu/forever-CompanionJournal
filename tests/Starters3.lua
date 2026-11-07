@@ -193,13 +193,12 @@ for _, j in ipairs(journeys) do
                 check(text == tell(), "deterministic " .. j[1])
                 check(#p.journal == count, "rendering leaves history intact")
                 check(not text:find("{%a+:") and not has(text, "<name>") and not has(text, "  "), "markup or spacing " .. j[1])
+                -- (DESIGN §3.0, 2026-11-07: the few stages worth telling, in their own words; each
+                -- day of the own book in Everything tells at least one)
                 for d = 5, #j do
-                    for _, id in ipairs(j[d][2]) do
-                        local q, found = L.questStoryIDs[id], false
-                        for _, line in ipairs(q.after) do if has(text, A.JournalPlain(line)) then found = true end end
-                        for _, line in ipairs(q.highlight or {}) do if has(text, A.JournalPlain(line)) then found = true end end
-                        check(found, "stage " .. id .. " lost its outcome in " .. j[1] .. (brief and " Highlights" or "") .. "\n" .. text)
-                    end
+                    local found = false
+                    for _, id in ipairs(j[d][2]) do if A.QuestDeeds.Shows(text, id) then found = true end end
+                    check(found or brief or companion, "day " .. d .. " told none of its stages in " .. j[1] .. "\n" .. text)
                 end
                 if printing and retell == 0 and (not only or j[1]:find(only, 1, true)) then
                     print("=== " .. j[1] .. (companion and " / COMPANION" or " / PERSONAL") .. (brief and " HIGHLIGHTS" or " EVERYTHING") .. "\n" .. text .. "\n")

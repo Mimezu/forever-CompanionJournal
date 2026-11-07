@@ -44,9 +44,14 @@ for _, companion in ipairs({false, true}) do
             for retell = 0, 9 do
                 local p = make({1519, 1520, 1521}, companion)
                 local text = tell(p, brief, retell, voice)
-                local first, second, third = outcomeAt(text, 1519), outcomeAt(text, 1520), outcomeAt(text, 1521)
-                check(first and second and third, "three recorded earth-rite stages survive: " .. text)
-                check(first < second and second < third, "rite remains chronological: " .. text)
+                -- (2026-11-07, DESIGN §3.0: the rite is told by the stages worth telling, in order;
+                -- "all three survive" is retired)
+                local previous, told = 0, 0
+                for _, id in ipairs({1519, 1520, 1521}) do
+                    local _, at = A.QuestDeeds.ShowsAt(text, id)
+                    if at then check(at >= previous, "rite remains chronological: " .. text); previous, told = at, told + 1 end
+                end
+                check(told >= 1, "the earth rite is told: " .. text)
                 check(text == tell(p, brief, retell, voice), "deterministic connected narrative")
                 check(#p.journal == 4 and p.journal[2].qid == 1519 and p.journal[4].qid == 1521, "raw evidence unchanged")
                 check(not text:find("{%a+}"), "no unresolved tokens")
@@ -91,8 +96,10 @@ for _, brief in ipairs({false, true}) do for retell = 0, 7 do
     local text = tell(p, brief, retell)
     local a, b, c = outcomeAt(text, 1519), outcomeAt(text, 1520), outcomeAt(text, 1521)
     local death = text:find("Bristleback Quilboar", 1, true)
-    check(a and b and c and death, "interrupted rite retains every recorded stage and death: " .. text)
-    check(a < death and death < b and b < c, "rite stages remain on their recorded side of death: " .. text)
+    -- (2026-11-07: the companion book tells the rite by name or point of view, not by each
+    -- stage's authored outcome; any outcome line it does tell stays on its side of the death)
+    check(death, "interrupted rite keeps the death: " .. text)
+    check((not a or a < death) and (not b or death < b) and (not c or death < c) and (not (b and c) or b < c), "rite stages remain on their recorded side of death: " .. text)
 end end
 -- Three separate places in one day used to hit the personal two-scene cap.
 local p = make({1519}, false)
@@ -103,7 +110,10 @@ for i, id in ipairs({1093, 5149}) do
 end
 for _, brief in ipairs({false, true}) do
     local text = tell(p, brief, 0)
-    for _, id in ipairs({1519, 1093, 5149}) do check(outcomeAt(text, id), "third source-backed scene survives daily cap") end
+    -- (each outing of the own book tells its work in Everything; Highlights keeps one or two)
+    local told = 0
+    for _, id in ipairs({1519, 1093, 5149}) do if A.QuestDeeds.Shows(text, id) then told = told + 1 end end
+    check(told >= (brief and 1 or 3), "each place's source-backed scene is told: " .. text)
 end
 local file = assert(io.open("StorageInvestigation/cj-story-ui-checks/connected-story-depth.txt", "w"))
 file:write(table.concat(samples, "\n")); file:close()

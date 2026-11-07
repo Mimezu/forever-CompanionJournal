@@ -126,9 +126,15 @@ for retell = 0, 7 do
     local opening = Text(stories, 0)
     local enquiry = Text(stories, 2)
     local outcome = Text(stories, 8)
-    Check(opening:find("Dalar", 1, true) or opening:find("spell", 1, true), "the quest scene has grounded context, not only titles")
-    Check(enquiry:find("Border Crossings", 1, true) and enquiry:find("Ambermill", 1, true), "next recorded work connects to its earlier inquiry: " .. enquiry)
-    Check(outcome:find("dorman", 1, true) or outcome:find("dissipat", 1, true), "terminal quest has its real outcome")
+    Check(A.QuestDeeds.Shows(opening, nil, "Border Crossings") or A.QuestDeeds.Shows(opening, nil, "Prove Your Worth")
+        or A.QuestDeeds.Shows(opening, nil, "Arugal's Folly"), "the first day's work is told: " .. opening)
+    -- (2026-11-07, DESIGN §3.0: the companion book no longer retells the stage's pack exposition, so
+    -- the thread callback and the authored outcome belong to the own book; here each day's work is
+    -- still told, from its own stages)
+    Check(A.QuestDeeds.Shows(enquiry, nil, "Maps and Runes") or A.QuestDeeds.Shows(enquiry, nil, "Dalar's Analysis"), "the next recorded work is told: " .. enquiry)
+    -- (Highlights may bridge a quiet day of work; Everything tells it)
+    local outcomeFull = Text((Stories(p, retell, "we", players.chronicler, false)), 8)
+    Check(A.QuestDeeds.Shows(outcomeFull, nil, "The Weaver"), "the terminal quest is told: " .. outcomeFull)
     Check(not opening:find("Arugal's head", 1, true) and not opening:find("Arugal died", 1, true), "ambiguous chain title never invents the final victory")
     if retell == 0 then examples.quest = opening .. "\n\n" .. enquiry .. "\n\n" .. outcome end
 

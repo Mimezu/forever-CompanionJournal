@@ -1849,3 +1849,12 @@ PB.shared.bgSeries = {"{pair} fought {times} in {what} that {part} and won {wins
 PB.shared.bgSeriesAll = {"{pair} fought {times} in {what} that {part} and won every one.", "{pair} went into {what} {times} together, and won each time."}
 PB.shared.bgSeriesNone = {"{pair} fought {times} in {what} that {part}, and lost every one."}
 PB.shared.bgFirstWin = {"It was the first battleground {I} had won, and {name} was in it.", "{name} was there for {my} first win in a battleground."}
+
+-- The first day with someone close, said as company, not as a meeting ("Dahlia, my wife,
+-- was at my side in Tirisfal Glades.", 2026-11-07).
+if A.JournalTale and A.JournalTale.phrases then
+    A.JournalTale.phrases.meetBond = {
+        "{name}, {bondWord}, was at {my} side in {zoneE}.",
+        "{I} set out in {zoneE} with {name}, {bondWord}, at {my} side.",
+    }
+end

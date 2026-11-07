@@ -144,17 +144,19 @@ do
     Group(p, 2, zone, 60, {{k = "quest", d = "Recorded Errand"}})
     Group(p, 3, zone, 60, {{k = "quest", d = titles[2]}})
     Group(p, 4, zone, 60, {{k = "quest", d = titles[3]}})
+    -- (2026-11-07, DESIGN §3.0: the companion book tells a stage by its name, act or point of
+    -- view, not by its authored outcome prose)
     local function Outcome(text, title)
-        for _, line in ipairs(A.Lore.questStory[title].after) do if text:find(A.JournalPlain(line), 1, true) then return true end end
-        return false
+        return A.QuestDeeds.Shows(text, nil, title) ~= nil
     end
     for _, voice in ipairs({"we", "you"}) do
         for retell = 0, 5 do
             local full, brief = Tell(p, voice, false, retell), Tell(p, voice, true, retell)
-            check(Outcome(full[4].plain, titles[2]), "Everything tells the middle stage: " .. full[4].plain)
+            -- (a quiet day may be told with the next one in Everything)
+            check(Outcome(full[4].plain .. " " .. full[5].plain, titles[2]), "Everything tells the middle stage: " .. full[4].plain .. " | " .. full[5].plain)
             check(not Outcome(brief[4].plain, titles[2]), "Highlights drops a title-only middle stage: " .. brief[4].plain)
             check(brief[4].plain == "", "the dropped day is bridged, not left as a stub: " .. brief[4].plain)
-            check(brief[5].plain:find("followed", 1, true) or brief[5].plain:find("came next", 1, true), "the next chapter bridges the day: " .. brief[5].plain)
+            check(brief[5].plain:find("followed", 1, true) or brief[5].plain:find("came next", 1, true) or brief[5].plain:find("more days", 1, true) or brief[5].plain:find("next two", 1, true), "the next chapter bridges the day: " .. brief[5].plain)
             check(Outcome(brief[5].plain, titles[3]), "the chain's last stage stays in Highlights: " .. brief[5].plain)
             check(Outcome(brief[1].plain, titles[1]), "the chain's first stage stays in Highlights: " .. brief[1].plain)
         end
@@ -170,8 +172,7 @@ do
     Group(q, 2, s2.zone, 60, {{k = "quest", d = "Recorded Errand"}})
     for retell = 0, 3 do
         local brief = Tell(q, "you", true, retell)
-        local kept = false
-        for _, line in ipairs(s2.highlight or s2.after) do if brief[2].plain:find(A.JournalPlain(line), 1, true) then kept = true end end
+        local kept = A.QuestDeeds.Shows(brief[2].plain, ids[2]) ~= nil
         check(kept, "an exact stage keeps its scene in Highlights: " .. brief[2].plain)
     end
 end

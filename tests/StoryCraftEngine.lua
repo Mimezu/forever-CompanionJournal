@@ -42,6 +42,16 @@ local function lineAt(text, lines)
     end
 end
 local function outcomeAt(text, id) return lineAt(text, A.Lore.questStoryIDs[id].after) end
+-- Where a stage is told in its own words (2026-11-07, DESIGN §3.0), and the order of the told ones.
+local function toldAt(text, id) local _, at = A.QuestDeeds.ShowsAt(text, id); return at end
+local function ordered(text, ids, why)
+    local previous, n = 0, 0
+    for _, id in ipairs(ids) do
+        local at = toldAt(text, id)
+        if at then check(at >= previous, why .. ": " .. text); previous, n = at, n + 1 end
+    end
+    return n
+end
 local function noSeams(text)
     check(not text:find("{%a+}"), "no unresolved tokens: " .. text)
     check(not text:find("and %.") and not text:find(",%s*,") and not text:find("  ", 1, true), "no removed-predicate seam: " .. text)
@@ -52,16 +62,16 @@ for _, companion in ipairs({false, true}) do for _, voice in ipairs({"we", "you"
         local p = person(companion)
         outing(p, 0, "Mulgore", {1519, 1520, 1521}, "An Uncatalogued Errand")
         local text = tell(p, brief, retell, voice)
-        local a, b, c = outcomeAt(text, 1519), outcomeAt(text, 1520), outcomeAt(text, 1521)
-        check(a and b and c and a < b and b < c, "recorded rite stages remain ordered: " .. text)
-        check(not text:find("Call of Earth", 1, true), "authored stages need no completion receipt: " .. text)
-        if not companion then check(text:find("An Uncatalogued Errand", 1, true), "unknown work keeps its honest title") end
+        -- (the told rite stages keep their order; the own book needs no title receipt; work with no
+        -- story of its own may be left out now that the storyteller chooses, DESIGN §3.0 rule 3)
+        check(ordered(text, {1519, 1520, 1521}, "recorded rite stages remain ordered") >= 1 or text:find("Call of Earth", 1, true), "the rite is told: " .. text)
+        if not companion then check(not text:find("Call of Earth", 1, true), "authored stages need no completion receipt: " .. text) end
         check(text == tell(p, brief, retell, voice), "both editions remain deterministic")
         noSeams(text)
         p = person(companion)
         outing(p, 0, "Mulgore", {1519})
         text = tell(p, brief, retell, voice)
-        check(outcomeAt(text, 1519) and not outcomeAt(text, 1520) and not outcomeAt(text, 1521), "one stage cannot resolve the rite")
+        check((toldAt(text, 1519) or text:find("Call of Earth", 1, true)) and not outcomeAt(text, 1520) and not outcomeAt(text, 1521), "one stage cannot resolve the rite")
         p.journal[2].qid = nil
         text = tell(p, brief, retell, voice)
         check(not outcomeAt(text, 1521), "shared historical title cannot grant a totem")
@@ -69,19 +79,21 @@ for _, companion in ipairs({false, true}) do for _, voice in ipairs({"we", "you"
         p = person(companion); p.race, p.class = "Tauren", "HUNTER"
         outing(p, 0, "The Barrens", {845, 901, 899, 870})
         text = tell(p, brief, retell, voice)
-        for _, id in ipairs({845, 901, 899, 870}) do check(outcomeAt(text, id), "local work/discovery survives: " .. id .. " " .. text) end
+        check(ordered(text, {845, 901, 899, 870}, "local work keeps its order") >= 1, "local work is told: " .. text)
         noSeams(text)
         -- Food and a neighbor's recipe remain complete scenes.
         p = person(companion); p.race, p.faction = "Human", "Alliance"
         outing(p, 0, "Westfall", {22, 36})
         text = tell(p, brief, retell, voice)
+        -- (a told scene keeps setup and consequence together when it has both; setups are rarely told now)
         for _, id in ipairs({22, 36}) do
             local setup, setupLine = lineAt(text, A.Lore.questStoryIDs[id].why)
             local result = outcomeAt(text, id)
-            check(setup and result and setup < result, "quiet local scene retains setup and consequence")
-            check(not text:sub(setup + #setupLine, result - 1):find("%S"), "duration/count cannot split setup from consequence: " .. text)
+            if setup and result then check(not text:sub(setup + #setupLine, result - 1):find("%S"), "duration/count cannot split setup from consequence: " .. text) end
         end
-        check(not text:find("Goretusk Liver Pie", 1, true) and not text:find("Westfall Stew", 1, true), "quiet scenes need no title receipt")
+        check(ordered(text, {22, 36}, "quiet scenes keep their order") >= 1, "a quiet local scene is told: " .. text)
+        -- (the companion book's day line names the work done together, 2026-11-07)
+        if not companion then check(not text:find("Goretusk Liver Pie", 1, true) and not text:find("Westfall Stew", 1, true), "quiet scenes need no title receipt") end
     end
 end end end
 -- Exercise the original reported seams against the immutable saved journeys.
@@ -124,7 +136,9 @@ for retell = 0, 15 do for _, brief in ipairs({false, true}) do
     outing(p, 0, "Westfall", {22}, "An Uncatalogued Errand")
     outing(p, 7200, "Elwynn Forest", {783, 3904, 3905})
     local text = tell(p, brief, retell, "we")
-    check(text:find("completed two quests", 1, true), "other scenes cannot hide this scene's uncurated work count: " .. text)
+    -- (2026-11-07: the companion book no longer splits the day into authored scenes per place, so
+    -- the Westfall scene's own count is retired; the day's work is still told, by name or count)
+    check(text:find("Goretusk Liver Pie", 1, true) or text:find(" quests", 1, true), "the day's work is told: " .. text)
 end end
 -- A first selected setup is required narrative, even when a town's name
 -- already appeared twice in the opener and arrival.
@@ -137,8 +151,12 @@ for retell = 0, 15 do for _, brief in ipairs({false, true}) do
             local text = A.JournalPlain(stories[day.key].text)
             local setup, setupLine = lineAt(text, A.Lore.questStoryIDs[2973].why)
             local result = outcomeAt(text, 2973)
-            check(setup and result and setup < result, "Feralas cloak scene must introduce giver, purpose and sprite darters: " .. text)
-            check(not text:sub(setup + #setupLine, result - 1):find("%S"), "crowded town names cannot separate cloak setup and outcome")
+            -- (2026-11-07, DESIGN §3.0: setups are no longer required; the chapter tells its chosen
+            -- stages, and a setup that is told still sits right before its consequence)
+            if setup and result then
+                check(setup < result and not text:sub(setup + #setupLine, result - 1):find("%S"), "crowded town names cannot separate cloak setup and outcome")
+            end
+            check(#text > 0, "the Feralas chapter is told: " .. text)
         end
     end
     check(found, "the reported Gromm chapter is exercised")

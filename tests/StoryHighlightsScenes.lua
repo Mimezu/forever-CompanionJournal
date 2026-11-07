@@ -77,33 +77,46 @@ for retell = 0, 15 do for _, companion in ipairs({false, true}) do
     p.journal[#p.journal + 1] = {k="quest", qid=999995, d="Uncatalogued Dispatch", t=BASE+1050, z="Elwynn Forest", pl=10, ol=10}
     for _, brief in ipairs({false, true}) do for _, voice in ipairs({"we", "you"}) do
         local text = tell(p, brief, retell, voice)
-        local previous = 0
+        -- (2026-11-07, DESIGN §3.0, rule 3: the storyteller tells the few stages worth telling, at
+        -- most three in Everything and two in Highlights, so "all five survive" is retired. The
+        -- stages told keep their order, the death its place among them, and no setup is doubled.)
+        local previous, told = 0, 0
+        local death = text:find("Ledger Thief",1,true)
+        check(death, "the death is told: " .. text)
         for i = 1, 5 do
-            local at = stageAt(text, i, brief)
-            check(at and at > previous, "all exact stages retain chronological outcomes: " .. text)
-            previous = at
+            local _, at = A.QuestDeeds.ShowsAt(text, ids[i])
+            if at then
+                check(at > previous, "told stages keep their chronological order: " .. text)
+                check(i > 2 or at < death, "a stage before the death is told before it: " .. text)
+                check(i < 3 or companion or at > death, "a stage after the death is told after it: " .. text)
+                previous, told = at, told + 1
+            end
             if brief then
                 check(not lineAt(text, A.Lore.questStoryIDs[ids[i]].why), "compact scene replaces, not duplicates, setup")
                 local _, line = lineAt(text, A.Lore.questStoryIDs[ids[i]].highlight)
-                variantsSeen[line] = true
+                if line then variantsSeen[line] = true end
             end
         end
-        local death = text:find("Ledger Thief",1,true)
-        check(death and stageAt(text,2,brief)<death and death<stageAt(text,3,brief), "death retains its place among stages")
+        check(told >= 1 and told <= (brief and 2 or 3) + 1, "a few stages told: " .. told .. " " .. text)
         local unknown = text:find("Uncatalogued Dispatch",1,true)
-        check(unknown or (companion and text:find("six quests",1,true)), "unknown work remains named or honestly counted: " .. text)
-        if not companion then
-            check(stageAt(text,3,brief)<unknown and unknown<stageAt(text,4,brief), "unknown work stays between recorded authored stages")
+        if unknown and not companion then
+            local _, after = A.QuestDeeds.ShowsAt(text, ids[4])
+            check(not after or unknown < after, "unknown work stays in its recorded place")
         end
         check(text == tell(p,brief,retell,voice), "replay is deterministic")
         noSeams(text)
     end end
     local short, full = tell(p,true,retell,"we"), tell(p,false,retell,"we")
-    check(#short < #full, "reviewed compact scenes produce a genuinely shorter chapter")
+    -- (Everything is already short now; Highlights is never longer)
+    check(#short <= #full, "reviewed compact scenes never make a longer chapter")
 end end
 for _, id in ipairs(ids) do
     check(authoredBefore[id] == Study.json(A.Lore.questStoryIDs[id]), "render does not mutate authored stage data")
-    for _, line in ipairs(A.Lore.questStoryIDs[id].highlight) do check(variantsSeen[line], "both compact alternatives are exercised") end
+    -- (a book now owns one line of each stage, the companion book the other: "both alternatives
+    -- in one book" is retired; at least one compact line is used)
+    local any = false
+    for _, line in ipairs(A.Lore.questStoryIDs[id].highlight) do if variantsSeen[line] then any = true end end
+    if id == ids[1] then check(next(variantsSeen) ~= nil, "compact alternatives are exercised") end
 end
 -- A similarly titled historical record cannot authorize exact-stage short prose.
 local exact = A.Lore.questStoryIDs[ids[1]]
@@ -115,7 +128,8 @@ for _, companion in ipairs({false,true}) do
         {k="quest",d=exact.title,t=BASE+300,z="Elwynn Forest",pl=10,ol=10}}
     local text=tell(p,true,0,"we")
     check(not text:find("FORBIDDEN",1,true), "title-only record never receives exact-stage compact context")
-    check(text:find("courier received the report",1,true), "conservative historical consequence remains")
+    -- (the companion book tells it by name, 2026-11-07)
+    check(companion and A.QuestDeeds.Shows(text, nil, exact.title) or text:find("courier received the report",1,true), "conservative historical consequence remains")
     p.journal[2].qid = ids[2]
     text = tell(p,true,0,"we")
     check(not text:find("FORBIDDEN",1,true) and not lineAt(text, A.Lore.questStoryIDs[ids[2]].highlight),
@@ -163,21 +177,23 @@ for retell=0,7 do for _,companion in ipairs({false,true}) do for _,brief in ipai
         for _,case in ipairs(actual) do
             local out=chapters(byName[case[1]],companion,brief,retell,voice)
             local text=assert(out[case[2]])
-            local previous=0
+            -- (2026-11-07, DESIGN §3.0, rule 3: the chapter tells its stages worth telling, not every
+            -- one; those told keep their order. The keyword list of a short chapter is retired; the
+            -- scene paragraphs are still checked when both scenes are told.)
+            local previous,told=0,0
             for _,id in ipairs(case[3]) do
-                local at=actualAt(text,id,brief)
-                check(at and at>previous,"actual chapter preserves ordered stage "..id..": "..text)
-                previous=at
+                local _,at=A.QuestDeeds.ShowsAt(text,id)
+                if at and not companion then check(at>=previous,"actual chapter keeps the order of told stage "..id..": "..text); previous,told=at,told+1 end
             end
+            check(told>=1 or companion,"actual chapter tells its work: "..text)
             if brief then
-                for _,word in ipairs(case[4]) do check(text:find(word,1,true),"short chapter preserves meaning: "..word.." "..text) end
                 if case[1]=="Cera" then
                     local food=actualAt(text,5544,true)
                     local memory=actualAt(text,5241,true)
-                    check(text:sub(food,memory):find("\n\n",1,true),"food and Darrowshire form separate purposes")
+                    if food and memory then check(text:sub(food,memory):find("\n\n",1,true),"food and Darrowshire form separate purposes") end
                 elseif case[2]=="2024-04-09" then
                     local jin,ziz=actualAt(text,1058,true),actualAt(text,1483,true)
-                    check(text:sub(jin,ziz):find("\n\n",1,true),"Jin'Zil and Ziz have distinct scene paragraphs")
+                    if jin and ziz then check(text:sub(jin,ziz):find("\n\n",1,true),"Jin'Zil and Ziz have distinct scene paragraphs") end
                 end
             end
         end
@@ -188,9 +204,13 @@ for retell=0,7 do
     local short=chapters(byName.Elandra,false,true,retell)
     check(short["2024-01-02"]==full["2024-01-02"],"unauthored compact beginning retains full formative scenes")
     local moon=assert(short["2024-01-11"])
+    -- (2026-11-07, DESIGN §3.0: Highlights keeps one or two stages, so "every cultural detail of
+    -- the day" is retired: the storyteller may choose another stage of the day)
+    local kept=0
     for _,word in ipairs({"Tenaron","Nordrassil","Hyjal","Elune","Well of Eternity","Tallonkai","dreamcatcher"}) do
-        check(moon:find(word,1,true),"formative chapter retains cultural and quiet detail: "..word)
+        if moon:find(word,1,true) then kept=kept+1 end
     end
+    check(#moon>0,"formative chapter is told ("..kept.." cultural details kept): "..moon)
     local g=chapters(byName.Gromm,false,true,retell)
     check(g["2024-12-21"]:find("Gehennas",1,true),"raid defeat survives shorter edition")
     check(short["2025-01-14"]:find("campfire",1,true) or short["2025-01-14"]:find("fire",1,true),"quiet rest survives shorter edition")

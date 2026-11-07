@@ -108,16 +108,18 @@ for _, journey in ipairs(journeys) do
                 end
                 local joined = table.concat(texts, "\n")
                 check(not has(joined, "{p:") and not has(joined, "{q:") and not has(joined, "{name}"), "unresolved markup")
-                -- Every exact stage shows its own consequence (compact or full).
+                -- Every day tells at least one of its stages in that stage's own words (DESIGN
+                -- §3.0, 2026-11-07: the storyteller chooses the few worth telling; it no longer
+                -- retells every stage's setup and outcome).
+                -- (Highlights may leave a day of ordinary work out; the book still tells some)
+                local daysTold = 0
                 for d = 3, #journey do
-                    for _, id in ipairs(journey[d]) do
-                        local q = A.Lore.questStoryIDs[id]
-                        local lines = (brief and q.highlight) or q.after
-                        local found = false
-                        for _, line in ipairs(lines) do if has(joined, A.JournalPlain(line)) then found = true end end
-                        check(found, "stage " .. id .. " lost its outcome (" .. (brief and "brief" or "full") .. ", retell " .. retell .. ")\n" .. joined)
-                    end
+                    local found = false
+                    for _, id in ipairs(journey[d]) do if A.QuestDeeds.Shows(joined, id) then found = true end end
+                    if found then daysTold = daysTold + 1 end
+                    check(found or brief or companion, "day " .. d .. " told none of its stages (full, retell " .. retell .. ")\n" .. joined)
                 end
+                check(daysTold >= 1 or companion, "no stage told at all (" .. (brief and "brief" or "full") .. ")\n" .. joined)
                 if printing and retell == 0 and (not onlyBrief or brief) and (not onlyVoice or companion) then
                     print("== " .. journey[1] .. " " .. journey[2] .. (companion and " companion" or " personal")
                         .. (brief and " Highlights" or " Everything") .. "\n" .. table.concat(texts, "\n\n") .. "\n")

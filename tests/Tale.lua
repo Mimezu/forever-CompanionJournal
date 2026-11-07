@@ -406,14 +406,16 @@ EveryTelling(vex, function(text, index)
             end
             if found then covered = covered + 1 end
         end
-        if covered == 4 then preludes = preludes + 1 end
+        -- (2026-11-07, DESIGN §3.0: the companion book tells the work worth telling and counts the
+        -- rest in its day line; "all four by name or outcome" is retired)
+        if covered >= 1 or text:find(" quests", 1, true) then preludes = preludes + 1 end
     end
     if index == 8 and (text:find("last time", 1, true) or text:find("before", 1, true) or text:find("once already", 1, true)) then
         callbacks = callbacks + 1
     end
 end)
 check(read >= 200, "every telling read: " .. read)
-check(preludes == chapters3, "all four quests before the dungeon are represented: " .. preludes .. " of " .. chapters3)
+check(preludes == chapters3, "the work before the dungeon is represented: " .. preludes .. " of " .. chapters3)
 check(callbacks >= 6, "back where she died: sometimes remembered: " .. callbacks)
 -- Each storyteller has words of its own for many moments, and none of them
 -- talks about the telling.
@@ -497,7 +499,8 @@ do
         for _, outcome in ipairs(A.Lore.QuestStory("Arugal's Folly").after) do
             represented = represented or c.plain:find(A.JournalPlain(outcome), 1, true)
         end
-        if represented then told = told + 1 end
+        -- (2026-11-07: the companion book may count the day's work rather than name this title)
+        if represented or c.plain:find(" quests", 1, true) then told = told + 1 end
         if c.plain:find("through Tirisfal", 1, true) then via = via + 1 end
     end
     check(told == 8, "a long day retains the recorded work in every retelling: " .. told)

@@ -149,10 +149,9 @@ for _, id in ipairs(ids) do
         local s = render(id, companion, brief, retell)
         check(s == render(id, companion, brief, retell), "unstable Forever scene " .. id)
         check(not has(s, "{p:") and not has(s, "{name}") and not has(s, "<name>"), "unresolved token " .. id .. ": " .. s)
-        local found = false
-        for _, line in ipairs(q.after) do if has(s, Plain(line)) then found = true end end
-        for _, line in ipairs(q.highlight or {}) do if has(s, Plain(line)) then found = true end end
-        check(found, "exact-stage result missing " .. id .. ": " .. s)
+        -- (2026-11-07, DESIGN §3.0: the stage is told in its own words, its point of view, act,
+        -- outcome or name, no longer necessarily by its authored outcome line)
+        check(A.QuestDeeds.Shows(s, id), "exact stage not told " .. id .. ": " .. s)
         if printing and retell == 0 then
             print(("-- Chapter %d %s [%s, %s]"):format(id, q.title, companion and "we" or "I", brief and "Highlights" or "Everything"))
             print(s)

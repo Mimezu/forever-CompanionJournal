@@ -90,7 +90,9 @@ for _, row in ipairs(cases) do
             local joined = table.concat(rendered, "\n")
             Check(#joined > 0 and None(joined, forbidden), "rendered stage stays within evidence " .. id .. "/" .. tostring(companion) .. "/" .. tostring(brief))
         end
-        Check(Has(table.concat(fullText, "\n"), row[3]), "actual teller retains stage result " .. id .. "/" .. tostring(companion))
+        -- (2026-11-07, DESIGN §3.0: the stage is told in its own words; the authored result is one of them)
+        Check(Has(table.concat(fullText, "\n"), row[3]) or A.QuestDeeds.Shows(table.concat(fullText, "\n"), id),
+            "actual teller tells the stage " .. id .. "/" .. tostring(companion))
         Check(before == Snapshot(p.journal), "teller keeps history read-only " .. id)
         Check(Render(p, companion, false, 0) == Render(p, companion, false, 0), "deterministic stage telling " .. id)
         if arg and arg[1] == "print" and not companion and (id == 66 or id == 78 or id == 98 or id == 5726 or id == 5728 or id == 5730) then

@@ -132,15 +132,16 @@ for _, journey in ipairs(journeys) do
                 local joined = table.concat(texts, "\n")
                 check(not has(joined, "{p:") and not has(joined, "{q:") and not has(joined, "{name}"), "unresolved markup")
                 check(not joined:find(":", 1, true) or joined:find("%d:%d"), "colon in rendered chapter")
+                -- (DESIGN §3.0, 2026-11-07: a chapter tells the few stages worth telling in their
+                -- own words; every day of the own book in Everything tells at least one)
+                local daysTold = 0
                 for d = 4, #journey do
-                    for _, id in ipairs(journey[d]) do
-                        local q = A.Lore.questStoryIDs[id]
-                        local lines = (brief and q.highlight) or q.after
-                        local found = false
-                        for _, line in ipairs(lines) do if has(joined, A.JournalPlain(line)) then found = true end end
-                        check(found, "stage " .. id .. " lost its outcome (" .. mode .. ", " .. (brief and "brief" or "full") .. ", retell " .. retell .. ")\n" .. joined)
-                    end
+                    local found = false
+                    for _, id in ipairs(journey[d]) do if A.QuestDeeds.Shows(joined, id) then found = true end end
+                    if found then daysTold = daysTold + 1 end
+                    check(found or brief or mode ~= "me", "day " .. d .. " told none of its stages (" .. mode .. ", full, retell " .. retell .. ")\n" .. joined)
                 end
+                check(daysTold >= 1 or mode ~= "me", "no stage told (" .. mode .. ")\n" .. joined)
                 if printing and retell == 0 and (not onlyBrief or brief) and (not onlyVoice or mode == onlyVoice) then
                     print("== " .. journey[1] .. " " .. journey[2] .. " " .. journey[3] .. " " .. mode
                         .. (brief and " Highlights" or " Everything") .. "\n" .. table.concat(texts, "\n\n") .. "\n")

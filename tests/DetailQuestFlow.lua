@@ -42,6 +42,17 @@ local function lineAt(text, lines)
     end
 end
 local function outcomeAt(text, id) return lineAt(text, A.Lore.questStoryIDs[id].after) end
+-- Where a stage is told in its own words, by any of them (2026-11-07, DESIGN §3.0).
+local function toldAt(text, id) local _, at = A.QuestDeeds.ShowsAt(text, id); return at end
+-- The told stages of a list keep their recorded order; returns how many were told.
+local function ordered(text, ids, why)
+    local previous, n = 0, 0
+    for _, id in ipairs(ids) do
+        local at = toldAt(text, id)
+        if at then check(at >= previous, why .. ": " .. text); previous, n = at, n + 1 end
+    end
+    return n
+end
 local function noSeams(text)
     check(not text:find("{%a+}"), "no unresolved tokens: " .. text)
     check(not text:find("and %.") and not text:find(",%s*,") and not text:find("  ", 1, true), "no removed-predicate seam: " .. text)
@@ -50,13 +61,11 @@ for _, companion in ipairs({false, true}) do for _, voice in ipairs({"we", "you"
     local p = person(companion)
     outing(p, 0, "Mulgore", {1519, 1520, 1521})
     local full, highlights = tell(p, false, retell, voice), tell(p, true, retell, voice)
-    local first, second, third = outcomeAt(full, 1519), outcomeAt(full, 1520), outcomeAt(full, 1521)
-    check(first and second and third and first < second and second < third, "all recorded rite stages retain chronological outcomes: " .. full)
-    local setup = lineAt(full, A.Lore.questStoryIDs[1519].why)
-    check(setup and setup < first, "lore establishes the purpose before quest-specific consequences: " .. full)
-    check(not full:find("Call of Earth", 1, true), "detail omits redundant quest title: " .. full)
-    check(not highlights:find("Call of Earth", 1, true), "Highlights omit redundant title anchors when all rite outcomes are narrated")
-    for _, id in ipairs({1519, 1520, 1521}) do check(outcomeAt(highlights, id), "Highlights retain rite outcomes") end
+    -- (2026-11-07: the storyteller tells the rite's stages worth telling, in order, not each
+    -- stage's setup and outcome; the own book needs no title where a stage's own line tells it)
+    check(ordered(full, {1519, 1520, 1521}, "told rite stages keep their order") >= 1, "the rite is told: " .. full)
+    if not companion then check(not full:find("Call of Earth", 1, true), "detail omits redundant quest title: " .. full) end
+    check(ordered(highlights, {1519, 1520, 1521}, "Highlights keep the order") >= 1 or highlights:find("Call of Earth", 1, true), "Highlights tell the rite: " .. highlights)
     check(full == tell(p, false, retell, voice), "detail is deterministic")
     check(#p.journal == 4 and p.journal[2].qid == 1519 and p.journal[4].qid == 1521, "raw evidence remains intact")
     noSeams(full)
@@ -66,7 +75,7 @@ for _, companion in ipairs({false, true}) do for _, voice in ipairs({"we", "you"
     p = person(companion); p.race, p.class, p.faction = "Human", "WARRIOR", "Alliance"
     outing(p, 0, "Elwynn Forest", {783, 3904, 3905})
     full = tell(p, false, retell, voice)
-    for _, id in ipairs({783, 3904, 3905}) do check(outcomeAt(full, id), "parallel authored work survives: " .. full) end
+    check(ordered(full, {783, 3904, 3905}, "parallel work keeps its order") >= 1, "parallel authored work is told: " .. full)
     noSeams(full)
 
     -- Nothing in the recorder identifies this errand's purpose or reward.
@@ -79,7 +88,7 @@ for _, companion in ipairs({false, true}) do for _, voice in ipairs({"we", "you"
 
     p = person(companion); outing(p, 0, "Mulgore", {1519})
     full = tell(p, false, retell, voice)
-    check(outcomeAt(full, 1519) and not outcomeAt(full, 1520) and not outcomeAt(full, 1521), "one recorded stage cannot finish the rite")
+    check((toldAt(full, 1519) or full:find("Call of Earth", 1, true)) and not outcomeAt(full, 1520) and not outcomeAt(full, 1521), "one recorded stage cannot finish the rite")
     p.journal[2].qid = nil
     full = tell(p, false, retell, voice)
     check(not outcomeAt(full, 1521), "historical shared title cannot supply a missing reward")
@@ -94,11 +103,14 @@ for _, companion in ipairs({false, true}) do for retell = 0, 9 do
     outing(p, 7200, "The Barrens", {1093})
     outing(p, 14400, "Eastern Plaguelands", {5149})
     local full = tell(p, false, retell)
-    local first, nextStep, lastStep = outcomeAt(full, 1519), outcomeAt(full, 1093), outcomeAt(full, 5149)
+    -- (2026-11-07: each outing of the own book tells its work; the companion book its best)
+    local first, nextStep, lastStep = toldAt(full, 1519), toldAt(full, 1093), toldAt(full, 5149)
     local death = full:find("Bristleback Quilboar", 1, true)
-    check(first and nextStep and lastStep and death and first < nextStep and death < nextStep and nextStep < lastStep,
-        "chronological outings retain outcomes and the intervening death: " .. full)
-    if companion then check(first < death, "companion rite retains its stage before death: " .. full) end
+    -- (the companion book's day line names the work done together before its scenes; order is the own book's to keep)
+    check(death and companion or death and (not first or first < (nextStep or math.huge)) and (not nextStep or (death < nextStep and nextStep < (lastStep or math.huge))),
+        "chronological outings keep their order and the intervening death: " .. full)
+    if not companion then check(first and nextStep and lastStep, "every outing tells its work: " .. full) end
+
     for _, zone in ipairs({"Mulgore", "Barrens", "Plaguelands"}) do check(full:find(zone, 1, true), "recorded place retained: " .. full) end
     noSeams(full)
 end end

@@ -286,7 +286,8 @@ do
     Clean(p)
     for retell, chapters in pairs(Tellings(p)) do
         local two = chapters[2].plain
-        check(two:find("Durotar", 1, true) or two:find("first time", 1, true), "the first zone beyond home (" .. retell .. "): " .. two)
+        check(two:find("Durotar", 1, true) or two:find("first time", 1, true) or two:find("somewhere new", 1, true) or two:find("behind me", 1, true),
+            "the first zone beyond home (" .. retell .. "): " .. two)
         local four = chapters[4].plain
         check(four:find("Tarok, a tauren warrior", 1, true) and Count(four, "Morwen") <= 3, "a newcomer among friends: " .. four)
         check(four:find("Skum killed Morwen and Tarok", 1, true) or four:find("Morwen and Tarok died", 1, true) or four:find("killed Morwen and Tarok", 1, true),

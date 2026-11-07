@@ -1331,3 +1331,490 @@ function A.DungeonLast(name)
     if type(last) == "table" and #last > 0 then return last end
     return nil
 end
+
+-- Quest deeds (2026-11-07). The telling leads with what the character did; a quest's
+-- authored lines are seasoning. A deed is a short past-tense verb phrase with no
+-- subject ("cut down the mindless dead"), plus the person who asked for it when the
+-- stage's own setup names one. Sources, in order: the stage's `pov` act (QD.Act, QD.Story),
+-- then the stage's outcome when it says the work in the passive ("The webbed Forsaken were freed."), then its setup when
+-- it says what someone wanted done ("Simmer wanted ten pumpkins stolen from..."). The
+-- verbs are a closed list of things a quester does, so a deed never hands the player an
+-- act the stage gave someone else; a phrase with an agent ("by Mordo") is refused.
+local QD = {}
+A.QuestDeeds = QD
+local DEED_VERBS = {
+    killed = "killed", slain = "killed", destroyed = "destroyed", ["cut down"] = "cut down", thinned = "thinned",
+    ["thinned out"] = "thinned out", freed = "freed", healed = "healed", struck = "struck", buried = "buried",
+    ["laid to rest"] = "laid to rest", recovered = "recovered", gathered = "gathered", collected = "collected",
+    delivered = "delivered", rescued = "rescued", burned = "burned", cleared = "cleared", ["driven off"] = "drove off",
+    ["driven back"] = "drove back", ["driven out"] = "drove out", defeated = "defeated", routed = "routed",
+    scattered = "scattered", ["put down"] = "put down", ["put to rest"] = "put to rest", ["brought down"] = "brought down",
+    carried = "carried", found = "found", retrieved = "retrieved", reclaimed = "reclaimed", smashed = "smashed",
+    poisoned = "poisoned", captured = "captured", stolen = "stole", hunted = "hunted", planted = "planted",
+    purified = "purified", cleansed = "cleansed", banished = "banished", culled = "culled", avenged = "avenged",
+    ["brought back"] = "brought back", ["hunted down"] = "hunted down", ["wiped out"] = "wiped out", silenced = "silenced",
+    salvaged = "salvaged", ["dealt with"] = "dealt with", ["beaten back"] = "beat back",
+    ["fought off"] = "fought off", ["torn down"] = "tore down", ["set free"] = "set free", released = "released",
+    ["put out"] = "put out", extinguished = "extinguished", burnt = "burned", ["burned down"] = "burned down",
+}
+QD.verbs = DEED_VERBS
+-- (a subject that is not the thing worked on: "Nothing was found", "It was done")
+local NOT_SUBJECT = {}
+for w in ("Nothing No None It They He She This That There Word Enough Each Some Everything All Both What Only Little Much "
+    .. "His Her Their Its Neither Either Whatever Too Once When If After Before With Without In At On By For From Then Now "
+    .. "Most Few Any Such Here Its Our My Your We I You Not Even Still Yet"):gmatch("%a+") do NOT_SUBJECT[w] = true end
+local PRONOUNS = {him = true, her = true, them = true, it = true, this = true, that = true, these = true, those = true, one = true}
+local function Sentences(text)
+    local list = {}
+    text = tostring(text or "")
+    for s in (text .. " "):gmatch("(.-[%.!])%s+") do list[#list + 1] = s end
+    if #list == 0 and text ~= "" then list[1] = text end
+    return list
+end
+QD.Sentences = Sentences
+local LOWER_LEAD = {}
+for w in ("The A An Two Three Four Five Six Seven Eight Nine Ten Eleven Twelve Fifteen Twenty Several Many Every Another "
+    .. "Their Some More Fresh Freshly Young Old"):gmatch("%a+") do LOWER_LEAD[w] = true end
+local function Lower(np)
+    return (np:gsub("^(%a+)", function(w) if LOWER_LEAD[w] then return w:lower() end return w end))
+end
+-- The rest of a phrase after its verb, up to the first comma or the next clause.
+local STOPS = {" and ", " so ", " before ", " while ", " until ", " as ", " but ", " because ", " when ", " after ",
+    " which ", " though ", " although ", " then ", " once "}
+local function Tail(rest)
+    rest = " " .. rest
+    rest = rest:gsub("[%.!]$", "")
+    rest = rest:gsub(",.*$", ""):gsub(";.*$", "")
+    for _, stop in ipairs(STOPS) do
+        local at = rest:find(stop, 1, true)
+        if at then rest = rest:sub(1, at - 1) end
+    end
+    rest = rest:gsub(" to be$", ""):gsub(" to be .*$", ""):gsub(" there$", "")
+    if rest == " up" or rest == " out" or rest == " off" or rest == " down" then rest = "" end
+    return (rest:gsub("^ ", ""))
+end
+local function Split(text)
+    local words = {}
+    for w in text:gmatch("%S+") do words[#words + 1] = w end
+    return words
+end
+local function VerbAt(words, i)
+    -- (the longer verb first: "laid to rest", "cut down", then "freed")
+    if words[i + 2] and DEED_VERBS[words[i] .. " " .. words[i + 1] .. " " .. words[i + 2]] then
+        return DEED_VERBS[words[i] .. " " .. words[i + 1] .. " " .. words[i + 2]], 3
+    end
+    if words[i + 1] and DEED_VERBS[words[i] .. " " .. words[i + 1]] then return DEED_VERBS[words[i] .. " " .. words[i + 1]], 2 end
+    if words[i] and DEED_VERBS[words[i]] then return DEED_VERBS[words[i]], 1 end
+    return nil
+end
+-- "The webbed Forsaken were freed." -> "freed the webbed Forsaken"
+function QD.FromOutcome(sentence)
+    local plain = A.JournalPlain(sentence)
+    if plain:find("[\"%?;:]") then return nil end
+    local np, be, rest = plain:match("^(.-) (w[ae][sr]e?) (.*)$")
+    if not np or (be ~= "was" and be ~= "were") then return nil end
+    local first = np:match("^(%a+)")
+    if not first or NOT_SUBJECT[first] or #Split(np) > 8 or np:find(",", 1, true) then return nil end
+    if np:find(" w[ae][sr]e? ") or np:find(" had ") or np:find(" said ") or np:find(" who ") or np:find(" that ") then return nil end
+    local words = Split(rest)
+    local verb, n = VerbAt(words, 1)
+    if not verb then return nil end
+    local tail = Tail(table.concat(words, " ", n + 1))
+    -- (someone else did it, or it was not finished: "was found by Mordo", "was thinned but not ended")
+    if tail:find("^by ") or tail:find(" by %u") or tail:find("^for good") or tail:find(" not ") then return nil end
+    return verb .. " " .. Lower(np) .. (tail ~= "" and (" " .. tail) or "")
+end
+-- "Deathguard Simmer wanted ten pumpkins stolen from a farm." -> "stole ten pumpkins from a farm", "Deathguard Simmer"
+local WANT = {"wanted", "needed", "ordered", "asked for"}
+function QD.FromSetup(sentence)
+    local plain = A.JournalPlain(sentence):gsub("[%.!]$", "")
+    if plain:find("[\"%?;:]") then return nil end
+    for _, want in ipairs(WANT) do
+        local who, rest = plain:match("^(%u[%a' ]-) " .. want .. " (.*)$")
+        if who and #Split(who) <= 4 and not who:find("^The ") then
+            local words = Split(rest)
+            for i = 2, math.min(#words, 10) do
+                local verb, n = VerbAt(words, i)
+                if verb then
+                    local np = table.concat(words, " ", 1, i - 1)
+                    if PRONOUNS[np:lower()] or np:find(",", 1, true) or np:find("^to ") or np:find("^[Tt]heir ") or np:find("^[Ii]ts ") then return nil end
+                    for w in who:gmatch("[%a']+") do if NOT_SUBJECT[w] then return nil end end
+                    local tail = Tail(table.concat(words, " ", i + n))
+                    if tail:find("^by ") then return nil end
+                    return verb .. " " .. np .. (tail ~= "" and (" " .. tail) or ""), who
+                end
+            end
+        end
+    end
+    return nil
+end
+-- The person a stage's setup names as asking: "Deathguard Saltain put...", "Novice Elreth wanted...".
+local GIVER_VERBS = {"wanted", "needed", "ordered", "asked", "sent", "offered", "put", "hoped", "set", "gave", "promised",
+    "required", "meant", "urged", "turned", "tended", "believed", "warned", "feared", "directed", "told", "had"}
+local NOT_GIVER = {He = true, She = true, It = true, They = true, Help = true, We = true, You = true}
+for w in ("Scourge Forsaken Horde Alliance Crusade Brotherhood Legion Defias Lich King Light Kingdom Council Burning Blade "
+    .. "Syndicate Venture Company Dawn Cenarion Circle Argent Scarlet Thorium Bloodsail Dragonmaw Kirin Explorers League "
+    .. "Night Elves Dwarves Orcs Trolls Tauren Humans Gnomes Undead Many Some Word Rumor Rumors Reports News One Two Three "
+    .. "Another Every Each Old Young Its His Her Their Our My Your Before After When While Since Long Somewhere Deep Far "
+    .. "Freedom Paladins Priests Mages Warriors Hunters Rogues Shamans Warlocks Druids Risen Dark Iron Shadowforge Wildhammer "
+    .. "Dalaran Stormwind Ironforge Orgrimmar Undercity Darnassus Thunder Bluff Gilneas Lordaeron Theramore Alterac Stromgarde "
+    .. "Quel'Thalas Azeroth Kalimdor Northrend Silvermoon Gnomeregan Lordamere Hillsbrad Southshore Tarren Mill Ratchet Booty Bay "
+    .. "Gadgetzan Everlook Menethil Auberdine Astranaar Crossroads Camp Village Hold Keep Post Outpost Town City Harbor"):gmatch("%a+") do
+    NOT_GIVER[w] = true
+end
+function QD.Giver(story)
+    for _, line in ipairs(story and story.why or {}) do
+        local s1 = Sentences(A.JournalPlain(line))[1] or ""
+        for _, verb in ipairs(GIVER_VERBS) do
+            local who = s1:match("^(%u[%a' ]-) " .. verb .. " ")
+            if who and #Split(who) <= 4 and not who:find("'s?$") then
+                local bad = false
+                for w in who:gmatch("[%a']+") do if NOT_GIVER[w] or not w:match("^%u") then bad = true end end
+                local zone = story.zone and A.JournalPlain(story.zone)
+                if zone and zone:find(who, 1, true) then bad = true end
+                if A.Lore and A.Lore.zoneStory and A.Lore.zoneStory[who] then bad = true end
+                if (A.LoreZoneLevels and A.LoreZoneLevels[who]) or (A.Lore and A.Lore.dungeonStory and A.Lore.dungeonStory[who]) then bad = true end
+                if A.SelfTale and A.SelfTale.Town and A.SelfTale.Town(who) then bad = true end
+                if not bad then return who end
+            end
+        end
+    end
+    return nil
+end
+-- One deed for a stage: {act, giver, solo, from} or nil. `from` is the outcome sentence
+-- the deed restates, so it is not said again beside the deed.
+function QD.Deed(quest, story)
+    if not story then return nil end
+    local W = A.SelfWords or {}
+    local qid = quest and tonumber(quest.qid)
+    local precise = qid and A.Lore and A.Lore.questStoryIDs and A.Lore.questStoryIDs[qid]
+    local solo = (story.class or story.pack == "class-stories" or (story.thread and story.thread:find("^class_"))) and true or nil
+    for _, line in ipairs(story.after or {}) do
+        local s1 = Sentences(line)[1]
+        local act = s1 and QD.FromOutcome(s1)
+        if act then return {act = act, giver = QD.Giver(story), solo = solo, from = A.JournalPlain(s1)} end
+    end
+    for _, line in ipairs(story.why or {}) do
+        for _, s in ipairs(Sentences(line)) do
+            local act, who = QD.FromSetup(s)
+            if act then return {act = act, giver = QD.Giver(story) or who, solo = solo} end
+        end
+    end
+    return nil
+end
+
+-- A stage with its point of view (DESIGN §3.0). `pov` sits on the stage in its pack, or
+-- in A.SelfWords.pov by exact quest ID (with `title`, for stages of a pack this lane may
+-- not edit, or quests no pack has yet). Format:
+--   pov = {act = "short verb phrase for a grouped line", solo = true|nil, giver = "Name"|nil,
+--          "Full line one, with {We}/{we}/{us}/{our}/{Our} and {I}/{me}/{my}/{My}.", "Line two."}
+-- {We}... is the party (I, or we with company); {I}... the character alone. `solo` marks
+-- work only the character did (a class trial) even when someone was along.
+function QD.Story(quest)
+    local L = A.Lore
+    local story = L and L.QuestStory and L.QuestStory(quest.title, quest.qid)
+    local W = A.SelfWords or {}
+    local qid = tonumber(quest.qid)
+    local precise = qid and L and L.questStoryIDs and L.questStoryIDs[qid]
+    local over = qid and W.pov and W.pov[qid]
+    if over and over.title == quest.title and not (story and story.pov) and (not precise or story == precise) then
+        local copy = {}
+        for k, v in pairs(story or {}) do copy[k] = v end
+        copy.pov = over
+        copy.importance = copy.importance or over.importance or 3
+        copy.thread = copy.thread or over.thread
+        copy.title = copy.title or over.title
+        return copy
+    end
+    if story and story.pov and not (precise and story == precise) then
+        -- (a title-only record never takes an exact stage's point of view)
+        local copy = {}
+        for k, v in pairs(story) do if k ~= "pov" then copy[k] = v end end
+        return copy
+    end
+    return story
+end
+function QD.Act(quest, story)
+    local pov = story and story.pov
+    if pov and pov.act then return {act = pov.act, giver = pov.giver, solo = pov.solo, pov = true} end
+    return QD.Deed(quest, story)
+end
+function QD.Fill(line, tokens)
+    return (tostring(line or ""):gsub("{(%a+)}", function(key) return tokens[key] or ("{" .. key .. "}") end))
+end
+function QD.Key(q) return q.qid or q.title end
+-- The stage of the hero's journey by level (DESIGN §3.0 rule 6).
+function QD.Band(level)
+    level = tonumber(level) or 1
+    if level < 20 then return "novice" elseif level < 45 then return "seasoned" end
+    return "known"
+end
+-- What a quest is worth to the telling (DESIGN §3.0 rule 3).
+function QD.Worth(story, ctx)
+    if not story then return 1 end
+    local w = story.importance or 3
+    if type(story.highlight) == "table" and #story.highlight > 0 then w = w + 1 end
+    if story.pov then w = w + 1 end
+    if ctx.finale then w = w + 2 end
+    if ctx.dungeon then w = w + 3 end
+    if ctx.struggle then w = w + 2 end
+    if ctx.newZone then w = w + 1 end
+    if ctx.company then w = w + 1 end
+    if ctx.foe then w = w + 3 end
+    if ctx.told then w = w - 4 end
+    return w
+end
+-- The chapter's quests in worth order; the top `limit` (at `floor` or more after the
+-- first) are told as moments. Ties: the higher authored importance, then the later stage.
+function QD.Choose(entries, limit, floor)
+    local order = {}
+    for i, e in ipairs(entries) do e.order = i; order[#order + 1] = e end
+    table.sort(order, function(a, b)
+        if a.worth ~= b.worth then return a.worth > b.worth end
+        local ia, ib = a.story and a.story.importance or 0, b.story and b.story.importance or 0
+        if ia ~= ib then return ia > ib end
+        return a.order > b.order
+    end)
+    local n = 0
+    for _, e in ipairs(order) do
+        if n < limit and ((n == 0 and e.quest) or (e.story and e.worth >= (floor or 5))) then e.mention = true; n = n + 1 end
+    end
+    return order
+end
+local function Low(S) return S == "I" and "I" or S:lower() end
+-- A moment as one line: the stage's own point of view (a variant by a counter), or a
+-- player-led line made from its act and the person who asked, or plainly its title.
+-- Semicolons become sentences ("...ranks; he saw only enemies" read as a run-on).
+function QD.NoSemicolon(line)
+    return (tostring(line or ""):gsub("; (%l)", function(c) return ". " .. c:upper() end))
+end
+function QD.Moment(e, tokens, variant, plainOnly, brief)
+    local pov = e.story and e.story.pov
+    if pov and #pov > 0 then
+        return QD.Fill(pov[((variant or 1) - 1) % #pov + 1], tokens), true
+    end
+    local act = e.act
+    local giver = act and act.giver or (e.story and QD.Giver(e.story))
+    if giver and act and act.act and act.act:find((giver:match("(%S+)$")), 1, true) then giver = nil end
+    local S = act and act.solo and "I" or tokens.We
+    if act and act.act then
+        if giver and (variant or 1) % 2 == 0 then return "For " .. giver .. ", " .. Low(S) .. " " .. act.act .. "." end
+        return S .. " " .. act.act .. (giver and (" for " .. giver) or "") .. "."
+    end
+    -- (a stage nobody has written from the character's side yet keeps one of its own outcome
+    -- lines in the own book, never its setup: the work in a few words until a `pov` exists)
+    local after = e.story and e.story.after
+    -- (Highlights takes the stage's short scene when it has one)
+    -- (only an exact stage's own short scene: a title-only record never takes one)
+    local qid = tonumber(e.quest and e.quest.qid)
+    local precise = qid and A.Lore and A.Lore.questStoryIDs and A.Lore.questStoryIDs[qid]
+    if brief and precise and precise.title == e.quest.title and type(e.story.highlight) == "table" and #e.story.highlight > 0 then after = e.story.highlight end
+    if not plainOnly and after and #after > 0 then
+        return QD.NoSemicolon(after[((variant or 1) - 1) % #after + 1]), false, "after"
+    end
+    local title = "{q:" .. tostring(e.quest.title):gsub("[{}]", "") .. "}"
+    if giver then return "For " .. giver .. ", " .. Low(S) .. " saw " .. title .. " through." end
+    return S .. " saw " .. title .. " through."
+end
+-- One outcome sentence of a fallback moment (the authored point of view needs none):
+-- a sentence the act does not already say, never one with a semicolon.
+function QD.Outcome(e, draw)
+    local story = e.story
+    if not story or story.pov or not story.after or #story.after == 0 then return nil end
+    local line = story.after[math.floor((draw or 0) * #story.after) + 1]
+    for _, s in ipairs(Sentences(line)) do
+        if not (e.act and e.act.from and A.JournalPlain(s) == e.act.from) and not s:find(";", 1, true) then return s end
+    end
+    return nil
+end
+-- Folded work: short acts in grouped lines, three to a line at most, one person who asked
+-- to a line ("For Sarvis, we cut down X, then thinned Y."). Same verbs share it.
+local function JoinActs(acts)
+    local merged = {}
+    for _, a in ipairs(acts) do
+        local last = merged[#merged]
+        if last and a:sub(1, #last.verb + 1) == last.verb .. " " and not last.text:find(" and ", 1, true) then
+            last.text = last.text .. " and " .. a:sub(#last.verb + 2)
+        else
+            local v = a:match("^(%a+ down)") or a:match("^(%a+ back)") or a:match("^(%a+ off)") or a:match("^(%a+)") or a
+            merged[#merged + 1] = {verb = v, text = a}
+        end
+    end
+    local texts = {}
+    for _, m in ipairs(merged) do texts[#texts + 1] = m.text end
+    -- (a place the line already named is "there" the second time: "freed the risen in Night
+    -- Web's Hollow and thinned the spiders there")
+    for i = 2, #texts do
+        for j = 1, i - 1 do
+            local plain = A.JournalPlain(texts[j])
+            for run in plain:gmatch("%u[%w']*%s%u[%w' ]*%u[%w']*") do
+                for _, prep in ipairs({" in ", " of ", " at "}) do
+                    local at = texts[i]:find(prep .. run, 1, true)
+                    if at then texts[i] = texts[i]:sub(1, at - 1) .. " there" .. texts[i]:sub(at + #prep + #run) end
+                end
+            end
+        end
+    end
+    if #texts == 2 then return texts[1] .. ", then " .. texts[2] end
+    if #texts <= 1 then return texts[1] or "" end
+    return table.concat(texts, ", ", 1, #texts - 1) .. " and " .. texts[#texts]
+end
+QD.JoinActs = JoinActs
+-- The connective of a grouped line grows with the journey (DESIGN §3.0 rule 6): a novice's
+-- "After that", a traveller's "Along the way", a known figure's "In between".
+local FOLD_LEADS = {novice = "After that", seasoned = "Along the way", known = "In between"}
+function QD.Folds(run, tokens, shape, named, band)
+    local lines, group = {}, {}
+    local function Short(giver) return giver and (giver:match("(%S+)$")) or nil end
+    local function Flush()
+        if #group == 0 then return end
+        local acts, giver, solo = {}, group[1].act.giver, group[1].act.solo
+        for _, e in ipairs(group) do if Short(e.act.giver) ~= Short(giver) then giver = nil end end
+        for _, e in ipairs(group) do acts[#acts + 1] = e.act.act end
+        if giver then for _, a in ipairs(acts) do if a:find(Short(giver), 1, true) then giver = nil; break end end end
+        local S = solo and "I" or tokens.We
+        local who = giver and (named[Short(giver)] and Short(giver) or giver)
+        if giver then named[Short(giver)] = true end
+        shape = shape + 1
+        local joined, text = JoinActs(acts)
+        if who and shape % 2 == 1 then text = "For " .. who .. ", " .. Low(S) .. " " .. joined .. "."
+        elseif who then text = S .. " " .. joined .. " for " .. who .. "."
+        elseif shape % 3 == 0 then text = (FOLD_LEADS[band or "novice"] or "After that") .. ", " .. Low(S) .. " " .. joined .. "."
+        elseif shape % 3 == 1 then text = S .. " " .. joined .. "."
+        else text = S .. " also " .. joined .. "." end
+        lines[#lines + 1] = {text = text, quest = group[1].quest, last = group[#group].quest}
+        group = {}
+    end
+    -- (the party's work and the character's own work each in their lines, in the order the
+    -- first of each was done; three acts to a line)
+    local party, own = {}, {}
+    for _, e in ipairs(run) do if e.act.solo then own[#own + 1] = e else party[#party + 1] = e end end
+    local firstOwn = own[1] and party[1] and own[1].quest.t and party[1].quest.t and own[1].quest.t < party[1].quest.t
+    for _, list in ipairs(firstOwn and {own, party} or {party, own}) do
+        for _, e in ipairs(list) do
+            if #group >= 3 then Flush() end
+            group[#group + 1] = e
+        end
+        Flush()
+    end
+    return lines, shape
+end
+-- The highest level a chain's authored stages reach: its last recorded stage is a finale only
+-- near that, never because the record simply stops there (no hindsight).
+local threadTop
+function QD.ThreadTop(thread)
+    if not threadTop then
+        threadTop = {}
+        for _, s in pairs(A.Lore and A.Lore.questStoryIDs or {}) do
+            if s.thread then threadTop[s.thread] = math.max(threadTop[s.thread] or 0, s.level or 0) end
+        end
+    end
+    return threadTop[thread] or 0
+end
+-- The chapter's plan (both books use it): every quest of the day with its story, act and
+-- worth, and which few are told. `book` = {threadCount, threadLast, told(key), zonesSeen,
+-- brief, limit, companion}. Deaths and raises between two hand-ins make the later one a
+-- struggle; a quest named for what killed you is a named foe.
+function QD.Plan(stretches, book)
+    local entries, byQuest, segment = {}, {}, 0
+    local L = A.Lore
+    for _, s in ipairs(stretches) do
+        local prevT = s.t or 0
+        segment = segment + 1
+        for _, q in ipairs(s.quests or {}) do
+            local story = QD.Story(q)
+            local struggle, foe = false, false
+            for _, x in ipairs(s.events or {}) do
+                if (x.k == "death" or x.k == "rez" or x.k == "wipe") and (x.t or 0) > prevT and (x.t or 0) <= (q.t or 0) then struggle = true end
+                if (x.k == "death" or x.k == "wipe") and x.d and (x.t or 0) < (q.t or 0)
+                    and tostring(q.title):gsub("[{}]", ""):find(tostring(x.d):gsub("[{}]", ""), 1, true) then foe = x.d end
+            end
+            if (q.t or 0) - prevT > 1200 then segment = segment + 1 end
+            prevT = q.t or prevT
+            local zone = s.zone
+            local thread = story and story.thread
+            local ctx = {
+                finale = thread and (book.threadCount[thread] or 0) >= 2 and book.threadLast[thread] == q
+                    and (story.level or 0) >= QD.ThreadTop(thread) - 1,
+                dungeon = (L and L.Dungeon and zone and L.Dungeon(zone)) and true or false,
+                struggle = struggle, foe = foe and true or false,
+                newZone = zone and not book.zonesSeen[zone],
+                company = #(s.with or {}) > 0 or book.companion,
+                told = book.told(QD.Key(q)),
+            }
+            local act = story and QD.Act(q, story)
+            local e = {quest = q, story = story, act = act, worth = QD.Worth(story, ctx) - (act and 0 or 2), stretch = s, foe = foe, segment = segment}
+            entries[#entries + 1] = e
+            byQuest[q] = e
+        end
+    end
+    QD.Choose(entries, book.limit or 3, book.floor)
+    -- (in Everything, a stretch of work never vanishes: its best quest is told when the
+    -- chapter's top few all came from other stretches)
+    if not book.brief then
+        local best, has = {}, {}
+        for _, e in ipairs(entries) do
+            if e.mention then has[e.segment] = true end
+            if not best[e.segment] or e.worth > best[e.segment].worth then best[e.segment] = e end
+        end
+        for s, e in pairs(best) do if not has[s] then e.mention = true end end
+    end
+    return {entries = entries, byQuest = byQuest}
+end
+-- Which of a stage's point-of-view lines a book takes: by the quest and the retelling, the
+-- companion book the other one, so the two books never say the same sentence (a retelling
+-- changes the other words, not which line a book owns).
+function QD.Variant(key, retell, other)
+    local h = 5381
+    local text = tostring(key)
+    for i = 1, #text do h = (h * 33 + text:byte(i)) % 2147483647 end
+    local v = (h + (tonumber(retell) or 0)) % 2 + 1
+    if other then v = 3 - v end
+    return v
+end
+-- Whether a told text carries a stage in any of the stage's own words: one of its point-of-
+-- view lines (by its longest stretch between tokens), its act, a sentence of its outcome,
+-- setup or Highlights scene, or its title. For tests and tools that check a stage was told
+-- from its sources without asking for its whole setup and outcome (DESIGN §3.0).
+local function Pieces(line)
+    local best = ""
+    for piece in (tostring(line) .. "{"):gmatch("([^{}]*)[{]") do
+        piece = piece:gsub("^%a*}", "")
+        if #piece > #best then best = piece end
+    end
+    for piece in tostring(line):gmatch("}([^{]+)") do if #piece > #best then best = piece end end
+    return (best:gsub("^%s+", ""):gsub("%s+$", ""):gsub("^[,%.]%s*", ""))
+end
+function QD.Shows(text, qid, title)
+    local kind = QD.ShowsAt(text, qid, title)
+    return kind
+end
+-- The same, with where the stage is first told (a position in the plain text).
+function QD.ShowsAt(text, qid, title)
+    local plain = A.JournalPlain(text or "")
+    local bestKind, bestAt
+    local function Mark(kind, piece)
+        local at = piece and #piece > 0 and plain:find(piece, 1, true)
+        if at and (not bestAt or at < bestAt) then bestKind, bestAt = kind, at end
+    end
+    local L = A.Lore
+    local quest = {qid = qid, title = title or (qid and L and L.questStoryIDs and L.questStoryIDs[qid] and L.questStoryIDs[qid].title)}
+    local story = QD.Story(quest)
+    if quest.title then Mark("title", A.JournalPlain(quest.title)) end
+    if not story then return bestKind, bestAt end
+    for _, line in ipairs(story.pov or {}) do
+        local piece = Pieces(line)
+        if #piece >= 12 then Mark("pov", piece) end
+    end
+    if story.pov and story.pov.act then Mark("act", story.pov.act) end
+    local act = QD.Act(quest, story)
+    if act and act.act then Mark("act", act.act) end
+    for _, field in ipairs({"after", "highlight", "why"}) do
+        for _, line in ipairs(story[field] or {}) do
+            for _, s in ipairs(Sentences(QD.NoSemicolon(A.JournalPlain(line)))) do
+                if #s >= 12 then Mark(field, s) end
+            end
+        end
+    end
+    return bestKind, bestAt
+end
