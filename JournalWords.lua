@@ -1008,6 +1008,12 @@ PB.myLevel = {"{I} reached level {mine}.", "{I} made level {mine} along the way.
 PB.levelAfterDeath = {"{name} reached level {theirs} {after}.", "{name} made level {theirs} {after}."}
 PB.levelAfterDeathMine = {"{I} reached level {mine} {after}.", "{I} made level {mine} {after}."}
 PB.companionStopped = {"It was {clock} when {name} stopped.", "{name} stopped {clock}."}
+-- (the planned opening: the hour and the place from the first outing, not the hours and the
+-- count; {who} "you and Dahlia" / "Dahlia and me", or "you" / "us" once she is named; {backIn}
+-- "back in " when the book knows the place; {run} " for a third night running" only on a run)
+PB.planOpen = {"{Weekday} {part} found {who} {backIn}{zone}{run}.", "{Weekday} {part} brought {who} {backTo}{zone}{run}."}
+-- (a moment that came before every hand-in of the day)
+PB.beforeWork = {"before {we} had turned in a single task"}
 PB.levelThen = {
     "{They} had been level {thenLevel} in {firstZone}, the day {we} met.",
     "{They} had been level {thenLevel} when {we} first met.",

@@ -4,6 +4,24 @@ The players and NPCs you want to remember, and a journal of what you lived
 through together. It came out of Forever Names 1.10: the People list, the
 journal, the group popup and the campfire now live here, in their own window.
 
+## 1.19.0: a new storyteller to try (Settings > Testing > Storyteller: Planned)
+
+A companion's chapters, told as a story rather than a list. Off by default; switch it on
+in Settings > Testing and compare.
+
+- **The evening in order, in movements.** Each paragraph is a stretch of the evening,
+  opened by its time or place ("A little after eleven", "Past midnight", "In the
+  Undercity"), and the chapter opens on the day itself ("Sunday evening found you and
+  Dahlia back in Tirisfal Glades for a third night running").
+- **Threads and turns.** A quest's payoff gets its setup (Gunther's spellbook before his
+  Nether Gem); a death opens its movement and what followed stays with it ("Dahlia made
+  level 13 a minute later"); the chapter can close on your companion stopping.
+- **Feelings, earned.** Now and then, only where the book set it up, the character
+  reacts: a death after an earlier one, a figure met after being named that evening. A
+  young Forsaken before Sylvanas: "Here was your queen, and you hardly knew where to look."
+  Two at most in a chapter, never the same twice.
+- Your own book and Highlights keep the current storyteller for now.
+
 ## 1.18.1: in the order it happened
 
 - **A companion's chapter keeps the evening's order.** A moment from your own

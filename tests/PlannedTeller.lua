@@ -20,7 +20,7 @@ local A = {defaults = {colors = {}}}
 for _, file in ipairs({"LoreData.lua", "Lore.lua", "LoreHordeStories.lua", "LoreAllianceStories.lua", "LoreWorldStories.lua",
     "LoreClassStories.lua", "LoreForeverStories.lua", "LoreNotes.lua", "LorePlaces.lua", "LorePeopleHistory.lua", "LoreWorldConnections.lua",
     "People.lua", "Characters.lua", "Journal.lua", "JournalSelf.lua", "JournalBook.lua", "JournalTellers.lua",
-    "JournalTale.lua", "JournalWords.lua", "JournalSelfWords.lua", "JournalSelfTale.lua"}) do
+    "JournalFeel.lua", "JournalTale.lua", "JournalWords.lua", "JournalSelfWords.lua", "JournalSelfTale.lua"}) do
     assert(loadfile(root .. file))("CompanionJournal", A)
 end
 A.db = {people = {}}
@@ -39,6 +39,8 @@ local t0, stop = At(2, 21), At(3, 1)
 me.journal[#me.journal + 1] = {k = "play", t = t0, e = stop + 1800, z = "Tirisfal Glades", pl = 12}
 me.journal[#me.journal + 1] = {k = "with", d = "dahlia-noir", n = "Dahlia-Noir", t = t0, e = stop}
 me.journal[#me.journal + 1] = {k = "first", d = "rarebeast", z = "Sri'skulk", sz = "Tirisfal Glades", t = At(2, 21, 20), pl = 12}
+-- (step 5: Sylvanas met past midnight, after "Bethor promised the Dark Lady would hear of it")
+me.journal[#me.journal + 1] = {k = "first", d = "notable", n = "Lady Sylvanas Windrunner", interaction = true, z = "Undercity", t = At(3, 0, 29), pl = 13}
 local J = dahlia.journal
 J[#J + 1] = {k = "group", t = t0, e = stop, z = "Tirisfal Glades", pl = 12, ol = 12}
 J[#J + 1] = {k = "quest", d = "Rear Guard Patrol", qid = 356, t = At(2, 21, 45), z = "Tirisfal Glades", pl = 12, ol = 12}
@@ -168,7 +170,9 @@ for _, voice in ipairs({"you", "we"}) do
             end
         end
         -- Never drops a quest or the hour line: every line of the current telling's facts is kept.
-        check(#plan.lines == plan.count, "no line dropped by the planner" .. tag)
+        local feltCount = 0
+        for _, line in ipairs(plan.lines) do if line.beat == "felt" then feltCount = feltCount + 1 end end
+        check(#plan.lines - feltCount == plan.count, "no line dropped by the planner" .. tag)
         if voice == "we" then check(not plain:find("%f[%a][Yy]ou%f[%A]"), "the diary never says you" .. tag .. ": " .. plain) end
     end
 end
@@ -176,6 +180,82 @@ check(differs > 0, "the planned telling differs from the current one")
 check(anchored > 0, "a later movement opens on a time or a place")
 check(hourLast > 0, "a late night is told, last, in some telling")
 check(threads > 0, "a thread's payoff is set up in some telling")
+
+-- Step 5. Felt lines (JournalFeel.lua): earned by a setup the chapter told, rare, placed right
+-- after their moment; a Forsaken before Sylvanas gets the identity line, another race the
+-- stage's own; a level-50 hero gets nothing meant for a fledgling.
+local F = A.JournalFeel
+local fledglingLines = {}
+local function Collect(t)
+    for k, v in pairs(t) do
+        if k == "fledgling" then for _, voiceList in pairs(v) do for _, l in ipairs(voiceList) do fledglingLines[l] = true end end
+        elseif type(v) == "table" then Collect(v) end
+    end
+end
+Collect(F)
+local function FeltRun(race, level)
+    player.race = race
+    local saved = {}
+    if level then for i, e in ipairs(J) do saved[i] = {e.pl, e.ol}; e.pl, e.ol = level, level end end
+    if level then for _, e in ipairs(me.journal) do e.pl = level end end
+    local results = {}
+    for _, voice in ipairs({"you", "we"}) do
+        for retell = 0, 7 do
+            local keep = {}
+            local text = Tell(voice, retell, PLANNED, keep)
+            results[#results + 1] = {voice = voice, retell = retell, text = text, plan = keep[#keep]}
+        end
+    end
+    if level then for i, e in ipairs(J) do e.pl, e.ol = saved[i][1], saved[i][2] end; for _, e in ipairs(me.journal) do e.pl = 12 end end
+    player.race = "Scourge"
+    return results
+end
+local function Felts(plan)
+    local list = {}
+    for i, line in ipairs(plan.lines) do if line.beat == "felt" then list[#list + 1] = {i = i, line = line} end end
+    return list
+end
+local identitySeen, genericSeen, feltSeen = 0, 0, 0
+for _, case in ipairs({{race = "Scourge"}, {race = "Orc"}, {race = "Scourge", level = 50}}) do
+    for _, r in ipairs(FeltRun(case.race, case.level)) do
+        local tag = " (" .. case.race .. (case.level and (" " .. case.level) or "") .. ", " .. r.voice .. " " .. r.retell .. ")"
+        local plan, felts = r.plan, Felts(r.plan)
+        local plain = A.JournalPlain(r.text)
+        check(not r.text:find("{%a+}"), "no raw token with felt lines" .. tag .. ": " .. r.text)
+        check(#felts <= 2, "two felt lines a chapter at most" .. tag)
+        local paras = {}
+        for k, fl in ipairs(felts) do
+            feltSeen = feltSeen + 1
+            check(fl.i < #plan.lines, "a felt line is never the last" .. tag .. ": " .. plain)
+            check(not paras[fl.line.para], "one felt line a movement" .. tag .. ": " .. plain)
+            paras[fl.line.para] = true
+            check(fl.i > 1 and plan.lines[fl.i - 1].beat ~= "felt", "never two felt lines in a row" .. tag .. ": " .. plain)
+            check(plan.lines[fl.i - 1].setup ~= nil, "a felt line follows the line it answers" .. tag .. ": " .. fl.line.text)
+            check(plain:find(A.JournalPlain(fl.line.text), 1, true), "the felt line is in the text" .. tag)
+            if case.level == 50 then
+                for l in pairs(fledglingLines) do
+                    local head = l:gsub("{%a+}", ""):sub(1, 18)
+                    check(not A.JournalPlain(fl.line.text):find(head, 1, true), "no fledgling line for a level-50 hero" .. tag .. ": " .. fl.line.text)
+                end
+            end
+            if fl.line.felt == "figureNamed" then
+                if case.race == "Scourge" and not case.level then
+                    check(fl.line.identity, "a Forsaken before Sylvanas: the identity line" .. tag .. ": " .. fl.line.text)
+                    identitySeen = identitySeen + 1
+                elseif case.race == "Orc" then
+                    check(not fl.line.identity, "an orc before Sylvanas: the stage's own line" .. tag .. ": " .. fl.line.text)
+                    genericSeen = genericSeen + 1
+                end
+            end
+        end
+        -- (never the same felt line twice in a book: one chapter here, so never twice in it)
+        local seen = {}
+        for _, fl in ipairs(felts) do check(not seen[fl.line.text], "a felt line once" .. tag); seen[fl.line.text] = true end
+        check(#plan.lines - #felts == plan.count, "the planner drops no line" .. tag)
+    end
+end
+check(identitySeen > 0, "the Forsaken identity line before Sylvanas is told in some telling")
+check(genericSeen > 0, "a non-Forsaken gets the stage's own figure line in some telling")
 A.db.people["dahlia-noir"] = nil
 
 io.write("PASS: " .. assertions .. " planned-telling assertions\n")

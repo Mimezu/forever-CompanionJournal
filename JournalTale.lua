@@ -832,7 +832,11 @@ function T.PlanChapter(c)
         return text
     end
     local function Say(key, tokens)
+        -- (the chapter's places are not "there" in a line the planner writes: it may stand first)
+        local saved = teller.saidPlaces
+        teller.saidPlaces = {}
         local line = teller:Say(key, PB[key], rng, tokens)
+        teller.saidPlaces = saved
         teller.pendingTokens = nil
         return line
     end
@@ -957,11 +961,11 @@ function T.PlanChapter(c)
                     end
                     if earlierLine then
                         done[key] = true
-                        S.setup[payoff] = {kind = "thread", key = key}
+                        S.setup[payoff] = {kind = "thread", key = key, setupName = key}
                         S.setupFor[earlierLine] = key
                     elseif earliest and folded[earliest] then
                         done[key] = true
-                        S.setup[payoff] = {kind = "thread", key = key}
+                        S.setup[payoff] = {kind = "thread", key = key, setupName = key}
                         S.setupFor[folded[earliest]] = key
                     elseif earliest then
                         local s = Story(earliest)
@@ -985,9 +989,102 @@ function T.PlanChapter(c)
                             Put(text, "questKey", earliest.t, earliest.z or (earliest.scene and earliest.scene.zone))
                             S.Q[text] = earliest
                             S.setupFor[text] = key
-                            S.setup[payoff] = {kind = "thread", key = key}
+                            S.setup[payoff] = {kind = "thread", key = key, setupName = key}
                         end
                     end
+                end
+            end
+        end
+    end
+
+    -- 5B. The opening: the hour and the place of the first outing ("Sunday evening found you and
+    -- Dahlia back in Tirisfal Glades for a third night running"), not the hours and the count.
+    -- A line that also folds in a rest or a named quest stays as it was.
+    do
+        local at
+        for i = 1, math.min(#out, 3) do
+            local l = out[i]
+            local plain = PlanPlain(l):lower()
+            if not at and beats[i] == "day" and not l:find("{q:", 1, true) and (plain:find(" hours?") or plain:find("quests?") or plain:find("minutes"))
+                and not plain:find(" inn") and not plain:find("fire") and not plain:find("camp") and not plain:find("rest") then at = i end
+        end
+        local start = c.firstOuting and c.firstOuting.t
+        local h = start and date and tonumber(date("%H", start))
+        if at and h and c.mainZone then
+            local part = (h >= 5 and h < 12) and "morning" or (h >= 12 and h < 17) and "afternoon" or (h >= 17 and h < 22) and "evening" or "night"
+            local b = teller.base
+            local named = false
+            for i = 1, at - 1 do if out[i]:find(b.name, 1, true) then named = true end end
+            local we = c.voice == "we"
+            local who = named and (we and "us" or "you") or (we and (b.name .. " and me") or ("you and " .. b.name))
+            local back = c.history and c.history.zones and c.history.zones[c.mainZone]
+            local run = ""
+            if (c.zoneRun or 1) >= 2 and (c.zoneRun or 1) <= 10 then
+                run = " for a " .. Ordinal(c.zoneRun) .. ((part == "evening" or part == "night") and " night" or " day") .. " running"
+            end
+            local line = Say("planOpen", {Weekday = c.weekday or "That", weekday = c.weekday or "that", part = part, who = who,
+                backIn = back and "back in " or "in ", backTo = back and "back to " or "to ", zone = c.place(c.mainZone), run = run})
+            if line then out[at] = Rekey(S, times, zones, out[at], line) end
+        end
+    end
+
+    -- 5B. A moment that came before every hand-in of the day says so, once ("came across
+    -- Sri'skulk before you had turned in a single task, a beast most people only hear of").
+    do
+        local firstWorkT
+        for _, list in ipairs({f.quests, f.dungeons, f.deaths}) do
+            for _, x in ipairs(list) do if x.t and (not firstWorkT or x.t < firstWorkT) then firstWorkT = x.t end end
+        end
+        if firstWorkT and #f.quests > 0 then
+            for i, l in ipairs(out) do
+                local t = times[l]
+                -- (only where it reads: after a named thing before the first comma, "came across
+                -- {p:Sri'skulk}, a beast...", or at the end of a line without one)
+                local comma0 = l:find(", ", 1, true)
+                local fits = (not comma0) or l:sub(comma0 - 1, comma0 - 1) == "}"
+                if S.M[l] and beats[i] == "shared" and t and t < firstWorkT and not l:find("%. ") and fits then
+                    local clause = Say("beforeWork", {})
+                    if clause then
+                        clause = clause:gsub("^%u", string.lower):gsub("%.$", "")
+                        local comma = l:find(", ", 1, true)
+                        local new
+                        if comma then new = l:sub(1, comma - 1) .. " " .. clause .. l:sub(comma)
+                        else new = l:sub(1, -2) .. " " .. clause .. l:sub(-1) end
+                        out[i] = Rekey(S, times, zones, l, new)
+                        S.M[new] = S.M[l]
+                    end
+                    break
+                end
+            end
+        end
+    end
+
+    -- 5B. The ledger: a line of three light deeds keeps the two most worthy ("patrolled east of
+    -- the waystation to Balnir Farmstead and cut down cultists..."); the third was light work.
+    do
+        for i, l in ipairs(out) do
+            local qs = {}
+            for _, q in pairs(S.Qs[l] or {}) do if q then qs[#qs + 1] = q end end
+            if #qs >= 3 and not S.setupFor[l] then
+                local acts = {}
+                for _, q in ipairs(qs) do
+                    local s = Story(q)
+                    local act = s and s.pov and s.pov.act
+                    local at = act and l:find(act, 1, true)
+                    if at then acts[#acts + 1] = {q = q, act = act, at = at, worth = s.importance or 1} end
+                end
+                if #acts == #qs then
+                    table.sort(acts, function(a, b) return a.at < b.at end)
+                    local first, lastAct = acts[1], acts[#acts]
+                    local prefix, suffix = l:sub(1, first.at - 1), l:sub(lastAct.at + #lastAct.act)
+                    while #acts > 2 do
+                        local worst = 1
+                        for k = 2, #acts do if acts[k].worth <= acts[worst].worth then worst = k end end
+                        table.remove(acts, worst)
+                    end
+                    local new = prefix .. acts[1].act .. " and " .. acts[2].act .. suffix
+                    out[i] = Rekey(S, times, zones, l, new)
+                    S.Qs[new] = {acts[1].q, acts[2].q}
                 end
             end
         end
@@ -1031,11 +1128,44 @@ function T.PlanChapter(c)
         for figure, list in pairs(npcs) do
             for _, l in ipairs(list) do lore[l] = figure; if A.JournalIslands then lore[A.JournalIslands(l)] = figure end end
         end
+        -- (people the day's work names: who spoke of the figure, "Bethor promised the Dark Lady")
+        local people = {}
+        for _, q in ipairs(f.quests) do
+            local s = Story(q)
+            local g = s and s.pov and s.pov.giver
+            for w in (g or ""):gmatch("[%a']+") do if #w >= 5 and not PLAN_TITLES[w] then people[#people + 1] = w; break end end
+        end
+        for _, l in ipairs(out) do
+            for n in l:gmatch("{n:([^}]+)}") do
+                for w in n:gmatch("[%a']+") do if #w >= 5 and not PLAN_TITLES[w] then people[#people + 1] = w; break end end
+            end
+        end
+        -- (true when named before; then the name it went by and who said it, when the line shows it)
         local function NamedBefore(figure, upto)
             local before = PlanPlain(table.concat(out, " ", 1, upto))
-            for _, alias in ipairs(FIGURE_ALIASES[figure] or {}) do if before:find(alias, 1, true) then return true end end
+            local function Speaker(at)
+                local sentence = before:sub(1, at - 1):match("([^%.!%?]*)$") or ""
+                local best, bestAt
+                for _, w in ipairs(people) do
+                    local from = 1
+                    while true do
+                        local s0 = sentence:find(w, from, true)
+                        if not s0 then break end
+                        if not figure:find(w, 1, true) and (not bestAt or s0 > bestAt) then best, bestAt = w, s0 end
+                        from = s0 + 1
+                    end
+                end
+                return best
+            end
+            for _, alias in ipairs(FIGURE_ALIASES[figure] or {}) do
+                local at = before:find(alias, 1, true)
+                if at then return true, alias, Speaker(at) end
+            end
             if not FIGURE_ALIASES[figure] then
-                for w in figure:gmatch("[%a']+") do if #w >= 5 and not PLAN_TITLES[w] and before:find(w, 1, true) then return true end end
+                for w in figure:gmatch("[%a']+") do
+                    local at = #w >= 5 and not PLAN_TITLES[w] and before:find(w, 1, true)
+                    if at then return true, nil, Speaker(at) end
+                end
             end
             return false
         end
@@ -1070,12 +1200,15 @@ function T.PlanChapter(c)
         -- (the hook: a figure met who was named earlier in the chapter)
         for k, l in ipairs(out) do
             for figure in l:gmatch("{n:([^}]+)}") do
-                if npcs[figure] and NamedBefore(figure, k - 1) then S.setup[l] = S.setup[l] or {kind = "figureNamed", figure = figure} end
+                local named, alias, speaker = false, nil, nil
+                if npcs[figure] then named, alias, speaker = NamedBefore(figure, k - 1) end
+                if named then S.setup[l] = S.setup[l] or {kind = "figureNamed", figure = figure, alias = alias, setupName = speaker} end
             end
         end
     end
 
-    -- Hooks: a death after a death (this chapter or the one before).
+    -- Hooks: a death after an earlier death anywhere in the book (the setup that earns it,
+    -- DESIGN §3.0 rule 5: the second death stings because the first was told).
     do
         local h = c.history or {}
         local seen, any = {}, false
@@ -1091,8 +1224,109 @@ function T.PlanChapter(c)
                 mine[#mine + 1] = foe or "?"
             end
         end
-        h.planDeaths = mine
+        local all = h.planDeaths or {}
+        for _, foe in ipairs(mine) do all[#all + 1] = foe end
+        h.planDeaths = all
     end
+
+    -- What the felt lines need (placed when the movements are known, in T.PlanText).
+    S.feel = {voice = c.voice, race = c.player and c.player.race, level = f.plEnd or f.plStart, history = c.history, index = c.index,
+        foe = c.foe, rng = Rng("feel" .. tostring(c.day and c.day.key) .. tostring(c.person and c.person.name) .. tostring(c.person and c.person.retell or ""))}
+end
+
+-- Felt lines (JournalFeel.lua; DESIGN §3.0 rule 5): one after a line whose setup the chapter told
+-- (a death after a death, a figure named before, a thread's payoff), two a chapter at most, one a
+-- movement, never the chapter's last line; the same kind not within three chapters, the same
+-- line never twice in a book. Figures first, then threads, then deaths; an identity pool (a
+-- Forsaken before Sylvanas) before the stage's own. No pool for the stage or voice: no line.
+local FIGURE_KEYS = {["Lady Sylvanas Windrunner"] = "Sylvanas"}
+local FEEL_RANK = {figureNamed = 1, thread = 2, deathAgain = 3}
+-- (first words of a felt line that need no name in the chapter behind them)
+local FEEL_COMMON = {here = true, somehow = true, dying = true, death = true, earlier = true, ["until"] = true, i = true}
+local function FeelStage(level)
+    level = tonumber(level)
+    if not level then return nil end
+    return level < 20 and "fledgling" or level < 45 and "seasoned" or "known"
+end
+function T.PlanFeel(paras, info, S, total)
+    local F, fc = A.JournalFeel, S and S.feel
+    if not F or not fc or #paras == 0 then return total end
+    local voice = fc.voice == "we" and "i" or "you"
+    local hist = fc.history or {}
+    hist.feelKind, hist.feelSaid = hist.feelKind or {}, hist.feelSaid or {}
+    local said = {}
+    for _, p in ipairs(paras) do said[#said + 1] = table.concat(p.lines, " ") end
+    said = PlanPlain(table.concat(said, " "))
+    local lastPara, lastM = #paras, #paras[#paras].lines
+    local cands = {}
+    for j, p in ipairs(paras) do
+        for m, text in ipairs(p.lines) do
+            local hook = S.setup[text]
+            local kindPool = hook and F[hook.kind]
+            if type(kindPool) == "table" and not (j == lastPara and m == lastM) then
+                local e, q = S.D[text], S.Q[text]
+                local stage = FeelStage((e and e.pl) or (q and q.pl) or fc.level)
+                local race = fc.race or ""
+                local idPool
+                local figKey = hook.kind == "figureNamed" and FIGURE_KEYS[hook.figure or ""]
+                if figKey then idPool = kindPool[figKey] and kindPool[figKey][race]
+                elseif hook.kind ~= "figureNamed" then idPool = kindPool[race] end
+                idPool = stage and type(idPool) == "table" and idPool[stage] and idPool[stage][voice] or nil
+                local generic = stage and type(kindPool[stage]) == "table" and kindPool[stage][voice] or nil
+                cands[#cands + 1] = {j = j, m = m, hook = hook, id = idPool, gen = generic, e = e, order = #cands}
+            end
+        end
+    end
+    table.sort(cands, function(a, b)
+        local ra, rb = FEEL_RANK[a.hook.kind] or 9, FEEL_RANK[b.hook.kind] or 9
+        if ra ~= rb then return ra < rb end
+        if (a.id ~= nil) ~= (b.id ~= nil) then return a.id ~= nil end
+        return a.order < b.order
+    end)
+    local chosen, usedPara = 0, {}
+    for _, cd in ipairs(cands) do
+        if chosen >= 2 then break end
+        local kind = cd.hook.kind
+        local lastUse = hist.feelKind[kind]
+        if not usedPara[cd.j] and not (lastUse and (fc.index or 0) - lastUse <= 3) then
+            local tokens = {}
+            if cd.e and fc.foe and (cd.e.boss or cd.e.d) then tokens.foe = fc.foe(cd.e.boss or cd.e.d, cd.e.a) end
+            if cd.hook.setupName then tokens.setupName = "{n:" .. cd.hook.setupName .. "}" end
+            if cd.hook.figure then
+                local alias = cd.hook.alias
+                tokens.figure = alias and (alias:find(" ") and ("the " .. alias) or ("{n:" .. alias .. "}")) or ("{n:" .. cd.hook.figure .. "}")
+            end
+            local function Usable(list)
+                local ok = {}
+                for _, l in ipairs(list or {}) do
+                    local fits = not hist.feelSaid[l]
+                    for tok in l:gmatch("{(%a+)}") do if not tokens[tok] then fits = false end end
+                    -- (a name the line says outright must be one the chapter said: "Bethor had promised...")
+                    for w in l:gsub("{%a+}", ""):gmatch("%u[%a']+") do
+                        if not PLAN_SMALL[w:lower()] and not FEEL_COMMON[w:lower()] and not said:find(w, 1, true) then fits = false end
+                    end
+                    if fits then ok[#ok + 1] = l end
+                end
+                return ok
+            end
+            local pool, identity = Usable(cd.id), true
+            if #pool == 0 then pool, identity = Usable(cd.gen), false end
+            if #pool > 0 then
+                local pick = pool[fc.rng(#pool)]
+                local felt = Cap((pick:gsub("{(%a+)}", function(tok) return tokens[tok] end)))
+                hist.feelSaid[pick] = true
+                hist.feelKind[kind] = fc.index or 0
+                usedPara[cd.j] = true
+                chosen = chosen + 1
+                local p = paras[cd.j]
+                total = total + 1
+                table.insert(p.lines, cd.m + 1, felt)
+                table.insert(p.idx, cd.m + 1, total)
+                info[total] = {text = felt, beat = "felt", felt = kind, identity = identity or nil, after = p.lines[cd.m]}
+            end
+        end
+    end
+    return total
 end
 
 -- Movements and their anchors, as the chapter's text. place(zone) gives the zone's token.
@@ -1165,6 +1399,8 @@ function T.PlanText(lines, beats, times, zones, place, S)
         Merge(paras[best - 1], paras[best])
         table.remove(paras, best)
     end
+    -- Felt lines, one a movement at most, after the line whose setup the chapter told.
+    if S and S.feel then T.PlanFeel(paras, info, S, #lines) end
     -- Anchors: each later movement opens on its place (a new zone the movement does not name) or
     -- its hour; the hour only on a line that tells what happened then, never a quest's setup.
     local seen = {}
@@ -1216,8 +1452,9 @@ function T.PlanText(lines, beats, times, zones, place, S)
         end
     end
     if T.keepPlan then
+        -- (in reading order; felt lines are marked felt)
         local list = {}
-        for i = 1, #lines do list[i] = info[i] end
+        for _, p in ipairs(paras) do for _, i in ipairs(p.idx) do list[#list + 1] = info[i] end end
         T.keepPlan[#T.keepPlan + 1] = {lines = list, count = #lines, companionStop = S and S.companionStop}
     end
     return table.concat(texts, "\n\n")
@@ -4666,7 +4903,9 @@ function T.Tell(person, days, voice, player, brief)
         -- made when the text is written, below).
         if S.planned then
             T.PlanChapter({out = out, beats = outBeat, times = outT, zones = S.Z, S = S, f = f, day = day, teller = teller,
-                place = Place, person = person, history = history, ownJournal = ownJournal, lastOuting = lastOuting})
+                place = Place, person = person, history = history, ownJournal = ownJournal, lastOuting = lastOuting,
+                voice = voice, player = player, index = index, foe = Foe, mainZone = mainZone, zoneRun = zoneRun,
+                weekday = day.weekday, firstOuting = firstOuting})
         end
         -- Chronology (2026-11-09): a moment from your own journal is told where it happened, and
         -- the hour you stopped closes the chapter. A rare seen at the start of the evening used to
