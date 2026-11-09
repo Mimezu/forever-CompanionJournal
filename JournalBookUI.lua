@@ -33,8 +33,6 @@ local state = {key = nil, index = nil, view = "journal", settings = "reading", n
 -- choice of each is the default. stage: the build stage that brings it.
 local BUILT = 8
 local VARIANTS = {
-    {key = "skin", label = "Book skin", stage = 2,
-        choices = {{"a", "A: first look"}, {"b", "B: spellbook pages"}}},
     {key = "loreNote", label = "Lore notes", stage = 2,
         choices = {{"letter", "Letter over the book"}, {"tucked", "Tucked at the edge"}, {"slip", "Slip (before)"}}},
     {key = "marks", label = "Bookmarks", stage = 2,
@@ -68,8 +66,6 @@ local function SetVariant(key, value)
         state.pageCache = nil
         if A.RefreshBook then A.RefreshBook() end
     end
-    -- (the skin is the art the book is built with: build it again)
-    if key == "skin" and changed and A.RebuildBook then A.RebuildBook() end
 end
 A.SetBookVariant = SetVariant
 -- Pinned companions (bookmarks), up to six.
@@ -105,11 +101,10 @@ local function ClassColor(class)
     return 1, 0.82, 0
 end
 
--- Skin B: the spellbook's pages, cloth ribbons, ink on paper (Settings > Testing).
-local function SkinB() return A.BookVariant("skin") == "b" end
+-- The book's look: the spellbook's pages, cloth ribbons, ink on paper.
 local function HasAtlas(name) return C_Texture and C_Texture.GetAtlasInfo and C_Texture.GetAtlasInfo(name) ~= nil end
 local function Font(name, fallback) return _G[name] and name or fallback end
--- Skin B's pages: the spellbook's pair (burnt outer edges; they meet at the fold,
+-- The pages: the spellbook's pair (burnt outer edges; they meet at the fold,
 -- and the spellbook's top bar finishes their top edge).
 local PAGES_B = {left = "spellbook-background-evergreen-left", right = "spellbook-background-evergreen-right"}
 local function SetBookPage(texture, side)
@@ -191,7 +186,7 @@ local function PaperChoice(parent, label, onClick)
     end
     return button
 end
--- The page scroll bar, slim and brown, with no arrows (skin B).
+-- The page scroll bar, slim and brown, with no arrows.
 local function SlimScrollBar(scroll)
     local bar = scroll.ScrollBar
     if type(bar) ~= "table" then return end
@@ -434,9 +429,9 @@ local function Page(parent, side, paged)
     rim:SetColorTexture(0, 0, 0, 0.45)
     -- (the text's box on the page: left, top, right, bottom)
     page.box = {14, 12, 30, 12}
-    -- (a "single" page, as the reading view's, keeps A's parchment: its torn edges finish it)
-    local skinB = side ~= "single" and SkinB() and HasAtlas(PAGES_B.left)
-    if skinB then
+    -- (a "single" page, as the reading view's, keeps the quest parchment: its torn edges finish it)
+    local spellbook = side ~= "single"
+    if spellbook then
         SetBookPage(page.paper, side)
         rim:Hide()
         -- (the top bar covers the pages' top: the text starts below it)
@@ -450,7 +445,7 @@ local function Page(parent, side, paged)
     -- (no scroll bar when the page has nothing to scroll)
     scroll.scrollBarHideable = true
     if not paged and ScrollFrame_OnScrollRangeChanged then pcall(ScrollFrame_OnScrollRangeChanged, scroll) end
-    if skinB then SlimScrollBar(scroll) end
+    if spellbook then SlimScrollBar(scroll) end
     local child = CreateFrame("Frame", nil, scroll)
     child:SetSize(400, 10)
     scroll:SetScrollChild(child)
@@ -539,8 +534,8 @@ local function Page(parent, side, paged)
     if A.BookLinkable then A.BookLinkable(child) end
     -- "Today, so far" (your own journal, today's chapter).
     page.today = page:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    page.today:SetPoint("TOPLEFT", skinB and page.box[1] or 12, skinB and -12 or -6); page.today:SetTextColor(CHAPTER[1], CHAPTER[2], CHAPTER[3])
-    if skinB and page.today.SetShadowOffset then page.today:SetShadowOffset(0, 0) end
+    page.today:SetPoint("TOPLEFT", spellbook and page.box[1] or 12, spellbook and -12 or -6); page.today:SetTextColor(CHAPTER[1], CHAPTER[2], CHAPTER[3])
+    if spellbook and page.today.SetShadowOffset then page.today:SetShadowOffset(0, 0) end
     page.today:SetText("Today, so far"); page.today:Hide()
     return page
 end
@@ -941,22 +936,18 @@ local function ContentsRow(index)
     row:SetHeight(30)
     row.select = row:CreateTexture(nil, "BACKGROUND")
     row.select:SetAllPoints(); row.select:SetColorTexture(1, 0.82, 0, 0.16)
-    -- (skin B: the class as a thin bar, the name in ink; the quest log's bars)
+    -- (the class as a thin bar, the name in ink; the quest log's bars)
     row.classBar = row:CreateTexture(nil, "ARTWORK")
     row.classBar:SetPoint("TOPLEFT", 0, -3); row.classBar:SetPoint("BOTTOMLEFT", 0, 3); row.classBar:SetWidth(3); row.classBar:Hide()
-    if SkinB() then
-        row.select:SetTexture("Interface\\QuestFrame\\UI-QuestLogTitleHighlight")
-        row.select:SetBlendMode("ADD"); row.select:SetVertexColor(0.85, 0.6, 0.25, 0.6)
-    end
+    row.select:SetTexture("Interface\\QuestFrame\\UI-QuestLogTitleHighlight")
+    row.select:SetBlendMode("ADD"); row.select:SetVertexColor(0.85, 0.6, 0.25, 0.6)
     -- (the gamepad's place in the list: a gold edge on the left)
     row.focus = row:CreateTexture(nil, "OVERLAY")
     row.focus:SetPoint("TOPLEFT", 0, 0); row.focus:SetPoint("BOTTOMLEFT", 0, 0); row.focus:SetWidth(3)
     row.focus:SetColorTexture(1, 0.82, 0, 1); row.focus:Hide()
     local hover = row:CreateTexture(nil, "HIGHLIGHT")
     hover:SetAllPoints(); hover:SetColorTexture(1, 0.7, 0.2, 0.10)
-    if SkinB() then
-        hover:SetTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight"); hover:SetBlendMode("ADD"); hover:SetVertexColor(0.85, 0.6, 0.25, 0.4)
-    end
+    hover:SetTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight"); hover:SetBlendMode("ADD"); hover:SetVertexColor(0.85, 0.6, 0.25, 0.4)
     row.icon = row:CreateTexture(nil, "ARTWORK")
     row.icon:SetSize(20, 20); row.icon:SetPoint("LEFT", 6, 0)
     row.name = row:CreateFontString(nil, "ARTWORK", "GameFontNormal")
@@ -994,9 +985,9 @@ local function FillList(items)
             row:SetHeight(24)
             row.icon:Hide(); row.sub:SetText("")
             row.name:ClearAllPoints(); row.name:SetPoint("LEFT", 8, 0); row.name:SetWidth(width - 16)
-            row.name:SetFontObject(SkinB() and Font("QuestFont_Shadow_Small", "GameFontNormal") or "GameFontNormal")
+            row.name:SetFontObject(Font("QuestFont_Shadow_Small", "GameFontNormal"))
             row.name:SetTextColor(CHAPTER[1], CHAPTER[2], CHAPTER[3])
-            if SkinB() and row.name.SetShadowOffset then row.name:SetShadowOffset(0, 0) end
+            if row.name.SetShadowOffset then row.name:SetShadowOffset(0, 0) end
             row.classBar:Hide()
             local arrow = data.open and "-  " or "+  "
             row.name:SetText(data.fixed and data.label or (arrow .. data.label .. "  (" .. data.count .. ")"))
@@ -1008,14 +999,9 @@ local function FillList(items)
             row:SetHeight(32)
             row.name:ClearAllPoints(); row.name:SetPoint("TOPLEFT", 32, -2); row.name:SetWidth(width - 40)
             row.name:SetText(data.label)
-            if SkinB() then
-                row.name:SetFontObject(Font("GameFontBlack", "GameFontNormal")); row.name:SetTextColor(INK[1], INK[2], INK[3])
-                row.sub:SetFontObject(Font("GameFontBlackSmall", "GameFontHighlightSmall")); row.sub:SetTextColor(INK_SOFT[1], INK_SOFT[2], INK_SOFT[3])
-                if data.class then row.classBar:SetColorTexture(ClassColor(data.class)); row.classBar:Show() else row.classBar:Hide() end
-            else
-                row.name:SetFontObject("GameFontNormal")
-                if data.class then row.name:SetTextColor(ClassColor(data.class)) else row.name:SetTextColor(INK[1], INK[2], INK[3]) end
-            end
+            row.name:SetFontObject(Font("GameFontBlack", "GameFontNormal")); row.name:SetTextColor(INK[1], INK[2], INK[3])
+            row.sub:SetFontObject(Font("GameFontBlackSmall", "GameFontHighlightSmall")); row.sub:SetTextColor(INK_SOFT[1], INK_SOFT[2], INK_SOFT[3])
+            if data.class then row.classBar:SetColorTexture(ClassColor(data.class)); row.classBar:Show() else row.classBar:Hide() end
             row.sub:SetWidth(width - 40); row.sub:SetText(data.sub or "")
             if data.class and A.SetPersonClassIcon then A.SetPersonClassIcon(row.icon, data.class)
             elseif data.icon then row.icon:SetTexture(data.icon); row.icon:Show()
@@ -1110,15 +1096,15 @@ end
 -- Narrative margins grow with the available paper. A keeps a compact text
 -- area; B and C add more room on all four edges, including the binding.
 -- Lists and settings use their own unchanged page boxes.
-local function SetNarrativeMargins(page, width, height, side, skinB)
-    local smallWidth = (SIZES.a[1] - (skinB and 20 or 56)) / 2
-    local smallHeight = SIZES.a[2] - 88 - (skinB and 48 or 86)
+local function SetNarrativeMargins(page, width, height, side)
+    local smallWidth = (SIZES.a[1] - 20) / 2
+    local smallHeight = SIZES.a[2] - 88 - 48
     local across = math.min(3.5, math.max(0, width - smallWidth) / 70)
     local down = math.min(3.5, math.max(0, height - smallHeight) / 80)
-    local outer = math.floor(((skinB and 42 or 32) + across * 18) * 0.90 + 0.5)
-    local inner = math.floor(((skinB and 44 or 34) + across * 20) * 0.90 + 0.5)
-    local top = math.floor(((skinB and 38 or 16) + down * 20) * 0.90 + 0.5)
-    local bottom = math.floor(((skinB and 40 or 16) + down * 20) * 0.70 + 0.5)
+    local outer = math.floor((42 + across * 18) * 0.90 + 0.5)
+    local inner = math.floor((44 + across * 20) * 0.90 + 0.5)
+    local top = math.floor((38 + down * 20) * 0.90 + 0.5)
+    local bottom = math.floor((40 + down * 20) * 0.70 + 0.5)
     local box = {side == "left" and outer or inner, top, side == "left" and inner or outer, bottom}
     local changed = page.layoutWidth ~= width or page.layoutHeight ~= height
     for i = 1, 4 do if page.box[i] ~= box[i] then changed = true end end
@@ -1132,26 +1118,23 @@ end
 -- Lay out the pages: contents + one chapter, or a two-page spread.
 local function LayoutPages()
     local spread = A.db.bookSpread == "two" and state.view == "journal"
-    local skinB = book.skinB
     local w = book:GetWidth()
-    -- (A: two pages with a gap; B: the spellbook's pages meet at the fold, inside the metal)
-    local left, right, gap = 22, 22, 12
-    if skinB then left, right, gap = 13, 7, 0 end
+    -- (the spellbook's pages meet at the fold, inside the metal)
+    local left, right, gap = 13, 7, 0
     local half = math.floor((w - left - right - gap) / 2)
     book.left:ClearAllPoints(); book.right:ClearAllPoints()
     local shownPerson = Shown()
     local timeline = A.db.bookTimeline ~= false and state.view == "journal" and shownPerson ~= nil and not shownPerson.self
-    local bottom = timeline and 104 or 86
-    if skinB then bottom = timeline and 66 or 48 end
+    local bottom = timeline and 66 or 48
     local managing = state.view == "people" or state.view == "npcs"
     if managing then bottom = 18 end
-    -- (skin B's journal: no header over the pages, only a narrow band for Pin and the tabs)
-    local top = managing and -40 or (skinB and state.view == "journal" and -76 or -88)
+    -- (the journal: no header over the pages, only a narrow band for the pin ribbon)
+    local top = managing and -40 or (state.view == "journal" and -76 or -88)
     book.left:SetPoint("TOPLEFT", left, top); book.left:SetPoint("BOTTOMLEFT", left, bottom); book.left:SetWidth(half)
     book.right:SetPoint("TOPRIGHT", -right, top); book.right:SetPoint("BOTTOMRIGHT", -right, bottom); book.right:SetWidth(half)
     local pageHeight = math.max(1, (book:GetHeight() or SIZES.a[2]) - 88 - bottom)
-    local leftChanged = SetNarrativeMargins(book.leftPage, half, pageHeight, "left", skinB)
-    local rightChanged = SetNarrativeMargins(book.rightPage, half, pageHeight, "right", skinB)
+    local leftChanged = SetNarrativeMargins(book.leftPage, half, pageHeight, "left")
+    local rightChanged = SetNarrativeMargins(book.rightPage, half, pageHeight, "right")
     if leftChanged or rightChanged then state.pageCache = nil end
     book.contents:SetShown(not spread)
     book.leftPage:SetShown(spread)
@@ -1162,12 +1145,12 @@ local function LayoutPages()
     if book.corner then
         local scale = (half * 2) / 1614
         book.corner:SetSize(math.floor(150 * scale + 0.5), math.floor(155 * scale + 0.5))
-        if skinB then book.corner:ClearAllPoints(); book.corner:SetPoint("BOTTOMRIGHT", -8, 21 - bottom) end
+        book.corner:ClearAllPoints(); book.corner:SetPoint("BOTTOMRIGHT", -8, 21 - bottom)
     end
     if book.topBar then book.topBar:SetHeight(22) end
     -- The paper belongs to the book, not the content viewport. Header and
     -- footer controls stay on the same uninterrupted leaves as the text.
-    if skinB and book.paperLeft then
+    if book.paperLeft then
         book.paperLeft:ClearAllPoints(); book.paperLeft:SetPoint("TOPLEFT", left, -40)
         book.paperLeft:SetPoint("BOTTOMLEFT", left, 18); book.paperLeft:SetWidth(half)
         book.paperRight:ClearAllPoints(); book.paperRight:SetPoint("TOPRIGHT", -right, -40)
@@ -1199,24 +1182,17 @@ local function LayoutPages()
     end
     -- Keep the writing controls clear of navigation, including the Reading view
     -- button used by the older bookmark variants, at the minimum window size.
-    if skinB and book.input then
-        local readingButton = A.BookVariant("marks") ~= "c"
-        book.input:SetWidth(math.max(140, math.min(240, half - 230)))
-        book.chapterLabel:SetWidth(readingButton and 100 or 110)
-    end
-    -- (the chapter arrows: under the chapter; A centres them under both pages of a spread)
+    local readingButton = A.BookVariant("marks") ~= "c"
+    if book.input then book.input:SetWidth(math.max(140, math.min(240, half - 230))) end
+    -- (the chapter arrows: under the right page)
     if book.chapterLabel then
-        local row = skinB and 44 or 63
+        book.chapterLabel:SetWidth(readingButton and 100 or 110)
         book.chapterLabel:ClearAllPoints()
-        if spread and not skinB then book.chapterLabel:SetPoint("CENTER", book, "BOTTOM", 0, row)
-        else
-            local readingButton = skinB and A.BookVariant("marks") ~= "c"
-            book.chapterLabel:SetPoint("CENTER", book.right, "BOTTOM", readingButton and -38 or 0, row - bottom)
-        end
+        book.chapterLabel:SetPoint("CENTER", book.right, "BOTTOM", readingButton and -38 or 0, 44 - bottom)
     end
 end
 
--- Skin B, in a companion's journal: the pin is a cloth bookmark hanging from the top of
+-- In a companion's journal, the pin is a cloth bookmark hanging from the top of
 -- the left page (full length when pinned, a faded stub when not), and a small inked cog
 -- beside it (a quill on paper) opens their card on the Companions page.
 local function DrawPinRibbon(show)
@@ -1253,20 +1229,17 @@ local function Build()
     book:SetScript("OnDragStart", book.StartMoving)
     book:SetScript("OnDragStop", book.StopMovingOrSizing)
     book:SetClampedToScreen(true)
-    book.skinB = SkinB() and HasAtlas(PAGES_B.left)
     local heading = book:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     heading:SetText("Companion Journal")
     book.heading = heading
     if A.OptionsSkin then A.OptionsSkin.Frame(book, heading) end
     if UISpecialFrames then table.insert(UISpecialFrames, "CompanionJournalBookB") end
     ApplySize()
-    if book.skinB then
-        book.paperLeft = book:CreateTexture(nil, "BACKGROUND", nil, 1)
-        book.paperRight = book:CreateTexture(nil, "BACKGROUND", nil, 1)
-        for _, key in ipairs({"leftRule", "rightRule"}) do
-            book[key] = book:CreateTexture(nil, "ARTWORK")
-            book[key]:SetHeight(1); book[key]:SetColorTexture(0.36, 0.22, 0.08, 0.22)
-        end
+    book.paperLeft = book:CreateTexture(nil, "BACKGROUND", nil, 1)
+    book.paperRight = book:CreateTexture(nil, "BACKGROUND", nil, 1)
+    for _, key in ipairs({"leftRule", "rightRule"}) do
+        book[key] = book:CreateTexture(nil, "ARTWORK")
+        book[key]:SetHeight(1); book[key]:SetColorTexture(0.36, 0.22, 0.08, 0.22)
     end
 
     -- Resizing: drag the corner (the size becomes "custom").
@@ -1295,17 +1268,15 @@ local function Build()
     book.summary:SetPoint("TOPLEFT", book.name, "BOTTOMLEFT", 0, -1); book.summary:SetHeight(16)
     book.summary:SetJustifyH("LEFT"); book.summary:SetWordWrap(false)
     book.summary:SetTextColor(0.75, 0.75, 0.75)
-    if book.skinB then
-        book.summary:SetHeight(28); book.summary:SetWordWrap(true)
-        for _, text in ipairs({book.name, book.summary}) do if text.SetShadowOffset then text:SetShadowOffset(0, 0) end end
-        -- (the journal's title: name, who they are, and the quest log's flourish under them)
-        book.headRule = book:CreateTexture(nil, "ARTWORK")
-        book.headRule:SetTexture("Interface\\QuestFrame\\UI-HorizontalBreak")
-        book.headRule:SetSize(150, 18); book.headRule:SetVertexColor(0.62, 0.42, 0.22, 0.9); book.headRule:Hide()
-        book.sectionHeading = book:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
-        book.sectionHeading:SetTextColor(unpack(INK)); book.sectionHeading:SetJustifyH("LEFT")
-        if book.sectionHeading.SetShadowOffset then book.sectionHeading:SetShadowOffset(0, 0) end
-    end
+    book.summary:SetHeight(28); book.summary:SetWordWrap(true)
+    for _, text in ipairs({book.name, book.summary}) do if text.SetShadowOffset then text:SetShadowOffset(0, 0) end end
+    -- (the journal's title: name, who they are, and the quest log's flourish under them)
+    book.headRule = book:CreateTexture(nil, "ARTWORK")
+    book.headRule:SetTexture("Interface\\QuestFrame\\UI-HorizontalBreak")
+    book.headRule:SetSize(150, 18); book.headRule:SetVertexColor(0.62, 0.42, 0.22, 0.9); book.headRule:Hide()
+    book.sectionHeading = book:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+    book.sectionHeading:SetTextColor(unpack(INK)); book.sectionHeading:SetJustifyH("LEFT")
+    if book.sectionHeading.SetShadowOffset then book.sectionHeading:SetShadowOffset(0, 0) end
     book.sizeButtons = {} -- (sizes: Settings > Reading)
 
     -- The two pages: left (the contents, or a chapter in a spread) and right.
@@ -1330,68 +1301,66 @@ local function Build()
     book.panel.empty:Hide()
     book.panel:Hide()
     book.sections = {}
-    if book.skinB then
-        -- (the spellbook's top bar across both pages: it finishes their top edge)
-        local deco = CreateFrame("Frame", nil, book)
-        deco:SetAllPoints(); deco:SetFrameLevel(book.right:GetFrameLevel() + 40)
-        -- Parchment meets the heading directly; no wooden strip across the pages.
-        -- (the bookmark that pins a companion, and the cog to their card)
-        local mark = CreateFrame("Button", nil, book)
-        mark:SetWidth(22); mark:SetFrameLevel(book.right:GetFrameLevel() + 35)
-        mark.body = mark:CreateTexture(nil, "ARTWORK"); mark.tail = mark:CreateTexture(nil, "ARTWORK")
-        mark:SetScript("OnClick", function()
-            if state.key and A.People[state.key] then TogglePin(state.key); A.RefreshBook() end
+    -- (the spellbook's top bar across both pages: it finishes their top edge)
+    local deco = CreateFrame("Frame", nil, book)
+    deco:SetAllPoints(); deco:SetFrameLevel(book.right:GetFrameLevel() + 40)
+    -- Parchment meets the heading directly; no wooden strip across the pages.
+    -- (the bookmark that pins a companion, and the cog to their card)
+    local mark = CreateFrame("Button", nil, book)
+    mark:SetWidth(22); mark:SetFrameLevel(book.right:GetFrameLevel() + 35)
+    mark.body = mark:CreateTexture(nil, "ARTWORK"); mark.tail = mark:CreateTexture(nil, "ARTWORK")
+    mark:SetScript("OnClick", function()
+        if state.key and A.People[state.key] then TogglePin(state.key); A.RefreshBook() end
+    end)
+    mark:SetScript("OnEnter", function(self)
+        self.hover = true; DrawPinRibbon(true)
+        local person = state.key and A.People[state.key]
+        local who = person and (person.display or ShortName(person.name or state.key)) or ""
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip:SetText(IsPinned(state.key) and "Unpin" or "Pin", 1, 0.82, 0)
+        GameTooltip:AddLine(IsPinned(state.key) and ("Remove " .. who .. "'s ribbon from the edge of the book.")
+            or ("Keep " .. who .. "'s journal on a ribbon at the edge of the book."), 0.9, 0.9, 0.9, true)
+        GameTooltip:Show()
+    end)
+    mark:SetScript("OnLeave", function(self) self.hover = false; DrawPinRibbon(true); GameTooltip:Hide() end)
+    mark:Hide()
+    book.pinRibbon = mark
+    local cog = CreateFrame("Button", nil, book)
+    -- (left of the ribbon, in the narrow band above the page)
+    cog:SetSize(20, 20); cog:SetFrameLevel(book.right:GetFrameLevel() + 35)
+    cog:SetPoint("TOPRIGHT", book.left, "TOPRIGHT", -67, 29)
+    cog.art = cog:CreateTexture(nil, "ARTWORK"); cog.art:SetAllPoints()
+    -- (a quill on paper, the game's own note mark: their card is written, not configured)
+    cog.art:SetTexture("Interface\\Buttons\\UI-GuildButton-PublicNote-Up")
+    cog.art:SetVertexColor(0.85, 0.85, 0.85, 1)
+    cog:SetScript("OnClick", function() if state.key and A.People[state.key] then A.OpenBookPeople(state.key) end end)
+    cog:SetScript("OnEnter", function(self)
+        self.art:SetVertexColor(1, 1, 1, 1)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip:SetText("Their card", 1, 0.82, 0)
+        GameTooltip:AddLine("Name, icon, note, and what they are to you.", 0.9, 0.9, 0.9, true)
+        GameTooltip:Show()
+    end)
+    cog:SetScript("OnLeave", function(self) self.art:SetVertexColor(0.85, 0.85, 0.85, 1); GameTooltip:Hide() end)
+    cog:Hide()
+    book.cardCog = cog
+    -- (the page corner: it lifts under the pointer and turns to the later chapter)
+    local corner = CreateFrame("Button", nil, book.rightPage)
+    corner:SetFrameLevel(book.rightPage:GetFrameLevel() + 30)
+    -- (the curl is drawn on the paper, under the text, as Blizzard draws it)
+    corner.art = book.rightPage:CreateTexture(nil, "BACKGROUND", nil, 2)
+    corner.art:SetAllPoints(corner)
+    if SetCornerFrame(corner.art, 1) then
+        corner:SetPoint("BOTTOMRIGHT", -8, 3)
+        corner:SetScript("OnEnter", function(self)
+            SetCornerFrame(self.art, 5)
+            GameTooltip:SetOwner(self, "ANCHOR_TOP"); GameTooltip:SetText("Next page", 1, 0.82, 0); GameTooltip:Show()
         end)
-        mark:SetScript("OnEnter", function(self)
-            self.hover = true; DrawPinRibbon(true)
-            local person = state.key and A.People[state.key]
-            local who = person and (person.display or ShortName(person.name or state.key)) or ""
-            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-            GameTooltip:SetText(IsPinned(state.key) and "Unpin" or "Pin", 1, 0.82, 0)
-            GameTooltip:AddLine(IsPinned(state.key) and ("Remove " .. who .. "'s ribbon from the edge of the book.")
-                or ("Keep " .. who .. "'s journal on a ribbon at the edge of the book."), 0.9, 0.9, 0.9, true)
-            GameTooltip:Show()
-        end)
-        mark:SetScript("OnLeave", function(self) self.hover = false; DrawPinRibbon(true); GameTooltip:Hide() end)
-        mark:Hide()
-        book.pinRibbon = mark
-        local cog = CreateFrame("Button", nil, book)
-        -- (left of the ribbon, in the narrow band above the page)
-        cog:SetSize(20, 20); cog:SetFrameLevel(book.right:GetFrameLevel() + 35)
-        cog:SetPoint("TOPRIGHT", book.left, "TOPRIGHT", -67, 29)
-        cog.art = cog:CreateTexture(nil, "ARTWORK"); cog.art:SetAllPoints()
-        -- (a quill on paper, the game's own note mark: their card is written, not configured)
-        cog.art:SetTexture("Interface\\Buttons\\UI-GuildButton-PublicNote-Up")
-        cog.art:SetVertexColor(0.85, 0.85, 0.85, 1)
-        cog:SetScript("OnClick", function() if state.key and A.People[state.key] then A.OpenBookPeople(state.key) end end)
-        cog:SetScript("OnEnter", function(self)
-            self.art:SetVertexColor(1, 1, 1, 1)
-            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-            GameTooltip:SetText("Their card", 1, 0.82, 0)
-            GameTooltip:AddLine("Name, icon, note, and what they are to you.", 0.9, 0.9, 0.9, true)
-            GameTooltip:Show()
-        end)
-        cog:SetScript("OnLeave", function(self) self.art:SetVertexColor(0.85, 0.85, 0.85, 1); GameTooltip:Hide() end)
-        cog:Hide()
-        book.cardCog = cog
-        -- (the page corner: it lifts under the pointer and turns to the later chapter)
-        local corner = CreateFrame("Button", nil, book.rightPage)
-        corner:SetFrameLevel(book.rightPage:GetFrameLevel() + 30)
-        -- (the curl is drawn on the paper, under the text, as Blizzard draws it)
-        corner.art = book.rightPage:CreateTexture(nil, "BACKGROUND", nil, 2)
-        corner.art:SetAllPoints(corner)
-        if SetCornerFrame(corner.art, 1) then
-            corner:SetPoint("BOTTOMRIGHT", -8, 3)
-            corner:SetScript("OnEnter", function(self)
-                SetCornerFrame(self.art, 5)
-                GameTooltip:SetOwner(self, "ANCHOR_TOP"); GameTooltip:SetText("Next page", 1, 0.82, 0); GameTooltip:Show()
-            end)
-            corner:SetScript("OnLeave", function(self) SetCornerFrame(self.art, 1); GameTooltip:Hide() end)
-            corner:SetScript("OnClick", function() if book.next:IsEnabled() then A.BookTurn(1) end end)
-            book.corner = corner
-        else
-            corner:Hide(); corner.art:Hide()
-        end
+        corner:SetScript("OnLeave", function(self) SetCornerFrame(self.art, 1); GameTooltip:Hide() end)
+        corner:SetScript("OnClick", function() if book.next:IsEnabled() then A.BookTurn(1) end end)
+        book.corner = corner
+    else
+        corner:Hide(); corner.art:Hide()
     end
 
     -- Pin this companion (a bookmark on the edge).
@@ -1442,7 +1411,7 @@ local function Build()
     -- The footer of the pages: the chapter arrows, under the page they turn.
     -- (Show, Told and Pages are in Settings > Reading; Reading view is a tools' ribbon)
     local footer = CreateFrame("Frame", nil, book)
-    footer:SetPoint("BOTTOMLEFT", 22, book.skinB and 16 or 50); footer:SetPoint("BOTTOMRIGHT", -22, book.skinB and 16 or 50); footer:SetHeight(26)
+    footer:SetPoint("BOTTOMLEFT", 22, 16); footer:SetPoint("BOTTOMRIGHT", -22, 16); footer:SetHeight(26)
     book.footer = footer
     book.chapterLabel = footer:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
     book.chapterLabel:SetPoint("CENTER"); book.chapterLabel:SetWidth(110)
@@ -1451,7 +1420,7 @@ local function Build()
     book.prev:SetPoint("RIGHT", book.chapterLabel, "LEFT", -4, 0)
     book.next = Toggle(footer, ">", 26, "Next page", nil, function() A.BookTurn(1) end)
     book.next:SetPoint("LEFT", book.chapterLabel, "RIGHT", 4, 0)
-    if book.skinB then PageArrow(book.prev, "Prev"); PageArrow(book.next, "Next") end
+    PageArrow(book.prev, "Prev"); PageArrow(book.next, "Next")
     -- (bookmarks A and B have no tools' ribbons, so they keep this button)
     book.readView = Toggle(footer, "Reading view", 84, "Reading view", "Compare Original, Your tale, Our story and By the fire.", function() A.BookReader(true) end)
     book.readView:SetPoint("RIGHT", 0, 0)
@@ -1465,8 +1434,8 @@ local function Build()
     input:SetScript("OnTextChanged", function(self) hint:SetShown((self:GetText() or "") == "") end)
     input:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
     input:SetScript("OnEnterPressed", WriteNote)
-    local write = CreateFrame("Button", nil, book, not book.skinB and "UIPanelButtonTemplate" or nil)
-    if book.skinB then write.label = write:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall"); write.label:SetPoint("CENTER"); write:SetFontString(write.label); A.StyleBookControl(write, false) end
+    local write = CreateFrame("Button", nil, book)
+    write.label = write:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall"); write.label:SetPoint("CENTER"); write:SetFontString(write.label); A.StyleBookControl(write, false)
     local noteDate = Toggle(book, "Today", 58, nil, nil, ChooseWriteDate)
     noteDate:SetPoint("LEFT", input, "RIGHT", 8, 0); noteDate:SetHeight(22)
     noteDate:SetScript("OnEnter", function(self)
@@ -1475,8 +1444,8 @@ local function Build()
     end)
     write:SetPoint("LEFT", noteDate, "RIGHT", 6, 0); write:SetSize(84, 24); write:SetText("Write")
     write:SetScript("OnClick", WriteNote)
-    local retell = CreateFrame("Button", nil, book, not book.skinB and "UIPanelButtonTemplate" or nil)
-    if book.skinB then retell.label = retell:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall"); retell.label:SetPoint("CENTER"); retell:SetFontString(retell.label); A.StyleBookControl(retell, false) end
+    local retell = CreateFrame("Button", nil, book)
+    retell.label = retell:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall"); retell.label:SetPoint("CENTER"); retell:SetFontString(retell.label); A.StyleBookControl(retell, false)
     retell:SetPoint("LEFT", write, "RIGHT", 6, 0); retell:SetSize(76, 24); retell:SetText("Retell")
     retell:SetScript("OnClick", function()
         local person = Shown()
@@ -1492,15 +1461,12 @@ local function Build()
     close:SetPoint("BOTTOMRIGHT", -26, 16); close:SetSize(100, 24); close:SetText("Close")
     close:SetScript("OnClick", function() book:Hide() end)
     if A.OptionsSkin then
-        if not book.skinB then A.OptionsSkin.Button(write); A.OptionsSkin.Button(retell) end
         A.OptionsSkin.Button(close)
     end
-    -- (skin B: one row, one height; the X closes the book)
-    if book.skinB then
-        input:ClearAllPoints(); input:SetPoint("BOTTOMLEFT", 24, 18); input:SetSize(240, 22)
-        write:SetSize(50, 22); retell:SetSize(56, 22)
-        close:Hide(); close.Show = close.Hide
-    end
+    -- (one row, one height; the X closes the book)
+    input:ClearAllPoints(); input:SetPoint("BOTTOMLEFT", 24, 18); input:SetSize(240, 22)
+    write:SetSize(50, 22); retell:SetSize(56, 22)
+    close:Hide(); close.Show = close.Hide
     book.input, book.write, book.retell, book.close, book.noteDate, book.writeHint = input, write, retell, close, noteDate, hint
     book:SetScript("OnSizeChanged", function() if book:IsShown() then A.RefreshBook() end end)
     book:SetScript("OnHide", function()
@@ -1644,7 +1610,9 @@ end
 -- Where the card shows, for the variant chosen.
 local function PlaceCard(person)
     local variant = A.BookVariant("card")
-    local people = person and not person.self and not person.readOnly and A.People[state.key] ~= nil and not book.skinB
+    -- (the header's card buttons are never shown: a companion's card opens from the cog
+    -- beside their pin ribbon, on the Companions page)
+    local people = false
     book.quill:SetShown(people and variant == "a")
     book.flip:SetShown(people and variant == "c")
     for key, tab in pairs(book.tabs) do if key ~= "last" then tab:SetShown(people and variant == "b") end end
@@ -1706,15 +1674,13 @@ end
 function BuildAddBar()
     local bar = CreateFrame("Frame", nil, book.contents)
     local function ActionButton()
-        local button = CreateFrame("Button", nil, bar, not book.skinB and "UIPanelButtonTemplate" or nil)
-        if book.skinB then
-            button.label = button:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
-            button.label:SetPoint("CENTER"); button:SetFontString(button.label)
-            A.StyleBookControl(button, false)
-        elseif A.OptionsSkin then A.OptionsSkin.Button(button) end
+        local button = CreateFrame("Button", nil, bar)
+        button.label = button:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+        button.label:SetPoint("CENTER"); button:SetFontString(button.label)
+        A.StyleBookControl(button, false)
         return button
     end
-    -- (inside the page's margins: on skin B's pages, clear of the burnt edge)
+    -- (inside the page's margins, clear of the burnt edge)
     local box = book.contents.box
     bar:SetPoint("BOTTOMLEFT", box[1] - 4, box[4] - 4); bar:SetPoint("BOTTOMRIGHT", -(box[3] - 20), box[4] - 4); bar:SetHeight(28)
     local rule = bar:CreateTexture(nil, "ARTWORK")
@@ -2078,7 +2044,7 @@ function Portrait(parent)
     return frame
 end
 -- Make room on a page for its portrait, or give the room back.
--- The journal's title page (skin B): the journal's first page opens with the name, who
+-- The journal's title page: the journal's first page opens with the name, who
 -- they are, and the quest log's flourish, above the portrait and the first chapter.
 -- A click on the name gives them a last name.
 local function TitleFont()
@@ -2135,7 +2101,7 @@ local function JournalTitle(person)
     return (last and last ~= "") and (first .. " " .. last) or first, last
 end
 local function TitleInfo(person)
-    if not (book and book.skinB and person) then return nil end
+    if not (book and person) then return nil end
     local name, last = JournalTitle(person)
     local sub = (A.PersonSummary(person) or ""):gsub("%s+%-%s+", "  \194\183  ")
     local second = {}
@@ -2475,31 +2441,6 @@ function A.BookArtboard()
     artboard:Show()
 end
 
--- Build the book again (the skin changed): the same page, the new art.
-function A.RebuildBook()
-    if not book then return end
-    local shown = book:IsShown()
-    local managerState = {}
-    if book.manager then
-        book.manager.form:Blur(); book.manager.listUI:Blur()
-        for _, key in ipairs({"mode", "circle", "page", "query", "selected", "character", "addName"}) do managerState[key] = book.manager[key] end
-    end
-    book:SetScript("OnSizeChanged", nil)
-    if book.addBar then book.addBar:UnregisterAllEvents() end
-    book:Hide()
-    if reader then reader.restoreBook = nil; reader:Hide(); reader = nil end
-    book = nil
-    if shown then
-        local view, settings = state.view, state.settings
-        A.OpenBook(state.key, state.owner)
-        if next(managerState) then
-            book.manager = A.CreateBookManager(book, {IsPinned = IsPinned, TogglePin = TogglePin})
-            for key, value in pairs(managerState) do book.manager[key] = value end
-        end
-        state.view, state.settings = view, settings
-        A.RefreshBook()
-    end
-end
 function A.BookReader(open)
     if not reader then
         reader = CreateFrame("Frame", "CompanionJournalReader", UIParent)
@@ -2668,7 +2609,7 @@ local function LabelMark(index)
     hover:SetAllPoints(); hover:SetColorTexture(1, 1, 1, 0.12)
     mark.text = mark:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
     mark.text:SetPoint("LEFT", 10, 0); mark.text:SetPoint("RIGHT", -8, 0); mark.text:SetWordWrap(false)
-    -- (skin B: cloth for the journals, the window's leather plate for the tools, an icon at the tip)
+    -- (cloth for the journals, the window's leather plate for the tools, an icon at the tip)
     mark.cloth = mark:CreateTexture(nil, "BACKGROUND", nil, 1)
     mark.cloth:SetAllPoints(); mark.cloth:Hide()
     mark.body = mark:CreateTexture(nil, "BACKGROUND", nil, 1); mark.body:Hide()
@@ -2730,7 +2671,6 @@ local function FillLabelledMarks()
     local height = book:GetHeight()
     -- (tucked 4 px under the window's metal border, which sits inside the frame's edge)
     local rim = book.legacyBorder or book
-    local skinB = book.skinB
     local function Column(list, left)
         local y = -88
         for _, item in ipairs(list) do
@@ -2749,27 +2689,25 @@ local function FillLabelledMarks()
             mark.cloth:Hide(); mark.icon:Hide(); mark.fill:Show(); mark.body:Hide(); mark.tail:Hide()
             if mark.plate then mark.plate:SetShown(false) end
             mark.text:ClearAllPoints(); mark.text:SetPoint("LEFT", 10, 0); mark.text:SetPoint("RIGHT", -8, 0)
-            if skinB then
-                mark:SetHeight(28)
-                mark:SetWidth(item.chosen and 140 or 124)
-                mark.edge:SetColorTexture(0, 0, 0, 0)
-                -- (journals: red cloth; tools: the same cloth, undyed; the open one at full colour)
-                local shade = item.chosen and 1 or 0.82
-                local tint = item.cloth and {shade, shade, shade} or {shade * 0.95, shade * 0.85, shade * 0.7}
-                if RibbonArt(mark, left, tint, not item.cloth) then mark.fill:Hide() end
-                -- (the icon at the outer tip: the class, or the book)
-                local iconShown = false
-                if item.class and A.SetPersonClassIcon then A.SetPersonClassIcon(mark.icon, item.class); iconShown = mark.icon:IsShown()
-                elseif item.icon then mark.icon:SetTexture(item.icon); iconShown = true end
-                mark.icon:SetShown(iconShown)
-                mark.icon:ClearAllPoints(); mark.text:ClearAllPoints()
-                if left then
-                    mark.icon:SetPoint("LEFT", 10, 0)
-                    mark.text:SetPoint("LEFT", iconShown and 30 or 10, 0); mark.text:SetPoint("RIGHT", -14, 0)
-                else
-                    mark.icon:SetPoint("RIGHT", -10, 0)
-                    mark.text:SetPoint("LEFT", 14, 0); mark.text:SetPoint("RIGHT", iconShown and -30 or -10, 0)
-                end
+            mark:SetHeight(28)
+            mark:SetWidth(item.chosen and 140 or 124)
+            mark.edge:SetColorTexture(0, 0, 0, 0)
+            -- (journals: red cloth; tools: the same cloth, undyed; the open one at full colour)
+            local shade = item.chosen and 1 or 0.82
+            local tint = item.cloth and {shade, shade, shade} or {shade * 0.95, shade * 0.85, shade * 0.7}
+            if RibbonArt(mark, left, tint, not item.cloth) then mark.fill:Hide() end
+            -- (the icon at the outer tip: the class, or the book)
+            local iconShown = false
+            if item.class and A.SetPersonClassIcon then A.SetPersonClassIcon(mark.icon, item.class); iconShown = mark.icon:IsShown()
+            elseif item.icon then mark.icon:SetTexture(item.icon); iconShown = true end
+            mark.icon:SetShown(iconShown)
+            mark.icon:ClearAllPoints(); mark.text:ClearAllPoints()
+            if left then
+                mark.icon:SetPoint("LEFT", 10, 0)
+                mark.text:SetPoint("LEFT", iconShown and 30 or 10, 0); mark.text:SetPoint("RIGHT", -14, 0)
+            else
+                mark.icon:SetPoint("RIGHT", -10, 0)
+                mark.text:SetPoint("LEFT", 14, 0); mark.text:SetPoint("RIGHT", iconShown and -30 or -10, 0)
             end
             mark:ClearAllPoints()
             mark.edge:ClearAllPoints()
@@ -2786,7 +2724,7 @@ local function FillLabelledMarks()
             -- (below the border's level, so the metal covers the tucked end)
             mark:SetFrameLevel(book:GetFrameLevel())
             mark:Show()
-            y = y - (skinB and 32 or 30)
+            y = y - 32
         end
     end
     Column(tools, toolsLeft)
@@ -2902,10 +2840,9 @@ end
 -- A label and a row of switches: choices {{value, label}, ...}.
 local function SectionChoice(section, y, label, choices, get, set, note)
     local width = math.max(200, (book.panel.child:GetWidth() or 340) - 8)
-    local skinB = book.skinB
     local onOff = #choices == 2 and choices[1][1] == true and choices[2][1] == false
-    if skinB and onOff then
-        -- (skin B: an On/Off pair is one checkbox)
+    if onOff then
+        -- (an On/Off pair is one checkbox)
         local check = CreateFrame("CheckButton", nil, section, "UICheckButtonTemplate")
         check:SetSize(24, 24); check:SetPoint("TOPLEFT", 0, y + 3)
         check:SetScript("OnClick", function(self) set(self:GetChecked() and true or false); A.RefreshBook() end)
@@ -2922,18 +2859,13 @@ local function SectionChoice(section, y, label, choices, get, set, note)
         end
         return y - 12
     end
-    local head = SectionText(section, label, y, skinB and Font("QuestFont_Shadow_Small", "GameFontNormal") or "GameFontNormal", CHAPTER)
-    if skinB and head.SetShadowOffset then head:SetShadowOffset(0, 0) end
+    local head = SectionText(section, label, y, Font("QuestFont_Shadow_Small", "GameFontNormal"), CHAPTER)
+    if head.SetShadowOffset then head:SetShadowOffset(0, 0) end
     local x, buttons = 4, {}
     for _, choice in ipairs(choices) do
         local button, w
-        if skinB then
-            button = PaperChoice(section, choice[2], function() set(choice[1]); A.RefreshBook() end)
-            w = button.width
-        else
-            w = math.max(34, #choice[2] * 7 + 16)
-            button = Toggle(section, choice[2], w, nil, nil, function() set(choice[1]); A.RefreshBook() end)
-        end
+        button = PaperChoice(section, choice[2], function() set(choice[1]); A.RefreshBook() end)
+        w = button.width
         -- (a row that would run off the page wraps)
         if x + w > width and x > 4 then x = 4; y = y - 24 end
         button:SetPoint("TOPLEFT", x, y - 20)
@@ -2965,7 +2897,6 @@ local function FillSettings()
         {kind = "row", label = "Recording", sub = "Adventures and crossing paths", icon = "Interface\\Icons\\INV_Misc_Book_11",
             selected = state.settings == "recording", action = function() state.settings = "recording"; A.RefreshBook() end},
     }
-    if not book.skinB then table.insert(sections, 1, {kind = "section", label = "Settings", fixed = true}) end
     FillList(sections)
     for name, section in pairs(book.sections) do section:SetShown(name == state.settings) end
     -- (a new section starts at its top)
@@ -3080,10 +3011,9 @@ function A.RefreshBook(toEnd, reusePages)
         if book.headRule then book.headRule:Hide() end
         book.name:SetFontObject("GameFontNormalLarge"); book.name:SetJustifyH("LEFT"); book.name:SetHeight(22)
         book.summary:SetFontObject("GameFontHighlightSmall"); book.summary:SetJustifyH("LEFT")
-        book.name:ClearAllPoints(); book.name:SetPoint("TOPLEFT", book.skinB and 43 or 26, book.skinB and -54 or -44)
+        book.name:ClearAllPoints(); book.name:SetPoint("TOPLEFT", 43, -54)
         book.name:SetWidth(book:GetWidth() - 52)
-        book.name:SetText(state.view == "settings" and "Settings" or state.view == "people" and "Companions" or "NPCs"); book.name:SetTextColor(1, 0.82, 0)
-        if book.skinB then book.name:SetTextColor(unpack(INK)) end
+        book.name:SetText(state.view == "settings" and "Settings" or state.view == "people" and "Companions" or "NPCs"); book.name:SetTextColor(unpack(INK))
         book.summary:SetText("")
         if state.view == "people" then
             for _, section in pairs(book.sections) do section:Hide() end
@@ -3107,14 +3037,14 @@ function A.RefreshBook(toEnd, reusePages)
         return
     end
     book.name:SetText(person.self and (person.name or "My journal") or (person.display or ShortName(person.name or state.key)))
-    if book.skinB then book.name:SetTextColor(unpack(CHAPTER)) else book.name:SetTextColor(ClassColor(person.class)) end
+    book.name:SetTextColor(unpack(CHAPTER))
     A.SetPersonClassIcon(book.classIcon, person.class)
-    local nameLeft = book.classIcon:IsShown() and (book.skinB and 73 or 62) or (book.skinB and 43 or 26)
-    book.name:ClearAllPoints(); book.name:SetPoint("TOPLEFT", nameLeft, book.skinB and -52 or -44)
+    local nameLeft = book.classIcon:IsShown() and 73 or 43
+    book.name:ClearAllPoints(); book.name:SetPoint("TOPLEFT", nameLeft, -52)
     -- Reserve room for Pin and Edit even with a long custom display name.
-    book.name:SetWidth(math.max(100, (book.skinB and book.left:GetWidth() + 13 or book:GetWidth()) - nameLeft - 130))
+    book.name:SetWidth(math.max(100, book.left:GetWidth() + 13 - nameLeft - 130))
     book.name:SetWidth(math.min(book.name:GetWidth(), math.ceil(book.name:GetStringWidth() or 100) + 6))
-    book.summary:SetWidth((book.skinB and book.left:GetWidth() + 13 or book:GetWidth()) - nameLeft - 28)
+    book.summary:SetWidth(book.left:GetWidth() + 13 - nameLeft - 28)
     book.summary:SetText(A.PersonSummary(person))
     if state.owner then book.summary:SetText(A.PersonSummary(person) .. "   |cffbbaa88Kept by " .. A.CharacterName(state.owner) .. " (read only)|r") end
     -- (a companion can be pinned to the edge)
@@ -3131,20 +3061,18 @@ function A.RefreshBook(toEnd, reusePages)
         if met then book.summary:SetText(A.PersonSummary(person) .. "   |cff8a7a62\194\183|r   " .. met) end
     end
     if book.headRule then book.headRule:Hide() end
-    if book.skinB then
-        -- (skin B: no header over the pages. The title bar names the journal, and the
-        -- journal's first page carries its title; a narrow band keeps Pin and the tabs.)
-        book.classIcon:Hide(); book.name:Hide(); book.summary:Hide()
-        if book.heading then book.heading:SetText(JournalTitle(person) .. "'s journal") end
-        book.pin:Hide()
-        DrawPinRibbon(pinnable)
-    end
+    -- (no header over the pages. The title bar names the journal, and the
+    -- journal's first page carries its title; a narrow band keeps Pin and the tabs.)
+    book.classIcon:Hide(); book.name:Hide(); book.summary:Hide()
+    if book.heading then book.heading:SetText(JournalTitle(person) .. "'s journal") end
+    book.pin:Hide()
+    DrawPinRibbon(pinnable)
     PlaceCard(person)
     local rival = A.PersonCircle and not person.self and A.PersonCircle(person) == "rival"
     local atlas = rival and (person.faction == "Horde" and "QuestBG-Horde" or person.faction == "Alliance" and "QuestBG-Alliance") or "QuestBG-Parchment"
-    if book.corner then book.corner:SetShown(book.skinB and not rival); book.corner.art:SetShown(book.skinB and not rival) end
-    if book.skinB and not rival then
-        -- (skin B: the spellbook's pages; a rival keeps their faction's paper)
+    if book.corner then book.corner:SetShown(not rival); book.corner.art:SetShown(not rival) end
+    if not rival then
+        -- (the spellbook's pages; a rival keeps their faction's paper)
         SetBookPage(book.rightPage.paper, "right"); SetBookPage(book.leftPage.paper, "left")
     else
         book.rightPage.paper:SetTexCoord(0, 1, 0, 1); book.leftPage.paper:SetTexCoord(0, 1, 0, 1)

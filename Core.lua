@@ -167,6 +167,7 @@ events:SetScript("OnEvent", function(_, event, arg)
                 .. " Wrong character? Log in with the right one and type /cj movelist.")
         end
         A.db.cjLayout = nil -- (the list window, layout A, is gone since 1.16.0)
+        if A.db.bookVariants then A.db.bookVariants.skin = nil end -- (one skin since 1.17.0)
         A.Refresh()
     end
 end)
@@ -208,16 +209,6 @@ SlashCmdList.COMPANIONJOURNAL = function(message)
     elseif command == "artboard" then
         -- /cj artboard: the game's candidate art for the book, with names (for choosing).
         if A.BookArtboard then A.BookArtboard() end
-    elseif command == "skin" then
-        -- /cj skin a|b: the book's art (A: the first look; B: the spellbook's pages).
-        local which = message:lower():match("^%s*skin%s+([ab])")
-        if which and A.SetBookVariant then A.SetBookVariant("skin", which) end
-        local b = A.BookVariant and A.BookVariant("skin") == "b"
-        print("Companion Journal: book skin " .. (b and "B (spellbook pages)" or "A (first look)") .. ".")
-        -- (B falls back to A's art when the client has no spellbook pages)
-        if b and not (C_Texture and C_Texture.GetAtlasInfo and C_Texture.GetAtlasInfo("spellbook-Page-Left-C60")) then
-            print("Companion Journal: this client has no spellbook page art, so the book keeps skin A's pages.")
-        end
     elseif command == "tag" then
         A.AddTargetPerson(message:match("^%s*%S+%s+(.-)%s*$"))
     elseif command == "testleave" then

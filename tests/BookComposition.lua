@@ -74,7 +74,7 @@ UIParent = object(); UIParent.origin = true; UIParent:SetSize(1920, 1080)
 UISpecialFrames = {}
 C_Texture = {GetAtlasInfo = function() return {file = "mock-atlas", width = 800, height = 800, leftTexCoord = 0, rightTexCoord = 1, topTexCoord = 0, bottomTexCoord = 1} end}
 local person = {name = "A companion with a very long custom display name", class = "SHAMAN", circle = "companion", faction = "Horde"}
-local A = {defaults = {}, People = {buddy = person}, db = {bookSize = "a", bookSpread = "one", bookVariants = {skin = "b", marks = "c"}}}
+local A = {defaults = {}, People = {buddy = person}, db = {bookSize = "a", bookSpread = "one", bookVariants = {marks = "c"}}}
 A.PersonCircle = function(p) return p.circle end
 A.PersonSummary = function() return "Companion · A long shared history across the world" end
 A.SetPersonClassIcon = function(icon) icon:Show() end

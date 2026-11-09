@@ -405,6 +405,7 @@ testing happens now.
 | 2026-11-02 | All work in `_forever_`; beta is an archive; repo `Mimezu/forever-CompanionJournal` | memory: forever-live-workspace |
 | 2026-11-05 | Overnight pass toward "a unique story for each character" (1.13.0, §4.5, §7.3a); new recording behind one toggle that starts off; ancestor journals archived for a future "ancestors' diaries" feature (`Migration\ancestor-journals-20261105\`) | user, in session |
 | 2026-11-05 | Codex-era chapter length accepted: "story is paramount", a fixed sentence budget makes no sense; "the road" allowed as long as it is not overused; prune the 6 beta `people`; keep skins A and B both for now | user, in session |
+| 2026-11-09 | Only the book (layout A removed, 1.16.0) and one skin, the spellbook pages (skin A removed, 1.17.0) | user, in session |
 
 ### Rejected or reverted
 
@@ -567,7 +568,7 @@ Details and API evidence: `SI: cj-overnight-20261105\moments\DESIGN-moments.md`.
 
 `JournalStyles.lua` (styles B Chronicle, C Margins, D Diary with drop cap, E Ledger; A is
 the original page), `JournalUI.lua` (reading choices, ways into a journal), `JournalBookUI.lua` (the
-book, the only window since 1.16.0; variants through `A.BookVariant(key)` and `db.bookVariants`; skin A/B decided at build),
+book, the only window since 1.16.0; variants through `A.BookVariant(key)` and `db.bookVariants`; one skin, the spellbook pages, since 1.17.0),
 `BookManagement.lua` (Companions, NPCs, Settings pages), `JournalPagination.lua`,
 `JournalReader.lua` (Reading view editions), `LoreNotesUI.lua` (the parchment slip).
 
@@ -631,7 +632,7 @@ SI: journal-voice/PLAN.md]:
 Book (layout B): Settings > Reading (Everything/Highlights, Simple/Story, page style A-E,
 book size A/B/C or drag, One/Two pages, extras: Today so far, Names open their journal,
 Reading view, Timeline, New chapter notice, portraits), Settings > Testing (bookmarks
-A/B/C, card, adding, unread ribbons, portraits when/where/frame, skin), People in the
+A/B/C, card, adding, unread ribbons, portraits when/where/frame), People in the
 world, Adding people, Recording. Reading view editions: Original, Your tale, Our story,
 By the fire. (Layout A, the list window, was removed in 1.16.0.)
 
@@ -693,6 +694,7 @@ Settled 2026-11-05 (see the decision log): chapter length follows the Codex era,
    [memory: live-migration-backup-2026-10-23].
 5. **Research artefacts** (settled 2026-11-05): `_forever_\StorageInvestigation\`, the live
    client's own copy of the archive (for example `cj-overnight-20261105\`).
-6. **Skin B default.** Skin A is still the default (`/cj skin b` opts in). Keep both skins
-   for now (2026-11-05); no winner yet. Layout B won over A (A removed in 1.16.0); bookmarks C is the other variant
-   recorded as having won.
+6. **Skin and layout** (settled 2026-11-09): skin B and layout B won; skin A was removed
+   in 1.17.0 and layout A in 1.16.0. Bookmarks C is the other variant recorded as having
+   won. The "Companion card" variant has had no effect since skin B dropped the header's
+   card buttons; it is still listed under Testing.

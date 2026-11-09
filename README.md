@@ -4,6 +4,13 @@ The players and NPCs you want to remember, and a journal of what you lived
 through together. It came out of Forever Names 1.10: the People list, the
 journal, the group popup and the campfire now live here, in their own window.
 
+## 1.17.0: one skin, the spellbook pages
+
+- **Skin A is gone.** The book always has skin B's look: the spellbook's pages,
+  cloth ribbons, ink on paper. The "Book skin" choice (Settings > Testing) and
+  `/cj skin` are removed. If you were still on skin A, the book changes look the
+  next time you open it; your journals and settings are unchanged.
+
 ## 1.16.0: only the book
 
 - **The list window is gone.** Companion Journal has one window, the book. `/cj`,
@@ -696,7 +703,6 @@ works.
 - `/cj`: open the book (at your target's journal when they are in your list).
 - `/cj me`: your own journal. `/cj book`: the book.
 - `/cj journal [name]`: a journal (or your target's).
-- `/cj skin a|b`: the book's art (B: the spellbook pages).
 - `/cj tag [note]`: add your target.
 - `/cj testleave [count|me]`: preview the group popup.
 - `/cj movelist`: move the list from before to this character (when the

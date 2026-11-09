@@ -15,6 +15,8 @@ local function Object()
     function obj:GetWidth() return self.width end
     function obj:GetHeight() return self.height end
     function obj:GetTop() return self.top or 0 end
+    function obj:GetFrameLevel() return self.level or 1 end
+    function obj:CreateFontString() return Object() end
     function obj:SetPoint(...) self.points[#self.points + 1] = {...} end
     function obj:ClearAllPoints() self.points = {} end
     function obj:SetText(text) self.text = text end
@@ -33,6 +35,7 @@ local function Object()
     end})
 end
 function CreateFrame() return Object() end
+function CreateFont() return Object() end
 function UnitGUID() return "Player-Test" end
 local A = {defaults = {}, db = {bookVariants = {}, bookSpread = "one"}, People = {}}
 assert(loadfile(root .. "JournalPagination.lua"))("CompanionJournal", A)
@@ -141,7 +144,7 @@ end
 -- Run RefreshBook with UI-only helpers stubbed, keeping portrait preparation,
 -- eligible-leaf selection, contents scheduling and navigation unchanged.
 local book = Object()
-for _, key in ipairs({"contents", "panel", "name", "summary", "readView", "footer", "input", "write", "retell", "cardHost", "quill", "flip", "addBar", "timeline", "classIcon", "pin", "chapterLabel", "prev", "next"}) do book[key] = Object() end
+for _, key in ipairs({"contents", "panel", "name", "summary", "readView", "footer", "input", "write", "retell", "cardHost", "quill", "flip", "addBar", "timeline", "classIcon", "pin", "chapterLabel", "prev", "next", "left", "right"}) do book[key] = Object() end
 book.contents.box, book.contents.scroll, book.contents.portrait = {20, 20, 20, 20}, Object(), Object()
 book.panel.scroll = Object()
 book.leftPage, book.rightPage = Page(), Page()

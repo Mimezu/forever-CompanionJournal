@@ -95,7 +95,7 @@ The user tests in game; nothing counts as verified until he has. Give him a shor
 
 - `/reload` after any change. Slash commands (`Core.lua`): `/cj` (open; at your target if
   listed), `/cj journal [name]`, `/cj me` (your own journal), `/cj book` (the book),
-  `/cj skin a|b` (book art), `/cj artboard`
+  `/cj artboard`
   (candidate atlases with names and sizes), `/cj tag [note]` (add target),
   `/cj testleave [n|me]` (preview the group popup), `/cj movelist` (move the list from the
   first login character; only while this character has nobody).
