@@ -49,6 +49,9 @@ local VARIANTS = {
         choices = {{"a", "Plate"}, {"b", "Facing page"}, {"c", "Cameo"}, {"d", "Contents"}, {"e", "Margin"}}},
     {key = "portraitFrame", label = "Portraits: frame", stage = 8,
         choices = {{"a", "Painted"}, {"b", "Cameo"}, {"c", "Scrapbook"}, {"d", "Plain"}}},
+    -- (the story planner, 2026-11-09: a companion's chapter told in time order, in movements)
+    {key = "teller", label = "Storyteller", stage = 8,
+        choices = {{"current", "Current"}, {"planned", "Planned (new)"}}},
 }
 function A.BookVariant(key)
     local chosen = A.db and A.db.bookVariants and A.db.bookVariants[key]
@@ -60,7 +63,7 @@ local function SetVariant(key, value)
     A.db.bookVariants = A.db.bookVariants or {}
     local changed = A.db.bookVariants[key] ~= value
     A.db.bookVariants[key] = value
-    if changed and (key == "portraitWhen" or key == "portraitWhere" or key == "portraitFrame") then
+    if changed and (key == "portraitWhen" or key == "portraitWhere" or key == "portraitFrame" or key == "teller") then
         state.pageCache = nil
         if A.RefreshBook then A.RefreshBook() end
     end

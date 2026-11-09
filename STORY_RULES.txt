@@ -9,7 +9,9 @@ EVIDENCE
 1. Recorded events establish what happened. Configured origins and bonds are
    explicit backstory. Lore establishes context. Keep these distinct.
 2. Never invent a visit, conversation, class trial, learned spell, victory,
-   route, feeling, motive, spoken dialogue or companion presence.
+   route, motive, spoken dialogue or companion presence. The character's own
+   feeling is not an invention: it answers a recorded fact (DESIGN §3.0 rule 5,
+   widened 2026-11-09). Another person's feelings stay unstated.
 3. A completed quest permits only that quest's supported consequence. Shared
    titles across chain stages must not imply completion of the entire chain.
 4. Preserve new quest IDs, and resolve precise ID context before title fallback.
@@ -52,7 +54,8 @@ WRITING
     "service", "proof of work" or a generic official's approval. The original
     quest can supply humor, grief and cultural detail through its NPCs. Attribute
     their opinions and wishes; never turn their suspicions into narrator fact,
-    invent gestures, or assign those feelings to the player.
+    invent gestures, or assign the NPC's feelings to the player (the player's
+    own reaction to the moment is told; DESIGN §3.0 rule 5).
 17. Express the achieved fact without appending an audit disclaimer. A promised
     report can remain a promise without saying "the report was not delivered".
     Keep a real unresolved mystery or consequential next question; omit generic

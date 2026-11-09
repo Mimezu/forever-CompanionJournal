@@ -84,10 +84,40 @@ too long on too many lore elements, not enough personal storytelling", and the E
    character's sentences ("the Mindless Ones, Deathknell's dead still bound to the Lich
    King"), occasionally a fuller moment where the story turns. Never a run of sentences
    about NPCs. There is no lore-heavy mode.
-5. **Perception and feeling, grounded.** The character may perceive and feel: what a place or
-   creature truly is (a spider cave is dark and full of spiders), and a reaction that fits
-   the recorded fact (a first death, a hard fight, a long road). Never invent an event, an
-   outcome, another person's speech, or weather; one perceptive or felt touch per moment.
+5. **Feeling gives the story its soul (widened 2026-11-09).** "A real book and story needs
+   feelings. A character story needs soul and character development, or else it's just cold
+   records." The character feels, and the prose says so: awe, fear, pride, shame, doubt,
+   tiredness, loyalty, grief, wonder, as a person of that race, class and level would at that
+   recorded moment. A young Forsaken meeting Sylvanas for the first time reacts; a first death
+   frightens; a death to the same beast twice stings; a paladin taught Redemption by the risen
+   order means something. Feelings colour each movement and link one moment to the next (the
+   fear at eleven is why the keep felt like shelter at midnight).
+   What stays forbidden: inventing an event, an outcome, another person's speech or thoughts,
+   or weather. A feeling always answers a recorded fact. About one felt line per movement, a
+   few per chapter; never a moral, a lesson or a summary of the day's meaning. The companion's
+   inner life is not ours to state: say what you saw of them, or what "we" shared in the diary
+   voice, sparingly.
+   **Natural and earned, never systematic** (the user, 2026-11-09). A feeling is earned by a
+   moment that matters: a first death, a death to a named beast, a first audience with a figure
+   like Sylvanas, a first capital, a class spell that means something, a thread paid off, a
+   level reached right after dying. An ordinary level, kill or errand earns none. Two or three
+   in a chapter at most, never two in a row, the same kind not again for several chapters, no
+   line twice in a book; a second time differs from the first. Show it (the body, an action, a
+   thought, a remembered thing) rather than naming it; "felt" and "For a moment" are crutches.
+   **Earned means set up** (the user, 2026-11-09). The size of the event is not enough: what
+   came before earns the feeling. The second death to Riptear stings because the first was
+   told; Sylvanas lands because the evening built toward "the Dark Lady"; Redemption means
+   something after the risen order's history. A feeling points back to its setup (an earlier
+   death, a figure named before, a thread, the character's own past); without a setup there is
+   no feeling line. Event lists and caps are safety limits, not the rule.
+   **Who the character is, used sparingly** (the user, 2026-11-09). Faction values (Horde:
+   survival, honour, freedom, outcasts' kinship; Alliance: duty, order, faith, rebuilding), race
+   (a troll, a dwarf and a Forsaken do not meet the world alike) and class (a mage studies, a
+   warlock bargains, a druid belongs to the wild) colour a line only at an identity moment: a
+   recorded event that touches who they are (a Forsaken before Sylvanas, a troll in Zul'Farrak,
+   a dwarf in Uldaman, a warlock's first demon, a paladin taught Redemption). Most chapters have
+   none; "class and race should not bleed into everything, but well-timed uses of those will
+   make each story feel earned and personal."
 6. **The hero's journey by level.** Low levels: a fledgling, novice adventurer, things new
    and big. Middle levels: a seasoned traveller, surer. High levels and the end game: a
    strong, known figure, the last part of the hero's journey; the voice grows with them.
@@ -114,9 +144,10 @@ them; `STORY_RULES.txt` in this folder adds the evidence rules of the Codex era.
 
 **Content**
 - Say what happened, in the order it happened. The fact is the sentence.
-- Never state what the journal does not record: who struck the blow, what anyone said,
+- Never state what the journal does not record: who struck the blow, what anyone else said,
   thought or felt, food, beds, weather, silence, intent, or unchecked history ("as she had
-  before", "the longest").
+  before", "the longest"). The character's own feelings are the exception (§3.0 rule 5):
+  they are told, as an answer to a recorded fact.
 - Never narrate the telling. No journal, tale, song, verse, page, book, record, chapter,
   story in a common pool. "The road" is allowed as long as it is not overused: at most
   once a chapter, not every chapter (relaxed 2026-09-30, confirmed 2026-11-05)
@@ -406,6 +437,7 @@ testing happens now.
 | 2026-11-05 | Overnight pass toward "a unique story for each character" (1.13.0, §4.5, §7.3a); new recording behind one toggle that starts off; ancestor journals archived for a future "ancestors' diaries" feature (`Migration\ancestor-journals-20261105\`) | user, in session |
 | 2026-11-05 | Codex-era chapter length accepted: "story is paramount", a fixed sentence budget makes no sense; "the road" allowed as long as it is not overused; prune the 6 beta `people`; keep skins A and B both for now | user, in session |
 | 2026-11-09 | Only the book (layout A removed, 1.16.0) and one skin, the spellbook pages (skin A removed, 1.17.0) | user, in session |
+| 2026-11-09 | Feelings widened (§3.0 rule 5): the character's own reactions give the story its soul; the story planner (movements, threads, time anchors) approved, `SI: cj-story-breakthrough-20261109/PROPOSAL.md` | user, in session |
 
 ### Rejected or reverted
 
