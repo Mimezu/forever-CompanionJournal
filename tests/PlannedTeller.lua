@@ -30,12 +30,13 @@ local BASE = os.time({year = 2026, month = 9, day = 1, hour = 0})
 local function At(day, hour, minute) return BASE + day * 86400 + math.floor((hour or 20) * 3600) + (minute or 0) * 60 end
 
 -- The evening: Tirisfal from nine, the Undercity at half past ten, back in Tirisfal, killed by
--- Riptear a little after eleven, the Undercity again past midnight, stopped at one.
+-- Riptear a little after eleven, Dahlia's level a minute later, Bandarion Keep at 23:37, the
+-- Undercity again past midnight; Dahlia stopped at one, you played on (steps 3-4, 2026-11-09).
 local me = {self = true, charKey = "alb", name = "Alberich", race = "Scourge", faction = "Horde", class = "PALADIN", startLevel = 1, journal = {}}
 local dahlia = {name = "Dahlia-Noir", class = "WARLOCK", race = "Scourge", pronouns = "she", journal = {}, bond = "spouse"}
 A.db.people["dahlia-noir"] = dahlia
 local t0, stop = At(2, 21), At(3, 1)
-me.journal[#me.journal + 1] = {k = "play", t = t0, e = stop, z = "Tirisfal Glades", pl = 12}
+me.journal[#me.journal + 1] = {k = "play", t = t0, e = stop + 1800, z = "Tirisfal Glades", pl = 12}
 me.journal[#me.journal + 1] = {k = "with", d = "dahlia-noir", n = "Dahlia-Noir", t = t0, e = stop}
 me.journal[#me.journal + 1] = {k = "first", d = "rarebeast", z = "Sri'skulk", sz = "Tirisfal Glades", t = At(2, 21, 20), pl = 12}
 local J = dahlia.journal
@@ -66,7 +67,7 @@ end
 
 local ANCHOR = {"^Just after ", "^A little after ", "^Around half past ", "^Close to ", "^Past midnight", "^Back in ", "^In "}
 local LEADS = {"Then ", "Then, ", "After that, ", "Later that day, ", "Later, ", "Before long, ", "Also, "}
-local hourLast, differs, anchored = 0, 0, 0
+local hourLast, differs, anchored, threads = 0, 0, 0, 0
 for _, voice in ipairs({"you", "we"}) do
     for retell = 0, 7 do
         local tag = " (" .. voice .. " " .. retell .. ")"
@@ -91,8 +92,9 @@ for _, voice in ipairs({"you", "we"}) do
         local lastT = 0
         for i, line in ipairs(plan.lines) do
             if line.t and not line.open and line.beat ~= "hour" then
-                check(line.t >= lastT, "line " .. i .. " in time order" .. tag .. ": " .. line.text)
-                lastT = line.t
+                -- (what came within ten minutes of a death is told right after it)
+                check(line.t >= lastT - 600, "line " .. i .. " in time order" .. tag .. ": " .. line.text)
+                lastT = math.max(lastT, line.t)
             end
             if line.beat == "hour" then check(i == #plan.lines, "the hour line is last" .. tag); hourLast = hourLast + 1 end
         end
@@ -105,16 +107,47 @@ for _, voice in ipairs({"you", "we"}) do
         end
         local death, rare = ParaOf("Riptear"), ParaOf("Sri'skulk")
         check(death and rare and rare < death, "the rare and the death in different movements, in order" .. tag .. ": " .. plain)
+        -- 3a/3b. The death opens its movement; her level a minute later is the next line; the keep,
+        -- twenty-six minutes on, opens the movement after.
+        local deathAt
+        for i, line in ipairs(plan.lines) do if line.beat == "death" then deathAt = i end end
+        check(deathAt and (deathAt == 1 or plan.lines[deathAt - 1].para < plan.lines[deathAt].para), "the death opens its movement" .. tag .. ": " .. plain)
+        local nextAt = deathAt + 1
+        while plan.lines[nextAt] and (plan.lines[nextAt].beat == "rez" or plan.lines[nextAt].beat == "deathLore") do nextAt = nextAt + 1 end
+        local after = plan.lines[nextAt]
+        check(after and after.beat == "level" and A.JournalPlain(after.text):find("Dahlia", 1, true) and after.text:find("a minute later", 1, true)
+            and after.para == plan.lines[deathAt].para, "her level a minute later, right after the death" .. tag .. ": " .. plain)
+        local keep23
+        for _, line in ipairs(plan.lines) do
+            if line.t and line.t >= At(2, 23, 30) and line.t < At(3, 0) and line.beat ~= "level" then keep23 = keep23 or line end
+        end
+        check(keep23 and keep23.para > plan.lines[deathAt].para, "Bandarion Keep, after the death's aftermath, opens its own movement" .. tag .. ": " .. plain)
+        -- 3a. A quest's setup line is never anchored on the hour (a place, or nothing).
+        for _, line in ipairs(plan.lines) do
+            if line.anchor and (line.setupLine or line.isSetup) then
+                check(line.anchor:find("^In ") or line.anchor:find("^Back in "), "a setup line takes no hour" .. tag .. ": " .. line.text)
+            end
+        end
+        -- 3c. A thread's payoff (Gunther's Nether Gem) has its setup before it, and both carry the hook.
         for i, line in ipairs(plan.lines) do
-            -- (the first timed line after the death's own lines opens a new paragraph)
-            if line.beat == "death" then
-                for j = i + 1, #plan.lines do
-                    local nextLine = plan.lines[j]
-                    if nextLine.t and nextLine.beat ~= "rez" and nextLine.beat ~= "deathLore" and nextLine.beat ~= "consequence" then
-                        check(nextLine.para > line.para or nextLine.merged, "a new movement after the death" .. tag .. ": " .. nextLine.text)
-                        break
-                    end
-                end
+            if line.setup and line.setup.kind == "thread" then
+                threads = threads + 1
+                local before = false
+                for j = 1, i - 1 do if plan.lines[j].setupFor == line.setup.key then before = true end end
+                check(before, "the thread's setup comes before its payoff" .. tag .. ": " .. line.text)
+            end
+        end
+        -- 3d. Dahlia stopped before you, late: that is the last line.
+        local closing = plan.lines[#plan.lines]
+        check(closing and closing.beat == "hour" and A.JournalPlain(closing.text):find("Dahlia stopped", 1, true) and closing.text == plan.companionStop,
+            "the companion stopping closes the chapter" .. tag .. ": " .. plain)
+        check(not plain:find("before you stopped", 1, true) and not plain:find("before we stopped", 1, true), "no second closing hour" .. tag .. ": " .. plain)
+        -- (each movement that holds her level names her)
+        for _, line in ipairs(plan.lines) do
+            if line.beat == "level" then
+                local named = false
+                for _, other in ipairs(plan.lines) do if other.para == line.para and A.JournalPlain(other.text):find("Dahlia", 1, true) then named = true end end
+                check(named, "a movement with her level names her" .. tag)
             end
         end
         local zoneBreaks = 0
@@ -142,6 +175,7 @@ end
 check(differs > 0, "the planned telling differs from the current one")
 check(anchored > 0, "a later movement opens on a time or a place")
 check(hourLast > 0, "a late night is told, last, in some telling")
+check(threads > 0, "a thread's payoff is set up in some telling")
 A.db.people["dahlia-noir"] = nil
 
 io.write("PASS: " .. assertions .. " planned-telling assertions\n")

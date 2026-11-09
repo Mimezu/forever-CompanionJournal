@@ -1002,6 +1002,12 @@ PB.shared = {
 -- PB.bothSame: the same level, reached together.
 PB.bothSame = {"{pair} both reached level {theirs}.", "{pair} reached level {theirs} together."}
 PB.myLevel = {"{I} reached level {mine}.", "{I} made level {mine} along the way.", "{I} climbed to level {mine}."}
+-- The planned telling (story planner, 2026-11-09): what the record says came right after a death,
+-- a level within minutes ({after}: "a minute later", "a few minutes later"), and the companion
+-- stopping for the night as the chapter's last fact ({clock}: "just after one", "past midnight").
+PB.levelAfterDeath = {"{name} reached level {theirs} {after}.", "{name} made level {theirs} {after}."}
+PB.levelAfterDeathMine = {"{I} reached level {mine} {after}.", "{I} made level {mine} {after}."}
+PB.companionStopped = {"It was {clock} when {name} stopped.", "{name} stopped {clock}."}
 PB.levelThen = {
     "{They} had been level {thenLevel} in {firstZone}, the day {we} met.",
     "{They} had been level {thenLevel} when {we} first met.",
@@ -1812,6 +1818,8 @@ do
     you.bothSame = {"The pair of {us} made level {theirs} the same day."}
     we.myLevel = {"I made level {mine} with {name} beside me."}
     you.myLevel = {"{I} made level {mine} with {name} in {my} party."}
+    we.companionStopped = {"It was {clock} when {name} stopped for the night."}
+    you.companionStopped = {"It was {clock} when {name} stopped for the night."}
     -- Moments shared.
     we.sharedSunset = {"{name} and I were at {what} as the sun went down."}
     you.sharedSunset = {"The sun went down at {what} with {name} and {me} there to see it."}
