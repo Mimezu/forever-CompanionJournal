@@ -207,4 +207,43 @@ do
     A.db.people["dahlia-noir"] = nil
 end
 
+-- 5. In the order it happened (2026-11-09): a rare seen at the start of the evening is told
+-- before the day's work, and the hour you stopped closes the chapter. It used to follow
+-- "Midnight came and went before you stopped".
+do
+    local me = {self = true, charKey = "alb", name = "Alberich", race = "Scourge", faction = "Horde", class = "PALADIN", startLevel = 1, journal = {}}
+    local dahlia = {name = "Dahlia-Noir", class = "WARLOCK", race = "Scourge", pronouns = "she", journal = {}, bond = "spouse"}
+    A.db.people["dahlia-noir"] = dahlia
+    local t = At(2, 22)
+    me.journal[#me.journal + 1] = {k = "play", t = t, e = t + 4 * 3600, z = "Tirisfal Glades", pl = 12}
+    me.journal[#me.journal + 1] = {k = "with", d = "dahlia-noir", n = "Dahlia-Noir", t = t, e = t + 4 * 3600}
+    me.journal[#me.journal + 1] = {k = "first", d = "rarebeast", z = "Sri'skulk", sz = "Tirisfal Glades", t = t + 600, pl = 12}
+    dahlia.journal[#dahlia.journal + 1] = {k = "group", t = t, e = t + 4 * 3600, z = "Tirisfal Glades", pl = 12, ol = 12}
+    dahlia.journal[#dahlia.journal + 1] = {k = "death", w = "them", t = t + 1800, z = "Tirisfal Glades"}
+    dahlia.journal[#dahlia.journal + 1] = {k = "quest", d = "Rear Guard Patrol", t = t + 2400, z = "Tirisfal Glades"}
+    A.SelfPerson = function() return me end
+    local player = {name = "Alberich", race = "Scourge", faction = "Horde", class = "PALADIN", charKey = "alb"}
+    local lateSeen = 0
+    for _, voice in ipairs({"you", "we"}) do
+        for retell = 0, 7 do
+            dahlia.retell = retell
+            local days = A.JournalBook(dahlia)
+            local stories = A.JournalTale.Tell(dahlia, days, voice, player, false)
+            local text = A.JournalPlain(stories[days[1].key].text)
+            if show and retell == 0 then print(("[in order, %s]\n%s\n"):format(voice, text)) end
+            local rare = text:find("Sri'skulk", 1, true)
+            local died = text:find("died", 1, true) or text:find("fell", 1, true) or text:find("killed", 1, true) or text:find("got the better", 1, true)
+            check(rare, "the rare seen together is told (" .. voice .. " " .. retell .. "): " .. text)
+            check(not died or rare < died, "the rare, seen first, comes before the death (" .. voice .. " " .. retell .. "): " .. text)
+            local late = text:find("midnight", 1, true)
+            if late then
+                lateSeen = lateSeen + 1
+                check(not text:sub(late):find("%.%s+%S"), "the hour you stopped is the last line (" .. voice .. " " .. retell .. "): " .. text)
+            end
+        end
+    end
+    check(lateSeen > 0, "a late night is told in some telling")
+    A.db.people["dahlia-noir"] = nil
+end
+
 io.write("PASS: " .. assertions .. " more-moment telling assertions\n")

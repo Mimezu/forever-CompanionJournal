@@ -4,6 +4,14 @@ The players and NPCs you want to remember, and a journal of what you lived
 through together. It came out of Forever Names 1.10: the People list, the
 journal, the group popup and the campfire now live here, in their own window.
 
+## 1.18.1: in the order it happened
+
+- **A companion's chapter keeps the evening's order.** A moment from your own
+  journal while together (a rare beast, a famous face, a sunset) is told where it
+  happened: one from the start of the evening comes before the day's work, not
+  after "Midnight came and went before you stopped". That line, the hour you
+  stopped, now always closes the chapter.
+
 ## 1.18.0: the card lives on the Companions page
 
 - **"Companion card" is gone** from Settings > Testing. It had done nothing since

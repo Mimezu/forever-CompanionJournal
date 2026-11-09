@@ -1001,6 +1001,9 @@ function T.Tell(person, days, voice, player, brief)
         -- (Highlights: a fire or an inn only when it is the first shared, or a counted one)
         local restNews = (#f.fires > 0 and (history.fires == 0 or (PB.fireCount and PB.fireCount[history.fires + #f.fires] ~= nil)))
             or (#f.rests > 0 and history.rests == 0)
+        -- (the time of what a line tells, where the chapter knows it: moments from your own journal;
+        -- keyed by the line, so lines moved, merged or dropped later keep or lose it safely)
+        local outT, lineT = {}, nil
         local function Add(text)
             if not text then return end
             if brief and (not KEEP[beat] and not (beat == "land" and discovery)
@@ -1024,6 +1027,7 @@ function T.Tell(person, days, voice, player, brief)
             text = A.JournalIslands and A.JournalIslands(text) or text
             out[#out + 1] = text
             outBeat[#out] = beat
+            if lineT then outT[text] = lineT end
             -- Named once it is written (a line the short telling drops names nobody).
             local bondWord = teller.base.bondWord
             if text:find(teller.base.name, 1, true) or (bondWord and text:lower():find(bondWord, 1, true)) then teller.named = true end
@@ -3385,6 +3389,7 @@ function T.Tell(person, days, voice, player, brief)
             for _, e in ipairs(sceneMoments) do
                 if sharedCount >= sceneLimit then break end
                 if toldEarly[e] then sharedCount = sharedCount + 1 end
+                lineT = e.t
                 local line
                 if toldEarly[e] then line = nil
                 elseif e.k == "first" and e.d == "notable" and e.n and PB.sharedNotableSeen then
@@ -3638,6 +3643,7 @@ function T.Tell(person, days, voice, player, brief)
                 end
             end
         end
+        lineT = nil
 
         -- Who else was in the party, from your own journal (people of your list).
         if together and ownJournal and PB.alsoThere and not history.othersSaid then history.othersSaid = {} end
@@ -4051,6 +4057,40 @@ function T.Tell(person, days, voice, player, brief)
                 or Place(mainZone):gsub("{p:the ", "{p:The "))) or nil
         -- (a title begins with a capital: "The Hillsbrad Foothills", not "the Hillsbrad Foothills")
         if chapterTitle then chapterTitle = chapterTitle:gsub("^the ", "The "):gsub("^{p:the ", "{p:The ") end
+        -- Chronology (2026-11-09): a moment from your own journal is told where it happened, and
+        -- the hour you stopped closes the chapter. A rare seen at the start of the evening used to
+        -- trail "Midnight came and went before you stopped", after the day's work.
+        do
+            local firstWorkT
+            for _, list in ipairs({f.quests, f.dungeons, f.deaths}) do
+                for _, x in ipairs(list) do if x.t and (not firstWorkT or x.t < firstWorkT) then firstWorkT = x.t end end
+            end
+            -- (what a chapter says before its work: who, where, how long)
+            local SETTING = {open = true, day = true, land = true, landKey = true, travel = true, stage = true,
+                prologue = true, recap = true, again = true, shared = true}
+            local early, kept, closing = {}, {}, {}
+            for n = 1, #out do
+                local t = outT[out[n]]
+                if outBeat[n] == "shared" and t and firstWorkT and t < firstWorkT then early[#early + 1] = n
+                elseif outBeat[n] == "hour" then closing[#closing + 1] = n
+                else kept[#kept + 1] = n end
+            end
+            if #early > 0 or (#closing > 0 and closing[#closing] < #out) then
+                local order, placed = {}, #early == 0
+                for _, n in ipairs(kept) do
+                    if not placed and not SETTING[outBeat[n] or ""] then
+                        for _, m in ipairs(early) do order[#order + 1] = m end
+                        placed = true
+                    end
+                    order[#order + 1] = n
+                end
+                if not placed then for _, m in ipairs(early) do order[#order + 1] = m end end
+                for _, n in ipairs(closing) do order[#order + 1] = n end
+                local newOut, newBeat = {}, {}
+                for i, n in ipairs(order) do newOut[i], newBeat[i] = out[n], outBeat[n] end
+                for i = 1, #out do out[i], outBeat[i] = newOut[i], newBeat[i] end
+            end
+        end
         -- (the companion's name opening the sentence right after the opening that named them: the
         -- pronoun instead, "I met Morammon at a campfire. He was level 15 then", never "Mira, my
         -- wife, was at my side. Mira was level 16"; a "they" keeps the name, 2026-11-07)
