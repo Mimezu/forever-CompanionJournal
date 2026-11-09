@@ -91,8 +91,8 @@ for _, file in ipairs({"Core.lua", "Glyphs.lua", "People.lua", "Characters.lua",
 end
 local events = frames[2] -- Core's event frame (after UIParent)
 check(events.events.ADDON_LOADED and events.events.PLAYER_LOGIN, "listens for loading and login")
-A.CreateOptions, A.OpenOptions, A.RefreshOptions = function() end, function() A.opened = true end, nil
-A.SelectPerson = function(key) A.selected = key end
+-- The book is not loaded here: /cj only has to reach it.
+A.OpenBook = function(key) A.opened, A.selected = true, key end
 
 -- 1. The one-time copy: your people and their options, nothing else, and
 -- Forever Names' saved settings untouched.
@@ -211,10 +211,13 @@ A.SetOption("peopleIcons", false)
 check(not plateEvents.events.NAME_PLATE_UNIT_ADDED, "icons off: plates are not followed")
 equal(mark.shown, false, "icons off: hidden")
 
--- 4. Slash command: /cj opens the window at your target when they are in the list.
+-- 4. Slash command: /cj opens the book (the book itself opens at your target).
 units.target = units.nameplate1
 SlashCmdList.COMPANIONJOURNAL("")
-check(A.opened and A.selected == "aeryn-forever", "/cj opens at your target")
+check(A.opened, "/cj opens the book")
+A.opened = nil
+SlashCmdList.COMPANIONJOURNAL("layout a")
+check(A.opened, "/cj layout is gone: it opens the book like /cj")
 units.target = nil
 
 -- The game has no os or io library (the tests do): an addon file must not use them

@@ -566,8 +566,8 @@ Details and API evidence: `SI: cj-overnight-20261105\moments\DESIGN-moments.md`.
 ### 7.4 Pages
 
 `JournalStyles.lua` (styles B Chronicle, C Margins, D Diary with drop cap, E Ledger; A is
-the original page), `JournalUI.lua` (layout A window), `JournalBookUI.lua` (layout B, the
-book; variants through `A.BookVariant(key)` and `db.bookVariants`; skin A/B decided at build),
+the original page), `JournalUI.lua` (reading choices, ways into a journal), `JournalBookUI.lua` (the
+book, the only window since 1.16.0; variants through `A.BookVariant(key)` and `db.bookVariants`; skin A/B decided at build),
 `BookManagement.lua` (Companions, NPCs, Settings pages), `JournalPagination.lua`,
 `JournalReader.lua` (Reading view editions), `LoreNotesUI.lua` (the parchment slip).
 
@@ -633,7 +633,7 @@ book size A/B/C or drag, One/Two pages, extras: Today so far, Names open their j
 Reading view, Timeline, New chapter notice, portraits), Settings > Testing (bookmarks
 A/B/C, card, adding, unread ribbons, portraits when/where/frame, skin), People in the
 world, Adding people, Recording. Reading view editions: Original, Your tale, Our story,
-By the fire. Layout A keeps the header switches and Options > Journal > Writing.
+By the fire. (Layout A, the list window, was removed in 1.16.0.)
 
 ### 7.8 Simulators (offline, lua5.1, run from the live client root)
 
@@ -668,7 +668,7 @@ never reads SavedVariables.
   outdoor regions and custom Forever foes have gaps (`SI: cj-lore-coverage-20261012.txt`).
 - Text widths in the offline mock renderer are estimates; fonts, drop caps and the
   middle dot need in-game checks [memory: companion-journal-styles].
-- Any Lua 5.1 upvalue-limit split (Options.lua has a second `do` block for this).
+- Any Lua 5.1 upvalue-limit split (a second `do` block works around it).
 
 ## 9. Open questions and contradictions
 
@@ -694,5 +694,5 @@ Settled 2026-11-05 (see the decision log): chapter length follows the Codex era,
 5. **Research artefacts** (settled 2026-11-05): `_forever_\StorageInvestigation\`, the live
    client's own copy of the archive (for example `cj-overnight-20261105\`).
 6. **Skin B default.** Skin A is still the default (`/cj skin b` opts in). Keep both skins
-   for now (2026-11-05); no winner yet. Same for layout A vs B (`/cj layout`), bookmarks C is the only variant
+   for now (2026-11-05); no winner yet. Layout B won over A (A removed in 1.16.0); bookmarks C is the other variant
    recorded as having won.

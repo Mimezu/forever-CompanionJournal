@@ -1,12 +1,11 @@
 local _, A = ...
--- Layout B: the book. /cj opens it when the layout is B (/cj layout a|b).
+-- The book: Companion Journal's window. /cj opens it.
 -- Left page: the contents (your journal, then your people by circle). Right
 -- page: the open journal, one chapter at a time; or, as a two-page spread,
 -- two chapters side by side. The page styles A to E draw each chapter
--- (JournalStyles.lua), from the same book and storytellers as the journal window.
+-- (JournalStyles.lua), from the same book and storytellers.
 -- Stage 1 of the book (StorageInvestigation\cj-book-layout-b\DESIGN.md).
 
-A.defaults.cjLayout = "a"
 A.defaults.bookSize = "a"      -- a, b, c (fixed sizes) or "custom" (dragged)
 A.defaults.bookSpread = "one"  -- "one" chapter at a time, or "two" (a spread)
 A.defaults.bookNotice = false  -- a notice when today's chapter is new and you rest
@@ -214,7 +213,7 @@ local function SlimScrollBar(scroll)
     track:SetColorTexture(0.30, 0.18, 0.07, 0.25)
 end
 
--- A small switch button: dark leather, a thin rim, gold when chosen (as the journal window's).
+-- A small switch button: dark leather, a thin rim, gold when chosen.
 local function Toggle(parent, label, width, title, tip, onClick)
     local button = CreateFrame("Button", nil, parent)
     button:SetSize(width, 19)
@@ -3001,12 +3000,9 @@ local function FillSettings()
             y = SectionChoice(sec, y, "New chapter notice", {{true, "On"}, {false, "Off"}},
                 function() return db.bookNotice == true end, function(v) db.bookNotice = v end,
                 "When you rest at an inn or in a city and today's chapter is new.")
-            y = SectionChoice(sec, y, "Minimap button", {{true, "On"}, {false, "Off"}},
+            return SectionChoice(sec, y, "Minimap button", {{true, "On"}, {false, "Off"}},
                 function() return db.bookMinimap ~= false end, function(v) db.bookMinimap = v; if A.UpdateBookMinimap then A.UpdateBookMinimap() end end,
                 "Opens the book. A red dot when something is unread.")
-            return SectionChoice(sec, y, "/cj opens", {{"a", "The list (layout A)"}, {"b", "The book (layout B)"}},
-                function() return db.cjLayout == "b" and "b" or "a" end,
-                function(v) db.cjLayout = v; if A.UpdateBookMinimap then A.UpdateBookMinimap() end end)
         end)
     elseif state.settings == "testing" then
         section = Section("testing", function(sec)
@@ -3348,8 +3344,6 @@ function A.OpenBook(key, charKey)
             if not A.PersonAs(key, charKey) then return end
         elseif not person then return end
     end
-    if A.CloseJournal then A.CloseJournal() end
-    if A.options then A.options:Hide() end
     if reader and reader:IsShown() then reader.restoreBook = nil; reader:Hide() end
     if not book then Build() end
     if not key and A.FindPerson then
@@ -3381,17 +3375,22 @@ function A.OpenBookPeople(key, circle, mode)
     if not book.manager then book.manager = A.CreateBookManager(book, {IsPinned = IsPinned, TogglePin = TogglePin}) end
     if key or circle or mode then book.manager:Select(key, circle, mode) end
     CommitRead(); state.view = "people"
-    if A.options then A.options:Hide() end
-    if A.CloseJournal then A.CloseJournal() end
     book:Show(); book:Raise(); A.RefreshBook()
+end
+-- The book's people pages at someone: your list, or My characters for someone
+-- only your other characters know. No key: the people pages as they were.
+function A.OpenPersonCard(key)
+    if key and not A.People[key] and A.OtherKnowers and #A.OtherKnowers(key) > 0 then
+        A.OpenBookPeople(key, nil, "others")
+    else
+        A.OpenBookPeople(key)
+    end
 end
 function A.OpenBookSettings(section)
     if not A.db then return end
     if not book then Build() end
     if reader and reader:IsShown() then reader.restoreBook = nil; reader:Hide() end
     CommitRead(); state.view, state.settings = "settings", section or state.settings
-    if A.options then A.options:Hide() end
-    if A.CloseJournal then A.CloseJournal() end
     book:Show(); book:Raise(); A.RefreshBook()
 end
 function A.BookIsOpen() return book ~= nil and book:IsShown() end
@@ -3450,7 +3449,7 @@ local watcher = CreateFrame("Frame")
 watcher:RegisterEvent("PLAYER_UPDATE_RESTING")
 watcher:SetScript("OnEvent", function()
     local db = A.db
-    if not db or not db.bookNotice or db.cjLayout ~= "b" then return end
+    if not db or not db.bookNotice then return end
     if not (IsResting and IsResting()) then return end
     local me = A.Me and A.Me()
     if not me then return end
@@ -3464,7 +3463,7 @@ local minimap
 function A.UpdateBookMinimap()
     local db = A.db
     if not db or not Minimap then return end
-    local wanted = db.bookMinimap ~= false and db.cjLayout == "b"
+    local wanted = db.bookMinimap ~= false
     if not wanted then if minimap then minimap:Hide() end return end
     if not minimap then
         minimap = CreateFrame("Button", "CompanionJournalMinimapButton", Minimap)

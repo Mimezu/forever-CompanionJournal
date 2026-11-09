@@ -46,18 +46,18 @@ function api.Subscribe(fn) A.Subscribe(fn) end
 -- The caller's plates changed hands (for example Forever Names' settings):
 -- redraw our icons beside Blizzard's names.
 function api.RefreshPlates() if A.RefreshPlateIcons then A.RefreshPlateIcons() end end
--- Open the window: at a person (key or unit token), a category, or the list.
+-- Open the book's people pages: at a person (key or unit token), a category,
+-- or as they were.
 function api.Open(target)
-    if not A.options or not A.db then return end
-    A.OpenOptions()
-    if type(target) ~= "string" then return end
+    if not A.db or not A.OpenBookPeople then return end
+    if type(target) ~= "string" then A.OpenBookPeople(); return end
     if A.People[target] or #A.OtherKnowers(target) > 0 then
-        A.SelectPerson(target)
+        A.OpenPersonCard(target)
     elseif CIRCLES[target] then
-        A.SelectPeopleCircle(target)
+        A.OpenBookPeople(nil, target)
     else
         local person, key = A.FindPerson(target)
-        if person and key then A.SelectPerson(key) end
+        A.OpenPersonCard(person and key or nil)
     end
 end
 -- Their journal: a name ("Name" or "Name-Realm"), or your target.

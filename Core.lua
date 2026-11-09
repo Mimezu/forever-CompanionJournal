@@ -58,15 +58,14 @@ function A.EachTrackedUnit(fn)
     end
 end
 
--- Something about your people changed: our icons on Blizzard's plates, this
--- window, and Forever Names (when installed) draw again.
+-- Something about your people changed: our icons on Blizzard's plates, the
+-- book, and Forever Names (when installed) draw again.
 local listeners = {}
 function A.Subscribe(fn)
     if type(fn) == "function" then listeners[#listeners + 1] = fn end
 end
 function A.Refresh()
     if A.RefreshPlateIcons then A.RefreshPlateIcons() end
-    if A.RefreshOptions then A.RefreshOptions() end
     -- A companion's settings also affect your own story and other characters'
     -- displayed journals. Rebuild the visible prose without advancing Retell.
     if A.RefreshJournal then A.RefreshJournal() end
@@ -167,7 +166,7 @@ events:SetScript("OnEvent", function(_, event, arg)
                 .. (A.CharacterName(A.Me()) or "this character's") .. "'s. Your other characters can add people from it (People > My characters)."
                 .. " Wrong character? Log in with the right one and type /cj movelist.")
         end
-        A.CreateOptions()
+        A.db.cjLayout = nil -- (the list window, layout A, is gone since 1.16.0)
         A.Refresh()
     end
 end)
@@ -204,11 +203,6 @@ SlashCmdList.COMPANIONJOURNAL = function(message)
             print("Companion Journal: moved " .. moved .. (moved == 1 and " person" or " people") .. " and their journals from "
                 .. A.CharacterName(from) .. " to " .. A.CharacterName(A.Me()) .. ".")
         end
-    elseif command == "layout" then
-        -- /cj layout a|b: the window /cj opens (A: the list; B: the book).
-        local which = message:lower():match("^%s*layout%s+([ab])")
-        if which then A.db.cjLayout = which end
-        print("Companion Journal: layout " .. ((A.db.cjLayout == "b") and "B (the book)" or "A (the list)") .. ". Type /cj to open it.")
     elseif command == "book" then
         if A.OpenBook then A.OpenBook() end
     elseif command == "artboard" then
@@ -230,12 +224,8 @@ SlashCmdList.COMPANIONJOURNAL = function(message)
         -- Test the group popup: /cj testleave [count] or /cj testleave me
         local count = message:lower():match("^%s*testleave%s+(%S+)")
         if count == "me" then A.SimulateGroupLeave(5, true) else A.SimulateGroupLeave(tonumber(count) or 1) end
-    elseif A.db.cjLayout == "b" and A.OpenBook then
+    elseif A.OpenBook then
+        -- (a targeted player from your list opens straight to their journal)
         A.OpenBook()
-    else
-        A.OpenOptions()
-        -- A targeted player or NPC from your list opens straight to them.
-        local person, key = A.FindPerson("target")
-        if person and key then A.SelectPerson(key) end
     end
 end
