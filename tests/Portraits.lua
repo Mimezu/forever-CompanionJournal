@@ -152,7 +152,7 @@ book.leftPage.paper, book.rightPage.paper = Object(), Object()
 book.sizeButtons, book.tabs, book.sections = {}, {}, {}
 book.contentsChild = Object()
 Upvalue(A.RefreshBook, "book", book)
-for _, name in ipairs({"LayoutPages", "FillBookmarks", "PlaceCard", "FillTimeline", "ShowingRead", "FillSettings", "FillNPCs"}) do
+for _, name in ipairs({"LayoutPages", "FillBookmarks", "PlaceWizard", "FillTimeline", "ShowingRead", "FillSettings", "FillNPCs"}) do
     Upvalue(A.RefreshBook, name, function() end)
 end
 Upvalue(A.RefreshBook, "UnreadDays", function() return {} end)

@@ -102,7 +102,7 @@ The user tests in game; nothing counts as verified until he has. Give him a shor
 - Book: Settings > Reading (Everything/Highlights, Simple/Story, style A-E, size, pages,
   extras), Settings > Testing (variants), Companions / NPCs pages, Retell at the bottom of a
   Story chapter, click a note to edit it, click the title name to set a last name.
-- Gamepad: D-pad moves, A opens, B back, LB/RB chapters, LT/RT card/journal, Y add, X settings.
+- Gamepad: D-pad moves, A opens, B back, LB/RB chapters, LT/RT the companion's card (Companions page), Y add, X settings.
   Addon menus, the Blizzard ColorPicker and chat focus taint the gamepad UI: keep the
   `A.GamepadUI()` guards (`People.lua`).
 - Unit names, GUIDs and health can be secret values on Forever; read them through the

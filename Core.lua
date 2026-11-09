@@ -167,7 +167,7 @@ events:SetScript("OnEvent", function(_, event, arg)
                 .. " Wrong character? Log in with the right one and type /cj movelist.")
         end
         A.db.cjLayout = nil -- (the list window, layout A, is gone since 1.16.0)
-        if A.db.bookVariants then A.db.bookVariants.skin = nil end -- (one skin since 1.17.0)
+        if A.db.bookVariants then A.db.bookVariants.skin, A.db.bookVariants.card = nil, nil end -- (one skin since 1.17.0, no card variant since 1.18.0)
         A.Refresh()
     end
 end)

@@ -23,10 +23,10 @@ local CIRCLE_ORDER = {
 }
 
 local book
-local BuildCard, BuildNotes, BuildAddBar, BuildWizard -- (below; Build uses them)
+local BuildAddBar, BuildWizard -- (below; Build uses them)
 local Portrait, LookFor -- (portraits, below; the contents page uses them)
 -- view: "journal" (contents + chapters), "settings" or "npcs".
-local state = {key = nil, index = nil, view = "journal", settings = "reading", npc = nil, cardOpen = false, tab = "journal",
+local state = {key = nil, index = nil, view = "journal", settings = "reading", npc = nil,
     collapsed = {acquaintance = true, campfire = true, rival = true}}
 
 -- The variants to try in game, chosen on the Settings > Testing page. The first
@@ -39,8 +39,6 @@ local VARIANTS = {
         choices = {{"c", "Tools | journals"}, {"a", "Sections + pins"}, {"b", "Pins only"}}},
     {key = "toolsSide", label = "Bookmarks C: the tools' side", stage = 2,
         choices = {{"left", "Tools left"}, {"right", "Tools right"}}},
-    {key = "card", label = "Companion card", stage = 3,
-        choices = {{"a", "Header + quill"}, {"b", "Tabs"}, {"c", "Flip"}}},
     {key = "add", label = "Adding someone", stage = 4,
         choices = {{"a", "Smart button"}, {"b", "Three steps"}, {"c", "Today's flow"}}},
     {key = "ribbon", label = "Unread ribbons", stage = 5,
@@ -1084,7 +1082,7 @@ local function FillContents(info)
     FillList(items)
 end
 
-local CARD_W = 320 -- (the card and notes width; Build uses it)
+local CARD_W = 320 -- (the adding wizard's width; Build uses it)
 local function ApplySize()
     local db = A.db
     local size = SIZES[db.bookSize]
@@ -1172,7 +1170,6 @@ local function LayoutPages()
         book.input:ClearAllPoints(); book.input:SetPoint("BOTTOMLEFT", left + 28, 33)
         book.timeline:ClearAllPoints(); book.timeline:SetPoint("BOTTOMLEFT", book, "BOTTOMLEFT", left + half + 30, 70)
         book.timeline:SetPoint("BOTTOMRIGHT", book, "BOTTOMRIGHT", -right - 30, 70)
-        book.tabs.journal:ClearAllPoints(); book.tabs.journal:SetPoint("TOPLEFT", book.right, "TOPLEFT", 34, 28)
         -- A quiet rule separates actions from prose without creating another bar.
         for _, item in ipairs({{book.leftRule, left + 24}, {book.rightRule, left + half + 24}}) do
             local rule = item[1]
@@ -1378,28 +1375,9 @@ local function Build()
     line:SetColorTexture(0.6, 0.5, 0.35, 0.7)
     book.timeline:Hide()
 
-    -- The card, three ways (Settings > Testing).
-    book.quill = Toggle(book, "Edit", 44, "Their card", "Name, icon, note, and what they are to you.", function()
-        state.cardOpen = not state.cardOpen; A.RefreshBook()
-    end)
-    book.flip = Toggle(book, "Card", 54, "Their card", "Turn the page to their card, and back.", function()
-        state.cardOpen = not state.cardOpen; A.RefreshBook()
-    end)
-    book.tabs = {}
-    for i, item in ipairs({{"journal", "Journal", 64}, {"about", "About", 56}, {"notes", "Notes", 56}}) do
-        local tab = Toggle(book, item[2], item[3], nil, nil, function() state.tab = item[1]; A.RefreshBook() end)
-        if i == 1 then tab:SetPoint("BOTTOMLEFT", book.right, "TOPLEFT", 0, 4)
-        else tab:SetPoint("LEFT", book.tabs.last, "RIGHT", 4, 0) end
-        book.tabs[item[1]] = tab
-        book.tabs.last = tab
-    end
     book.cardHost = Page(book, "right")
     book.cardHost.empty:Hide()
     book.cardHost:SetFrameLevel(book.right:GetFrameLevel() + 5)
-    book.card = BuildCard()
-    book.card:SetParent(book.cardHost.child); book.card:SetPoint("TOPLEFT", 6, -2)
-    book.notes = BuildNotes()
-    book.notes:SetParent(book.cardHost.child); book.notes:SetPoint("TOPLEFT", 6, -2); book.notes:SetSize(CARD_W, 300)
     book.cardHost.child:SetHeight(440)
     book.wizard = BuildWizard()
     book.addBar = BuildAddBar()
@@ -1478,170 +1456,14 @@ local function Build()
     book:Hide()
 end
 
--- The companion card: who they are to you. One card, shown three ways (Settings >
--- Testing): A, a slim panel opened with the quill; B, the About and Notes tabs;
--- C, the page flipped with the Card button. It saves as the classic window does.
-local function CardEdit(parent, x, y, width, letters, field)
-    local box = CreateFrame("EditBox", nil, parent, "InputBoxTemplate")
-    box:SetPoint("TOPLEFT", x + 6, y); box:SetSize(width - 6, 22)
-    box:SetAutoFocus(false); box:SetMaxLetters(letters)
-    local function Save(self)
-        local person = state.key and A.People[state.key]
-        if not person then return end
-        local text = (self:GetText() or ""):gsub("^%s+", ""):gsub("%s+$", "")
-        person[field] = text ~= "" and text or nil
-        A.Refresh()
-    end
-    box:SetScript("OnEnterPressed", function(self) Save(self); self:ClearFocus() end)
-    box:SetScript("OnEditFocusLost", Save)
-    box:SetScript("OnEscapePressed", function(self) self:ClearFocus(); A.RefreshBook() end)
-    return box
-end
-function BuildCard()
-    local card = CreateFrame("Frame", nil, book)
-    card:SetSize(CARD_W, 420)
-    card.updates = {}
-    local function Label(text, y)
-        local label = card:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-        label:SetPoint("TOPLEFT", 4, y); label:SetText(text); label:SetTextColor(unpack(CHAPTER))
-        return label
-    end
-    local function Choice(y, choices, get, set)
-        local x, buttons = 4, {}
-        for _, choice in ipairs(choices) do
-            local width = math.max(30, #choice[2] * 7 + 14)
-            local button = Toggle(card, choice[2], width, nil, nil, function()
-                local person = state.key and A.People[state.key]
-                if person then set(person, choice[1]); A.RefreshBook() end
-            end)
-            button:SetPoint("TOPLEFT", x, y)
-            x = x + width + 3
-            buttons[#buttons + 1] = {button = button, value = choice[1]}
-        end
-        card.updates[#card.updates + 1] = function(person)
-            local current = get(person)
-            for _, item in ipairs(buttons) do SetChosen(item.button, item.value == current) end
-        end
-    end
-    card.title = card:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
-    card.title:SetPoint("TOPLEFT", 4, -2); card.title:SetWidth(CARD_W - 8); card.title:SetJustifyH("LEFT")
-    card.met = card:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
-    card.met:SetPoint("TOPLEFT", 4, -24); card.met:SetWidth(CARD_W - 8); card.met:SetJustifyH("LEFT")
-    card.met:SetTextColor(unpack(INK_SOFT))
-    Label("Display name", -52)
-    card.display = CardEdit(card, 112, -48, CARD_W - 116, 60, "display")
-    Label("Icon", -82)
-    card.glyph = Toggle(card, "", 40, "Their icon", "Shown beside their name in the world.", function(self)
-        local person = state.key and A.People[state.key]
-        if person and A.PickGlyph then
-            A.PickGlyph(self, A.IconGlyph("people", person), A.IconColor("people", person), function(name) person.glyph = name; A.Refresh(); A.RefreshBook() end, true)
-        end
-    end)
-    card.glyph:SetPoint("TOPLEFT", 112, -80)
-    card.glyph.icon = card.glyph:CreateTexture(nil, "ARTWORK")
-    card.glyph.icon:SetPoint("CENTER"); card.glyph.icon:SetSize(14, 14)
-    card.color = Toggle(card, "", 40, "Icon color", nil, function(self)
-        local person = state.key and A.People[state.key]
-        if person and A.PickIconColor then A.PickIconColor("people", self, person) end
-    end)
-    card.color:SetPoint("LEFT", card.glyph, "RIGHT", 4, 0)
-    card.color.swatch = card.color:CreateTexture(nil, "ARTWORK")
-    card.color.swatch:SetPoint("TOPLEFT", 6, -5); card.color.swatch:SetPoint("BOTTOMRIGHT", -6, 5)
-    Label("Note", -112)
-    card.note = CardEdit(card, 112, -108, CARD_W - 116, 200, "note")
-    Label("List", -146)
-    Choice(-164, {{"companion", "Companion"}, {"acquaintance", "Acquaintance"}, {"campfire", "Campfire"}, {"rival", "Rival"}},
-        function(person) return A.PersonCircle(person) end,
-        function(person, value) if A.PersonCircle(person) ~= value and A.MovePerson then A.MovePerson(state.key, value) end end)
-    Label("They are", -194)
-    Choice(-212, {{"none", "-"}, {"spouse", "Spouse"}, {"partner", "Partner"}, {"friend", "Friend"}, {"family", "Family"}},
-        function(person) return person.bond or "none" end, function(person, value) A.SetPersonStory(person, "bond", value) end)
-    Label("How it began", -242)
-    Choice(-260, {{"road", "On the road"}, {"together", "Together"}},
-        function(person) return person.origin or "road" end, function(person, value) A.SetPersonStory(person, "origin", value) end)
-    Label("Pronouns", -290)
-    Choice(-308, {{"they", "They"}, {"he", "He"}, {"she", "She"}},
-        function(person) return person.pronouns or "they" end, function(person, value) A.SetPersonPronouns(person, value) end)
-    card.world = card:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
-    card.world:SetPoint("TOPLEFT", 4, -340); card.world:SetWidth(CARD_W - 8); card.world:SetJustifyH("LEFT")
-    card.world:SetTextColor(unpack(INK_SOFT))
-    function card:Load(key)
-        local person = A.People[key]
-        if not person then return end
-        self.title:SetText(person.display and (person.display .. "  |cff6b5a44" .. ShortName(person.name) .. "|r") or ShortName(person.name or key))
-        self.title:SetTextColor(ClassColor(person.class))
-        local met = A.DescribeMet and A.DescribeMet(person)
-        local seen = A.DescribeSeen and A.DescribeSeen(person)
-        self.met:SetText(table.concat({met or "", seen and ("Last seen " .. seen) or ""}, met and seen and "   " or ""))
-        if not self.display:HasFocus() then self.display:SetText(person.display or "") end
-        if not self.note:HasFocus() then self.note:SetText(person.note or "") end
-        local glyph = A.IconGlyph and A.IconGlyph("people", person)
-        local tint = A.IconColor and A.IconColor("people", person) or {1, 1, 1}
-        self.glyph.icon:SetShown(glyph ~= nil and glyph ~= "none")
-        if glyph and glyph ~= "none" then self.glyph.icon:SetTexture(A.GlyphPath(glyph)); self.glyph.icon:SetVertexColor(tint[1], tint[2], tint[3]) end
-        self.glyph.label:SetText(glyph == "none" and "None" or "")
-        self.color.swatch:SetColorTexture(tint[1], tint[2], tint[3])
-        for _, update in ipairs(self.updates) do update(person) end
-        self.world:SetText("Their name and icon on nameplates follow your settings (Settings > People and the world).")
-    end
-    return card
-end
--- The notes page (variant B's Notes tab): the note, larger.
-function BuildNotes()
-    local notes = CreateFrame("Frame", nil, book)
-    notes.title = notes:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-    notes.title:SetPoint("TOPLEFT", 4, -2); notes.title:SetTextColor(unpack(CHAPTER)); notes.title:SetText("Note")
-    local box = CreateFrame("EditBox", nil, notes)
-    box:SetMultiLine(true); box:SetAutoFocus(false); box:SetMaxLetters(200)
-    box:SetFontObject("QuestFont"); box:SetTextColor(unpack(INK))
-    box:SetPoint("TOPLEFT", 4, -24); box:SetPoint("BOTTOMRIGHT", -4, 4)
-    local function Save(self)
-        local person = state.key and A.People[state.key]
-        if not person then return end
-        local text = (self:GetText() or ""):gsub("^%s+", ""):gsub("%s+$", "")
-        person.note = text ~= "" and text or nil
-        A.Refresh()
-    end
-    box:SetScript("OnEditFocusLost", Save)
-    box:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
-    notes.box = box
-    return notes
-end
--- Where the card shows, for the variant chosen.
-local function PlaceCard(person)
-    local variant = A.BookVariant("card")
-    -- (the header's card buttons are never shown: a companion's card opens from the cog
-    -- beside their pin ribbon, on the Companions page)
-    local people = false
-    book.quill:SetShown(people and variant == "a")
-    book.flip:SetShown(people and variant == "c")
-    for key, tab in pairs(book.tabs) do if key ~= "last" then tab:SetShown(people and variant == "b") end end
-    local cardShown, notesShown = false, false
-    if people then
-        if variant == "a" then cardShown = state.cardOpen
-        elseif variant == "b" then cardShown, notesShown = state.tab == "about", state.tab == "notes"
-        else cardShown = state.cardOpen end
-    end
-    -- A: the card on the left page, beside the chapter. B and C: the right page.
-    local slim = variant == "a"
-    book.cardHost:ClearAllPoints()
-    book.cardHost:SetAllPoints(slim and book.left or book.right)
+-- The right page, or the adding wizard over it (Adding someone B).
+local function PlaceWizard()
     local adding = state.wizard ~= nil and A.BookVariant("add") == "b"
-    if adding then cardShown, notesShown = false, false; slim = false; book.cardHost:ClearAllPoints(); book.cardHost:SetAllPoints(book.right) end
-    book.cardHost:SetShown(cardShown or notesShown or adding)
-    book.card:SetShown(cardShown); book.notes:SetShown(notesShown)
+    book.cardHost:ClearAllPoints(); book.cardHost:SetAllPoints(book.right)
+    book.cardHost:SetShown(adding)
     book.wizard:SetShown(adding); book.wizard:Update()
-    if cardShown then book.card:Load(state.key) end
-    if notesShown then
-        if not book.notes.box:HasFocus() then book.notes.box:SetText(person.note or "") end
-    end
-    -- (B and C cover the chapter; A covers the contents, beside it)
-    book.rightPage:SetShown(not ((cardShown or notesShown or adding) and not slim))
-    if slim and cardShown then book.contents:Hide() elseif A.db.bookSpread ~= "two" then book.contents:Show() end
-    for key, tab in pairs(book.tabs) do if key ~= "last" then SetChosen(tab, key == (state.tab or "journal")) end end
-    book.flip.label:SetText(cardShown and "Journal" or "Card")
-    SetChosen(book.flip, cardShown)
-    SetChosen(book.quill, cardShown)
+    book.rightPage:SetShown(not adding)
+    if A.db.bookSpread ~= "two" then book.contents:Show() end
 end
 
 -- Adding someone (Settings > Testing): A, one smart button that names your
@@ -1659,9 +1481,7 @@ end
 -- Open someone just added (or found), on their card.
 local function OpenAdded(key)
     if not key or not A.People[key] then return end
-    A.OpenBook(key)
-    if A.BookVariant("card") == "b" then state.tab = "about" else state.cardOpen = true end
-    A.RefreshBook()
+    A.OpenPersonCard(key)
 end
 local function AddTyped(text)
     text = (text or ""):gsub("^%s+", ""):gsub("%s+$", "")
@@ -3002,8 +2822,7 @@ function A.RefreshBook(toEnd, reusePages)
     if other then
         ContentsPortrait(nil)
         if A.CloseLoreNote then A.CloseLoreNote() end
-        book.cardHost:Hide(); book.quill:Hide(); book.flip:Hide(); book.addBar:Hide(); book.timeline:Hide()
-        for key, tab in pairs(book.tabs) do if key ~= "last" then tab:Hide() end end
+        book.cardHost:Hide(); book.addBar:Hide(); book.timeline:Hide()
         -- (Settings and NPCs: the contents page lists their sections)
         book.contents:Show(); book.leftPage:Hide()
         book.classIcon:Hide(); book.pin:Hide(); DrawPinRibbon(false)
@@ -3033,7 +2852,7 @@ function A.RefreshBook(toEnd, reusePages)
         DrawPinRibbon(false)
         ClearPage(book.rightPage); book.rightPage.empty:SetText("Choose a journal from the contents."); book.rightPage.empty:Show()
         book.chapterLabel:SetText("")
-        PlaceCard(nil)
+        PlaceWizard()
         return
     end
     book.name:SetText(person.self and (person.name or "My journal") or (person.display or ShortName(person.name or state.key)))
@@ -3054,8 +2873,6 @@ function A.RefreshBook(toEnd, reusePages)
         book.pin:ClearAllPoints(); book.pin:SetPoint("LEFT", book.name, "RIGHT", 10, 0)
         book.pin.label:SetText(IsPinned(state.key) and "Unpin" or "Pin")
         SetChosen(book.pin, IsPinned(state.key))
-        book.quill:ClearAllPoints(); book.quill:SetPoint("LEFT", book.pin, "RIGHT", 4, 0)
-        book.flip:ClearAllPoints(); book.flip:SetPoint("LEFT", book.pin, "RIGHT", 4, 0)
         -- (how long you have known them: under the name)
         local met = A.DescribeMet and A.DescribeMet(person)
         if met then book.summary:SetText(A.PersonSummary(person) .. "   |cff8a7a62\194\183|r   " .. met) end
@@ -3067,7 +2884,7 @@ function A.RefreshBook(toEnd, reusePages)
     if book.heading then book.heading:SetText(JournalTitle(person) .. "'s journal") end
     book.pin:Hide()
     DrawPinRibbon(pinnable)
-    PlaceCard(person)
+    PlaceWizard()
     local rival = A.PersonCircle and not person.self and A.PersonCircle(person) == "rival"
     local atlas = rival and (person.faction == "Horde" and "QuestBG-Horde" or person.faction == "Alliance" and "QuestBG-Alliance") or "QuestBG-Parchment"
     if book.corner then book.corner:SetShown(not rival); book.corner.art:SetShown(not rival) end
@@ -3290,7 +3107,7 @@ function A.OpenBook(key, charKey)
         local me = A.Me and A.Me()
         key = me and A.SelfPerson and A.SelfPerson(me) and ("self:" .. me) or state.key
     end
-    if key ~= state.key or charKey ~= state.owner then CommitRead(); state.index, state.cardOpen, state.tab = nil, false, "journal" end
+    if key ~= state.key or charKey ~= state.owner then CommitRead(); state.index = nil end
     state.key, state.owner = key, charKey
     state.view = "journal"
     book:Show(); book:Raise()
@@ -3530,24 +3347,15 @@ function A.BookPad(button)
         end
     elseif button == "PAD2" then
         if state.wizard then state.wizard = nil
-        elseif state.cardOpen then state.cardOpen = false
-        elseif state.tab and state.tab ~= "journal" then state.tab = "journal"
         elseif state.view ~= "journal" then state.view = "journal"
         else book:Hide(); return end
         A.RefreshBook()
     elseif button == "PADLSHOULDER" then A.BookTurn(-1)
     elseif button == "PADRSHOULDER" then A.BookTurn(1)
     elseif button == "PADLTRIGGER" or button == "PADRTRIGGER" then
-        if A.BookVariant("card") == "b" then
-            local order = {"journal", "about", "notes"}
-            local at = 1
-            for i, tab in ipairs(order) do if tab == (state.tab or "journal") then at = i end end
-            at = ((at - 1 + (button == "PADRTRIGGER" and 1 or -1)) % #order) + 1
-            state.tab = order[at]
-        else
-            state.cardOpen = not state.cardOpen
-        end
-        A.RefreshBook()
+        -- (a companion's card, on the Companions page)
+        local person = state.view == "journal" and state.key and A.People[state.key]
+        if person and not person.npc then A.OpenPersonCard(state.key) end
     elseif button == "PAD4" then
         if state.view == "npcs" and book.npcManager then book.npcManager:AddTarget()
         else

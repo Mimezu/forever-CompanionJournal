@@ -632,7 +632,7 @@ SI: journal-voice/PLAN.md]:
 Book (layout B): Settings > Reading (Everything/Highlights, Simple/Story, page style A-E,
 book size A/B/C or drag, One/Two pages, extras: Today so far, Names open their journal,
 Reading view, Timeline, New chapter notice, portraits), Settings > Testing (bookmarks
-A/B/C, card, adding, unread ribbons, portraits when/where/frame), People in the
+A/B/C, adding, unread ribbons, portraits when/where/frame), People in the
 world, Adding people, Recording. Reading view editions: Original, Your tale, Our story,
 By the fire. (Layout A, the list window, was removed in 1.16.0.)
 
@@ -696,5 +696,5 @@ Settled 2026-11-05 (see the decision log): chapter length follows the Codex era,
    client's own copy of the archive (for example `cj-overnight-20261105\`).
 6. **Skin and layout** (settled 2026-11-09): skin B and layout B won; skin A was removed
    in 1.17.0 and layout A in 1.16.0. Bookmarks C is the other variant recorded as having
-   won. The "Companion card" variant has had no effect since skin B dropped the header's
-   card buttons; it is still listed under Testing.
+   won. The "Companion card" variant (no effect since skin B) was removed in 1.18.0: the
+   card lives on the Companions page, opened from the pin ribbon's cog.

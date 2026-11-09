@@ -82,22 +82,25 @@ A.JournalVoice = function() return "story" end
 assert(loadfile(root .. "BookManagement.lua"))("CompanionJournal", A)
 A.CreateBookManager = function() return {Refresh = function() end, Hide = function() end} end
 assert(loadfile(root .. "JournalBookUI.lua"))("CompanionJournal", A)
+-- (Lua 5.1's debug.setupvalue sets no GC barrier on a closed upvalue: a stub
+-- held only there can be collected and its memory reused. Keep every stub.)
+local keep = {}
 local function upvalue(fn, name, replacement)
     for i = 1, 100 do
         local key, value = debug.getupvalue(fn, i)
         if not key then break end
-        if key == name then if replacement ~= nil then debug.setupvalue(fn, i, replacement) end; return value end
+        if key == name then if replacement ~= nil then keep[#keep + 1] = replacement; debug.setupvalue(fn, i, replacement) end; return value end
     end
     error("Missing production function: " .. name)
 end
 local Build = upvalue(upvalue(A.OpenBook, "open"), "Build")
-for _, name in ipairs({"BuildCard", "BuildNotes", "BuildWizard"}) do upvalue(Build, name, function() return object() end) end
+for _, name in ipairs({"BuildWizard"}) do upvalue(Build, name, function() return object() end) end
 upvalue(Build, "BuildAddBar", function() local f = object(); f.Update = function() end; return f end)
 Build()
 local book, state = upvalue(A.RefreshBook, "book"), upvalue(A.RefreshBook, "state")
 book.origin = true; book:Show()
 local LayoutPages = upvalue(A.RefreshBook, "LayoutPages")
-for _, name in ipairs({"FillBookmarks", "ContentsPortrait", "FillSettings", "FillNPCs", "PlaceCard", "FillContents",
+for _, name in ipairs({"FillBookmarks", "ContentsPortrait", "FillSettings", "FillNPCs", "PlaceWizard", "FillContents",
     "ClearPage", "ShowingRead", "FillTimeline", "DrawChapter", "Ribbon", "ShowRibbon", "UpdateWriteDate"}) do
     upvalue(A.RefreshBook, name, function() end)
 end
@@ -157,7 +160,6 @@ for _, size in ipairs({{"minimum", 760, 520}, {"a", 860, 580}, {"b", 1000, 660},
                         inside(book.readView, book.paperRight, "Reading view button fits its leaf")
                         check(bounds(book.next).right < bounds(book.readView).left, "Reading view button clears page navigation")
                     end
-                    check(bounds(book.tabs.journal).bottom > bounds(book.right).top, "chapter tabs stay above the prose viewport")
                     check(bounds(book.summary).bottom > bounds(book.contents.scroll).top, "header summary clears contents text")
                     check(bounds(book.timeline).top < bounds(book.right).bottom + book.rightPage.box[4], "timeline clears reserved narrative text")
                     inside(book.corner, book.paperRight, "page curl follows the physical paper corner")

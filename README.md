@@ -4,6 +4,16 @@ The players and NPCs you want to remember, and a journal of what you lived
 through together. It came out of Forever Names 1.10: the People list, the
 journal, the group popup and the campfire now live here, in their own window.
 
+## 1.18.0: the card lives on the Companions page
+
+- **"Companion card" is gone** from Settings > Testing. It had done nothing since
+  skin B: a companion's card opens from the cog beside their pin ribbon, on the
+  Companions page. The old Edit / Card / Journal-About-Notes buttons and the card
+  inside the journal are removed with it.
+- **Adding someone** (the add button, or Y on a gamepad) now opens their new card
+  on the Companions page, ready to fill in.
+- **Gamepad:** LT/RT open the shown companion's card on the Companions page.
+
 ## 1.17.0: one skin, the spellbook pages
 
 - **Skin A is gone.** The book always has skin B's look: the spellbook's pages,
