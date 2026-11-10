@@ -1709,7 +1709,9 @@ function QD.Folds(run, tokens, shape, named, band)
             text = lead .. (lead == "Then" and " " or ", ") .. Low(S) .. " " .. joined .. "."
         elseif shape % 3 == 1 then text = S .. " " .. joined .. "."
         else text = S .. " also " .. joined .. "." end
-        lines[#lines + 1] = {text = text, quest = group[1].quest, last = group[#group].quest}
+        -- (entries, acts and subject let the planned telling rebuild a shorter, plainer line)
+        lines[#lines + 1] = {text = text, quest = group[1].quest, last = group[#group].quest,
+            entries = group, acts = acts, subject = S, who = who}
         group = {}
     end
     -- (the party's work and the character's own work each in their lines, in the order the

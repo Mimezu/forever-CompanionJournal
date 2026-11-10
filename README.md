@@ -4,6 +4,30 @@ The players and NPCs you want to remember, and a journal of what you lived
 through together. It came out of Forever Names 1.10: the People list, the
 journal, the group popup and the campfire now live here, in their own window.
 
+## 1.20.0: the planned storyteller for your own book (Settings > Testing > Storyteller: Planned)
+
+A writer's pass over the storyteller. Still off by default; with the switch on Current
+nothing changes except two plain wording fixes.
+
+- **Your own book is told as a story too.** With Planned on, `/cj me` tells the day in
+  sittings and movements, each opened by its hour or place ("That evening", "A little
+  after eleven", "Past midnight"). Routine work is cut to what mattered, an evening at the
+  forge is one sentence, and a level is told where it came ("Level 11 came with it").
+- **Feelings, earned, in your own voice.** A second death is felt because the first one is
+  in the book ("I remembered dying, and that made it worse"). A figure is felt only after
+  the book has named them ("Here was my queen, and I hardly knew where to look"). Two at
+  most in a chapter, one to a paragraph, never the same kind twice, never the last line.
+- **In order.** A great figure is told at the hour you met them, after the errands that
+  came first, and what is known of them comes before the feeling.
+- **A companion's planned chapter reads more smoothly.** The opening says the run of
+  nights once; a death and the fire after it are one sentence; a land first reached at
+  the end of the night closes the chapter ("Before the night was over, you had set foot in
+  the Undercity for the first time"); "during your time together" is gone; a deed that
+  names its own place is not placed again in the town where it was handed in.
+- A dungeon day and a thin day in your own book keep the current telling. Highlights keeps
+  it as well.
+- Restart the game once after updating: a new file was added, and `/reload` does not load it.
+
 ## 1.19.0: a new storyteller to try (Settings > Testing > Storyteller: Planned)
 
 A companion's chapters, told as a story rather than a list. Off by default; switch it on

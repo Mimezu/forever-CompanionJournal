@@ -1014,6 +1014,8 @@ PB.companionStopped = {"It was {clock} when {name} stopped.", "{name} stopped {c
 PB.planOpen = {"{Weekday} {part} found {who} {backIn}{zone}{run}.", "{Weekday} {part} brought {who} {backTo}{zone}{run}."}
 -- (a moment that came before every hand-in of the day)
 PB.beforeWork = {"before {we} had turned in a single task"}
+-- (a country first seen as the last thing of the day; {span} "night" or "day")
+PB.planArriveLast = {"Before the {span} was over, {I} had set foot in {zoneD} for the first time."}
 PB.levelThen = {
     "{They} had been level {thenLevel} in {firstZone}, the day {we} met.",
     "{They} had been level {thenLevel} when {we} first met.",

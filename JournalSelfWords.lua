@@ -3310,7 +3310,7 @@ W.pov = {
         "{We} found Bareth Dawnstone, a risen paladin, held by zealots who wielded the Light with hatred, and helped him escape. His order at Bandarion Keep, northwest of the Solliden Farmstead, welcomed any who sought the Light.",
         "{We} got Bareth Dawnstone away from the zealots who had caught him on his way from Bandarion Keep to Shari Stilwell in Brill. His order thanked {us} for saving one so promising."},
     -- (#96607, corpus_vanilla_quests.txt; no pack stage yet)
-    [96607] = {title = "The Great Outdoors", act = "learned the basics of camping from Eleanor Shackleton", giver = "Eleanor Shackleton", importance = 3,
+    [96607] = {title = "The Great Outdoors", act = "sat by Eleanor Shackleton's fire to learn how to rest in the wilds", giver = "Eleanor Shackleton", importance = 3,
         "Eleanor Shackleton sat {us} by her fire and walked {us} through the basics of living in the wilds, then sent {us} to the trainers in the village nearby to learn a trade.",
         "By Eleanor's fire {we} learned how to rest and prepare out in the wilds, as an adventurer must."},
 }
@@ -3382,4 +3382,35 @@ W.openFirstLateBand = {
 -- The first chapter's title, by the people a life begins among (2026-11-07).
 W.titles.originRace = {
     Scourge = {"A Second Life", "The Waking"},
+}
+
+-- The planned telling of your own book (JournalSelfPlan.lua, Settings > Testing > Storyteller).
+-- Each line states a recorded fact: the day had two sittings, the hearthstone was used and a
+-- death followed within minutes, ore was mined and smelted, a level came, the hour you stopped.
+W.plan = {
+    short = {"{When} was short."},
+    hearthDeath = {"Back in {town} by hearthstone, {foe} killed me within minutes."},
+    joined = {"{When}, {names} joined me in {zone}."},
+    killed = {"{foe} killed me{where}."},
+    forge = {"At the forge I smelted what I had mined, then worked a while at the anvil."},
+    smelt = {"At the forge I smelted what I had mined."},
+    -- (leads the day's gathering tally, which the teller places at the end: "Along the way I mined sixteen veins.")
+    along = {"Along the way"},
+    trade = {
+        Blacksmithing = {"I worked a while at the anvil."},
+        Cooking = {"I cooked what I had been carrying."},
+        ["First Aid"] = {"I made up bandages from the cloth I had."},
+        Tailoring = {"I sat a while with needle and cloth."},
+        Leatherworking = {"I worked the hides I had into leather goods."},
+        Alchemy = {"I mixed what potions my herbs allowed."},
+        Engineering = {"I spent a while over my tools."},
+        Enchanting = {"I worked a while at my enchanting."},
+        crafting = {"I spent a while at my trade."},
+    },
+    level = {"By then I had reached level {level}."},
+    levelCame = {"Level {level} came with it."},
+    levelHour = {"Level {level} came in the same hour."},
+    levelSoon = {"Level {level} came soon after."},
+    levelWith = {", and level {level} came with it"},
+    stopped = {"It was {clock} when I stopped."},
 }

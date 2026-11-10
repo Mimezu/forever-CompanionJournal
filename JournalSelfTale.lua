@@ -86,6 +86,31 @@ for w in ("Executor Novice Apothecary Deathguard Priest Captain Magistrate Comma
     .. "Ranger Scout Sentinel Watcher Warden Grunt Shaman Seer Mystic Trainer Baron Duke Count Admiral General Major Private Officer "
     .. "Foreman Overseer Supervisor Master Grand Apprentice Junior Senior Initiate Acolyte Bishop Abbot Deputy Sheriff Constable "
     .. "Thane Mountaineer Rifleman Huntsman Tracker Ambassador Emissary Envoy Herald Inquisitor Dark Shadow Arch"):gmatch("%a+") do TITLE_WORDS[w] = true end
+-- A killer that was never the target has no "one of a kind of creature" flag in the record
+-- ("I died fighting Dark Enforcer", 2026-11-08). Its name still says so when it ends in the
+-- word for a creature or a calling: "a Dark Enforcer", "a Scarlet Zealot". A one-word name, a
+-- name with an apostrophe or "the", and anyone the lore knows as a boss stay as they are.
+local KIND_NOUNS = {}
+for w in ("Enforcer Neophyte Cultist Warrior Zealot Gnoll Murloc Spider Duskbat Darkhound Wolf Bear Boar Zombie Skeleton Ghoul "
+    .. "Horror Spirit Bandit Mage Warlock Hunter Rogue Acolyte Initiate Missionary Friar Monk Medic Soldier Footman Sentry "
+    .. "Invader Defender Conjurer Sorcerer Necromancer Adept Thug Brigand Poacher Outrunner Raider Marauder Pillager Reaver "
+    .. "Geomancer Bodyguard Peon Miner Digger Worker Laborer Looter Trapper Smuggler Pirate Sailor Swashbuckler Crab Crocolisk "
+    .. "Raptor Scorpid Scorpion Tiger Panther Lion Lioness Stalker Prowler Hyena Vulture Buzzard Condor Bat Rat Snake Serpent "
+    .. "Adder Lurker Crawler Creeper Recluse Tarantula Kobold Trogg Ogre Elemental Imp Felhound Felhunter Satyr Harpy Centaur "
+    .. "Quilboar Furbolg Treant Golem Abomination Wraith Ghost Banshee Shade Gargoyle Hound Mastiff Worg Yeti Gorilla Basilisk "
+    .. "Turtle Snapper Thresher Oracle Tidehunter Coastrunner Mongrel Ravager Brute Mauler Butcher Assassin Infiltrator Spy "
+    .. "Peasant Deserter Recruit Trainee Squire Knight Crusader Gryphon Wyvern Drake Whelp Ooze Slime Sludge Worm Grub Beetle "
+    .. "Moth Wasp Plainstrider Strider Kodo Zhevra Stag Owl Hawk Eagle Wizard Tracker Scavenger Vermin Cook Magus Summoner "
+    .. "Torturer Chaplain Preserver Diviner Evoker Pyromancer Gallant Protector Guardsman Henchman Lackey Minion Rager "
+    .. "Destroyer Shadowcaster Shadowmage Warder Overseer Taskmaster Slaver Enchanter Plaguehound Plaguebat Carrion"):gmatch("%a+") do KIND_NOUNS[w] = true end
+local function OfAKind(e, name)
+    if not e then return false end
+    if e.a ~= nil then return e.a and true or false end
+    name = Clean(name or e.d)
+    if not name:find(" ", 1, true) or name:find("'", 1, true) or name:match("^The ") then return false end
+    if A.Lore and A.Lore.Boss and A.Lore.Boss(name) then return false end
+    return KIND_NOUNS[name:match("(%a+)$") or ""] or false
+end
 -- A place's name in a sentence: "the {p:Barrens}", "{p:Durotar}", "the {p:Arathi Highlands}".
 local ARTICLE = {["Eastern Kingdoms"] = true, ["Arathi Highlands"] = true, ["Eastern Plaguelands"] = true, ["Western Plaguelands"] = true,
     ["Badlands"] = true, ["Blasted Lands"] = true, ["Burning Steppes"] = true, ["Searing Gorge"] = true, ["Wetlands"] = true,
@@ -599,6 +624,9 @@ function ST.Tell(person, days, brief, retell)
         continents = {}, killers = {}, zoneMemory = {}, companionDays = {}, tallySaid = {}, avenged = {}, memorySaid = {},
         dungeonVisits = {}, dungeonsEver = 0, dungeonLordDone = {}, dungeonUnfinishedLast = {}, dungeonDiedLast = {}, roleSaid = {}, titles = {}, questLore = {}, storyThreads = {}, describedZones = {}, infamous = {}, companionLast = {}, companionTime = {}, quests = 0, deaths = 0}
     local teller = Teller((person.charKey or person.name or "me") .. ":" .. tostring(retell or person.retell or 0))
+    -- (the planned telling, JournalSelfPlan.lua: what earlier chapters told, for the feelings it has earned)
+    local planned = A.SelfPlan and not brief and A.BookVariant and A.BookVariant("teller") == "planned" or false
+    history.plan = {said = {}, kind = {}, text = ""}
     local profile = ST.Profile(days)
     -- (the longest gap between two recorded days: the first return after it opens as one)
     local maxGap = 0
@@ -785,7 +813,12 @@ function ST.Tell(person, days, brief, retell)
         local moodQueue = {}
         local times = {}
         local sayTime
+        -- (the planned telling's notes: for every line, the event or work behind it, its time and
+        -- its stretch; nothing here changes what is said)
+        local plan = {metas = {}}
         local function Say(text, major, kind, required)
+            local meta = plan.meta or {}
+            plan.meta = nil
             if not text then return end
             -- (a mood line waits until the line that carries the "when" is said)
             if prefix and kind == "mood" then moodQueue[#moodQueue + 1] = {text, major}; return end
@@ -809,6 +842,11 @@ function ST.Tell(person, days, brief, retell)
             scenes[#out] = sceneAt
             majors[#out] = major or false
             kinds[#out] = kind
+            meta.e, meta.s = meta.e or plan.event, plan.stretch
+            meta.t = meta.t or (plan.event and plan.event.t)
+                or ((kind == "quests" or kind == "questStart" or kind == "questOutcome" or kind == "level") and sayTime) or plan.stretchT
+            meta.said = text
+            plan.metas[#out] = meta
             if kind == "quests" or kind == "level" then
                 times[#out] = sayTime
                 sayTime = nil
@@ -817,7 +855,10 @@ function ST.Tell(person, days, brief, retell)
             if not prefix and #moodQueue > 0 then
                 local queued = moodQueue
                 moodQueue = {}
-                for _, m in ipairs(queued) do out[#out + 1] = m[1]; majors[#out] = m[2] or false; kinds[#out] = "mood"; scenes[#out] = sceneAt end
+                for _, m in ipairs(queued) do
+                    out[#out + 1] = m[1]; majors[#out] = m[2] or false; kinds[#out] = "mood"; scenes[#out] = sceneAt
+                    plan.metas[#out] = {s = plan.stretch, t = meta.t}
+                end
             end
         end
         local stretches = {}
@@ -1799,6 +1840,7 @@ function ST.Tell(person, days, brief, retell)
             local previous
             for si, s in ipairs(stretches) do
                 sceneAt = si
+                plan.stretch, plan.stretchT, plan.event = si, s.t, nil
                 local st = {zoneD = Place(s.zone), zoneE = ZoneE(s.zone)}
                 currentStretch = {zone = s.zone, st = st}
                 local together = #s.with > 0
@@ -1831,6 +1873,7 @@ function ST.Tell(person, days, brief, retell)
                 if si > 1 and previous and s.zone ~= previous.zone and not isDungeon and not arrives and hearthed and W.hearthMove then
                     st.zoneSaid = true
                     history.hearthSaid = index
+                    plan.meta = {hearth = hearthed}
                     Say(teller:Say("hearthMove", W.hearthMove, st))
                 elseif si > 1 and previous and s.zone ~= previous.zone and L and L.Dungeon and L.Dungeon(previous.zone) and W.leaveDungeon and not isDungeon then
                     st.zoneSaid = true
@@ -2001,15 +2044,17 @@ function ST.Tell(person, days, brief, retell)
                     if most and si == 1 then
                         if history.weNamedDay ~= index then Say(teller:Say(#joined > 1 and "withMostPlural" or "withMost", #joined > 1 and W.withMostPlural or W.withMost, st), true) end
                     elseif st.zoneSaid then
+                        plan.meta = {joined = st.names}
                         Say(teller:Say("joinedThere", W.joinedThere, st), true)
                         if kinds[#out - 1] == "move" then majors[#out - 1] = true end
-                    else Say(teller:Say("joined", W.joined, st), true); st.zoneSaid = true end
+                    else plan.meta = {joined = st.names, zone = st.zoneD}; Say(teller:Say("joined", W.joined, st), true); st.zoneSaid = true end
                 end
                 function GatherLine()
                     if st.gatherDone then return end
                     st.gatherDone = true
                     local work = A.JournalGatherClauses and A.JournalGatherClauses(s.gather) or {}
                     if #work > 0 then
+                        plan.meta = {gather = s.gather}
                         st.work = List(work)
                         local names = {}
                         local mostKind, most = nil, 0
@@ -2199,6 +2244,7 @@ function ST.Tell(person, days, brief, retell)
                     if e.d == "notable" and e.n then
                         local lore = W.notableNPCs and W.notableNPCs[e.n]
                         local nt = {name = N(e.n), place = Place(e.z or s.zone)}
+                        plan.meta = {figure = e.n, e = e, t = e.t}
                         Say(teller:Say(e.interaction and "notableSpoke" or "notableSeen", e.interaction and W.notableSpoke or W.notableSeen, nt), true, "first")
                         history.notableNPC = history.notableNPC or {}
                         if lore and not history.notableNPC[e.n] then Say(teller:Say("notableLore:" .. e.n, lore, nt), true, "lore") end
@@ -2321,6 +2367,7 @@ function ST.Tell(person, days, brief, retell)
                 local questAnchors = {}
                 for _, e in ipairs(s.events) do
                     if e.k ~= "boss" then FlushKills() end
+                    plan.event = e
                     local eventStart = #out
                     if e.skip then
                         e.skip = nil
@@ -2692,7 +2739,7 @@ function ST.Tell(person, days, brief, retell)
                             if (x.k == "death" or (x.k == "close" and deathsToday == 0)) and x.sz == e.d and x.d and not inCave then inCave = x end
                         end
                         if inCave then
-                            st.foe = (inCave.a and ((Clean(inCave.d):match("^[AEIOUaeiou]") and "an " or "a ")) or "") .. Place(inCave.d)
+                            st.foe = (OfAKind(inCave) and ((Clean(inCave.d):match("^[AEIOUaeiou]") and "an " or "a ")) or "") .. Place(inCave.d)
                             st.Foe = Cap(st.foe)
                             local cavePool = inCave.k == "death" and ((together and W.caveDeathWe) or W.caveDeath) or W.caveClose
                             Say(teller:Say(inCave.k == "death" and "caveDeath" or "caveClose", cavePool, st), true)
@@ -3047,7 +3094,7 @@ function ST.Tell(person, days, brief, retell)
                         -- (the lost fight was told: you were one of those who fell)
                         history.deaths = history.deaths + 1
                     elseif e.k == "death" and deathsHere <= 2 and not e.told then
-                        local foe = e.d and ((e.a and ((Clean(e.d):match("^[AEIOUaeiou]") and "an " or "a ")) or "") .. Place(e.d))
+                        local foe = e.d and ((OfAKind(e) and ((Clean(e.d):match("^[AEIOUaeiou]") and "an " or "a ")) or "") .. Place(e.d))
                         st.foe, st.sub = foe, e.sz and Place(e.sz)
                         st.inSub = st.sub and ("in " .. st.sub) or nil
                         local pool = foe and W.death.foe or W.death[e.env or ""] or W.death.plain
@@ -3088,7 +3135,7 @@ function ST.Tell(person, days, brief, retell)
                         if foe and history.deathDay == index and history.deathCause and history.deathCause ~= cause and W.deathAgainDay then
                             st.Foe = Cap(foe)
                             pool = W.deathAgainDay
-                        elseif foe and (history.killers[cause] or 0) >= 1 and W.deathAgainFoe and not (e.a and (history.killers[cause] or 0) < 2) then
+                        elseif foe and (history.killers[cause] or 0) >= 1 and W.deathAgainFoe and not (OfAKind(e) and (history.killers[cause] or 0) < 2) then
                             -- (a named foe that killed you before, on an earlier day)
                             st.Foe = Cap(foe)
                             local n = history.killers[cause] + 1
@@ -3098,6 +3145,9 @@ function ST.Tell(person, days, brief, retell)
                         end
                         history.deathDay, history.deathCause = index, cause
                         local sinceDeath = history.lastDeathDay and (dayNumber - history.lastDeathDay) or nil
+                        if pool == W.death.foe or pool == W.deathAgainDay or pool == W.deathAgainFoe then
+                            plan.meta = {simpleDeath = {foe = foe, sub = st.sub, again = pool ~= W.death.foe, sameDay = pool == W.deathAgainDay}}
+                        end
                         Say(teller:Say("death", pool, st), true, "death")
                         if sinceDeath and sinceDeath >= 21 and W.deathAfterLong and (index - (history.longRunSaid or -99)) >= 5 and pool ~= W.deathShameful then
                             history.longRunSaid = index
@@ -3150,7 +3200,7 @@ function ST.Tell(person, days, brief, retell)
                         else Say(teller:Say(known and "rez" or "rezStranger", (known or not W.rezStranger) and W.rez or W.rezStranger, st), true, "rez") end
                     elseif e.k == "close" and (deathsToday == 0 or (clumsy and e.env)) and not closeToday and not e.told then
                         closeToday = true
-                        local foe = e.d and ((e.a and ((Clean(e.d):match("^[AEIOUaeiou]") and "an " or "a ")) or "") .. Place(e.d))
+                        local foe = e.d and ((OfAKind(e) and ((Clean(e.d):match("^[AEIOUaeiou]") and "an " or "a ")) or "") .. Place(e.d))
                         if (e.pr or e.pc) and not e.d then
                             -- one of the other side: what they were, not their name
                             local theirRace, theirClass = e.pr and Clean(e.pr):lower(), e.pc and Clean(e.pc):lower() or "fighter"
@@ -3187,6 +3237,7 @@ function ST.Tell(person, days, brief, retell)
                     end
                 end
                 FlushKills()
+                plan.event = nil
                 if st.hkLine then Say(st.hkLine[1], st.hkLine[2], "death"); st.hkLine = nil end
                 if (st.pvpDeaths or 0) >= 2 and W.deathPvpMany and (function()
                     local n = 0
@@ -3433,7 +3484,7 @@ function ST.Tell(person, days, brief, retell)
                     local count = stop - start
                     -- Move the complete setup/action/outcome, with its metadata.
                     -- The original journal and the book's scene are untouched.
-                    for _, arr in ipairs({out, majors, kinds, times, scenes}) do
+                    for _, arr in ipairs({out, majors, kinds, times, scenes, plan.metas}) do
                         local saved = {}
                         for n = 1, count do saved[n] = arr[start + n] end
                         for n = start, at + 1, -1 do arr[n + count] = arr[n] end
@@ -3549,6 +3600,7 @@ function ST.Tell(person, days, brief, retell)
                         foldLines = foldLines + 1
                         local start = #out
                         sayTime = line.last.t
+                        plan.meta = {fold = line, short = ShortNames}
                         Say(ShortNames(line.text), false, "quests")
                         PlaceQuestPassage(start, line.quest)
                     end
@@ -3581,11 +3633,12 @@ function ST.Tell(person, days, brief, retell)
                         local line, own, from = QD.Moment(e, Tokens(solo), variant, dayPlan.npcLast or history.questLore[QD.Key(q)] == true, brief,
                             history.questLore[QD.Key(q)] == true)
                         dayPlan.npcLast = from == "after"
+                        plan.meta = {entry = e}
                         Say(line, true, from == "after" and "questOutcome" or "questStart", true)
                         if e.act and e.act.giver then giversNamed[(e.act.giver:match("(%S+)$"))] = true end
                         if not own and from ~= "after" and not brief and not dayPlan.outcomeSaid then
                             local outcome = QD.Outcome(e, teller.rng())
-                            if outcome then dayPlan.outcomeSaid = true; Say(outcome, true, "questOutcome", true) end
+                            if outcome then dayPlan.outcomeSaid = true; plan.meta = {entry = e, outcome = true}; Say(outcome, true, "questOutcome", true) end
                         end
                         if e.foe and W.questRevenge and not revengeSaid then
                             revengeSaid = true
@@ -3627,15 +3680,18 @@ function ST.Tell(person, days, brief, retell)
                     st.trade, st.count, st.made = trade == "crafting" and "trade" or trade:lower(), Words(line.count or 0), List(made)
                     -- (the short telling keeps a crafter's work, an honest day's, or a big batch)
                     local craftMajor = honest or profile.crafter or (line.count or 0) >= 10
+                    plan.meta = {trade = trade, count = line.count or 0}
                     if trade == "Mining" and W.smelt then
                         local metals = {}
-                        for _, m in ipairs(line.made or {}) do metals[#metals + 1] = (Clean(m):gsub(" Bar$", ""):lower()) end
+                        -- (the record keeps the spell's name: "Smelt Copper" is copper)
+                        for _, m in ipairs(line.made or {}) do metals[#metals + 1] = (Clean(m):gsub("^Smelt ", ""):gsub(" Bar$", ""):lower()) end
                         st.made = #metals > 0 and List(metals) or "metal"
                         Say(teller:Say("smelt", W.smelt, st), craftMajor, "craft")
                     elseif (line.count or 0) == 1 and #made == 1 then Say(teller:Say("craftOne", W.craftOne, st), craftMajor, "craft")
                     elseif #made > 0 and W.craftBy and W.craftBy[trade] then Say(teller:Say("craftBy" .. trade, W.craftBy[trade], st), craftMajor, "craft")
                     elseif #made > 0 then Say(teller:Say("craftMade", W.craftMade, st), craftMajor, "craft")
                     elseif (line.count or 0) > 0 then Say(teller:Say("craftPlain", W.craftPlain, st), craftMajor, "craft") end
+                    plan.meta = nil
                 end
                 for _, line in ipairs(st.afterCraft or {}) do Say(line, true, "first") end
                 st.afterCraft = nil
@@ -3681,10 +3737,10 @@ function ST.Tell(person, days, brief, retell)
                             local name = Clean(foe)
                             history.killers[name] = (history.killers[name] or 0) + 1
                             if not history.firstKiller then
-                                history.firstKiller = (e.d and not e.boss) and ((e.a and ((name:match("^[AEIOUaeiou]") and "an " or "a ")) or "") .. Place(e.d)) or Place(foe)
+                                history.firstKiller = (e.d and not e.boss) and ((OfAKind(e) and ((name:match("^[AEIOUaeiou]") and "an " or "a ")) or "") .. Place(e.d)) or Place(foe)
                             end
                             if e.d and not e.boss then
-                                local said = (e.a and ((name:match("^[AEIOUaeiou]") and "an " or "a ")) or "") .. Place(e.d)
+                                local said = (OfAKind(e) and ((name:match("^[AEIOUaeiou]") and "an " or "a ")) or "") .. Place(e.d)
                                 history.zoneMemory[s.zone or "?"] = {foe = said, day = dayNumber}
                             end
                         end
@@ -3719,7 +3775,7 @@ function ST.Tell(person, days, brief, retell)
                 -- sentences, ends the chapter instead, and the consequence keeps to its kills: 2026-11-06)
                 if consequenceAt and consequenceAt == countBefore and #out > countBefore and #out - countBefore == 1 then
                     local last, k = #out, #out - countBefore
-                    for _, arr in ipairs({out, majors, kinds, times, scenes}) do
+                    for _, arr in ipairs({out, majors, kinds, times, scenes, plan.metas}) do
                         local consequenceLine = arr[countBefore]
                         for i = 1, k do arr[countBefore - 1 + i] = arr[countBefore + i] end
                         arr[last] = consequenceLine
@@ -3761,6 +3817,7 @@ function ST.Tell(person, days, brief, retell)
                     end
                     if early then
                         lt.level = Words(top) == tostring(top) and tostring(top) or (top >= 10 and top % 10 == 0 and Words(top) or tostring(top))
+                        plan.meta = {levelEarly = top, t = f.levelT, mark = mark}
                         Say(teller:Say("levelEarly", earlyPool or W.levelEarly, lt), mark ~= nil, "level")
                         if mark then Title(mark == 60 and 90 or 50, (teller:Pick("tLevel", W.titles.level) or ""):gsub("{level}", tostring(mark))) end
                     elseif mark then
@@ -3909,8 +3966,11 @@ function ST.Tell(person, days, brief, retell)
             if sleep and not nextDay then sleep = nil end
             if sleep and W.sleepInn and (index - (history.sleepSaid or -99)) >= 3 then
                 history.sleepSaid = index
-                local saidPlace = table.concat(out, " "):find(Clean(sleep.d), 1, true)
+                -- ("there" only right after the place was named, never pointing at a field
+                -- three sentences back)
+                local saidPlace = ((out[#out - 1] or "") .. " " .. (out[#out] or "")):find(Clean(sleep.d), 1, true)
                 local inn = InnName(sleep.d)
+                plan.meta = {close = "sleep", place = inn or Place(sleep.d)}
                 Say(teller:Say("sleepInn", (saidPlace and W.sleepInnHere) or (inn and W.sleepInnNamed) or W.sleepInn, {place = inn or Place(sleep.d)}), false, "rest")
             elseif hearth and hearth.d and not after and W.hearthHome and not sunsetLater and history.hearthSaid ~= index
                 and (index - (history.hearthSaid or -99)) >= 4 and teller.rng() < 0.6 then
@@ -3918,8 +3978,10 @@ function ST.Tell(person, days, brief, retell)
                 Say(teller:Say("hearthHome", W.hearthHome, {place = Place(hearth.d)}))
             elseif h < 4 and not last.open and not (day.readerEpisode and nextDay and nextDay.sourceDay == day.sourceDay) and teller.rng() < (profile.night and 0.25 or 0.6) then
                 -- (a night player's late hours are not news every chapter)
+                plan.meta = {close = "late", t = last.e}
                 Say(teller:Say("late", W.late, {}))
             elseif f.together >= 4 * 3600 and not (day.readerEpisode and nextDay and nextDay.sourceDay == day.sourceDay) and teller.rng() < 0.4 then
+                plan.meta = {close = "long", t = last.e}
                 Say(teller:Say("long", W.long, {span = Span(f.together)}))
             end
             history.lastDay = dayNumber
@@ -4002,6 +4064,20 @@ function ST.Tell(person, days, brief, retell)
                 end
             end
             out, majors, kinds, times, scenes = filtered, fm, fk, ft, fs
+        end
+        if ST.Trace then ST.Trace(day, out, kinds, scenes, times, majors, stretches, plan.metas) end -- (offline printers only)
+        -- The planned telling goes over the day's lines once more (Settings > Testing > Storyteller).
+        -- A failure there leaves the chapter as the current teller wrote it.
+        if planned then
+            local ctx = {day = day, out = out, kinds = kinds, majors = majors, metas = plan.metas, stretches = stretches, history = history,
+                index = index, W = W, race = race, level = stretches[#stretches] and stretches[#stretches].level or person.level,
+                seed = (person.charKey or person.name or "me") .. ":" .. tostring(retell or person.retell or 0),
+                Place = Place, Cap = Cap, Evening = Evening, titleWords = TITLE_WORDS}
+            if ST.PlanStrict then plan.text = A.SelfPlan.Apply(ctx)
+            else
+                local ok, result = pcall(A.SelfPlan.Apply, ctx)
+                plan.text = ok and result or nil
+            end
         end
         -- Two short sentences of yours in a row become one, now and then
         -- ("I turned in Kodo Roundup, and I made level 6.").
@@ -4149,7 +4225,8 @@ function ST.Tell(person, days, brief, retell)
             paragraphWords = paragraphWords + Words2(sentence)
         end
         if #paragraph > 0 then paragraphs[#paragraphs + 1] = table.concat(paragraph, " ") end
-        local text = table.concat(paragraphs, "\n\n")
+        local text = plan.text or table.concat(paragraphs, "\n\n")
+        if planned then history.plan.text = history.plan.text .. " " .. (A.JournalPlain and A.JournalPlain(text) or text) end
         -- the title: the best of the day that no earlier chapter had
         table.sort(titles, function(x, y) return x.rank > y.rank end)
         local title

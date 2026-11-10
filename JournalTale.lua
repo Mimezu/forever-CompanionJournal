@@ -765,6 +765,7 @@ local function ClockPhrase(t)
     return "Close to " .. Word(h + 1)
 end
 T.ClockPhrase = ClockPhrase
+T.FigureAliases = FIGURE_ALIASES
 
 local function StripLead(text)
     for _, lead in ipairs(PLAN_LEADS) do
@@ -1016,15 +1017,23 @@ function T.PlanChapter(c)
             local named = false
             for i = 1, at - 1 do if out[i]:find(b.name, 1, true) then named = true end end
             local we = c.voice == "we"
-            local who = named and (we and "us" or "you") or (we and (b.name .. " and me") or ("you and " .. b.name))
             local back = c.history and c.history.zones and c.history.zones[c.mainZone]
             local run = ""
             if (c.zoneRun or 1) >= 2 and (c.zoneRun or 1) <= 10 then
                 run = " for a " .. Ordinal(c.zoneRun) .. ((part == "evening" or part == "night") and " night" or " day") .. " running"
             end
+            -- (on a run of days the line says the rhythm itself: a short "she was in the party
+            -- again" before it would say it twice, so the two become one)
+            local fold = at == 2 and run ~= "" and beats[1] == "open" and not out[1]:find("{q:", 1, true)
+                and not PlanPlain(out[1]):find("%. ") and select(2, PlanPlain(out[1]):gsub("%S+", "")) <= 10
+            if fold then named = false end
+            local who = named and (we and "us" or "you") or (we and (b.name .. " and me") or ("you and " .. b.name))
             local line = Say("planOpen", {Weekday = c.weekday or "That", weekday = c.weekday or "that", part = part, who = who,
                 backIn = back and "back in " or "in ", backTo = back and "back to " or "to ", zone = c.place(c.mainZone), run = run})
-            if line then out[at] = Rekey(S, times, zones, out[at], line) end
+            if line then
+                out[at] = Rekey(S, times, zones, out[at], line)
+                if fold then table.remove(out, 1); table.remove(beats, 1) end
+            end
         end
     end
 
@@ -1041,20 +1050,41 @@ function T.PlanChapter(c)
                 -- (only where it reads: after a named thing before the first comma, "came across
                 -- {p:Sri'skulk}, a beast...", or at the end of a line without one)
                 local comma0 = l:find(", ", 1, true)
-                local fits = (not comma0) or l:sub(comma0 - 1, comma0 - 1) == "}"
+                -- (a list of places is not one: "Deathknell, Solliden Farmstead and ..." has names after the comma)
+                local fits = (not comma0) or (l:sub(comma0 - 1, comma0 - 1) == "}" and not l:find("{", comma0, true))
                 if S.M[l] and beats[i] == "shared" and t and t < firstWorkT and not l:find("%. ") and fits then
                     local clause = Say("beforeWork", {})
                     if clause then
                         clause = clause:gsub("^%u", string.lower):gsub("%.$", "")
                         local comma = l:find(", ", 1, true)
                         local new
-                        if comma then new = l:sub(1, comma - 1) .. " " .. clause .. l:sub(comma)
+                        -- (after the apposition, so "Sri'skulk, a beast most people only hear of"
+                        -- stays in one piece)
+                        if comma then new = l:sub(1, -2) .. ", " .. clause .. l:sub(-1)
                         else new = l:sub(1, -2) .. " " .. clause .. l:sub(-1) end
                         out[i] = Rekey(S, times, zones, l, new)
                         S.M[new] = S.M[l]
                     end
                     break
                 end
+            end
+        end
+    end
+
+    -- 5C. The chapter is about the pair already: a shared moment does not say "during your time
+    -- together" again.
+    for i, l in ipairs(out) do
+        if beats[i] == "shared" then
+            local new = l:gsub(" during %a+ time together%.$", "."):gsub(" during %a+ travels together%.$", ".")
+            -- (the place leads, so the figure's name ends the line and can take a clause after it)
+            local head, where = new:match("^(.-) in ({%a:[^{}]*})%.$")
+            if new ~= l and head and not head:find(",", 1, true) then
+                local word = head:match("^(%a+) ")
+                new = "In " .. where .. ", " .. ((word == "You" or word == "We") and head:gsub("^%u", string.lower) or head) .. "."
+            end
+            if new ~= l then
+                out[i] = Rekey(S, times, zones, l, new)
+                S.M[new] = S.M[l]
             end
         end
     end
@@ -1117,6 +1147,41 @@ function T.PlanChapter(c)
                 end
                 i = at + 1
             else i = i + 1 end
+        end
+    end
+
+    -- 5C. A death and the short rest right after it read as one sentence ("a Vampiric Duskbat got
+    -- the better of you, and you sat by a fire a while").
+    do
+        local i = 1
+        while i < #out do
+            local d, r = out[i], out[i + 1]
+            local word = PlanPlain(r):match("^(%a+) ")
+            if beats[i] == "death" and beats[i + 1] == "rest" and not PlanPlain(d):find("%. ") and d:sub(-1) == "."
+                and not PlanPlain(r):find("%. ") and select(2, PlanPlain(r):gsub("%S+", "")) <= 8
+                and (word == "You" or word == "We" or word == "I") then
+                local new = d:sub(1, -2) .. ", and " .. (word == "I" and r or r:gsub("^%u", string.lower))
+                out[i] = Rekey(S, times, zones, d, new)
+                table.remove(out, i + 1); table.remove(beats, i + 1)
+            end
+            i = i + 1
+        end
+    end
+
+    -- 5C. A country first seen as the last thing of the day closes the chapter as an arrival
+    -- ("Before the night was over, you had set foot in the Undercity for the first time.").
+    do
+        local last = #out
+        while last > 1 and beats[last] == "hour" do last = last - 1 end
+        local l = out[last]
+        local t = l and times[l]
+        local h = t and t > 0 and date and tonumber(date("%H", t))
+        if last > 3 and beats[last] == "shared" and S.zoneFirstD and h and PlanPlain(l):lower():find(PlanPlain(S.zoneFirstD):lower(), 1, true) and not PlanPlain(l):find("%. ") then
+            local line = Say("planArriveLast", {span = (h >= 17 or h < 5) and "night" or "day", zoneD = S.zoneFirstD})
+            if line then
+                out[last] = Rekey(S, times, zones, l, line)
+                S.M[line] = S.M[l]
+            end
         end
     end
 
@@ -1240,6 +1305,7 @@ end
 -- line never twice in a book. Figures first, then threads, then deaths; an identity pool (a
 -- Forsaken before Sylvanas) before the stage's own. No pool for the stage or voice: no line.
 local FIGURE_KEYS = {["Lady Sylvanas Windrunner"] = "Sylvanas"}
+T.FigureKeys = FIGURE_KEYS
 local FEEL_RANK = {figureNamed = 1, thread = 2, deathAgain = 3}
 -- (first words of a felt line that need no name in the chapter behind them)
 local FEEL_COMMON = {here = true, somehow = true, dying = true, death = true, earlier = true, ["until"] = true, i = true}
@@ -1422,9 +1488,14 @@ function T.PlanText(lines, beats, times, zones, place, S)
                 or plainBody:find("^That ") or plainBody:find("^By ") or plainBody:find("^Late ") or plainBody:find("^Early ")
             -- (a death opens on its hour, "A little after eleven, Riptear...", wherever it was)
             local clockFirst = p.reason == "death" and not setupLine and ClockPhrase(t)
+            -- (a deed the line places itself, "from the lich's camp on Brightwater Lake", is not
+            -- placed in the town where it was handed in: it opens on its hour instead)
+            local sentence = plainBody:match("^[^.]*") or plainBody
+            local elsewhere = sentence:find(" on %u") or sentence:find(" on the %u") or sentence:find(" at %u") or sentence:find(" at the %u")
+                or sentence:find(" in %u") or sentence:find(" in the %u")
             if T.PlaceLed(body) or timed then prefix = nil
             elseif clockFirst then prefix = clockFirst .. ", "
-            elseif z and p.prevZ and z ~= p.prevZ and not named then
+            elseif z and p.prevZ and z ~= p.prevZ and not named and not elsewhere then
                 prefix = (seen[z] and "Back in " or "In ") .. place(z) .. ", "
             elseif not setupLine then
                 local clock = ClockPhrase(t)
@@ -4337,10 +4408,18 @@ function T.Tell(person, days, voice, player, brief)
                     tokens.Faction = Cap(tokens.faction)
                     line = teller:Say("sharedRep" .. word, PB.sharedRep[word], rng, tokens)
                 elseif e.k == "explore" and e.d and PB.shared.explore then
-                    local names = {}
-                    for _, x in ipairs(moments) do if x.k == "explore" and x.d and #names < 3 then names[#names + 1] = Place(x.d) end end
-                    tokens.places = List(names)
-                    line = teller:Say("sharedExplore", PB.shared.explore, rng, tokens)
+                    -- (planned: the country the chapter opens in is not news here, and a cave
+                    -- that gets its own line is not listed too)
+                    local names = {skip = {}}
+                    if S.planned then
+                        if mainZone then names.skip[mainZone] = true end
+                        for _, x in ipairs(moments) do if x.k == "cave" and x.d then names.skip[x.d] = true end end
+                    end
+                    for _, x in ipairs(moments) do if x.k == "explore" and x.d and #names < 3 and not names.skip[x.d] then names[#names + 1] = Place(x.d) end end
+                    if #names > 0 then
+                        tokens.places = List(names)
+                        line = teller:Say("sharedExplore", PB.shared.explore, rng, tokens)
+                    end
                 elseif e.k == "read" and e.d and PB.shared.read then
                     tokens.what = Q(e.d)
                     line = teller:Say("sharedRead", PB.shared.read, rng, tokens)
@@ -4349,6 +4428,7 @@ function T.Tell(person, days, voice, player, brief)
                     tokens.zoneD = Place(e.z)
                     tokens.zoneDWas = Plural(tokens.zoneD) and "were" or "was"
                     line = teller:Say("sharedZoneFirst", PB.shared.zoneFirst, rng, tokens)
+                    S.zoneFirstD = tokens.zoneD
                 elseif e.k == "first" and e.d == "continent" and e.z and not e.u and PB.shared.continent then
                     local how
                     for _, x in ipairs(moments) do if x.k == "voyage" and x.d and math.abs((x.t or 0) - (e.t or 0)) <= 120 then how = x.d end end
