@@ -743,7 +743,14 @@ local FIGURE_ALIASES = {["Lady Sylvanas Windrunner"] = {"Sylvanas", "Dark Lady",
     ["Cairne Bloodhoof"] = {"Cairne", "high chieftain"}, ["Vol'jin"] = {"Vol'jin"}, ["King Magni Bronzebeard"] = {"Magni"},
     ["High Tinker Mekkatorque"] = {"Mekkatorque", "high tinker"}, ["Tyrande Whisperwind"] = {"Tyrande"}, ["Arch Druid Fandral Staghelm"] = {"Fandral", "Staghelm"}}
 local PLAN_TITLES = {Lady = true, Lord = true, King = true, Queen = true, High = true, Arch = true, Druid = true, Tinker = true, Captain = true,
-    Deathguard = true, Executor = true, Magistrate = true, Apothecary = true, Commander = true, General = true}
+    Deathguard = true, Executor = true, Magistrate = true, Apothecary = true, Commander = true, General = true,
+    Novice = true, Shadow = true, Priest = true, Priestess = true, Sergeant = true, Lieutenant = true, Corporal = true, Private = true,
+    Major = true, Colonel = true, Admiral = true, Marshal = true, Deputy = true, Mountaineer = true, Sentinel = true, Warden = true,
+    Scout = true, Grunt = true, Farmer = true, Innkeeper = true, Brother = true, Sister = true, Father = true, Elder = true, Seer = true,
+    Chief = true, Chieftain = true, Overseer = true, Foreman = true, Prince = true, Princess = true, Mayor = true, Master = true,
+    Mistress = true, Doctor = true, Professor = true, Archmage = true, Magus = true, Thane = true, Baron = true, Duke = true, Sir = true,
+    Keeper = true, Loremaster = true, Prospector = true, Senior = true, Junior = true, Grand = true, Initiate = true, Acolyte = true,
+    Bishop = true, Guard = true, Watcher = true, Dark = true, Ranger = true, Warlord = true, Overlord = true, Shaman = true, Mage = true}
 local function PlanPlain(s) return (tostring(s or ""):gsub("{%a:([^}]*)}", "%1")) end
 local function PlanWords(s) local c = 0 for _ in PlanPlain(s):gmatch("%S+") do c = c + 1 end return c end
 
@@ -779,7 +786,7 @@ local function Rekey(S, times, zones, old, new)
     if times[new] == nil then times[new] = times[old] end
     if zones[new] == nil then zones[new] = zones[old] end
     if S then
-        for _, map in ipairs({S.Q, S.Qs, S.SL, S.D, S.LV, S.setup, S.setupFor}) do
+        for _, map in ipairs({S.Q, S.Qs, S.SL, S.D, S.LV, S.setup, S.setupFor, S.ME or {}, S.peak or {}}) do
             if map and map[new] == nil then map[new] = map[old] end
         end
     end
@@ -817,6 +824,261 @@ function T.PlanOrder(lines, beats, times, zones, S)
     end
     for k = 1, n do lines[k], beats[k] = newLines[k], newBeats[k] end
     return head
+end
+
+-- The shape of a chapter (2026-11-09, pass 2). A peak is a death, a great figure met or a first
+-- sight of a capital. A chapter that has peaks drops its furniture (places passed, a cave gone
+-- into, a rare beast, herbs and fish, a campfire), and a campfire never follows a death. A line
+-- of light deeds joins two only when one giver or one chain asked for both and the sentence
+-- stays at eighteen words; otherwise the worthier deed stands alone (a thin chapter keeps two,
+-- a sentence each). S.dropped lists what was left out and why.
+local PLAN_CITIES = {Orgrimmar = true, ["Thunder Bluff"] = true, Undercity = true, ["Stormwind City"] = true, Stormwind = true,
+    Ironforge = true, Darnassus = true}
+local PLAN_FURNITURE = {explore = true, cave = true, gather = true, swim = true}
+-- (round 2) The day's line without its list of quest titles: "... for about two hours and turned
+-- in X, a job for a whole party." keeps the span; a line that is only its titles gives nil.
+local function PlanStripTitles(line)
+    local s = line:find(",? and turned in {q:") or line:find(",? and finished {q:")
+    if s then return line:sub(1, s - 1) .. "." end
+    s = line:find(", turned in {q:", 1, true) or line:find(", finished {q:", 1, true)
+    if s then
+        local rest
+        for at in line:gmatch("(), and ") do if at > s then rest = line:sub(at + 6) end end
+        return line:sub(1, s - 1) .. (rest and (" and " .. rest) or ".")
+    end
+    return nil
+end
+-- (round 2) A raise you gave: "You brought him back from death."
+local function PlanRaiseGiven(S, line, beat)
+    local e = S.ME[line]
+    if e and e.k == "first" and e.d == "rezother" then return true end
+    if beat ~= "rez" then return false end
+    local plain = PlanPlain(line)
+    return (plain:find("^You ") or plain:find("^I ") or plain:find("^Your ") or plain:find("^My ") or plain:find("^The Light answered ")) ~= nil
+end
+-- (round 2) Where the line "Tarok, a tauren warrior, came along too." stands, if the chapter has one.
+local function PlanAlsoAt(out, beats)
+    local ends = {}
+    for _, pool in ipairs({PB.alsoThere or {}, PB.alsoTherePlural or {}}) do
+        for _, l in ipairs(pool) do
+            local tail = l:match("^{others}(.+)$")
+            if tail then ends[#ends + 1] = ((tail:gsub("%p", "%%%0")):gsub("%%{pairObj%%}", ".-")) .. "$" end
+        end
+    end
+    ends[#ends + 1] = " came along too%.$"
+    for i, line in ipairs(out) do
+        if beats[i] == "shared" then
+            local plain = PlanPlain(line)
+            for _, pat in ipairs(ends) do if plain:find(pat) then return i end end
+        end
+    end
+end
+function T.PlanShape(c)
+    local out, beats, times, zones, S, teller = c.out, c.beats, c.times, c.zones, c.S, c.teller
+    local L, QD, b = A.Lore, A.QuestDeeds, teller.base
+    local function Story(q) return q and L and L.QuestStory and L.QuestStory(q.title, q.qid) or nil end
+    S.dropped = {}
+    S.subject = b.we
+    local peaks, words, deathT, seenE = 0, 0, {}, {}
+    for i, line in ipairs(out) do
+        local e, kind = S.ME[line], nil
+        if beats[i] == "death" then kind = "death"; deathT[#deathT + 1] = times[line]
+        elseif e and not seenE[e] and e.k == "first" and e.d == "notable" and line:find("{n:", 1, true) then kind = "figure"
+        elseif e and not seenE[e] and e.k == "first" and e.d == "zone" and PLAN_CITIES[(tostring(e.z or ""):gsub("^[Tt]he ", ""))] then kind = "city" end
+        if kind then S.peak[line] = kind; peaks = peaks + 1; if e then seenE[e] = true end end
+        words = words + PlanWords(line)
+    end
+    local crowded = peaks >= 2 or (peaks >= 1 and words > 110)
+    local run = false
+    for i = 1, #out do if beats[i] == "climax" then run = true end end
+    -- Round 2 (2026-11-09). The companion's deaths this chapter tells, and the first death of
+    -- anyone, by time.
+    local theirDeaths, firstDeath = {}, nil
+    for i, line in ipairs(out) do
+        local e = S.D[line]
+        if e then
+            local t = times[line] or e.t
+            if e.w ~= "you" then theirDeaths[#theirDeaths + 1] = t or 0 end
+            if beats[i] == "death" and t and t > 0 and (not firstDeath or t < firstDeath) then firstDeath = t end
+        end
+    end
+    -- (the day's line never says "for" twice: "in Durotar for a second day for about two hours")
+    for i, line in ipairs(out) do
+        if beats[i] == "day" then
+            local new, n = line:gsub("( for a %a+ day) for [%a ]-( and )", "%1%2", 1)
+            if n == 0 then new, n = line:gsub("( for a %a+ day) for [%a ]-([,%.])", "%1%2", 1) end
+            if n > 0 then out[i] = Rekey(S, times, zones, line, new) end
+        end
+    end
+    -- (someone else of the list who came along: plain words, and no hour of its own, so it
+    -- stays where the telling put it; PlanChapter keeps it from opening the chapter)
+    do
+        local i = PlanAlsoAt(out, beats)
+        if i then
+            local line = out[i]
+            local new = line:gsub(" made one more in the party%.$", " came along too."):gsub(" was in the party as well%.$", " came along too.")
+            if new ~= line then out[i] = Rekey(S, times, zones, line, new) end
+            times[out[i]] = nil
+        end
+    end
+    -- (quest titles: a quest nobody has written is not told, so "saw X through" goes; one list
+    -- of titles a chapter at most, none with a colon or quote marks in a title, and none that
+    -- tells a turn-in ahead of the death that came before it)
+    do
+        local listed, i = false, 1
+        while i <= #out do
+            local line = out[i]
+            local why
+            if beats[i] ~= "shared" and line:find("{q:", 1, true) and not S.setup[line] and not S.setupFor[line] then
+                if line:find(" saw {q:[^}]*} through") then why = "title"
+                else
+                    local bad = listed
+                    for title in line:gmatch("{q:([^}]*)}") do
+                        if title:find("[:\"]") then bad = true end
+                        for _, q in ipairs(c.f and c.f.quests or {}) do
+                            if firstDeath and (tostring(q.title):gsub("[{}]", "")) == title and (q.t or 0) > firstDeath
+                                and (times[line] or 0) < firstDeath then bad = true end
+                        end
+                    end
+                    if bad then
+                        local new = beats[i] == "day" and PlanStripTitles(line) or nil
+                        if new then
+                            S.dropped[#S.dropped + 1] = {why = "titles", text = line, kept = new}
+                            out[i] = Rekey(S, times, zones, line, new)
+                        else why = "titles" end
+                    else listed = true end
+                end
+            end
+            if why then
+                S.dropped[#S.dropped + 1] = {why = why, text = line}
+                table.remove(out, i); table.remove(beats, i)
+                words = words - PlanWords(line)
+            else i = i + 1 end
+        end
+    end
+    for i = #out, 1, -1 do
+        local line = out[i]
+        local e, why = S.ME[line], nil
+        -- (a verdict on the day is not a close: "It had been a good day's work.")
+        if beats[i] == "close" and not line:find("{", 1, true) and PlanWords(line) <= 8 then why = "verdict" end
+        -- (a raise is told only with the death it answers)
+        do
+            if PlanRaiseGiven(S, line, beats[i]) then
+                local t, told = times[line], false
+                for _, dt in ipairs(theirDeaths) do if not t or dt <= t then told = true end end
+                if not told then why = "raise" end
+            end
+        end
+        -- (a quest told by its title alone, "You saw Leaders of the Fang through.", beside a
+        -- dungeon run or in a chapter of peaks)
+        if (crowded or run) and (beats[i] == "questKey" or beats[i] == "quest") and not S.setup[line] and not S.setupFor[line]
+            and line:find("{q:", 1, true) and not line:find("[%.!%?]%s") and PlanWords((line:gsub("{q:[^}]*}", "Q"))) <= 5 then
+            why = "title"
+        end
+        if not S.peak[line] and not S.Q[line] and not S.Qs[line] and not S.setup[line] and not S.setupFor[line] then
+            if beats[i] == "rest" then
+                local plain, t = PlanPlain(line):lower(), times[line]
+                local camp = (plain:find("fire", 1, true) or plain:find("camp", 1, true)) and not plain:find("first", 1, true) and not plain:find(" inn", 1, true)
+                local byDeath = false
+                for _, dt in ipairs(deathT) do if t and t >= dt and t - dt <= PLAN_NEXT then byDeath = true end end
+                if camp and (crowded or byDeath) then why = "rest" end
+            elseif beats[i] == "shared" and crowded and e and (PLAN_FURNITURE[e.k] or (e.k == "first" and e.d == "rarebeast")) then
+                why = e.k == "first" and e.d or e.k
+            end
+        end
+        if why then
+            S.dropped[#S.dropped + 1] = {why = why, text = line}
+            table.remove(out, i); table.remove(beats, i)
+            words = words - PlanWords(line)
+        end
+    end
+    -- (a fact of the place told twice in other words: the later telling goes)
+    local PLACE_FACT = {land = true, dungeon = true, lore = true}
+    local function Content(line)
+        local set, n = {}, 0
+        for w in PlanPlain(line):lower():gmatch("%a+") do if #w >= 5 and not set[w] then set[w] = true; n = n + 1 end end
+        return set, n
+    end
+    for i = #out, 2, -1 do
+        local line = out[i]
+        if PLACE_FACT[beats[i]] and not S.peak[line] and not S.Q[line] and not S.Qs[line] and not S.setup[line] and not S.setupFor[line] then
+            local set, n = Content(line)
+            local twice = false
+            for k = 1, i - 1 do
+                if PLACE_FACT[beats[k]] then
+                    local other, shared = Content(out[k]), 0
+                    for w in pairs(set) do if other[w] then shared = shared + 1 end end
+                    if shared >= 4 and shared * 5 >= n * 3 then twice = true end
+                end
+            end
+            if twice then
+                S.dropped[#S.dropped + 1] = {why = "twice", text = line}
+                table.remove(out, i); table.remove(beats, i)
+            end
+        end
+    end
+    -- The join rule.
+    local function Short(giver) return giver and giver:match("(%S+)$") or nil end
+    for i = 1, #out do
+        local l = out[i]
+        local qs = {}
+        for _, q in pairs(S.Qs[l] or {}) do if q then qs[#qs + 1] = q end end
+        table.sort(qs, function(x, y) return (x.t or 0) < (y.t or 0) end)
+        local acts = {}
+        for _, q in ipairs(qs) do
+            local s = Story(q)
+            local a = QD and QD.Act and QD.Act(q, s)
+            if a and a.act and a.act ~= "" then
+                acts[#acts + 1] = {q = q, act = a.act, giver = a.giver, solo = a.solo, thread = s and s.thread, worth = (s and s.importance) or 3, at = #acts}
+            end
+        end
+        if #qs >= 2 and #acts == #qs then
+            local lead = l:match("^(In {%a:[^{}]*}, )") or ""
+            local function Sentence(list, first)
+                local subject = list[1].solo and b.I or b.we
+                if first and lead ~= "" then subject = lead .. subject else subject = Cap(subject) end
+                local parts = {}
+                for _, a in ipairs(list) do parts[#parts + 1] = a.act end
+                return subject .. " " .. table.concat(parts, " and ") .. "."
+            end
+            local a1, a2 = acts[1], acts[2]
+            local related = #acts == 2 and (a1.solo == a2.solo) and ((a1.giver and Short(a1.giver) == Short(a2.giver)) or (a1.thread and a1.thread == a2.thread))
+            local new, kept
+            if related and not (a1.act .. a2.act):find(",", 1, true) and PlanWords(Sentence(acts, true)) <= 18 then
+                new, kept = Sentence(acts, true), acts
+            else
+                -- (the worthier: the one a thread hangs on, one whose giver the chapter names
+                -- elsewhere, then by importance, then the earlier)
+                local others = {}
+                for k, other in ipairs(out) do if k ~= i then others[#others + 1] = other end end
+                local rest = PlanPlain(table.concat(others, " "))
+                local key = S.setupFor[l]
+                for _, a in ipairs(acts) do
+                    a.score = a.worth
+                    if a.giver and rest:find(Short(a.giver), 1, true) then a.score = a.score + 10 end
+                    if key and (a.act:find(key, 1, true) or (a.giver or ""):find(key, 1, true)) then a.score = a.score + 100 end
+                end
+                table.sort(acts, function(x, y) if x.score ~= y.score then return x.score > y.score end return x.at < y.at end)
+                if peaks == 0 and words < 60 then
+                    kept = {acts[1], acts[2]}
+                    table.sort(kept, function(x, y) return x.at < y.at end)
+                    new = Sentence({kept[1]}, true) .. " " .. Sentence({kept[2]})
+                else
+                    kept = {acts[1]}
+                    new = Sentence(kept, true)
+                end
+                for k = #kept + 1, #acts do S.dropped[#S.dropped + 1] = {why = "join", text = acts[k].act} end
+            end
+            if new ~= l then
+                local first = kept[1].q
+                times[new] = times[new] or first.t or times[l]
+                zones[new] = zones[new] or first.z or (first.scene and first.scene.zone) or zones[l]
+                out[i] = Rekey(S, times, zones, l, new)
+                S.Qs[new] = {}
+                for _, a in ipairs(kept) do S.Qs[new][#S.Qs[new] + 1] = a.q end
+            end
+        end
+    end
 end
 
 -- The chapter's plan, in place (c: out, beats, times, zones, S, f, day, teller, place, person,
@@ -911,6 +1173,18 @@ function T.PlanChapter(c)
                 for i = #out, 1, -1 do if beats[i] == "hour" then Remove(i) end end
                 Put(line, "hour", last.e, last.zone)
                 S.companionStop = line
+            end
+        elseif last and h and h < 5 then
+            -- (the pair stopping past midnight: the close names the company, not the clock alone)
+            for i = #out, 1, -1 do
+                if beats[i] == "hour" and PlanPlain(out[i]):lower():find("midnight", 1, true) then
+                    local clock = ClockPhrase(last.e)
+                    local b = teller.base
+                    local who = c.voice == "we" and (b.name .. " and I") or ("you and " .. b.name)
+                    local line = clock and Say("planClose", {clock = (clock:gsub("^%u", string.lower)), who = who, Who = Cap(who)})
+                    if line then out[i] = Rekey(S, times, zones, out[i], line) end
+                    break
+                end
             end
         end
     end
@@ -1019,12 +1293,16 @@ function T.PlanChapter(c)
             local we = c.voice == "we"
             local back = c.history and c.history.zones and c.history.zones[c.mainZone]
             local run = ""
-            if (c.zoneRun or 1) >= 2 and (c.zoneRun or 1) <= 10 then
+            -- (round 2: from the second night on, so "the very next day she was in the party
+            -- again" folds into this line and the chapter has one opener)
+            -- (the run is said on the nights the Current telling says it: 2, 3, 5, 7, 10)
+            local zr = c.zoneRun or 1
+            if zr == 2 or zr == 3 or zr == 5 or zr == 7 or zr == 10 then
                 run = " for a " .. Ordinal(c.zoneRun) .. ((part == "evening" or part == "night") and " night" or " day") .. " running"
             end
             -- (on a run of days the line says the rhythm itself: a short "she was in the party
             -- again" before it would say it twice, so the two become one)
-            local fold = at == 2 and run ~= "" and beats[1] == "open" and not out[1]:find("{q:", 1, true)
+            local fold = at == 2 and zr >= 2 and beats[1] == "open" and not out[1]:find("{q:", 1, true)
                 and not PlanPlain(out[1]):find("%. ") and select(2, PlanPlain(out[1]):gsub("%S+", "")) <= 10
             if fold then named = false end
             local who = named and (we and "us" or "you") or (we and (b.name .. " and me") or ("you and " .. b.name))
@@ -1037,45 +1315,14 @@ function T.PlanChapter(c)
         end
     end
 
-    -- 5B. A moment that came before every hand-in of the day says so, once ("came across
-    -- Sri'skulk before you had turned in a single task, a beast most people only hear of").
-    do
-        local firstWorkT
-        for _, list in ipairs({f.quests, f.dungeons, f.deaths}) do
-            for _, x in ipairs(list) do if x.t and (not firstWorkT or x.t < firstWorkT) then firstWorkT = x.t end end
-        end
-        if firstWorkT and #f.quests > 0 then
-            for i, l in ipairs(out) do
-                local t = times[l]
-                -- (only where it reads: after a named thing before the first comma, "came across
-                -- {p:Sri'skulk}, a beast...", or at the end of a line without one)
-                local comma0 = l:find(", ", 1, true)
-                -- (a list of places is not one: "Deathknell, Solliden Farmstead and ..." has names after the comma)
-                local fits = (not comma0) or (l:sub(comma0 - 1, comma0 - 1) == "}" and not l:find("{", comma0, true))
-                if S.M[l] and beats[i] == "shared" and t and t < firstWorkT and not l:find("%. ") and fits then
-                    local clause = Say("beforeWork", {})
-                    if clause then
-                        clause = clause:gsub("^%u", string.lower):gsub("%.$", "")
-                        local comma = l:find(", ", 1, true)
-                        local new
-                        -- (after the apposition, so "Sri'skulk, a beast most people only hear of"
-                        -- stays in one piece)
-                        if comma then new = l:sub(1, -2) .. ", " .. clause .. l:sub(-1)
-                        else new = l:sub(1, -2) .. " " .. clause .. l:sub(-1) end
-                        out[i] = Rekey(S, times, zones, l, new)
-                        S.M[new] = S.M[l]
-                    end
-                    break
-                end
-            end
-        end
-    end
-
     -- 5C. The chapter is about the pair already: a shared moment does not say "during your time
     -- together" again.
     for i, l in ipairs(out) do
         if beats[i] == "shared" then
             local new = l:gsub(" during %a+ time together%.$", "."):gsub(" during %a+ travels together%.$", ".")
+            -- (a moment of one minute is not "the day": the pool's plain line instead)
+            local who, side, foe = new:match("^That was the day (%S+) first saw one of (.-), (.-)%.$")
+            if who then new = Cap(who) .. " saw one of " .. side .. " for the first time, " .. foe .. "." end
             -- (the place leads, so the figure's name ends the line and can take a clause after it)
             local head, where = new:match("^(.-) in ({%a:[^{}]*})%.$")
             if new ~= l and head and not head:find(",", 1, true) then
@@ -1120,8 +1367,36 @@ function T.PlanChapter(c)
         end
     end
 
-    -- The order of the evening.
+    -- Peaks, furniture and the join rule (T.PlanShape), then the order of the evening.
+    T.PlanShape(c)
     T.PlanOrder(out, beats, times, zones, S)
+    -- (round 2: the others in the party never open the chapter, before the companion is named)
+    do
+        local i = PlanAlsoAt(out, beats)
+        if i == 1 and #out >= 2 then
+            local line, bt = out[1], beats[1]
+            table.remove(out, 1); table.remove(beats, 1)
+            table.insert(out, 2, line); table.insert(beats, 2, bt)
+        end
+    end
+    -- (round 2: a raise you gave stands right after the death it answers, not at the day's end)
+    do
+        local death
+        for i, line in ipairs(out) do
+            local e = S.D[line]
+            if e and e.w ~= "you" then death = i
+            elseif death and PlanRaiseGiven(S, line, beats[i]) then
+                local to = death + 1
+                while to < i and beats[to] == "deathLore" do to = to + 1 end
+                if to < i then
+                    local bt = beats[i]
+                    table.remove(out, i); table.remove(beats, i)
+                    table.insert(out, to, line); table.insert(beats, to, bt)
+                end
+                break
+            end
+        end
+    end
 
     -- 3b. Right after a death, what the record says came next within ten minutes (a level, a
     -- raise, a rest); other lines of those minutes follow them.
@@ -1147,24 +1422,6 @@ function T.PlanChapter(c)
                 end
                 i = at + 1
             else i = i + 1 end
-        end
-    end
-
-    -- 5C. A death and the short rest right after it read as one sentence ("a Vampiric Duskbat got
-    -- the better of you, and you sat by a fire a while").
-    do
-        local i = 1
-        while i < #out do
-            local d, r = out[i], out[i + 1]
-            local word = PlanPlain(r):match("^(%a+) ")
-            if beats[i] == "death" and beats[i + 1] == "rest" and not PlanPlain(d):find("%. ") and d:sub(-1) == "."
-                and not PlanPlain(r):find("%. ") and select(2, PlanPlain(r):gsub("%S+", "")) <= 8
-                and (word == "You" or word == "We" or word == "I") then
-                local new = d:sub(1, -2) .. ", and " .. (word == "I" and r or r:gsub("^%u", string.lower))
-                out[i] = Rekey(S, times, zones, d, new)
-                table.remove(out, i + 1); table.remove(beats, i + 1)
-            end
-            i = i + 1
         end
     end
 
@@ -1272,18 +1529,65 @@ function T.PlanChapter(c)
         end
     end
 
+    -- (round 2) A list of quest titles is never the chapter's last sentence.
+    do
+        local last = #out
+        local line = out[last]
+        while last > 1 and line and beats[last] ~= "shared" and beats[last] ~= "hour" and line:find("{q:", 1, true)
+            and not S.setup[line] and not S.setupFor[line] and not S.SL[line] do
+            local new = beats[last] == "day" and PlanStripTitles(line) or nil
+            S.dropped[#S.dropped + 1] = {why = "titles", text = line, kept = new}
+            if new then out[last] = Rekey(S, times, zones, line, new); break end
+            table.remove(out, last); table.remove(beats, last)
+            last = #out
+            line = out[last]
+        end
+    end
+
     -- Hooks: a death after an earlier death anywhere in the book (the setup that earns it,
     -- DESIGN §3.0 rule 5: the second death stings because the first was told).
+    -- (round 2: only your own deaths count and only your own death takes the hook; a friend's
+    -- death an hour before is not an earlier death of yours. The first death of your life, by
+    -- your own journal, takes the first-death line. Two deaths running are not both "got the
+    -- better of".)
     do
         local h = c.history or {}
         local seen, any = {}, false
         for _, foe in ipairs(h.planDeaths or {}) do seen[foe] = true; any = true end
-        local mine = {}
+        local mine, counted = {}, {}
         for i, line in ipairs(out) do
-            if beats[i] == "death" then
-                local e = S.D[line]
-                local foe = e and (e.boss or e.d) or nil
-                if any or (foe and seen[foe]) then S.setup[line] = S.setup[line] or {kind = "deathAgain", foe = foe, same = foe and seen[foe] or nil} end
+            local e = S.D[line]
+            if e and e.w == "you" and not counted[e] then
+                counted[e] = true
+                local foe = e.boss or e.d
+                if beats[i] == "death" then
+                    local plain = PlanPlain(line)
+                    local shape = plain:find(" got the better of ", 1, true) and "better" or "other"
+                    if shape == "better" and h.planDeathShape == "better" and not plain:find("%. ") then
+                        -- ("Riptear got the better of you." -> "You fell to Riptear.")
+                        local killer, me = line:match("^(.-) got the better of (%a+)%.$")
+                        local subj = me == "you" and "You" or me == "me" and "I" or nil
+                        local new
+                        if killer and subj then
+                            killer = killer:gsub("^A ", "a "):gsub("^An ", "an "):gsub("^The ", "the ")
+                            new = subj .. " fell to " .. killer .. "."
+                        else new = line:gsub(" got the better of ", " killed ", 1) end
+                        out[i] = Rekey(S, times, zones, line, new)
+                        line, shape = new, "other"
+                    end
+                    h.planDeathShape = shape
+                    if any then
+                        S.setup[line] = S.setup[line] or {kind = "deathAgain", foe = foe, same = foe and seen[foe] or nil}
+                    elseif c.ownJournal and (tonumber(c.startLevel) or 99) <= 9 then
+                        local earlier = false
+                        for _, x in ipairs(c.ownJournal) do
+                            if x.k == "death" and x.w ~= "them" and (x.t or 0) < (e.t or 0) - 1 then earlier = true end
+                        end
+                        local key = (c.player and c.player.race == "Scourge") and "planFirstDeathScourge" or "planFirstDeath"
+                        local felt = not earlier and PB[key] and PB[key][c.voice == "we" and "we" or "you"] or nil
+                        if felt then S.setup[line] = S.setup[line] or {kind = "deathFirst", line = felt} end
+                    end
+                end
                 any = true
                 if foe then seen[foe] = true end
                 mine[#mine + 1] = foe or "?"
@@ -1306,7 +1610,7 @@ end
 -- Forsaken before Sylvanas) before the stage's own. No pool for the stage or voice: no line.
 local FIGURE_KEYS = {["Lady Sylvanas Windrunner"] = "Sylvanas"}
 T.FigureKeys = FIGURE_KEYS
-local FEEL_RANK = {figureNamed = 1, thread = 2, deathAgain = 3}
+local FEEL_RANK = {figureNamed = 1, thread = 2, deathFirst = 3, deathAgain = 4}
 -- (first words of a felt line that need no name in the chapter behind them)
 local FEEL_COMMON = {here = true, somehow = true, dying = true, death = true, earlier = true, ["until"] = true, i = true}
 local function FeelStage(level)
@@ -1329,6 +1633,8 @@ function T.PlanFeel(paras, info, S, total)
         for m, text in ipairs(p.lines) do
             local hook = S.setup[text]
             local kindPool = hook and F[hook.kind]
+            -- (the first death of your life: one line the planner wrote, round 2)
+            if hook and hook.kind == "deathFirst" and hook.line then kindPool = {} end
             if type(kindPool) == "table" and not (j == lastPara and m == lastM) then
                 local e, q = S.D[text], S.Q[text]
                 local stage = FeelStage((e and e.pl) or (q and q.pl) or fc.level)
@@ -1339,6 +1645,7 @@ function T.PlanFeel(paras, info, S, total)
                 elseif hook.kind ~= "figureNamed" then idPool = kindPool[race] end
                 idPool = stage and type(idPool) == "table" and idPool[stage] and idPool[stage][voice] or nil
                 local generic = stage and type(kindPool[stage]) == "table" and kindPool[stage][voice] or nil
+                if hook.kind == "deathFirst" then idPool, generic = nil, {hook.line} end
                 cands[#cands + 1] = {j = j, m = m, hook = hook, id = idPool, gen = generic, e = e, order = #cands}
             end
         end
@@ -1349,12 +1656,13 @@ function T.PlanFeel(paras, info, S, total)
         if (a.id ~= nil) ~= (b.id ~= nil) then return a.id ~= nil end
         return a.order < b.order
     end)
+    -- (2026-11-09: never in two paragraphs running, so two feelings never stand a paragraph apart)
     local chosen, usedPara = 0, {}
     for _, cd in ipairs(cands) do
         if chosen >= 2 then break end
         local kind = cd.hook.kind
         local lastUse = hist.feelKind[kind]
-        if not usedPara[cd.j] and not (lastUse and (fc.index or 0) - lastUse <= 3) then
+        if not usedPara[cd.j] and not usedPara[cd.j - 1] and not usedPara[cd.j + 1] and not (lastUse and (fc.index or 0) - lastUse <= 3) then
             local tokens = {}
             if cd.e and fc.foe and (cd.e.boss or cd.e.d) then tokens.foe = fc.foe(cd.e.boss or cd.e.d, cd.e.a) end
             if cd.hook.setupName then tokens.setupName = "{n:" .. cd.hook.setupName .. "}" end
@@ -1362,10 +1670,17 @@ function T.PlanFeel(paras, info, S, total)
                 local alias = cd.hook.alias
                 tokens.figure = alias and (alias:find(" ") and ("the " .. alias) or ("{n:" .. alias .. "}")) or ("{n:" .. cd.hook.figure .. "}")
             end
+            -- (the death line named the killer: the felt line after it does not name it again)
+            local foeSaid = false
+            if tokens.foe then
+                local name = PlanPlain(tokens.foe):gsub("^[Aa]n? ", ""):gsub("^[Tt]he ", "")
+                foeSaid = name ~= "" and PlanPlain(paras[cd.j].lines[cd.m]):find(name, 1, true) ~= nil
+            end
             local function Usable(list)
                 local ok = {}
                 for _, l in ipairs(list or {}) do
                     local fits = not hist.feelSaid[l]
+                    if foeSaid and l:find("{foe}", 1, true) then fits = false end
                     for tok in l:gmatch("{(%a+)}") do if not tokens[tok] then fits = false end end
                     -- (a name the line says outright must be one the chapter said: "Bethor had promised...")
                     for w in l:gsub("{%a+}", ""):gmatch("%u[%a']+") do
@@ -1395,11 +1710,173 @@ function T.PlanFeel(paras, info, S, total)
     return total
 end
 
--- Movements and their anchors, as the chapter's text. place(zone) gives the zone's token.
+-- The last pass over the words (2026-11-09, pass 2). A person named in full earlier in the
+-- chapter goes by the short name after that: "Novice Elreth", then "Elreth"; "Gunther Arcanus",
+-- then "Gunther" when the chapter itself calls him that. A sentence over 24 words breaks at
+-- ", and you ..." when both halves stand. Nothing is added.
+local PLAN_SUB = {When = true, While = true, After = true, Before = true, As = true, If = true, Once = true, Though = true,
+    Because = true, Since = true, Until = true, Although = true}
+function T.PlanPolish(paras, info, S, times, zones)
+    local L = A.Lore
+    local npcs = A.SelfWords and A.SelfWords.notableNPCs or {}
+    local function Esc(x) return (x:gsub("%p", "%%%0")) end
+    local names, known, whole = {}, {}, {}
+    local function Note(name)
+        if name and name:find(" ", 1, true) and not known[name] and not npcs[name] then known[name] = true; names[#names + 1] = name end
+    end
+    for _, p in ipairs(paras) do
+        for _, line in ipairs(p.lines) do
+            whole[#whole + 1] = line
+            local qs = {}
+            if S.Q[line] then qs[1] = S.Q[line] end
+            for _, q in pairs(S.Qs[line] or {}) do if q then qs[#qs + 1] = q end end
+            for _, q in ipairs(qs) do
+                local s = L and L.QuestStory and L.QuestStory(q.title, q.qid)
+                Note(s and s.pov and s.pov.giver)
+            end
+            for n in line:gmatch("{n:([^}]+)}") do Note(n) end
+        end
+    end
+    local text = PlanPlain(table.concat(whole, " "))
+    local short = {}
+    for _, name in ipairs(names) do
+        local words = {}
+        for w in name:gmatch("%S+") do words[#words + 1] = w end
+        local k = 1
+        while k < #words and PLAN_TITLES[words[k]] do k = k + 1 end
+        local blank = text:gsub(Esc(name), string.rep("#", #name))
+        local cand
+        if k > 1 and k == #words then cand = words[k]
+        elseif k == 1 and #words == 2 and #words[1] >= 4 and blank:find("%f[%a]" .. Esc(words[1]) .. "%f[%A]") then
+            -- (no title: the first name, when the chapter itself uses it alone)
+            cand = words[1]
+        end
+        -- (only when the full name comes first)
+        local full = text:find(name, 1, true)
+        local alone = cand and blank:find("%f[%a]" .. Esc(cand) .. "%f[%A]")
+        if cand and full and not (alone and alone < full) then short[name] = cand end
+    end
+    local met = {}
+    for _, p in ipairs(paras) do
+        for m, line in ipairs(p.lines) do
+            local new = line
+            for _, name in ipairs(names) do
+                local sh = short[name]
+                if sh then
+                    local count = 0
+                    new = new:gsub(Esc(name), function()
+                        count = count + 1
+                        if met[name] or count > 1 then return sh end
+                    end)
+                    if count > 0 then met[name] = true end
+                end
+            end
+            -- (the long sentence)
+            local pieces, rebuilt = {}, ""
+            for sentence, gap in new:gmatch("([^%.!%?]+[%.!%?]+)(%s*)") do pieces[#pieces + 1] = {sentence, gap}; rebuilt = rebuilt .. sentence .. gap end
+            if rebuilt == new then
+                for _, piece in ipairs(pieces) do
+                    local sentence = piece[1]
+                    if PlanWords(sentence) > 24 and not PLAN_SUB[sentence:match("^(%a+)") or ""] then
+                        local best, bestOff
+                        local total = #sentence
+                        for _, subject in ipairs({"you", "we", "I"}) do
+                            local from = 1
+                            while true do
+                                local a, z = sentence:find(", and " .. subject .. " ", from, true)
+                                if not a then break end
+                                local firstHalf, secondHalf = sentence:sub(1, a - 1), sentence:sub(z + 1)
+                                local off = math.abs(a - total / 2)
+                                if PlanWords(firstHalf) >= 7 and PlanWords(secondHalf) >= 5 and (not bestOff or off < bestOff) then
+                                    best, bestOff = firstHalf .. ". " .. Cap(subject) .. " " .. secondHalf, off
+                                end
+                                from = z
+                            end
+                        end
+                        if not best and S.subject then
+                            for _, verb in ipairs({"finished", "turned in"}) do
+                                local a, z = sentence:find(",? and " .. verb .. " ")
+                                if a and not best then
+                                    local firstHalf, secondHalf = sentence:sub(1, a - 1), verb .. " " .. sentence:sub(z + 1)
+                                    if PlanWords(firstHalf) >= 7 and PlanWords(secondHalf) >= 4 and not firstHalf:find(", " .. verb, 1, true) then
+                                        best = firstHalf .. ". " .. Cap(S.subject) .. " " .. secondHalf
+                                    end
+                                end
+                            end
+                        end
+                        if best then piece[1] = best end
+                    end
+                end
+                local parts = {}
+                for _, piece in ipairs(pieces) do parts[#parts + 1] = piece[1] .. piece[2] end
+                new = table.concat(parts)
+            end
+            if new ~= line then
+                p.lines[m] = Rekey(S, times, zones, line, new)
+                info[p.idx[m]].text = new
+            end
+        end
+    end
+    -- (three sentences running that open on the same bare "You" / "We" / "I": a level line
+    -- among them opens on "By then")
+    local flat = {}
+    for _, p in ipairs(paras) do
+        for m, line in ipairs(p.lines) do
+            local plain = PlanPlain(line)
+            local first = true
+            for sentence in plain:gmatch("[^%.!%?]+[%.!%?]+") do
+                local opener = sentence:match("^%s*(%a+) ")
+                if opener ~= "You" and opener ~= "We" and opener ~= "I" then opener = nil end
+                if opener and sentence:find("^%s*%a+ and ") then opener = nil end
+                local who, level = plain:match("^(%a+) [%a ]-level (%d+)%.$")
+                if not who then who, level = plain:match("^(%a+) [%a ]-level (%d+) along the way%.$") end
+                local both = false
+                if not who then
+                    who, level = plain:match("^(%a+) [%a ]-level (%d+) together%.$")
+                    both = who == "You" or who == "We"
+                    if not both then who, level = nil, nil end
+                end
+                local beat = info[p.idx[m]].beat
+                flat[#flat + 1] = {p = p, m = m, opener = opener,
+                    level = first and who == opener and (beat == "level" or beat == "levelMark") and level or nil, both = both}
+                first = false
+            end
+        end
+    end
+    for k = 3, #flat do
+        local a, b, c = flat[k - 2], flat[k - 1], flat[k]
+        if c.opener and a.opener == c.opener and b.opener == c.opener then
+            local pick = (b.level and b) or (c.level and c) or (a.level and a) or nil
+            if pick then
+                local who = pick.opener
+                local new = "By then " .. (who == "I" and "I was" or (who:lower() .. " were")) .. (pick.both and " both" or "") .. " level " .. pick.level .. "."
+                local old = pick.p.lines[pick.m]
+                pick.p.lines[pick.m] = Rekey(S, times, zones, old, new)
+                info[pick.p.idx[pick.m]].text = new
+                pick.opener, pick.level = nil, nil
+            end
+        end
+    end
+end
+
+-- Paragraphs and their openings, as the chapter's text. place(zone) gives the zone's token.
+-- (2026-11-09, pass 2: paragraphs by sense.) A paragraph ends before a death; before and after a
+-- peak (a great figure, a first city), which stands with its feeling and nothing else; where the
+-- place changes; after a long gap; and before it would pass four sentences or 55 words. A death
+-- keeps what the record says came right after it (a raise, a level "a minute later"), no other
+-- level and no errand. One sentence stands alone only as the opening, a death, a peak or the
+-- close. Only a death and a long gap open on the hour, and never two paragraphs running.
 -- T.keepPlan (tests): a table that receives each chapter's plan.
+local PLAN_AFTER = {rez = true, deathLore = true, consequence = true}
+local function PlanOurs(plain)
+    for _, lead in ipairs({"You ", "We ", "I ", "Your ", "Our ", "My ", "The two of ", "The pair of ", "Both of "}) do
+        if plain:sub(1, #lead) == lead then return true end
+    end
+    return false
+end
 function T.PlanText(lines, beats, times, zones, place, S)
-    local function Plain(s) return (s:gsub("{%a:([^}]*)}", "%1")) end
-    local function Words(s) local c = 0 for _ in Plain(s):gmatch("%S+") do c = c + 1 end return c end
+    local Plain, Words = PlanPlain, PlanWords
+    local function Count(line) return select(2, Plain(line):gsub("[%.!%?]%s", "")) + 1 end
     local head = 0
     while head < #lines and PLAN_OPEN[beats[head + 1] or ""] do head = head + 1 end
     local paras, current = {}, nil
@@ -1408,68 +1885,66 @@ function T.PlanText(lines, beats, times, zones, place, S)
     for i, line in ipairs(lines) do
         local t, z = times[line], zones[line]
         if t and t <= 0 then t = nil end
+        local peak = beats[i] == "death" and "death" or (S and S.peak[line]) or nil
+        local w, n = Words(line), Count(line)
         local reason
-        if current and i > head and t then
-            if beats[i] == "death" then reason = "death"
-            elseif deathT and (beats[i] == "level" or beats[i] == "levelMark") and t - deathT <= PLAN_AFTERMATH then reason = nil
-            elseif z and lastZ and z ~= lastZ then reason = "place"
-            elseif lastT and t - lastT >= (deathT and PLAN_GAP_AFTER_DEATH or PLAN_GAP) then reason = "time" end
+        if current and i > head then
+            if peak == "death" then
+                -- (two deaths of one fight share the paragraph)
+                if not (current.peak == "death" and deathT and t and t - deathT <= PLAN_NEXT) then reason = "death" end
+            elseif peak then reason = "peak"
+            elseif current.peak == "death" then
+                -- (her level "a minute later" belongs to the death; a plain level line does not)
+                local plain = Plain(line)
+                local said = (beats[i] == "level" or beats[i] == "levelMark") and (plain:find(" later%.$") or plain:find(" soon after%.$"))
+                -- (so does a first raise told as a moment)
+                local raised = plain:find("from death", 1, true) or plain:find("back to life", 1, true) or plain:find("ever raised", 1, true)
+                if not (PLAN_AFTER[beats[i]] or raised or (said and deathT and t and t - deathT <= PLAN_NEXT)) then reason = "after" end
+            elseif current.peak then
+                if not (S and current.e and S.ME[line] == current.e) then reason = "after" end
+            elseif t and z and lastZ and z ~= lastZ then reason = "place"
+            elseif t and lastT and t - lastT >= PLAN_GAP then reason = "time"
+            elseif current.w + w > 60 or (current.n >= 2 and (current.w + w > 55 or current.n + n > 4)) then reason = "size" end
         end
         if not current or reason then
-            current = {lines = {}, idx = {}, reason = reason, prevZ = lastZ}
+            current = {lines = {}, idx = {}, reason = reason, prevZ = lastZ, peak = peak, e = peak and S and S.ME[line] or nil, w = 0, n = 0,
+                gap = (t and lastT and t - lastT >= PLAN_GAP) or nil}
             paras[#paras + 1] = current
             deathT = nil
         end
         current.lines[#current.lines + 1] = line
         current.idx[#current.idx + 1] = i
-        info[i] = {text = line, t = t, z = z, beat = beats[i], open = i <= head or nil, reason = reason}
+        current.w, current.n = current.w + w, current.n + n
+        info[i] = {text = line, t = t, z = z, beat = beats[i], open = i <= head or nil, reason = reason, peak = S and S.peak[line] or nil}
         if beats[i] == "death" then deathT = t end
         if t then lastT = t end
         if z and t then lastZ = z end
     end
-    -- (a movement of one sentence is joined to a neighbour: a death keeps its movement and takes in
-    -- what came after it; the opening takes in the next; any other joins the one before it)
-    local function Sentences(p)
-        local c = 0
-        for _, line in ipairs(p.lines) do c = c + select(2, Plain(line):gsub("[%.!%?]%s", "")) + 1 end
-        return c
-    end
+    -- (a paragraph of one sentence joins a neighbour that has room, the one before it first; a
+    -- peak neither takes one in nor is taken in)
     local function Merge(into, from)
         for m, line in ipairs(from.lines) do into.lines[#into.lines + 1] = line; into.idx[#into.idx + 1] = from.idx[m] end
         for _, i in ipairs(from.idx) do info[i].merged = true end
+        into.w, into.n = into.w + from.w, into.n + from.n
     end
+    local function Fits(x, y) return x and y and not x.peak and not y.peak and x.w + y.w <= 60 and x.n + y.n <= 5 end
     local k = 1
     while k <= #paras and #paras > 1 do
-        local p, nextP = paras[k], paras[k + 1]
-        if Sentences(p) <= 1 then
-            if (k == 1 or p.reason == "death") and nextP and nextP.reason ~= "death" then
-                Merge(p, nextP)
-                table.remove(paras, k + 1)
-            elseif k == 1 or p.reason == "death" then
-                k = k + 1
-            else
-                Merge(paras[k - 1], p)
-                table.remove(paras, k)
-            end
+        local p, prev, nextP = paras[k], paras[k - 1], paras[k + 1]
+        if p.n <= 1 and not p.peak and Fits(prev, p) then
+            Merge(prev, p)
+            table.remove(paras, k)
+        elseif p.n <= 1 and not p.peak and Fits(p, nextP) then
+            Merge(p, nextP)
+            table.remove(paras, k + 1)
         else k = k + 1 end
-    end
-    -- (five movements at most: the shortest joins the one before it; a death keeps its own)
-    while #paras > 5 do
-        local best, bestW = nil, nil
-        for j = 2, #paras do
-            local w = 0
-            for _, line in ipairs(paras[j].lines) do w = w + Words(line) end
-            if paras[j].reason ~= "death" and (not bestW or w < bestW) then best, bestW = j, w end
-        end
-        best = best or #paras
-        Merge(paras[best - 1], paras[best])
-        table.remove(paras, best)
     end
     -- Felt lines, one a movement at most, after the line whose setup the chapter told.
     if S and S.feel then T.PlanFeel(paras, info, S, #lines) end
-    -- Anchors: each later movement opens on its place (a new zone the movement does not name) or
-    -- its hour; the hour only on a line that tells what happened then, never a quest's setup.
-    local seen = {}
+    -- Openings: a later paragraph opens on its place (a new zone the paragraph does not name), or
+    -- on its hour when it is a death or follows a long gap; the hour only on a line that tells
+    -- what happened then, never a quest's setup, and never on two paragraphs running.
+    local seen, clockBefore = {}, false
     for j, p in ipairs(paras) do
         local first = p.lines[1]
         local t, z
@@ -1487,7 +1962,8 @@ function T.PlanText(lines, beats, times, zones, place, S)
                 or plainBody:find("^A little after ") or plainBody:find("^Close to ") or plainBody:find("^Around ")
                 or plainBody:find("^That ") or plainBody:find("^By ") or plainBody:find("^Late ") or plainBody:find("^Early ")
             -- (a death opens on its hour, "A little after eleven, Riptear...", wherever it was)
-            local clockFirst = p.reason == "death" and not setupLine and ClockPhrase(t)
+            local leadIn = not PlanOurs(plainBody) and (plainBody:match("^%a+ [^,%.]-,") ~= nil) and select(2, (plainBody:match("^[^,%.]*") or ""):gsub("%S+", "")) <= 4
+            local clockFirst = p.reason == "death" and not setupLine and not leadIn and ClockPhrase(t)
             -- (a deed the line places itself, "from the lich's camp on Brightwater Lake", is not
             -- placed in the town where it was handed in: it opens on its hour instead)
             local sentence = plainBody:match("^[^.]*") or plainBody
@@ -1495,13 +1971,20 @@ function T.PlanText(lines, beats, times, zones, place, S)
                 or sentence:find(" in %u") or sentence:find(" in the %u")
             if T.PlaceLed(body) or timed then prefix = nil
             elseif clockFirst then prefix = clockFirst .. ", "
-            elseif z and p.prevZ and z ~= p.prevZ and not named and not elsewhere then
+            elseif z and p.prevZ and z ~= p.prevZ and not named and not elsewhere and not (S and (S.Q[first] or S.Qs[first]))
+                and beats[p.idx[1]] ~= "hour" then
+                -- (the hour the day ended is not placed: its place is only where the evening began)
                 prefix = (seen[z] and "Back in " or "In ") .. place(z) .. ", "
-            elseif not setupLine then
+            elseif not setupLine and p.gap and not clockBefore and beats[p.idx[1]] ~= "level" and beats[p.idx[1]] ~= "levelMark"
+                and PlanOurs(plainBody) and not (S and (S.Q[first] or S.Qs[first])) then
+                -- (never on a line about a place, "The Scarlet Monastery was a hard venture...";
+                -- never on a quest, whose time is its hand-in: "Past midnight, Gunther gave you...")
                 local clock = ClockPhrase(t)
                 prefix = clock and (clock .. ", ") or nil
             end
+            clockBefore = (timed and true) or (prefix ~= nil and prefix:find("^In ") == nil and prefix:find("^Back in ") == nil)
             if prefix then
+                body = body:gsub("^Later that day,? ", ""):gsub("^Later,? ", "")
                 local word = body:match("^(%a+)")
                 if word and word ~= "I" and PLAN_SMALL[word:lower()] then body = body:gsub("^%u", string.lower) end
                 body = prefix .. body
@@ -1513,6 +1996,7 @@ function T.PlanText(lines, beats, times, zones, place, S)
             for _, i in ipairs(p.idx) do if info[i].z then seen[info[i].z] = true end end
         end
     end
+    if S then T.PlanPolish(paras, info, S, times, zones) end
     local texts = {}
     for j, p in ipairs(paras) do
         texts[j] = table.concat(p.lines, " ")
@@ -1526,7 +2010,7 @@ function T.PlanText(lines, beats, times, zones, place, S)
         -- (in reading order; felt lines are marked felt)
         local list = {}
         for _, p in ipairs(paras) do for _, i in ipairs(p.idx) do list[#list + 1] = info[i] end end
-        T.keepPlan[#T.keepPlan + 1] = {lines = list, count = #lines, companionStop = S and S.companionStop}
+        T.keepPlan[#T.keepPlan + 1] = {lines = list, count = #lines, companionStop = S and S.companionStop, dropped = S and S.dropped}
     end
     return table.concat(texts, "\n\n")
 end
@@ -1825,8 +2309,9 @@ function T.Tell(person, days, voice, player, brief)
         -- S.planned: the planned telling (Settings > Testing > Storyteller; Everything only for now)
         -- (step 3 hooks, read by the planned telling only: S.Q line -> quest, S.Qs line -> quests of a
         -- fold, S.SL quest setup lines, S.D line -> death entry, S.LV the level lines and S.levelMine the
-        -- level of yours they told; S.setup / S.setupFor what a line points back to, for felt lines)
-        local S = {Z = {}, M = {}, z = nil, moment = false, Q = {}, Qs = {}, SL = {}, D = {}, LV = {}, setup = {}, setupFor = {},
+        -- level of yours they told; S.setup / S.setupFor what a line points back to, for felt lines;
+        -- S.ME moment line -> its event and S.peak line -> "death" / "figure" / "city", for T.PlanShape)
+        local S = {Z = {}, M = {}, z = nil, moment = false, Q = {}, Qs = {}, SL = {}, D = {}, LV = {}, setup = {}, setupFor = {}, ME = {}, peak = {},
             planned = not brief and A.BookVariant ~= nil and A.BookVariant("teller") == "planned"}
         function S.Stamp(t, z, q) lineT, S.z, S.q = t, z, q end
         -- (a line rewritten in place keeps the stamp of what it was)
@@ -1861,7 +2346,7 @@ function T.Tell(person, days, voice, player, brief)
             text = A.JournalIslands and A.JournalIslands(text) or text
             out[#out + 1] = text
             outBeat[#out] = beat
-            if lineT then outT[text] = lineT; if S.moment then S.M[text] = true end end
+            if lineT then outT[text] = lineT; if S.moment then S.M[text] = true; S.ME[text] = S.me end end
             if S.z then S.Z[text] = S.z end
             if S.q then S.Q[text] = S.q end
             if S.e then S.D[text] = S.e end
@@ -4292,7 +4777,7 @@ function T.Tell(person, days, voice, player, brief)
                 -- (the moment's zone: sz where it is kept apart; e.z names the place only for these kinds)
                 S.z = e.sz or (e.k == "first" and (e.d == "notable" or e.d == "zone" or e.d == "sunset" or e.d == "snow") and e.z)
                     or (e.k ~= "first" and e.k ~= "voyage" and e.k ~= "cave" and e.k ~= "bg" and e.z) or momentRegions[e]
-                S.moment = true
+                S.moment = true; S.me = e
                 local line
                 if toldEarly[e] then line = nil
                 elseif e.k == "first" and e.d == "notable" and e.n and PB.sharedNotableSeen then
@@ -4985,7 +5470,7 @@ function T.Tell(person, days, voice, player, brief)
             T.PlanChapter({out = out, beats = outBeat, times = outT, zones = S.Z, S = S, f = f, day = day, teller = teller,
                 place = Place, person = person, history = history, ownJournal = ownJournal, lastOuting = lastOuting,
                 voice = voice, player = player, index = index, foe = Foe, mainZone = mainZone, zoneRun = zoneRun,
-                weekday = day.weekday, firstOuting = firstOuting})
+                weekday = day.weekday, firstOuting = firstOuting, startLevel = mySelf and mySelf.startLevel})
         end
         -- Chronology (2026-11-09): a moment from your own journal is told where it happened, and
         -- the hour you stopped closes the chapter. A rare seen at the start of the evening used to

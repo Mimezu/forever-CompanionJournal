@@ -253,7 +253,12 @@ function A.JournalBook(person)
                 local known
                 for _, other in ipairs(outing.with) do if other.name == name then known = other end end
                 if known then known.seconds = known.seconds + overlap
-                else outing.with[#outing.with + 1] = {name = name, key = w.d, seconds = overlap} end
+                else
+                    known = {name = name, key = w.d, seconds = overlap, spans = {}}
+                    outing.with[#outing.with + 1] = known
+                end
+                -- (when exactly: the Planned teller asks whether she was there at a line's own time)
+                known.spans[#known.spans + 1] = {math.max(w.t or 0, outing.t), math.min(wEnd, outing.e)}
             end
         end
     end

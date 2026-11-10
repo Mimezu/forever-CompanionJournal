@@ -148,7 +148,7 @@ W.openStill = {
     "{When}, I was still in {zoneD}.",
     "{When}, I stayed on in {zoneD}.",
     "{When}, I picked up where I had left off, in {zoneD}.",
-    "{When}, I was back out in {zoneD}.",
+    "{When} I set out again in {zoneD}.",
     "{When}, I spent more time in {zoneD}.",
     "I spent {when} in {zoneD} as well.",
 }
@@ -681,7 +681,7 @@ W.firstDeathRez = {
     "I had never died before.",
 }
 W.firstDeathScourge = {
-    "It was my first death since I rose, and it felt strangely familiar.",
+    "It was my first death since I rose, and none of it was new to me.",
     "I had died once before, long ago. This time I walked back from the graveyard.",
     "It was my second death, if the first one counts.",
     "It was my first death since I rose. I walked back from the graveyard and found my body where it fell.",
@@ -953,15 +953,15 @@ W.long = {"All told, it was {span}.", "It came to {span}, all told."}
 -- {class}: "rogue"; {zoneD}).
 W.foeSeen = {
     "In {zoneD}, I saw one of the {side} for the first time, {aRace} {class}.",
-    "I saw one of the {side} for the first time in {zoneD}, {aRace} {class}. Until then they had only been a name.",
+    "It was in {zoneD} that I first saw one of the {side}, {aRace} {class}.",
     "My first sight of the {side} came in {zoneD}, {aRace} {class}.",
     "In {zoneD} I crossed paths with one of the {side} for the first time, {aRace} {class}.",
     "In {zoneD} I saw {aRace} {class} of the {side}, the first of them I had ever seen.",
 }
 W.foeSeenHere = {
     "There I saw one of the {side} for the first time, {aRace} {class}.",
-    "It was there that I first saw one of the {side}, {aRace} {class}. Until then they had only been a name.",
-    "There, for the first time, I crossed paths with one of the {side}, {aRace} {class}.",
+    "It was there that I first saw one of the {side}, {aRace} {class}.",
+    "One of the {side} was there, {aRace} {class}, the first I had seen.",
 }
 -- Killed by one of the other side ({aRace}, {class}, {side}); again the same day.
 W.deathPvp = {
@@ -1384,11 +1384,11 @@ W.snowFirst = {
 }
 -- A rare creature seen ({what}, {zoneD}).
 W.rareBeast = {
-    "In {zoneD}, I came across {what}, a beast most people only hear of.",
-    "{what} crossed my path in {zoneD}. Not many people ever see it.",
-    "There I crossed paths with {what}, and not many can say that.",
-    "I saw {what} in {zoneD}, which not many people can say.",
-    "{what} was about that day, and our paths crossed.", -- (no first)
+    "In {zoneD} I came on {what}, which few people ever see.",
+    "{what} crossed my path in {zoneD}, a rare sight.",
+    "There I came on {what}, which few people ever see.",
+    "I saw {what} in {zoneD}, and few people have.",
+    "{what} crossed my path that day, seldom seen by anyone.", -- (no first, no place)
 }
 -- The first sale at the auction house ({what}).
 W.aucSale = {
@@ -1682,7 +1682,7 @@ W.leaveCity = {
     ["Thunder Bluff"] = {"I rode the lift back down to the plains of {zoneD}.", "{We} took the lift down into {zoneD}."},
     ["Ironforge"] = {"I went back out through the gate of {p:Ironforge}, into the snow of {zoneD}.", "{We} left the mountain and went back out into {zoneD}."},
     ["Stormwind City"] = {"I went out over the bridge into {zoneD}.", "{We} left the city walls behind and went out into {zoneD}."},
-    ["Undercity"] = {"I rode the lift back up into the grey light of {zoneD}.", "{We} went back up into {zoneD}."},
+    ["Undercity"] = {"I rode the lift back up into the grey light of {zoneD}.", "{We} came up out of the city into {zoneD}."},
 }
 W.leaveHomeFirst = {
     NightElf = {"It was the first time I had left Teldrassil.", "Teldrassil was behind me now, across the water."},
@@ -3286,19 +3286,19 @@ W.titles.bgSeries = {"A Night in {what}", "{What}, {Times}"}
 -- classic quest; its text is not in the captured corpus, so check it in game).
 W.pov = {
     [98601] = {title = "A Difficult Path", solo = true, act = "took a scroll of the Light to Aramis Hammerhand",
-        "Shadow Priest Sarvis handed {me} a scroll that reeked of the Light and wanted it read well away from him. It sent {me} to Aramis Hammerhand, who began {my} training as a paladin and warned that the Light would hurt now.",
+        "Shadow Priest Sarvis handed {me} a scroll that reeked of the Light and wanted it read far from him. Aramis Hammerhand began {my} training as a paladin, and warned that the Light would hurt now.",
         "A scroll for a risen paladin had come to the village, and it was for {me}. Aramis Hammerhand began {my} training, and told {me} the pain of the Light was a crucible."},
-    [90902] = {title = "Rediscovering the Light", solo = true, act = "healed the injured Deathguards by the chapel",
+    [90902] = {title = "Rediscovering the Light", solo = true, act = "healed the injured Deathguards, and the Light burned as it went",
         "{I} healed the injured Deathguards by the chapel, and the Light burned as it went, as Aramis had warned. He called the pain a badge of honor.",
-        "Aramis set {me} to heal the wounded Deathguards near the chapel. It hurt, as he had said it would, and he told {me} the pain was proof of still serving the Light."},
-    [91208] = {title = "Coming to Terms", solo = true, act = "went after a frightened paladin in the hills",
+        "Aramis set {me} to heal the wounded Deathguards near the chapel. It hurt as he had said it would, and he called the pain proof that {I} still served the Light."},
+    [91208] = {title = "Coming to Terms", solo = true, act = "followed a frightened paladin into the hills and could not bring her back",
         "A newly risen paladin had fled into the hills west of the chapel, unable to bear what she had become. {I} went after her, but she could not be brought back, and Aramis prayed to the Light for her.",
-        "{I} found the frightened paladin in the hills west of the chapel. There was no bringing her back, and Aramis called her end a clean one."},
-    [98389] = {title = "A Light in the Darkness", act = "freed the newly risen webbed in Night Web's Hollow", giver = "Aramis Hammerhand",
-        "{We} went down into Night Web's Hollow, dark and thick with spiders, and cut free the newly risen Forsaken caught in their webs. Aramis hoped it would show the others what paladins were for.",
+        "{I} went after a risen paladin who had fled into the hills in fear. There was no bringing her back, and Aramis called her end a clean one."},
+    [98389] = {title = "A Light in the Darkness", act = "cut the newly risen out of the webs in Night Web's Hollow", giver = "Aramis Hammerhand",
+        "{We} went down into Night Web's Hollow, dark and thick with spiders, and cut the newly risen out of the webs. Aramis hoped it would show the others what paladins were for.",
         "In the dark of Night Web's Hollow, spiders had webbed freshly raised Forsaken. {We} freed them, as Aramis Hammerhand wanted, to show that the paladins lived to protect their people."},
     [91209] = {title = "Continue Your Training", solo = true, act = "went on to Shari Stilwell in Brill",
-        "Aramis sent {me} on to Shari Stilwell in Brill to go on with {my} training, and warned that many in the Dark Lady's service distrusted those close to the Light.",
+        "Aramis sent {me} on to Shari Stilwell in Brill for the rest of {my} training. He warned that many in the Dark Lady's service distrusted those close to the Light.",
         "{My} training passed from Aramis to Shari Stilwell in Brill, who had work for any paladin willing."},
     [380] = {title = "Night Web's Hollow", act = "thinned the spiders of Night Web's Hollow", giver = "Executor Arren", importance = 3,
         "Executor Arren wanted the spiders of Night Web's Hollow thinned. {We} went into the dark among them, where their legs scratched over the stone, and came out with far fewer left.",
@@ -3307,18 +3307,18 @@ W.pov = {
         "Executor Zygand kept a ledger of Deathguards who had disappointed him, and since {we} had not yet, he had {us} punish them. Pain, he said, was one of the few delights left to the dead.",
         "{We} punished the Deathguards on Executor Zygand's ledger. It pleased him, and so, he said, it pleased the Dark Lady."},
     [99144] = {title = "Seeking Refuge", act = "freed Bareth Dawnstone from the zealots who held him",
-        "{We} found Bareth Dawnstone, a risen paladin, held by zealots who wielded the Light with hatred, and helped him escape. His order at Bandarion Keep, northwest of the Solliden Farmstead, welcomed any who sought the Light.",
+        "{We} freed Bareth Dawnstone, a risen paladin, from zealots who wielded the Light with hatred. His order at Bandarion Keep welcomed any who sought the Light.",
         "{We} got Bareth Dawnstone away from the zealots who had caught him on his way from Bandarion Keep to Shari Stilwell in Brill. His order thanked {us} for saving one so promising."},
     -- (#96607, corpus_vanilla_quests.txt; no pack stage yet)
     [96607] = {title = "The Great Outdoors", act = "sat by Eleanor Shackleton's fire to learn how to rest in the wilds", giver = "Eleanor Shackleton", importance = 3,
-        "Eleanor Shackleton sat {us} by her fire and walked {us} through the basics of living in the wilds, then sent {us} to the trainers in the village nearby to learn a trade.",
+        "Eleanor Shackleton sat {us} by her fire and walked {us} through the basics of living in the wilds. Then she sent {us} to the trainers in the village to learn a trade.",
         "By Eleanor's fire {we} learned how to rest and prepare out in the wilds, as an adventurer must."},
 }
 -- An inn that has a name of its own ({place} = "the Gallows' End Tavern"), 2026-11-07.
 W.innNamed = {"{We} rested at {place}.", "{We} took a room at {place}.", "{We} stopped at {place} to rest."}
 W.homeNamed = {"I made {place} my home.", "I set my hearthstone at {place}.", "From then on, my hearthstone took me back to {place}."}
-W.homeNamedHere = {"I made it my home, and set my hearthstone there.", "I set my hearthstone there, and made it my home."}
-W.sleepInnNamed = {"That night I took a room at {place} and slept there.", "I slept at {place} that night."}
+W.homeNamedHere = {"I set my hearthstone there.", "I made it my home."}
+W.sleepInnNamed = {"That night I slept at {place}.", "I slept at {place} that night."}
 
 -- The hero's journey by level in the engine's own lines (DESIGN §3.0 rule 6, 2026-11-07): the
 -- level lines, and the first page of a book begun late, by the stage of the climb. A novice
@@ -3327,10 +3327,10 @@ W.sleepInnNamed = {"That night I took a room at {place} and slept there.", "I sl
 -- hammered. One felt touch at most; never a claim about the past.
 W.levelBand = {
     novice = {
-        "I reached level {level}, and felt a little stronger for it.",
+        "I reached level {level} that day.",
         "I made level {level}, still learning as I went.",
         "I reached level {level}.",
-        "I climbed to level {level}, a little surer of myself.",
+        "I climbed to level {level}.",
         "By the end of the day I was level {level}.",
     },
     seasoned = {
@@ -3348,7 +3348,7 @@ W.levelBand = {
 }
 W.levelsBand = {
     novice = {
-        "I went from level {from} to {level}, and each one felt like a big step.",
+        "I went from level {from} to {level} that day.",
         "I climbed from level {from} to {level}, learning as I went.",
         "I went from level {from} to {level}.",
     },
@@ -3388,11 +3388,11 @@ W.titles.originRace = {
 -- Each line states a recorded fact: the day had two sittings, the hearthstone was used and a
 -- death followed within minutes, ore was mined and smelted, a level came, the hour you stopped.
 W.plan = {
-    short = {"{When} was short."},
-    hearthDeath = {"Back in {town} by hearthstone, {foe} killed me within minutes."},
+    short = {"{When} I was out only a short while."},
+    hearthDeath = {"My hearthstone took me back to {town}, and {foe} killed me within minutes."},
     joined = {"{When}, {names} joined me in {zone}."},
     killed = {"{foe} killed me{where}."},
-    forge = {"At the forge I smelted what I had mined, then worked a while at the anvil."},
+    forge = {"At the forge I smelted what I had mined and worked a while at the anvil.", "I smelted my ore at the forge, then took a turn at the anvil."},
     smelt = {"At the forge I smelted what I had mined."},
     -- (leads the day's gathering tally, which the teller places at the end: "Along the way I mined sixteen veins.")
     along = {"Along the way"},
@@ -3408,9 +3408,34 @@ W.plan = {
         crafting = {"I spent a while at my trade."},
     },
     level = {"By then I had reached level {level}."},
-    levelCame = {"Level {level} came with it."},
-    levelHour = {"Level {level} came in the same hour."},
-    levelSoon = {"Level {level} came soon after."},
-    levelWith = {", and level {level} came with it"},
-    stopped = {"It was {clock} when I stopped."},
+    levelCame = {"That brought me to level {level}."},
+    levelHour = {"Within the hour I reached level {level}."},
+    levelSoon = {"Soon after, I reached level {level}."},
+    levelWith = {", and that brought me to level {level}"},
+    stopped = {"I stopped {clock}."},
+    -- Pass 2 (2026-11-09). A stretch without the companion ({When}: "Sunday afternoon").
+    alone = {"{When} I went out alone.", "{When} I was out on my own."},
+    -- (levels shared with the companion; {gap}: "a minute later", "soon after")
+    bothLevel = {"We had both made level {level} by then.", "By then we were both level {level}."},
+    mateLevel = {"{name} made level {level} {gap}.", "{name} reached level {level} {gap}."},
+    -- (the close, on place or company with the hour; {place} a town or a land, {clock}: "a little after one")
+    closeWePlace = {"We stopped in {place} {clock}.", "We ended the day in {place} {clock}."},
+    closeIPlace = {"I stopped in {place} {clock}.", "I ended the day in {place} {clock}."},
+    closeWe = {"We stopped {clock}.", "We left it there {clock}."},
+    closeI = {"I stopped {clock}.", "I left it there {clock}."},
+    -- The close that carries the day's last level (kept out of a peak, death or feeling paragraph).
+    closeLevelWe = {"By the time we stopped, {clock}, I was level {level}.", "When we stopped, {clock}, I had reached level {level}."},
+    closeLevelI = {"By the time I stopped, {clock}, I was level {level}.", "When I stopped, {clock}, I had reached level {level}."},
+    closeLevelBoth = {"By the time we stopped, {clock}, we were both level {level}."},
+    -- (callbacks the record proves. backDeath is a clause set into the task's own sentence;
+    -- {when}: "that evening", "the night before". backFoe: {foe} is the kind, in the plural.)
+    backDeath = {", where {foe} had killed me {when}"},
+    backFoe = {"They were the same {foe} that had killed me {when}.", "Here were the {foe} that had killed me {when}."},
+    backPlace = {"It stood where {name} had said it would.", "This was the place {name} had told me of."},
+    -- (the first sentence of a book begun beside someone close; {mate}: "wife". The list is for
+    -- any people; a people's own opening stands under its key. originTail joins a W.origin head.)
+    origin = {"I began at {place}, with my {mate} {name} beside me.",
+        Scourge = {"My second life began at {place}, with my {mate} {name} beside me."},
+    },
+    originTail = {", with my {mate} {name} beside me."},
 }

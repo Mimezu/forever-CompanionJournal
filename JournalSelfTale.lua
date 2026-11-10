@@ -1817,6 +1817,7 @@ function ST.Tell(person, days, brief, retell)
                 local capital = (W.capitalFirstRace and W.capitalFirstRace[race] and W.capitalFirstRace[race][e.d]) or (W.capitalFirst and W.capitalFirst[e.d])
                 if capital and tone ~= "foe" and not seen and not history.zones[e.d] and (knownFirst or history.earlyCoverage)
                     and not (tone == "home" and (s.level or 0) > 20) then
+                    plan.meta = {capital = e.d} -- (a note for the planned telling: a capital seen for the first time)
                     Say(teller:Say("capital:" .. e.d, Sparing(Fresh(capital)), tt), true, "first")
                     Title(58, ((teller:Pick("tCapital", W.titles.capital) or ""):gsub("{city}", (Clean(town.name):gsub("^the ", ""):gsub("^p:", "")))))
                 elseif knownFirst and tone ~= "home" and tone ~= "foe" then
@@ -2003,6 +2004,8 @@ function ST.Tell(person, days, brief, retell)
                     local head = kinds[#out] == "origin" and #out <= 2 and out[#out]:match("^(.-), ")
                     if head and not head:find(",", 1, true) then
                         out[#out] = head .. ", with " .. st.names .. ", " .. st.bond .. ", at my side."
+                        -- (a note for the planned telling, which says "with my wife Mira beside me")
+                        if plan.metas[#out] then plan.metas[#out].origin = {head = head, name = st.names, mate = st.bond, one = #bonded == 1} end
                     else
                         Say(teller:Say("joinedBond", W.joinedBond, st), true)
                     end
@@ -4072,7 +4075,9 @@ function ST.Tell(person, days, brief, retell)
             local ctx = {day = day, out = out, kinds = kinds, majors = majors, metas = plan.metas, stretches = stretches, history = history,
                 index = index, W = W, race = race, level = stretches[#stretches] and stretches[#stretches].level or person.level,
                 seed = (person.charKey or person.name or "me") .. ":" .. tostring(retell or person.retell or 0),
-                Place = Place, Cap = Cap, Evening = Evening, titleWords = TITLE_WORDS}
+                Place = Place, Cap = Cap, Evening = Evening, titleWords = TITLE_WORDS,
+                -- (for the selection: the companion's own record, the character's class and side)
+                Companion = Companion, class = person.class, faction = person.faction}
             if ST.PlanStrict then plan.text = A.SelfPlan.Apply(ctx)
             else
                 local ok, result = pcall(A.SelfPlan.Apply, ctx)

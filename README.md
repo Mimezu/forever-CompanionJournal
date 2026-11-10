@@ -4,6 +4,36 @@ The players and NPCs you want to remember, and a journal of what you lived
 through together. It came out of Forever Names 1.10: the People list, the
 journal, the group popup and the campfire now live here, in their own window.
 
+## 1.21.0: the planned storyteller breathes (Settings > Testing > Storyteller: Planned)
+
+A second writer's pass, after a harsh read of Alberich's own book. Still off by default;
+with the switch on Current only a few authored quest lines changed wording.
+
+- **Shorter, with room to breathe.** A planned chapter of your own book holds 340
+  words at most and never more than the current telling. Alberich's three chapters went
+  from 1140 words to 989, sentences from 15 words to about 13, and no paragraph is longer
+  than 60 words (the longest was 105).
+- **Fewer deeds, each with its reason.** A piece of work is told in its full account or in
+  its opening sentence before it is told as a bare act; a chapter holds two bare acts at
+  most. What leads nowhere goes first. A step that sets up a later scene, or pays one off,
+  is kept ("I brought Tanis fresh cloth to hold his wife together").
+- **In the order it happened.** Work inside one folded line is told by its own hour, a
+  quest chain stays in one paragraph, and "we" is used only for what the companion was
+  there for; your class's own work is "I".
+- **Names are introduced.** A person, place or thing is said once in full with what it is
+  ("the mage Bethor Iceshard", "papers taken from a Scarlet courier"), then by its short
+  name ("That night I slept at the tavern").
+- **Levels close the chapter.** The last level of the night is part of the closing
+  sentence ("By the time we stopped, close to two, we were both level 11"); a chapter no
+  longer ends on a lone level line.
+- **A feeling always ends its paragraph**, and a one-sentence paragraph is kept for a
+  death, a peak or the close.
+- **Companion chapters (Planned):** "died again" only after an earlier death the book
+  told; the first death says so ("It was your first death since you rose"); one opener a
+  chapter; no hour in front of a quest's paragraph; no verdict as the last line.
+- A new file was added (`JournalSelfStyle.lua`): restart the game once, `/reload` does not
+  load it.
+
 ## 1.20.0: the planned storyteller for your own book (Settings > Testing > Storyteller: Planned)
 
 A writer's pass over the storyteller. Still off by default; with the switch on Current

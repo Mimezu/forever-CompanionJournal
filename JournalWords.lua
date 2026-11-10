@@ -1012,9 +1012,14 @@ PB.companionStopped = {"It was {clock} when {name} stopped.", "{name} stopped {c
 -- count; {who} "you and Dahlia" / "Dahlia and me", or "you" / "us" once she is named; {backIn}
 -- "back in " when the book knows the place; {run} " for a third night running" only on a run)
 PB.planOpen = {"{Weekday} {part} found {who} {backIn}{zone}{run}.", "{Weekday} {part} brought {who} {backTo}{zone}{run}."}
--- (a moment that came before every hand-in of the day)
-PB.beforeWork = {"before {we} had turned in a single task"}
+-- (the pair still out past midnight, as the chapter's last fact: the company, not the clock alone;
+-- {who} "you and Dahlia" / "Dahlia and I", {clock} "past midnight")
+PB.planClose = {"It was {clock} when {who} stopped.", "{Who} stopped {clock}."}
 -- (a country first seen as the last thing of the day; {span} "night" or "day")
+-- (round 2: your first death of all, by your own journal, told in a friend's book; one line a
+-- voice, picked without a draw; the Forsaken line is the own book's)
+PB.planFirstDeath = {you = "It was the first time you died.", we = "It was the first time I died."}
+PB.planFirstDeathScourge = {you = "It was your first death since you rose.", we = "It was my first death since I rose."}
 PB.planArriveLast = {"Before the {span} was over, {I} had set foot in {zoneD} for the first time."}
 PB.levelThen = {
     "{They} had been level {thenLevel} in {firstZone}, the day {we} met.",
