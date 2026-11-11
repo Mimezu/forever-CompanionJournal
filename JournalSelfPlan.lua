@@ -290,8 +290,11 @@ function Sel.Budget(sel)
     local units, items, Shares = sel.units, sel.items, sel.Shares
     local fixed = 0
     for _, it in ipairs(items) do if it.keep and not it.unit and not it.acts then fixed = fixed + WordCount(it.text) end end
+    -- (the composer counts its own fixed lines, and keeps a floor for the work: lane U, 2026-11-11)
+    fixed = fixed + (sel.fixedExtra or 0)
     -- (what the fixed lines and a feeling on each of two peaks leave; Sel.Finish holds the cap)
     local room = sel.cap - 3 - fixed - 9 * math.min(2, sel.peaks or 0)
+    if sel.roomFloor and room < sel.roomFloor then room = sel.roomFloor end
     local used, errands = 0, 0
     local function Cost(u, mode)
         if not mode then return 0 end
@@ -736,6 +739,7 @@ function Sel.Choose(sel)
     sel.Shares, sel.folk, sel.count = Shares, folk, count
     Sel.Callback(sel, true)
     Sel.Budget(sel)
+    if sel.pairs then Sel.Pairs(sel) end
     Sel.Callback(sel)
 
     -- What was decided, on the lines.
@@ -1634,6 +1638,175 @@ function Sel.Promiser(text)
     return nil
 end
 
+-- Routine work as acts (P.Apply step 4, shared with the composer since lane U, 2026-11-11).
+-- Every piece gets a score: its worth, two more when a scene of the day names the same person
+-- or place (or shares its thread), one more for a turning point.
+function Sel.Acts(sel, scenes)
+    local items, zoneWords = sel.items, sel.zoneWords
+    local function LinkedTo(act, scene)
+        for name in pairs(act.names) do if scene.plain:find(name, 1, true) then return true end end
+        return act.thread ~= nil and act.thread == scene.thread and Specific(act.thread)
+    end
+    for _, it in ipairs(items) do
+        if it.fold and not it.fixed then
+            it.acts = {}
+            local whoNames = it.fold.who and Names(it.fold.who, zoneWords) or {}
+            for i, entry in ipairs(it.fold.entries) do
+                local text = tostring(it.fold.acts[i])
+                local act = {i = i, text = text, worth = entry.worth or 0, thread = entry.story and entry.story.thread,
+                    t = entry.quest and entry.quest.t, names = Names(text, zoneWords)}
+                for name in pairs(whoNames) do act.names[name] = true end
+                act.score = act.worth + ((entry.story and (entry.story.importance or 0) >= 5) and 1 or 0)
+                for _, scene in ipairs(scenes) do if LinkedTo(act, scene) then act.score = act.score + 2; break end end
+                it.acts[i] = act
+            end
+            it.top = 0
+            for _, act in ipairs(it.acts) do if act.score > it.top then it.top = act.score end end
+        end
+    end
+end
+
+-- People named by the day's work (shared with the composer since lane U, 2026-11-11): the
+-- full name once, the short name after. Sel.Persons fills sel.persons (full name to short) and
+-- sel.people (the full names, longest first); Sel.Shorten shortens a line's names that were
+-- said before, and a two-word name said twice in one line.
+function Sel.Persons(sel)
+    local items, titleWords = sel.items, sel.titleWords or {}
+    local persons = {}
+    local function Person(name)
+        name = name and Plain(name)
+        if not name or not name:find(" ", 1, true) then return end
+        local short
+        for word in name:gmatch("%S+") do if not titleWords[word] and not short then short = word end end
+        short = short or name:match("(%S+)$")
+        if short ~= name then persons[name] = short end
+    end
+    for _, it in ipairs(items) do
+        if it.fold then
+            Person(it.fold.who)
+            for _, entry in ipairs(it.fold.entries) do Person(entry.act and entry.act.giver) end
+        elseif it.m.entry then
+            local entry = it.m.entry
+            Person(entry.act and entry.act.giver)
+            Person(entry.story and entry.story.pov and entry.story.pov.giver)
+        end
+    end
+    local people = {}
+    sel.persons = persons
+    for full in pairs(persons) do people[#people + 1] = full end
+    table.sort(people, function(x, y) if #x ~= #y then return #x > #y end return x < y end)
+    sel.people = people
+end
+function Sel.Shorten(sel, line, saidBefore)
+    local people, persons, titleWords = sel.people or {}, sel.persons or {}, sel.titleWords or {}
+    for _, full in ipairs(people) do
+        local short = persons[full]
+        local at = line:find(full, 1, true)
+        if at then
+            local pattern = Esc(full)
+            if saidBefore:find(full, 1, true) then line = line:gsub(pattern, short)
+            else line = line:sub(1, at + #full - 1) .. line:sub(at + #full):gsub(pattern, short) end
+        end
+    end
+    -- (a two-word name twice in one line, whoever it is)
+    for a, b in line:gmatch("(%u%l+) (%u%l+)") do
+        if not STOP[a] and not STOP[b] and not titleWords[a] then
+            local full = a .. " " .. b
+            local at = line:find(full, 1, true)
+            if at and line:find(full, at + #full, true) then
+                line = line:sub(1, at + #full - 1) .. line:sub(at + #full):gsub(Esc(full), a)
+            end
+        end
+    end
+    return line
+end
+
+-- Lane U (2026-11-11, the composer only, sel.pairs). Setups and payoffs kept together: a told
+-- step of a chain of its own (the class's, or a specific thread) pulls in the step before it
+-- and the step after it when they are untold and have words of their own (a scene, or an act
+-- with an authored account). The room comes from the plainest told errands that stand in no
+-- pair and need not be told; a payoff whose setup finds no room is left out instead, unless it
+-- must be told. A pulled step pulls nothing further.
+function Sel.Pairs(sel)
+    local units, steps = sel.units, sel.steps or {}
+    local used, room = steps[4] or 0, steps[5] or 0
+    local function Cost(u, mode)
+        if not mode then return 0 end
+        if u.kind == "scene" then return (mode == "short" and u.short) and WordCount(u.short) or u.words end
+        if u.kind == "act" and mode == "full" then return WordCount(Sel.Account(sel, u)) end
+        if u.kind == "act" and mode == "alt" then return WordCount(u.alt) end
+        if u.kind == "act" and mode == "lead" then return WordCount(Sel.Lead(sel, u)) end
+        return u.words + (u.kind == "act" and (u.callback and 8 or 2) or 0)
+    end
+    local function Rich(u) return u.kind == "scene" or (u.kind == "act" and Sel.Account(sel, u) ~= nil) end
+    local function Untell(w) used = used - Cost(w, w.mode); w.mode, w.skip = nil, true end
+    local function Tell(o)
+        used = used + Cost(o, "full")
+        o.mode, o.paired, o.pulled = "full", true, true
+        if o.kind == "act" then o.tell, o.promote = o.full, o.promote or o.variant end
+    end
+    local order = {}
+    for _, u in ipairs(units) do order[#order + 1] = u end
+    table.sort(order, function(x, y) if (x.t or 0) ~= (y.t or 0) then return (x.t or 0) < (y.t or 0) end return x.i < y.i end)
+    -- (the nearest step of the same people or chain, before or after: told already, nothing is
+    -- needed; untold and bare, the walk goes on; untold with words of its own, it is pulled)
+    local function Neighbour(i, step)
+        local j = i + step
+        while order[j] do
+            local o = order[j]
+            if Sel.Linked(sel, order[i], o) then
+                if o.mode then return nil end
+                if Rich(o) then return o end
+            end
+            j = j + step
+        end
+        return nil
+    end
+    -- (the told steps, best first: a pair is worth its told step, so the room for it comes from
+    -- told steps of lower rank, a pulled step of lower rank among them)
+    local at = {}
+    for i, u in ipairs(order) do at[u] = i end
+    local anchors = {}
+    for _, u in ipairs(units) do if u.mode and u.kind ~= "fixed" then anchors[#anchors + 1] = u end end
+    local function Rank(u) return u.rank or u.score or 0 end
+    table.sort(anchors, function(x, y) if Rank(x) ~= Rank(y) then return Rank(x) > Rank(y) end return at[x] < at[y] end)
+    for _, u in ipairs(anchors) do
+        if u.mode and not u.pulled then
+            local i = at[u]
+            local prev, nxt = Neighbour(i, -1), Neighbour(i, 1)
+            for _, o in ipairs({prev, nxt}) do
+                if u.mode and o and not o.mode and Rich(o) then
+                    local cost = Cost(o, "full")
+                    while used + cost > room do
+                        local worst
+                        for _, w in ipairs(units) do
+                            if w.mode and w ~= u and w ~= o and not w.must and not w.peak and not w.setup and not w.first and not w.callback
+                                and Rank(w) < Rank(u) and (not w.paired or w.pulled)
+                                and (not worst or Rank(w) < Rank(worst)) then worst = w end
+                        end
+                        if not worst then break end
+                        Untell(worst)
+                    end
+                    if used + cost <= room then Tell(o); u.paired = true
+                    elseif o == prev and not u.must then Untell(u) end
+                end
+            end
+        end
+    end
+    -- (a bare act beside a told scene of the same people, now that the pairs are in: left out)
+    for _, w in ipairs(units) do
+        local bare = (w.kind == "scene" and w.mode == "short") or (w.kind == "act" and w.mode == "act")
+        if bare and not w.callback and not w.must then
+            for _, o in ipairs(units) do
+                if o.mode and o ~= w and o.kind ~= "fixed" and not ((o.kind == "scene" and o.mode == "short") or (o.kind == "act" and o.mode == "act"))
+                    and Sel.Linked(sel, w, o) then Untell(w); break end
+            end
+        end
+    end
+    sel.used = (sel.used or 0) - (steps[4] or 0) + used
+    steps[4] = used
+end
+
 -- (selection helpers end)
 
 function P.Apply(ctx)
@@ -1848,27 +2021,8 @@ function P.Apply(ctx)
     -- names the same person or place (or shares its thread), one more for a turning point.
     local scenes = {}
     for _, it in ipairs(items) do if it.scene then scenes[#scenes + 1] = it end end
-    local function LinkedTo(act, scene)
-        for name in pairs(act.names) do if scene.plain:find(name, 1, true) then return true end end
-        return act.thread ~= nil and act.thread == scene.thread and Specific(act.thread)
-    end
-    for _, it in ipairs(items) do
-        if it.fold and not it.fixed then
-            it.acts = {}
-            local whoNames = it.fold.who and Names(it.fold.who, zoneWords) or {}
-            for i, entry in ipairs(it.fold.entries) do
-                local text = tostring(it.fold.acts[i])
-                local act = {i = i, text = text, worth = entry.worth or 0, thread = entry.story and entry.story.thread,
-                    t = entry.quest and entry.quest.t, names = Names(text, zoneWords)}
-                for name in pairs(whoNames) do act.names[name] = true end
-                act.score = act.worth + ((entry.story and (entry.story.importance or 0) >= 5) and 1 or 0)
-                for _, scene in ipairs(scenes) do if LinkedTo(act, scene) then act.score = act.score + 2; break end end
-                it.acts[i] = act
-            end
-            it.top = 0
-            for _, act in ipairs(it.acts) do if act.score > it.top then it.top = act.score end end
-        end
-    end
+    sel.zoneWords = zoneWords
+    Sel.Acts(sel, scenes)
 
     -- 5. A great figure met: the scene tells it, the bare meeting line goes.
     local aliasesOf = Tale.FigureAliases or {}
@@ -2014,51 +2168,9 @@ function P.Apply(ctx)
     end
 
     -- People named by the day's work: the full name once, the short name after.
-    local persons = {}
-    local function Person(name)
-        name = name and Plain(name)
-        if not name or not name:find(" ", 1, true) then return end
-        local short
-        for word in name:gmatch("%S+") do if not titleWords[word] and not short then short = word end end
-        short = short or name:match("(%S+)$")
-        if short ~= name then persons[name] = short end
-    end
-    for _, it in ipairs(items) do
-        if it.fold then
-            Person(it.fold.who)
-            for _, entry in ipairs(it.fold.entries) do Person(entry.act and entry.act.giver) end
-        elseif it.m.entry then
-            local entry = it.m.entry
-            Person(entry.act and entry.act.giver)
-            Person(entry.story and entry.story.pov and entry.story.pov.giver)
-        end
-    end
-    local people = {}
-    sel.persons = persons
-    for full in pairs(persons) do people[#people + 1] = full end
-    table.sort(people, function(x, y) if #x ~= #y then return #x > #y end return x < y end)
-    local function ShortenPeople(line, saidBefore)
-        for _, full in ipairs(people) do
-            local short = persons[full]
-            local at = line:find(full, 1, true)
-            if at then
-                local pattern = Esc(full)
-                if saidBefore:find(full, 1, true) then line = line:gsub(pattern, short)
-                else line = line:sub(1, at + #full - 1) .. line:sub(at + #full):gsub(pattern, short) end
-            end
-        end
-        -- (a two-word name twice in one line, whoever it is)
-        for a, b in line:gmatch("(%u%l+) (%u%l+)") do
-            if not STOP[a] and not STOP[b] and not titleWords[a] then
-                local full = a .. " " .. b
-                local at = line:find(full, 1, true)
-                if at and line:find(full, at + #full, true) then
-                    line = line:sub(1, at + #full - 1) .. line:sub(at + #full):gsub(Esc(full), a)
-                end
-            end
-        end
-        return line
-    end
+    sel.titleWords = titleWords
+    Sel.Persons(sel)
+    local function ShortenPeople(line, saidBefore) return Sel.Shorten(sel, line, saidBefore) end
 
     -- Felt lines (JournalFeel.lua): the identity pool first, then the stage's own.
     local stage, race = Stage(ctx.level), ctx.race

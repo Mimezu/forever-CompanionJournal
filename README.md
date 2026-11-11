@@ -4,6 +4,18 @@ The players and NPCs you want to remember, and a journal of what you lived
 through together. It came out of Forever Names 1.10: the People list, the
 journal, the group popup and the campfire now live here, in their own window.
 
+## 1.24.0: fewer deeds, each with its reason
+
+The book you read by default (Current) now chooses what work to tell the way the Planned
+storyteller does (Settings > Testing), inside the episodes, dungeon runs and death passages of
+1.23.0. On an ordinary day of many quests the chapter no longer chains bare acts with "then"
+and "also": each quest is told in its own authored account, in the account's opening sentence,
+as one of at most two bare acts, or not at all, within a budget of about a hundred words an hour.
+A setup stays with its payoff (a beggar's plea with the cloth you brought him and his thanks;
+a head found with the alcove it was carried to), the step that first names a person is told in
+words that hold the name, and what leads nowhere goes first. Dungeon runs, bad stretches,
+firsts and the close are told as before. Off: book variant `select` = off (like `compose`).
+
 ## 1.23.0: the storyteller tells adventures, not events
 
 A rebuilt storyteller for the book you read by default (Current), tested on Alberich's book and

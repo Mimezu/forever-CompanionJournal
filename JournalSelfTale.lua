@@ -5295,7 +5295,11 @@ function ST.Tell(person, days, brief, retell)
             if not (A.SelfCompose and A.SelfCompose.Apply) or (A.BookVariant and A.BookVariant("compose") == "off") then return end
             plan.composed = A.SelfCompose.Apply({day = day, stretches = stretches, out = out, majors = majors, kinds = kinds, times = times,
                 scenes = scenes, metas = plan.metas, dayPlan = dayPlan, teller = teller, W = W, Place = Place, person = person,
-                history = history, index = index, brief = brief}) or nil
+                history = history, index = index, brief = brief,
+                -- (for the selection of the work, JournalSelfPlan's Sel through the composer: lane U)
+                race = race, class = person.class, titleWords = TITLE_WORDS, Companion = Companion,
+                level = stretches[#stretches] and stretches[#stretches].level or person.level,
+                seed = (person.charKey or person.name or "me") .. ":" .. tostring(retell or person.retell or 0)}) or nil
         end
         if not planned then plan.Compose() end
         if brief then

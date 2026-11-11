@@ -550,6 +550,13 @@ day before, `Evening()`), merges outings (gap 20 min or less), builds scenes, Hi
   first person. `ST.Tell(person, days, brief, retell)`. Tone per race for towns
   (`W.towns`, home/ally/neutral/foe), caves, dungeons with company, firsts, honest-work days,
   level milestones, the level-60 look-back.
+- **`JournalSelfCompose.lua`** (1.23.0) composes the Current chapter from `JournalEpisodes.Day`:
+  one paragraph an episode, the lines in slot order, a close from the record. Since 1.24.0 it
+  first runs the Planned storyteller's selection over the quest lines outside dungeon runs
+  (`A.SelfPlan.Sel`: `Start`, `Units`, `Acts`, `Peaks`, `Choose` with `Budget`, `Introduce`,
+  `Pairs`, then `Work`, `Shorten`, `Titles`), so a quest is told in its full account, its lead,
+  as a bare act (two a chapter at most) or not at all, and a setup stays with its payoff. The
+  composer's own lines count half against Planned's budget; the work keeps at least 120 words.
 - **Pools and tokens.** A pool is a Lua table of lines; the picker is least-recently-used
   and rests lines until most of the pool is used. Tokens in braces are filled by the engine
   (`{zoneD}` plain zone name, `{zoneE}` zone or epithet, `{When}`, `{part}`, `{We}`/`{we}`,
