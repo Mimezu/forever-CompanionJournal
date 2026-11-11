@@ -105,7 +105,7 @@ for _, companion in ipairs({false, true}) do for retell = 0, 9 do
     local full = tell(p, false, retell)
     -- (2026-11-07: each outing of the own book tells its work; the companion book its best)
     local first, nextStep, lastStep = toldAt(full, 1519), toldAt(full, 1093), toldAt(full, 5149)
-    local death = full:find("Bristleback Quilboar", 1, true)
+    local death = full:lower():find("bristleback quilboar", 1, true)
     -- (the companion book's day line names the work done together before its scenes; order is the own book's to keep)
     check(death and companion or death and (not first or first < (nextStep or math.huge)) and (not nextStep or (death < nextStep and nextStep < (lastStep or math.huge))),
         "chronological outings keep their order and the intervening death: " .. full)

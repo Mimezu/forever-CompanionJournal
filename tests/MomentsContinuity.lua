@@ -13,7 +13,7 @@ local show = arg and arg[1] == "print"
 function time(t) if type(t) == "table" then return os.time(t) end return 1790000000 + 40 * 86400 end
 function date(fmt, t) return os.date(fmt, t) end
 local A = {defaults = {colors = {}}}
-for _, file in ipairs({"LoreData.lua", "Lore.lua", "JournalBook.lua", "JournalSelfWords.lua", "JournalSelfTale.lua"}) do
+for _, file in ipairs({"LoreData.lua", "Lore.lua", "JournalBook.lua", "JournalEpisodes.lua", "JournalSelfWords.lua", "JournalSelfTale.lua"}) do
     assert(loadfile(root .. file))("CompanionJournal", A)
 end
 A.SelfUnderground = function(name)
@@ -99,7 +99,16 @@ do
     Clean(p)
     for retell, chapters in pairs(Tellings(p)) do
         local one = chapters[1].plain
-        check(one:find("Oggleflint, Taragaman the Hungerer, Jergosh the Invoker and Bazzalan", 1, true), "four kills, one sentence (" .. retell .. "): " .. one)
+        -- (2026-11-11: the kills are told around the lord, in order, in the run's one paragraph:
+        -- "Past Oggleflint, I came to Taragaman the Hungerer and killed him. Jergosh the Invoker and Bazzalan fell after him.")
+        -- (round 2: the quest's boss is the goal, named before the fights: "It was Taragaman ... we had come for.
+        -- Past Oggleflint, we reached him and killed him. Jergosh ... and Bazzalan fell after him.")
+        local a, b, c, d = one:find("Oggleflint", 1, true), one:find("Taragaman the Hungerer", 1, true), one:find("Jergosh the Invoker", 1, true), one:find("Bazzalan", 1, true)
+        check(a and b and c and d and a < c and c < d, "four kills, the last two after the goal (" .. retell .. "): " .. one)
+        check(not one:find("Oggleflint, Taragaman the Hungerer, Jergosh the Invoker and Bazzalan", 1, true), "no roll call of four (" .. retell .. "): " .. one)
+        local para
+        for p in (one .. "\n\n"):gmatch("(.-)\n\n") do if p:find("Oggleflint", 1, true) then para = p end end
+        check(para and para:find("Bazzalan", 1, true), "the four kills in one paragraph (" .. retell .. "): " .. one)
     end
     local k = {}
     Stretch(k, At(0, 20), 60, "Ragefire Chasm", 14, {{k = "dungeon", d = "Ragefire Chasm"}, {k = "boss", d = "Oggleflint"}, {k = "boss", d = "Taragaman the Hungerer"},
@@ -107,7 +116,10 @@ do
     local q = {self = true, charKey = "rfc2", name = "Alberich", race = "Scourge", faction = "Horde", class = "PALADIN", startLevel = 1, journal = k}
     for retell, chapters in pairs(Tellings(q)) do
         local one = chapters[1].plain
-        check(one:find("Oggleflint and Taragaman the Hungerer", 1, true) and one:find("Jergosh the Invoker and Bazzalan", 1, true),
+        check((one:find("Oggleflint and Taragaman the Hungerer", 1, true) or one:find("past Oggleflint and killed Taragaman the Hungerer", 1, true)
+            or one:find("Past Oggleflint, I came to Taragaman the Hungerer", 1, true) or one:find("past Oggleflint to Taragaman the Hungerer", 1, true)
+            or one:find("Oggleflint fell first", 1, true) or one:find("Oggleflint came first", 1, true))
+            and one:find("Jergosh the Invoker and Bazzalan", 1, true),
             "a hand-in between the second and third kill keeps two sentences (" .. retell .. "): " .. one)
     end
 end

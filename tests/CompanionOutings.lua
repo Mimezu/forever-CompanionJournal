@@ -83,7 +83,7 @@ for _, brief in ipairs({false, true}) do for _, voice in ipairs({"we", "you"}) d
     local p = make({1519, 1520, 1521}, "Tauren", "SHAMAN")
     p.journal[#p.journal + 1] = {k = "death", t = BASE + 1000, z = "Mulgore", d = "Bristleback Quilboar", w = "you", pl = 4}
     local text = tell(p, brief, voice, retell)
-    local death = text:find("Bristleback Quilboar", 1, true)
+    local death = text:lower():find("bristleback quilboar", 1, true)
     -- (2026-11-07: a stage's authored outcome, when a book tells one, stays on its own side of
     -- the death; the companion book tells the rite by name or point of view, not by that prose)
     check(death, "the death is told: " .. text)

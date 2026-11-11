@@ -14,6 +14,23 @@ local _, A = ...
 
 local MERGE_GAP = 20 * 60      -- two outings in the same zone this close are one scene
 local CONTINUE_GAP = 10 * 60   -- an outing starting this soon after another continues it
+-- A step over a border and back is not a journey (the cave mouth of the Wailing Caverns is
+-- its own zone; a road wobbles along the Duskwood line; a ghost runs out of Ragefire
+-- Chasm through Durotar and Orgrimmar and back in). A stay in another zone this short,
+-- between two stays in one zone, where nothing happened that the book would tell, is
+-- folded into the stay around it. Three minutes: on foot that is about one sub-zone, enough
+-- to look into a cave mouth or cross a corner of the map, while anything done over the
+-- border (a quest, a kill, a vendor) is recorded and keeps the stay.
+local FLICKER_STAY = 3 * 60
+local FLICKER_INSTANCE = 2 * 60   -- an instance walked into and straight out of (no boss, no death)
+local FLICKER_RUN = 5 * 60        -- several short stays in a row, out and back, at most this long in all
+-- A zone crossed on the way somewhere else is not a stop either. A stay this short where
+-- nothing happened but the going itself (a town passed, an inn, a lift, a zeppelin, a
+-- flight, the hearthstone) is folded into the stay before it, and only what carried the
+-- reader on (the voyage, the flight, the hearthstone, a first crossing) is kept, told
+-- there, so the next stop opens on what happened in it. Ten minutes: a zone crossed on
+-- foot or by zeppelin tower and gate takes less; a stay longer than that was a stop.
+local TRANSIT_STAY = 10 * 60
 
 -- Words ------------------------------------------------------------------------
 local ONES = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve",
@@ -104,6 +121,7 @@ A.CraftNotMade = CRAFT_NOT_MADE
 local function Add(scene, entry)
     scene.entries[#scene.entries + 1] = entry
     local k = entry.k
+    local before = #scene.events
     if k == "quest" and entry.d then
         scene.questCount = scene.questCount + 1
         local found
@@ -203,6 +221,213 @@ local function Add(scene, entry)
         scene.events[#scene.events + 1] = {k = k, t = entry.t, d = entry.d, z = entry.z, w = entry.w, env = entry.env, boss = entry.boss,
             by = entry.by, a = entry.a, sz = entry.sz, pr = entry.pr, pc = entry.pc, walk = entry.walk}
     end
+    -- (a line carried in from a crossing folded into this stay: the tellers say it last)
+    if entry.carried and #scene.events > before then scene.events[#scene.events].carried = true end
+end
+
+-- Flickers: the quick steps over a border and back -------------------------------
+-- What a short stay owes only to being a stay, and so goes with it when it is folded:
+-- the cave line, the dungeon walked into, the inn, the town passed, the swim.
+local FLICKER_DROP = {cave = true, dungeon = true, sleep = true, swim = true, town = true, rest = true}
+-- What happened to the people in it, kept on the merged stay in time order so the death
+-- writer tells it with the rest (a ghost run through Durotar after a wipe).
+local FLICKER_KEEP = {pdeath = true, death = true, rez = true}
+-- The first index in `others` (sorted by time) at or after t.
+local function FirstAt(others, t)
+    local low, high = 1, #others + 1
+    while low < high do
+        local mid = math.floor((low + high) / 2)
+        if (others[mid].t or 0) < t then low = mid + 1 else high = mid end
+    end
+    return low
+end
+-- Folds the flickers out of the outings, in place. A run of stays B1..Bn between two
+-- stays in zone A, each shorter than FLICKER_STAY (FLICKER_INSTANCE for one with a
+-- dungeon entry), the run under FLICKER_RUN, where nothing happened but what FLICKER_DROP
+-- and FLICKER_KEEP allow, is removed and the two A stays become one. Returns the entries
+-- to leave out (keyed by entry) and the "first time in B" entries seen only in a flicker
+-- (keyed by entry; the value is the next real stay in B to tell them at, or false).
+local function FoldFlickers(outings, entries)
+    local skip, moved = {}, {}
+    local others = {}
+    for _, entry in ipairs(entries) do
+        if entry.k ~= "group" and entry.k ~= "play" and entry.k ~= "with" then others[#others + 1] = entry end
+    end
+    local changed = true
+    while changed do
+        changed = false
+        local i = 2
+        while i < #outings do
+            local before = outings[i - 1]
+            -- the run of stays away from A, up to the next stay in A
+            local j, run = i, before.zone ~= nil
+            while run and j <= #outings and outings[j].zone ~= before.zone do
+                local stay = outings[j]
+                if stay.open or stay.e - stay.t > FLICKER_STAY then run = false end
+                j = j + 1
+            end
+            if run and (j == i or j > #outings) then run = false end
+            if run and outings[j - 1].e - outings[i].t > FLICKER_RUN then run = false end
+            local inside = {}
+            if run then
+                local first, last = outings[i], outings[j - 1]
+                -- (a line written a few seconds after the stay closed still belongs to it:
+                -- in the minute around the run, a line from one of its zones counts)
+                local zones = {}
+                for m = i, j - 1 do zones[outings[m].zone or ""] = true end
+                local n = FirstAt(others, first.t - 60)
+                while run and n <= #others and (others[n].t or 0) <= last.e + 60 do
+                    local entry = others[n]
+                    local t = entry.t or 0
+                    local within = t >= first.t and t <= last.e and entry.z ~= before.zone
+                    if within or zones[entry.z or ""] then
+                        local k = entry.k
+                        if k == "dungeon" then
+                            -- (the stay it was walked into must be the shorter kind)
+                            for m = i, j - 1 do
+                                local stay = outings[m]
+                                if (entry.t or 0) >= stay.t and (entry.t or 0) <= stay.e and stay.e - stay.t > FLICKER_INSTANCE then run = false end
+                            end
+                        end
+                        local zoneFirst = k == "first" and entry.d == "zone" and (entry.z == nil or entry.z ~= before.zone)
+                        if zoneFirst or FLICKER_DROP[k] then inside[#inside + 1] = entry
+                        elseif not FLICKER_KEEP[k] then run = false end
+                    end
+                    n = n + 1
+                end
+            end
+            if run then
+                for _, entry in ipairs(inside) do
+                    if entry.k == "first" then moved[entry] = entry.z or outings[i].zone else skip[entry] = true end
+                end
+                local after = outings[j]
+                before.e = math.max(before.e, after.e)
+                before.open = after.open
+                for _, entry in ipairs(after.entries) do before.entries[#before.entries + 1] = entry end
+                before.flicker = before.flicker or {}
+                for m = i, j - 1 do before.flicker[#before.flicker + 1] = outings[m].zone end
+                for _ = i, j do table.remove(outings, i) end
+                changed = true
+            else
+                i = i + 1
+            end
+        end
+    end
+    return skip, moved
+end
+A.JournalFoldFlickers = FoldFlickers
+
+-- Transit: a zone crossed on the way somewhere else --------------------------------
+-- What a crossing may hold and still be a crossing: the stops that did not matter (left
+-- out) and the going itself (carried to the stay before, or the stay after when the day
+-- opens on the crossing).
+local TRANSIT_DROP = {town = true, rest = true, sleep = true, swim = true, cave = true}
+local TRANSIT_CARRY = {voyage = true, taxi = true, nightflight = true, hearth = true}
+local TRANSIT_CARRY_FIRST = {continent = true, zeppelin = true, boat = true, tram = true, flight = true, landmark = true}
+-- Folds the crossings out of the outings, in place: a stay under TRANSIT_STAY whose lines
+-- are all of those kinds goes into the stay before it (its time too), when that stay ended
+-- within CONTINUE_GAP of it; a crossing the day opens on goes into the stay after it. Adds
+-- to skip and moved (as FoldFlickers fills them) and returns rehome: the carried entries,
+-- each with the stay to tell it in.
+local function FoldTransit(outings, entries, skip, moved)
+    local rehome = {}
+    local others = {}
+    for _, entry in ipairs(entries) do
+        if entry.k ~= "group" and entry.k ~= "play" and entry.k ~= "with" and not skip[entry] and moved[entry] == nil then others[#others + 1] = entry end
+    end
+    -- the lines of a crossing, or nil when something in the stay made it a stop
+    -- (a line at the stay's edge from the zone before or after belongs there, not here)
+    local function Lines(stay, prevZone, nextZone)
+        if stay.open or stay.e - stay.t >= TRANSIT_STAY then return nil end
+        local drop, carry, firsts = {}, {}, {}
+        local n = FirstAt(others, stay.t - 60)
+        while n <= #others and (others[n].t or 0) <= stay.e + 60 do
+            local entry = others[n]
+            local t = entry.t or 0
+            local within = t >= stay.t and t <= stay.e and entry.z ~= prevZone and entry.z ~= nextZone
+            if within or entry.z == stay.zone then
+                local k = entry.k
+                if k == "first" and entry.d == "zone" then
+                    -- (a first visit is a glimpse only under FLICKER_STAY; longer, it was a visit)
+                    if stay.e - stay.t >= FLICKER_STAY then return nil end
+                    firsts[#firsts + 1] = entry
+                elseif TRANSIT_DROP[k] then drop[#drop + 1] = entry
+                elseif TRANSIT_CARRY[k] or (k == "first" and TRANSIT_CARRY_FIRST[entry.d]) then carry[#carry + 1] = entry
+                else return nil end
+            end
+            n = n + 1
+        end
+        return {drop = drop, carry = carry, firsts = firsts}
+    end
+    -- (a dungeon run or a battleground match is a stay of its own: two of them are never one)
+    local instanced = {}
+    for _, stay in ipairs(outings) do
+        local n = FirstAt(others, stay.t)
+        while n <= #others and (others[n].t or 0) <= stay.e do
+            if others[n].k == "dungeon" or others[n].k == "bg" then instanced[stay] = true end
+            n = n + 1
+        end
+    end
+    local kept, pending = {}, {}
+    local function Fold(stay, lines, into)
+        for _, entry in ipairs(lines.drop) do skip[entry] = true end
+        for _, entry in ipairs(lines.carry) do rehome[entry] = into end
+        for _, entry in ipairs(lines.firsts) do moved[entry] = entry.z or stay.zone end
+        into.crossed = into.crossed or {}
+        into.crossed[#into.crossed + 1] = stay.zone
+    end
+    for i, stay in ipairs(outings) do
+        local lines = Lines(stay, outings[i - 1] and outings[i - 1].zone, outings[i + 1] and outings[i + 1].zone)
+        local last = kept[#kept]
+        if lines and last and stay.t - last.e <= CONTINUE_GAP and #pending == 0 then
+            Fold(stay, lines, last)
+            last.e = math.max(last.e, stay.e)
+            last.open = stay.open
+        elseif lines and (not last or stay.t - last.e > CONTINUE_GAP or #pending > 0) then
+            pending[#pending + 1] = {stay = stay, lines = lines}
+        else
+            if #pending > 0 then
+                if lines == nil and stay.t - pending[#pending].stay.e <= CONTINUE_GAP then
+                    -- (the day opened on crossings: they go into this, its first stop)
+                    for _, p in ipairs(pending) do Fold(p.stay, p.lines, stay) end
+                    stay.t = math.min(stay.t, pending[1].stay.t)
+                else
+                    for _, p in ipairs(pending) do kept[#kept + 1] = p.stay end
+                end
+                pending = {}
+            end
+            kept[#kept + 1] = stay
+        end
+    end
+    for _, p in ipairs(pending) do kept[#kept + 1] = p.stay end
+    -- Two stays in one zone left touching by the folds are one stay (as MERGE_GAP merges them).
+    local merged = {}
+    for _, stay in ipairs(kept) do
+        local last = merged[#merged]
+        if last and last.zone == stay.zone and stay.t - last.e <= MERGE_GAP and not instanced[last] and not instanced[stay] then
+            last.e = math.max(last.e, stay.e)
+            last.open = stay.open
+            for _, entry in ipairs(stay.entries) do last.entries[#last.entries + 1] = entry end
+            for _, zone in ipairs(stay.crossed or {}) do last.crossed = last.crossed or {}; last.crossed[#last.crossed + 1] = zone end
+        else
+            merged[#merged + 1] = stay
+        end
+    end
+    for i = #outings, 1, -1 do outings[i] = nil end
+    for i, stay in ipairs(merged) do outings[i] = stay end
+    return rehome
+end
+-- A first visit seen only in a flicker or a crossing belongs to the next real stay there,
+-- if any (the recorder claims it once, so the book moves it): moved[entry] becomes that
+-- stay, or false.
+local function ResolveMoved(outings, moved, skip)
+    for entry, zone in pairs(moved) do
+        local target = false
+        for _, o in ipairs(outings) do
+            if o.zone == zone and o.e > (entry.t or 0) and not skip[entry] then target = o; break end
+        end
+        moved[entry] = target
+    end
 end
 
 -- Days (oldest first), each with its scenes in order.
@@ -241,6 +466,34 @@ function A.JournalBook(person)
             end
         end
     end
+    -- A step over a border and back is not a journey: folded away, with what it owes only
+    -- to being a stay; a first visit seen only that way moves to the next real stay there.
+    local skip, moved = FoldFlickers(outings, entries)
+    -- A zone crossed on the way somewhere else is not a stop: folded into the stay before,
+    -- with only the going itself (voyage, flight, hearthstone, a first crossing) kept.
+    local rehome = FoldTransit(outings, entries, skip, moved)
+    ResolveMoved(outings, moved, skip)
+    local told = {}
+    for _, entry in ipairs(entries) do
+        if moved[entry] ~= nil then
+            if moved[entry] then
+                local copy = {}
+                for k, v in pairs(entry) do copy[k] = v end
+                copy.t = moved[entry].t
+                order[copy] = order[entry]
+                told[#told + 1] = copy
+            end
+        elseif not skip[entry] then
+            told[#told + 1] = entry
+        end
+    end
+    if next(moved) then
+        table.sort(told, function(a, b)
+            if (a.t or 0) ~= (b.t or 0) then return (a.t or 0) < (b.t or 0) end
+            return order[a] < order[b]
+        end)
+    end
+    entries = told
     -- Your own journal: who of your list was with you, stretch by stretch
     -- (a companion for at least five minutes of it).
     for _, w in ipairs(withs) do
@@ -279,7 +532,15 @@ function A.JournalBook(person)
                     if not home or (entry.z and o.zone == entry.z and home.zone ~= entry.z) then home = o end
                 elseif not loose and t >= o.t - 60 and t <= o.e + 60 then loose = o end
             end
-            home = home or loose
+            if rehome[entry] then
+                home = rehome[entry]
+                local copy = {}
+                for k, v in pairs(entry) do copy[k] = v end
+                copy.carried = true
+                entry = copy
+            else
+                home = home or loose
+            end
             local own = entry.k == "custom" or entry.k == "met" or entry.k == "added" or entry.k == "seen"
             if home and not own then
                 Add(home, entry)

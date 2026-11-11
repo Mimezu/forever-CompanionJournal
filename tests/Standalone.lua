@@ -240,4 +240,22 @@ for _, addonName in ipairs({"CompanionJournal", "ForeverNames"}) do
     end
 end
 
+-- Campfire people (1.22.0): no journal, and gone two hours after the last fire shared.
+do
+    local now = clock
+    A.People["ember-forever"] = {name = "Ember-Forever", circle = "campfire", added = now - 3 * 3600, met = now - 3 * 3600,
+        campfireT = now - 3 * 3600, journal = {{k = "seen", t = now - 3 * 3600}}}
+    A.People["spark-forever"] = {name = "Spark-Forever", circle = "campfire", added = now - 3 * 3600, met = now - 3 * 3600,
+        campfireT = now - 600, journal = {{k = "seen", t = now - 3 * 3600}}}
+    A.People["friend-forever"] = {name = "Friend-Forever", added = now - 5 * 3600, journal = {{k = "group", t = now - 5 * 3600}}}
+    check(A.JournalAdd(A.People["spark-forever"], {k = "seen"}) == nil, "a campfire person gets no new journal entry")
+    check(A.JournalAdd(A.People["friend-forever"], {k = "seen"}) ~= nil, "a companion still does")
+    local removed = A.PruneCampfire(now)
+    equal(removed, 1, "one campfire person past two hours is removed")
+    check(A.People["ember-forever"] == nil, "the one whose last fire was three hours ago is gone")
+    check(A.People["spark-forever"] and A.People["spark-forever"].journal == nil, "the recent one stays, without a journal")
+    check(A.People["friend-forever"] and #A.People["friend-forever"].journal == 2, "a companion keeps their journal")
+    A.People["spark-forever"], A.People["friend-forever"] = nil, nil
+end
+
 io.write("PASS: " .. assertions .. " companion journal standalone assertions\n")

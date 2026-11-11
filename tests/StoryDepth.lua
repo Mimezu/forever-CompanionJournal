@@ -95,7 +95,7 @@ for _, brief in ipairs({false, true}) do for retell = 0, 7 do
     p.journal[#p.journal + 1] = {k = "death", w = "you", d = "Bristleback Quilboar", t = BASE + 900, z = "Mulgore", pl = 4}
     local text = tell(p, brief, retell)
     local a, b, c = outcomeAt(text, 1519), outcomeAt(text, 1520), outcomeAt(text, 1521)
-    local death = text:find("Bristleback Quilboar", 1, true)
+    local death = text:lower():find("bristleback quilboar", 1, true)
     -- (2026-11-07: the companion book tells the rite by name or point of view, not by each
     -- stage's authored outcome; any outcome line it does tell stays on its side of the death)
     check(death, "interrupted rite keeps the death: " .. text)

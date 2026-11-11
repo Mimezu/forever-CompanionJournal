@@ -161,6 +161,54 @@ function A.RemoveCircle(circle)
 end
 function A.RemoveAcquaintances() A.RemoveCircle("acquaintance") end
 
+-- Campfire people (since 1.22.0) keep no journal, and leave the list two hours after the
+-- last fire shared with them. Run at login, at each campfire scan and every ten minutes.
+-- Every character's list is cleared the same way.
+local CAMPFIRE_KEEP = 2 * 3600
+function A.PruneCampfire(now)
+    local db = A.db
+    if not db then return 0 end
+    now = now or (time and time()) or 0
+    local removed = 0
+    local function Old(person)
+        local last = person.campfireT or person.met or person.added
+        return now > 0 and type(last) == "number" and now - last >= CAMPFIRE_KEEP
+    end
+    -- (other characters' lists: the relationship is dropped, the card stays for whoever else knows them)
+    local me = A.Me and A.Me()
+    for charKey, char in pairs(type(db.characters) == "table" and db.characters or {}) do
+        local relations = type(char) == "table" and type(char.people) == "table" and char.people
+        if relations and charKey ~= me then
+            for key, rel in pairs(relations) do
+                if type(rel) == "table" and rel.circle == "campfire" then
+                    rel.journal = nil
+                    if Old(rel) then relations[key] = nil; removed = removed + 1 end
+                end
+            end
+        end
+    end
+    -- (this character's list, or the shared list)
+    local gone = {}
+    for key, person in A.EachPerson() do
+        if A.PersonCircle(person) == "campfire" then
+            person.journal = nil
+            if Old(person) then gone[#gone + 1] = key end
+        end
+    end
+    for _, key in ipairs(gone) do A.People[key] = nil end
+    removed = removed + #gone
+    if #gone > 0 and A.Refresh then A.Refresh() end
+    return removed
+end
+local ticking = false
+local function PruneLater()
+    -- (one ticker for the session; a mock C_Timer without NewTicker gets none)
+    if ticking or not (C_Timer and C_Timer.NewTicker) then return end
+    ticking = true
+    C_Timer.NewTicker(600, function() A.PruneCampfire() end)
+end
+A.PruneCampfireLater = PruneLater
+
 -- Campfire (experimental): while your campfire timer aura runs, friendly
 -- players near you who have the same aura are sitting with you. A few scans
 -- during your one-minute sit, over plates already tracked; nothing otherwise.
@@ -195,6 +243,7 @@ function A.ScanCampfire()
     if not AtCampfire("player", ids) then return 0 end
     if A.SelfCampfire then A.SelfCampfire() end -- your own journal: you sat by a fire
     local now, zone, added = time and time() or nil, Text(GetRealZoneText and GetRealZoneText()), 0
+    A.PruneCampfire(now)
     A.EachTrackedUnit(function(unit)
         local okPlayer, isPlayer = pcall(UnitIsPlayer, unit)
         local okFriend, friend = pcall(UnitIsFriend, "player", unit)
@@ -210,8 +259,10 @@ function A.ScanCampfire()
         local key, full = A.PersonKey(name, realm)
         local known = key and A.People[key]
         if known and A.JournalCampfire then A.JournalCampfire(known) end
+        -- (another fire shared: their two hours start again)
+        if known and known.circle == "campfire" then known.campfireT = now end
         if key and not known and not db.peopleBlocked[key] then
-            local fields = {name = full, circle = "campfire", added = now, met = now, metZone = zone, metHow = "campfire"}
+            local fields = {name = full, circle = "campfire", added = now, met = now, metZone = zone, metHow = "campfire", campfireT = now}
             if db.peopleCampfireIcon then
                 local fire = db.colors.campfire
                 fields.glyph, fields.color = "fire", {fire[1], fire[2], fire[3]}

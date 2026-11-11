@@ -522,8 +522,9 @@ W.dungeonWithAgain = {
     "{names} joined me, and we went back into {dungeonE}.",
 }
 W.dungeonRegular = {
-    "Back {we} went into {dungeonE}.",
-    "{We} went down into {dungeonE} once more.",
+    "Back {we} went into {dungeonE}, {our} {nth} time there.",
+    "{We} went into {dungeonE} once more, the {nth} time.",
+    "Once more {we} went into {dungeonE}, {our} {nth} run.",
 }
 -- The very first dungeon of your life, after it.
 W.firstDungeonEnd = {
@@ -531,6 +532,8 @@ W.firstDungeonEnd = {
     "I had never been inside such a place before, and I came out again.",
     "It was my first time under a dungeon's roof, and I came out with the others.",
 }
+-- The first dungeon of your life, said with going in ("...into the Deadmines, the first dungeon of my life.").
+W.firstDungeonEntry = {"the first dungeon of my life", "my first dungeon", "the first dungeon I had ever been in"}
 -- The first dungeon of your life, when it killed you ({dungeonD}).
 W.firstDungeonDied = {
     "{dungeonD} was my first dungeon, and it killed me once before we were done.",
@@ -612,6 +615,101 @@ W.boast = {
 }
 W.killOne = {"{We} killed {boss}.", "{boss} fell.", "{We} brought down {boss}."}
 W.killMany = {"{We} killed {bosses}.", "Inside, {we} brought down {bosses}.", "{bosses} fell, one after the other."}
+-- Two bosses and more, told as beats around the one that mattered (round 3, 2026-11-11; the
+-- shape from JournalEpisodes.ShapeKills): the ones before fell first ({Before}: "Rhahk'Zor,
+-- Sneed and three more"; the Next pools when a kill was told already in the run), then came the
+-- goal ({boss} with its epithet, who he is; the Goal pools say why he matters: a quest's boss;
+-- the Lord pools for the lord of the place with no quest about him), and the kill; the ones
+-- after are a tail ({after}, {him}/{her}).
+-- (round 4: no "down" in these, the entry and the retry have it)
+W.bossLeadOne = {"{Before} fell first.", "{Before} came first, and fell."}
+W.bossLeadMany = {"{Before} fell first, one after another.", "{Before} came first, and fell one after another."}
+W.bossLeadOneNext = {"{Before} fell next.", "Next came {before}, and fell."}
+W.bossLeadManyNext = {"{Before} fell next, one after another.", "Next {we} fought past {before}."}
+W.bossGoal = {
+    "Then came {boss}, the one {we} had come for, and {we} killed {him}.",
+    "Then came {boss}, the one {we} had come for. {We} killed {him}.",
+}
+W.bossGoalFirst = {
+    "{We} came to {boss} first, the one {we} had come for, and killed {him}.",
+    "{We} came straight to {boss}, the one {we} had come for, and killed {him}.",
+}
+W.bossLord = {
+    "Then came {boss}, and {we} killed {him}.",
+    "Then came {boss}. {We} killed {him}.",
+}
+W.bossLordFirst = {
+    "{We} came to {boss} first, and killed {him}.",
+    "{Boss} came first, and {we} killed {him}.",
+}
+W.bossTail = {"After {him}, {we} killed {after} as well.", "{After} fell after {him}."}
+-- Going in with the company named ({names}: the ones the record knows; {count} when more went).
+-- ({namesI}: "Bryn, Grak and I"; {names}: "Bryn and Grak", or "Bryn, Grak and one more" when the
+-- record counted more than it named: never a count the names contradict, round 4)
+W.dungeonNames = {
+    "{namesI} went into {dungeonE}.",
+    "I went into {dungeonE} with {names}.",
+    "With {names}, I went into {dungeonE}.",
+}
+W.dungeonNamesDown = {
+    "{namesI} went down into {dungeonE}.",
+    "I went down into {dungeonE} with {names}.",
+    "With {names}, I went down into {dungeonE}.",
+}
+-- The first dungeon of my life, as its own sentence after the entry (the second pool when
+-- the chapter has said "first" twice already).
+W.firstDungeonLine = {"It was my first dungeon.", "It was the first dungeon of my life."}
+-- (folded into the entry after the place, round 4: "...into Ragefire Chasm, my first dungeon, a lava cave...")
+W.firstDungeonFold = {"my first dungeon", "the first dungeon of my life"}
+-- After the run, when earned (once a book each, never the last line of a chapter).
+W.runEarned = {
+    secondTry = {"It had taken {us} two tries, and {we} had done it.", "The first try had cost {us}, and the second paid for it.",
+        "{We} had been beaten once down there, and not the second time."},
+    firstClean = {"I walked out of it on my feet.", "I came out of it standing, with everything I had gone in with."},
+}
+-- A level reached in the run or with its turn-ins, folded into the run's end ({level}).
+W.runLevel = {"I came out of it at level {level}.", "The run took me to level {level}.", "Level {level} came out of it with me."}
+-- A level reached inside the run, at the kill it came with (round 5; {boss}, {level}).
+W.runLevelAt = {"Level {level} came with {boss}.", "{Boss} took me to level {level}.", "I reached level {level} on {boss}."}
+-- The odds, once at the entry (round 5): the quest about the run against my level ({n} levels).
+W.runOdds = {
+    above = {"The work was {n} levels above {us}.", "It was a task meant for someone {n} levels above {me}."},
+    below = {"{We} {were} well past it by then.", "It was work {we} had outgrown."},
+}
+-- (the same as a clause on the line before it, round 4: "..., and the run took me to level 17.")
+W.runLevelClause = {"the run took me to level {level}", "I came out of it level {level}", "I was level {level} by then"}
+-- Going in with company: the count from the record ({count}: "five").
+W.dungeonParty = {
+    "The {count} of us went into {dungeonE}.",
+    "Then the {count} of us went into {dungeonE}.",
+    "There were {count} of us going into {dungeonE}.",
+}
+W.dungeonPartyDown = {
+    "The {count} of us went down into {dungeonE}.",
+    "Then the {count} of us went down into {dungeonE}.",
+    "There were {count} of us going down into {dungeonE}.",
+}
+-- The run's second try, after a wipe (the deaths were just told): a beat of the story
+-- ({try}: "second", "third"; the Well pools when nobody died after it).
+W.dungeonBackDown = {
+    "{We} went back down for a {try} try.",
+    "Then {we} picked {ourselves} up and went back down.",
+    "{We} went back down and tried again.",
+}
+W.dungeonBackDownWell = {
+    "{We} went back down, and the {try} try went better.",
+    "Back down {we} went, and this time nobody fell.",
+    "{We} picked {ourselves} up and went back down, and the {try} try held.",
+}
+W.dungeonBackIn = {
+    "{We} went back in for a {try} try.",
+    "Then {we} picked {ourselves} up and went back in.",
+    "{We} went back in and tried again.",
+}
+W.dungeonBackInWell = {
+    "{We} went back in, and the {try} try went better.",
+    "Back in {we} went, and this time nobody fell.",
+}
 W.wipe = {"{boss} was too much for {us}.", "{boss} beat {us}.", "{We} lost the fight against {boss}."}
 
 -- Danger ---------------------------------------------------------------------------
@@ -681,9 +779,8 @@ W.firstDeathRez = {
     "I had never died before.",
 }
 W.firstDeathScourge = {
-    "It was my first death since I rose, and none of it was new to me.",
+    "It was my first death since I rose.",
     "I had died once before, long ago. This time I walked back from the graveyard.",
-    "It was my second death, if the first one counts.",
     "It was my first death since I rose. I walked back from the graveyard and found my body where it fell.",
     "I had been dead before, in Lordaeron. This time it only lasted as long as the walk back.",
 }
@@ -2185,6 +2282,8 @@ W.craftBy = {
     Cooking = {"I cooked {count} dishes, {made} among them."},
     Enchanting = {"I made {count} enchanted things, {made} among them."},
     FirstAid = {"I made {count} bandages, {made} among them."},
+    -- (pass 3: "I worked at my fishing and made three things" read as a craft bench)
+    Fishing = {"I put together {made} for my fishing.", "I made {made} for my fishing as well."},
 }
 
 -- W.milestone[20] / [30]  (no tokens). "Level twenty." and "Level thirty." closed three chapters of
@@ -2232,6 +2331,10 @@ W.openFirstLate.home = {"I was level {level}, and in {zoneE}, among my own peopl
 -- A level reached in an earlier part of the day ({level}, {where}).
 W.levelEarlyDungeon = {"I had reached level {level} down in {where}.", "Level {level} had come in {where}, earlier that day."}
 W.levelEarlyIn = {"I had reached level {level} in {where}, earlier that day.", "Level {level} had come in {where}, earlier that day."}
+-- (pass 3, 2026-11-11: a level from earlier in the day is told where it came, right after the
+-- last line of that stretch: "with it" when that line's deed came within two minutes of it)
+W.levelWithIt = {"Level {level} came with it.", "I reached level {level} with it."}
+W.levelThere = {"I reached level {level} there.", "Level {level} came there."}
 
 -- A long swim that nearly drowned you ({place}).
 W.swimNearly = {"I swam a long way in the waters of {place}, and very nearly drowned.", "I swam out into {place} and came up for air just in time."}
@@ -2608,6 +2711,8 @@ W.openNewLateBare = {"I came late to {zoneD}, at level {level}, with its dangers
     "At level {level}, I saw {zoneD} for the first time, long after it could have troubled me."}
 W.firstZoneWith = {"{names} and I came into {zoneD}, where I had never been.", "It was my first time in {zoneD}, and {names} {were} with me."}
 W.firstZoneYoung = {"I came into {zoneD} at level {level}, young for the place.", "{zoneD} was new to me, and at level {level} I was early for it."}
+-- (the same, once the chapter has told the level already: the number is not said twice)
+W.firstZoneYoungBare = {"I came into {zoneD} young for the place.", "{zoneD} was new to me, and I was early for it."}
 W.firstZoneLate = {"I came late to {zoneD}, at level {level}, with its dangers below me.",
     "At level {level}, I saw {zoneD} for the first time, long after it could have troubled me."}
 W.firstZoneFrom = {"After {from} came {zoneD}, new to me.", "{from} gave way to {zoneD}, where I had never been."}
@@ -3438,4 +3543,100 @@ W.plan = {
         Scourge = {"My second life began at {place}, with my {mate} {name} beside me."},
     },
     originTail = {", with my {mate} {name} beside me."},
+}
+
+---------------------------------------------------------------------------
+-- A run of deaths told as one passage (2026-11-11, DESIGN §3.0): a lost fight or a bad
+-- hour in the order it happened, not a line per zone (ST.DeathRuns, DeathPassage in
+-- JournalSelfTale.lua). Tokens: {foe} {Foe} (the killer, "a Rot Hide Brute" or "Bishop
+-- Jericho"), {names} (the party who fell, each name once), {count} ("twice", "three times
+-- between them"), {all} ("three", for "all three of us"), {us} {our} {Our} {we} {We},
+-- {zoneD} {ZoneD}, {sub} {Sub} (the place inside the zone where it began), {mins} {Mins}.
+---------------------------------------------------------------------------
+W.deathRun = {
+    -- the lost first fight in a dungeon the day went back into
+    firstTry = {"The first try went badly.", "{Our} first try went badly.", "The first time in, it went badly."},
+    -- the signal, once a chapter: more than one fight lost (the zone lines only when it was not just named)
+    open = {"It went badly from there.", "The next while went badly for {us}.", "{ZoneD} nearly finished {us}."},
+    openSub = {"{Sub} was another matter.", "{Sub} nearly finished {us}.", "It went badly at {sub}."},
+    -- a second bad stretch the same day
+    openAgain = {"{ZoneD} was no kinder.", "It was no kinder there.", "{ZoneD} was no better."},
+    -- one lost fight, all of us ({names} the party who fell)
+    wipeMeFirst = {"{Foe} killed me, and {names} fell with me.", "{Foe} killed me, and {names} went down after me."},
+    wipePartyFirst = {"{names} fell, and {foe} killed me after.", "{names} went down first, and {foe} finished me."},
+    -- the first fight of a bad stretch
+    firstMe = {"{Foe} killed me first.", "{Foe} got me first.", "The first to kill me was {foe}."},
+    firstMeParty = {"{Foe} killed me first, and {names} with me.", "{Foe} took {names} and me together."},
+    firstPartyMe = {"{names} fell first, and then {foe} killed me.", "{names} went down first, and {foe} finished me."},
+    firstParty = {"{names} fell first.", "{names} went down first."},
+    -- (the same fights when the day's record had a death before or after them: no "first", no "last")
+    plainMe = {"{Foe} killed me.", "{Foe} got me."},
+    plainMeParty = {"{Foe} took {names} and me together.", "{Foe} killed me, {names} with me."},
+    plainPartyMe = {"{names} fell, and then {foe} killed me.", "{names} went down, and {foe} finished me."},
+    partyEarly = {"{names} fell within minutes of {our} coming.", "{names} went down within minutes of {our} coming."},
+    -- a companion who fell more than once in the fight that killed me ({count})
+    partyCountThenMe = {"{names} fell {count} before {foe} killed me.", "{names} went down {count} before {foe} finished me."},
+    meThenPartyCount = {"{Foe} killed me, and {names} fell {count} after.", "{Foe} killed me, and {names} went down {count} before it was over."},
+    -- no killer in the record
+    meAndPartyPlain = {"I died, and {names} with me.", "{names} and I all went down."},
+    -- the fights in the middle that someone ended with a raise ({by}: "Varreth" or "Ralph Cuthbridge, a stranger,")
+    midRez = {"{By} raised me after {foe} got me.", "{Foe} got me, and {by} raised me."},
+    midRezParty = {"{Foe} took {names} and me together, and {by} raised me.", "{Foe} killed me, {names} with me, and {by} raised me."},
+    midParty = {"{Foe} took {names} and me together.", "{Foe} killed me, {names} with me."},
+    -- several raises in the middle, folded ({raisers}: "Pip and Faelyn", {count}: "three times")
+    midRezMany = {"{Raisers} raised me {count} between them.", "{Raisers} picked me up {count} between them."},
+    midRezSame = {"{Raisers} raised me {count} more.", "{Raisers} picked me up {count} after that."},
+    -- the party alone, in the middle or at the end
+    party = {"{names} fell.", "{names} went down."},
+    partyCount = {"{names} fell {count}.", "{names} went down {count}."},
+    lastParty = {"{names} fell last.", "Last of all, {names} fell."},
+    -- the deaths nobody raised me from ({count}: "twice", "three times")
+    walked = {"{Count} more I died and walked back as a ghost.", "{Count} more I died, and came back from the graveyard on my own feet."},
+    diedMore = {"{Count} more I died before it was over.", "{Count} more deaths came between."},
+    -- the last fight: a named foe, a kind of foe, with or without the party
+    lastNamed = {"{Foe} ended it.", "{Foe} finished it."},
+    lastNamedParty = {"{Foe} ended it, and {names} went down after me.", "{Foe} ended it, and {names} fell after me."},
+    lastMe = {"The last of it was {foe}.", "{Foe} killed me a last time.", "{Foe} ended it."},
+    lastMeParty = {"{Foe} ended it, and {names} fell with me.", "{Foe} killed me a last time, and {names} after me."},
+    lastPartyMe = {"{names} fell, and {foe} finished me.", "{names} went down, and {foe} ended it."},
+    lastPartyAgainMe = {"{names} went down again, and {foe} finished me.", "{names} fell a second time, and then {foe} killed me."},
+    -- someone who raised me and is not of my list ({by})
+    rezStranger = {"{by}, a stranger, stopped to raise me.", "{by}, whom I had never met, stopped and raised me."},
+    -- someone of the party who is of no list, the first time they are named ({name})
+    newcomer = {"a newcomer named {name}", "{name}, who had joined {us} for it,"},
+    -- the count, once, at the end ({count} my deaths, {span}, {tally}: "Dahlia three times and Varreth twice")
+    count = {"{Count} deaths in {span}, and {tally} besides.", "{Count} deaths in {span}, and {tally} as well."},
+    countAlone = {"{Count} deaths in {span}.", "I died {count} times in {span}."},
+    -- a felt line, once a book: the first raise, pointing back to the one who taught it ({teacher},
+    -- from an earlier chapter)
+    feltTaught = {"It was what {teacher} had taught me for.", "It was for this that {teacher} had taught me."},
+}
+
+-- The composer's own lines (JournalSelfCompose.lua, 2026-11-11): a level put where it came, a
+-- companion gone before a bad stretch, and the chapter's close built from the record (what the
+-- evening came to, then where it ended). {place}, {from}, {dungeon}, {lord}, {foe} are places and
+-- names; {span} is the day's length in words, {crossings} the sea crossings, {part} the part of
+-- the day the record began in.
+W.compose = {
+    levelSoon = {"Level {level} came not long after.", "Level {level} came soon after."},
+    levelAt = {"Level {level} came at {place}.", "At {place}, level {level} came."},
+    levelIn = {"Level {level} came in {zone}.", "Somewhere in {zone}, level {level} came."},
+    left = {"{name} had left us by then.", "{name} was gone by then."},
+    byWay = {"{We} went on by way of {stops}.", "The road took {us} on by way of {stops}."},
+    moveFlew = {"{We} flew to {place}.", "A flight took {us} to {place}."},
+    moveVoyage = {"{We} took the {how} to {place}."},
+    moveHearth = {"My hearthstone took me back to {place}."},
+    moveWent = {"{We} went on to {place}.", "From there {we} went to {place}."},
+    runLevels = {"The run took me from level {from} to {level}."},
+    closeDungeonDone = {"{dungeon} was behind {us}"},
+    closeFoeHeld = {"{foe} still held {place}"},
+    closeWork = {"the work for {givers} was done"},
+    closeSleepFar = {"Then {I} slept {at} {place}, {span} and {crossings} from {from}.", "{I} slept {at} {place} that night, {span} and {crossings} from {from}."},
+    closeSleepNear = {"Then {I} slept {at} {place}, {span} after the {part} began {atFrom} {from}.", "{I} slept {at} {place}, {span} after the {part} had begun {atFrom} {from}."},
+    closeSleepSame = {"Then {I} slept {at} {place}, {span} after the {part} began there."},
+    closeSleepShort = {"Then {I} slept {at} {place}.", "{I} slept {at} {place} that {part}."},
+    closeEndShort = {"The {part} ended {at} {place}."},
+    closeEndFar = {"The {part} ended {at} {place}, {span} and {crossings} from {from}."},
+    closeEndNear = {"The {part} ended {at} {place}, {span} after it began {atFrom} {from}.", "{span} after the {part} began {atFrom} {from}, it ended {at} {place}."},
+    closeEndSame = {"The {part} ended {at} {place}, {span} after it began there."},
 }

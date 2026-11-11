@@ -467,10 +467,12 @@ do
         local chapters = Chapters(p)
         retells = retells + 1
         local text = chapters[2] and chapters[2].plain or ""
-        if text:find("took the blows", 1, true) or text:find("stood in front", 1, true) then pairs_seen = pairs_seen + 1 end
+        -- (2026-11-11 round 2: the role as a role, never an act: "your part was to hold the front")
+        if text:find("hold the front", 1, true) or text:find("part was", 1, true) then pairs_seen = pairs_seen + 1 end
         check(not text:lower():find("damage", 1, true) and not text:lower():find("meter", 1, true), "no meter talk: " .. text)
     end
-    check(pairs_seen >= 1 and pairs_seen < retells, "you tanked, Dahl healed, now and then: " .. pairs_seen .. " of " .. retells)
+    -- (round 3: a role pairing reads as an act; none is the rule)
+    check(pairs_seen < retells, "you tanked, Dahl healed, rarely or never: " .. pairs_seen .. " of " .. retells)
 end
 
 -- A long day, told fuller: quest context (one title occurs three times), the way to the

@@ -12,8 +12,11 @@ local function q(id, title, zone, level, thread, importance, why1, why2, after1,
     P.questIDs[id] = v
     if not shared then P.quests[title] = v end
 end
+-- (progress = true: the `after` lines are chain-progress lines, "went on", "a step forward", written
+-- for a title shared across stages; after a dungeon run that killed the quest's goal, neither book
+-- takes them as the outcome, 2026-11-11)
 local function fallback(title, zone, thread, ids, w1, w2, a1, a2)
-    P.quests[title] = {zone = zone, thread = "world_" .. thread, importance = 3,
+    P.quests[title] = {zone = zone, thread = "world_" .. thread, importance = 3, progress = true,
         why = {w1, w2}, after = {a1, a2}, source = {"corpus_vanilla_quests.txt quests " .. ids}}
 end
 P.threads = {

@@ -166,6 +166,9 @@ events:SetScript("OnEvent", function(_, event, arg)
                 .. (A.CharacterName(A.Me()) or "this character's") .. "'s. Your other characters can add people from it (People > My characters)."
                 .. " Wrong character? Log in with the right one and type /cj movelist.")
         end
+        -- (campfire people keep no journal and leave after two hours: 1.22.0)
+        if A.PruneCampfire then A.PruneCampfire() end
+        if A.PruneCampfireLater then A.PruneCampfireLater() end
         A.db.cjLayout = nil -- (the list window, layout A, is gone since 1.16.0)
         if A.db.bookVariants then A.db.bookVariants.skin, A.db.bookVariants.card = nil, nil end -- (one skin since 1.17.0, no card variant since 1.18.0)
         A.Refresh()

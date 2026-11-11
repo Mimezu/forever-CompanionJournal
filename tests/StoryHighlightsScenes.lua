@@ -81,7 +81,7 @@ for retell = 0, 15 do for _, companion in ipairs({false, true}) do
         -- most three in Everything and two in Highlights, so "all five survive" is retired. The
         -- stages told keep their order, the death its place among them, and no setup is doubled.)
         local previous, told = 0, 0
-        local death = text:find("Ledger Thief",1,true)
+        local death = text:find("Ledger Thief",1,true) or text:find("Ledger thief",1,true) -- (a kind of foe, lowered since 2026-11-11)
         check(death, "the death is told: " .. text)
         for i = 1, 5 do
             local _, at = A.QuestDeeds.ShowsAt(text, ids[i])

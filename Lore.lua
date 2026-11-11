@@ -203,7 +203,7 @@ Add("humanoid", {
     ["Oggleflint"] = {e = "the chieftain of the chasm's troggs"},
     -- Neeru names Taragaman in 5761; Thrall identifies Jergosh and Bazzalan
     -- as the leaders in 5728. Keep Neeru's claim out of omniscient narration.
-    ["Taragaman the Hungerer"] = {e = "the felguard of Ragefire Chasm", kind = "demon", last = true, after = "One of the Searing Blade's demons lay dead beneath Orgrimmar.", afterMore = {"The felguard beneath Orgrimmar had fallen.", "The Searing Blade had lost its felguard beneath the city."}},
+    ["Taragaman the Hungerer"] = {e = "the felguard who led the Searing Blade", kind = "demon", last = true, after = "One of the Searing Blade's demons lay dead beneath Orgrimmar.", afterMore = {"The felguard beneath Orgrimmar had fallen.", "The Searing Blade had lost its felguard beneath the city."}},
     ["Jergosh the Invoker"] = {e = "the warlock who led the Searing Blade's rites"},
     ["Bazzalan"] = {e = "the satyr who kept the Searing Blade's deepest cave", kind = "demon"},
 })

@@ -43,8 +43,9 @@ end
 -- a level-8 one.
 -- Someone another character of yours knows (recognized, or their journal
 -- opened to read) is never written to from here.
+-- (campfire people keep no journal, since 1.22.0: they leave the list two hours after the fire)
 local function Writable(person)
-    return person and not person.npc and not person.recognizedBy and not person.readOnly
+    return person and not person.npc and not person.recognizedBy and not person.readOnly and person.circle ~= "campfire"
 end
 function A.JournalAdd(person, entry)
     if not Writable(person) then return nil end

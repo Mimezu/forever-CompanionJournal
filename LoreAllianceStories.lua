@@ -3666,6 +3666,9 @@ local POV = {
         "{We} knew the coast well by then, and went looking for Old Murk-Eye, the murloc who had led both raids on the lighthouse. {We} killed him and brought Captain Grayson a scale, and the ghost said the Great Sea would be a little safer that night.",
         "Old Murk-Eye had killed the keeper's family before Grayson's eyes, and the dead captain wanted him slain. {We} found him on the shore and ended him, one life laid to rest, Grayson said, so that many more might be saved."},
     [166] = {act = "killed Edwin VanCleef in the Deadmines",
+        -- (when the run's own lines told the kill: only what came of it)
+        afterRun = {"{We} came up into {zone} with VanCleef's head for Gryan Stoutmantle, who called it the beginning of the end for the Defias.",
+            "VanCleef's head went to Gryan Stoutmantle at Sentinel Hill, who called it the beginning of the end for the gang."},
         "There was one task left, Stoutmantle said, and it saddened him to sentence any man to death. {We} went down into the Deadmines beneath Moonbrook, fought through the Defias to Edwin VanCleef, and brought his head back to Sentinel Hill.",
         "{We} faced Edwin VanCleef in the depths of the Deadmines and ended the man who had built the Defias Brotherhood. Gryan Stoutmantle saluted {us} and called it the beginning of the end for the gang."},
 

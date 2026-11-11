@@ -1879,3 +1879,252 @@ if A.JournalTale and A.JournalTale.phrases then
         "{I} set out in {zoneE} with {name}, {bondWord}, at {my} side.",
     }
 end
+
+---------------------------------------------------------------------------
+-- A foe's name in a sentence (2026-11-11, companion deaths lane). Shared by both books.
+-- A generic creature takes "a" ("a Ragefire Trogg", "a Venture Co. geologist"); a named one
+-- takes none ("Bishop Jericho", "Veni Lace", "Hogger"). The record's own flag (a = the
+-- target was of normal rank) is a hint only: the server ranks Bishop Jericho as a normal
+-- unit, and a killer never targeted has no flag at all.
+--   A.FoeNamed(name, flag) -> true for a proper name
+--   A.FoeName(name, flag)  -> "a Ragefire Trogg" / "Bishop Jericho" (plain text, no markup)
+---------------------------------------------------------------------------
+A.FoeKinds = {}
+for w in ("Enforcer Neophyte Cultist Warrior Zealot Gnoll Murloc Spider Duskbat Darkhound Wolf Bear Boar Zombie Skeleton Ghoul "
+    .. "Horror Spirit Bandit Mage Warlock Hunter Rogue Acolyte Initiate Missionary Friar Monk Medic Soldier Footman Sentry "
+    .. "Invader Defender Conjurer Sorcerer Necromancer Adept Thug Brigand Poacher Outrunner Raider Marauder Pillager Reaver "
+    .. "Geomancer Bodyguard Peon Miner Digger Worker Laborer Looter Trapper Smuggler Pirate Sailor Swashbuckler Crab Crocolisk "
+    .. "Raptor Scorpid Scorpion Tiger Panther Lion Lioness Stalker Prowler Hyena Vulture Buzzard Condor Bat Rat Snake Serpent "
+    .. "Adder Lurker Crawler Creeper Recluse Tarantula Kobold Trogg Ogre Elemental Imp Felhound Felhunter Satyr Harpy Centaur "
+    .. "Quilboar Furbolg Treant Golem Abomination Wraith Ghost Banshee Shade Gargoyle Hound Mastiff Worg Yeti Gorilla Basilisk "
+    .. "Turtle Snapper Thresher Oracle Tidehunter Coastrunner Mongrel Ravager Brute Mauler Butcher Assassin Infiltrator Spy "
+    .. "Peasant Deserter Recruit Trainee Squire Knight Crusader Gryphon Wyvern Drake Whelp Ooze Slime Sludge Worm Grub Beetle "
+    .. "Moth Wasp Plainstrider Strider Kodo Zhevra Stag Owl Hawk Eagle Wizard Tracker Scavenger Vermin Cook Magus Summoner "
+    .. "Torturer Chaplain Preserver Diviner Evoker Pyromancer Gallant Protector Guardsman Henchman Lackey Minion Rager "
+    .. "Destroyer Shadowcaster Shadowmage Warder Overseer Taskmaster Slaver Enchanter Plaguehound Plaguebat Carrion "
+    .. "Geologist Surveyor Engineer Mechanic Tinkerer Alchemist Farmer Farmhand Fisherman Lumberjack Logger Woodcutter "
+    .. "Guard Grunt Watchman Scout Archer Marksman Crossbowman Spearman Swordsman Axeman Shieldbearer Cleric Priest Priestess "
+    .. "Shaman Witchdoctor Mystic Apprentice Journeyman Veteran Champion Captain Lieutenant Sergeant Corporal "
+    .. "Dwarf Orc Troll Gnome Human Elf Tauren Goblin Naga Dryad Dragonkin Makrura Nerubian Silithid Hornet Hatchling "
+    .. "Matriarch Patriarch Broodling Fledgling Spiderling Pup Cub Bull Cow Ram Ewe Doe Buck Toad Frog Lizard Gecko "
+    .. "Hide Savage Mongrel Bruiser Lookout Headhunter Axethrower Berserker Mercenary Shredder Operator Deforester Wrangler Drudger "
+    .. "Ursa Frostsaber Walker Shambler Bonewarder Logger Marauder Interloper Snowstrider Runt Myrmidon Snapjaw Nightsaber Wisp"):gmatch("%a+") do
+    A.FoeKinds[w] = true
+end
+-- (a kind word that is part of a species name keeps its capital when a teller lowers the kind:
+-- "a Raging Rot Hide", but "a Venture Co. geologist")
+A.FoeKindsProper = {Hide = true}
+-- (a kind in front of "of": "Son of Arugal", "Servant of Grol", "Spawn of Hakkar")
+A.FoeKindsOf = {}
+for w in ("Son Daughter Servant Spawn Minion Agent Shade Spirit Remnant Hound Whelp Acolyte Cultist Defender Guardian Warden "
+    .. "Herald Emissary Envoy Blade Fist Hand Eye Voice Child Children Sons Daughters Servants Spawns Minions Agents Hounds Whelps "
+    .. "Priest Priestess Disciple Follower Zealot Knight Champion Warrior Soldier Guard Scout Hunter Stalker Keeper"):gmatch("%a+") do
+    A.FoeKindsOf[w] = true
+end
+-- (a title in front of a name: the whole is a person)
+A.FoeTitles = {}
+for w in ("Lady Lord King Queen High Arch Captain Commander General Lieutenant Sergeant Corporal Major Colonel Admiral Marshal "
+    .. "Deputy Warden Chief Chieftain Overseer Foreman Prince Princess Mayor Master Mistress Doctor Professor Archmage Magus "
+    .. "Thane Baron Duke Sir Keeper Loremaster Prospector Grand Bishop Dark Warlord Overlord Elder Brother Sister Father Mother "
+    .. "Deathguard Executor Magistrate Apothecary Innkeeper Farmer Mountaineer Sentinel Guard Watcher Ranger Shaman Mage Priest "
+    .. "Priestess Scout Grunt Baroness Countess Count Emperor Empress Chancellor Councillor Advisor Instructor Trainer "
+    .. "Witchdoctor Shadowmage Highlord Warchief Prophet Seer Oracle Sage Archbishop Cardinal Inquisitor"):gmatch("%a+") do
+    A.FoeTitles[w] = true
+end
+function A.FoeNamed(name, flag)
+    name = tostring(name or ""):gsub("[{}%[%]|]", "")
+    if name == "" then return true end
+    if A.Lore and A.Lore.Boss and A.Lore.Boss(name) then return true end
+    local first = name:match("^(%a+)")
+    local words = 0
+    for _ in name:gmatch("%S+") do words = words + 1 end
+    local last = name:match("(%a+)$") or ""
+    if words >= 2 and A.FoeTitles[first or ""] and not A.FoeKinds[last] then return true end
+    if words == 1 then return not A.FoeKinds[first or ""] end
+    -- ("Son of Arugal", "Servant of Grol": a kind in front of "of" is one of many)
+    if name:find(" of ", 1, true) and A.FoeKindsOf[first or ""] then return false end
+    if name:find("'", 1, true) or name:find(" the ", 1, true) or name:find(" of ", 1, true) or name:match("^[Tt]he ") then return true end
+    if A.FoeKinds[last] then return false end
+    -- (an agent noun at the end is a kind: Tunneler, Gravedigger, Windcaller)
+    if last:match("%l[eo]r$") or last:match("%list$") or last:match("%lman$") or last:match("%lling$") or last:match("%lkin$") then return false end
+    if flag ~= nil then return not flag end
+    return true
+end
+local FOE_ADJ = {Young = true, Elder = true, Old = true, Giant = true, Great = true, Greater = true, Lesser = true,
+    Large = true, Small = true, Wild = true, Rabid = true, Feral = true, Dire = true, Mangy = true, Savage = true,
+    Dark = true, Black = true, Grey = true, Gray = true, White = true, Red = true, Green = true, Brown = true,
+    Forest = true, Plains = true, Mountain = true, Cave = true, Swamp = true, Jungle = true, Desert = true,
+    Frenzied = true, Starving = true, Ravenous = true, Sickly = true, Ancient = true, Rotting = true, Mottled = true,
+    Timber = true, Prairie = true, Coastal = true, Hill = true, Snow = true, Ice = true, Fire = true}
+function A.FoeName(name, flag)
+    name = tostring(name or ""):gsub("[{}%[%]|]", "")
+    if A.FoeNamed(name, flag) then return name end
+    -- (the kind word in small letters, the proper noun kept: "a Venture Co. geologist", "a Ragefire
+    -- trogg", "a kobold tunneler", "a son of Arugal"; a word the tables do not know stays as the game
+    -- writes it, "a Nightbane Vile Fang")
+    local function Kind(w) return A.FoeKinds[w] or A.FoeKindsOf[w] or w:match("%l[eo]r$") or w:match("%list$") or w:match("%lman$") end
+    local words = {}
+    for w in name:gmatch("%S+") do words[#words + 1] = w end
+    if #words >= 2 then
+        local last = words[#words]
+        if last:match("^%u%l+$") and Kind(last) and not A.FoeKindsProper[last] then
+            words[#words] = last:lower()
+            -- (the plain describing words right before it go small too: "a vampiric duskbat",
+            -- "a young forest bear"; a name part stays, "a Defias pathstalker", "a Venture Co. geologist")
+            for i = #words - 1, 1, -1 do
+                local w = words[i]
+                if w:match("^%u%l+$") and (FOE_ADJ[w] or w:match("%l[il]c$") or w:match("%lous$") or w:match("%ling$")
+                    or w:match("%l[^e]ed$") or w:match("%lful$") or w:match("%live$")) then
+                    words[i] = w:lower()
+                else break end
+            end
+        end
+        local first = words[1]
+        if first:match("^%u%l+$") and (A.FoeKinds[first] or A.FoeKindsOf[first]) then words[1] = first:lower() end
+        name = table.concat(words, " ")
+    elseif name:match("^%u%l+$") and A.FoeKinds[name] and not A.FoeKindsProper[name] then
+        -- (a one-word kind the same way: "a prowler", "a plaguehound")
+        name = name:lower()
+    end
+    return (name:match("^[aeiouAEIOU]") and "an " or "a ") .. name
+end
+
+---------------------------------------------------------------------------
+-- Deaths at their moments (2026-11-11, companion deaths lane): a wipe in a dungeon is one
+-- sentence at its moment and the retry is "went back down"; deaths in the field are told
+-- where and when they fell, never as a count against the day. Tokens: {killer} (with its
+-- article where it takes one), {name}, {place}, {count} ("twice", "three times").
+---------------------------------------------------------------------------
+-- A wipe: you fell, and the companion with you, then the party went back down (one sentence:
+-- the retry is folded, never a beat of its own).
+PB.wipeTry = {
+    "The first try went badly when {killer} got {me} and {name} fell with {me}, and {we} went back down.",
+    "{killer} got {me} on the first try, and {name} fell too, so {we} went back down.",
+    "The first run ended early, when {killer} killed {me} and {name} fell with {me}, and {we} went back down.",
+}
+-- A later wipe in the same run: never "the first try" twice. {nth} the death ("second").
+PB.wipeAgain = {
+    "{killer} got {me} a {nth} time, {name} fell with {me}, and {we} went back down.",
+    "{killer} got {me} a {nth} time, and {name} with {me}, and {we} went back down once more.",
+}
+PB.wipeAgainAlone = {
+    "{killer} got {me} a {nth} time, and {we} went back down once more.",
+}
+-- Their death on the way to a boss, with nothing of yours beside it: told with the boss it came before.
+PB.theyDieBefore = {"{name} died before {boss} fell.", "{name} fell first, and then {boss} went down."}
+-- A boss that killed the companion before it fell: a sentence after the roll that holds it, never
+-- the death and the kill as two lines.
+PB.theyDieBossInRoll = {"{boss} took {name} down before falling.", "{name} fell to {boss} first, and {bossShort} went down after."}
+-- The same killer a second time that day ({nth}: "second", "third").
+PB.dieAgainFoe = {"{killer} got {me} a {nth} time.", "{killer} killed {me} again.", "{Killer} had {me} a {nth} time."}
+-- A wipe where only your death is recorded.
+PB.wipeTryAlone = {
+    "The first try went badly, {killer} got {me}, and {we} went back down.",
+    "{killer} killed {me} on the first try, so {we} went back down.",
+}
+-- The run ended on the wipe: no retry recorded (the unfinished line says what was left).
+PB.wipeEnd = {
+    "{killer} got {me}, and {name} fell with {me}.",
+    "{killer} killed {me}, and {name} fell too.",
+}
+-- Their deaths at a moment, before yours or on their own.
+PB.theyDieMoment = {"{name} died {count} in {place}.", "{name} was killed {count} in {place}.", "{name} fell {count} in {place}."}
+-- Their deaths at a moment, then yours: one sentence.
+PB.momentBothOnce = {
+    "{name} died in {place}, and {killer} got {me} as well.",
+    "In {place}, {name} died and {killer} killed {me}.",
+    "{name} fell in {place}, and {killer} killed {me} too.",
+}
+PB.momentBothTimes = {
+    "{name} died {count} in {place}, and {killer} got {me} as well.",
+    "In {place}, {name} died {count} and {killer} killed {me}.",
+    "{name} fell {count} in {place}, and then {killer} killed {me}.",
+}
+-- Your death with theirs in the same minute.
+PB.dieWithThem = {
+    "{killer} killed {me} in {place}, and {name} fell too.",
+    "{killer} got {me} in {place}, and {name} with {me}.",
+    "{killer} killed {me}, and {name} fell with {me}.",
+}
+-- Their death right after yours was told.
+PB.theyDieToo = {"{name} fell there too.", "{name} died there as well.", "{name} went down there too."}
+-- The run's roll when the lord of the place was the goal (a hand-in about it that day) and fell
+-- among the others: {before} the kills before it, {lordText} the lord with its epithet, {after}
+-- the kills after it, {shortRaw} the lord's short name.
+PB.killRollGoalMid = {
+    "{we} killed {before}, then {lordText}, the one {we} had come for, and after that {after}.",
+    "{before} fell first. Then came {lordText}, the one {we} had come for, and after {shortRaw} {we} killed {after}.",
+}
+PB.killRollGoalLast = {
+    "{we} killed {before}, and last of all {lordText}, the one {we} had come for.",
+    "{before} fell first, and then {lordText}, the one {we} had come for.",
+}
+-- The level that came with a run: folded into the run's end, never a bare tally. {runPlace} the
+-- dungeon, {theirs} their level, {mine} yours.
+PB.runLevelBoth = {
+    "Both of {us} came up out of {runPlace} at level {theirs}.",
+    "The run brought both of {us} to level {theirs}.",
+    "{We} came out of {runPlace} a level higher, both of {us} at {theirs}.",
+}
+PB.runLevelBothDiff = {
+    "{We} came up out of {runPlace} at level {mine}, and {name} at level {theirs}.",
+    "The run brought {me} to level {mine} and {name} to level {theirs}.",
+}
+PB.runLevelMine = {"{I} came up out of {runPlace} at level {mine}.", "The run brought {me} to level {mine}."}
+PB.runLevelTheirs = {"{name} came up out of {runPlace} at level {theirs}.", "The run brought {name} to level {theirs}."}
+-- The chapter's close (2026-11-11, round 3), from the record only: what the evening came to (the
+-- dungeon behind you, the work for the givers done) and where it ended ({place} and {from} plain,
+-- {span} "two and a half hours", {crossings} "two zeppelin crossings", {clock} "past midnight" or
+-- nothing, {part} "evening"/"night"). Never a moral, never a death or an errand last.
+PB.closeDone = {"{Dungeon} was behind {us}"}
+PB.closeWork = {"the work for {givers} was done"}
+PB.closeStopFar = {
+    "{name} stopped in {place} {clock}, {span} and {crossings} after the {part} began in {from}.",
+    "{name} left {me} in {place} {clock}, {span} and {crossings} from {from}.",
+}
+PB.closeStopNear = {"{name} stopped in {place} {clock}, {span} after the {part} began in {from}."}
+PB.closeStopSame = {"{name} stopped {clock}, {span} after the {part} began in {place}.", "{span} after the {part} began in {place}, {name} stopped {clock}."}
+PB.closeEndFar = {"The {part} ended in {place} {clock}, {span} and {crossings} from {from}.", "{span} and {crossings} from {from}, the {part} ended in {place} {clock}."}
+PB.closeEndNear = {"The {part} ended in {place} {clock}, {span} after it began in {from}.", "{span} after it began in {from}, the {part} ended in {place} {clock}."}
+PB.closeEndSame = {"The {part} ended {clock} where it began, in {place}, {span} later.", "{span} after it began there, the {part} ended {clock} in {place}."}
+-- A raise by someone other than the companion, in the companion's book (round 4): {raiser} the
+-- name as recorded, a stranger when no party window of your own book covers the moment.
+PB.rezOther = {"{raiser} raised {me} from death.", "{raiser} brought {me} back."}
+PB.rezOtherClause = {"{raiser} brought {me} back", "{raiser} raised {me}"}
+PB.rezStranger = {"{raiser}, a stranger, stopped to raise {me}.", "{raiser}, a stranger, brought {me} back from death."}
+-- A count folded on the last line of a bad moment (four deaths or more): "..., five deaths in ten minutes between {us}".
+PB.deathsCountClause = {"{count} deaths in {span} between {us}", "{count} deaths between {us} in {span}"}
+-- The level a run brought, as a clause on the run's closing sentence ("..., and the run took you
+-- to level 17"): never a tally of its own, never "came with it".
+PB.runLevelClause = {
+    both = {"the run took both of {us} to level {theirs}", "both of {us} came out of it at level {theirs}"},
+    mine = {"the run took {me} to level {mine}", "{I} came out of it at level {mine}"},
+    theirs = {"{name} came out of it at level {theirs}", "the run took {name} to level {theirs}"},
+}
+-- Earned once in a long while: a wipe, then the lord of the place killed on the second try. It
+-- points at the run's own facts ({killer} the foe of the first try, {shortRaw} the lord), plainly.
+PB.runProud = {
+    "{killer} had sent {us} back up once, and this time it was {shortRaw} who stayed down.",
+    "The first try had ended with {killer}, the second with {shortRaw}.",
+}
+-- A role is said as a role, never as an act the record does not hold.
+PB.rolePart = {tank = "to hold the front", healer = "to keep the others on their feet", damage = "the killing"}
+PB.rolesPlain = {
+    "{my} part was {myPart}, and {name}'s was {theirPart}.",
+    "{name}'s part was {theirPart}, {my} own {myPart}.",
+}
+if PB.voice and PB.voice.we and PB.voice.you then
+    PB.voice.we.runLevelBoth = {"{name} and I both came up out of {runPlace} at level {theirs}."}
+    PB.voice.you.runLevelBoth = {"{my} party came up out of {runPlace} at level {theirs}, {me} and {name} both."}
+end
+-- They fell, you raised them, they fell again (the raise was said between).
+PB.theyDieAgain = {"{They} fell again.", "{They} died again there.", "It did not hold, and {they} fell again."}
+PB.momentBothAgain = {
+    "{They} fell again, and {killer} killed {me} too.",
+    "Then {they} died again, and {killer} got {me} with {them}.",
+    "{They} went down again, and {killer} killed {me} with {them}.",
+}
+if PB.voice and PB.voice.we and PB.voice.you then
+    PB.voice.we.theyDieMoment = {"{name} died {count} in {place}, with me there."}
+    PB.voice.you.theyDieMoment = {"{my} party lost {name} {count} in {place}."}
+end

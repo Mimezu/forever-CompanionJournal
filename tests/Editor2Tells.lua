@@ -106,7 +106,7 @@ do
                     if s:find("Taragaman", 1, true) and s:find("Bazzalan", 1, true) and s:find("Jergosh", 1, true) then joined = true end
                 end
                 check(joined, "a lord killed before the final kill stays in the roll (" .. voice .. " " .. retell .. "): " .. ragefire)
-                check(ragefire:find("Cultist", 1, true), "the death before the lord is told: " .. ragefire)
+                check(ragefire:find("Cultist", 1, true) or ragefire:find("cultist", 1, true), "the death before the lord is told: " .. ragefire) -- (a kind of foe, lowered since 2026-11-11)
                 check(ragefire:find("brought", 1, true) or ragefire:find("bring", 1, true) or ragefire:find("raised", 1, true) or ragefire:find("prayed", 1, true)
                     or ragefire:find("prayers", 1, true) or ragefire:find("back on", 1, true) or ragefire:find("feet", 1, true), "the rescue is told: " .. ragefire)
                 -- the quest title keeps its own small "and"

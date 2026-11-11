@@ -319,7 +319,11 @@ do
     local spirits = false
     for retell, chapters in pairs(Tellings(p)) do
         local two = chapters[2].plain
-        check(not two:find("level 17", 1, true) or two:find("earlier", 1, true) or two:find("in all of it", 1, true),
+        -- (pass 3: or told where it came, before the turn-ins: "... and reached level 17 there.")
+        local at17 = two:find("level 17", 1, true)
+        local placed = at17 and (two:find("level 17 there", 1, true) or two:find("level 17 came there", 1, true)
+            or two:find("level 17 with it", 1, true) or two:find("level 17 came with it", 1, true)) and at17 < #two / 2
+        check(not at17 or placed or two:find("earlier", 1, true) or two:find("in all of it", 1, true),
             "a level before the turn-ins is not told as their end (" .. retell .. "): " .. two)
         local three = chapters[3].plain
         local mount, forty = three:find("mount", 1, true), three:find("forty", 1, true) or three:find("40", 1, true)

@@ -16,7 +16,7 @@ local function Now() return time and time() or 0 end
 
 -- What belongs to a character's relationship (the rest is the shared card).
 local REL = {circle = true, journal = true, met = true, metZone = true, metHow = true, added = true,
-    origin = true, bond = true, retell = true}
+    origin = true, bond = true, retell = true, campfireT = true}
 A.RelationshipFields = REL
 
 -- Other characters' people show in the world with a chain link (not their

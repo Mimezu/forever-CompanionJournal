@@ -87,7 +87,7 @@ for retell = 0, 15 do for _, brief in ipairs({false, true}) do for _, companion 
         end
     end
     check(told >= 1, "the Stonetalon chapter tells its work: " .. stonetalon)
-    check(stonetalon:find("Venture Co. Logger", 1, true), "expanding local work retains recorded death")
+    check(stonetalon:find("Venture Co. Logger", 1, true) or stonetalon:find("Venture Co. logger", 1, true), "expanding local work retains recorded death") -- (a kind of foe, lowered since 2026-11-11)
     if not companion then
         local mixed = out["2024-06-30"]
         local dungeon = mixed:find("Uldaman", 1, true)
@@ -144,7 +144,7 @@ for _, companion in ipairs({false, true}) do for _, brief in ipairs({false, true
     -- (a dense outing tells its few stages worth telling, the rest folds or is left out: "every
     -- stage a scene" and "unknown work named or counted" are retired; a told stage stays on its
     -- side of the death)
-    local death = text:find("Recorded Stonecutter", 1, true)
+    local death = text:lower():find("recorded stonecutter", 1, true)
     check(death, "the death is told: " .. text)
     local told = 0
     for i, id in ipairs(ids) do

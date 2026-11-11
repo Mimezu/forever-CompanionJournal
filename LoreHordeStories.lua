@@ -3121,6 +3121,9 @@ local POV = {
         "Neeru named {me} one of his lieutenants and spoke of new work for his agents in the Barrens and Ashenvale. {I} carried it all back to Thrall, who had heard nothing of the Council in Ashenvale and sent his spies to look.",
         "As one of Neeru's new lieutenants {I} learned of the Shadow Council's schemes beyond Ragefire Chasm. Thrall told {me} {I} had done well and promised to call on {me} again soon."},
     [5761] = {act = "slew Taragaman the Hungerer in Ragefire Chasm",
+        -- (when the run's own lines told the kill: only what came of it)
+        afterRun = {"{We} came up into {zone} with Taragaman's heart, proof for Thrall that the cult under his city had lost its master.",
+            "Taragaman's heart came up out of the chasm with {us}, and with it the proof Thrall wanted that the Searing Blade had lost its felguard."},
         "The Searing Blade worked from Ragefire Chasm to subvert the Horde, led by a felguard named Taragaman the Hungerer. {We} went down into the fire beneath the city and killed him, and his heart went up to be shown to Thrall.",
         "{We} fought down through Ragefire Chasm to Taragaman the Hungerer and cut out his heart. The demon who had led the Searing Blade under the Warchief's own city was dead."},
     [95350] = {act = "carried the Windshapers' greeting to Thrall", solo = true,

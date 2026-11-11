@@ -97,7 +97,7 @@ check(Chapter(2):find("Brill", 1, true) and (Chapter(2):find("home", 1, true) or
     or Chapter(2):find("quiet", 1, true) or Chapter(2):find("my own people", 1, true) or Chapter(2):find("Forsaken", 1, true)), "Brill, told as home to the Forsaken: " .. Chapter(2))
 check(Chapter(2):find("Fields of Grief", 1, true) or Chapter(2):find("Gordo's Task", 1, true) or Chapter(2):find("Rot Hides", 1, true) or Chapter(2):find("five quests", 1, true) or Chapter(2):find("Five quests", 1, true),
     "the day's quests: " .. Chapter(2))
-check(Chapter(3):find("Agamand Mills Mine", 1, true) and Chapter(3):find("Kobold Tunneler", 1, true), "the mine and the kobold: " .. Chapter(3))
+check(Chapter(3):find("Agamand Mills Mine", 1, true) and (Chapter(3):find("Kobold Tunneler", 1, true) or Chapter(3):find("Kobold tunneler", 1, true)), "the mine and the kobold: " .. Chapter(3)) -- (a kind of foe, lowered since 2026-11-11)
 check(not Chapter(3):find("Rattlecage", 1, true), "a close call is not told on a day you died: " .. Chapter(3))
 check(Chapter(4):find("honest work", 1, true) or Chapter(4):find("my trades", 1, true), "an honest day: " .. Chapter(4))
 check(Chapter(4):find("mined twenty-two veins", 1, true) and (Chapter(4):lower():find("tailoring", 1, true) or Chapter(4):find("needle and thread", 1, true) or Chapter(4):find("sewed", 1, true)), "the work itself: " .. Chapter(4))
@@ -165,8 +165,11 @@ do
         check(not text:lower():find("damage", 1, true), "no meter talk in the story: " .. text)
         check(text:find("Searing Blade", 1, true) or text:find("Orgrimmar", 1, true), "why you went in, the first time: " .. text)
     end
-    check(roles >= 1 and roles < told, "your part, now and then: " .. roles .. " of " .. told)
-    check(boasts >= 1 and boasts < told, "a deed worth saying, now and then: " .. boasts .. " of " .. told)
+    -- (round 4, 2026-11-11: the record has a role, never the act, so the role lines are off in a dungeon run;
+    -- the boast from the fight's own numbers may still come, now and then)
+    check(roles < told, "your part, now and then at most: " .. roles .. " of " .. told)
+    -- (round 5, 2026-11-11: the stat boast is off in a dungeon run, "Taragaman never got past me" read as invented judgement)
+    check(boasts < told, "a deed worth saying, now and then at most: " .. boasts .. " of " .. told)
     local p = {self = true, charKey = "t-forever", name = "Tank", race = "Orc", faction = "Horde", class = "WARRIOR", journal = j}
     local simple = A.JournalPlain(A.JournalSceneText(p, A.JournalBook(p)[1].scenes[1], "you"))
     check(simple:find("I did the most damage in that fight.", 1, true) and simple:find("as the tank", 1, true), "Simple says it plainly: " .. simple)

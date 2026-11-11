@@ -4,6 +4,34 @@ The players and NPCs you want to remember, and a journal of what you lived
 through together. It came out of Forever Names 1.10: the People list, the
 journal, the group popup and the campfire now live here, in their own window.
 
+## 1.23.0: the storyteller tells adventures, not events
+
+A rebuilt storyteller for the book you read by default (Current), tested on Alberich's book and
+on randomly generated days for every race, class and dungeon. The same rules serve your own
+book and your companions' books.
+
+- **The day as episodes.** Before writing, the storyteller splits the evening into episodes (a
+  dungeon run, a piece of work in one place, a bad stretch of deaths, a journey) and tells each as
+  one paragraph in time order: who went, why, where, what happened, what it cost, what came of it.
+  Each chapter closes on what the evening came to and where it ended.
+- **A dungeon run is one adventure.** The reason first, who went, a first dungeon said once, a
+  wipe as the first try and the retry as a beat, the bosses as a progression with the goal arriving
+  at the climax ("Then came Taragaman the Hungerer, the felguard who led the Searing Blade, the one
+  we had come for"), and a closing sentence on what came of it, with the level folded in.
+- **Deaths told as one movement.** A bad stretch is one passage, in order: the first death, who
+  raised you, the last fight, the count once. A wipe is one fight even when the deaths were logged
+  during the run back. No "Dahlia and Dahlia", no death piled into the wrong place.
+- **No meaningless back and forth.** A quick crossing into a zone and straight back (a cave mouth,
+  a border, a ghost run) is not told; a chain of lifts, zeppelins and flights is one journey.
+- **People and places.** A companion is never "a stranger" when they raise you; "we" only when
+  someone was with you; a generic killer is "a Venture Co. geologist", a named one is "Veni Lace".
+  A corner of a city ("Sewers") is told as the city.
+- **The level** is said once a chapter, where it came.
+- **Campfire people** keep no journal, and leave your list two hours after the last fire you
+  shared. Their existing journals are cleared at login.
+- Two files were added (`JournalEpisodes.lua`, `JournalSelfCompose.lua`): restart the game once,
+  `/reload` does not load them.
+
 ## 1.22.0: the author's setup is the default
 
 A fresh install now starts with the settings used on Alberich. Existing installs keep

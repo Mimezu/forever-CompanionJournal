@@ -100,7 +100,7 @@ for _, voice in ipairs({"we", "you"}) do for retell = 0, 7 do
         local player, card = input("Blackrock Depths", "Alliance", {7848, 3802, 4123}, conflict)
         local text = render(player, card, companion, brief, retell, voice)
         ordered(text, {7848, 3802, 4123}, brief)
-        local clash = text:find("Recorded Cave Stalker", 1, true)
+        local clash = text:lower():find("recorded cave stalker", 1, true) -- (a kind of foe, lowered since 2026-11-11)
         local before, after = outcome(text, 7848, brief), outcome(text, 3802, brief)
         check(clash and (not before or before < clash) and (not after or clash < after), "quest crossed a recorded " .. conflict .. ": " .. text)
     end
@@ -116,7 +116,7 @@ for _, voice in ipairs({"we", "you"}) do for retell = 0, 7 do
             local text = render(player, card, false, brief, retell, voice)
             if not brief then
                 ordered(text, {207, 900007, 206}, brief)
-                local clash = text:find("Recorded Jungle Stalker", 1, true)
+                local clash = text:lower():find("recorded jungle stalker", 1, true)
                 local fallback, last = text:find("Uncatalogued Errand 900007", 1, true), outcome(text, 206)
                 if conflict then check(clash and (not fallback or fallback < clash) and (not last or clash < last), "fallback crossed conflict: " .. text) end
                 samples.fallback = samples.fallback or text
@@ -135,7 +135,7 @@ for _, voice in ipairs({"we", "you"}) do for retell = 0, 7 do
                 -- fallback-group checks are retired; what is told keeps its order and its side of a death)
                 ordered(text, {900001, 900002, 207, 900003, 900007, 900004, 206, 900005, 900006}, false)
                 if conflict then
-                    local death = text:find("Recorded Jungle Stalker", 1, true)
+                    local death = text:lower():find("recorded jungle stalker", 1, true)
                     local early, late = toldAt(text, 207), toldAt(text, 206)
                     check(death and (not early or early < death) and (not late or death < late), "told work crossed a conflict: " .. text)
                 end

@@ -167,7 +167,7 @@ for retell = 0, 7 do
         if printing and retell == 0 then print("== own " .. (brief and "Highlights" or "Everything") .. "\n" .. text .. "\n") end
         for _, bad in ipairs(DEFECTS) do check(not has(text, bad), "defect '" .. bad .. "' in own book: " .. text) end
         check(has(text, "with Dahlia, my wife, at my side"), "the life begins with Dahlia at my side: " .. text)
-        check(text:find("[Aa] Vampiric Duskbat") ~= nil, "the killer is a kind, with its article: " .. text)
+        check(text:lower():find("a vampiric duskbat", 1, true) ~= nil, "the killer is a kind, with its article: " .. text)
         local _, deathknell = text:gsub("Deathknell", "")
         check(deathknell <= 2, "Deathknell named at most twice: " .. deathknell)
         check(not text:find(":", 1, true) and not text:find("?", 1, true), "no colon or question: " .. text)
@@ -201,7 +201,7 @@ for retell = 0, 7 do
             local full = Own(false, retell)
             check(#text < #full * 0.6, "Highlights is a real cut: " .. #text .. " of " .. #full)
             check(#Sentences(text) <= 10, "Highlights is a short paragraph or two: " .. #Sentences(text) .. " " .. text)
-            check(has(text, "Duskbat") and has(text, "Brill"), "Highlights keeps the death and the evening's end: " .. text)
+            check((has(text, "Duskbat") or has(text, "duskbat")) and has(text, "Brill"), "Highlights keeps the death and the evening's end: " .. text)
         end
         -- The companion book: the pair's evening, no second copy of the own book's lines.
         for _, voice in ipairs({"we", "you"}) do

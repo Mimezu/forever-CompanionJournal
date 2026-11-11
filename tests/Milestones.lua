@@ -359,7 +359,11 @@ do
         check(dungeon and (dungeon.plain:find("first dungeon", 1, true) or dungeon.plain:find("never been inside", 1, true)
             or dungeon.plain:find("first time under", 1, true) or dungeon.plain:find("first dungeon of my life", 1, true)),
             label .. ": the first dungeon said as one: " .. (dungeon and dungeon.plain or "none"))
-        check(dungeon and (dungeon.plain:find("killed me once", 1, true) or dungeon.plain:find("cost me a death", 1, true)),
+        -- (round 2, 2026-11-11: the first dungeon is said with going in, and the death it cost is told in the run
+        -- itself, "Lord Pythas was the end of me", not as a last word after it)
+        check(dungeon and (dungeon.plain:find("killed me once", 1, true) or dungeon.plain:find("cost me a death", 1, true)
+            or dungeon.plain:find("killed me", 1, true) or dungeon.plain:find("end of me", 1, true) or dungeon.plain:find("got me", 1, true)
+            or dungeon.plain:find("I died", 1, true) or dungeon.plain:find("I fell", 1, true)),
             label .. ": the first dungeon that killed me once: " .. (dungeon and dungeon.plain or "none"))
         local pvp = Chapter(own, "Gorna", true)
         check(pvp and (pvp.plain:find("other side", 1, true) or pvp.plain:find("Alliance", 1, true)), label .. ": the first honorable kill")
@@ -406,7 +410,8 @@ do
         check(sixty, label .. ": level sixty")
         check(sixty and (sixty.plain:find("begun in", 1, true) or sixty.plain:find("set out from", 1, true) or sixty.plain:find("started from", 1, true)
             or sixty.plain:find("before, I had been", 1, true)), label .. ": the look-back: " .. (sixty and sixty.plain or "none"))
-        check(sixty and sixty.plain:find("Burning Blade Thug", 1, true), label .. ": the look-back names the first killer: " .. (sixty and sixty.plain or "none"))
+        -- (2026-11-11: a kind of foe takes "a" and a lowered kind word, "a Burning Blade thug")
+        check(sixty and (sixty.plain:find("Burning Blade Thug", 1, true) or sixty.plain:find("Burning Blade thug", 1, true)), label .. ": the look-back names the first killer: " .. (sixty and sixty.plain or "none"))
         check(ChaptersWith(own, "evel sixty\n|evel 60") == 1, label .. ": sixty once")
         -- the raids
         local azuregos = Chapter(own, "Azuregos", true)
