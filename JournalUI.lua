@@ -3,9 +3,9 @@ local _, A = ...
 -- reading choices, a person's one-line summary and class icon, and the ways in
 -- to someone's journal. The book is the only window.
 
-A.defaults.journalStyle = "a"
+A.defaults.journalStyle = "b"
 A.defaults.journalMode = "all"
-A.defaults.journalVoice = "simple"
+A.defaults.journalVoice = "story"
 local STYLES = {"a", "b", "c", "d", "e"}
 function A.JournalStyle()
     local style = A.db and A.db.journalStyle

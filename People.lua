@@ -2,19 +2,19 @@ local _, A = ...
 -- People: the players (and NPCs) you want to remember. Each character has
 -- its own list (Characters.lua); a person's card (display name, icon and
 -- color, note, when and where you last saw them) is shared by all of them.
--- Every display feature is its own toggle (all off by default). Lookups are a
+-- Every display feature is its own toggle (on by default since 1.22.0). Lookups are a
 -- few table reads per plate, and only while one of them is on.
 local function Public(value) return not issecretvalue or not issecretvalue(value) end
 local function Text(value)
     return Public(value) and type(value) == "string" and value ~= "" and value or nil
 end
 
-A.defaults.peopleRename, A.defaults.peopleIcons = false, false
-A.defaults.peopleTooltip, A.defaults.peopleLastSeen, A.defaults.peopleMenu = false, false, false
+A.defaults.peopleRename, A.defaults.peopleIcons = true, true
+A.defaults.peopleTooltip, A.defaults.peopleLastSeen, A.defaults.peopleMenu = true, true, true
 A.defaults.colors.people = {1, 0.55, 0.85}
 -- Categories: companions (added by you), acquaintances (auto-added from your
 -- groups, or moved there), and NPCs (always their own category).
-A.defaults.peopleAutoGroup = false
+A.defaults.peopleAutoGroup = true
 -- Groupmates added automatically get the group icon (theirs to change after).
 A.defaults.peopleGroupIcon = true
 A.defaults.colors.groupmate = {0.55, 0.8, 1}
@@ -164,7 +164,7 @@ function A.RemoveAcquaintances() A.RemoveCircle("acquaintance") end
 -- Campfire (experimental): while your campfire timer aura runs, friendly
 -- players near you who have the same aura are sitting with you. A few scans
 -- during your one-minute sit, over plates already tracked; nothing otherwise.
-A.defaults.peopleAutoCampfire = false
+A.defaults.peopleAutoCampfire = true
 -- People added at a campfire get the fire icon (theirs to change after). On by
 -- default: it only matters once the experimental campfire option is on.
 A.defaults.peopleCampfireIcon = true

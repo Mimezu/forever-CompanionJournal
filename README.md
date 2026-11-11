@@ -4,6 +4,17 @@ The players and NPCs you want to remember, and a journal of what you lived
 through together. It came out of Forever Names 1.10: the People list, the
 journal, the group popup and the campfire now live here, in their own window.
 
+## 1.22.0: the author's setup is the default
+
+A fresh install now starts with the settings used on Alberich. Existing installs keep
+every setting they have.
+
+- **People:** display names, icons on nameplates, tooltips, "last seen", the right-click
+  menu, everyone you group with added as acquaintances, the popup asking about them when
+  they leave, and the campfire (experimental) all start on.
+- **Book:** the large size (C), two chapters side by side (a spread), style B, the
+  "story" voice, and the notice when today's chapter is new and you rest.
+
 ## 1.21.0: the planned storyteller breathes (Settings > Testing > Storyteller: Planned)
 
 A second writer's pass, after a harsh read of Alberich's own book. Still off by default;

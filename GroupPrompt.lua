@@ -2,14 +2,14 @@ local _, A = ...
 -- Group prompt: instead of adding groupmates automatically, ask when they leave
 -- the group (or when you leave it). One small popup lists everyone who left,
 -- each with three choices: companion, acquaintance, or don't add.
--- Off by default. Work only happens on GROUP_ROSTER_UPDATE (already debounced
+-- On by default since 1.22.0. Work only happens on GROUP_ROSTER_UPDATE (already debounced
 -- by People.lua) while both "Everyone I group with" and "Ask" are on.
 local function Public(value) return not issecretvalue or not issecretvalue(value) end
 local function Text(value)
     return Public(value) and type(value) == "string" and value ~= "" and value or nil
 end
 
-A.defaults.peopleGroupPrompt = false
+A.defaults.peopleGroupPrompt = true
 -- Popup look, chosen in the options: "cards", "legacy", "minimal".
 A.defaults.groupPromptStyle = "cards"
 A.groupPromptStyles = {

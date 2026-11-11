@@ -6,9 +6,9 @@ local _, A = ...
 -- (JournalStyles.lua), from the same book and storytellers.
 -- Stage 1 of the book (StorageInvestigation\cj-book-layout-b\DESIGN.md).
 
-A.defaults.bookSize = "a"      -- a, b, c (fixed sizes) or "custom" (dragged)
-A.defaults.bookSpread = "one"  -- "one" chapter at a time, or "two" (a spread)
-A.defaults.bookNotice = false  -- a notice when today's chapter is new and you rest
+A.defaults.bookSize = "c"      -- a, b, c (fixed sizes) or "custom" (dragged)
+A.defaults.bookSpread = "two"  -- "one" chapter at a time, or "two" (a spread)
+A.defaults.bookNotice = true   -- a notice when today's chapter is new and you rest
 A.defaults.bookMinimap = true  -- the minimap button (with the book as /cj)
 
 local SIZES = {a = {860, 580}, b = {1000, 660}, c = {1140, 740}}
