@@ -2239,6 +2239,19 @@ PB.firstFlightOurs = {"{pairNamed} flew for the first time that {part}, out of {
 PB.firstFlightClose = {"{pairNamed} flew out of {zoneD} together, {my} first flight."}
 PB.firstFlightCloseAlt = {"{pairNamed} took a flight out of {zoneD} together, the first {I} ever took."}
 PB.firstFlightFriend = {"{I} took {my} first flight out of {zoneD}, with {name} along."}
+-- Round 17: a close bond's road and run when others were in the party: the two named, the party
+-- honest ("Dahlia and I and the others"), never "Dahlia and I" standing for five.
+PB.roadOutParty = {"With the rest of the party, {pairNamed} set off walking from {from} into {lands}{roadNote}."}
+PB.roadOnParty = {"With the rest of the party, {pairNamed} kept walking into {lands}{roadNote}."}
+PB.roadOutHardParty = {"With the rest of the party, {pairNamed} fought {our} way out of {from} into {lands}{roadNote}."}
+PB.roadOnHardParty = {"With the rest of the party, {pairNamed} fought {our} way into {lands}{roadNote}."}
+PB.roadByCraftParty = {"With the rest of the party, {pairNamed} rode the {craft} to {from}, then walked on into {lands}{roadNote}."}
+PB.roadBackParty = {"At {far} the party turned for home and went back {backWay}."}
+PB.roadBackHardParty = {"At {far} the party gave ground and fell back {backWay}."}
+PB.killRollGoalMidParty = {"With the others, {name} and I cut through {before} to {lordText}, whom {we} had come down for, and then {after}."}
+PB.killRollGoalLastParty = {"With the others, {name} and I cut through {before}, and last of all {lordText}, whom {we} had come down for."}
+-- One already in the group before the companion joined: never "joined" (round 17).
+PB.alsoThereBefore = {"{others} was already with {me}.", "{others} had been with {me} since the {part} began."}
 -- The road and the run told from a close bond: the two side by side.
 PB.roadOutBond = {"From {from}, {pairNamed} set off on foot side by side through {lands}{roadNote}.", "{pairNamed} left {from} on foot together, through {lands}{roadNote}."}
 PB.roadOnBond = {"From there {pairNamed} walked on together through {lands}{roadNote}.", "Side by side, {pairNamed} went on foot through {lands}{roadNote}."}

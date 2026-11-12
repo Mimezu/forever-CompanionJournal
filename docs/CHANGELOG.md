@@ -1,5 +1,11 @@
 # Companion Journal: changes
 
+## 1.33.0 (2026-11-12)
+
+- Deaths in one place are one sentence about the danger
+- An item is told where it came from the first time
+- Companion books: real quest stories, the whole party, record order
+
 ## 1.32.0 (2026-11-12)
 
 - One adventure per paragraph

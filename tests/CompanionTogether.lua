@@ -191,4 +191,25 @@ for _, voice in ipairs({"we", "you"}) do
         check(compared >= 3, "the same evenings in both books")
     end
 end
+-- (round 17) A chapter's told work in turn-in order: the quest lines outside a run stand in the
+-- order of their record times, whatever book and voice
+local orderChecked = 0
+A.JournalTale.DebugLines = function(day, out, beats, times, S)
+    local last
+    for n, l in ipairs(out) do
+        if (beats[n] == "questKey" or beats[n] == "quests") and times[l] and not (S.R and S.R[l]) then
+            check(not last or times[l] >= last - 60, ("turn-in order on %s: %s"):format(tostring(day.key), Plain(l)))
+            last = math.max(last or 0, times[l])
+            orderChecked = orderChecked + 1
+        end
+    end
+end
+for _, voice in ipairs({"we", "you"}) do
+    for _, who in ipairs({{dahlia, "spouse"}, {marrow, "friend"}}) do
+        who[1].bond, who[1].retell = who[2], 0
+        A.JournalTale.Tell(who[1], A.JournalBook(who[1]), voice, player, false)
+    end
+end
+A.JournalTale.DebugLines = nil
+check(orderChecked >= 4, "the order check saw the chapters' work")
 print(assertions .. " checks passed")

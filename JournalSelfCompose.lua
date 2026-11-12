@@ -370,7 +370,13 @@ local function Select(ctx, lines, inRun, episodes, D)
                 end
             end
             if not told and best then
-                best.mode = "act"
+                -- (round 18, reader T: the opening that says where a thing came from, when short)
+                local lead = Sel.Lead and Sel.Lead(sel, best)
+                if lead and Words(lead) <= 32 and not best.kin and not Any(lead:lower(), {" went to fetch", " went to find", " wanted%.$", " set out to"}) then
+                    best.mode, best.tell, best.promote = "lead", lead, best.promote or best.variant
+                else
+                    best.mode = "act"
+                end
                 local it = best.it
                 it.chosen = it.chosen or {}
                 it.chosen[best.act.i] = true
@@ -996,10 +1002,10 @@ function C.DangerSentence(evs, k)
     local zone, sub = x1.e.z or x1.ep.zone, x1.e.sz
     local where = (sub and Clean(sub) ~= Clean(zone or "")) and Place(sub) or Place(zone)
     local verb = (k.killedMe == "cut me down") and "cut me down" or "killed me"
-    local s = "At " .. where .. " " .. who .. " " .. verb .. " " .. (#own >= 3 and "again and again" or "more than once")
-    local fellNot = {}
-    for _, n in ipairs(fell) do fellNot[#fellNot + 1] = n end
-    if #fellNot > 0 then s = s .. ", with " .. List(fellNot) .. " falling beside me" end
+    local named_ = who:find("{", 1, true) and not who:find("^the ")
+    local s = ((sub and Clean(sub) ~= Clean(zone or "")) and "At " or "In ") .. where .. " " .. who .. " " .. verb .. " " .. ((#own >= 3 and "again and again") or (named_ and "in turn") or "more than once")
+    -- (round 18, reader T: no list of who fell; the company falls in "us")
+    if #fell > 0 then s = s:gsub(" me down ", " us down "):gsub(" killed me ", " killed us ") end
     if #raisers > 0 then s = s .. ", and " .. List(raisers) .. " brought me back" end
     if k.lead then s = k.lead .. s:gsub("^At ", "at ") end
     return Cap(s) .. "."
@@ -1083,6 +1089,8 @@ function C.DeathGroup(evs, k)
         local all = {}
         for _, n in ipairs(order) do if n ~= raiserShort then all[#all + 1] = n end end
         all[#all + 1] = "me"
+        -- (round 18: three or more of us at once is "us all", never a roll call)
+        if #all >= 4 and not o.e.env then all = {"us all"} end
         local foe, plainVerb = FoeWords(o.e, Place)
         local cut = not plainVerb and k.killedMe == "cut me down"
         local w = Where(o)
@@ -2420,7 +2428,7 @@ function C.Apply(ctx)
                     -- (only the stretch's last death, at a named killer's hand, is its own moment)
                     local lastOwn
                     for _, x in ipairs(evs) do if x.e.k == "death" then lastOwn = x end end
-                    if lastOwn and lastOwn.e.d and not lastOwn.e.env and A.FoeNamed and A.FoeNamed(Clean(lastOwn.e.d)) then named[1] = lastOwn end
+                    if own >= 4 and lastOwn and lastOwn.e.d and not lastOwn.e.env and A.FoeNamed and A.FoeNamed(Clean(lastOwn.e.d)) then named[1] = lastOwn end
                     local namedSet = {}
                     for _, x in ipairs(named) do namedSet[x] = true end
                     local namedGroups = {}
@@ -3626,10 +3634,22 @@ function C.Apply(ctx)
                     or name:match("^(%u[%l']+) Mountains$") or name:match("^(%u[%l']+) Foothills$") or name:match("^(%u[%l']+) Highlands$")
                 return short ~= nil and keptPlain:find("%f[%a]" .. Esc(short) .. "%f[%A]") ~= nil
             end
+            -- (round 18, reader T: the night began where the record's first event was, a hearthstone
+            -- cast in Tirisfal before the road to Silverpine, a minute in the Undercity before Brill)
+            local firstEv
+            for _, sc in ipairs(ctx.day and ctx.day.scenes or {}) do
+                for _, e in ipairs(sc.entries or {}) do
+                    if e.t and e.z and e.k ~= "play" and (not firstEv or e.t < firstEv.t) then firstEv = e end
+                end
+            end
+            local firstZoneRec = firstEv and firstEv.z
+            -- (a start the chapter never names is not named in the close either)
             if from and not (Told(from) or (inn and keptPlain:find(Plain(inn), 1, true))) then
-                local firstZone = episodes[1] and episodes[1].zone
-                if Told(firstZone) then from, fromName, inn = firstZone, Place(firstZone), nil
+                local firstZone = (firstZoneRec and Told(firstZoneRec) and firstZoneRec) or (episodes[1] and Told(episodes[1].zone) and episodes[1].zone) or nil
+                if firstZone then from, fromName, inn = firstZone, Place(firstZone), nil
                 else from, fromName, inn = nil, nil, nil end
+            elseif firstZoneRec and Told(firstZoneRec) and from and not IsTown(from) and not inn and Clean(from) ~= Clean(firstZoneRec) then
+                from, fromName = firstZoneRec, Place(firstZoneRec)
             end
             local endPlace = (D.sleep and D.sleep.place) or D.endTown or D.endZone
             local endZone = (D.sleep and D.sleep.zone) or D.endZone
