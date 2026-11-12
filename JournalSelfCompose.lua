@@ -60,6 +60,19 @@ local function List(items)
     if #items == 0 then return "" elseif #items == 1 then return items[1] end
     return table.concat(items, ", ", 1, #items - 1) .. " and " .. items[#items]
 end
+-- A death line as a clause: no cleft ("It was X that killed me"), no ledger tail ("as well,
+-- before the day was out"), no full stop, lower case unless it opens on "I" or a name.
+local function DeathClause(text)
+    local clause = text:gsub("%.$", "")
+    clause = clause:gsub("^It was (.-) that killed me$", "%1 killed me")
+    clause = clause:gsub(" as well, before the day was out$", ""):gsub(", before the day was out$", ""):gsub(" as well$", ""):gsub(" too$", ""):gsub(" as well,", ",")
+    clause = clause:gsub("^[Ll]ater that %a+, ", ""):gsub("^[Ll]ater, ", ""):gsub("^Before the day was out, ", "")
+    return Lower(clause)
+end
+local function PartOfDay(t)
+    local h = tonumber(date and date("%H", t or 0)) or 12
+    return (h >= 5 and h < 12 and "morning") or (h >= 12 and h < 18 and "afternoon") or (h >= 18 and h < 22 and "evening") or "night"
+end
 
 -- Text that only moves or rests the character (for untagged lines).
 local MOVE = {"rode the lift", "zeppelin", "came up out of", "went on through", "went on to ", "took me on to", "took me to", "hearthstone took me",
@@ -193,7 +206,7 @@ local function Hash(text)
     for i = 1, #text do h = (h * 33 + text:byte(i)) % 2147483647 end
     return h
 end
-local function Select(ctx, lines, inRun, episodes)
+local function Select(ctx, lines, inRun, episodes, D)
     local P = A.SelfPlan
     local Sel = P and P.Sel
     local W = ctx.W or {}
@@ -252,6 +265,14 @@ local function Select(ctx, lines, inRun, episodes)
         end
     end
     sel.figureScene, sel.figureLine = figureScene, figureLine
+    -- (what the chapter's other lines say: a name they hold needs no promised step)
+    do
+        local known = {}
+        for _, l in ipairs(lines) do
+            if not l.drop and (l.cls ~= "quest" or inRun[l]) and l.cls ~= "close" then known[#known + 1] = Plain(l.text) end
+        end
+        sel.knownText = table.concat(known, " ")
+    end
     -- (what the chapter's other lines take; the furniture the composer drops is not counted)
     local fixed, craft = 0, 0
     for _, l in ipairs(lines) do
@@ -270,6 +291,40 @@ local function Select(ctx, lines, inRun, episodes)
             for _, u in ipairs(sel.units) do if u.kind == "scene" then u.first = true; break end end
             break
         end
+    end
+    -- (lane S: the names the next days' work carries, from the record's own quests; a dropped
+    -- step that first names one is told after all, Sel.Promised, so a later chapter's "the
+    -- ring" has its ring)
+    do
+        local later, givers = {}, {}
+        local lim = (D and D.e or 0) + 3 * 86400
+        if ctx.person and type(ctx.person.journal) == "table" and QD.Story then
+            for _, e in ipairs(ctx.person.journal) do
+                if e.k == "quest" and e.t and e.t > (D and D.e or 0) and e.t <= lim then
+                    local ok, story = pcall(QD.Story, {title = e.d, qid = e.qid})
+                    if ok and type(story) == "table" and type(story.pov) == "table" then
+                        local texts, giver = {}, Plain(tostring(story.pov.giver or ""))
+                        for _, x in ipairs(story.pov) do if type(x) == "string" then texts[#texts + 1] = x end end
+                        if type(story.pov.act) == "string" then texts[#texts + 1] = story.pov.act end
+                        for word in giver:gmatch("%a+") do givers[word] = true end
+                        for _, x in ipairs(texts) do
+                            for name in pairs(C.BareNames(Plain(x), true)) do
+                                later[name] = true
+                                if C.Debug then C.Debug(("promised %s <- %s"):format(name, Plain(x):sub(1, 90))) end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+        -- (whoever gives work later is introduced by that work; a place of the record is no person)
+        for name in pairs(givers) do later[name] = nil end
+        for _, e in ipairs(ctx.person and type(ctx.person.journal) == "table" and ctx.person.journal or {}) do
+            for _, field in ipairs({e.sz, e.z, (e.k == "town" or e.k == "rest" or e.k == "cave" or e.k == "first") and e.d or nil}) do
+                if type(field) == "string" then for word in field:gmatch("%a+") do later[word] = nil end end
+            end
+        end
+        sel.promised = later
     end
     Sel.Peaks(sel)
     Sel.Choose(sel)
@@ -307,10 +362,98 @@ local function Select(ctx, lines, inRun, episodes)
     end
     for _, nl in ipairs(added) do lines[#lines + 1] = nl end
     if C.Debug then
-        for _, u in ipairs(sel.units or {}) do C.Debug(("sel %-5s mode=%-5s score=%s rank=%s must=%s own=%s %s%s %s"):format(u.kind, tostring(u.mode), tostring(u.score), tostring(u.rank), tostring(u.must), tostring(u.own), u.paired and "P" or "", u.pulled and "p" or "", (u.plain or ""):sub(1, 50) .. (" [kin=%s skip=%s fb=%s full=%s w=%s]"):format(tostring(u.kin), tostring(u.skip), tostring(u.fallback), u.full and #u.full or "nil", tostring(u.words)))) end
+        for _, u in ipairs(sel.units or {}) do C.Debug(("sel %-5s mode=%-5s score=%s rank=%s must=%s own=%s %s%s %s"):format(u.kind, tostring(u.mode), tostring(u.score), tostring(u.rank), tostring(u.must), tostring(u.own), u.paired and "P" or "", u.pulled and "p" or "", (u.plain or ""):sub(1, 50) .. (" [kin=%s skip=%s fb=%s full=%s w=%s%s]"):format(tostring(u.kin), tostring(u.skip), tostring(u.fallback), u.full and #u.full or "nil", tostring(u.words), u.promised and (" PROMISED " .. tostring(u.promisedName)) or ""))) end
         C.Debug(("sel cap=%d fixed=%d room=%s used=%s steps=%s"):format(sel.cap or 0, fixed + craft, tostring(sel.room), tostring(sel.used), table.concat(sel.steps or {}, ",")))
     end
     return sel
+end
+
+-- The feeling a great figure earns (lane S): the planned telling's figureNamed line, asked
+-- the same way (JournalSelfPlan P.Apply): the figure was named before in the book or earlier
+-- in the chapter, the stage's pool (the race's own for Sylvanas before a Forsaken), no line
+-- said before in the book, not within three chapters of the last such feeling, every name in
+-- the line already said, a "promised" line only after a promise. Returns a line or nil.
+function C.FigureFelt(ctx, name, short, fig, kept, chapterPlain)
+    local F, Tale, Sel = A.JournalFeel, A.JournalTale or {}, A.SelfPlan and A.SelfPlan.Sel
+    local history = ctx.history
+    if not F or not F.figureNamed or not history or not Sel or not Sel.NamesFigure then return nil end
+    history.plan = history.plan or {said = {}, kind = {}, text = ""}
+    local hp = history.plan
+    hp.said, hp.kind = hp.said or {}, hp.kind or {}
+    local index = ctx.index or 0
+    if hp.kind.figureNamed and index - hp.kind.figureNamed <= 3 then return nil end
+    local level = tonumber(ctx.level)
+    local stage = level and (level < 20 and "fledgling" or level < 45 and "seasoned" or "known") or nil
+    if not stage then return nil end
+    -- (what the book said before this moment: earlier chapters, and the chapter's lines before the figure)
+    local before = {hp.text or ""}
+    for _, l in ipairs(kept) do if l == fig then break end; if not l.drop then before[#before + 1] = Plain(l.text) end end
+    before = table.concat(before, " ")
+    local sel = {Tale = Tale}
+    if not Sel.NamesFigure(sel, before, name) then return nil end
+    local key = (Tale.FigureKeys and Tale.FigureKeys[name]) or name
+    local race = ctx.race or ""
+    local pools = {F.figureNamed[key] and F.figureNamed[key][race], F.figureNamed}
+    local promiser = Sel.Promiser and Sel.Promiser(before) or nil
+    local tokens = {figure = short, setupName = promiser or ""}
+    local seed = tostring(ctx.seed or "me") .. ":" .. tostring(ctx.day and ctx.day.key or index) .. ":figure"
+    local said = before .. " " .. Plain(fig.text)
+    for _, pool in ipairs(pools) do
+        local lines = pool and pool[stage] and pool[stage].i
+        local usable = {}
+        for _, line in ipairs(lines or {}) do
+            local filled = Fill(line, tokens)
+            local ok = not filled:find("{", 1, true) and not hp.said[line] and not (line:find("promis", 1, true) and not said:find("promis", 1, true))
+            if ok and line:find("{setupName}", 1, true) and not promiser then ok = false end
+            if ok then
+                local plain, firstWord = Plain(filled), true
+                for word in plain:gmatch("%a[%a']*") do
+                    if not firstWord and word:find("^%u") and word ~= "I" and #word >= 3 and not said:find(word, 1, true) then ok = false end
+                    firstWord = false
+                end
+            end
+            if ok then usable[#usable + 1] = {line = line, text = filled} end
+        end
+        if #usable > 0 then
+            local choice = usable[Hash(seed) % #usable + 1]
+            hp.said[choice.line], hp.kind.figureNamed = true, index
+            return {cls = "what", t = fig.t, ep = fig.ep, text = choice.text, major = false, kind = "feel", s = fig.s, slot = fig.slot,
+                meta = {t = fig.t, felt = "figureNamed", compose = "felt"}, n = fig.n + 0.25}
+        end
+    end
+    return nil
+end
+
+-- The names a text uses bare (lane S): a capitalised word of four letters or more with no
+-- title or other name beside it ("found Deliah", not "High Executor Hadrec", "Rot Hide",
+-- "the abomination Gordo") and no description after it (", a beggar"). Such a name assumes
+-- the reader knows it; the one that first names it must be told.
+local BARE_SKIP = {}
+for word in ("The This That Then There Here After Before When While With From Into Over Under Among Along Past Only Just Still Once Both Each Every "
+    .. "Scarlet Scourge Forsaken Deathguard Deathguards Executor Captain Light Crusade Alliance Horde Magistrate Apothecary Novice Shadow Priest Father "
+    .. "Doctor Lady Lord Dark Cult Damned Argent Dawn Keep Mills Hollow Vale Farmstead Lake Rest Tower Camp Village Glades Quarter Watch Graves Haunt "
+    .. "Bridge Farm Mass Trade Magic Undercity Brill Sepulcher Orgrimmar Kalimdor Eastern Kingdoms Silverpine Tirisfal Forest Isle Hill Ridge"):gmatch("%S+") do BARE_SKIP[word] = true end
+function C.BareNames(text, strict)
+    local words, opens = {}, {}
+    for before, w in text:gmatch("(%p?)%s*([%a'][%a']*)") do words[#words + 1] = w; opens[#words] = (before == "." or before == "!" or before == "?") end
+    local names = {}
+    for i, w in ipairs(words) do
+        local name = w:gsub("'s$", ""):gsub("'$", "")
+        -- (strict, for the later text: a possessive, "Varimathras's advance", points at someone known)
+        if #name >= 4 and name:match("^%u") and not BARE_SKIP[name] and i > 1 and not opens[i] and not (strict and w:find("'s$")) then
+            local before, before2, after = words[i - 1], words[i - 2], words[i + 1]
+            -- (a name after "the" is a thing or a place, not a person)
+            local titled = before and (before:match("^%u") or before:lower() == "the")
+            -- (a place preposition before the name, with or without one plain word between: "in ruined Shadowvale")
+            local PLACE = {at = true, ["in"] = true, of = true, from = true, near = true, beneath = true, below = true, around = true, into = true, through = true, across = true, past = true, beyond = true, inside = true, outside = true}
+            if strict and before and (PLACE[before:lower()] or (before:match("^%l") and before2 and PLACE[before2:lower()])) then titled = true end
+            local described = before2 and before2:lower() == "the" and before and before:match("^%l")
+            local tail = text:find(name .. ", an? ") or text:find(name .. ", the ") or text:find(name .. "'s? of the ")
+            local named = after and after:match("^%u") and after ~= "I"
+            if not titled and not described and not tail and not named then names[name] = true end
+        end
+    end
+    return names
 end
 
 -- One chapter -------------------------------------------------------------------------------
@@ -419,7 +562,7 @@ function C.Apply(ctx)
         return false
     end
     -- (lane U: the planned telling's selection of the work, before the episodes take their lines)
-    local sel = Select(ctx, lines, inRun, episodes)
+    local sel = Select(ctx, lines, inRun, episodes, D)
     local byEp = {}
     for _, ep in ipairs(episodes) do byEp[ep] = {} end
     for _, l in ipairs(lines) do byEp[l.ep][#byEp[l.ep] + 1] = l end
@@ -448,6 +591,16 @@ function C.Apply(ctx)
                 l.drop = not inside
             elseif l.cls == "close" then
                 l.drop = true
+            elseif l.kind == "first" and ((l.meta.e and l.meta.e.k == "first" and l.meta.e.d == "rare") or Any(Plain(l.text):lower(), {"crossed my path", "few people ever see", "a rare sight", "seldom seen"})) then
+                -- (a rare creature only seen is no event of the day: a kill is told, a sighting is not)
+                l.drop = true
+            elseif l.kind == "learn" and Plain(l.text):find("the trainer", 1, true) then
+                -- (lane S: "I learned Devotion Aura and Judgement from the trainer" is the game's note, not the day's)
+                l.drop = true
+            elseif l.kind == "deathRun" and (Plain(l.text):lower():match("^%a+ deaths in ") or Plain(l.text):lower():match("^i died %a+ times in ")) then
+                -- (lane S: a run of deaths is told as its fights, never as a tally at the end)
+                -- (a rare creature only seen is no event of the day: a kill is told, a sighting is not)
+                l.drop = true
             elseif l.cls == "night" then
                 if nightSaid then l.drop = true end
                 nightSaid = true
@@ -461,10 +614,8 @@ function C.Apply(ctx)
                 l.drop = not first
                 if not l.drop then l.cls = "arrive" end
             elseif l.cls == "quest" and l.text:find("{q:", 1, true) then
-                -- (a quest with no words of its own is never named by its title; it is folded or left out)
-                local other = false
-                for _, x in ipairs(byEp[ep]) do if x ~= l and (x.cls == "quest" or x.cls == "what" or x.cls == "death") then other = true end end
-                l.drop = other
+                -- (a quest with no words of its own is never named by its title: left out, lane S)
+                l.drop = true
             elseif l.cls == "death" and l.meta.e and l.meta.e.k == "pdeath" and not l.meta.deathRun then
                 -- (a companion's death with nothing around it, or inside a city: not told)
                 local near = false
@@ -598,6 +749,76 @@ function C.Apply(ctx)
             for i = budget + 1, #folds do folds[i].drop = true end
         end
     end
+    -- a place is told for what was done there (lane S): a lore line naming a place the chapter
+    -- never goes near is dropped, and so is a zone's "stakes" line, which says what the land is
+    -- about and nothing the character saw
+    do
+        local L = A.Lore
+        local keptText, subs = {}, {}
+        for _, l in ipairs(lines) do
+            if not l.drop and l.kind ~= "lore" and l.cls ~= "close" then keptText[#keptText + 1] = Plain(l.text) end
+        end
+        keptText = table.concat(keptText, " ")
+        for _, s in ipairs(stretches) do
+            for _, e in ipairs(s.events or {}) do
+                if e.sz then subs[#subs + 1] = Clean(e.sz) end
+                if (e.k == "town" or e.k == "rest" or e.k == "cave") and e.d then subs[#subs + 1] = Clean(e.d) end
+            end
+            for _, q in ipairs(s.quests or {}) do if E.QuestText then keptText = keptText .. " " .. E.QuestText(q) end end
+        end
+        local SMALL = {The = true, In = true, Lake = true, Forest = true, Horde = true, Alliance = true, Scourge = true, Forsaken = true, Light = true}
+        for _, l in ipairs(lines) do
+            if not l.drop and not inRun[l] and l.kind == "lore" and l.cls == "place" then
+                local plain = Plain(l.text)
+                local zone = Clean(l.ep.zone or "")
+                local zoneWords = {}
+                for w in zone:gmatch("%a+") do zoneWords[w] = true end
+                local zs = L and L.ZoneStory and zone ~= "" and L.ZoneStory(zone)
+                for _, line in ipairs(zs and zs.stakes or {}) do if Plain(line) == plain then l.drop = true end end
+                if not l.drop then
+                    local names, any, near = {}, false, false
+                    for word in plain:gmatch("%u[%a']+") do
+                        word = word:gsub("'s$", "")
+                        -- (the sentence's first word is no name unless it stands elsewhere too)
+                        local opens = plain:find("^" .. Esc(word)) and not plain:find(" " .. Esc(word))
+                        if #word >= 4 and not SMALL[word] and not zoneWords[word] and not opens then names[word], any = true, true end
+                    end
+                    for word in pairs(names) do
+                        if keptText:find(word, 1, true) then near = true end
+                        for _, sub in ipairs(subs) do if sub:find(word, 1, true) then near = true end end
+                    end
+                    if any and not near then l.drop = true end
+                end
+            end
+        end
+    end
+    -- transit carries the reader to the next thing told (lane S): of two transits in a row only
+    -- the last stays, none that lands where the reader already was, none after the chapter's
+    -- last thing (the close says where the night ended)
+    do
+        local TRANSIT = {move = true, arrive = true, voyage = true, night = true}
+        -- (a glimpse of a new place on the way, "the Barrens, which was new to me", is a thing seen, not a transit)
+        local function Transit(l) return TRANSIT[l.cls] and l.kind ~= "first" and not Any(Plain(l.text):lower(), FIRST) end
+        local seq = {}
+        for _, l in ipairs(lines) do
+            if not l.drop and not inRun[l] and l.cls ~= "close" and l.cls ~= "craft" and l.cls ~= "level" and l.cls ~= "milestone" and l.cls ~= "who" and l.cls ~= "rest" then seq[#seq + 1] = l end
+        end
+        Sorted(seq, function(a, b) if a.t ~= b.t then return a.t < b.t end return a.n < b.n end)
+        local i = 1
+        while i <= #seq do
+            if Transit(seq[i]) then
+                local j = i
+                while seq[j + 1] and Transit(seq[j + 1]) do j = j + 1 end
+                for k = i, j - 1 do seq[k].drop = true end
+                local last, before, after = seq[j], seq[i - 1], seq[j + 1]
+                if not after then last.drop = true
+                elseif j > i and before and Clean(before.ep.zone or "") == Clean(after.ep.zone or "") then last.drop = true end
+                i = j + 1
+            else
+                i = i + 1
+            end
+        end
+    end
     -- a quest line that narrates the road into the episode's own zone, after the arrival was told
     for _, l in ipairs(lines) do
         if l.cls == "quest" and not inRun[l] and l.ep.zone then
@@ -662,6 +883,7 @@ function C.Apply(ctx)
                 local together = WithAtDay(windows, l.t)
                 local low = Plain(l.text):lower()
                 local personal = low:find("hearthstone") or (l.meta.e and l.meta.e.d == "rezother") or low:find("my first death") or low:find("the first i ever")
+                    or low:find("not died") or low:find("walked back as a spirit") or low:find("found my body") or low:find("my own feet") or low:find("as a ghost")
                 if together and not personal and not l.meta.solo and (l.text:match("^I ") or l.text:match("^[^,%.]+, I ") or l.text:find("%. I ") or l.text:find(", I ")
                     or (l.cls ~= "quest" and (l.text:find("carried me ") or l.text:find("took me ") or l.text:find("brought me ")))) then
                     l.text = Together(l.text, l.cls ~= "quest")
@@ -719,7 +941,21 @@ function C.Apply(ctx)
         for _, x in ipairs(byEp[ep]) do
             if not x.drop and (x.cls == "quest" or x.cls == "what") and x.t <= at and at - x.t <= 300 and (not deed or x.t > deed.t) then deed = x end
         end
-        if deed and W.levelWithIt then return Pick("levelWith", W.levelWithIt, tokens), deed end
+        -- (a hand-in the chapter left out between the deed and the level: the level was not the deed's)
+        if deed then
+            for _, sc in ipairs(ep.scenes) do
+                for _, q in ipairs(sc.quests or {}) do if (q.t or 0) > deed.t + 30 and (q.t or 0) <= at then deed = nil end end
+            end
+        end
+        if deed and W.levelWithIt then
+            local head, lastSentence = deed.text:match("^(.*%. )([^%.]+%.)$")
+            if head and (lastSentence:find(" and ", 1, true) or Words(lastSentence) > 20) then
+                -- ("with it" after a second sentence points at nothing: the place, or "not long after")
+                if deed.text:find("{p:", 1, true) and W.levelThere then return Pick("levelThere", W.levelThere, tokens), deed end
+                if P.levelSoon then return Pick("levelSoon", P.levelSoon, tokens), deed end
+            end
+            return Pick("levelWith", W.levelWithIt, tokens), deed
+        end
         local near
         for _, x in ipairs(byEp[ep]) do
             if not x.drop and (x.cls == "quest" or x.cls == "what") and x.t <= at and at - x.t <= 20 * 60 and (not near or x.t > near.t) then near = x end
@@ -736,20 +972,38 @@ function C.Apply(ctx)
         return nil
     end
     local added = {}
+    -- (the day's last level, by the record: the only one the composer gives a line of its own)
+    local lastLevel, lastLevelT
+    for _, s in ipairs(stretches) do
+        for _, e in ipairs(s.events or {}) do
+            if e.k == "mylevel" and e.d and e.t and (not lastLevelT or e.t > lastLevelT) then lastLevel, lastLevelT = tostring(tonumber(e.d) or e.d), e.t end
+        end
+    end
     for _, l in ipairs(lines) do
         if l.cls == "level" and not inRun[l] then
             local plain = Plain(l.text)
-            local num = Num(plain:match("[Ll]evel ([%w%-]+)"))
+            -- (the day's last level, whatever shape the teller gave the line: a span tells its top)
+            local num
+            for n in pairs(LevelsSaid(plain)) do if not num or tonumber(n) > tonumber(num) then num = n end end
             local at = (l.meta.levelEarly and l.meta.t) or l.t
+            -- (the record's own time for that level, when it has one: the teller says it at the stay's end)
+            for _, s in ipairs(stretches) do
+                for _, e in ipairs(s.events or {}) do if e.k == "mylevel" and tostring(e.d) == tostring(num) and e.t then at = e.t end end
+            end
             local ep = EpisodeAt(at, episodes)
             if ep.kind == "dungeon" then
                 -- (a level of the run is the run's to tell; said by the dungeon writer)
                 l.ep = ep
             else
                 l.ep, l.t = ep, at
-                if num and (plain:match("^I reached level %d+ there%.$") or plain:match("^Level %d+ came there%.$")) then
+                -- (lane S: a level is told where it came, never as bookkeeping at the close)
+                -- (the teller's line for the day's last level, whatever its shape, unless it is an early
+                -- level's own line with its feeling)
+                if num and (not lastLevel or num == lastLevel) and (plain:match("^I reached level %d+ there%.$") or plain:match("^Level %d+ came there%.$") or (not l.meta.levelEarly and Words(plain) <= 12
+                    and (plain:match("^I reached level ") or plain:match("^Level %d+ came") or plain:match(" with it%.$") or plain:find("from level ") or plain:find("level %d+ to %d+")
+                    or plain:match("^By the end of the day") or plain:match("^I started the day at level") or plain:match(" when I stopped%.$")))) then
                     local text, deed = LevelLine(num, ep, at)
-                    if text then l.text = text; l.after = deed end
+                    if text then l.text = text; l.after = deed; l.meta.compose = "level" end
                 end
             end
         end
@@ -762,17 +1016,7 @@ function C.Apply(ctx)
     local topLevel = dayLevels[#dayLevels]
     local topSaid = topLevel and levelNums[tostring(topLevel.level)]
     local spanFrom = #dayLevels >= 2 and tonumber(dayLevels[1].level) and (tonumber(dayLevels[1].level) - 1) or nil
-    -- (several levels and the teller's own line for the last of them: that line becomes the span,
-    -- where it stands, so no level is skipped in silence)
-    if topLevel and topSaid and spanFrom and spanFrom >= 1 and W.levels then
-        for _, l in ipairs(lines) do
-            if l.cls == "level" and not inRun[l] and not l.drop and l.ep.kind ~= "dungeon" and LevelsSaid(Plain(l.text))[tostring(topLevel.level)] then
-                local text = Pick("levels", W.levels, {from = tostring(spanFrom), level = tostring(topLevel.level)})
-                if text then l.text = text; l.meta.compose = "level" end
-                break
-            end
-        end
-    end
+    -- (lane S: the span "from level 1 to 7" is gone; the day's last level is told where it came)
     for _, lv in ipairs(dayLevels) do
         local num = tostring(lv.level)
         -- (only the day's last level gets a line of its own, a span when several came)
@@ -795,7 +1039,6 @@ function C.Apply(ctx)
                 end
             else
                 local text, deed = LevelLine(num, ep, lv.t)
-                if spanFrom and W.levels then text = Pick("levels", W.levels, {from = tostring(spanFrom), level = num}) end
                 if text then
                     levelNums[num] = true
                     added[#added + 1] = {cls = "level", t = lv.t, ep = ep, text = text, after = deed, major = false, kind = "level", meta = {t = lv.t, compose = "level"}, n = #out + #added + 1}
@@ -818,12 +1061,53 @@ function C.Apply(ctx)
         for i, ep in ipairs(episodes) do
             local before = episodes[i - 1]
             if before and P.left then
+                -- (lane S: two who left at once leave in one sentence)
+                local gone, leftAt = {}, ep.t
                 for name in pairs(windows) do
                     if PresentIn(name, before) and not PresentIn(name, ep) and (minutes[name] or 0) >= 1800 and chapterPlain:find(name, 1, true) then
-                        local text = Pick("left", P.left, {name = "{n:" .. name .. "}"})
-                        local leftAt = ep.t
+                        gone[#gone + 1] = name
                         for _, sp in ipairs(windows[name] or {}) do if sp[2] <= ep.t and sp[2] > leftAt - 3600 then leftAt = sp[2] end end
-                        if text then added[#added + 1] = {cls = "who", t = leftAt, ep = ep, text = text, major = false, kind = nil, meta = {t = leftAt, compose = "left"}, n = #out + #added + 1} end
+                    end
+                end
+                if #gone > 0 then
+                    table.sort(gone)
+                    local names = {}
+                    for _, name in ipairs(gone) do names[#names + 1] = "{n:" .. name .. "}" end
+                    local text = Pick("left", P.left, {name = List(names)})
+                    if text then added[#added + 1] = {cls = "who", t = leftAt, ep = ep, text = text, major = false, kind = nil, meta = {t = leftAt, compose = "left"}, n = #out + #added + 1} end
+                end
+            end
+        end
+        -- (lane S: someone the chapter names, in a death or a raise, whose joining it never told
+        -- is told joining at the time the record has them)
+        if P.joinedLate then
+            local deathText, otherText = {}, {}
+            for _, l in ipairs(lines) do
+                if not l.drop and not inRun[l] then
+                    if l.cls == "death" then deathText[#deathText + 1] = Plain(l.text) else otherText[#otherText + 1] = Plain(l.text) end
+                end
+            end
+            for _, l in ipairs(added) do if l.cls == "who" then otherText[#otherText + 1] = Plain(l.text) end end
+            deathText, otherText = table.concat(deathText, " "), table.concat(otherText, " ")
+            -- (a party death of someone with no window that day: the record still has them, at that time)
+            local firstFall = {}
+            for _, s in ipairs(stretches) do
+                for _, e in ipairs(s.events or {}) do
+                    if e.k == "pdeath" and e.n and e.t then
+                        local name = (Clean(e.n):gsub("%-.*$", ""))
+                        if not windows[name] and (not firstFall[name] or e.t < firstFall[name]) then firstFall[name] = e.t end
+                    end
+                end
+            end
+            local candidates = {}
+            for name, spans in pairs(windows) do candidates[name] = (minutes[name] or 0) >= 600 and spans[1] and spans[1][1] or nil end
+            for name, t in pairs(firstFall) do candidates[name] = t end
+            for name, first in pairs(candidates) do
+                if first and deathText:find("%f[%a]" .. Esc(name) .. "%f[%A]") and not otherText:find("%f[%a]" .. Esc(name) .. "%f[%A]") and not deathText:find("named " .. name, 1, true) then
+                    local ep = EpisodeAt(first, episodes)
+                    if ep.kind ~= "dungeon" then
+                        local text = Pick("joinedLate", P.joinedLate, {name = "{n:" .. name .. "}"})
+                        if text then added[#added + 1] = {cls = "who", t = first, ep = ep, text = text, major = false, kind = nil, meta = {t = first, compose = "joined"}, n = #out + #added + 1} end
                     end
                 end
             end
@@ -834,8 +1118,13 @@ function C.Apply(ctx)
     for _, l in ipairs(lines) do
         if not l.drop and not inRun[l] and l.ep.kind ~= "dungeon" then
             if l.cls == "milestone" then l.toClose, l.closeRank = true, 2 end
-            if l.cls == "level" and l.meta.compose == "level" and not Plain(l.text):match("^Level %d+ came") and not Plain(l.text):match("^I reached level %d+ with it") then l.toClose, l.closeRank = true, 3 end
         end
+    end
+    -- (one count a chapter, in the close: the quest count over the craft tally)
+    do
+        local milestone = false
+        for _, l in ipairs(lines) do if not l.drop and l.toClose and l.cls == "milestone" then milestone = true end end
+        if milestone then for _, l in ipairs(lines) do if l.toClose and l.cls == "craft" then l.drop = true end end end
     end
     for _, l in ipairs(lines) do
         if l.toClose and l.ep ~= episodes[#episodes] and episodes[#episodes].kind ~= "dungeon" then
@@ -920,25 +1209,51 @@ function C.Apply(ctx)
                 if l.cls == "level" and l.after and not l.toClose then
                     local at
                     for j, x in ipairs(kept) do if x == l.after then at = j end end
-                    if at and at < i then table.remove(kept, i); table.insert(kept, at + 1, l) end
+                    if at and at < i then
+                        -- (after the deed's whole scene: its outcome lines share its entry)
+                        local entry = l.after.meta and l.after.meta.entry
+                        while entry and kept[at + 1] and kept[at + 1] ~= l and kept[at + 1].meta and kept[at + 1].meta.entry == entry do at = at + 1 end
+                        table.remove(kept, i); table.insert(kept, at + 1, l)
+                    end
                 end
             end
         end
-        -- (a lone death is told inside the deed it interrupted: joined to the quest line before it
-        -- when that line can take a clause, so it never stands alone between errands)
+        -- (a lone death is told inside the deed it interrupted (lane S): a clause of the line
+        -- before it when that line can take one, "where" when the line ends on the place it
+        -- happened in; else one sentence with what the death was ("..., my first death since I
+        -- rose"); else a clause before the deed that followed it ("After I fell to a son of
+        -- Arugal, we carried..."). It never stands as a bare entry between two errands.)
         if ep.kind ~= "dungeon" then
-            for i = 2, #kept do
-                local l, prev = kept[i], kept[i - 1]
-                if l and prev and l.cls == "death" and not l.inPassage and l.kind == "death" and prev.cls == "quest" and l.t - prev.t <= 15 * 60 and l.t >= prev.t
-                    and Words(l.text) <= 14 and not Plain(l.text):find("%. ") then
-                    local head, lastSentence = prev.text:match("^(.*%. )([^%.]+%.)$")
-                    if not head then head, lastSentence = "", prev.text end
-                    if lastSentence and not lastSentence:find(", and ", 1, true) and not lastSentence:find(" and ", 1, true) and lastSentence:match("%.$") and Words(lastSentence) <= 22 then
-                        local clause = l.text
-                        if not clause:match("^I ") and not clause:match("^{") then clause = clause:gsub("^%u", string.lower) end
-                        prev.text = head .. lastSentence:gsub("%.$", "") .. ", and " .. clause
-                        prev.merged = true
-                        l.drop = true
+            for i = 1, #kept do
+                local l, prev, nxt = kept[i], kept[i - 1], kept[i + 1]
+                if l and l.cls == "death" and not l.drop and not l.inPassage and l.kind == "death" and Words(l.text) <= 14 and not Plain(l.text):find("%. ") then
+                    local clause = DeathClause(l.text)
+                    local joined = false
+                    if prev and not prev.drop and not prev.merged and (prev.cls == "quest" or prev.cls == "open" or prev.cls == "arrive") and l.t - prev.t <= (prev.cls == "quest" and 15 or 30) * 60 and l.t >= prev.t - 60 then
+                        local head, lastSentence = prev.text:match("^(.*%. )([^%.]+%.)$")
+                        if not head then head, lastSentence = "", prev.text end
+                        -- (not onto reported speech: "..., he said, and a buzzard killed me" hangs the death on his words)
+                        if lastSentence and not lastSentence:find(" and ", 1, true) and lastSentence:match("%.$") and Words(lastSentence) <= 22
+                            and not lastSentence:find(" said") and not lastSentence:find(" told ") and not lastSentence:find(" asked") then
+                            local zone = l.s and l.s.zone and Clean(l.s.zone) or ""
+                            local there = zone ~= "" and lastSentence:find("%a+ {p:" .. Esc(zone) .. "}%.$")
+                            prev.text = head .. lastSentence:gsub("%.$", "") .. (there and ", where " or ", and ") .. clause .. "."
+                            prev.merged, l.drop, joined = true, true, true
+                        end
+                    end
+                    if not joined and nxt and not nxt.drop and nxt.cls == "what" and math.abs(nxt.t - l.t) <= 120 then
+                        local tail = nxt.text:match("^It was (my [^%.]+%.)$")
+                        if tail then
+                            l.text = l.text:gsub("%.$", "") .. ", " .. tail
+                            l.merged, nxt.drop, joined = true, true, true
+                        end
+                    end
+                    if not joined and nxt and not nxt.drop and nxt.cls == "quest" and nxt.t >= l.t and nxt.t - l.t <= 30 * 60 and not nxt.text:find("^After ") then
+                        local first, rest = nxt.text:match("^(.-%.)(.*)$")
+                        if first and Words(first) <= 22 and (first:match("^We ") or first:match("^I ")) then
+                            nxt.text = "After " .. clause .. ", " .. Lower(first) .. rest
+                            nxt.merged, l.drop, joined = true, true, true
+                        end
                     end
                 end
             end
@@ -987,9 +1302,23 @@ function C.Apply(ctx)
                     end
                     local lore
                     for _, l in ipairs(kept) do if l ~= fig and l.kind == "lore" and math.abs(l.t - fig.t) <= 120 and Plain(l.text):find(short, 1, true) then lore = l end end
+                    -- (lane S: "sent me" is followed by "I spoke with", not "we spoke with")
+                    if starts[1] then
+                        local sp = " " .. Plain(starts[1].text) .. " "
+                        local mine = (sp:find("%Ame%A") or sp:find("%AI%A") or sp:find("%Amy%A")) and not (sp:find("%Awe%A") or sp:find("%AWe%A") or sp:find("%Aus%A") or sp:find("%Aour%A"))
+                        if mine then
+                            fig.text = Solo(fig.text)
+                            for _, o in ipairs(outcomes) do o.text = Solo(o.text) end
+                        end
+                    end
                     for _, l in ipairs(starts) do block[#block + 1] = l end
                     block[#block + 1] = fig
                     if lore then block[#block + 1] = lore end
+                    -- (lane S: the feeling a figure met earns when the book named them before,
+                    -- JournalFeel.figureNamed, as the planned telling gives it: once a chapter, not
+                    -- within three chapters of the last, every name in it said before, no line twice)
+                    local felt = C.FigureFelt(ctx, name, short, fig, kept, chapterPlain)
+                    if felt then block[#block + 1] = felt end
                     for _, l in ipairs(outcomes) do block[#block + 1] = l end
                     local inBlock = {}
                     for _, l in ipairs(block) do inBlock[l] = true end
@@ -1025,7 +1354,9 @@ function C.Apply(ctx)
                 if l.cls == "open" or l.cls == "arrive" or l.cls == "place" or (l.cls == "voyage" and l.slot ~= 9) then opens = true end
                 if j <= 3 and placeName ~= "" and Plain(l.text):find(placeName, 1, true) then opens = true end
             end
-            if not opens and prevEp and Clean(prevEp.zone or "") ~= Clean(ep.zone or "") then
+            local substance = false
+            for _, l in ipairs(kept) do if l.cls == "quest" or l.cls == "what" or l.cls == "death" or l.cls == "place" or l.cls == "town" then substance = true end end
+            if not opens and substance and prevEp and Clean(prevEp.zone or "") ~= Clean(ep.zone or "") then
                 local how, voyageHow, howT
                 for _, s in ipairs(stretches) do
                     for _, e in ipairs(s.events or {}) do
@@ -1134,6 +1465,38 @@ function C.Apply(ctx)
             for _, l in ipairs(p.lines) do C.Debug(("   %s slot=%s %-7s %s"):format(Clock(l.t), tostring(l.slot), l.cls, Plain(l.text):sub(1, 60))) end
         end
     end
+    -- (lane S: a transit at the end of a paragraph carries the reader into the next one, as its
+    -- first sentence; the level a deed brought is a clause of the deed's sentence when it can take one)
+    for pi = 1, #paragraphs - 1 do
+        local p, nxt = paragraphs[pi], paragraphs[pi + 1]
+        local last = p.lines[#p.lines]
+        if last and #p.lines >= 2 and (last.cls == "voyage" or last.cls == "night" or last.cls == "arrive") and not inRun[last] and nxt.kind ~= "dungeon" and not last.toClose then
+            table.remove(p.lines)
+            p.words = p.words - Words(last.text)
+            table.insert(nxt.lines, 1, last)
+            nxt.words = nxt.words + Words(last.text)
+        end
+    end
+    for _, p in ipairs(paragraphs) do
+        for i = 2, #p.lines do
+            local l, prev = p.lines[i], p.lines[i - 1]
+            if l.cls == "level" and l.after and (prev == l.after or (prev.meta.entry and prev.meta.entry == l.after.meta.entry)) and P.levelClause and not inRun[l] and not prev.merged then
+                local head, lastSentence = prev.text:match("^(.*%. )([^%.]+%.)$")
+                if not head then head, lastSentence = "", prev.text end
+                local num = Plain(l.text):match("[Ll]evel (%d+)")
+                if num and lastSentence and not lastSentence:find(" and ", 1, true) and lastSentence:match("%.$") and Words(lastSentence) <= 20 then
+                    local clause = Pick("levelClause", P.levelClause, {level = num})
+                    if clause then
+                        prev.text = head .. lastSentence:gsub("%.$", "") .. ", " .. Lower(clause) .. "."
+                        prev.merged, l.drop = true, true
+                    end
+                end
+            end
+        end
+        local kept2 = {}
+        for _, l in ipairs(p.lines) do if not l.drop then kept2[#kept2 + 1] = l end end
+        p.lines = kept2
+    end
     -- (a tally never follows the day's true last beat: a told story's outcome closes the story)
     do
         local last = paragraphs[#paragraphs]
@@ -1172,10 +1535,12 @@ function C.Apply(ctx)
             local o = ep.outcome
             local epParty = #ep.party > 0
             if o and o.kind == "dungeon" and o.bosses > 0 then
-                if o.lordKilled and P.closeDungeonDone then
+                -- (lane S: "was behind us" belongs to the paragraph that came up with the heart; an
+                -- hour later and a continent away it is stale)
+                if o.lordKilled and P.closeDungeonDone and (D.e or 0) - (ep.e or ep.t) <= 3600 then
                     phrases[#phrases + 1] = Fill(P.closeDungeonDone[1], {dungeon = Place(o.dungeon), us = epParty and "us" or "me"})
                 end
-            elseif o and o.kind == "deaths" and ep.mine >= 2 and o.place and Clean(o.place) ~= Clean(ep.zone or "") and not IsTown(o.place) then
+            elseif o and o.kind == "deaths" and ep.mine >= 2 and o.place and Clean(o.place) ~= Clean(ep.zone or "") and not IsTown(o.place) and (D.e or 0) - (ep.e or ep.t) <= 3600 then
                 local named = A.FoeNamed and A.FoeNamed(o.foe) or (A.SelfTale and A.SelfTale.CommonFoe and not A.SelfTale.CommonFoe(o.foe))
                 local killedAfter = false
                 for _, s in ipairs(stretches) do
@@ -1184,7 +1549,7 @@ function C.Apply(ctx)
                 if named and not killedAfter and P.closeFoeHeld then
                     phrases[#phrases + 1] = Fill(P.closeFoeHeld[1], {foe = Place(o.foe), place = Place(o.place)})
                 end
-            elseif dayPlan and (ep.kind == "field" or ep.kind == "deaths") then
+            elseif dayPlan and (ep.kind == "field" or ep.kind == "deaths") and (D.e or 0) - (ep.e or ep.t) <= 3600 then
                 -- the told quest the chapter weighed most in this episode, by the one who asked
                 local best
                 for _, e in ipairs(dayPlan.entries or {}) do
@@ -1241,6 +1606,14 @@ function C.Apply(ctx)
             local fromName = from and Place(from) or nil
             local inn = A.SelfTale and A.SelfTale.InnName and from and A.SelfTale.InnName(from)
             if inn then fromName = inn end
+            -- (lane S: the chapter closes where it opened: the place the night began is one the
+            -- chapter told, else the first episode's zone when that was told, else no place)
+            local function Told(place) return place and keptPlain:find((Clean(place):gsub("^[Tt]he ", "")), 1, true) end
+            if from and not (Told(from) or (inn and keptPlain:find(Plain(inn), 1, true))) then
+                local firstZone = episodes[1] and episodes[1].zone
+                if Told(firstZone) then from, fromName, inn = firstZone, Place(firstZone), nil
+                else from, fromName, inn = nil, nil, nil end
+            end
             local endPlace = (D.sleep and D.sleep.place) or D.endTown or D.endZone
             local endZone = (D.sleep and D.sleep.zone) or D.endZone
             -- (a corner of a city, "Trade Quarter" or "Canals", is told as the city)
@@ -1259,7 +1632,8 @@ function C.Apply(ctx)
             else
                 pool = same and P.closeEndSame or (crossings > 0 and P.closeEndFar) or P.closeEndNear
             end
-            if endName and (fromName or same or gapped) then
+            if endName and not fromName and not same and not gapped then pool = D.sleep and P.closeSleepShort or P.closeEndShort end
+            if endName and (fromName or same or gapped or pool == P.closeSleepShort or pool == P.closeEndShort) then
                 local text = Pick("closeEnd", pool, tokens)
                 if text then closeLines[#closeLines + 1] = Cap(text) end
             end
@@ -1301,13 +1675,15 @@ function C.Apply(ctx)
         local rest = p
         local ceiling = (rest.kind == "deaths") and C.MAX_WORDS_DEATHS or C.MAX_WORDS
         while rest.words > ceiling and #rest.lines >= 2 do
+            if C.Debug then C.Debug(("split: %d words, %d lines, ceiling %d"):format(rest.words, #rest.lines, ceiling)) end
             -- (the head: the most that fits under the ceiling and ends at a turn, a new story
             -- moment first, a grouped line or a death next; the tail is split again in its turn)
             local acc, bestAt, bestScore = 0, nil, nil
             for j = 1, #rest.lines - 1 do
                 acc = acc + Words(rest.lines[j].text)
                 local nxt = rest.lines[j + 1]
-                local turn = nxt.cls == "quest" or (nxt.cls == "death" and nxt.inPassage) or nxt.cls == "move" or nxt.cls == "voyage" or nxt.cls == "night" or nxt.cls == "level" or nxt.cls == "who"
+                -- (lane S: a level never opens a paragraph; it belongs to the deed before it)
+                local turn = nxt.cls == "quest" or (nxt.cls == "death" and nxt.inPassage) or nxt.cls == "move" or nxt.cls == "voyage" or nxt.cls == "night" or nxt.cls == "who"
                 local prevCls = rest.lines[j].cls
                 local inside = (rest.lines[j].meta.entry and nxt.meta.entry and rest.lines[j].meta.entry == nxt.meta.entry)
                     or (prevCls == "death" and nxt.cls == "death") or (rest.lines[j].inPassage and nxt.inPassage)
@@ -1326,6 +1702,7 @@ function C.Apply(ctx)
                     local nxt = rest.lines[j + 1]
                     local inside = (rest.lines[j].meta.entry and nxt.meta.entry and rest.lines[j].meta.entry == nxt.meta.entry) or (inRun[rest.lines[j]] and inRun[nxt])
                         or (rest.lines[j].inPassage and nxt.inPassage) or rest.lines[j].cls == "arrive" or rest.lines[j].cls == "move" or rest.lines[j].cls == "open" or rest.lines[j].cls == "who"
+                        or nxt.cls == "level"
                     if not inside and acc >= C.MIN_WORDS and acc <= ceiling and rest.words - acc >= C.MIN_WORDS and j >= 3 and #rest.lines - j >= 3 then bestAt = j end
                 end
             end
@@ -1351,6 +1728,49 @@ function C.Apply(ctx)
                 if cut and not cut:match("^%u%l+ %u") then l.text = Cap(cut) end
             end
         end
+    end
+    -- (lane S: a place named in the two lines before is not named again at the head of the next:
+    -- "In the Undercity, we spoke" after "We went on to the Undercity")
+    for _, p in ipairs(paragraphs) do
+        for i = 2, #p.lines do
+            local l = p.lines[i]
+            local place, rest = l.text:match("^In ({p:[^}]+}), (.*)$")
+            if place and not inRun[l] then
+                local before = ""
+                for j = math.max(1, i - 2), i - 1 do before = before .. " " .. Plain(p.lines[j].text) end
+                if before:find(Plain(place), 1, true) then l.text = Cap(rest) end
+            end
+        end
+    end
+    -- (lane S: a day played in two sittings says so where the second begins: "That evening,
+    -- Dahlia joined me." an hour or more after the line before it)
+    do
+        local prev
+        for _, p in ipairs(paragraphs) do
+            for _, l in ipairs(p.lines) do
+                if prev and not inRun[l] and not inRun[prev] and (l.cls == "who" or l.cls == "quest" or l.cls == "what") and not l.toClose
+                    and prev.cls ~= "close" and prev.cls ~= "craft" and prev.cls ~= "level" and prev.cls ~= "milestone" and not prev.toClose
+                    and l.t - prev.t >= 3600 and not l.text:find("^That ") and not l.text:find("^Later") and not l.text:find("^The %a+ ") then
+                    -- (the time between the two lines that no stay covers: a sitting's gap, not a long stay)
+                    local played = 0
+                    for _, s in ipairs(stretches) do
+                        local a, b = math.max(prev.t, s.t or 0), math.min(l.t, s.e or s.t or 0)
+                        if b > a then played = played + (b - a) end
+                    end
+                    if (l.t - prev.t) - played >= 3600 then
+                        local part, partBefore = PartOfDay(l.t), PartOfDay(prev.t)
+                        local lead = part == partBefore and "Later" or ("That " .. part)
+                        if l.text:match("^I ") or l.text:match("^We ") or l.text:match("^{n:") then l.text = lead .. ", " .. Lower(l.text) end
+                    end
+                end
+                if not l.toClose and l.cls ~= "close" then prev = l end
+            end
+        end
+    end
+    -- (lane S: a feeling never ends a paragraph)
+    for _, p in ipairs(paragraphs) do
+        local last = p.lines[#p.lines]
+        if last and last.meta.felt and last.meta.compose == "felt" and #p.lines >= 2 then table.remove(p.lines); p.words = p.words - Words(last.text) end
     end
     -- ("There" points at the line before: after a death, a join or a level it points at nothing)
     for _, p in ipairs(paragraphs) do

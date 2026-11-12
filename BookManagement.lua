@@ -430,7 +430,7 @@ function A.BuildBookWorldSettings(section, category, ui)
         section.updates[#section.updates + 1] = function()
             previewButton:SetText(A.IsGroupPromptPreview and A.IsGroupPromptPreview() and "Hide preview" or "Preview")
         end
-        Check("peopleAutoCampfire", "Remember people at my campfire", "Experimental: friendly players nearby with the same readable campfire timer; unavailable in combat or instances. They keep no journal and leave the list two hours after the last fire you shared.")
+        Check("peopleAutoCampfire", "Remember people at my campfire", "Experimental: friendly players nearby with the same readable campfire timer; unavailable in combat or instances. No journal; gone after 2 hours.")
         Check("peopleCampfireIcon", "Give them the campfire icon")
         Check("peopleMenu", "Add people from right-click menus")
         Action("Manage blocked people", function() A.OpenBookPeople(nil, "blocked") end)

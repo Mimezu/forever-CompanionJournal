@@ -134,6 +134,10 @@ Rule("short-run", false, "three or more sentences of six words or fewer in a row
 Rule("sentence-repeat", false, "an identical sentence twice in a book")
 Rule("first-time-chain", false, "\"first\" said four or more times in a chapter")
 Rule("clock-chain", false, "three or more sentences in a chapter opening on the clock (\"Just after ten\", \"Ten minutes on\")")
+-- lane S (2026-11-11): the seams
+Rule("lone-seam-line", false, "a short death, rare-creature, level or transit sentence standing between two longer sentences that ignore it")
+Rule("unanchored-the", false, "a chapter opening on \"the <thing>\" (\"with the engraved ring\") the book never showed before")
+Rule("close-untold-place", false, "a close that says where the night began at a place the chapter never told")
 
 local function Flag(rule, where, example)
     local r = RULES[rule]
@@ -467,6 +471,42 @@ local function Read(where, plain, rec, present, known, people, bookSeen, book)
         end
     end
     if deathParas >= 3 then Flag("deaths-split", where, ("%d paragraphs with deaths: %s"):format(deathParas, Short(plain))) end
+    -- lane S: the seams. A short entry (a death, a rare creature seen, a level, a transit) between
+    -- two longer sentences that touch neither side of it; the chapter's first sentence pointing at
+    -- a thing the book never showed; a close naming a start the chapter never told.
+    do
+        local SEAM = {"crossed my path", "few people ever see", "a rare sight", "seldom seen", "^level %d+ came", "^i reached level", "^i went from level", "^i was level %d+ when"}
+        for _, para in ipairs(paras) do
+            local ss = Sentences(para)
+            for i = 2, #ss - 1 do
+                local s, before, after = ss[i], ss[i - 1], ss[i + 1]
+                local low = s:lower()
+                local seam = WordCount(s) <= 9 and (IsDeath(s) or Any(low, SEAM) or IsMove(s) == "move")
+                if seam and WordCount(before) >= 10 and WordCount(after) >= 10 and not IsDeath(before) and not IsDeath(after)
+                    and not IsMove(before) and not IsMove(after) and not Any(before:lower(), SEAM) and not Any(after:lower(), SEAM) then
+                    Flag("lone-seam-line", where, s .. "  <-  " .. Short(before, 60))
+                end
+            end
+        end
+        local first = allSentences[1] or ""
+        local adj, thing = first:match("%f[%a]with the (%l+) (%l+)")
+        if not thing then adj, thing = first:match("%f[%a]took the (%l+) (%l+)") end
+        if not thing then adj, thing = first:match("%f[%a]carried the (%l+) (%l+)") end
+        if not thing then adj, thing = first:match("%f[%a]brought the (%l+) (%l+)") end
+        local COMMON = {zeppelin = true, boat = true, ship = true, lift = true, road = true, tram = true, flight = true, sea = true, lake = true, city = true,
+            keep = true, inn = true, gate = true, gates = true, night = true, day = true, evening = true, morning = true, afternoon = true, way = true, dark = true}
+        local PREP = {across = true, over = true, into = true, through = true, back = true, down = true, from = true, with = true, past = true, along = true}
+        if thing and #thing >= 4 and not COMMON[thing] and not COMMON[adj] and not PREP[thing] and not (book.text or ""):lower():find("%f[%a]" .. thing .. "%f[%A]") then Flag("unanchored-the", where, first) end
+        local last = allSentences[#allSentences] or ""
+        local closing = last:find("slept") or last:find(" ended ") or last:find("it ended")
+        local began = closing and (last:match("began %a+ (.-)[%.,]") or last:match("begun %a+ (.-)[%.,]") or last:match("crossings? from (.-)%.$")) or nil
+        if began and not began:find("^there") then
+            local bare = Bare(began)
+            local body = plain:sub(1, #plain - #last)
+            if not body:find(bare, 1, true) then Flag("close-untold-place", where, last) end
+        end
+        book.text = (book.text or "") .. " " .. plain
+    end
     if deathSentences >= 5 then Flag("death-ledger", where, ("%d death sentences: %s"):format(deathSentences, Short(plain))) end
     if tailChain >= 2 then Flag("death-tail-chain", where, Short(plain)) end
     if tally >= 3 then Flag("craft-ledger", where, ("%d tallies: %s"):format(tally, Short(plain, 120))) end

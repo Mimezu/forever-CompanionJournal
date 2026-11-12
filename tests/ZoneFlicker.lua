@@ -379,4 +379,42 @@ do
     if show then print("10: " .. text) end
 end
 
+-- 11. A first visit with nothing done in it (lane G, 2026-11-11): the place is named as new,
+-- never described, carries no danger line, and its sentence joins the next stop's paragraph.
+-- The next zone, where a quest was done, keeps its own telling. Both tellers.
+for _, planned in ipairs({false, true}) do
+    local j, Add, Stay = Journal()
+    Stay("Durotar", At(1, 20, 0), At(1, 20, 25))
+    Add({k = "quest", d = "Lazy Peons", t = At(1, 20, 10), z = "Durotar"})
+    Stay("The Barrens", At(1, 20, 25), At(1, 20, 40))
+    Add({k = "first", d = "zone", t = At(1, 20, 26), z = "The Barrens"})
+    Add({k = "town", d = "The Crossroads", t = At(1, 20, 30), z = "The Barrens"})
+    Stay("Ashenvale", At(1, 20, 40), At(1, 21, 10))
+    Add({k = "first", d = "zone", t = At(1, 20, 41), z = "Ashenvale"})
+    Add({k = "quest", d = "Ashenvale Outrunners", t = At(1, 21, 0), z = "Ashenvale"})
+    local p = Self("Rokhan", "Troll", "HUNTER", "Horde", j)
+    local _, texts = Tell(p, planned)
+    local text = texts[1]
+    local n, glimpse = 0, false
+    for s2 in text:gmatch("[^%.]+%.") do
+        if s2:find("Barrens", 1, true) then
+            n = n + 1
+            if s2:find("which was new to me", 1, true) or s2:find("no more than cross", 1, true) or s2:find("My way took me across", 1, true)
+                or s2:find("went on through", 1, true) then glimpse = true end
+        end
+    end
+    -- (the glimpse, and at most the next stop's "After the Barrens came Ashenvale": no lore line)
+    check(glimpse and n <= 2, "the Barrens are named, never described (" .. (planned and "planned" or "current") .. "): " .. text)
+    for _, bad in ipairs({"dangerous country", "young for the place", "early for it", "outmatched", "inexperienced"}) do
+        check(not text:find(bad, 1, true), "no danger line for a place only crossed: " .. text)
+    end
+    check(text:find("Ashenvale", 1, true), "the next stop is told: " .. text)
+    if not planned then
+        local para
+        for p2 in (text .. "\n\n"):gmatch("(.-)\n\n") do if p2:find("Barrens", 1, true) then para = p2 end end
+        check(para and para:find("Ashenvale", 1, true), "the crossing joins the next stop's paragraph: " .. text)
+    end
+    if show then print("11" .. (planned and "p" or "") .. ": " .. text) end
+end
+
 print(assertions .. " zone flicker checks passed")

@@ -290,6 +290,13 @@ W.moveShort = {
     "I crossed {zoneD}.",
     "I went on through {zoneD} without stopping.",
 }
+-- New ground only crossed, nothing done in it (lane G, 2026-11-11): named, never described.
+W.firstZoneGlimpse = {
+    "I crossed {zoneD}, which was new to me.",
+    "{zoneD} was new to me, and I did no more than cross it.",
+    "My way took me across {zoneD}, where I had never been.",
+    "I went on through {zoneD}, which I had never seen before.",
+}
 W.firstZone = {
     "I had never been to {zoneD} before.",
     "It was my first time in {zoneD}.",
@@ -666,6 +673,22 @@ W.runEarned = {
     secondTry = {"It had taken {us} two tries, and {we} had done it.", "The first try had cost {us}, and the second paid for it.",
         "{We} had been beaten once down there, and not the second time."},
     firstClean = {"I walked out of it on my feet.", "I came out of it standing, with everything I had gone in with."},
+}
+-- The run's losses that were not at a boss, in one sentence after the bosses that led to the
+-- goal (lane G, 2026-11-11). {foes}: "Deviate shamblers" / "a Deviate shambler and a Deviate
+-- guardian"; {count}: "once", "four times"; {raisers}: "Mirelle and Faelyn"; {rcount}; {names}
+-- and {tally} for the party ("Tarok twice", "once each", "four times between them").
+W.runLosses = {
+    meWalked = {"{Foes} got me {count} between the fights, and each time I walked back as a ghost.",
+        "{Foes} killed me {count} along the way, and I came back from the graveyard on my own feet each time."},
+    meRaised = {"{Foes} got me {count} between the fights, and {raisers} brought me back each time.",
+        "{Foes} killed me {count} along the way, and each time {raisers} raised me."},
+    meRaisedSome = {"{Foes} got me {count} between the fights. {Raisers} raised me {rcount}, and the rest of the time I walked back as a ghost.",
+        "{Foes} killed me {count} along the way. {Raisers} picked me up {rcount}, and otherwise I walked back as a ghost."},
+    party = {"{Names} fell {tally} along the way.", "{Names} went down {tally} between the fights."},
+    partyToo = {"{Names} fell {tally} as well.", "{Names} went down {tally} too."},
+    costly = {"{Boss} took {names} down before {he} fell.", "{Names} fell to {boss} before {he} did."},
+    costlyMany = {"{Names} fell to {bosses} in turn, and each of them fell after.", "{Bosses} each took {names} down before they fell."},
 }
 -- A level reached in the run or with its turn-ins, folded into the run's end ({level}).
 W.runLevel = {"I came out of it at level {level}.", "The run took me to level {level}.", "Level {level} came out of it with me."}
@@ -2584,9 +2607,10 @@ W.fallCount = {
 }
 -- (engine hook: a second death in one day by a different cause; in place of the plain death line).
 -- Tokens {foe} {Foe}. "I stayed under too long, and drowned ... A Defias Bandit killed me." (Wenna 1).
+-- (no ledger connective, "as well, before the day was out": reader F, 2026-11-11)
 W.deathAgainDay = {
-    "{Foe} killed me as well, before the day was out.",
-    "Later that day, {foe} killed me too.",
+    "{Foe} got me too, my second death of the day.",
+    "{Foe} killed me as well, the second time that day.",
 }
 -- Companion revenge (engine hook: the same fold as W.questRevenge). Tokens {foe}. Bryn II and
 -- Tobias I tell the death and the quest, but not that the foe died.
@@ -3621,7 +3645,11 @@ W.compose = {
     levelSoon = {"Level {level} came not long after.", "Level {level} came soon after."},
     levelAt = {"Level {level} came at {place}.", "At {place}, level {level} came."},
     levelIn = {"Level {level} came in {zone}.", "Somewhere in {zone}, level {level} came."},
+    -- (lane S: the level as a clause of the deed it came with, when that sentence can take one)
+    levelClause = {"and level {level} came with it", "and that took me to level {level}"},
     left = {"{name} had left us by then.", "{name} was gone by then."},
+    -- (lane S: someone named later in the chapter whose joining the teller never said)
+    joinedLate = {"{name} had joined us by then.", "{name} was with us by then."},
     byWay = {"{We} went on by way of {stops}.", "The road took {us} on by way of {stops}."},
     moveFlew = {"{We} flew to {place}.", "A flight took {us} to {place}."},
     moveVoyage = {"{We} took the {how} to {place}."},

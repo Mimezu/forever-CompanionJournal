@@ -525,15 +525,23 @@ local SHORT = {["Edwin VanCleef"] = "VanCleef", ["Emperor Dagran Thaurissan"] = 
     ["Warchief Rend Blackhand"] = "Rend", ["General Drakkisath"] = "Drakkisath", ["Mr. Smite"] = "Smite",
     ["Crowd Pummeler 9-60"] = "the Pummeler", ["Electrocutioner 6000"] = "the Electrocutioner", ["The Beast"] = "the Beast",
     ["The Baron"] = "the Baron", ["The Abandoned"] = "the Abandoned", ["Lordaeron Captain"] = "the captain"}
+-- (a name made of plain words, "Ancient Stone Keeper", "Avatar of Hakkar", has no short form:
+-- its first word is not a name, lane G 2026-11-11)
+local PLAIN_WORDS = {Ancient = true, Lost = true, Stone = true, Twilight = true, Crimson = true, Scarlet = true, Shadow = true, Dark = true,
+    Black = true, Red = true, White = true, Great = true, Death = true, Blood = true, Iron = true, Fire = true, Golem = true, War = true,
+    Shade = true, Avatar = true, Spirit = true, Grand = true, Elder = true, Chief = true, Mountain = true, Deep = true, Hive = true}
 function L.Short(name)
     if not name then return nil end
     if SHORT[name] then return SHORT[name] end
     local rest = name
+    local titled = false
     for _, title in ipairs(TITLES) do
-        if rest:sub(1, #title + 1) == title .. " " then rest = rest:sub(#title + 2); break end
+        if rest:sub(1, #title + 1) == title .. " " then rest = rest:sub(#title + 2); titled = true; break end
     end
     rest = rest:match("^(.-) the ") or rest
-    return rest:match("^(%S+)") or rest
+    local first = rest:match("^(%S+)") or rest
+    if not titled and first ~= rest and (PLAIN_WORDS[first] or rest:find(" of ", 1, true)) then return name end
+    return first
 end
 -- Dungeon stories: why adventurers go in (the old quests' reasons), and what
 -- it is like inside; detail is one concrete thing seen there. Plain sentences, no "you" or "I": both storytellers use

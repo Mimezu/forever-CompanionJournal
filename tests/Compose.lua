@@ -188,7 +188,10 @@ for i, para in ipairs(paras) do
     end
 end
 -- the chapter's close is built from the record, never a feeling, never a quest title
-check(Find(paras[#paras], "Ragefire Chasm was behind us."), "the sum names the spine, the run, as done")
+-- (lane S: "was behind us" belongs to the paragraph that came up with the heart; three hours and a
+-- journey later it is stale, so the close has no sum and the run's paragraph keeps the heart)
+check(not Find(paras[#paras], "was behind us"), "no stale sum an hour after the run")
+check(Find(plain, "with Taragaman's heart"), "the run's paragraph ends on what came of it")
 check(not Find(paras[#paras], "the work for"), "no work-for line when the chapter has an outcome")
 -- the levels: one line a chapter, the day's last level, with the run it came out of; the other silent
 local saidLevels = C.LevelsSaid(plain)
@@ -267,7 +270,8 @@ if gen then
                     local last = (ss[#ss] or ""):lower()
                     check(not last:find("^i mined %a+ veins%.$") and not last:find("^i caught %a+ fish%.$"), life.key .. " " .. d.key .. ": a tally ends a paragraph: " .. last)
                     for _, sn in ipairs(ss) do
-                        if sn:find("^Level %d+ came") or sn:find("^Somewhere in .- level %d+ came") then plainLevelLines = plainLevelLines + 1 end
+                        -- (the run's own "Level 22 came with Oggleflint" is the dungeon writer's, not a plain line)
+                        if (sn:find("^Level %d+ came") and not sn:find("^Level %d+ came with %u")) or sn:find("^Somewhere in .- level %d+ came") then plainLevelLines = plainLevelLines + 1 end
                         check(not sn:find("^We saw .- through%.$") and not sn:find("^I saw .- through%.$"), life.key .. " " .. d.key .. ": a bare quest title: " .. sn)
                     end
                 end
@@ -280,6 +284,74 @@ if gen then
     check(chapters >= 30, "generated chapters read: " .. chapters)
     check(composed >= chapters / 2, "most generated chapters were composed: " .. composed .. " of " .. chapters)
     if show then print(("generated: %d chapters, %d composed"):format(chapters, composed)) end
+end
+
+-- Lane S (2026-11-11): the seams ------------------------------------------------------------
+-- The names a text uses bare: the ones a later chapter assumes known.
+do
+    local bare = C.BareNames("Magistrate Sevren found Deliah in his records and said the Rot Hides must have taken her body to Silverpine.")
+    check(bare.Deliah, "a name used bare is found")
+    check(not bare.Sevren, "a titled name is not bare")
+    check(not bare.Hides and not bare.Hide, "a word of a two-word name is not bare")
+    local strict = C.BareNames("Dalar wanted it taken for Varimathras's advance. Hadrec let me choose from the arsenal.", true)
+    check(not strict.Varimathras, "a possessive is no bare name in the later text")
+    check(not strict.Hadrec, "a name opening a sentence is not bare")
+    check(not C.BareNames("We fought past the Bulwark.").Bulwark, "a thing after \"the\" is not a person")
+    check(C.BareNames("I took the scraps to Balthule, who named them.").Balthule, "a name before a who-clause is bare")
+end
+-- In the synthetic chapter: no rare-creature sighting, no stakes line, no level span, no title-only quest,
+-- the close opens where the chapter began, the first death is one sentence with what it was.
+check(not Find(plain, "crossed my path") and not Find(plain, "few people ever see"), "a rare creature only seen is not told")
+check(not Find(plain, "from level") or Find(plain, "The run took me from level"), "no level span outside the run's own line")
+check(not Find(plain, " through."), "no title-only quest line")
+check(not Find(plain, "Ride to Orgrimmar"), "the errand with no words of its own is left out")
+-- the generated days: the seams the editor named, on every chapter
+do
+    local gen = loadfile("StorageInvestigation/cj-story-breakthrough-20261109/pass3/gen_days.lua")
+    if gen then
+        local G = gen()
+        if G and G.Generate then
+            local TRANSIT = {"^we flew to ", "^i flew to ", "^a flight took ", "^we rode a zeppelin", "^i rode a zeppelin", "^we took the zeppelin", "^i took the zeppelin",
+                "^from there ", "^we went on to ", "^i went on to ", "hearthstone took me", "hearthstone brought me"}
+            local function Transit(s) local l = s:lower(); for _, p in ipairs(TRANSIT) do if l:find(p) then return true end end return false end
+            for _, life in ipairs(G.Generate(A, 9001, 30)) do
+                A.db.people = {}
+                for key, p in pairs(life.people) do A.db.people[key] = p end
+                A.SelfPerson = function() return life end
+                life.retell = 0
+                local book = A.JournalBook(life)
+                local stories = A.SelfTale.Tell(life, book, false, 0)
+                for _, d in ipairs(book) do
+                    local st = stories[d.key]
+                    if st and st.text ~= "" then
+                        local text = A.JournalPlain(st.text)
+                        local tag = life.key .. " " .. d.key .. ": "
+                        check(not Find(text, "crossed my path") and not Find(text, "few people ever see"), tag .. "a rare creature only seen")
+                        check(not text:find("%a+ deaths in [%a ]+, and .- besides%.") and not text:find("%a+ deaths in [%a ]+, and .- as well%."), tag .. "a death tally")
+                        check(not text:find("I went from level %d+ to %d+%.") and not text:find("I started the day at level"), tag .. "a level span")
+                        local ps = Paragraphs(text)
+                        for _, p in ipairs(ps) do
+                            local ss = Sentences(p)
+                            check(not (#ss == 1 and ss[1]:find("^Level %d+ came")), tag .. "a level standing as a paragraph")
+                            for i = 2, #ss do
+                                check(not (Transit(ss[i]) and Transit(ss[i - 1])), tag .. "two transit sentences in a row: " .. ss[i - 1] .. " " .. ss[i])
+                                local place = ss[i]:match("^In ([%u][%w' ]+), ")
+                                if place then check(not Find(ss[i - 1], place), tag .. "a place named again at the head of the next sentence: " .. ss[i]) end
+                            end
+                        end
+                        local last = ss and ss[#ss] or ""
+                        local allS = Sentences(text)
+                        last = allS[#allS] or ""
+                        local began = last:match("began %a+ (.-)[%.,]") or last:match("begun %a+ (.-)[%.,]")
+                        if began and not began:find("^there") then
+                            local bare = began:gsub("^[Tt]he ", "")
+                            check(Find(text:sub(1, #text - #last), bare), tag .. "the close names a start the chapter never told: " .. last)
+                        end
+                    end
+                end
+            end
+        end
+    end
 end
 
 print(assertions .. " checks passed")

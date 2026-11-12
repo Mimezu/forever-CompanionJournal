@@ -2,7 +2,7 @@
 ## Title: Companion Journal
 ## Notes: The players and NPCs you want to remember: display names, icons, notes, and a journal of your adventures together. Works on Blizzard's nameplates, and with Forever Names.
 ## Author: Mimezu
-## Version: 1.24.0
+## Version: 1.25.0
 ## SavedVariables: CompanionJournalDB
 ## LoadSavedVariablesFirst: 1
 ## OptionalDeps: ForeverNames, Blizzard_NamePlates

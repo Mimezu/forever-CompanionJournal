@@ -361,4 +361,85 @@ do
     end
 end
 
+-- The run's losses (lane G, 2026-11-11): deaths to the place's ordinary foes, the party's
+-- falls and the raises between the bosses are one sentence after the bosses that led to the
+-- goal, not a line each between the kills; a boss that killed someone is told with that kill;
+-- a level inside the run is told at its kill; the bosses stay a progression of a few beats.
+do
+    local D = DUNGEONS[3]
+    local journal = {}
+    local t0 = At(40, 20)
+    local function Add(e) e.pl = e.pl or D.level; journal[#journal + 1] = e end
+    Add({k = "play", t = t0, e = t0 + 900, z = D.zone})
+    Add({k = "town", d = "The Crossroads", t = t0 + 60, z = D.zone})
+    local tIn = t0 + 900
+    Add({k = "play", t = tIn, e = tIn + 85 * 60, z = D.name})
+    Add({k = "dungeon", d = D.name, z = D.name, t = tIn + 30, r = "healer"})
+    local function M(m, s2) return tIn + m * 60 + (s2 or 0) end
+    Add({k = "boss", d = "Lady Anacondra", z = D.name, t = M(7), n = 3})
+    Add({k = "death", w = "you", d = "Deviate Guardian", a = true, t = M(15), z = D.name})
+    Add({k = "rez", by = "Bryn", w = "them", t = M(17), z = D.name})
+    Add({k = "boss", d = "Lord Cobrahn", z = D.name, t = M(21), n = 3})
+    Add({k = "pdeath", n = "Grak-Forever", t = M(29), z = D.name})
+    Add({k = "pdeath", n = "Bryn-Forever", boss = "Lord Pythas", t = M(34, 30), z = D.name})
+    Add({k = "boss", d = "Lord Pythas", z = D.name, t = M(35), n = 3})
+    Add({k = "death", w = "you", d = "Deviate Guardian", a = true, t = M(43), z = D.name})
+    Add({k = "rez", by = "Bryn", w = "them", t = M(45), z = D.name})
+    Add({k = "boss", d = "Skum", z = D.name, t = M(50), n = 3})
+    Add({k = "mylevel", d = "21", t = M(50, 10), z = D.name, pl = 21})
+    Add({k = "boss", d = "Lord Serpentis", z = D.name, t = M(57), n = 3, pl = 21})
+    Add({k = "death", w = "you", d = "Deviate Guardian", a = true, t = M(65), z = D.name, walk = 200, pl = 21})
+    Add({k = "boss", d = "Verdan the Everliving", z = D.name, t = M(72), n = 3, pl = 21})
+    Add({k = "boss", d = "Mutanus the Devourer", z = D.name, t = M(80), n = 3, pl = 21})
+    local tOut = tIn + 85 * 60
+    Add({k = "play", t = tOut, e = tOut + 1200, z = D.zone, pl = 21})
+    Add({k = "town", d = "The Crossroads", t = tOut + 60, z = D.zone, pl = 21})
+    Add({k = "rest", d = "The Crossroads", t = tOut + 600, z = D.zone, pl = 21})
+    for _, c in ipairs({COMPANIONS[1], COMPANIONS[2]}) do journal[#journal + 1] = {k = "with", d = c.key, n = c.name .. "-Forever", t = t0, e = tOut + 1200} end
+    local me = Person(D, journal)
+    me.charKey = "drlosses"
+    for retell = 0, 3 do
+        for _, brief in ipairs({false, true}) do
+            local chapters = Tell(me, brief, retell)
+            local label = "losses retell " .. retell .. (brief and " Highlights" or "")
+            local plain = chapters[1].plain
+            CleanText(plain, chapters[1].text)
+            local para = RunParagraph(plain, D)
+            check(para, "a paragraph tells the run (" .. label .. "):\n" .. plain)
+            local sentences = Sentences(para)
+            local lossAt, firstKillAt, lordAt, levelAt, costlyAt, grakAt = nil, nil, nil, nil, nil, nil
+            local kills = 0
+            for i, s2 in ipairs(sentences) do
+                if s2:find("between the fights", 1, true) or s2:find("along the way", 1, true) then
+                    check(not lossAt, "the losses once (" .. label .. "):\n" .. para)
+                    lossAt = i
+                    -- (who raised me may take the sentence after: "Bryn raised me twice, and the rest of the time...")
+                    check(s2:find("Deviate guardians", 1, true) and s2:find("three times", 1, true) and (s2 .. (sentences[i + 1] or "")):find("Bryn", 1, true),
+                        "the losses sentence: the foe in the plural, the count, who raised me (" .. label .. "): " .. s2)
+                end
+                for _, b in ipairs(D.bosses) do if ClaimsKill(s2, Short(b)) then kills = kills + 1; firstKillAt = firstKillAt or i end end
+                -- ("Then came Mutanus the Devourer. We killed it.": the goal's arrival, after the first kills)
+                if s2:find("Mutanus", 1, true) and firstKillAt and i > firstKillAt then lordAt = lordAt or i end
+                if s2:lower():find("level 21", 1, true) then levelAt = i end
+                if s2:find("Bryn", 1, true) and s2:find("Pythas", 1, true) then costlyAt = i end
+                if s2:find("Grak", 1, true) and (s2:find("fell", 1, true) or s2:find("went down once", 1, true) or s2:find("died", 1, true) or s2:find("killed", 1, true)) then
+                    grakAt = i
+                    check(not s2:find("died there", 1, true) and not s2:find("was killed", 1, true), "no bare party death (" .. label .. "): " .. s2)
+                    check(s2:find("once", 1, true), "Grak's one fall counted with the losses (" .. label .. "): " .. s2)
+                end
+            end
+            check(lossAt, "the losses are told (" .. label .. "):\n" .. para)
+            check(firstKillAt and lossAt > firstKillAt, "the losses come after the first kills (" .. label .. "):\n" .. para)
+            check(lordAt and lossAt < lordAt, "the losses come before the goal (" .. label .. "):\n" .. para)
+            check(kills <= 4, "the kills are a few beats, not a list (" .. label .. "): " .. kills .. "\n" .. para)
+            check(costlyAt, "Bryn's fall to Lord Pythas is told with that kill (" .. label .. "):\n" .. para)
+            check(levelAt and levelAt < lordAt, "the level inside the run comes before the goal (" .. label .. "):\n" .. para)
+            check(grakAt, "Grak's fall is told (" .. label .. "):\n" .. para)
+            check(not para:find("got me, and", 1, true) and not para:find("raised me after", 1, true), "no death told one by one (" .. label .. "):\n" .. para)
+            told = told + 1
+            if show and retell == 0 and not brief then print("[losses] " .. chapters[1].title .. "\n" .. plain .. "\n") end
+        end
+    end
+end
+
 print("PASS: " .. assertions .. " dungeon-run assertions over " .. told .. " tellings")

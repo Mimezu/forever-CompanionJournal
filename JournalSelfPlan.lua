@@ -740,6 +740,7 @@ function Sel.Choose(sel)
     Sel.Callback(sel, true)
     Sel.Budget(sel)
     if sel.pairs then Sel.Pairs(sel) end
+    if sel.promised then Sel.Promised(sel) end
     Sel.Callback(sel)
 
     -- What was decided, on the lines.
@@ -1805,6 +1806,58 @@ function Sel.Pairs(sel)
     end
     sel.used = (sel.used or 0) - (steps[4] or 0) + used
     steps[4] = used
+end
+
+-- Lane S (2026-11-11). A step dropped today that first names someone or something the next
+-- days' work goes on to speak of is told after all, in its account's opening at least, so a
+-- later chapter's "the ring" has its ring. sel.promised holds the names the later records
+-- carry (the composer collects them from the record's next days); a name the book or the
+-- day's told work already holds needs nothing; two such steps a chapter at most, the best first.
+function Sel.Promised(sel)
+    local units, promised = sel.units, sel.promised
+    local known = ((sel.hp and sel.hp.text) or "") .. " " .. (sel.knownText or "")
+    local Bare = A.SelfCompose and A.SelfCompose.BareNames or function(text) return Names(text, sel.zoneWords) end
+    local told = ""
+    for _, u in ipairs(units) do
+        if u.mode then
+            local text = (u.kind == "act" and ((u.mode == "full" and u.full) or (u.mode == "alt" and u.alt) or (u.mode == "lead" and Sel.Lead(sel, u)) or u.plain))
+                or (u.mode == "short" and u.short) or u.plain
+            told = told .. " " .. Plain(text or "")
+        end
+    end
+    local order = {}
+    for _, u in ipairs(units) do order[#order + 1] = u end
+    table.sort(order, function(x, y) if (x.t or 0) ~= (y.t or 0) then return (x.t or 0) < (y.t or 0) end return x.i < y.i end)
+    local candidates = {}
+    for _, u in ipairs(order) do
+        if not u.mode and u.kind ~= "fixed" and (u.kind == "scene" or Sel.Account(sel, u)) then
+            local text = u.plain .. " " .. Plain((u.kind == "act" and u.full) or "")
+            for name in pairs(Bare(text)) do
+                if promised[name] and not (sel.zoneWords or {})[name] and not known:find(name, 1, true) and not told:find(name, 1, true) then
+                    u.promisedName = name
+                    candidates[#candidates + 1] = u
+                    break
+                end
+            end
+        end
+    end
+    table.sort(candidates, function(x, y) if (x.score or 0) ~= (y.score or 0) then return (x.score or 0) > (y.score or 0) end return x.i < y.i end)
+    local n = 0
+    for _, u in ipairs(candidates) do
+        if n >= 2 then break end
+        if not told:find(u.promisedName, 1, true) then
+            if u.kind == "scene" then u.mode = "full"
+            else
+                u.need = u.promisedName
+                local lead = not u.kin and Sel.Lead(sel, u)
+                u.mode = (lead and lead:find(u.promisedName, 1, true)) and "lead" or "full"
+                u.tell, u.promote = (u.mode == "lead" and lead) or u.full, u.promote or u.variant
+            end
+            u.must, u.promised = true, true
+            told = told .. " " .. u.plain .. " " .. Plain(u.full or "")
+            n = n + 1
+        end
+    end
 end
 
 -- (selection helpers end)

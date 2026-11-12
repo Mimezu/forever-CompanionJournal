@@ -767,6 +767,16 @@ PB.aftermath = {"{dungeonD} would be quieter for a while."}
 PB.dieHeroic = {"{killer} killed {me}.", "{I} fell to {killer}.", "{I} died fighting {killer}.", "{I} died fighting {killer}, like many before {me}."}
 
 -- PB.dieBoss
+-- Your deaths to the place's ordinary foes in one run, two or more, in one sentence after the
+-- kills (lane G, 2026-11-11). {killers}: "Deviate shamblers"; {count}; {raisers}; {rcount}.
+PB.runLosses = {
+    raised = {"{Killers} got {me} {count} between the fights, and {raisers} brought {me} back each time.",
+        "{Killers} killed {me} {count} along the way, and each time {raisers} raised {me}."},
+    some = {"{Killers} got {me} {count} between the fights. {Raisers} raised {me} {rcount}, and the rest of the time {I} walked back as a ghost.",
+        "{Killers} killed {me} {count} along the way. {Raisers} picked {me} up {rcount}, and otherwise {I} walked back from the graveyard."},
+    walked = {"{Killers} got {me} {count} between the fights, and each time {I} walked back as a ghost.",
+        "{Killers} killed {me} {count} along the way, and {I} walked back from the graveyard each time."},
+}
 PB.dieBoss = {"{killer} cut {me} down.", "{I} fell before {killer}.", "{killer} was too much for {me}.", "{killer} killed {me}."}
 
 -- PB.dieBossAvenged
@@ -2089,6 +2099,8 @@ PB.closeEndNear = {"The {part} ended in {place} {clock}, {span} after it began i
 PB.closeEndSame = {"The {part} ended {clock} where it began, in {place}, {span} later.", "{span} after it began there, the {part} ended {clock} in {place}."}
 -- A raise by someone other than the companion, in the companion's book (round 4): {raiser} the
 -- name as recorded, a stranger when no party window of your own book covers the moment.
+-- (the same hand raised you three times and more in a day: one line after the last, lane G)
+PB.rezEachTime = {"{raiser} brought {me} back each time.", "Each time, {raiser} raised {me}."}
 PB.rezOther = {"{raiser} raised {me} from death.", "{raiser} brought {me} back."}
 PB.rezOtherClause = {"{raiser} brought {me} back", "{raiser} raised {me}"}
 PB.rezStranger = {"{raiser}, a stranger, stopped to raise {me}.", "{raiser}, a stranger, brought {me} back from death."}

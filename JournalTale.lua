@@ -4049,6 +4049,25 @@ function T.Tell(person, days, voice, player, brief)
                 -- your own book covers the moment)
                 local inParty = false
                 local first = by:match("^(%S+)") or by
+                -- (the same hand three times and more in a day, lane G 2026-11-11: the clause once,
+                -- then one line for the rest, never "but Faelyn brought you back" after every death)
+                S.rezHands = S.rezHands or {}
+                local hand = S.rezHands[first:lower()]
+                if not hand then
+                    hand = {total = 0, said = 0}
+                    for _, b2 in pairs(f.rezBy) do if (tostring(b2):match("^(%S+)") or tostring(b2)):lower() == first:lower() then hand.total = hand.total + 1 end end
+                    S.rezHands[first:lower()] = hand
+                end
+                hand.said = hand.said + 1
+                if hand.total >= 3 and hand.said >= 2 then
+                    if hand.said == hand.total and PB.rezEachTime then
+                        tokens.raiser = "{n:" .. first .. "}"
+                        Add(teller:Say("rezEachTime", PB.rezEachTime, rng, tokens))
+                    end
+                    return
+                end
+                -- (the companion whose book this is was in the party by definition)
+                if first:lower() == tostring(FirstName(person) or ""):lower() then inParty = true end
                 for _, x in ipairs(ownJournal or {}) do
                     if x.k == "with" and x.n and (Clean(x.n):gsub("%-.*$", "")):lower() == first:lower() and (x.t or 0) <= rt and (x.e or x.t or 0) >= rt then inParty = true end
                 end
@@ -4354,6 +4373,14 @@ function T.Tell(person, days, voice, player, brief)
                 if ev.k == "wipe" and killedAt[ev.d] and killedAt[ev.d] > (ev.t or 0) then wipeWon[ev.d] = true end
                 if ev.k == "death" and ev.e and ev.e.w == "you" and (ev.e.boss or ev.e.d) then diedTo[ev.e.boss or ev.e.d] = true end
             end
+            -- (lane G, 2026-11-11: your deaths to the place's ordinary foes, two or more in a run, are
+            -- one sentence after the kills, not a line and a raise each between them)
+            d.gatherYou = {}
+            for _, ev in ipairs(d.events) do
+                local e = ev.k == "death" and ev.e
+                if e and e.w == "you" and e.d and not e.boss and not e.env and not ev.wipe and not ev.wipeOf and not wipeWon[e.d] then d.gatherYou[#d.gatherYou + 1] = ev end
+            end
+            if #d.gatherYou >= 2 and PB.runLosses then for _, ev in ipairs(d.gatherYou) do ev.gathered = true end else d.gatherYou = nil end
             local lastBoss, finalKill
             for _, ev in ipairs(d.events) do
                 local lore = ev.k == "boss" and L.Boss and L.Boss(ev.d)
@@ -4540,7 +4567,7 @@ function T.Tell(person, days, voice, player, brief)
                 elseif ev.k == "death" then
                     local e = ev.e
                     -- (their death in a boss's fight is a clause of that kill: it does not cut the roll)
-                    ev.attached = (e.w ~= "you" and e.boss and killedAt[e.boss] and killedAt[e.boss] >= (ev.t or 0) and PB.theyDieBossInRoll) and true or false
+                    ev.attached = ((e.w ~= "you" and e.boss and killedAt[e.boss] and killedAt[e.boss] >= (ev.t or 0) and PB.theyDieBossInRoll) or ev.gathered) and true or false
                     if not ev.attached then Flush() end
                     lastKiller = e.boss or e.d
                     tokens.place = Place(name)
@@ -4579,6 +4606,10 @@ function T.Tell(person, days, voice, player, brief)
                         beat = "rez"
                         do local rt = S.RezAfter(ev.t); if rt then RezLine(rt) end end
                         beat = savedBeat
+                    elseif ev.gathered then
+                        -- (said with the run's losses, after the kills)
+                        d.afterDeath = true
+                        d.youDeathsTold = (d.youDeathsTold or 0) + 1
                     elseif e.w == "you" then
                         d.afterDeath = true
                         d.youDeathsTold = (d.youDeathsTold or 0) + 1
@@ -4679,6 +4710,46 @@ function T.Tell(person, days, voice, player, brief)
             end -- (not told as one sentence)
             S.e = nil
             Flush()
+            if d.gatherYou then
+                -- (one table: T.Tell is near Lua 5.1's 200-local limit)
+                local G = {foes = {}, seen = {}, raisers = {}, rseen = {}, raised = 0, names = {}}
+                for _, ev in ipairs(d.gatherYou) do
+                    local kind = Clean(ev.e.d)
+                    if not G.seen[kind] then G.seen[kind] = 0; G.foes[#G.foes + 1] = ev.e end
+                    G.seen[kind] = G.seen[kind] + 1
+                    G.rt = S.RezAfter(ev.t)
+                    if G.rt then
+                        S.rezTold[G.rt] = true
+                        G.by = G.rt ~= true and f.rezBy and f.rezBy[G.rt]
+                        G.who = G.by and ("{n:" .. (G.by:match("^(%S+)") or G.by) .. "}") or teller.base.name
+                        G.raised = G.raised + 1
+                        if not G.rseen[G.who] then G.rseen[G.who] = true; G.raisers[#G.raisers + 1] = G.who end
+                    end
+                end
+                for i, e in ipairs(G.foes) do
+                    if i <= 2 then
+                        G.one = Foe(e.d, e.a)
+                        if G.seen[Clean(e.d)] == 1 then G.names[#G.names + 1] = G.one
+                        else
+                            G.text = G.one:gsub("^an? ", "")
+                            G.inner = G.text:match("{p:(.-)}$") or G.text
+                            G.plural = (G.inner:match("man$") and G.inner:gsub("man$", "men")) or ((G.inner:match("[sxz]$") or G.inner:match("[cs]h$")) and (G.inner .. "es")) or (G.inner .. "s")
+                            if G.text:match("{p:.-}$") then G.text = G.text:gsub("{p:.-}$", "{p:" .. G.plural .. "}") else G.text = G.plural end
+                            G.names[#G.names + 1] = G.text
+                        end
+                    end
+                end
+                if #G.foes > 2 then G.names[#G.names + 1] = "others" end
+                tokens.killers = List(G.names)
+                tokens.Killers = Cap(tokens.killers)
+                G.Times = function(n) return n == 1 and "once" or n == 2 and "twice" or (Words(n) .. " times") end
+                tokens.count = G.Times(#d.gatherYou)
+                tokens.raisers, tokens.Raisers = List(G.raisers), Cap(List(G.raisers))
+                tokens.rcount = G.Times(G.raised)
+                Add(teller:Say("runLosses", (G.raised == 0 and PB.runLosses.walked) or (G.raised >= #d.gatherYou and PB.runLosses.raised) or PB.runLosses.some, rng, tokens))
+                mood.grim = true
+                TitleFrom(65, "death")
+            end
             -- The run that stopped short of the lord: the lord beat you, a veteran fell short, or the
             -- run simply ended; then what still holds the deeper halls (Lore's `unfinished`).
             if unfinished and lordHere and PB.dungeonUnfinished then
