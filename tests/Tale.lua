@@ -265,7 +265,7 @@ local friend = Person("Brom", "WARRIOR", "Orc", "he")
 friend.origin, friend.bond = "together", "friend"
 Outing(friend, At(0), "Durotar", 60, 5, 5, {})
 local start = Chapters(friend)[1].plain
-check(start:find("together", 1, true) and not start:find("Deathknell", 1, true) and start:find("oldest friend", 1, true), "a different people: " .. start)
+check(start:find("together", 1, true) and not start:find("Deathknell", 1, true) and start:find("your friend", 1, true), "a different people: " .. start)
 
 -- Story Highlights: the notable beats only, shorter than the full story.
 local days = A.JournalBook(kael)

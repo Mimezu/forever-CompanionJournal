@@ -353,6 +353,13 @@ function E.ClaimsDeath(sentence, name)
         local at, after
         for _, form in ipairs(forms) do
             local s, e = low:find("%f[%w']" .. form:lower():gsub("%p", "%%%0") .. "%f[^%w]")
+            -- (lane O8 round 12: a possessive is no claim, "the foreman Arugal's magic had tainted")
+            if s and low:sub(e + 1, e + 2) == "'s" then
+                -- (but "VanCleef's head" is one: a part of the body taken)
+                local noun = low:sub(e + 3):match("^%s*(%a+)") or ""
+                local BODY = {head = true, heart = true, skull = true, corpse = true, body = true, remains = true, ashes = true, scalp = true, hide = true, blood = true, bones = true, hands = true, eye = true, eyes = true, tusk = true, fang = true, claw = true}
+                if not BODY[noun] then s = nil end
+            end
             if s and (not at or s < at) then at, after = s, e end
         end
         if at then

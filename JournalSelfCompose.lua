@@ -376,6 +376,89 @@ local function Select(ctx, lines, inRun, episodes, D)
             end
         end
     end
+    -- (lane O8 round 11, reader K rule 1: a completed quest with a named kill, or one that ends a
+    -- thread the chapter told (the same people as a told step before it), or the first work of a new
+    -- land (why we came), is never dropped; plain errands go first. Told as its bare act.)
+    local function Tell(u, kill)
+        if u.kind == "scene" then
+            -- (a scene told short: its act as one sentence, the scene's first line)
+            if not u.short then return end
+            u.mode = "short"
+            for i, line in ipairs(u.items or {}) do
+                if i == 1 then line.keep, line.text, line.plain, line.short = true, u.short, Plain(u.short), true else line.keep = false end
+            end
+            return
+        end
+        -- (round 12, reader M rule 7: the variant that carries the why, the account's opening, when it
+        -- is short; the bare act otherwise)
+        local lead = Sel.Lead and Sel.Lead(sel, u)
+        -- (a kill keeps its deed: the opening is used only when it tells the kill too)
+        if kill and lead and not Any(lead:lower(), {"killed", "destroyed", "slew", "beheaded", "put down", "cut down"}) then lead = nil end
+        if lead and Words(lead) <= 32 and not u.kin then
+            u.mode, u.tell, u.promote = "lead", lead, u.promote or u.variant
+        else
+            u.mode = "act"
+        end
+        local it = u.it
+        it.chosen = it.chosen or {}
+        it.chosen[u.act.i] = true
+        it.pick, it.keep = true, true
+    end
+    local firstOf = {}
+    for _, ep in ipairs(episodes) do
+        local isNew = false
+        for _, f in ipairs(ep.firsts or {}) do if f.what == "zone" then isNew = true end end
+        if isNew and ep.kind ~= "dungeon" then
+            for _, u in ipairs(sel.units or {}) do
+                if (u.t or 0) >= ep.t and (u.t or 0) < (ep.until_ or ep.e or ep.t) and (not firstOf[ep] or (u.t or 0) < (firstOf[ep].t or 0)) then firstOf[ep] = u end
+            end
+        end
+    end
+    local firstUnit = {}
+    for _, u in pairs(firstOf) do firstUnit[u] = true end
+    for _, u in ipairs(sel.units or {}) do
+        if not u.mode and ((u.kind == "act" and not u.fallback and u.act) or (u.kind == "scene" and u.short)) and EpisodeAt(u.t or 0, episodes).kind ~= "dungeon" then
+            local act = u.entry and u.entry.act and u.entry.act.act
+            -- (one named foe: "Ivar the Foul", "Besseleth", "until Nightlash came out"; never a band,
+            -- "Moonrage Whitescalps", "Rot Hides")
+            local kill = false
+            if type(act) == "string" then
+                for _, v in ipairs({"killed", "slew", "destroyed", "put down", "executed", "hunted down", "beheaded", "until"}) do
+                    local text_ = (act .. " x"):gsub("%f[%a](" .. v .. ") the %l+ (%u)", "%1 %2")
+                    for n_ in text_:gmatch("%f[%a]" .. v .. " (%u[%w']+[^,]-)%s+[a-z,]") do
+                        local name = n_:gsub(" in$", ""):gsub(" at$", "")
+                        if not name:match("s$") and not name:match("^The ") and (not A.FoeNamed or A.FoeNamed(name)) then kill = true end
+                    end
+                end
+            end
+            -- (a thread's last step the same day, when an earlier step of it was told)
+            local ends = false
+            if u.own and u.own ~= "class" then
+                local later, toldBefore = false, false
+                for _, o in ipairs(sel.units or {}) do
+                    if o ~= u and o.own == u.own then
+                        if (o.t or 0) > (u.t or 0) then later = true end
+                        if o.mode and (o.t or 0) < (u.t or 0) then toldBefore = true end
+                    end
+                end
+                ends = toldBefore and not later
+            end
+            -- (round 12, reader M: the spine. A step that names someone the chapter tells of elsewhere,
+            -- not as the one who gives work ("Thule" in Rot Hide Origins, told by his deaths and his
+            -- keep), sets that up and is told)
+            local spine = false
+            local known = sel.knownText or ""
+            for name in pairs(u.names or {}) do
+                if #name >= 4 and not (sel.folk or {})[name] and not (sel.zoneWords or {})[name] and known:find("%f[%a]" .. name .. "%f[%A]") then
+                    -- (named only outside the work told: Thule in his deaths and his keep, not Aramis in his lessons)
+                    local inWork = false
+                    for _, o in ipairs(sel.units or {}) do if o.mode and o ~= u and (o.plain or ""):find("%f[%a]" .. name .. "%f[%A]") then inWork = true end end
+                    if not inWork then spine = true end
+                end
+            end
+            if kill or ends or firstUnit[u] or spine then Tell(u, kill) end
+        end
+    end
     -- 2. What was decided, back on the lines. A grouped line's kept acts are lines of their own
     -- (Sel.Work: a sentence a piece, or two under one giver; an act told in its account comes
     -- in those words), each at its act's time; a scene told short keeps its act; the rest goes.
@@ -816,36 +899,161 @@ end
 -- (round 10, reader J: no death counts, no comparisons; a group of deaths in time order as one moment:
 -- who killed me where, who fell with me, who raised me. "Mountaineer Rharen killed me at Dun Algaz in
 -- Loch Modan, and Marrow and Dahlia fell with me." Everything said is true of this group alone.)
+-- (round 13, reader O rule 2: three deaths or more in one stretch are one sentence about the danger
+-- of the place: where, what killed us, who fell beside me, who brought me back. "At Fenris Isle the
+-- Rot Hides cut me down again and again, with Dahlia and Varreth falling beside me, and Ralph
+-- Cuthbridge and Varreth brought me back." The kind is the words the killers share, "Rot Hide".)
+local function KindOf(names)
+    if #names == 0 then return nil end
+    local best
+    local first = {}
+    for w in names[1]:gmatch("%S+") do first[#first + 1] = w end
+    for i = 1, #first do
+        for j = #first, i, -1 do
+            local phrase = table.concat(first, " ", i, j)
+            local all = true
+            for _, n in ipairs(names) do if not (" " .. n .. " "):find(" " .. phrase .. " ", 1, true) then all = false end end
+            if all and (not best or #phrase > #best) then best = phrase end
+        end
+    end
+    return best
+end
+function C.DangerSentence(evs, k)
+    local Place = k.Place
+    local own, killers, fell, seenF, raisers, seenR = {}, {}, {}, {}, {}, {}
+    for _, x in ipairs(evs) do
+        if x.e.k == "death" then
+            own[#own + 1] = x
+            if x.e.d and not x.e.env then killers[#killers + 1] = Clean(x.e.d) end
+        elseif x.e.k == "pdeath" then
+            local n = (Clean(x.e.n):gsub("%-.*$", ""))
+            if not seenF[n] then seenF[n] = true; fell[#fell + 1] = n end
+        elseif x.e.k == "rez" and x.e.by then
+            local by = (tostring(x.e.by):gsub("%-.*$", ""))
+            local short = by:gsub(" .*$", "")
+            local name = (k.party or {})[short] and short or by
+            if not seenR[name] then seenR[name] = true; raisers[#raisers + 1] = name end
+        end
+    end
+    if #own < 2 then return nil end
+    local kind = KindOf(killers)
+    local who
+    if kind and #kind >= 3 then
+        local plural = kind:match("s$") and kind or (kind .. "s")
+        who = (A.FoeNamed and A.FoeNamed(kind)) and Place(kind) or ("the " .. plural)
+    else
+        local list, seen = {}, {}
+        for _, n in ipairs(killers) do
+            local w = FoeWords({d = n}, Place)
+            if w and not seen[w] then seen[w] = true; list[#list + 1] = w end
+        end
+        who = #list > 0 and List(list) or "the foes there"
+    end
+    local x1 = own[1]
+    local zone, sub = x1.e.z or x1.ep.zone, x1.e.sz
+    local where = (sub and Clean(sub) ~= Clean(zone or "")) and Place(sub) or Place(zone)
+    local verb = (k.killedMe == "cut me down") and "cut me down" or "killed me"
+    local s = "At " .. where .. " " .. who .. " " .. verb .. " " .. (#own >= 3 and "again and again" or "more than once")
+    local fellNot = {}
+    for _, n in ipairs(fell) do fellNot[#fellNot + 1] = n end
+    if #fellNot > 0 then s = s .. ", with " .. List(fellNot) .. " falling beside me" end
+    if #raisers > 0 then s = s .. ", and " .. List(raisers) .. " brought me back" end
+    if k.lead then s = k.lead .. s:gsub("^At ", "at ") end
+    return Cap(s) .. "."
+end
 function C.DeathGroup(evs, k)
     local Place = k.Place
     local own, order, seen, raisers = {}, {}, {}, {}
+    for _, x in ipairs(evs) do if x.e.k == "death" then own[#own + 1] = x end end
     for _, x in ipairs(evs) do
-        if x.e.k == "death" then own[#own + 1] = x
-        elseif x.e.k == "pdeath" then
+        if x.e.k == "pdeath" then
             local n = (Clean(x.e.n):gsub("%-.*$", ""))
-            if not seen[n] then seen[n] = true; order[#order + 1] = n end
+            -- (round 11: "with me" only for a fall within a minute of one of mine)
+            local near = not k.exact or #own == 0
+            for _, o in ipairs(own) do if math.abs(o.t - x.t) <= 60 then near = true end end
+            if near and not seen[n] then seen[n] = true; order[#order + 1] = n end
         elseif x.e.k == "rez" and #own > 0 then
             local by = (tostring(x.e.by):gsub("%-.*$", ""))
             if not raisers[by] then raisers[by] = true; raisers[#raisers + 1] = by end
         end
     end
-    if #own == 0 and #order == 0 then return nil end
+    if #own == 0 and (#order == 0 or k.exact) then return nil end
+    local said = k.said or ""
     local function Where(x)
         local zone, sub = x.e.z or x.ep.zone, x.e.sz
-        if sub and Clean(sub) ~= Clean(zone or "") then return "at " .. Place(sub) .. " in " .. Place(zone) end
+        if sub and said:find((Plain(sub):gsub("^[Tt]he ", "")), 1, true) then return "there" end
+        if not sub and said:find((Plain(zone or ""):gsub("^[Tt]he ", "")), 1, true) then return "there" end
+        if sub and Clean(sub) ~= Clean(zone or "") then return "at " .. Place(sub) .. ((k.stay and "") or (" in " .. Place(zone))) end
+        -- (in a stay the land is the paragraph's own: not named again)
+        if k.stay then return "" end
         return "in " .. Place(zone)
+    end
+    -- (round 12, reader M: in a stay's stretch, each death in its turn with its own company and its
+    -- own raiser: "A Raging Rot Hide killed Dahlia and me there, and Ralph Cuthbridge stopped to raise
+    -- me; then a Rot Hide savage killed me, and Varreth brought me back; then a Raging Rot Hide killed
+    -- Dahlia, Varreth and me." One sentence, time order, nothing lost.)
+    if k.exact and #own >= 2 then
+        local party = k.party or {}
+        local clauses, seenFoe = {}, {}
+        for i, o in ipairs(own) do
+            local nextT = own[i + 1] and own[i + 1].t or math.huge
+            local with, seenW = {}, {}
+            for _, x in ipairs(evs) do
+                if x.e.k == "pdeath" and math.abs(x.t - o.t) <= 150 and x.t < nextT - 60 then
+                    local n = (Clean(x.e.n):gsub("%-.*$", ""))
+                    if not seenW[n] then seenW[n] = true; with[#with + 1] = n end
+                end
+            end
+            local raiser
+            for _, x in ipairs(evs) do
+                if x.e.k == "rez" and x.t >= o.t and x.t < nextT and not raiser then raiser = (tostring(x.e.by):gsub("%-.*$", "")) end
+            end
+            local foe, plainVerb = FoeWords(o.e, Place)
+            local cut = not plainVerb and k.killedMe == "cut me down"
+            local verb = cut and "cut" or "killed"
+            local all = {}
+            local raiserShort = raiser and (tostring(raiser):gsub("%-.*$", ""):gsub(" .*$", ""))
+            for _, n in ipairs(with) do if n ~= raiserShort then all[#all + 1] = n end end
+            all[#all + 1] = "me"
+            local whom = List(all) .. (cut and " down" or "")
+            local again = foe and seenFoe[foe] and " again" or ""
+            if foe then seenFoe[foe] = true end
+            local c = foe and (foe .. " " .. verb .. " " .. whom .. again) or ("I died" .. again)
+            if i == 1 then local w = Where(o); if w ~= "" then c = c .. " " .. w end end
+            if raiser then
+                local short = raiser:gsub(" .*$", "")
+                c = c .. (party[short] and (", and " .. short .. " brought me back") or (", and " .. raiser .. " stopped to raise me"))
+            end
+            clauses[#clauses + 1] = (i > 1 and "then " or "") .. c
+        end
+        local s_ = table.concat(clauses, "; ")
+        if k.lead then s_ = k.lead .. s_ end
+        return Cap(s_) .. "."
     end
     local s
     if #own == 1 then
         local foe, plain = FoeWords(own[1].e, Place)
         s = foe and (foe .. " " .. ((plain or not k.killedMe) and "killed me" or k.killedMe) .. " " .. Where(own[1])) or ("I died " .. Where(own[1]))
+        s = s:gsub("%s+$", "")
     elseif #own >= 2 then
-        local parts = {}
+        local parts, seenF, places = {}, {}, {}
         for _, x in ipairs(own) do
             local foe = FoeWords(x.e, Place)
-            if foe then parts[#parts + 1] = foe .. " " .. Where(x) end
+            if foe and not seenF[foe] then seenF[foe] = true; parts[#parts + 1] = foe end
+            local w = Where(x)
+            if not places[w] then places[w] = true; places[#places + 1] = w end
         end
-        s = #parts > 0 and (List(parts) .. " killed me") or "I died there again and again"
+        -- (one place for the group: told after the foes, or with each foe when they differ)
+        -- (one place for the group when they all fell in one; else each foe with its place)
+        if #places == 1 or k.exact then parts.where = places[1]
+        else
+            parts = {}; seenF = {}
+            for _, x in ipairs(own) do
+                local foe = FoeWords(x.e, Place)
+                if foe and not seenF[foe] then seenF[foe] = true; parts[#parts + 1] = foe .. " " .. Where(x) end
+            end
+        end
+        s = #parts > 0 and (List(parts) .. " killed me" .. (parts.where and (" " .. parts.where) or "")) or "I died there again and again"
     end
     if #order > 0 then
         if s then s = s .. ", and " .. List(order) .. " fell with me"
@@ -858,8 +1066,8 @@ function C.DeathGroup(evs, k)
         if party[short] then friends[#friends + 1] = short else strangers[#strangers + 1] = by end
     end
     if #friends > 0 then s = s .. ", though " .. List(friends) .. " brought me back" end
-    if #strangers == 1 then s = s .. ", and " .. strangers[1] .. ", a stranger, stopped to raise me"
-    elseif #strangers > 1 then s = s .. ", and " .. List(strangers) .. ", strangers, stopped to raise me" end
+    -- (not called strangers: the book may have met them before; StoryLint's stranger-known)
+    if #strangers >= 1 then s = s .. ", and " .. List(strangers) .. " stopped to raise me" end
     if k.lead then s = k.lead .. s end
     return Cap(s) .. "."
 end
@@ -948,7 +1156,7 @@ function C.QuestGoal(q)
         local giver = ok and type(story) == "table" and type(story.pov) == "table" and story.pov.giver
         if type(giver) == "string" and giver ~= "" then return "the work " .. giver .. " had for {us}" end
     end
-    if type(quest.title) == "string" and quest.title ~= "" then return "the task called " .. quest.title end
+    -- (round 11, reader K: never "the task called <Title>"; without a giver the goal is the land itself)
     return nil
 end
 
@@ -1101,9 +1309,28 @@ function C.TellExpedition(run, k)
         end
     end
     goal = goalQ and C.QuestGoal(goalQ.q)
-    run.goalQ = goal and goalQ or nil
-    local farGoal = Place(run.far) .. (goal and (" and " .. Fill(goal, we)) or "")
+    run.goalQ = goalQ
+    -- (round 12, reader M: the lands where the road's work was handed in are all its goals, the far
+    -- point and any other, "for Loch Modan and the Arathi Highlands"; each is answered where it was done)
+    local goals, seenG = {}, {}
+    for i = road, #eps do
+        for _, q in ipairs(eps[i].quests) do
+            local z = q.scene and q.scene.zone or eps[i].zone
+            if z and not seenG[Clean(z)] then seenG[Clean(z)] = true; goals[#goals + 1] = {zone = z, ep = eps[i], t = q.t} end
+        end
+    end
+    run.goals = goals
+    local goalNames = {}
+    for _, g in ipairs(goals) do goalNames[#goalNames + 1] = Place(g.zone) end
+    local farGoal = (#goalNames > 1 and List(goalNames) or Place(run.far)) .. (goal and (" and " .. Fill(goal, we)) or "")
+    if #goals > 1 then
+        local pass = {}
+        for _, z in ipairs(run.lands) do if not seenG[Clean(z)] then pass[#pass + 1] = Place(z) end end
+        lands = pass
+    end
     local tokens = T({from = Place(from or run.start), far = farGoal, lands = List(lands)})
+    if #lands == 0 then tokens.lands = Place(run.far) end
+    if above and not goal then tokens.far = tokens.far .. ", on work meant for travellers far stronger than " .. we.us end
     local pool, key = Reg(allNew and "journeyOutNew" or "journeyOut")
     Add(eps[road], setOut, Pick(key or "journeyOut", pool, tokens), "out")
     -- the deaths on the road (round 10): in time order, as moments, never counted: those on the way
@@ -1115,21 +1342,54 @@ function C.TellExpedition(run, k)
     for _, ep in ipairs(eps) do
         for _, sc in ipairs(ep.scenes or {}) do if Clean(sc.zone or "") == Clean(run.far) then farEnd = math.max(farEnd or 0, sc.e or sc.t or 0) end end
     end
-    local out_, back_ = {}, {}
+    -- (round 13, reader O rule 1: one group a place; a companion's fall within two and a half
+    -- minutes of mine goes with my death there)
+    local placeGroups = {}
     for _, x in ipairs(evs) do
-        if farEnd and x.t > farEnd then back_[#back_ + 1] = x else out_[#out_ + 1] = x end
+        if x.e.k == "death" then
+            local z = Clean(x.e.z or x.ep.zone or "")
+            local g = placeGroups[#placeGroups]
+            if not g or g.zone ~= z then g = {zone = z}; placeGroups[#placeGroups + 1] = g end
+            g[#g + 1] = x
+        end
     end
+    for _, x in ipairs(evs) do
+        if x.e.k ~= "death" then
+            local best, bestD
+            for _, g in ipairs(placeGroups) do
+                for _, o in ipairs(g) do
+                    if o.e.k == "death" and math.abs(o.t - x.t) <= 150 and (not bestD or math.abs(o.t - x.t) < bestD) then best, bestD = g, math.abs(o.t - x.t) end
+                end
+            end
+            if best then best[#best + 1] = x end
+        end
+    end
+    for _, g in ipairs(placeGroups) do table.sort(g, function(a_, b_) return a_.t < b_.t end) end
     local lastBeat
-    for gi, group in ipairs({out_, back_}) do
-        local text = C.DeathGroup(group, {Place = Place, killedMe = killedMe, party = partySet, lead = (gi == 2 and "on the way back, " or nil)})
+    local saidBack = false
+    for gi, group in ipairs(placeGroups) do
+        -- (the way back is "the way back" only when no goal lay on it)
+        local goalAfter = false
+        for _, g in ipairs(run.goals or {}) do if group[1] and g.t > group[1].t and Clean(g.zone) ~= Clean(run.far) then goalAfter = true end end
+        local backNow = farEnd and group[1] and group[1].t > farEnd and not saidBack
+        if backNow then saidBack = true end
+        local text = C.DeathGroup(group, {Place = Place, killedMe = killedMe, party = partySet, exact = true, road = true,
+            lead = (backNow and (goalAfter and "from there, " or "on the way back, ") or nil)})
         if text and #group > 0 then
             Add(group[1].ep, group[1].t, Fill(text, we), "beat")
             lastBeat = {ep = group[#group].ep, t = group[#group].t}
         end
     end
     -- the goal seen through, at its hand-in: named in the opening, its deed here
-    if goal and goalQ and P.journeyDone then
-        Add(goalQ.ep, goalQ.t, Pick(above and "journeyDoneAbove" or "journeyDone", above and P.journeyDoneAbove or P.journeyDone, T()), "done")
+    -- (round 13, reader O rule 7: work with no authored words is not padded with "there was work";
+    -- a road whose goal has a giver says it was done, one without says nothing more)
+    if goalQ and P.journeyDone and goal then
+        Add(goalQ.ep, goalQ.t, Pick(above and "journeyDoneAbove" or "journeyDone", above and P.journeyDoneAbove or P.journeyDone, T({far = Place(run.far)})), "done")
+        for _, g in ipairs(run.goals or {}) do
+            if Clean(g.zone) ~= Clean(run.far) and P.journeyDoneToo and goal then
+                Add(g.ep, g.t, Pick("journeyDoneToo", P.journeyDoneToo, T({zone = Place(g.zone)})), "done")
+            end
+        end
     end
     -- one sentence that says the danger outright at most: a feeling earned on a hard road with others,
     -- never last; else, when only the foes' strength says it, that
@@ -1152,6 +1412,11 @@ function C.TellExpedition(run, k)
     local lastZone = lastZones[#lastZones]
     local farText = Place(run.far)
     if not back and last.hearth and lastZone and Clean(lastZone) ~= Clean(run.far) then farText = farText .. " and back into " .. Place(lastZone) end
+    -- (round 13: the end is where the hearthstone was cast and how long the road took, not a recap)
+    if not back and last.hearth and lastZone and P.journeyHomeFrom then
+        endPool, endKey = P.journeyHomeFrom, "journeyHomeFrom"
+        farText = Place(lastZone)
+    end
     Add(last, endT - 1, Pick(endKey or "journeyEnd", endPool, T({far = farText, span = span})), "end")
     return out
 end
@@ -1334,6 +1599,11 @@ function C.Apply(ctx)
                         end
                     end
                     if at then
+                        -- (round 11, reader K rule 5: the deed before its hand-in, told as the deed itself)
+                        local act = l.meta and l.meta.entry and l.meta.entry.act and l.meta.entry.act.act
+                        if type(act) == "string" and act ~= "" and rest then
+                            first = ((l.text:match("^I ") and "I ") or "We ") .. act .. "."
+                        end
                         local meta = {}
                         for k_, v in pairs(l.meta or {}) do meta[k_] = v end
                         -- (we were there before what befell us there: the deed a few minutes before the record's moment)
@@ -1347,6 +1617,41 @@ function C.Apply(ctx)
                         end
                     end
                 end
+            end
+        end
+    end
+    -- (round 13, reader O rule 5: two steps of one thread never both tell the same find. A told step
+    -- whose opening sentence retells things an earlier told step found ("we slipped the pendant out of
+    -- the Dalaran crate" after "inside one we found ... a pendant") opens on its own act instead, "We
+    -- took the maps and pendant to Shadow Priest Allister.")
+    do
+        local STOP = {which = true, there = true, their = true, would = true, could = true, about = true, after = true, again = true, where = true, these = true, those = true, other = true}
+        local order = {}
+        for _, l in ipairs(lines) do if not l.drop and not inRun[l] and l.cls == "quest" then order[#order + 1] = l end end
+        Sorted(order, function(a, b) if a.t ~= b.t then return a.t < b.t end return a.n < b.n end)
+        -- (within one thread only: the same story thread, or the same giver)
+        local seenWords = {}
+        local function Key(l)
+            local e = l.meta and l.meta.entry
+            local th = e and e.story and e.story.thread
+            local giver = e and e.act and e.act.giver
+            -- (the class's own thread is a calling, not one errand chain)
+            if type(th) == "string" and th:find("^class") then return nil end
+            return (type(th) == "string" and th) or (type(giver) == "string" and giver) or nil
+        end
+        for _, l in ipairs(order) do
+            local key = Key(l)
+            local first, rest = l.text:match("^(.-[%.!])%s+([%u{].*)$")
+            local act = l.meta and l.meta.entry and l.meta.entry.act and l.meta.entry.act.act
+            if key and first and rest and type(act) == "string" and act ~= "" and seenWords[key] then
+                local shared = 0
+                for w in Plain(first):lower():gmatch("%a+") do if #w >= 5 and not STOP[w] and seenWords[key][w] then shared = shared + 1 end end
+                local low_ = Plain(first):lower()
+                if shared >= 2 and low_:find("^we ") and Any(low_, {"found", "slipped", "took", "carried", "brought", "opened", "inside"}) then l.text = "We " .. act .. ". " .. rest end
+            end
+            if key then
+                seenWords[key] = seenWords[key] or {}
+                for w in Plain(l.text):lower():gmatch("%a+") do if #w >= 5 then seenWords[key][w] = true end end
             end
         end
     end
@@ -1633,11 +1938,49 @@ function C.Apply(ctx)
                 while seq[j + 1] and Transit(seq[j + 1]) do j = j + 1 end
                 for k = i, j - 1 do seq[k].drop = true end
                 local last, before, after = seq[j], seq[i - 1], seq[j + 1]
+                -- (lane O8 round 11, reader K rule 6: several legs between two told stops are one sentence
+                -- from the record, the hearthstone and the ways we went: "My hearthstone took us back to the
+                -- Sepulcher, and by flight and zeppelin we came on to the Stonetalon Mountains, new to us.")
+                if after and before and P.roadLegs and Clean(after.ep.zone or "") ~= Clean(before.ep.zone or "") then
+                    local legs, hearth = {}, nil
+                    for _, st in ipairs(stretches) do
+                        for _, e in ipairs(st.events or {}) do
+                            local t = e.t or 0
+                            if t >= math.max(before.t, seq[i].t - 3600) and t <= after.t then
+                                if e.k == "hearth" and e.d then hearth = hearth or {t = t, place = e.d, z = e.z}
+                                elseif e.k == "voyage" and e.d and e.d ~= "hearth" and e.d ~= "portal" then legs[#legs + 1] = {t = t, w = (e.d == "boat" and "ship") or e.d}
+                                elseif e.k == "nightflight" or e.k == "taxi" then legs[#legs + 1] = {t = t, w = "flight"} end
+                            end
+                        end
+                    end
+                    Sorted(legs, function(a, b) return a.t < b.t end)
+                    local words, seenW = {}, {}
+                    for _, g in ipairs(legs) do if not hearth or g.t > hearth.t then if not seenW[g.w] then seenW[g.w] = true; words[#words + 1] = g.w end end end
+                    if #words > 0 and hearth then
+                        local party = #(after.ep.party or {}) > 0
+                        local isNew = false
+                        for _, f in ipairs(after.ep.firsts or {}) do if f.what == "zone" then isNew = true end end
+                        local tk = {we = party and "we" or "I", We = party and "We" or "I", us = party and "us" or "me", modes = List(words),
+                            place = hearth and Place(hearth.place) or "", dest = Place(after.ep.zone), new = isNew and (", new to " .. (party and "us" or "me")) or ""}
+                        local pool = hearth and P.roadLegsHearth or P.roadLegs
+                        -- (round 13, reader O rule 6: a first visit is never dropped; the land the
+                        -- hearthstone was cast from, new to us and told nowhere else, is said here)
+                        if hearth and P.roadLegsHearthFrom then hearth.z = hearth.z or EpisodeAt(hearth.t, episodes).zone end
+                        if hearth and hearth.z and P.roadLegsHearthFrom and Clean(hearth.z) ~= Clean(before.ep.zone or "") then
+                            local hep = EpisodeAt(hearth.t, episodes)
+                            local firstHere = false
+                            for _, f in ipairs(hep.firsts or {}) do if f.what == "zone" and Clean(f.z or hep.zone or "") == Clean(hearth.z) then firstHere = true end end
+                            if firstHere then tk.origin, pool = Place(hearth.z), P.roadLegsHearthFrom end
+                        end
+                        local text = pool and Pick("roadLegs", pool, tk, true)
+                        if text then last.text, last.cls, last.legs = text, "voyage", true; after.ep.roadTold = true end
+                    end
+                end
                 if not after then last.drop = true
                 elseif j > i and before and Clean(before.ep.zone or "") == Clean(after.ep.zone or "") then last.drop = true end
                 -- (lane O8: a crossing that lands on the continent the reader was already on is the
                 -- return of a round trip the chapter does not tell)
-                if not last.drop and last.cls == "voyage" and last.meta.e and last.meta.e.to then
+                if not last.drop and not last.legs and last.cls == "voyage" and last.meta.e and last.meta.e.to then
                     local fromZone = before and before.ep.zone or (episodes[1] and episodes[1].zone)
                     if fromZone and ZC[fromZone] and Clean(ZC[fromZone]) == Clean(last.meta.e.to) then last.drop = true end
                 end
@@ -1704,6 +2047,35 @@ function C.Apply(ctx)
     end
     -- the subject follows the party window at the line's own time: "we" with company, "I" alone
     local windows, anyWindow = DayWindows(stretches)
+    -- (round 13, reader O rule 4: a companion is with us from the record's first sign of them; a
+    -- line that brings them in earlier than that waits for it: "Varreth caught up with me" at 00:50)
+    do
+        local firstSign = {}
+        for _, st in ipairs(stretches) do
+            for _, e in ipairs(st.events or {}) do
+                local n = (e.k == "pdeath" and e.n) or (e.k == "rez" and e.by) or nil
+                if n then
+                    n = (Clean(n):gsub("%-.*$", ""):gsub(" .*$", ""))
+                    if not firstSign[n] or (e.t or 0) < firstSign[n] then firstSign[n] = e.t or 0 end
+                end
+            end
+        end
+        for _, l in ipairs(lines) do
+            if not l.drop and (l.cls == "who" or (l.cls == "what" and Plain(l.text):find(", was with us by then", 1, true))) and not inRun[l] then
+                local plain = Plain(l.text)
+                local name = plain:match("^(%u[%a']+) caught up") or plain:match("^(%u[%a']+), [^,]+, was with us") or plain:match("^(%u[%a']+) joined")
+                    or plain:match("^(%u[%a']+), [^,]+, was with me")
+                local at = name and firstSign[name]
+                if at and at > l.t + 300 then
+                    -- (only within the same evening's stay: never across a crossing)
+                    local ep = EpisodeAt(at, episodes)
+                    if ep == l.ep or Clean(ep.zone or "") == Clean(l.ep.zone or "") then
+                        l.t = at - 120; l.meta.t = l.t; l.ep = ep; l.signMoved = true
+                    end
+                end
+            end
+        end
+    end
     -- (lane O8: "There, Marrow joined me." while Dahlia was already with me is "joined us")
     for _, l in ipairs(lines) do
         if not l.drop and l.cls == "who" and l.text:find(" joined me", 1, true) then
@@ -1793,6 +2165,94 @@ function C.Apply(ctx)
     -- deaths or more, or two death lines, tells them in one sentence after the last of them: the
     -- first killer by place, the others, the company's falls as one clause, who raised me. A first
     -- (my first death, the first I raised) keeps its own line, and then the stay is left as it is.)
+    -- (lane O8 round 11, reader K rules 2-3: a stretch where I died three times or more is told among
+    -- its work by time: the deaths between two told steps are one moment, who killed me, who fell
+    -- with me within a minute of it, who raised me; never counted, never batched before or after.)
+    if C.DEATHS_INTERLEAVE ~= false then
+        for _, ep in ipairs(episodes) do
+            if ep.kind ~= "dungeon" and not ep.expedition then
+                local evs = C.DeathEvents({ep})
+                local own = 0
+                for _, x in ipairs(evs) do if x.e.k == "death" then own = own + 1 end end
+                local kept, firstLine, raisedOther, lead = {}, false, false, nil
+                for _, x in ipairs(byEp[ep]) do
+                    if not x.drop and not inRun[x] then
+                        local low = Plain(x.text):lower()
+                        if (x.meta and x.meta.e and x.meta.e.d == "rezother") or (Any(low, {"the first i", "my first", "for the first time"}) and Any(low, {"from death", "rose", "raised", "brought back"})) then raisedOther = true end
+                        if x.cls == "death" then
+                            if Any(low, {"my first", "first death", "the first i", "first time", "since i rose"}) then firstLine = true
+                            elseif Any(low, {"killed", "got me", " fell", "went down", "took ", "finished", "raised", "brought me back", "died", "the end of me", "prayers"}) then kept[#kept + 1] = x
+                            elseif not lead then lead = x end
+                        end
+                    end
+                end
+                local total = 0
+                for _, x in ipairs(evs) do if x.e.k ~= "rez" then total = total + 1 end end
+                -- (round 13: three deaths of mine, or two among four falls and more, are a stretch)
+                if (own >= 3 or (own >= 2 and total >= 4)) and #kept >= 1 and not firstLine and not raisedOther then
+                    local told = {}
+                    for _, x in ipairs(byEp[ep]) do if not x.drop and not inRun[x] and x.cls == "quest" then told[#told + 1] = x.t end end
+                    -- (round 13: a named killer's death is its own moment, at its time, "Thule Ravenclaw
+                    -- cut Dahlia, Saint, Varreth and me down"; the rest of the stretch is one sentence
+                    -- about the danger of the place, at its first death)
+                    local named, rest_ = {}, {}
+                    -- (only the stretch's last death, at a named killer's hand, is its own moment)
+                    local lastOwn
+                    for _, x in ipairs(evs) do if x.e.k == "death" then lastOwn = x end end
+                    if lastOwn and lastOwn.e.d and not lastOwn.e.env and A.FoeNamed and A.FoeNamed(Clean(lastOwn.e.d)) then named[1] = lastOwn end
+                    local namedSet = {}
+                    for _, x in ipairs(named) do namedSet[x] = true end
+                    local namedGroups = {}
+                    for _, nx in ipairs(named) do
+                        local g = {nx}
+                        for _, x in ipairs(evs) do
+                            if x ~= nx and x.e.k ~= "death" and math.abs(x.t - nx.t) <= 150 then g[#g + 1] = x; namedSet[x] = true end
+                        end
+                        table.sort(g, function(a_, b_) return a_.t < b_.t end)
+                        namedGroups[#namedGroups + 1] = g
+                    end
+                    for _, x in ipairs(evs) do if not namedSet[x] then rest_[#rest_ + 1] = x end end
+                    local partySet = {}
+                    for _, n in ipairs(ep.party or {}) do partySet[n] = true end
+                    local r = C.EpisodeDanger(ep)
+                    local killedMe = (P.journeyKilled and P.journeyKilled[r]) or "killed me"
+                    local made = {}
+                    local restOwn = 0
+                    for _, x in ipairs(rest_) do if x.e.k == "death" then restOwn = restOwn + 1 end end
+                    if restOwn >= 2 then
+                        local text = C.DangerSentence(rest_, {Place = Place, killedMe = killedMe, party = partySet})
+                        if text then
+                            local at = rest_[#rest_].t
+                            made[#made + 1] = {cls = "death", t = at, ep = ep, text = text, major = false, kind = "deathGroup", meta = {t = at, compose = "deaths"}, n = #out + 750 + ep.index}
+                        end
+                    elseif restOwn == 1 then
+                        local text = C.DeathGroup(rest_, {Place = Place, killedMe = killedMe, party = partySet, exact = true, stay = true})
+                        if text then
+                            local at = rest_[1].t
+                            for _, x in ipairs(rest_) do if x.e.k == "death" then at = x.t; break end end
+                            made[#made + 1] = {cls = "death", t = at, ep = ep, text = text, major = false, kind = "deathGroup", meta = {t = at, compose = "deaths"}, n = #out + 750 + ep.index}
+                        end
+                    end
+                    for gi, g in ipairs(namedGroups) do
+                        local text = C.DeathGroup(g, {Place = Place, killedMe = killedMe, party = partySet, exact = true, stay = true})
+                        if text then
+                            made[#made + 1] = {cls = "death", t = g[1].t, ep = ep, text = text, major = false, kind = "deathGroup", meta = {t = g[1].t, compose = "deaths"}, n = #out + 760 + ep.index + gi / 10}
+                        end
+                    end
+                    if #made > 0 then
+                        for _, x in ipairs(kept) do x.drop = true end
+                        if lead then
+                            local first_ = made[1].text:gsub("^At [^,]-%} ", function(m) return Plain(lead.text):find(Plain(m:sub(4, -2)):gsub("^the ", ""), 1, true) and "" or m end)
+                            first_ = first_:gsub("^At [%w' ]- (the %u)", function(m, rest) return rest end)
+                            made[1].text = lead.text:gsub("%s*$", "") .. " " .. Cap(first_)
+                            lead.drop = true
+                        end
+                        for _, l in ipairs(made) do lines[#lines + 1] = l; byEp[ep][#byEp[ep] + 1] = l end
+                    end
+                end
+            end
+        end
+    end
     if C.DEATHS_ONE == true then
         for _, ep in ipairs(episodes) do
             if ep.kind ~= "dungeon" and not ep.expedition then
@@ -1911,7 +2371,17 @@ function C.Apply(ctx)
                     end
                 end
                 for k = i, j do Silence(episodes[k], carry) end
-                if #headNames > 0 then
+                -- (round 13, reader O rule 6: a first visit is said in one clause on the road out of it,
+                -- "From Westfall, new to us, my hearthstone took us back to the Sepulcher, ...")
+                if #headNames == 1 and not C.NAME_EMPTY_LANDS then
+                    for _, x in ipairs(lines) do
+                        if not x.drop and x.legs and x.t >= head[1].t and (not D or x.t <= D.t) and x.text:find("^My hearthstone") then
+                            local party = WithAtDay(windows, x.t)
+                            x.text = "From " .. headNames[1] .. ", new to " .. (party and "us" or "me") .. ", my hearthstone" .. x.text:sub(#"My hearthstone" + 1)
+                        end
+                    end
+                end
+                if #headNames > 0 and C.NAME_EMPTY_LANDS then
                     local ep = head[#head] or tail[#tail]
                     -- (lane O8: said where the first of those lands was reached, not in a later stop)
                     for _, h in ipairs(head) do if IsFirst(h) then ep = h; break end end
@@ -2240,7 +2710,8 @@ function C.Apply(ctx)
                         if not joined then
                             local text = (who and P.joinedLateNew and Pick("joinedLateNew", P.joinedLateNew, {name = "{n:" .. name .. "}", who = who}))
                                 or Pick("joinedLate", P.joinedLate, {name = "{n:" .. name .. "}"})
-                            if text then added[#added + 1] = {cls = "who", t = first, ep = ep, text = text, major = false, kind = nil, meta = {t = first, compose = "joined"}, n = #out + #added + 1} end
+                            -- (round 13: told at the record's first sign of them, not at the stay's start)
+                            if text then added[#added + 1] = {cls = "who", t = first - 120, ep = ep, text = text, major = false, kind = nil, meta = {t = first - 120, compose = "joined"}, n = #out + #added + 1, signMoved = first > ep.t + 300 or nil} end
                         end
                     end
                 end
@@ -2314,6 +2785,7 @@ function C.Apply(ctx)
     local function Slot(l, ep, firstWhat, lastWhat, passage)
         if l.toClose then return 9 end
         if ep.kind == "journey" and l.cls ~= "open" and l.cls ~= "close" and not (l.cls == "who" and l.t <= ep.t + 300) then return SLOT_WHAT end
+        if l.cls == "who" and l.signMoved then return SLOT_WHAT end
         if l.cls == "who" and ep.kind ~= "deaths" and l.t > ep.t + 10 * 60 and l.t > (firstWhat or math.huge) + 300 then l.cut = true; return SLOT_WHAT end
         if PRIORITY[l.cls] then return PRIORITY[l.cls] end
         if l.cls == "level" or l.cls == "milestone" then return SLOT_WHAT end
@@ -2522,7 +2994,7 @@ function C.Apply(ctx)
             end
         end
         -- (an episode in another place than the one before opens with the move between them)
-        if ep.kind ~= "dungeon" and ep.index > 1 and #kept > 0 and not (ep.expedition and (ep.expedition.eps[1] ~= ep or ep.expedition.before)) then
+        if ep.kind ~= "dungeon" and ep.index > 1 and #kept > 0 and not (ep.expedition and (ep.expedition.eps[1] ~= ep or ep.expedition.before)) and not ep.roadTold then
             local prevEp = episodes[ep.index - 1]
             local opens = false
             local placeName = Clean(ep.zone or "")
@@ -2961,7 +3433,7 @@ function C.Apply(ctx)
     local pieces = {}
     for _, p in ipairs(paragraphs) do
         local rest = p
-        local ceiling = ((rest.kind == "adventure" or rest.kind == "expedition") and C.MAX_WORDS_ADVENTURE) or (rest.kind == "deaths") and C.MAX_WORDS_DEATHS or C.MAX_WORDS
+        local ceiling = ((rest.kind == "adventure" or rest.kind == "expedition") and C.MAX_WORDS_ADVENTURE) or (rest.kind == "deaths" or rest.kind == "journey") and C.MAX_WORDS_DEATHS or C.MAX_WORDS
         -- (round 9: the day's sums at the end, level, time and the fold, do not count against a road's or an adventure's ceiling)
         local function StoryWords(list)
             local n = 0
@@ -2983,6 +3455,7 @@ function C.Apply(ctx)
                     or (prevCls == "death" and nxt.cls == "death") or (rest.lines[j].inPassage and nxt.inPassage)
                     or (inRun[rest.lines[j]] and inRun[nxt])
                     or prevCls == "arrive" or prevCls == "move" or prevCls == "open" or prevCls == "who"
+                    or (rest.lines[j].ep == nxt.ep and nxt.ep.kind == "journey")
                 if turn and not inside and acc >= C.MIN_WORDS and acc <= ceiling and rest.words - acc >= C.MIN_WORDS and j >= 3 and #rest.lines - j >= 3 and HasStory(rest.lines, j + 1) then
                     local score = acc + ((nxt.kind == "questStart" and nxt.meta.entry) and 15 or 0) + (nxt.cls == "death" and 10 or 0)
                     if not bestScore or score > bestScore then bestScore, bestAt = score, j end
@@ -2996,7 +3469,7 @@ function C.Apply(ctx)
                     local nxt = rest.lines[j + 1]
                     local inside = (rest.lines[j].meta.entry and nxt.meta.entry and rest.lines[j].meta.entry == nxt.meta.entry) or (inRun[rest.lines[j]] and inRun[nxt])
                         or (rest.lines[j].inPassage and nxt.inPassage) or rest.lines[j].cls == "arrive" or rest.lines[j].cls == "move" or rest.lines[j].cls == "open" or rest.lines[j].cls == "who"
-                        or nxt.cls == "level" or nxt.toClose or nxt.cls == "close"
+                        or nxt.cls == "level" or nxt.toClose or nxt.cls == "close" or (rest.lines[j].ep == nxt.ep and nxt.ep.kind == "journey")
                     if not inside and acc >= C.MIN_WORDS and acc <= ceiling and rest.words - acc >= C.MIN_WORDS and j >= 3 and #rest.lines - j >= 3 and HasStory(rest.lines, j + 1) then bestAt = j end
                 end
             end

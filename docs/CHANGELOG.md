@@ -1,5 +1,14 @@
 # Companion Journal: changes
 
+## 1.28.0 (2026-11-12)
+
+- Named kills and story-moving quests are kept
+- Several deaths in one place are one sentence about that place
+- Companions appear when they joined, introduced once
+- An object found once is told once
+- Companion books: her levels and deeds beside yours, in words of her own
+- Two companions' books never share a sentence
+
 ## 1.27.0 (2026-11-12)
 
 - Records everyone in your group, and how long they stayed

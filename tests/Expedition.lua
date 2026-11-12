@@ -117,11 +117,16 @@ check(Count(para, "new to") + Count(para, "known to") + Count(para, "strange to"
 check(Find(para, "Dun Algaz"), "the death is told where it fell, at Dun Algaz")
 check(Index(para:lower(), "rharen") < Index(para:lower(), "a fall") and Index(para:lower(), "a fall") < Index(para:lower(), "plains creeper"), "the dangers in the order they came")
 check(Find(para, "Marrow brought me back"), "the raise on the road")
-check(Count(para:lower(), "killed me") + Count(para:lower(), "cut me down") + Count(para:lower(), "i died") <= 2, "the deaths in two sentences at most, the way out and the way back (round 10)")
+for sentence in para:gmatch("[^%.]+%.") do
+    local lands = 0
+    for _, z in ipairs({"Loch Modan", "Wetlands", "Arathi Highlands"}) do if sentence:find(z, 1, true) then lands = lands + 1 end end
+    check(not (sentence:find("killed me") or sentence:find("cut me down")) or lands <= 1, "one death sentence a place, never two places merged (round 13): " .. sentence)
+end
 check(not Find(para, "between them") and not Find(para, "more often") and not para:lower():find("%a+ times"), "the deaths never counted or compared (round 10)")
-check(Index(para, "Rharen") < Index(para, "saw it through") and Index(para, "saw it through") < Index(para, "On the way back"), "deaths and the goal's deed in time order (round 10)")
-check(Find(para, "back into the Arathi Highlands, and the hearthstone brought us home"), "the hearthstone from where it was cast (round 10)")
-check(Index(para, "Wet Job") < Index(para, "Rharen"), "the road opens with its goal, named (round 9)")
+check(Index(para, "Rharen") < Index(para, "On the way back"), "the deaths in time order (round 10)")
+check(not Find(para, "there was work") and not Find(para, "what we had come for"), "no filler for work without words (round 13)")
+check(Find(para, "From the Arathi Highlands the hearthstone brought us home"), "the hearthstone from where it was cast (round 10, 13)")
+check(Index(para, "for Loch Modan") < Index(para, "Rharen") and not Find(para, "task called"), "the road opens with where it was for, never a quest title (round 11)")
 check(Find(para, "little more than an hour") or Find(para, "under two hours") or Find(para, "less than an hour"), "and how long, in words")
 check(Find(para, "far stronger than"), "work far above the level says the road was dangerous")
 check(Count(hard:lower(), "hard road") + Count(hard:lower(), "took a lot of killing") + Count(hard:lower(), "died easily") <= 1, "the danger said outright at most once")
@@ -135,7 +140,7 @@ for _, p in ipairs(Paragraphs(easy)) do if Find(p, "Loch Modan") then easyPara =
 check(easyPara, "the easy road is told: " .. easy)
 check(not Find(easyPara, "killed me") and not Find(easyPara, "cut me down") and not Find(easyPara, "hard road"), "no dangers on an easy road")
 check(not Find(easyPara, "fought our way") and not Find(easyPara, "as best we could"), "the plain register on an easy road")
-check(Find(easyPara, "as far as Loch Modan"), "the easy road ends on how far too")
+check(Find(easyPara, "hearthstone brought us home") and Find(easyPara, "after we had set out"), "the easy road ends on where it ended and how long (round 13)")
 
 -- 2. The register --------------------------------------------------------------------------
 local line = "We killed Captain Perrine and went home. We went on to Brill."

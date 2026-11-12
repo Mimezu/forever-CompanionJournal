@@ -3701,7 +3701,10 @@ W.compose = {
     -- only as a first; a level that came at a burst of hand-ins)
     crossRun = {"By way of {places}, new to {us}, {we} came into {zoneD}."},
     crossRunNew = {"By way of {places}, {we} came into {zoneD}, all of it new to {us}."},
-    crossOnlyBy = {"The {how} carried {us} on, and {Places} {were} new to {us}."},
+    -- (round 11: the legs of a road between told stops, from the record)
+    roadLegs = {"By {modes}, {we} came on to {dest}{new}."},
+    roadLegsHearthFrom = {"From {origin}, new to {us}, my hearthstone took {us} back to {place}, and by {modes} {we} came on to {dest}{new}."},
+    roadLegsHearth = {"My hearthstone took {us} back to {place}, and by {modes} {we} came on to {dest}{new}."},
     crossOnly = {"{Places} {were} new to {us}."},
     levelBurst = {"By then I was level {level}."},
     -- (lane O8: an adventure's record may say how many went in and that the foes were strong; told
@@ -3733,9 +3736,9 @@ W.compose = {
     crossFold = {", and {we} saw to {count} {tasks} there."},
     foldGiversOnly = {"{We} saw to {count} {tasks} for {givers} there.", "There {we} saw to {count} {tasks} for {givers}."},
     foldPlaceOnly = {"In {place}, {we} saw to {count} {tasks}.", "{We} saw to {count} {tasks} in {place}."},
-    journeyDone = {"{We} saw it through there.", "There {we} saw the work done."},
-    journeyDoneAbove = {"{We} saw it through, though it was meant for travellers far stronger than {us}.",
-        "It was work meant for travellers far stronger than {us}, and {we} saw it through all the same."},
+    journeyDoneToo = {"In {zone} {we} finished the rest of what {we} had come for."},
+    journeyDone = {"In {far} {we} found the work {we} had come for, and saw it done."},
+    journeyDoneAbove = {"In {far} there was work meant for travellers far stronger than {us}, and {we} saw it through all the same."},
     journeyKilled = {[0] = "killed me", [1] = "killed me", [2] = "cut me down", [3] = "cut me down"},
     journeyHardFelt = {"It was a hard road, and I was glad not to walk it alone.", "It was a hard road, and I was glad of the company on it."},
     journeyDangerous = {"Nothing on that road died easily.", "What lived along that road took a lot of killing."},
@@ -3744,6 +3747,7 @@ W.compose = {
     journeyBack2 = {"In {span}, {we} had made it to {far} and back.", "{We} had made it to {far} and back in {span}."},
     journeyBack3 = {"In {span}, {we} had fought {our} way to {far} and back.", "{We} had fought {our} way to {far} and back in {span}."},
     journeyFar0 = {"In {span}, {we} had come as far as {far}."},
+    journeyHomeFrom = {"From {far} the hearthstone brought {us} home, {span} after {we} had set out."},
     journeyHome0 = {"In {span}, {we} had gone as far as {far}, and the hearthstone brought {us} home."},
     journeyHome2 = {"In {span}, {we} had made it as far as {far}, and the hearthstone brought {us} home."},
     journeyHome3 = {"In {span}, {we} had fought {our} way as far as {far}, and the hearthstone brought {us} home."},

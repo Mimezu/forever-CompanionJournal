@@ -78,6 +78,18 @@ for d = 2, 5 do
     end
 end
 
+-- Marrow, a friend on his card, in the same party on days 2 to 5 (round 10)
+local marrow = {name = "Marrow-Rotmoor", class = "PRIEST", race = "Scourge", pronouns = "he", journal = {}, key = "marrow-rotmoor", bond = "friend"}
+A.db.people["marrow-rotmoor"] = marrow
+for _, e in ipairs(J) do
+    if e.t and e.t >= At(2, 0, 0) then
+        local copy = {}
+        for k, v in pairs(e) do copy[k] = v end
+        if copy.k == "death" and copy.w == "them" then copy = nil end
+        if copy then marrow.journal[#marrow.journal + 1] = copy end
+    end
+end
+for d = 2, 5 do M[#M + 1] = {k = "with", d = "marrow-rotmoor", n = "Marrow-Rotmoor", t = At(d, 20, 0), e = At(d, 22, 30)} end
 A.SelfPerson = function() return me end
 local player = {name = "Alberich", race = "Scourge", faction = "Horde", class = "PALADIN", charKey = "alb"}
 local function Tell(bond, voice, retell)
@@ -114,14 +126,16 @@ for _, voice in ipairs({"we", "you"}) do
             if bond == "spouse" then
                 check(all:find("ended the night together", 1, true) or all:find("ended the evening together", 1, true) or all:find("parted for the night", 1, true),
                     "a close bond's close is about the two of them" .. where)
-                check(all:find("five days in a row", 1, true) or all:find("fifth day in a row", 1, true), "five days in a row, for a close bond" .. where)
+                check(book[#book]:find("evenings since", 1, true) and not book[#book]:find("in a row", 1, true), "the latest chapter looks back, no streak counter" .. where .. ": " .. book[#book])
                 check(one:find("fire", 1, true) or one:find("camp", 1, true), "the fire kept for a close bond" .. where .. ": " .. one)
             else
                 check(not all:find("parted for the night", 1, true) and not all:find("ended the night together", 1, true), "no close-bond words for " .. tostring(bond) .. where)
                 check(not all:find("days in a row together", 1, true) and not all:find("in a row that", 1, true), "days in a row only for a close bond" .. where)
             end
+            check(not bond or (not all:find("crossing", 1, true) and not all:find("hours after", 1, true)), "no counters in a bonded close" .. where)
             if bond == "friend" then
-                check(all:find("called it a night", 1, true) or all:find(voice == "we" and "Dahlia and I ended" or "You and Dahlia ended", 1, true), "a friend's close" .. where)
+                check(book[#book]:find("evenings with Dahlia", 1, true), "a friend's look-back" .. where .. ": " .. book[#book])
+                check(all:find("called it a night", 1, true) or all:find("own way", 1, true) or all:find(voice == "we" and "Dahlia and I ended" or "You and Dahlia ended", 1, true), "a friend's close" .. where)
             end
             local raise = book[4] or ""
             if raise:find("ever raised", 1, true) then
@@ -129,6 +143,51 @@ for _, voice in ipairs({"we", "you"}) do
                 if bond == "spouse" then check(raise:find("She was the first", 1, true), "its weight for a close bond" .. where) end
             end
         end
+    end
+end
+-- The two books of one evening share no sentence (a spouse's and a friend's, both voices)
+local SKIP = {i = true, me = true, my = true, we = true, us = true, our = true, you = true, your = true}
+local function Words(sentence)
+    local out = {}
+    for at, w in sentence:gmatch("()([%a']+)") do
+        local before = at > 1 and sentence:sub(at - 1, at - 1) or " "
+        if w:match("^%l") and not SKIP[w] and not before:match("[%a']") then out[w] = true end
+    end
+    return out
+end
+local function Sentences(text)
+    local out = {}
+    for s in (Plain(text) .. " "):gmatch("(.-[%.!?])%s+") do out[s:gsub("^%s+", "")] = true end
+    return out
+end
+for _, voice in ipairs({"we", "you"}) do
+    for retell = 0, 2 do
+        dahlia.bond, dahlia.retell, marrow.retell = "spouse", retell, retell
+        local dd, md = A.JournalBook(dahlia), A.JournalBook(marrow)
+        local ds = A.JournalTale.Tell(dahlia, dd, voice, player, false)
+        local ms = A.JournalTale.Tell(marrow, md, voice, player, false)
+        local compared = 0
+        for key, st in pairs(ms) do
+            if st.text ~= "" and ds[key] and ds[key].text ~= "" then
+                compared = compared + 1
+                local mine = Sentences(ds[key].text)
+                for sentence in pairs(Sentences(st.text)) do
+                    check(not mine[sentence], ("the two books of %s share no sentence (%s, retell %d): %s"):format(key, voice, retell, sentence))
+                    -- (round 11: nor a near copy, 70% of the phrasing words the same; names and pronouns
+                    -- left out, they are the same people and places)
+                    local a = Words(sentence)
+                    for other in pairs(mine) do
+                        local b = Words(other)
+                        local na, nb, both = 0, 0, 0
+                        for w in pairs(a) do na = na + 1; if b[w] then both = both + 1 end end
+                        for _ in pairs(b) do nb = nb + 1 end
+                        local least = math.min(na, nb)
+                        check(least < 6 or both / least < 0.7, ("no near copy on %s (%s, retell %d): %s || %s"):format(key, voice, retell, sentence, other))
+                    end
+                end
+            end
+        end
+        check(compared >= 3, "the same evenings in both books")
     end
 end
 print(assertions .. " checks passed")

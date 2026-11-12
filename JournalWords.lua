@@ -2201,33 +2201,43 @@ PB.closeEndShort = {"The {part} ended in {place} {span} later.", "{Span} later, 
 -- you and where the night left you, never "the work for X was done". {pairNamed} "Dahlia and I"
 -- / "you and Dahlia". Close bonds (spouse, partner, family) end the night together or part for
 -- the night; a friend calls it a night. All from the record: who stopped first, where, how long.
-PB.closeTogetherSame = {"{pairNamed} ended the {part} together where it began, in {place} {clock}, {span} later.",
-    "{Span} after {we} set out, {pairNamed} ended the {part} together where it began, in {place} {clock}."}
-PB.closeTogetherNear = {"{pairNamed} ended the {part} together in {place} {clock}, {span} after {we} set out from {from}.",
-    "{Span} after {we} set out from {from}, {pairNamed} ended the {part} together in {place} {clock}."}
-PB.closeTogetherFar = {"{pairNamed} ended the {part} together in {place} {clock}, {span} and {crossings} after {we} set out from {from}.",
-    "{Span} and {crossings} after {we} set out from {from}, {pairNamed} ended the {part} together in {place} {clock}."}
-PB.closeBothSame = {"{pairNamed} ended the {part} where it began, in {place} {clock}, {span} later.",
-    "{Span} after {we} set out, {pairNamed} ended the {part} where it began, in {place} {clock}."}
-PB.closeBothNear = {"{pairNamed} ended the {part} in {place} {clock}, {span} after {we} set out from {from}.",
-    "{Span} after {we} set out from {from}, {pairNamed} ended the {part} in {place} {clock}."}
-PB.closeBothFar = {"{pairNamed} ended the {part} in {place} {clock}, {span} and {crossings} after {we} set out from {from}.",
-    "{Span} and {crossings} after {we} set out from {from}, {pairNamed} ended the {part} in {place} {clock}."}
-PB.closePartedSame = {"{pairNamed} parted for the night in {place} {clock}, {span} after {we} set out.",
-    "{Span} after {we} set out, {pairNamed} parted for the night in {place} {clock}."}
-PB.closePartedNear = {"{pairNamed} parted for the night in {place} {clock}, {span} after {we} set out from {from}.",
-    "{Span} after {we} set out from {from}, {pairNamed} parted for the night in {place} {clock}."}
-PB.closePartedFar = {"{pairNamed} parted for the night in {place} {clock}, {span} and {crossings} after {we} set out from {from}.",
-    "{Span} and {crossings} after {we} set out from {from}, {pairNamed} parted for the night in {place} {clock}."}
-PB.closeCalledSame = {"{name} went {their} own way in {place} {clock}, {span} after {we} set out.",
-    "{name} called it a night in {place} {clock}, {span} after {we} set out.",
-    "{Span} after {we} set out, {name} called it a night in {place} {clock}."}
-PB.closeCalledNear = {"{name} went {their} own way in {place} {clock}, {span} after {we} set out from {from}.",
-    "{name} called it a night in {place} {clock}, {span} after {we} set out from {from}.",
-    "{Span} after {we} set out from {from}, {name} called it a night in {place} {clock}."}
-PB.closeCalledFar = {"{name} went {their} own way in {place} {clock}, {span} and {crossings} after {we} set out from {from}.",
-    "{name} called it a night in {place} {clock}, {span} and {crossings} after {we} set out from {from}.",
-    "{Span} and {crossings} after {we} set out from {from}, {name} called it a night in {place} {clock}."}
+-- (round 10: no counters in a close, no "N hours and N crossings after": where the night left the two)
+PB.closeTogetherSame = {"{pairNamed} ended the {part} together where it began, in {place} {clock}.", "{pairNamed} were still together when the {part} ended in {place} {clock}."}
+PB.closeTogetherNear = {"{pairNamed} ended the {part} together in {place} {clock}.", "{pairNamed} were still together when the {part} ended in {place} {clock}."}
+PB.closeTogetherFar = {"{pairNamed} ended the {part} together in {place} {clock}.", "{pairNamed} were still together when the {part} ended in {place} {clock}."}
+PB.closeBothSame = {"{pairNamed} ended the {part} where it began, in {place} {clock}.", "The {part} ended in {place} {clock}, {name} still with {me}."}
+PB.closeBothNear = {"{pairNamed} ended the {part} in {place} {clock}.", "The {part} ended in {place} {clock}, {name} still with {me}."}
+PB.closeBothFar = {"{pairNamed} ended the {part} in {place} {clock}.", "The {part} ended in {place} {clock}, {name} still with {me}."}
+PB.closePartedSame = {"{pairNamed} parted for the night in {place} {clock}.", "{name} stopped first, and {we} parted for the night in {place} {clock}."}
+PB.closePartedNear = {"{pairNamed} parted for the night in {place} {clock}.", "{name} stopped first, and {we} parted for the night in {place} {clock}."}
+PB.closePartedFar = {"{pairNamed} parted for the night in {place} {clock}.", "{name} stopped first, and {we} parted for the night in {place} {clock}."}
+PB.closeCalledSame = {"{name} called it a night in {place} {clock}.", "{name} went {their} own way in {place} {clock}."}
+PB.closeCalledNear = {"{name} called it a night in {place} {clock}.", "{name} went {their} own way in {place} {clock}."}
+PB.closeCalledFar = {"{name} called it a night in {place} {clock}.", "{name} went {their} own way in {place} {clock}."}
+-- The book's latest chapter looks back once (round 10): {count} evenings together, since {first}
+-- (the land of the first day); "every one" only when no day between was missed.
+PB.lookBackEvery = {"It had been {count} evenings since {we} first set out together in {first}, and {we} had not missed one of them."}
+PB.lookBackClose = {"It had been {count} evenings together since {first}."}
+PB.lookBackFriend = {"That made {count} evenings with {name} since {first}."}
+-- Round 11: the bond shown through what the two did, from her record. Levels: she was ahead,
+-- she caught up, she ended the night ahead. A run: the parts each had (the record's roles).
+PB.herLevelAhead = {"{name} reached each new level a little ahead of {me} that {part}.", "Level after level, {name} got there a few minutes before {me}."}
+PB.herLevelOne = {"{name} reached level {n} ahead of {me}.", "{name} made level {n} before {I} did."}
+PB.herCaughtUp = {"{name} caught up with {me} at level {n}.", "By level {n}, {name} had caught up with {me}."}
+PB.herLeftAhead = {"{name} ended the {part} a level ahead of {me}.", "{name} finished the {part} a level ahead of {me}."}
+PB.herBehind = {"{name} reached level {n} a little after {me}.", "{name} came up to level {n} not long after {me}."}
+PB.herRoles = {"{my} part was {myPart}, and {name}'s was {theirPart}.", "{name}'s part was {theirPart}, and {my} own was {myPart}."}
+-- The road and the run told from a close bond: the two side by side.
+PB.roadOutBond = {"From {from}, {pairNamed} set off on foot side by side through {lands}{roadNote}.", "{pairNamed} left {from} on foot together, through {lands}{roadNote}."}
+PB.roadOnBond = {"From there {pairNamed} walked on together through {lands}{roadNote}.", "Side by side, {pairNamed} went on foot through {lands}{roadNote}."}
+PB.roadOutHardBond = {"From {from}, {pairNamed} pushed on foot side by side into {lands}{roadNote}.", "{pairNamed} struck out of {from} together, on foot, into {lands}{roadNote}."}
+PB.roadOnHardBond = {"From there {pairNamed} fought on together, on foot, through {lands}{roadNote}.", "Side by side, {pairNamed} pushed on foot through {lands}{roadNote}."}
+PB.roadBackBond = {"{far} was as far as the two of {us} went, and {we} turned back {backWay}.", "At {far} {we} turned back together, {backWay}."}
+PB.roadBackHardBond = {"{far} was as far as {we} could go together, and {we} fell back {backWay}.", "At {far} {we} gave ground together and fell back {backWay}."}
+PB.killRollGoalMidBond = {"{name} and I cut through {before} to {lordText}, whom {we} had come down for, and then {after}."}
+PB.killRollGoalLastBond = {"{name} and I cut through {before}, and last of all {lordText}, whom {we} had come down for."}
+-- Several falls in one stretch, told once on the one that mattered (round 10).
+PB.fallMore = {", and it was not the last fall there", ", and not for the last time there"}
 -- The first day of two who began the world together (both at level one or two in the record).
 PB.startedBond = {we = {"{name}, {bondWord}, and I took our first steps together in {zoneD}."},
     you = {"You and {name}, {bondWord}, took your first steps together in {zoneD}."}}
