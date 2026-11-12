@@ -323,6 +323,8 @@ function A.JournalGroupChanged()
     for key, entry in pairs(sessions) do
         if not inGroup or (complete and not members[key]) then CloseSession(key, entry, now) end
     end
+    -- (your own journal: how many you travel with, strangers counted; JournalSelf.lua)
+    if A.SelfParty then A.SelfParty(members, complete, inGroup) end
     if not next(sessions) then ResetQuestWatch() end
     if A.JournalWatchParty then A.JournalWatchParty(next(sessions) ~= nil) end
     if A.JournalRestCheck then A.JournalRestCheck() end

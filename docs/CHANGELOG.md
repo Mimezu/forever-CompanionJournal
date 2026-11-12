@@ -1,5 +1,15 @@
 # Companion Journal: changes
 
+## 1.27.0 (2026-11-12)
+
+- Records everyone in your group, and how long they stayed
+- Records elite fights in the open world
+- Short groups with strangers are told as small adventures
+- Long walks through many lands are told as journeys
+- Danger changes the words, from our level against the land's
+- Companion books: "we", the bond, and shared firsts lead each chapter
+- A quest is told in the place and order it happened
+
 ## 1.26.0 (2026-11-11)
 
 - A bad stretch of deaths is told in a few sentences, in order

@@ -369,7 +369,8 @@ function E.ClaimsDeath(sentence, name)
                 local head = low:sub(1, at - 1)
                 for _, w in ipairs(CLAIM_BEFORE) do
                     local p = head:find(w, 1, true)
-                    if p and #head - (p + #w) < 40 then return true end
+                    -- (lane G8: "killed by a son of Arugal" is Arugal's son killing, not Arugal dying)
+                    if p and #head - (p + #w) < 40 and not head:sub(p + #w):find("%f[%a]by%f[%A]") then return true end
                 end
             end
         end
@@ -407,7 +408,8 @@ function E.ShapeKills(names, isGoal, isLord)
     for i = 1, keyAt - 1 do before[#before + 1] = names[i] end
     for i = keyAt + 1, #names do after[#after + 1] = names[i] end
     local shown, more = before, 0
-    if #before > 3 then shown = {before[1], before[2]}; more = #before - 2 end
+    -- (lane G8: the record has names; up to five are said, "more" only beyond that)
+    if #before > 5 then shown = {before[1], before[2], before[3]}; more = #before - 3 end
     return {key = names[keyAt], at = keyAt, goal = goal or false, before = before, after = after, shown = shown, more = more}
 end
 
@@ -453,7 +455,17 @@ end
 -- line with a time finds its episode. Each episode: {kind, t, e, zone, scenes, errands,
 -- run (a dungeon run from E.DungeonRuns), deaths (my deaths and the party's, in order),
 -- quests, levels, firsts, voyages, sleep, night (the last stay), party (names present),
--- weight, outcome (the facts the close can use)}. Kinds:
+-- weight, outcome (the facts the close can use)}; and, when the record has them (lane REC8,
+-- 2026-11-12; nil on older journals):
+--   members   everyone in the group in this part of the day, in your list or not, first come
+--             first: {name, full, class, race, level, circle ("companion", "acquaintance", ...
+--             when in your list), guild, friend, bnet, t, e (first and last moment inside the
+--             episode), seconds, spans = {{from, to}}, significant (together ten minutes or
+--             more: A.JournalMemberSignificant)}. (ep.party stays the list's names, as before.)
+--   partySize the size that held longest, me among them; partyMax the most at once
+--   elites, eliteSeconds, eliteNames  elite foes fought in the open (how many, seconds in
+--             combat with them, the named ones); dangerous = A.JournalDangerous (six elites,
+--             or ten minutes fighting them). Kinds:
 --   dungeon  one run of E.DungeonRuns, from the first way in to the last way out
 --   deaths   a bad stretch: two or more deaths of mine, or one of mine with three of the
 --            party's, within E.DEATH_GAP of each other in one stay; the stay's work after
@@ -520,6 +532,35 @@ local function NewEpisode(kind, t, zone)
     return {kind = kind, t = t, e = t, zone = zone, scenes = {}, errands = {}, deaths = {}, quests = {}, levels = {}, firsts = {}, voyages = {},
         party = {}, weight = 0}
 end
+-- A member's time in an episode, added to the one already there (by full name).
+local function AddMember(ep, m, spans)
+    ep.members = ep.members or {}
+    local known
+    for _, other in ipairs(ep.members) do if other.full == m.full then known = other end end
+    if not known then
+        known = {name = m.name, full = m.full, seconds = 0, spans = {}}
+        ep.members[#ep.members + 1] = known
+    end
+    known.class, known.race, known.level = m.class or known.class, m.race or known.race, m.level or known.level
+    known.circle = m.circle or known.circle
+    known.guild, known.friend, known.bnet = m.guild or known.guild, m.friend or known.friend, m.bnet or known.bnet
+    for _, sp in ipairs(spans) do
+        known.spans[#known.spans + 1] = {sp[1], sp[2]}
+        known.seconds = known.seconds + (sp[2] - sp[1])
+        known.t = math.min(known.t or sp[1], sp[1])
+        known.e = math.max(known.e or sp[2], sp[2])
+    end
+end
+local function AddElites(ep, count, seconds, names)
+    ep.elites = (ep.elites or 0) + count
+    ep.eliteSeconds = (ep.eliteSeconds or 0) + seconds
+    for _, name in ipairs(names or {}) do
+        ep.eliteNames = ep.eliteNames or {}
+        local known = false
+        for _, other in ipairs(ep.eliteNames) do if other == name then known = true end end
+        if not known and type(name) == "string" then ep.eliteNames[#ep.eliteNames + 1] = name end
+    end
+end
 -- What of a stay falls inside an episode's time (the episode may hold a part of a stay).
 local function Gather(ep, scene, from, to)
     local seen = {}
@@ -528,6 +569,24 @@ local function Gather(ep, scene, from, to)
         local name = (Clean(w.name):gsub("%-.*$", ""))
         for _, span in ipairs(w.spans or {{scene.t, scene.e}}) do
             if span[1] < to and span[2] > from and name ~= "" and not seen[name] then seen[name] = true; ep.party[#ep.party + 1] = name end
+        end
+    end
+    -- (everyone in the group in this part of the stay, and the elite foes fought: JournalBook's
+    -- members and elites on the stay; the record's elites line goes where it began)
+    for _, m in ipairs(scene.members or {}) do
+        local clipped = {}
+        for _, sp in ipairs(m.spans or {}) do
+            local a, b = math.max(sp[1], from), math.min(sp[2], to)
+            if b > a then clipped[#clipped + 1] = {a, b} end
+        end
+        if #clipped > 0 then AddMember(ep, m, clipped) end
+    end
+    for _, x in ipairs(scene.entries or {}) do
+        if x.k == "elites" then
+            local t = x.t or scene.t or 0
+            if t >= from and t < to then
+                AddElites(ep, tonumber(x.c) or 1, tonumber(x.s) or 0, type(x.x) == "table" and x.x or nil)
+            end
         end
     end
     for _, e in ipairs(Events(scene)) do
@@ -553,6 +612,20 @@ local function Finish(ep)
     ep.mine, ep.theirs = 0, 0
     for _, d in ipairs(ep.deaths) do if d.mine then ep.mine = ep.mine + 1 else ep.theirs = ep.theirs + 1 end end
     ep.lastDeath = ep.deaths[#ep.deaths] and ep.deaths[#ep.deaths].t or nil
+    -- everyone in the group: the size that held longest (alone counted for the time no
+    -- member covers), the most at once, who stayed long enough to matter
+    if ep.members then
+        table.sort(ep.members, function(a, b) if a.t ~= b.t then return a.t < b.t end return a.full < b.full end)
+        local all = {}
+        for _, m in ipairs(ep.members) do
+            m.significant = m.seconds >= (A.JournalMemberSignificant or 600)
+            for _, sp in ipairs(m.spans) do all[#all + 1] = sp end
+        end
+        if A.JournalPartySize then ep.partySize, ep.partyMax = A.JournalPartySize(all, ep.t, math.max(ep.e, ep.t)) end
+    end
+    if ep.elites then
+        ep.dangerous = A.JournalDangerous and A.JournalDangerous(ep.elites, ep.eliteSeconds) or false
+    end
     -- the weight the record gives it: what the evening was about
     local w = 0
     if ep.kind == "dungeon" then w = 100 + 5 * #(ep.run and ep.run.bosses or {}) + 10 * ep.mine
@@ -708,6 +781,8 @@ function E.Day(scenes, opts)
             for _, w in ipairs(last.party) do seen[w] = true end
             for _, w in ipairs(ep.party) do if not seen[w] then seen[w] = true; last.party[#last.party + 1] = w end end
             last.sleep, last.hearth = ep.sleep or last.sleep, ep.hearth or last.hearth
+            for _, m in ipairs(ep.members or {}) do AddMember(last, m, m.spans) end
+            if ep.elites then AddElites(last, ep.elites, ep.eliteSeconds or 0, ep.eliteNames) end
             last.e = ep.e
             Finish(last)
         else
@@ -738,9 +813,26 @@ function E.Day(scenes, opts)
     end
     if last then
         day.endZone = last.zone
+        -- (lane G8: a short stay after the last one, folded into it as a zone only crossed, is
+        -- where the night ended: the stay's own time ends before the scene does. Open ground,
+        -- never a dungeon or its mouth.)
+        local ownEnd = 0
+        for _, entry in ipairs(last.entries or {}) do
+            if (entry.k == "play" or entry.k == "group") and (entry.e or 0) > ownEnd then ownEnd = entry.e end
+        end
+        if ownEnd > 0 and (last.e or 0) > ownEnd + 60 then
+            local known = (opts and opts.isDungeon) or (A.Lore and A.Lore.Dungeon)
+            for _, z in ipairs(last.crossed or {}) do
+                local plain, here = Clean(z), Clean(last.zone)
+                local mouth = (known and known(plain)) or (A.SelfUnderground and A.SelfUnderground(plain))
+                    or plain:find(here, 1, true) or here:find(plain, 1, true)
+                if not mouth then day.endZone = z; day.endCrossed = true end
+            end
+        end
         for _, e in ipairs(Events(last)) do
             if e.k == "sleep" and e.d then day.sleep = {place = e.d, zone = e.z or last.zone, t = e.t} end
-            if e.k == "town" and e.d then day.endTown = e.d end
+            -- (a town of the stay the night did not end in is not where it ended)
+            if e.k == "town" and e.d and not day.endCrossed then day.endTown = e.d end
         end
     end
     return day

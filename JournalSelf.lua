@@ -6,6 +6,10 @@ local _, A = ...
 --   play     time in one zone (t .. e), like an outing
 --   with     someone from your list in your group (d = their key, n = name)
 --   quest, dungeon, boss, wipe, death, rez (by = who), rest, campfire, mylevel
+--   member   everyone in your group, list or not, one line per stay (n = Name-Realm; c, r, lv;
+--            l = their circle in your list, g = your guild, f = a friend, b = through Battle.net)
+--   elites   elite foes fought in the open, per stretch (c = how many, s = seconds fighting
+--            them, x = the named ones)
 -- Seeded once from what your journals with people already know.
 
 local function Public(value) return not issecretvalue or not issecretvalue(value) end
@@ -240,6 +244,7 @@ A.SelfItemInfo = ItemInfo
 
 -- Stretches of play, zone by zone ------------------------------------------------
 local stretch -- the open "play" entry
+local memberOpen = {} -- key -> the open "member" line (everyone in your group, below)
 local function Close(now)
     if stretch then stretch.e, stretch.u = now or Now(), nil end
     stretch = nil
@@ -273,9 +278,16 @@ end
 local function Settle()
     local journal = Journal()
     if not journal then return end
-    for i = #journal, math.max(1, #journal - 40), -1 do
+    local open = {}
+    for _, entry in pairs(memberOpen) do open[entry] = true end
+    local playEnd -- (where the last stretch ended: a member line left open ends there too)
+    for i = #journal, math.max(1, #journal - 80), -1 do
         local entry = journal[i]
         if entry.k == "play" and not entry.e and entry ~= stretch then entry.e, entry.u = entry.u or entry.t, nil end
+        if entry.k == "play" and entry ~= stretch and not playEnd then playEnd = entry.e or entry.u end
+        if entry.k == "member" and not entry.e and not open[entry] then
+            entry.e = math.max(entry.t or 0, math.min(playEnd or 0, Now()))
+        end
     end
 end
 
@@ -302,6 +314,114 @@ function A.SelfWith(key, person, together, now)
         withOpen[key] = nil
     end
 end
+
+-- Everyone you group with ------------------------------------------------------------------
+-- One line per member per stay in your group, in your list or not ({k = "member",
+-- n = "Name-Realm", c = class token, r = race token, lv = level, l = their circle when they
+-- are in your list ("companion", "acquaintance", ...), g = true in your guild, f = true a
+-- friend (b = true a Battle.net friend), t = joined, e = left}). Written once they have
+-- been with you a minute (MEMBER_SETTLE): a member gone within the minute is not kept.
+-- Gone and back within MEMBER_GAP (a disconnect, a /reload, a quick re-invite): the same
+-- line goes on. Only public names are written: a member the game hides is never recorded,
+-- and a secret class, race, level, GUID or flag is left out. Journal.lua calls A.SelfParty
+-- a second after each roster change.
+local MEMBER_SETTLE, MEMBER_GAP = 60, 300
+local memberPending = {} -- key -> {key, t, name, member} waiting for the minute
+local function MemberUnits()
+    local units = {}
+    local raid = Ask(IsInRaid) == true
+    local count = tonumber(Ask(GetNumGroupMembers)) or 0
+    for i = 1, raid and count or math.max(0, count - 1) do
+        local unit = (raid and "raid" or "party") .. i
+        local ok, name, realm = pcall(UnitFullName or function() end, unit)
+        if ok and Text(name) and Public(realm) and A.PersonKey then
+            local key = A.PersonKey(name, realm)
+            if key then units[key] = unit end
+        end
+    end
+    return units
+end
+-- What the line says of them, refreshed while they stay (a level gained, added to your list).
+local function MemberFacts(entry, key, member, unit)
+    if type(member) == "table" then
+        entry.c = Text(member.class) or entry.c
+        entry.r = Text(member.race) or entry.r
+        entry.lv = (Public(member.level) and tonumber(member.level)) or entry.lv
+        if entry.lv and entry.lv <= 0 then entry.lv = nil end
+    end
+    local person = A.People and A.People[key]
+    local circle = person and A.PersonCircle and A.PersonCircle(person)
+    if circle and circle ~= "blocked" and circle ~= "npc" then entry.l = circle end
+    if unit then
+        if Ask(UnitIsInMyGuild, unit) == true then entry.g = true
+        else
+            local mine, theirs = Text(Ask(GetGuildInfo, "player")), Text(Ask(GetGuildInfo, unit))
+            if mine and mine == theirs then entry.g = true end
+        end
+        local guid = Text(Ask(UnitGUID, unit))
+        if guid then
+            if C_FriendList and Ask(C_FriendList.IsFriend, guid) == true then entry.f = true end
+            local bnet = C_BattleNet and C_BattleNet.GetGameAccountInfoByGUID
+            if type(Ask(bnet, guid)) == "table" then entry.f, entry.b = true, true end
+        end
+    end
+end
+local function MemberSettled(pending)
+    if memberPending[pending.key] ~= pending then return end
+    memberPending[pending.key] = nil
+    if not A.SelfJournalOn() or memberOpen[pending.key] then return end
+    local entry = {k = "member", n = pending.name, t = pending.t}
+    MemberFacts(entry, pending.key, pending.member, MemberUnits()[pending.key])
+    memberOpen[pending.key] = Add(entry)
+end
+-- Back a moment after leaving (or after a /reload): the same line, at once.
+local function MemberResume(name, now)
+    local journal = Journal()
+    if not journal then return nil end
+    for i = #journal, math.max(1, #journal - 120), -1 do
+        local entry = journal[i]
+        if entry.k == "member" and entry.n == name and entry.e and now - entry.e <= MEMBER_GAP then
+            entry.e = nil
+            return entry
+        end
+    end
+    return nil
+end
+local function MembersClose(now)
+    now = now or Now()
+    for key, entry in pairs(memberOpen) do entry.e = now; memberOpen[key] = nil end
+    for key in pairs(memberPending) do memberPending[key] = nil end
+end
+-- members: the readable players of the group keyed like People (A.ReadGroupRoster);
+-- complete: every member was readable (a hidden one is not taken for someone who left).
+function A.SelfParty(members, complete, inGroup)
+    if not A.SelfJournalOn() then return end
+    local now = Now()
+    members = inGroup and type(members) == "table" and members or {}
+    local units
+    for key, member in pairs(members) do
+        local name = type(member) == "table" and Text(member.name)
+        if name and not memberPending[key] then
+            units = units or MemberUnits()
+            local entry = memberOpen[key] or MemberResume(name, now)
+            if entry then
+                memberOpen[key] = entry
+                MemberFacts(entry, key, member, units[key])
+            else
+                local pending = {key = key, t = now, name = name, member = member}
+                memberPending[key] = pending
+                C_Timer.After(MEMBER_SETTLE, function() MemberSettled(pending) end)
+            end
+        end
+    end
+    if not inGroup or complete then
+        for key, entry in pairs(memberOpen) do
+            if not members[key] then entry.e = now; memberOpen[key] = nil end
+        end
+        for key in pairs(memberPending) do if not members[key] then memberPending[key] = nil end end
+    end
+end
+A.SelfMembersClose = MembersClose -- (the tests)
 
 -- Dungeons, bosses, deaths ------------------------------------------------------------
 local inside -- the instance you are in (written once per visit)
@@ -571,6 +691,65 @@ local function CloseCall()
 end
 closeFrame:SetScript("OnEvent", function() if A.SelfJournalOn() then CloseCall() end end)
 A.SelfHealthCheck = function() if A.SelfJournalOn() then CloseCall() end end -- (the tests)
+
+-- Elite foes fought in the open, per stretch ({k = "elites", c = how many, s = seconds in
+-- combat with them, x = the named ones, t = the first, e = the last}): a target marked
+-- elite (a rare elite, a world boss, a skull-level foe too) that you can attack, while you
+-- are in combat, read when the target changes and when a fight begins. The same foe (its
+-- GUID; failing that, its name within two minutes) counts once. A fight's time runs from
+-- the first elite targeted to the end of combat (at most ELITE_FIGHT_CAP a fight). Named:
+-- a rare elite, a world boss or a skull-level elite keeps its name in x (up to six).
+-- Nothing inside a dungeon, a raid or a battleground, where every foe is elite; nothing
+-- for players; a secret rank is never read as elite. Nothing is read every frame.
+local ELITE_RANKS = {elite = true, rareelite = true, worldboss = true}
+local NAMED_RANKS = {rareelite = true, worldboss = true}
+local ELITE_SAME, ELITE_FIGHT_CAP = 120, 600
+local elitesAt = setmetatable({}, {__mode = "k"})
+local eliteSeen, eliteSeenCount = {}, 0 -- GUID or name -> when last seen
+local eliteFight -- {entry, t}: a fight with an elite going on
+local function EliteFightEnd(now)
+    if not eliteFight then return end
+    now = now or Now()
+    local entry = eliteFight.entry
+    entry.s = (entry.s or 0) + math.max(0, math.min(now - eliteFight.t, ELITE_FIGHT_CAP))
+    if (entry.e or 0) < now then entry.e = now end
+    eliteFight = nil
+end
+local function CheckElite()
+    if not stretch then return end
+    local okInst, inside, kind = pcall(IsInInstance or function() return false end)
+    if okInst and inside and (kind == "party" or kind == "raid" or kind == "pvp" or kind == "arena") then return end
+    local rank = Text(Ask(UnitClassification, "target"))
+    if not rank or not ELITE_RANKS[rank] then return end
+    if Ask(UnitCanAttack, "player", "target") ~= true or Ask(UnitIsDeadOrGhost, "target") == true or Ask(UnitIsPlayer, "target") == true then return end
+    if Ask(UnitAffectingCombat, "player") ~= true then return end
+    local now = Now()
+    local guid, name = Text(Ask(UnitGUID, "target")), Text(Ask(UnitName, "target"))
+    local id = guid or name or "?"
+    local seen = eliteSeen[id]
+    local entry = elitesAt[stretch] or InStretch("elites")
+    if not (seen and (guid or now - seen <= ELITE_SAME)) then
+        if eliteSeenCount > 300 then eliteSeen, eliteSeenCount = {}, 0 end
+        if not seen then eliteSeenCount = eliteSeenCount + 1 end
+        if entry then entry.c, entry.e = (entry.c or 0) + 1, now
+        else entry = Add({k = "elites", c = 1, e = now}) end
+        if not entry then return end
+        local skull = Ask(UnitLevel, "target") == -1
+        if name and (NAMED_RANKS[rank] or skull) then
+            entry.x = type(entry.x) == "table" and entry.x or {}
+            local known = false
+            for _, n in ipairs(entry.x) do if n == name then known = true end end
+            if not known and #entry.x < 6 then entry.x[#entry.x + 1] = name end
+        end
+    end
+    eliteSeen[id] = now
+    if not entry then return end
+    elitesAt[stretch] = entry
+    if eliteFight and eliteFight.entry ~= entry then EliteFightEnd(now) end
+    if not eliteFight then eliteFight = {entry = entry, t = now} end
+end
+A.SelfEliteCheck = CheckElite -- (the tests)
+A.SelfEliteFightEnd = EliteFightEnd -- (the tests)
 
 -- More moments (A.MoreMomentsOn) -------------------------------------------------------
 local function Num(value) return Public(value) and tonumber(value) or nil end
@@ -1059,7 +1238,7 @@ local EVENTS = {"PLAYER_ENTERING_WORLD", "ZONE_CHANGED_NEW_AREA", "ZONE_CHANGED"
     "ENCOUNTER_END", "PLAYER_CONTROL_LOST", "PLAYER_PVP_KILLS_CHANGED", "CHAT_MSG_LOOT", "PLAYER_EQUIPMENT_CHANGED",
     "PLAYER_MOUNT_DISPLAY_CHANGED", "UNIT_SPELLCAST_SUCCEEDED", "TRADE_SKILL_SHOW", "TRADE_SKILL_CLOSE", "CRAFT_SHOW", "CRAFT_CLOSE", "PLAYER_DEAD", "PLAYER_LEVEL_UP", "PLAYER_UPDATE_RESTING", "RESURRECT_REQUEST", "PLAYER_ALIVE", "PLAYER_UNGHOST",
     "PLAYER_TARGET_CHANGED", "UPDATE_MOUSEOVER_UNIT", "PLAYER_GUILD_UPDATE", "HEARTHSTONE_BOUND", "SPELLS_CHANGED", "UNIT_PET",
-    "CHAT_MSG_SYSTEM", "GOSSIP_SHOW", "QUEST_DETAIL"}
+    "CHAT_MSG_SYSTEM", "GOSSIP_SHOW", "QUEST_DETAIL", "PLAYER_REGEN_DISABLED", "PLAYER_REGEN_ENABLED"}
 -- A named figure must actually be seen or spoken to. Visiting their city is
 -- not evidence of meeting them. Keep a sighting and, at most, one conversation.
 local function NotableNPC(unit, interaction)
@@ -1163,6 +1342,8 @@ events:SetScript("OnEvent", function(_, event, ...)
         if stretch then stretch.u = Now(); stretch.e = stretch.u end
         stretch = nil
         for key, entry in pairs(withOpen) do entry.e = Now(); withOpen[key] = nil end
+        MembersClose(Now())
+        EliteFightEnd(Now())
     elseif event == "QUEST_TURNED_IN" then
         local questID = ...
         if not Public(questID) then return end
@@ -1181,6 +1362,11 @@ events:SetScript("OnEvent", function(_, event, ...)
     elseif event == "PLAYER_TARGET_CHANGED" then
         FoeSeen("target")
         NotableNPC("target")
+        CheckElite()
+    elseif event == "PLAYER_REGEN_DISABLED" then
+        CheckElite()
+    elseif event == "PLAYER_REGEN_ENABLED" then
+        EliteFightEnd(Now())
     elseif event == "GOSSIP_SHOW" or event == "QUEST_DETAIL" then
         NotableNPC("npc", true)
     elseif event == "UPDATE_MOUSEOVER_UNIT" then
@@ -1457,6 +1643,8 @@ function A.UpdateSelfJournalEvents()
     for _, event in ipairs(MORE_EVENTS) do
         if A.MoreMomentsOn() then pcall(events.RegisterEvent, events, event) else pcall(events.UnregisterEvent, events, event) end
     end
+    -- (the end of a fight is in both lists: the elites' fighting time needs it with more moments off)
+    if A.SelfJournalOn() then pcall(events.RegisterEvent, events, "PLAYER_REGEN_ENABLED") end
     if not A.MoreMomentsOn() then
         -- (off: the next time it is turned on starts afresh)
         RareUnwatch()
@@ -1484,5 +1672,7 @@ function A.UpdateSelfJournalEvents()
         CheckInstance()
     else
         Close()
+        MembersClose()
+        EliteFightEnd()
     end
 end

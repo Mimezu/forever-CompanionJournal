@@ -352,7 +352,6 @@ W.moveBetween = {
     "From {from}, {we} went on to {zoneD}.",
     "After {from} came {zoneD}.",
     "{We} left {from} for {zoneD}.",
-    "The next part of the day took {us} from {from} to {zoneD}.",
 }
 W.questsFew = {
     "{We} finished {quests}.",
@@ -632,6 +631,9 @@ W.killMany = {"{We} killed {bosses}.", "Inside, {we} brought down {bosses}.", "{
 W.bossLeadOne = {"{Before} fell first.", "{Before} came first, and fell."}
 W.bossLeadMany = {"{Before} fell first, one after another.", "{Before} came first, and fell one after another."}
 W.bossLeadOneNext = {"{Before} fell next.", "Next came {before}, and fell."}
+-- (lane G8: after a death or a wipe was told, the ones before the goal: neither "first" nor "next")
+W.bossLeadOneAfter = {"{Before} fell.", "{We} fought past {before}."}
+W.bossLeadManyAfter = {"{Before} fell, one after another.", "{We} fought past {before}, one after another."}
 W.bossLeadManyNext = {"{Before} fell next, one after another.", "Next {we} fought past {before}."}
 W.bossGoal = {
     "Then came {boss}, the one {we} had come for, and {we} killed {him}.",
@@ -705,10 +707,11 @@ W.runLosses = {
         "{Foes} killed me {count} along the way. {Raisers} picked me up {rcount}, and otherwise I walked back as a ghost."},
     party = {"{Names} fell {tally} along the way.", "{Names} went down {tally} between the fights."},
     partyToo = {"{Names} fell {tally} as well.", "{Names} went down {tally} too."},
-    costly = {"{Boss} took {names} down before {he} fell.", "{Names} fell to {boss} before {he} did."},
+    -- (lane G8: said after the kill, so as a step back: "We killed him. He had taken Faelyn down first.")
+    costly = {"{Boss} had taken {names} down first.", "{Names} had fallen to {boss} first.", "{He} had taken {names} down first."},
     -- (for a boss the data gives no pronoun for)
-    costlyNamed = {"{Names} fell to {boss}, who did not outlive the fight.", "{Boss} took {names} down, and fell not long after."},
-    costlyMany = {"{Names} fell to {bosses} in turn, and each of them fell after.", "{Bosses} each took {names} down before they fell."},
+    costlyNamed = {"{Names} had fallen to {boss} first.", "{Boss} had taken {names} down first."},
+    costlyMany = {"{Names} had fallen to {bosses} in turn before they fell.", "{Bosses} had each taken {names} down first."},
 }
 -- A level reached in the run or with its turn-ins, folded into the run's end ({level}).
 W.runLevel = {"I came out of it at level {level}.", "The run took me to level {level}.", "Level {level} came out of it with me."}
@@ -3634,6 +3637,8 @@ W.deathRun = {
     party = {"{names} fell.", "{names} went down."},
     partyCount = {"{names} fell {count}.", "{names} went down {count}."},
     lastParty = {"{names} fell last.", "Last of all, {names} fell."},
+    -- (lane O8: two of the party by name when "between them" was said once already in the chapter)
+    partyEach = {"{first} fell {firstTimes}, and {second} {secondTimes}.", "{first} went down {firstTimes}, {second} {secondTimes}."},
     -- the deaths nobody raised me from ({count}: "twice", "three times")
     walked = {"{Count} more I died and walked back as a ghost.", "{Count} more I died, and came back from the graveyard on my own feet."},
     diedMore = {"{Count} more I died before it was over.", "{Count} more deaths came between."},
@@ -3692,7 +3697,60 @@ W.compose = {
     moveFlew = {"{We} flew to {place}.", "A flight took {us} to {place}."},
     moveVoyage = {"{We} took the {how} to {place}."},
     moveHearth = {"My hearthstone took me back to {place}."},
+    -- (lane O8: the firsts of a crossing run in one sentence, and a place with no told work named
+    -- only as a first; a level that came at a burst of hand-ins)
+    crossRun = {"By way of {places}, new to {us}, {we} came into {zoneD}."},
+    crossRunNew = {"By way of {places}, {we} came into {zoneD}, all of it new to {us}."},
+    crossOnlyBy = {"The {how} carried {us} on, and {Places} {were} new to {us}."},
+    crossOnly = {"{Places} {were} new to {us}."},
+    levelBurst = {"By then I was level {level}."},
+    -- (lane O8: an adventure's record may say how many went in and that the foes were strong; told
+    -- in passing, never as a count of elites)
+    -- (the company of an adventure, by who they were or as strangers, and their parting; the
+    -- foes, told in passing, never as a count of elites; a named one by name)
+    adventureCompany = {"There {we} made common cause with {company}.", "{Company} joined {us} there."},
+    adventureParted = {"After that, {them} went {their} own way.", "Then the company broke up, and {them} went {their} own way."},
+    adventureDanger = {"Nothing there died easily.", "What {we} fought there took a lot of killing.", "It was hard fighting, and it went on a long while."},
+    adventureNamed = {"{We} fought {names} there.", "{Names} stood against {us} there."},
+    -- (lane O8: a journey told as one road. The setting out, hard or easy, with the lands crossed
+    -- and, when all of it was new, that; the work far above the level; the dangers by place; one
+    -- earned feeling on a hard road with others; how far and how long)
+    -- (by the danger register, 0 safe to 3 deadly: the same setting out in other words)
+    journeyOut0 = {"From {from}, {we} went by way of {lands} to {far}.", "{We} left {from} for {far}, through {lands}."},
+    journeyOutNew0 = {"From {from}, {we} went by way of {lands} to {far}, none of it known to {us}.", "{We} left {from} for {far}, through {lands}, all of it new to {us}."},
+    journeyOut1 = {"From {from}, {we} took the road to {far} and kept to it through {lands}.", "{We} left {from} for {far} and kept to the roads through {lands}."},
+    journeyOutNew1 = {"From {from}, {we} took the road to {far} and kept to it through {lands}, none of it known to {us}.",
+        "{We} left {from} for {far} and kept to the roads through {lands}, all of it new to {us}."},
+    journeyOut2 = {"From {from}, {we} set out on the long road to {far}, and pressed on through {lands}.", "{We} left {from} for {far}, a long road, and pressed on through {lands}."},
+    journeyOutNew2 = {"From {from}, {we} set out on the long road to {far}, and pressed on through {lands}, none of it known to {us}.",
+        "{We} left {from} for {far}, a long road, and pressed on through {lands}, all of it new to {us}."},
+    journeyOut3 = {"From {from}, {we} set out for {far}, and slipped through {lands} as best {we} could.", "{We} left {from} for {far}, and made {our} way through {lands} as best {we} could."},
+    journeyOutNew3 = {"From {from}, {we} set out for {far}, and slipped through {lands}, none of it known to {us}, as best {we} could.",
+        "{We} left {from} for {far}, and made {our} way through {lands}, all of it strange to {us}, as best {we} could."},
+    -- (the goal named in the opening, seen through at its hand-in; far above the level, said so)
+    -- (round 9: the work a chapter does not tell, folded into one plain clause by giver or place)
+    foldChapter = {"Besides all this, {we} saw to {count} smaller {tasks}{where}.", "That day there {were} also {count} smaller {tasks}{where}, and {we} saw to {them}."},
+    crossFold = {", and {we} saw to {count} {tasks} there."},
+    foldGiversOnly = {"{We} saw to {count} {tasks} for {givers} there.", "There {we} saw to {count} {tasks} for {givers}."},
+    foldPlaceOnly = {"In {place}, {we} saw to {count} {tasks}.", "{We} saw to {count} {tasks} in {place}."},
+    journeyDone = {"{We} saw it through there.", "There {we} saw the work done."},
+    journeyDoneAbove = {"{We} saw it through, though it was meant for travellers far stronger than {us}.",
+        "It was work meant for travellers far stronger than {us}, and {we} saw it through all the same."},
+    journeyKilled = {[0] = "killed me", [1] = "killed me", [2] = "cut me down", [3] = "cut me down"},
+    journeyHardFelt = {"It was a hard road, and I was glad not to walk it alone.", "It was a hard road, and I was glad of the company on it."},
+    journeyDangerous = {"Nothing on that road died easily.", "What lived along that road took a lot of killing."},
+    journeyBack0 = {"In {span}, {we} had gone to {far} and back.", "{We} had been to {far} and back in {span}."},
+    journeyBack1 = {"In {span}, {we} had been to {far} and back.", "{We} had been to {far} and back in {span}."},
+    journeyBack2 = {"In {span}, {we} had made it to {far} and back.", "{We} had made it to {far} and back in {span}."},
+    journeyBack3 = {"In {span}, {we} had fought {our} way to {far} and back.", "{We} had fought {our} way to {far} and back in {span}."},
+    journeyFar0 = {"In {span}, {we} had come as far as {far}."},
+    journeyHome0 = {"In {span}, {we} had gone as far as {far}, and the hearthstone brought {us} home."},
+    journeyHome2 = {"In {span}, {we} had made it as far as {far}, and the hearthstone brought {us} home."},
+    journeyHome3 = {"In {span}, {we} had fought {our} way as far as {far}, and the hearthstone brought {us} home."},
+    journeyFar2 = {"In {span}, {we} had made it as far as {far}."},
+    journeyFar3 = {"In {span}, {we} had fought {our} way as far as {far}."},
     moveWent = {"{We} went on to {place}.", "From there {we} went to {place}."},
+    moveWentNew = {"{We} went on to {place}, new to {us}.", "From there {we} went to {place}, where {we} had never been."},
     runLevels = {"The run took me from level {from} to {level}."},
     closeDungeonDone = {"{dungeon} was behind {us}"},
     closeFoeHeld = {"{foe} still held {place}"},

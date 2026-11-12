@@ -217,6 +217,19 @@ local function Add(scene, entry)
         local n = tonumber(entry.c) or 1
         if not scene.hk then scene.events[#scene.events + 1] = {k = "hk", t = entry.t} end
         scene.hk = (scene.hk or 0) + n
+    elseif k == "elites" then
+        -- (elite foes fought in the open, on the stay: JournalSelf.lua; no event line.
+        -- elites = how many, eliteSeconds = time in combat with them, eliteNames = the named
+        -- ones, dangerous = A.JournalDangerous: a long time among them, not one quest target)
+        scene.elites = (scene.elites or 0) + (tonumber(entry.c) or 1)
+        scene.eliteSeconds = (scene.eliteSeconds or 0) + (tonumber(entry.s) or 0)
+        for _, name in ipairs(type(entry.x) == "table" and entry.x or {}) do
+            scene.eliteNames = scene.eliteNames or {}
+            local known = false
+            for _, other in ipairs(scene.eliteNames) do if other == name then known = true end end
+            if not known and type(name) == "string" then scene.eliteNames[#scene.eliteNames + 1] = name end
+        end
+        scene.dangerous = A.JournalDangerous(scene.elites, scene.eliteSeconds)
     elseif k == "death" or k == "wipe" or k == "rez" or k == "rest" or k == "close" then
         scene.events[#scene.events + 1] = {k = k, t = entry.t, d = entry.d, z = entry.z, w = entry.w, env = entry.env, boss = entry.boss,
             by = entry.by, a = entry.a, sz = entry.sz, pr = entry.pr, pc = entry.pc, walk = entry.walk}
@@ -228,7 +241,7 @@ end
 -- Flickers: the quick steps over a border and back -------------------------------
 -- What a short stay owes only to being a stay, and so goes with it when it is folded:
 -- the cave line, the dungeon walked into, the inn, the town passed, the swim.
-local FLICKER_DROP = {cave = true, dungeon = true, sleep = true, swim = true, town = true, rest = true}
+local FLICKER_DROP = {cave = true, dungeon = true, sleep = true, swim = true, town = true, rest = true, elites = true}
 -- What happened to the people in it, kept on the merged stay in time order so the death
 -- writer tells it with the rest (a ghost run through Durotar after a wipe).
 local FLICKER_KEEP = {pdeath = true, death = true, rez = true}
@@ -251,7 +264,7 @@ local function FoldFlickers(outings, entries)
     local skip, moved = {}, {}
     local others = {}
     for _, entry in ipairs(entries) do
-        if entry.k ~= "group" and entry.k ~= "play" and entry.k ~= "with" then others[#others + 1] = entry end
+        if entry.k ~= "group" and entry.k ~= "play" and entry.k ~= "with" and entry.k ~= "member" then others[#others + 1] = entry end
     end
     local changed = true
     while changed do
@@ -321,7 +334,7 @@ A.JournalFoldFlickers = FoldFlickers
 -- What a crossing may hold and still be a crossing: the stops that did not matter (left
 -- out) and the going itself (carried to the stay before, or the stay after when the day
 -- opens on the crossing).
-local TRANSIT_DROP = {town = true, rest = true, sleep = true, swim = true, cave = true}
+local TRANSIT_DROP = {town = true, rest = true, sleep = true, swim = true, cave = true, elites = true}
 local TRANSIT_CARRY = {voyage = true, taxi = true, nightflight = true, hearth = true}
 local TRANSIT_CARRY_FIRST = {continent = true, zeppelin = true, boat = true, tram = true, flight = true, landmark = true}
 -- Folds the crossings out of the outings, in place: a stay under TRANSIT_STAY whose lines
@@ -333,7 +346,7 @@ local function FoldTransit(outings, entries, skip, moved)
     local rehome = {}
     local others = {}
     for _, entry in ipairs(entries) do
-        if entry.k ~= "group" and entry.k ~= "play" and entry.k ~= "with" and not skip[entry] and moved[entry] == nil then others[#others + 1] = entry end
+        if entry.k ~= "group" and entry.k ~= "play" and entry.k ~= "with" and entry.k ~= "member" and not skip[entry] and moved[entry] == nil then others[#others + 1] = entry end
     end
     -- the lines of a crossing, or nil when something in the stay made it a stop
     -- (a line at the stay's edge from the zone before or after belongs there, not here)
@@ -430,6 +443,88 @@ local function ResolveMoved(outings, moved, skip)
     end
 end
 
+-- Your own journal: everyone who travelled with you, stay by stay, in your list or not
+-- (JournalSelf.lua's "member" lines), and the elite foes fought there ("elites" lines).
+-- On each outing, when the record has them (nil otherwise):
+--   members  {{name, full, class, race, level, circle, guild, friend, bnet, t, e, seconds,
+--            spans = {{from, to}}, significant}}: each member's time inside the stay (a
+--            minute at least), first come first; significant = together MEMBER_SIGNIFICANT or
+--            more in it; circle = "companion" / "acquaintance" / ... when in your list
+--   partySize  the size that held longest, me among them (alone counted for the time no
+--            member covers); partyMax = the most at once
+--   elites, eliteSeconds, eliteNames, dangerous  (Add, above)
+-- A teller reads; nothing here is told.
+local MEMBER_SIGNIFICANT = 600 -- ten minutes together (the player's measure)
+local DANGEROUS_ELITES, DANGEROUS_SECONDS = 6, 600
+A.JournalMemberSignificant = MEMBER_SIGNIFICANT
+-- Dangerous ground: six different elite foes, or ten minutes in combat with them. One elite
+-- quest target (a pull or two, a named foe) stays below both; a stay spent among them does not.
+function A.JournalDangerous(count, seconds)
+    return (tonumber(count) or 0) >= DANGEROUS_ELITES or (tonumber(seconds) or 0) >= DANGEROUS_SECONDS
+end
+-- The size that held longest over [from, to] and the most at once, from the members' spans
+-- (me counted: one more than the members covering a moment).
+function A.JournalPartySize(spans, from, to)
+    local marks = {}
+    for _, sp in ipairs(spans) do
+        local a, b = math.max(sp[1], from), math.min(sp[2], to)
+        if b > a then marks[#marks + 1] = {a, 1}; marks[#marks + 1] = {b, -1} end
+    end
+    if #marks == 0 then return nil, nil end
+    table.sort(marks, function(x, y) if x[1] ~= y[1] then return x[1] < y[1] end return x[2] < y[2] end)
+    local seconds, size, at, largest = {}, 1, from, 1
+    for _, m in ipairs(marks) do
+        if m[1] > at then seconds[size] = (seconds[size] or 0) + (m[1] - at); at = m[1] end
+        size = size + m[2]
+        if size > largest then largest = size end
+    end
+    if to > at then seconds[size] = (seconds[size] or 0) + (to - at) end
+    local best
+    for n, s in pairs(seconds) do
+        if not best or s > seconds[best] or (s == seconds[best] and n > best) then best = n end
+    end
+    return best, largest
+end
+local function MemberSpans(outings, lines, now)
+    for _, line in ipairs(lines) do
+        local full = type(line.n) == "string" and line.n ~= "" and line.n or nil
+        local lineEnd = line.e or now
+        for _, outing in ipairs(outings) do
+            local from, to = math.max(line.t or 0, outing.t), math.min(lineEnd, outing.e)
+            if full and to - from >= 60 then
+                outing.members = outing.members or {}
+                local known
+                for _, m in ipairs(outing.members) do if m.full == full then known = m end end
+                if not known then
+                    known = {name = (full:gsub("%-.*$", "")), full = full, seconds = 0, spans = {}, t = from, e = to}
+                    outing.members[#outing.members + 1] = known
+                end
+                known.class, known.race = line.c or known.class, line.r or known.race
+                known.level = tonumber(line.lv) or known.level
+                known.circle = line.l or known.circle
+                known.guild = line.g and true or known.guild
+                known.friend = line.f and true or known.friend
+                known.bnet = line.b and true or known.bnet
+                known.seconds = known.seconds + (to - from)
+                known.t, known.e = math.min(known.t, from), math.max(known.e, to)
+                known.spans[#known.spans + 1] = {from, to}
+            end
+        end
+    end
+    for _, outing in ipairs(outings) do
+        if outing.members then
+            table.sort(outing.members, function(a, b) if a.t ~= b.t then return a.t < b.t end return a.full < b.full end)
+            local all = {}
+            for _, m in ipairs(outing.members) do
+                m.significant = m.seconds >= MEMBER_SIGNIFICANT
+                for _, sp in ipairs(m.spans) do all[#all + 1] = sp end
+            end
+            outing.partySize, outing.partyMax = A.JournalPartySize(all, outing.t, outing.e)
+        end
+    end
+end
+A.JournalMemberSpans = MemberSpans
+
 -- Days (oldest first), each with its scenes in order.
 function A.JournalBook(person)
     local entries = {}
@@ -449,9 +544,10 @@ function A.JournalBook(person)
     local now = time and time() or 0
     -- Outings, merged when they follow each other in the same place.
     local outings, last = {}, nil
-    local withs = {}
+    local withs, memberLines = {}, {}
     for _, entry in ipairs(entries) do
         if entry.k == "with" then withs[#withs + 1] = entry end
+        if entry.k == "member" then memberLines[#memberLines + 1] = entry end
         if entry.k == "group" or entry.k == "play" then
             local stop = entry.e or math.max(entry.t or 0, now)
             if last and last.zone == entry.z and (entry.t or 0) - last.e <= MERGE_GAP then
@@ -515,12 +611,14 @@ function A.JournalBook(person)
             end
         end
     end
+    -- (everyone who travelled with you, list or not: members, partySize, partyMax on each outing)
+    MemberSpans(outings, memberLines, now)
     -- Everything else goes into the outing it happened in, or is a moment.
     local scenes = {}
     for _, outing in ipairs(outings) do scenes[#scenes + 1] = outing end
     local lastMoment
     for _, entry in ipairs(entries) do
-        if entry.k ~= "group" and entry.k ~= "play" and entry.k ~= "with" then
+        if entry.k ~= "group" and entry.k ~= "play" and entry.k ~= "with" and entry.k ~= "member" then
             -- The outing it happened in: one that holds its time (and its zone, when
             -- two touch); failing that, one within a minute of it. A companion's death
             -- a minute before a hearthstone belongs where it happened, not where you landed.
@@ -542,7 +640,9 @@ function A.JournalBook(person)
                 home = home or loose
             end
             local own = entry.k == "custom" or entry.k == "met" or entry.k == "added" or entry.k == "seen"
-            if home and not own then
+            if entry.k == "elites" and not home then
+                -- (elite foes belong to a stay; outside one they are no moment of their own)
+            elseif home and not own then
                 Add(home, entry)
                 lastMoment = nil
             else
@@ -1581,6 +1681,8 @@ function A.JournalAgree(text)
         if word == "if " or word == "though " or word == "wish " or word == "wished " then return before .. "I were" end
         return before .. "I was"
     end)
+    -- ("{n:Bramble} and I were": a companion and I make a plural, lane C8)
+    text = text:gsub("({n:[^}]*}) and I was%f[%A]", "%1 and I were")
     text = text:gsub("({p:[^}]*}) was ", function(place) return place .. (PluralPlace(place) and " were " or " was ") end)
     text = text:gsub("({p:[^}]*}), which was ", function(place) return place .. (PluralPlace(place) and ", which were " or ", which was ") end)
     return text

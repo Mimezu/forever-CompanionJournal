@@ -404,7 +404,8 @@ me[#me] = nil -- (kept out of the day read below: the checklist has one standing
 mine.rep["Orgrimmar"] = nil
 
 -- The whole evening, as recorded.
-equal(Kinds(me), "play,first,town,with,pdeath,first,explore,explore,taxi,learn,rep,read,duel:lost,first,rarekill,pdeath", "the evening's record: " .. Kinds(me))
+-- (member: Dahlia's line as a group member, once she had been with me a minute; lane REC8)
+equal(Kinds(me), "play,first,town,with,member,pdeath,first,explore,explore,taxi,learn,rep,read,duel:lost,first,rarekill,pdeath", "the evening's record: " .. Kinds(me))
 equal(Kinds(dahlia.journal), "group,death:them,death:them,rez:you", "her record: " .. Kinds(dahlia.journal))
 
 -- 12. Reading the day: your own book, Everything and Highlights, retells 0-7; her book, both voices.

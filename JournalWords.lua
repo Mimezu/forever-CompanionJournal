@@ -1793,12 +1793,13 @@ do
     we.wipe = {"{boss} beat the two of us that time."}
     you.wipe = {"{boss} beat {my} party that time."}
     -- Deaths, and who carried whom.
-    we.dieBoss = {"{killer} cut me down, with {name} there.", "{killer} cut me down."}
-    you.dieBoss = {"{killer} cut {me} down, with {name} there.", "{killer} got {me}."}
-    we.dieHeroic = {"{killer} killed me, as {killerShort} had killed many before.", "I died fighting {killer}, with {name} there."}
-    you.dieHeroic = {"{killer} killed {me}. Many have gone the same way.", "{I} fell to {killer}, with {name} there."}
-    we.dieFoe = {"{killer} killed me in {place}, with {name} there.", "{killer} got the better of me in {place}."}
-    you.dieFoe = {"{killer} killed {me} in {place}, with {name} there.", "{killer} got the better of {me} in {place}."}
+    -- (the companion is always there in its own book: "with {name} there" says nothing, lane C8)
+    we.dieBoss = {"{killer} cut me down.", "{killer} got me."}
+    you.dieBoss = {"{killer} cut {me} down.", "{killer} got {me}."}
+    we.dieHeroic = {"{killer} killed me, as {killerShort} had killed many before.", "I died fighting {killer}."}
+    you.dieHeroic = {"{killer} killed {me}. Many have gone the same way.", "{I} fell to {killer}."}
+    we.dieFoe = {"{killer} killed me in {place}.", "{killer} got the better of me in {place}."}
+    you.dieFoe = {"{killer} killed {me} in {place}.", "{killer} got the better of {me} in {place}."}
     we.theyDie = {"{name} died in {place} while {pair} were out.", "In {place}, {name} died."}
     you.theyDie = {"{my} party lost {name} in {place}.", "In {place}, {name} died."}
     we.theyDieBoss = {"{boss} killed {name}, with me there.", "{boss} took {name} down, with me there."}
@@ -1914,6 +1915,8 @@ for w in ("Enforcer Neophyte Cultist Warrior Zealot Gnoll Murloc Spider Duskbat 
     .. "Destroyer Shadowcaster Shadowmage Warder Overseer Taskmaster Slaver Enchanter Plaguehound Plaguebat Carrion "
     .. "Geologist Surveyor Engineer Mechanic Tinkerer Alchemist Farmer Farmhand Fisherman Lumberjack Logger Woodcutter "
     .. "Guard Grunt Watchman Scout Archer Marksman Crossbowman Spearman Swordsman Axeman Shieldbearer Cleric Priest Priestess "
+    .. "Refugee Villager Citizen Settler Pilgrim Wanderer Nomad Vagrant Beggar Drifter Hermit Squatter Convict Prisoner Escapee Fugitive "
+    .. "Outcast Thief Robber Cutthroat Cutpurse Highwayman Mercenary Hireling Apprentice Journeyman Scribe Courier Messenger Herald "
     .. "Shaman Witchdoctor Mystic Apprentice Journeyman Veteran Champion Captain Lieutenant Sergeant Corporal "
     .. "Dwarf Orc Troll Gnome Human Elf Tauren Goblin Naga Dryad Dragonkin Makrura Nerubian Silithid Hornet Hatchling "
     .. "Matriarch Patriarch Broodling Fledgling Spiderling Pup Cub Bull Cow Ram Ewe Doe Buck Toad Frog Lizard Gecko "
@@ -2174,6 +2177,133 @@ PB.closeStopSame = {"{name} stopped {clock}, {span} after the {part} began in {p
 PB.closeEndFar = {"The {part} ended in {place} {clock}, {span} and {crossings} from {from}.", "{span} and {crossings} from {from}, the {part} ended in {place} {clock}."}
 PB.closeEndNear = {"The {part} ended in {place} {clock}, {span} after it began in {from}.", "{span} after it began in {from}, the {part} ended in {place} {clock}."}
 PB.closeEndSame = {"The {part} ended {clock} where it began, in {place}, {span} later.", "{span} after it began there, the {part} ended {clock} in {place}."}
+-- Lane C8 (2026-11-12): the composed companion chapter. An opener that names the companion and
+-- the place the close answers, when the teller's own opening was a tally; a level as a clause of
+-- the deed it came with, else once before the close; a first meeting with next to nothing shared
+-- told from the record (the hour, your level) and closed where your own book says the night ended.
+PB.beganIn = {"The {part} began in {zoneD}, with {name} along.", "The {part} began in {zoneD}, {name} at {my} side."}
+PB.beganPlain = {"The {part} began in {zoneD}.", "That {part} began in {zoneD}."}
+PB.theyFellAgain = {"{name} fell again.", "{name} went down again.", "Then {name} fell again."}
+PB.levelClause = {
+    theirs = {"that took {name} to level {theirs}", "{name} was level {theirs} by then"},
+    mine = {"that took {me} to level {mine}", "{Iwas} level {mine} by then"},
+    both = {"that took both of {us} to level {theirs}", "both of {us} were level {theirs} by then"},
+}
+PB.levelByEnd = {
+    theirs = {"{name} was level {theirs} by the end of it.", "By the end of it, {name} was level {theirs}."},
+    mine = {"{Iwas} level {mine} by the end of it.", "By the end of it, {Iwas} level {mine}."},
+    both = {"Both of {us} were level {theirs} by the end of it.", "By the end of it, both of {us} were level {theirs}."},
+}
+PB.metBrief = {"{Iwas} level {mine} then."}
+PB.metBriefClock = {"It was {clock}, and {Iwas} level {mine}.", "{Iwas} level {mine} then, and it was {clock}."}
+PB.closeEndShort = {"The {part} ended in {place} {span} later.", "{Span} later, the {part} ended in {place}."}
+-- Lane C9 (2026-11-12): the companion's book as a shared story. The close is about the two of
+-- you and where the night left you, never "the work for X was done". {pairNamed} "Dahlia and I"
+-- / "you and Dahlia". Close bonds (spouse, partner, family) end the night together or part for
+-- the night; a friend calls it a night. All from the record: who stopped first, where, how long.
+PB.closeTogetherSame = {"{pairNamed} ended the {part} together where it began, in {place} {clock}, {span} later.",
+    "{Span} after {we} set out, {pairNamed} ended the {part} together where it began, in {place} {clock}."}
+PB.closeTogetherNear = {"{pairNamed} ended the {part} together in {place} {clock}, {span} after {we} set out from {from}.",
+    "{Span} after {we} set out from {from}, {pairNamed} ended the {part} together in {place} {clock}."}
+PB.closeTogetherFar = {"{pairNamed} ended the {part} together in {place} {clock}, {span} and {crossings} after {we} set out from {from}.",
+    "{Span} and {crossings} after {we} set out from {from}, {pairNamed} ended the {part} together in {place} {clock}."}
+PB.closeBothSame = {"{pairNamed} ended the {part} where it began, in {place} {clock}, {span} later.",
+    "{Span} after {we} set out, {pairNamed} ended the {part} where it began, in {place} {clock}."}
+PB.closeBothNear = {"{pairNamed} ended the {part} in {place} {clock}, {span} after {we} set out from {from}.",
+    "{Span} after {we} set out from {from}, {pairNamed} ended the {part} in {place} {clock}."}
+PB.closeBothFar = {"{pairNamed} ended the {part} in {place} {clock}, {span} and {crossings} after {we} set out from {from}.",
+    "{Span} and {crossings} after {we} set out from {from}, {pairNamed} ended the {part} in {place} {clock}."}
+PB.closePartedSame = {"{pairNamed} parted for the night in {place} {clock}, {span} after {we} set out.",
+    "{Span} after {we} set out, {pairNamed} parted for the night in {place} {clock}."}
+PB.closePartedNear = {"{pairNamed} parted for the night in {place} {clock}, {span} after {we} set out from {from}.",
+    "{Span} after {we} set out from {from}, {pairNamed} parted for the night in {place} {clock}."}
+PB.closePartedFar = {"{pairNamed} parted for the night in {place} {clock}, {span} and {crossings} after {we} set out from {from}.",
+    "{Span} and {crossings} after {we} set out from {from}, {pairNamed} parted for the night in {place} {clock}."}
+PB.closeCalledSame = {"{name} went {their} own way in {place} {clock}, {span} after {we} set out.",
+    "{name} called it a night in {place} {clock}, {span} after {we} set out.",
+    "{Span} after {we} set out, {name} called it a night in {place} {clock}."}
+PB.closeCalledNear = {"{name} went {their} own way in {place} {clock}, {span} after {we} set out from {from}.",
+    "{name} called it a night in {place} {clock}, {span} after {we} set out from {from}.",
+    "{Span} after {we} set out from {from}, {name} called it a night in {place} {clock}."}
+PB.closeCalledFar = {"{name} went {their} own way in {place} {clock}, {span} and {crossings} after {we} set out from {from}.",
+    "{name} called it a night in {place} {clock}, {span} and {crossings} after {we} set out from {from}.",
+    "{Span} and {crossings} after {we} set out from {from}, {name} called it a night in {place} {clock}."}
+-- The first day of two who began the world together (both at level one or two in the record).
+PB.startedBond = {we = {"{name}, {bondWord}, and I took our first steps together in {zoneD}."},
+    you = {"You and {name}, {bondWord}, took your first steps together in {zoneD}."}}
+PB.startedFriend = {we = {"{name} and I took our first steps together in {zoneD}."}, you = {"You and {name} took your first steps together in {zoneD}."}}
+-- Levels gained side by side all day (each within ten minutes of the other's): once in a book.
+PB.lockstep = {"Level by level {we} kept pace with each other, and both of {us} were level {theirs} by the end of it."}
+-- Days in a row together, for a close bond (5, 10, 15...; the common streak keeps 7, 14, 21, 30).
+PB.streakBond = {"It was the {nth} day in a row that {pairNamed} had set out together.", "That made {count} days in a row together."}
+PB.streakBondPlain = {"That made {count} days in a row.", "It was the {nth} day running."}
+-- A first seen together: folded on the line that says the place was new.
+PB.firstWithBond = {", and {name} was there for it", ", with {name} beside {me}", ", and {name} was there with {me}"}
+PB.firstWithFriend = {", with {name} along"}
+-- Two places new the same day, said once.
+PB.firstTwo = {"{a} and {b} were new to {me} that day", "{a} and {b} were both new ground to {me}"}
+-- The road (lane C8): a long walk while together, one paragraph. {from} where it set out, {lands}
+-- the lands crossed in order, {roadNote} the firsts folded in and how far above you they were
+-- (", all of it new to you, and lands well above your level"), {far} where it turned, {span} how
+-- long out, {backWay} "through the Wetlands to the Arathi Highlands". Plain: the dangers are the
+-- road's own lines that follow.
+PB.roadOut = {
+    "From {from}, {pairNamed} set out on foot through {lands}{roadNote}.",
+    "On foot, {pairNamed} left {from} for {lands}{roadNote}.",
+}
+PB.roadOn = {
+    "From there {pairNamed} made {our} way on foot through {lands}{roadNote}.",
+    "On foot, {pairNamed} went on through {lands}{roadNote}.",
+}
+PB.roadBack = {
+    "{far} was as far as {we} went, {span} out, and from there {pair} turned back {backWay}.",
+    "From {far}, {span} out, {pair} turned back {backWay}.",
+}
+-- The same road when the record holds it hard (two deaths on it, or one in lands well above
+-- you): the verbs change, nothing is added.
+PB.roadOutHard = {
+    "From {from}, {pairNamed} struck out on foot through {lands}{roadNote}.",
+    "On foot, {pairNamed} pushed out of {from} into {lands}{roadNote}.",
+}
+PB.roadOnHard = {
+    "From there {pairNamed} fought {our} way on foot through {lands}{roadNote}.",
+    "On foot, {pairNamed} pressed on through {lands}{roadNote}.",
+}
+PB.roadBackHard = {
+    "{far} was as far as {we} got, {span} out, and from there {pair} fell back {backWay}.",
+    "From {far}, {span} out, {pair} fell back {backWay}.",
+}
+-- The company (lane C8): strangers grouped with a while, for work the chapter tells or a long
+-- fight among elites. {company} by name, by kind or as strangers ("two strangers, a troll priest
+-- and an orc warrior"), {place} where they joined, {parted} the same again at the parting. The
+-- elites only as the strength of the foes, never a count.
+PB.companyJoin = {
+    "In {place}, {company} joined {us} for a while.",
+    "{Company} fell in with {us} in {place}.",
+    "{Company} joined {us} for a while.",
+    "For a while {company} went with {us}.",
+}
+PB.companyAlong = {
+    "For a while in {place}, {company} travelled with {us}.",
+    "{Company} went with {us} for a while in {place}.",
+    "{Company} travelled with {us} for a while.",
+}
+PB.companyHard = {
+    "The foes there were no common ones, and the fighting went on a long while.",
+    "It was long, hard fighting, against foes stronger than most in that country.",
+}
+PB.companyHardNamed = {
+    "The foes there were no common ones, {elite} among them, and the fighting went on a long while.",
+    "It was long, hard fighting, and {elite} was among the foes.",
+}
+PB.companyPart = {
+    "After that the company parted, and {parted} went their own way.",
+    "Then {parted} went their own way.",
+}
+PB.companyPartOne = {
+    "After that the company parted, and {parted} went on alone.",
+    "Then {parted} went on alone.",
+}
 -- A raise by someone other than the companion, in the companion's book (round 4): {raiser} the
 -- name as recorded, a stranger when no party window of your own book covers the moment.
 -- (the same hand raised you three times and more in a day: one line after the last, lane G)
@@ -2198,6 +2328,8 @@ PB.runLevelClause = {
     both = {"the run took both of {us} to level {theirs}", "both of {us} came out of it at level {theirs}"},
     mine = {"the run took {me} to level {mine}", "{I} came out of it at level {mine}"},
     theirs = {"{name} came out of it at level {theirs}", "the run took {name} to level {theirs}"},
+    -- (the companion's level came a while after yours: said so, never "both of you came out of it", lane C8)
+    bothLater = {"the run took {me} to level {mine}, {name} a little later", "{I} came out of it at level {mine}, {name} a little later"},
 }
 -- Earned once in a long while: a wipe, then the lord of the place killed on the second try. It
 -- points at the run's own facts ({killer} the foe of the first try, {shortRaw} the lord), plainly.

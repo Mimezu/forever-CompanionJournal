@@ -171,7 +171,8 @@ for _, voice in ipairs({"you", "we"}) do
         check(select(1, Order(text, {"Mor'Ladim", "Nightbane Vile Fang", "Splinter Fist ogre"})), "your deaths in time order" .. tag)
         -- 4. three in the party
         check(not text:lower():find("the pair of ", 1, true) and not text:lower():find("the two of ", 1, true), "no 'the pair of you' with three" .. tag)
-        check(text:find("Hollis", 1, true), "the third is named" .. tag)
+        -- (lane C8: a companion the chapter shows doing nothing is not named that day)
+        check(not text:find("Hollis", 1, true), "the third, who did nothing the record kept, is not named" .. tag)
         -- 5. the writing
         check(not text:find(":", 1, true) and not text:find("?", 1, true), "no colon or question" .. tag)
         seen[text] = true

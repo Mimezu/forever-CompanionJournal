@@ -102,6 +102,9 @@ Rule("dungeon-twice", true, "a dungeon entered twice in one chapter")
 Rule("death-count-wrong", true, "a death count that does not match the record")
 Rule("pair-three", true, "\"the pair of you\" with three or more present")
 Rule("boss-unkilled", true, "a death or defeat claimed of a boss the record never killed, today or before (\"Amnennar was destroyed\")")
+-- lane G8 (2026-11-12): time order inside a run, and the close in the record's last place
+Rule("boss-order", true, "a boss's death claimed before that of a boss the record killed earlier that day")
+Rule("close-place", true, "a close (\"the night ended in\", \"I slept at\") naming a place that is not the record's last stay")
 -- soft: reading faults, counted
 Rule("lower-start", false, "a sentence that starts in lower case")
 Rule("stranger-met-today", false, "someone first met that day called a stranger when they raise you")
@@ -225,7 +228,8 @@ local TALLY = {"mined %a+[%a%-]* veins?", "made %a+[%a%-]* (pieces|things)", "sm
 -- The record of one day, for the cross-checks -----------------------------------------------
 local function DayKey(t) return date("%Y-%m-%d", A.JournalEvening(t or 0)) end
 local function Record(journal, dayKey)
-    local r = {places = {}, zones = {}, dungeons = {}, mouths = {}, bosses = {}, foes = {}, ownDeaths = 0, theirDeaths = 0, pdeaths = {}, levels = {}, stays = {}, rezBy = {}}
+    local r = {places = {}, zones = {}, dungeons = {}, mouths = {}, bosses = {}, foes = {}, ownDeaths = 0, theirDeaths = 0, pdeaths = {}, levels = {}, stays = {}, rezBy = {},
+        bossOrder = {}, endPlaces = {}}
     local plays = {}
     for _, e in ipairs(journal) do
         if e.k ~= "with" and DayKey(e.t) == dayKey then
@@ -238,7 +242,7 @@ local function Record(journal, dayKey)
                 if e.k == "cave" and e.z and e.z ~= e.d and Bare(e.z) == Bare(e.d) then r.mouths[e.z] = e.d end
             end
             if e.k == "town" or e.k == "rest" or e.k == "sleep" or e.k == "home" or e.k == "hearth" then r.places[e.d] = true end
-            if e.k == "boss" and e.d then r.bosses[e.d] = true end
+            if e.k == "boss" and e.d then r.bosses[e.d] = true; r.bossOrder[#r.bossOrder + 1] = {name = e.d, t = e.t or 0} end
             if e.k == "death" then
                 if e.w == "them" then r.theirDeaths = r.theirDeaths + 1 else r.ownDeaths = r.ownDeaths + 1 end
                 if e.d then r.foes[e.d] = true end
@@ -258,7 +262,21 @@ local function Record(journal, dayKey)
             if e.k ~= "play" and e.k ~= "group" and e.k ~= "with" and (e.t or 0) >= (p.t or 0) and (e.t or 0) <= (p.e or p.t or 0) and (e.z == p.z or e.z == nil) then busy = true end
         end
         local short = ((p.e or p.t or 0) - (p.t or 0)) < 180
-        r.stays[#r.stays + 1] = {zone = p.z, flicker = short and not busy}
+        r.stays[#r.stays + 1] = {zone = p.z, flicker = short and not busy, t = p.t or 0}
+    end
+    -- (where the record's last real stay was, and the places named from its start on: the close may name those)
+    table.sort(r.bossOrder, function(a, b) return a.t < b.t end)
+    local lastStay
+    for _, st in ipairs(r.stays) do if not st.flicker then lastStay = st end end
+    if lastStay then
+        r.lastStay = lastStay.zone
+        r.endPlaces[lastStay.zone] = true
+        for _, e in ipairs(journal) do
+            if e.k ~= "with" and DayKey(e.t) == dayKey and (e.t or 0) >= lastStay.t then
+                if (e.k == "town" or e.k == "rest" or e.k == "sleep" or e.k == "hearth" or e.k == "home") and e.d then r.endPlaces[e.d] = true end
+                if (e.k == "play" or e.k == "group") and e.z then r.endPlaces[e.z] = true end
+            end
+        end
     end
     return r
 end
@@ -283,7 +301,15 @@ for _, name in ipairs((A.Lore.BossNames and A.Lore.BossNames()) or {}) do
     local short = A.Lore.Short and A.Lore.Short(name)
     BOSSES[#BOSSES + 1] = {name = name, short = (short and short ~= name and not short:find(" ", 1, true) and #short >= 4 and short:lower() ~= "the") and short or nil}
 end
+-- (every zone the world tables know and every place a record names, longest first, for the close check)
+local ALL_PLACES = {}
+do
+    local seen = {}
+    for zone in pairs(A.LoreZoneLevels or {}) do if not seen[zone] then seen[zone] = true; ALL_PLACES[#ALL_PLACES + 1] = zone end end
+    ALL_PLACES.add = function(place) if place and not seen[place] and Bare(place) ~= "" then seen[place] = true; ALL_PLACES[#ALL_PLACES + 1] = place end end
+end
 local function Read(where, plain, rec, present, known, people, bookSeen, book)
+    for p in pairs(rec.places) do ALL_PLACES.add(p) end
     if DUMP and where.life == DUMP then print(("---- %s/%s/%s/%s ch.%d\n%s\n"):format(where.life, where.book, where.teller, where.voice, where.chapter, plain)) end
     book.killed = book.killed or {}
     local paras = Paragraphs(plain)
@@ -517,6 +543,47 @@ local function Read(where, plain, rec, present, known, people, bookSeen, book)
             keep = true, inn = true, gate = true, gates = true, night = true, day = true, evening = true, morning = true, afternoon = true, way = true, dark = true}
         local PREP = {across = true, over = true, into = true, through = true, back = true, down = true, from = true, with = true, past = true, along = true}
         if thing and #thing >= 4 and not COMMON[thing] and not COMMON[adj] and not PREP[thing] and not (book.text or ""):lower():find("%f[%a]" .. thing .. "%f[%A]") then Flag("unanchored-the", where, first) end
+        -- lane G8: a boss told dead before one the record killed earlier; the close in a place the
+        -- record did not end in
+        do
+            local E = A.JournalEpisodes
+            local claimAt = {}
+            for i, s in ipairs(allSentences) do
+                for _, b in ipairs(rec.bossOrder) do
+                    if not claimAt[b.name] and E and E.ClaimsDeath and E.ClaimsDeath(s, b.name) then claimAt[b.name] = i end
+                end
+            end
+            for i = 1, #rec.bossOrder do
+                for j = i + 1, #rec.bossOrder do
+                    local a, b = rec.bossOrder[i], rec.bossOrder[j]
+                    if claimAt[a.name] and claimAt[b.name] and b.t > a.t and claimAt[b.name] < claimAt[a.name] then
+                        Flag("boss-order", where, ("%s (killed later) told before %s: %s"):format(b.name, a.name, Short(allSentences[claimAt[b.name]], 100)))
+                    end
+                end
+            end
+            if rec.lastStay then
+                local lastPara = paras[#paras] or ""
+                for _, s in ipairs(Sentences(lastPara)) do
+                    local low = s:lower()
+                    local k = low:find("%f[%a]ended%f[%A]") or low:find("%f[%a]slept%f[%A]")
+                    if k then
+                        local tail = s:sub(k)
+                        local best, bestAt
+                        for _, place in ipairs(ALL_PLACES) do
+                            local at = tail:find("%f[%w]" .. Esc(Bare(place)) .. "%f[%W]")
+                            if at and (not bestAt or at < bestAt or (at == bestAt and #place > #best)) then best, bestAt = place, at end
+                        end
+                        if best then
+                            local ok = false
+                            for p in pairs(rec.endPlaces) do if Bare(p) == Bare(best) then ok = true end end
+                            -- (a dungeon's mouth zone and its dungeon; a city corner told as the city)
+                            for p in pairs(rec.endPlaces) do if rec.mouths[p] and Bare(rec.mouths[p]) == Bare(best) then ok = true end end
+                            if not ok then Flag("close-place", where, ("%s (record ends in %s): %s"):format(best, rec.lastStay, Short(s, 120))) end
+                        end
+                    end
+                end
+            end
+        end
         local last = allSentences[#allSentences] or ""
         local closing = last:find("slept") or last:find(" ended ") or last:find("it ended")
         local began = closing and (last:match("began %a+ (.-)[%.,]") or last:match("begun %a+ (.-)[%.,]") or last:match("crossings? from (.-)%.$")) or nil

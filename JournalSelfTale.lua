@@ -411,7 +411,7 @@ for w in ("bat duskbat spider wolf worg boar bear zombie skeleton ghoul zealot c
     .. "tunneler miner digger taskmaster slaver overseer brute bruiser mauler shaman mystic seer oracle hunter trapper warder "
     .. "defender protector sentinel warden myrmidon invoker deathguard boar tallstrider basilisk serpent snake cobra adder lizard "
     .. "thunderhawk hawk eagle gryphon wyvern hippogryph nightsaber frostsaber mongrel hound jackal coyote rat vermin moth "
-    .. "fly mosquito leech worm silithid tunneler grunt peon brave"):gmatch("%a+") do FOE_KINDS[w] = true end
+    .. "fly mosquito leech worm silithid tunneler grunt peon brave refugee villager"):gmatch("%a+") do FOE_KINDS[w] = true end
 function ST.CommonFoe(name)
     local plain = Clean(name)
     if plain:find("^The ") or plain:find("'s ") then return false end
@@ -445,7 +445,14 @@ local function Facts(day)
                 if entry.pl then s.level = s.level or tonumber(entry.pl) end
                 if entry.s then s.seeded = true end
             end
-            table.sort(s.events, function(a, b) return (a.t or 0) < (b.t or 0) end)
+            -- (lane G8: a stable order; two events of one second keep the record's order, so the
+            -- one a boss killed is read before the kill it is told with)
+            local at = {}
+            for i, event in ipairs(s.events) do at[event] = i end
+            table.sort(s.events, function(a, b)
+                if (a.t or 0) ~= (b.t or 0) then return (a.t or 0) < (b.t or 0) end
+                return at[a] < at[b]
+            end)
             s.scene = scene
             f.stretches[#f.stretches + 1] = s
             f.together = f.together + (scene.e - scene.t)
@@ -453,7 +460,7 @@ local function Facts(day)
             for _, n in pairs(s.gather) do f.gather = f.gather + n end
             for _, line in pairs(s.craft) do f.crafts = f.crafts + (line.count or 0) end
             for _, event in ipairs(s.events) do
-                if event.k == "mylevel" then f.levels[#f.levels + 1] = tonumber(event.d); f.levelT = math.max(f.levelT or 0, event.t or 0) end
+                if event.k == "mylevel" then f.levels[#f.levels + 1] = tonumber(event.d); f.levelT = math.max(f.levelT or 0, event.t or 0); f.levelAt = f.levelAt or {}; f.levelAt[tonumber(event.d) or 0] = event.t or 0 end
                 if event.k == "dungeon" then f.dungeons = f.dungeons + 1 end
             end
         elseif scene.kind == "custom" and scene.text then
@@ -617,11 +624,19 @@ function ST.DeathRuns(stretches)
         local prev = run and run.items[#run.items]
         local gap = prev and (it.t - prev.t) or 0
         local join = prev and (gap <= 150 or (gap <= 1200 and it.s.zone == prev.s.zone))
+        -- (lane G8: a boss killed between two deaths parts them; the deaths of a run are told between the
+        -- bosses they fell between, never gathered ahead of a kill the record puts before them)
+        if join and it.s == prev.s and run.lastDeath then
+            for _, x in ipairs(it.s.events) do
+                if x.k == "boss" and (x.t or 0) > run.lastDeath and (x.t or 0) < it.t then join = false end
+            end
+        end
         -- (the one who brought me back, up to twenty minutes after, wherever my body lay)
         if prev and it.k == "rez" and gap <= 1200 and run.hasMe then join = true end
         if join then run.items[#run.items + 1] = it
         else run = {items = {it}}; runs[#runs + 1] = run end
         if it.k == "me" then run.hasMe = true end
+        if it.k == "me" or it.k == "party" then run.lastDeath = it.t end
     end
     local kept = {}
     for _, r in ipairs(runs) do
@@ -667,7 +682,11 @@ function ST.DeathRuns(stretches)
                 end
                 if after > 0 and before == 0 then r.firstTry, r.dungeon = true, dungeon end
             end
-            lead.e.deathRun = r
+            -- (lane O8: the passage is told in the stay where I died, by the record's zone; a
+            -- companion's fall a minute before it, over the border, belongs to that fight)
+            local anchor = lead
+            for _, it in ipairs(r.items) do if it.k == "me" then anchor = it; break end end
+            anchor.e.deathRun = r
             kept[#kept + 1] = r
         end
     end
@@ -1592,7 +1611,7 @@ function ST.Tell(person, days, brief, retell)
             return false
         end
         function DR.GatherLosses(s)
-            DR.gathered, DR.losses, DR.costly, DR.lossesSaid = nil, nil, {}, nil
+            DR.gathered, DR.losses, DR.costly, DR.lossesSaid, DR.deathTold = nil, nil, {}, nil, nil
             if not (s.run and W.runLosses) then return end
             if history.deaths == 0 and (person.startLevel or 99) <= 9 then return end
             local G = {me = 0, foes = {}, foeOrder = {}, raisers = {}, raiserOrder = {}, raised = 0, party = {}, partyOrder = {}}
@@ -1612,6 +1631,7 @@ function ST.Tell(person, days, brief, retell)
                     if not G.raisers[by] then G.raisers[by] = true; G.raiserOrder[#G.raiserOrder + 1] = by end
                     G.raised = G.raised + 1
                 end
+                if (e.t or 0) > (G.lastT or 0) then G.lastT = e.t or 0 end
             end
             -- (a death that ended a try, with the walk back in after it, is the wipe's own passage)
             local function WipeDeath(e)
@@ -1746,12 +1766,17 @@ function ST.Tell(person, days, brief, retell)
                     -- (no pronoun the data vouches for, round 7: the lines that need none)
                     local pool = (he and W.runLosses.costly) or W.runLosses.costlyNamed or W.runLosses.costly
                     he = he or (E and E.BossTitle and E.BossTitle(c.boss)) or Place(c.boss)
-                    -- (the line before named the boss: the one it killed leads, "Pip fell to Grubbis before he did")
-                    if (out[#out] or ""):find(Clean(c.boss), 1, true) then
-                        local kept = {}
-                        for _, line in ipairs(pool) do if line:find("^{Names}") then kept[#kept + 1] = line end end
-                        if #kept > 0 then pool = kept end
+                    -- (the line before named the boss: the one it killed leads, or the pronoun; else the
+                    -- boss by name, never "He" with no one named before it)
+                    local named = (out[#out] or ""):find(Clean(c.boss), 1, true)
+                    -- (the pronoun only when that line told this boss alone, not a list it was one of)
+                    local alone = named and (names == nil or #names == 1)
+                    local kept = {}
+                    for _, line in ipairs(pool) do
+                        if named and (line:find("^{Names}") or (alone and line:find("^{He}"))) then kept[#kept + 1] = line
+                        elseif not named and not line:find("^{He}") then kept[#kept + 1] = line end
                     end
+                    if #kept > 0 then pool = kept end
                     Say(teller:Say("runLossesCostly", pool, {Boss = Place(c.boss), boss = Place(c.boss), names = List(c.names), Names = List(c.names), he = he}), true, "death")
                 else left[#left + 1] = c end
             end
@@ -1760,13 +1785,16 @@ function ST.Tell(person, days, brief, retell)
         -- The zone a run came out into when that stay was only crossed and folded into the run's
         -- stay: the first crossed zone that is open ground, never the cave mouth or another dungeon.
         function DR.OutZone(s)
+            local city
             for _, z in ipairs((s.scene and s.scene.crossed) or {}) do
                 local plain, here = Clean(z), Clean(s.zone or "")
                 local mouth = (L and L.Dungeon and L.Dungeon(plain)) or (A.SelfUnderground and A.SelfUnderground(plain))
                     or (here ~= "" and (plain:find(here, 1, true) or here:find(plain, 1, true)))
                 if not mouth and not CITY_ZONE[plain] then return z end
+                -- (lane G8: the Stockade opens on Stormwind: back out into the city, never into the zone a flight then took me to)
+                if not mouth and CITY_ZONE[plain] then city = city or z end
             end
-            return nil
+            return city
         end
         -- Does a boss of the stretch still come after the event being told?
         function DR.MoreBosses(s)
@@ -1963,6 +1991,9 @@ function ST.Tell(person, days, brief, retell)
             local lastSeen = history.zones[first.zone]
             local crossing
             for _, e in ipairs(first.events) do if e.k == "voyage" and e.d and W.voyageOpen and W.voyageOpen[e.d] then crossing = e end end
+            -- (lane O8: a day begins with a crossing only when it left within ten minutes of the start; a
+            -- hearthstone an hour into the first stay is told at the end of that stay, where it landed)
+            if crossing and (crossing.t or 0) - (first.t or 0) > 600 then crossing = nil end
             if crossing then
                 for _, e in ipairs(first.events) do if e.k == "first" and e.d == crossing.d and not e.u then crossing = nil; break end end
             end
@@ -2165,6 +2196,13 @@ function ST.Tell(person, days, brief, retell)
                 prefix = not plainOpen and When or nil
             elseif crossing and When and not absence then
                 tokens.to = crossing.to and Place(crossing.to) or "the other shore"
+                -- (lane O8: a hearthstone names where it landed, the town the stone was set at, not the continent)
+                if crossing.d == "hearth" then
+                    for _, e in ipairs(first.events) do
+                        if e.k == "hearth" and e.d and math.abs((e.t or 0) - (crossing.t or 0)) <= 120 then tokens.to = Place(e.d) end
+                    end
+                end
+                plan.meta = {e = crossing}
                 Say(teller:Say("voyageOpen" .. crossing.d, W.voyageOpen[crossing.d], tokens), true)
                 crossing.told = true
                 if crossing.d == "zeppelin" or crossing.d == "boat" then Title(58, teller:Pick("tVoyage", W.titles.voyage)) end
@@ -2774,11 +2812,22 @@ function ST.Tell(person, days, brief, retell)
                 local hearthed
                 for _, e in ipairs(previous and previous.events or {}) do if e.k == "hearth" then hearthed = e end end
                 if hearthed then
-                    for _, e in ipairs(previous.events) do if (e.t or 0) > (hearthed.t or 0) and e.k ~= "hearth" then hearthed = nil; break end end
+                    for _, e in ipairs(previous.events) do if (e.t or 0) > (hearthed.t or 0) and e.k ~= "hearth" and not (e.k == "voyage" and e.d == "hearth") then hearthed = nil; break end end
+                end
+                -- (lane O8: a hearthstone over the sea has a voyage record beside it, told at the end of the
+                -- stay it left from with where it landed; that line is the arrival, and no second one follows)
+                if hearthed then
+                    for _, e in ipairs(previous.events) do
+                        if e.k == "voyage" and e.d == "hearth" and math.abs((e.t or 0) - (hearthed.t or 0)) <= 120 then hearthed.voyaged = e end
+                    end
                 end
                 if si > 1 and DR.leftSaid then
                     -- (the way out of the run was said with the run)
                     st.zoneSaid, DR.leftSaid = true, nil
+                elseif si > 1 and previous and s.zone ~= previous.zone and not isDungeon and not arrives and hearthed and hearthed.voyaged then
+                    -- (the crossing line said it: "My hearthstone took me back to the Sepulcher.")
+                    st.zoneSaid = true
+                    history.hearthSaid = index
                 elseif si > 1 and previous and s.zone ~= previous.zone and not isDungeon and not arrives and hearthed and W.hearthMove then
                     st.zoneSaid = true
                     history.hearthSaid = index
@@ -2829,7 +2878,7 @@ function ST.Tell(person, days, brief, retell)
                             if shape == "young" then history.perils[s.zone] = true end
                             -- (a level reached earlier this day is told where it came: the number is not said again)
                             local youngPool = W.firstZoneYoung
-                            if shape == "young" and W.firstZoneYoungBare and f.levelT and f.levelT < (s.t or 0) then youngPool = W.firstZoneYoungBare end
+                            if shape == "young" and W.firstZoneYoungBare and f.levelAt and f.levelAt[s.level or 0] and f.levelAt[s.level or 0] < (s.t or 0) then youngPool = W.firstZoneYoungBare end
                             Say(teller:Say(shape == "young" and "firstZoneYoung" or "firstZoneLate", shape == "young" and youngPool or W.firstZoneLate, st), true, "first")
                         elseif shape == "from" and W.firstZoneFrom then
                             st.from = Place(previous.zone)
@@ -2876,7 +2925,7 @@ function ST.Tell(person, days, brief, retell)
                 if not isDungeon and not dungeonToday and history.quietDay ~= index and (zoneDanger == "daring" or zoneDanger == "reckless") and not history.perils[s.zone] and not Lane.Bare(s) then
                     history.perils[s.zone] = true
                     local justNamed = (out[#out] or ""):find(Clean(s.zone):gsub("^The ", ""), 1, true)
-                    Say(teller:Say("perilous", (si == 1 and justNamed and W.perilousHere) or W.perilous, st))
+                    Say(teller:Say("perilous", (si == 1 and justNamed and W.perilousHere) or W.perilous, st), false, "peril")
                 end
                 if st.arrived then TownLine(st.arrived, s, st); st.zoneSaid = true end
                 currentStretch.zoneSaid = st.zoneSaid
@@ -3090,7 +3139,9 @@ function ST.Tell(person, days, brief, retell)
                     -- (the beats: the ones before, the goal's arrival and the kill, the tail)
                     if #shape.before > 0 then
                         local one = #shape.before == 1
-                        local key = (one and "bossLeadOne" or "bossLeadMany") .. (st.killSaid and "Next" or "")
+                        -- (lane G8: after a death or a wipe was told, the ones before the goal are not "first";
+                        -- after a kill was told they come "next")
+                        local key = (one and "bossLeadOne" or "bossLeadMany") .. (st.killSaid and "Next" or (DR.deathTold and W.bossLeadOneAfter) and "After" or "")
                         Say(Clean2(teller:Say(key, W[key] or (one and W.bossLeadOne) or W.bossLeadMany, kt)), true, "kill")
                         if DR.gathered then DR.SayCostly(shape.before) end
                         -- (a level that came with one of them is told here, not after the goal)
@@ -3103,6 +3154,12 @@ function ST.Tell(person, days, brief, retell)
                         .. ((not pro and W.bossLordPlain) and "Plain" or "")
                     Say(Clean2(teller:Say(key, W[key] or W.bossLord, kt)), true, "kill")
                     if DR.gathered then DR.SayCostly({shape.key}) end
+                    -- (lane G8: no kill told before the goal, and every loss came before it: said here, not after the tail)
+                    if DR.gathered and DR.losses and not DR.lossesSaid and #shape.after > 0 then
+                        local goalT
+                        for _, x in ipairs(s.events) do if x.k == "boss" and x.d == raw then goalT = x.t or 0 end end
+                        if goalT and (DR.losses.lastT or 0) <= goalT then DR.SayLosses(s, st) end
+                    end
                     DR.LevelAtKill({shape.key}, s, st)
                     if #shape.after > 0 and W.bossTail then Say(Clean2(teller:Say("bossTail", W.bossTail, kt)), true, "kill") end
                     if DR.gathered then DR.SayCostly(shape.after) end
@@ -3226,8 +3283,24 @@ function ST.Tell(person, days, brief, retell)
                         We = company and "We" or "I", zoneD = st.zoneD}
                     -- (the passage is one unit with its own span, for the composer to place: every line of
                     -- it carries the run in its notes, t0 to t1)
+                    -- (lane O8: a minor stretch, one death of mine and at most two of theirs with nobody
+                    -- raised, is one sentence and no signal: its items are one fight)
+                    do
+                        local mine, theirs, raised = 0, 0, false
+                        for _, it in ipairs(run.items) do
+                            if it.k == "me" then mine = mine + 1 elseif it.k == "party" then theirs = theirs + 1 else raised = true end
+                        end
+                        if mine == 1 and theirs <= 2 and not raised and #beats > 1 then
+                            local one = {items = {}, party = {}, t = run.items[1].t, last = run.items[#run.items].t}
+                            for _, it in ipairs(run.items) do
+                                one.items[#one.items + 1] = it
+                                if it.k == "me" then one.me = it elseif it.k == "party" then one.party[#one.party + 1] = it end
+                            end
+                            beats = {one}
+                        end
+                    end
                     local unit = {firstTry = run.firstTry or false, dungeon = run.dungeon, beats = #beats, wipe = run.wipe or false,
-                        t0 = run.items[1].t, t1 = run.items[#run.items].t, zone = s.zone}
+                        t0 = math.max(run.items[1].t, s.t or 0), t1 = run.items[#run.items].t, zone = s.zone}
                     local function Mark() plan.meta = {deathRun = unit, t = unit.t0} end
                     Mark()
                     local kind, pendingTally = "death", nil
@@ -3309,13 +3382,24 @@ function ST.Tell(person, days, brief, retell)
                         for _, key in ipairs(order) do total = total + counts[key]; if counts[key] > 1 then repeats = true end end
                         if not repeats then return nil end
                         if #order == 1 then return Times(total) end
+                        history.betweenSaid = index
                         return Words(total) .. " times between them"
+                    end
+                    -- (lane O8: two of the party by name, "Dahlia fell once, and Marrow twice", once the
+                    -- chapter has said "between them")
+                    local function EachLine(counts, order, full)
+                        if #order ~= 2 or not DR.partyEach or history.betweenSaid ~= index then return nil end
+                        if counts[order[1]] == 1 and counts[order[2]] == 1 then return nil end
+                        if not Lane.Known(full[order[1]]) or not Lane.Known(full[order[2]]) then return nil end
+                        return teller:Say("deathRunPartyEach", DR.partyEach, {first = N(full[order[1]]), second = N(full[order[2]]),
+                            firstTimes = Times(counts[order[1]]), secondTimes = Times(counts[order[2]])})
                     end
                     -- the party's losses alone: one sentence
                     if run.partyOnly then
                         local counts, order, full = PartyCounts(run.items)
+                        local each = EachLine(counts, order, full)
                         local bt = {names = NameList(order, full), us = tokens.us, our = tokens.our, count = CountText(counts, order)}
-                        SayRun(teller:Say("deathRunParty", bt.count and DR.partyCount or DR.party, bt), true)
+                        SayRun(each or teller:Say("deathRunParty", bt.count and DR.partyCount or DR.party, bt), true)
                         history.deathRunDay = index
                         return
                     end
@@ -3549,7 +3633,12 @@ function ST.Tell(person, days, brief, retell)
                             local early = (first.t - (s.t or first.t)) <= 300 and DR.partyEarly
                             pool = (bt.count and DR.partyCount) or early or (PartyFirst(first) and DR.firstParty or DR.party)
                         end
-                        SayRun(teller:Say("deathRunFirst", pool, bt), true)
+                        local line = teller:Say("deathRunFirst", pool, bt)
+                        -- (lane O8: one fight names the place inside the zone where I fell, when the record has one)
+                        if #beats == 1 and first.me and first.me.e.sz and Clean(first.me.e.sz) ~= Clean(s.zone or "") and line and line:match(" me%.$") then
+                            line = line:gsub(" me%.$", " me at " .. Place(first.me.e.sz) .. ".")
+                        end
+                        SayRun(line, true)
                         if first.me then Count(first.me) end
                         RezLines(first, bt)
                         Taught(first)
@@ -3576,6 +3665,23 @@ function ST.Tell(person, days, brief, retell)
                                     else pool = lt.again and DR.lastPartyAgainMe or DR.lastPartyMe end
                                 else
                                     pool = lt.count and DR.partyCount or (PartyLast(last) and DR.lastParty or DR.party)
+                                end
+                                -- (lane O8: "ended it" only when no hand-in of the day came after the last death; the
+                                -- day the stretch did not end goes on in plain words)
+                                if last.me and pool then
+                                    local later = false
+                                    for _, ds in ipairs(stretches) do
+                                        for _, q in ipairs(ds.quests or {}) do if (q.t or 0) > last.me.t then later = true end end
+                                    end
+                                    if later then
+                                        local kept = {}
+                                        for _, line in ipairs(pool) do
+                                            if not line:find("ended it", 1, true) and not line:find("finished it", 1, true) then kept[#kept + 1] = line end
+                                        end
+                                        if #kept > 0 then pool = kept
+                                        elseif lt.party == 0 then pool = DR.plainMe
+                                        else pool = lt.meFirst and DR.plainMeParty or DR.plainPartyMe end
+                                    end
                                 end
                                 SayRun(teller:Say("deathRunLast", pool, lt), true)
                                 if last.me then Count(last.me) end
@@ -3765,7 +3871,9 @@ function ST.Tell(person, days, brief, retell)
                 end
                 local questAnchors = {}
                 for _, e in ipairs(s.events) do
-                    if e.k ~= "boss" and not DR.Quiet(e) then FlushKills() end
+                    -- (lane G8: a run of deaths is a passage of its own, told at its first death; the
+                    -- kills before it are said first, so no boss is told after a death that followed it)
+                    if e.k ~= "boss" and (e.deathRun or not DR.Quiet(e)) then FlushKills() end
                     plan.event = e
                     -- (a line carried in from a crossing folded into this stay, the zeppelin or the
                     -- hearthstone that took you on: said at the end of the stay, where it happened)
@@ -4094,6 +4202,12 @@ function ST.Tell(person, days, brief, retell)
                         e.told = nil
                     elseif e.k == "voyage" and e.d then
                         local vt = {to = e.to and Place(e.to) or "the other shore"}
+                        -- (lane O8: a hearthstone names where it landed, not the continent)
+                        if e.d == "hearth" then
+                            for _, x in ipairs(s.events) do
+                                if x.k == "hearth" and x.d and math.abs((x.t or 0) - (e.t or 0)) <= 120 then vt.to = Place(x.d) end
+                            end
+                        end
                         Say(teller:Say("voyage" .. e.d, W.voyage[e.d] or W.voyage.boat, vt), e.d == "zeppelin" or e.d == "boat")
                         if e.d == "zeppelin" or e.d == "boat" then Title(58, teller:Pick("tVoyage", W.titles.voyage)) end
                     elseif e.k == "first" and (e.d == "zeppelin" or e.d == "boat") and W.voyageFirstLand and W.voyageFirstLand[e.d]
@@ -4455,9 +4569,11 @@ function ST.Tell(person, days, brief, retell)
                         st.wonAfterWipe[e.d] = true
                     elseif e.k == "wipe" and e.d then
                         st.boss = Place(e.d)
+                        DR.deathTold = true
                         Say(teller:Say("wipe", W.wipe, st), true)
                     elseif e.deathRun and W.deathRun then
                         -- a run of deaths, told as one passage
+                        DR.deathTold = true
                         DP.DeathPassage(e.deathRun)
                     elseif e.k == "pdeath" and e.n and not e.boss and not e.told and Lane.StrayDeath(e, s) then
                         -- (a companion's death with nothing around it, or in a city: not told)
@@ -5396,9 +5512,9 @@ function ST.Tell(person, days, brief, retell)
                         if mark == 60 and W.lookBackLate and (person.startLevel or 0) >= 50 and history.firstDay and history.originPlace then
                             -- (a short book: where it began, and when)
                             local span = dayNumber - history.firstDay
-                            local lb = {since = (span < 11 and "a week") or (span < 60 and (Words(math.floor(span / 7 + 0.5)) .. " weeks")) or (Words(math.floor(span / 30 + 0.5)) .. " months"),
-                                fromLevel = tostring(person.startLevel), origin = history.originPlace}
-                            local line = teller:Say("lookBackLate", W.lookBackLate, lb)
+                            -- (lane G8: the gap as the record has it; a book begun that same day has nothing to look back on)
+                            local lb = {since = SinceWords(span, 0), fromLevel = tostring(person.startLevel), origin = history.originPlace}
+                            local line = span >= 1 and teller:Say("lookBackLate", W.lookBackLate, lb)
                             if line then Say(Cap(line), true) end
                         end
                         if mark == 60 and W.lookBack and (person.startLevel or 99) <= 20 and history.firstDay and history.quests >= 20 then
