@@ -1,5 +1,12 @@
 # Companion Journal: changes
 
+## 1.29.0 (2026-11-12)
+
+- Everyone is introduced once, when they first appear
+- Threads the book opens are closed
+- Journeys follow the road you really took, zeppelin or on foot
+- Companion books: people in their real places, a friend's own falls told
+
 ## 1.28.0 (2026-11-12)
 
 - Named kills and story-moving quests are kept

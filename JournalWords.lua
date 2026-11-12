@@ -208,7 +208,7 @@ PB.pauseFar = {
 PB.openPart = {
     morning = {"{pair} set out in the morning.", "It was still morning when {name} joined {me}.", "{name} joined {me} that morning."},
     afternoon = {"{pair} set out after noon.", "It was past noon when {name} joined {me}.", "{name} joined {me} that afternoon."},
-    evening = {"It was evening when {pair} set out.", "{name} joined {me} that evening.", "The light was going when {pair} set out."},
+    evening = {"It was evening when {pair} set out.", "{name} joined {me} that evening.", "{pair} set out together that evening."},
     night = {"It was late when {name} joined {me}.", "Night had fallen by the time {pair} set out.", "{pair} set out late that night."},
 }
 
@@ -2227,6 +2227,13 @@ PB.herCaughtUp = {"{name} caught up with {me} at level {n}.", "By level {n}, {na
 PB.herLeftAhead = {"{name} ended the {part} a level ahead of {me}.", "{name} finished the {part} a level ahead of {me}."}
 PB.herBehind = {"{name} reached level {n} a little after {me}.", "{name} came up to level {n} not long after {me}."}
 PB.herRoles = {"{my} part was {myPart}, and {name}'s was {theirPart}.", "{name}'s part was {theirPart}, and {my} own was {myPart}."}
+-- Round 12: a road that began where a zeppelin, boat or flight set the two down says so ({craft}
+-- "zeppelin", {from} the land it landed in, {lands} the lands walked after it).
+PB.roadByCraft = {"The {craft} carried {us} to {from}, and from there {pair} went on foot through {lands}{roadNote}."}
+PB.roadByCraftBond = {"{pairNamed} rode the {craft} to {from} together and walked on from there, side by side, into {lands}{roadNote}."}
+PB.roadByFlight = {"{We} flew to {from}, and from there {pair} went on foot through {lands}{roadNote}."}
+-- A first meeting with nothing shared is no chapter of its own (round 12): the next chapter opens on it.
+PB.metBefore = {"{I} had first met {name} the night before, in {place}, {clock}."}
 -- The road and the run told from a close bond: the two side by side.
 PB.roadOutBond = {"From {from}, {pairNamed} set off on foot side by side through {lands}{roadNote}.", "{pairNamed} left {from} on foot together, through {lands}{roadNote}."}
 PB.roadOnBond = {"From there {pairNamed} walked on together through {lands}{roadNote}.", "Side by side, {pairNamed} went on foot through {lands}{roadNote}."}
@@ -2266,8 +2273,8 @@ PB.roadOn = {
     "On foot, {pairNamed} went on through {lands}{roadNote}.",
 }
 PB.roadBack = {
-    "{far} was as far as {we} went, {span} out, and from there {pair} turned back {backWay}.",
-    "From {far}, {span} out, {pair} turned back {backWay}.",
+    "{far} was as far as {we} went, and from there {pair} turned back {backWay}.",
+    "From {far}, {pair} turned back {backWay}.",
 }
 -- The same road when the record holds it hard (two deaths on it, or one in lands well above
 -- you): the verbs change, nothing is added.
@@ -2280,8 +2287,8 @@ PB.roadOnHard = {
     "On foot, {pairNamed} pressed on through {lands}{roadNote}.",
 }
 PB.roadBackHard = {
-    "{far} was as far as {we} got, {span} out, and from there {pair} fell back {backWay}.",
-    "From {far}, {span} out, {pair} fell back {backWay}.",
+    "{far} was as far as {we} got, and from there {pair} fell back {backWay}.",
+    "From {far}, {pair} fell back {backWay}.",
 }
 -- The company (lane C8): strangers grouped with a while, for work the chapter tells or a long
 -- fight among elites. {company} by name, by kind or as strangers ("two strangers, a troll priest

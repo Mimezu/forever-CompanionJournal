@@ -3703,8 +3703,8 @@ W.compose = {
     crossRunNew = {"By way of {places}, {we} came into {zoneD}, all of it new to {us}."},
     -- (round 11: the legs of a road between told stops, from the record)
     roadLegs = {"By {modes}, {we} came on to {dest}{new}."},
-    roadLegsHearthFrom = {"From {origin}, new to {us}, my hearthstone took {us} back to {place}, and by {modes} {we} came on to {dest}{new}."},
-    roadLegsHearth = {"My hearthstone took {us} back to {place}, and by {modes} {we} came on to {dest}{new}."},
+    roadLegsHearthFrom = {"From {origin}, new to {us}, {our} hearthstones took {us} back to {place}, and by {modes} {we} came on to {dest}{new}."},
+    roadLegsHearth = {"{Our} hearthstones took {us} back to {place}, and by {modes} {we} came on to {dest}{new}."},
     crossOnly = {"{Places} {were} new to {us}."},
     levelBurst = {"By then I was level {level}."},
     -- (lane O8: an adventure's record may say how many went in and that the foes were strong; told
@@ -3747,7 +3747,9 @@ W.compose = {
     journeyBack2 = {"In {span}, {we} had made it to {far} and back.", "{We} had made it to {far} and back in {span}."},
     journeyBack3 = {"In {span}, {we} had fought {our} way to {far} and back.", "{We} had fought {our} way to {far} and back in {span}."},
     journeyFar0 = {"In {span}, {we} had come as far as {far}."},
-    journeyHomeFrom = {"From {far} the hearthstone brought {us} home, {span} after {we} had set out."},
+    journeyHomeFrom = {"From {far} {our} hearthstones brought {us} home, {span} after {we} had set out."},
+    journeyDonePlain = {"In {zone} {we} saw that work done."},
+    journeyDoneRest = {"In {zone} {we} saw the rest of it done."},
     journeyHome0 = {"In {span}, {we} had gone as far as {far}, and the hearthstone brought {us} home."},
     journeyHome2 = {"In {span}, {we} had made it as far as {far}, and the hearthstone brought {us} home."},
     journeyHome3 = {"In {span}, {we} had fought {our} way as far as {far}, and the hearthstone brought {us} home."},

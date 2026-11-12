@@ -124,8 +124,8 @@ for sentence in para:gmatch("[^%.]+%.") do
 end
 check(not Find(para, "between them") and not Find(para, "more often") and not para:lower():find("%a+ times"), "the deaths never counted or compared (round 10)")
 check(Index(para, "Rharen") < Index(para, "On the way back"), "the deaths in time order (round 10)")
-check(not Find(para, "there was work") and not Find(para, "what we had come for"), "no filler for work without words (round 13)")
-check(Find(para, "From the Arathi Highlands the hearthstone brought us home"), "the hearthstone from where it was cast (round 10, 13)")
+check(not Find(para, "there was work") and Find(para, "In Loch Modan we saw that work done"), "the work closed where it was done, no filler (round 13, 14)")
+check(Find(para, "From the Arathi Highlands our hearthstones brought us home"), "the hearthstone from where it was cast (round 10, 13, 14)")
 check(Index(para, "for Loch Modan") < Index(para, "Rharen") and not Find(para, "task called"), "the road opens with where it was for, never a quest title (round 11)")
 check(Find(para, "little more than an hour") or Find(para, "under two hours") or Find(para, "less than an hour"), "and how long, in words")
 check(Find(para, "far stronger than"), "work far above the level says the road was dangerous")
@@ -140,7 +140,7 @@ for _, p in ipairs(Paragraphs(easy)) do if Find(p, "Loch Modan") then easyPara =
 check(easyPara, "the easy road is told: " .. easy)
 check(not Find(easyPara, "killed me") and not Find(easyPara, "cut me down") and not Find(easyPara, "hard road"), "no dangers on an easy road")
 check(not Find(easyPara, "fought our way") and not Find(easyPara, "as best we could"), "the plain register on an easy road")
-check(Find(easyPara, "hearthstone brought us home") and Find(easyPara, "after we had set out"), "the easy road ends on where it ended and how long (round 13)")
+check(Find(easyPara, "hearthstones brought us home") and Find(easyPara, "after we had set out"), "the easy road ends on where it ended and how long (round 13)")
 
 -- 2. The register --------------------------------------------------------------------------
 local line = "We killed Captain Perrine and went home. We went on to Brill."
