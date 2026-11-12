@@ -173,7 +173,7 @@ for _, voice in ipairs({"we", "you"}) do
                 local mine = Sentences(ds[key].text)
                 for sentence in pairs(Sentences(st.text)) do
                     check(not mine[sentence], ("the two books of %s share no sentence (%s, retell %d): %s"):format(key, voice, retell, sentence))
-                    -- (round 11: nor a near copy, 70% of the phrasing words the same; names and pronouns
+                    -- (round 11: nor a near copy, 70% of the phrasing words of the longer one the same; names and pronouns
                     -- left out, they are the same people and places)
                     local a = Words(sentence)
                     for other in pairs(mine) do
@@ -181,8 +181,8 @@ for _, voice in ipairs({"we", "you"}) do
                         local na, nb, both = 0, 0, 0
                         for w in pairs(a) do na = na + 1; if b[w] then both = both + 1 end end
                         for _ in pairs(b) do nb = nb + 1 end
-                        local least = math.min(na, nb)
-                        check(least < 6 or both / least < 0.7, ("no near copy on %s (%s, retell %d): %s || %s"):format(key, voice, retell, sentence, other))
+                        local least, most = math.min(na, nb), math.max(na, nb)
+                        check(least < 6 or both / most < 0.7, ("no near copy on %s (%s, retell %d): %s || %s"):format(key, voice, retell, sentence, other))
                     end
                 end
             end

@@ -1044,7 +1044,14 @@ function C.DeathGroup(evs, k)
         local foe, plainVerb = FoeWords(o.e, Place)
         local cut = not plainVerb and k.killedMe == "cut me down"
         local w = Where(o)
-        local c = foe and (foe .. " " .. (cut and "cut " or "killed ") .. List(all) .. (cut and " down" or "") .. (w ~= "" and (" " .. w) or "")) or ("I died" .. (w ~= "" and (" " .. w) or ""))
+        local c
+        if plainVerb and #all > 1 then
+            -- (a fall or the water is mine alone: the others fell there too, cause unrecorded)
+            table.remove(all)
+            c = foe .. " killed me" .. (w ~= "" and (" " .. w) or "") .. ", and " .. List(all) .. " fell there too"
+        else
+            c = foe and (foe .. " " .. (cut and "cut " or "killed ") .. List(all) .. (cut and " down" or "") .. (w ~= "" and (" " .. w) or "")) or ("I died" .. (w ~= "" and (" " .. w) or ""))
+        end
         if raiser then
             local party = k.party or {}
             c = c .. (party[raiserShort] and (", and " .. raiserShort .. " brought me back") or (", and " .. raiser .. " stopped to raise me"))
@@ -1179,6 +1186,15 @@ function C.QuestGoal(q)
         if type(giver) == "string" and giver ~= "" then return "the work " .. giver .. " had for {us}" end
     end
     -- (round 11, reader K: never "the task called <Title>"; without a giver the goal is the land itself)
+    return nil
+end
+
+-- (round 15, reader Q rule 3: a chain of quests is one named goal. W.compose.questChains holds
+-- chains the authored story tables do not, each step's words taken from its quest's own text.)
+function C.ChainOf(qid, P)
+    for _, chain in ipairs((P and P.questChains) or {}) do
+        for _, id in ipairs(chain.qids or {}) do if id == tonumber(qid) then return chain end end
+    end
     return nil
 end
 
@@ -1347,6 +1363,12 @@ function C.TellExpedition(run, k)
     -- (round 14, reader P: the far goal in the setting out and the lands in the order we crossed them;
     -- the other goals are answered where they were done)
     local farGoal = Place(run.far) .. (goal and (" and " .. Fill(goal, we)) or "")
+    local chain
+    for _, g in ipairs(goals) do
+        for _, q in ipairs(g.ep.quests) do chain = chain or C.ChainOf(q.quest and q.quest.qid, P) end
+    end
+    run.chain = chain
+    if chain and chain.road then farGoal = Place(run.far) .. ", " .. Fill(chain.road, we) end
     local tokens = T({from = Place(from or run.start), far = farGoal, lands = List(lands)})
     if #lands == 0 then tokens.lands = Place(run.far) end
     if above and not goal then tokens.far = tokens.far .. ", on work meant for travellers far stronger than " .. we.us end
@@ -1405,8 +1427,17 @@ function C.TellExpedition(run, k)
     -- (round 14, reader P: every land's work is closed where it was done; without authored words,
     -- plainly: "In Loch Modan we saw that work done." / "Back in the Arathi Highlands we saw the rest done.")
     for gi, g in ipairs(run.goals or {}) do
-        local pool = (gi == 1 and P.journeyDonePlain) or P.journeyDoneRest
-        if pool then Add(g.ep, g.t, Pick(gi == 1 and "journeyDonePlain" or "journeyDoneRest", pool, T({zone = Place(g.zone)})), "done") end
+        -- (a chain's step in its own words, "In Loch Modan we found the next stash, high on the mountainside")
+        local step
+        for _, q in ipairs(g.ep.quests) do
+            local qid = q.quest and tonumber(q.quest.qid)
+            if not step and chain and chain.steps and qid and chain.steps[qid] then step = chain.steps[qid] end
+        end
+        if step then Add(g.ep, g.t, Fill(step, T({zone = Place(g.zone)})), "done")
+        else
+            local pool = (gi == 1 and P.journeyDonePlain) or P.journeyDoneRest
+            if pool then Add(g.ep, g.t, Pick(gi == 1 and "journeyDonePlain" or "journeyDoneRest", pool, T({zone = Place(g.zone)})), "done") end
+        end
     end
     -- one sentence that says the danger outright at most: a feeling earned on a hard road with others,
     -- never last; else, when only the foes' strength says it, that
@@ -2099,6 +2130,26 @@ function C.Apply(ctx)
             end
         end
     end
+    -- (round 15, reader Q rule 1: everyone the record puts in the group for ten minutes or more is
+    -- named the first time they are there; a companion the chapter never names gets a line at the
+    -- start of their time with us, "Marrow, a Forsaken priest, joined us")
+    if P.joinedPlain then
+        local said_ = {}
+        for _, l in ipairs(lines) do if not l.drop and not inRun[l] then said_[#said_ + 1] = Plain(l.text) end end
+        said_ = table.concat(said_, " ")
+        for name, spans in pairs(windows) do
+            local total, first = 0, nil
+            for _, sp in ipairs(spans) do total = total + (sp[2] - sp[1]); first = first and math.min(first, sp[1]) or sp[1] end
+            if total >= 600 and first and not said_:find("%f[%a]" .. Esc(name) .. "%f[%A]") then
+                local ep = EpisodeAt(first, episodes)
+                if ep.kind ~= "dungeon" then
+                    local text = Fill(P.joinedPlain[1], {name = "{n:" .. name .. "}", us = "us"})
+                    local l = {cls = "who", t = first, ep = ep, text = text, major = false, kind = nil, meta = {t = first, compose = "joined"}, n = #out + 400 + ep.index, signMoved = first > ep.t + 300 or nil}
+                    lines[#lines + 1] = l
+                end
+            end
+        end
+    end
     -- (round 14, reader P rule 2: a companion the book has not named before is introduced at the line
     -- that first names them, with who they are: "Varreth, a Forsaken paladin, caught up with me")
     do
@@ -2449,7 +2500,14 @@ function C.Apply(ctx)
                     for _, x in ipairs(lines) do
                         if not x.drop and x.legs and x.t >= head[1].t and (not D or x.t <= D.t) and (x.text:find("^My hearthstone") or x.text:find("^Our hearthstones")) then
                             local party = WithAtDay(windows, x.t)
-                            x.text = "From " .. headNames[1] .. ", new to " .. (party and "us" or "me") .. ", " .. x.text:gsub("^%u", string.lower)
+                            local why = ""
+                            for _, h in ipairs(head) do
+                                for _, q in ipairs(h.quests or {}) do
+                                    local chain = C.ChainOf(q.quest and q.quest.qid, P)
+                                    if chain and chain.start and why == "" then why = ", " .. Fill(chain.start, {we = party and "we" or "I", us = party and "us" or "me"}) end
+                                end
+                            end
+                            x.text = "From " .. headNames[1] .. ", new to " .. (party and "us" or "me") .. why .. ", " .. x.text:gsub("^%u", string.lower)
                         end
                     end
                 end
@@ -2818,7 +2876,8 @@ function C.Apply(ctx)
                         if not other then covered = false end
                     end
                 end
-                if covered then
+                -- (round 15, reader Q rule 1: everyone the record puts in the group is named; this hiding is off)
+                if covered and C.HIDE_COVERED then
                     for _, l in ipairs(mine) do
                         -- (a line that names others too keeps them: only the lone name's line goes)
                         local others = 0

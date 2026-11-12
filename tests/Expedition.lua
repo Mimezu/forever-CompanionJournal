@@ -124,7 +124,8 @@ for sentence in para:gmatch("[^%.]+%.") do
 end
 check(not Find(para, "between them") and not Find(para, "more often") and not para:lower():find("%a+ times"), "the deaths never counted or compared (round 10)")
 check(Index(para, "Rharen") < Index(para, "On the way back"), "the deaths in time order (round 10)")
-check(not Find(para, "there was work") and Find(para, "In Loch Modan we saw that work done"), "the work closed where it was done, no filler (round 13, 14)")
+check(not Find(para, "there was work") and (Find(para, "In Loch Modan we saw that work done") or Find(para, "the next hiding place")), "the work closed where it was done, in its chain's words when it has them (round 13-15)")
+check(Find(para, "where the trail of notes led"), "a chain of quests is one named goal (round 15)")
 check(Find(para, "From the Arathi Highlands our hearthstones brought us home"), "the hearthstone from where it was cast (round 10, 13, 14)")
 check(Index(para, "for Loch Modan") < Index(para, "Rharen") and not Find(para, "task called"), "the road opens with where it was for, never a quest title (round 11)")
 check(Find(para, "little more than an hour") or Find(para, "under two hours") or Find(para, "less than an hour"), "and how long, in words")

@@ -2234,12 +2234,16 @@ PB.roadByCraftBond = {"{pairNamed} rode the {craft} to {from} together and walke
 PB.roadByFlight = {"{We} flew to {from}, and from there {pair} went on foot through {lands}{roadNote}."}
 -- A first meeting with nothing shared is no chapter of its own (round 12): the next chapter opens on it.
 PB.metBefore = {"{I} had first met {name} the night before, in {place}, {clock}."}
+-- A first flight the two took together, from the player's own record (round 13).
+PB.firstFlightOurs = {"{pairNamed} flew for the first time that {part}, out of {zoneD}."}
+PB.firstFlightClose = {"{pairNamed} flew out of {zoneD} together, {my} first flight."}
+PB.firstFlightFriend = {"{I} took {my} first flight out of {zoneD}, with {name} along."}
 -- The road and the run told from a close bond: the two side by side.
 PB.roadOutBond = {"From {from}, {pairNamed} set off on foot side by side through {lands}{roadNote}.", "{pairNamed} left {from} on foot together, through {lands}{roadNote}."}
 PB.roadOnBond = {"From there {pairNamed} walked on together through {lands}{roadNote}.", "Side by side, {pairNamed} went on foot through {lands}{roadNote}."}
 PB.roadOutHardBond = {"From {from}, {pairNamed} pushed on foot side by side into {lands}{roadNote}.", "{pairNamed} struck out of {from} together, on foot, into {lands}{roadNote}."}
 PB.roadOnHardBond = {"From there {pairNamed} fought on together, on foot, through {lands}{roadNote}.", "Side by side, {pairNamed} pushed on foot through {lands}{roadNote}."}
-PB.roadBackBond = {"{far} was as far as the two of {us} went, and {we} turned back {backWay}.", "At {far} {we} turned back together, {backWay}."}
+PB.roadBackBond = {"From {far} the two of {us} made for home again, {backWay}.", "At {far} {we} started home together, {backWay}."}
 PB.roadBackHardBond = {"{far} was as far as {we} could go together, and {we} fell back {backWay}.", "At {far} {we} gave ground together and fell back {backWay}."}
 PB.killRollGoalMidBond = {"{name} and I cut through {before} to {lordText}, whom {we} had come down for, and then {after}."}
 PB.killRollGoalLastBond = {"{name} and I cut through {before}, and last of all {lordText}, whom {we} had come down for."}

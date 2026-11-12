@@ -2304,10 +2304,20 @@ function T.ComposeRoad(c, lines, EpisodeAt, Place)
     local t0, e0 = DayWindow(c.day)
     if e0 <= t0 then return end
     local stays, breaks, firsts = {}, {}, {}
+    -- (round 13: a stay begun while walking back as a ghost after a death is no land walked: the
+    -- graveyard of another land, "back through the Hillsbrad Foothills", is not the road)
+    local ghost = {}
+    for _, x in ipairs(own) do
+        if x.k == "death" and x.w == "you" and x.t and tonumber(x.walk) then ghost[#ghost + 1] = {x.t, x.t + tonumber(x.walk) + 60} end
+    end
+    local function Ghost(t)
+        for _, g in ipairs(ghost) do if t > g[1] and t <= g[2] then return true end end
+        return false
+    end
     for _, x in ipairs(own) do
         local t = x.t or 0
         if t >= t0 - 60 and t <= e0 then
-            if x.k == "play" and x.z then stays[#stays + 1] = {zone = x.z, t = t, e = x.e or t, pl = tonumber(x.pl)}
+            if x.k == "play" and x.z and not Ghost(t) then stays[#stays + 1] = {zone = x.z, t = t, e = x.e or t, pl = tonumber(x.pl)}
             elseif CARRIED[x.k] then breaks[#breaks + 1] = t
             elseif x.k == "first" and x.d == "zone" and x.z then firsts[x.z] = true end
         end
@@ -2366,7 +2376,7 @@ function T.ComposeRoad(c, lines, EpisodeAt, Place)
                 if level and range and range[1] and range[1] >= level + 5 then above = above + 1 end
             end
         end
-        local long = #lands >= 3
+        local long = #lands >= 3 or (T.BondKind(c.person) ~= "plain" and #lands >= 2 and to - from >= 30 * 60)
         local hard = #distinct >= 2 and #lands >= 1 and landsNew == #lands and (deaths > 0 or above > 0)
         -- (the register: a hard road only when the record holds it, two deaths, or one in lands above you)
         local rough = deaths >= 2 or (deaths >= 1 and above > 0)
@@ -2450,8 +2460,12 @@ function T.ComposeRoad(c, lines, EpisodeAt, Place)
                         for _, p in ipairs(backs) do if not got[p] then got[p] = true; uniq[#uniq + 1] = p end end
                         tokens.backWay = (#backs <= 3 and #uniq == #backs and #backs >= 2 and ("through " .. List({unpack(backs, 1, #backs - 1)}) .. " to " .. backs[#backs]))
                             or ("to " .. backs[#backs])
-                        local backPool = (rough and PB.roadBackHard) or PB.roadBack
-                        if T.BondKind(c.person) == "close" then backPool = (rough and PB.roadBackHardBond) or PB.roadBackBond or backPool end
+                        -- (round 13: where work was done in the far land it was no retreat: the plain way back)
+                        local farZone, worked = outLeg[#outLeg].zone, false
+                        for _, q in ipairs(f.quests or {}) do if q.z == farZone and (q.t or 0) >= from and (q.t or 0) <= to then worked = true end end
+                        local backRough = rough and not worked
+                        local backPool = (backRough and PB.roadBackHard) or PB.roadBack
+                        if T.BondKind(c.person) == "close" then backPool = (backRough and PB.roadBackHardBond) or PB.roadBackBond or backPool end
                         local bl = teller:Say("roadBack", backPool, rng, tokens)
                         if bl then NewLine(lines, bl, "road", back[1].t - 0.5, EpisodeAt, S, back[1].zone) end
                     end
@@ -2910,6 +2924,12 @@ function T.ComposeTogether(c, lines)
             text = text:gsub(N .. " was in the party for the first time in", name .. " was " .. side .. " for the first time in", 1)
             text = text:gsub(", and " .. N .. " was in the party%.$", ", and " .. name .. " was " .. side .. ".", 1)
             text = text:gsub(" brought " .. N .. " back to the party", " brought " .. name .. " back", 1)
+            -- (round 13: a close bond does not "come back" like an acquaintance; the two are together again)
+            if close and l.n == 1 then
+                text = text:gsub("^" .. N .. " came back ", Cap(pairNamed) .. " were together again ", 1)
+                text = text:gsub("^" .. N .. " was back ", Cap(pairNamed) .. " were together again ", 1)
+                text = text:gsub("^" .. N .. " joined " .. me .. " ", Cap(pairNamed) .. " set out together ", 1)
+            end
             Rewrite(l, text)
         end
     end
@@ -3098,7 +3118,7 @@ function T.ComposeTogether(c, lines)
                     -- dungeon at once, a friend's book says the party)
                     local tail = ", " .. teller.base.our .. " first dungeon together."
                     if close and (history.startedTogether or (c.person and c.person.origin == "together")) then
-                        tail = " side by side, the first dungeon either of " .. (we and "us" or "you") .. " had seen."
+                        tail = (teller.crowd and "" or " side by side") .. ", the first dungeon either of " .. (we and "us" or "you") .. " had seen."
                     elseif kind == "friend" then
                         tail = ", the first dungeon " .. teller.base.we .. " took on as a party."
                     end
@@ -3195,6 +3215,32 @@ function T.ComposeTogether(c, lines)
                 end
             end
         end
+        -- (round 13: a first flight the two took together, from your own record, when the chapter
+        -- does not tell it: it was a first for both of a pair who began together)
+        do
+            local t0, e0 = DayWindow(c.day)
+            local said = false
+            for _, l in ipairs(lines) do
+                local low = Live(l) and PlainOf(l.text):lower() or ""
+                if low:find("flight", 1, true) or low:find(" flew", 1, true) then said = true end
+            end
+            for _, x in ipairs(c.ownJournal or {}) do
+                if not said and x.k == "first" and x.d == "flight" and x.t and x.t >= t0 and x.t <= e0 and x.z then
+                    local pool = (close and c.ours and PB.firstFlightOurs) or (close and PB.firstFlightClose) or PB.firstFlightFriend
+                    tokens.zoneD = (c.Place or function(z) return "{p:" .. Clean(z) .. "}" end)(x.z)
+                    tokens.part = PartOf(Hour(x.t))
+                    if teller.saidPlaces then teller.saidPlaces[(Clean(x.z):gsub("^[Tt]he ", ""):match("^(%S+)")) or ""] = nil end
+                    local text = pool and teller:Say("firstFlight", pool, rng, tokens)
+                    local near
+                    for _, l in ipairs(lines) do if Live(l) and l.t and (not near or math.abs(l.t - x.t) < math.abs(near.t - x.t)) then near = l end end
+                    if text and near then
+                        S.Z[text] = x.z
+                        lines[#lines + 1] = {n = #lines + 1.5, text = text, beat = "shared", t = x.t, ep = near.ep, added = true}
+                        said = true
+                    end
+                end
+            end
+        end
         -- 9c. round 11: her deed from her record (levels: ahead, caught up, behind), or the parts in a
         -- run; it takes the place of the plain level line ("Both of us went up a level ...")
         T.HerDeed(c, lines, Live, Rewrite)
@@ -3204,6 +3250,7 @@ function T.ComposeTogether(c, lines)
                 local any = false
                 for w in l.text:gmatch("{n:([^}]+)}") do
                     if "{n:" .. w .. "}" ~= teller.base.name then
+                        if T.Listed and T.Listed(w) then any = true end
                         for _, x in ipairs(lines) do if Live(x) and x ~= l and PlainOf(x.text):find(Clean(w), 1, true) then any = true end end
                     end
                 end
@@ -3216,6 +3263,7 @@ function T.ComposeTogether(c, lines)
         if fold then
             local any = false
             for w in fold:gmatch("{n:([^}]+)}") do
+                if T.Listed and T.Listed(w) then any = true end
                 for _, x in ipairs(lines) do if Live(x) and x ~= l1 and PlainOf(x.text):find(Clean(w), 1, true) then any = true end end
             end
             if not any then Rewrite(l1, (l1.text:gsub(", with .- along%.$", "."))) end
@@ -3277,7 +3325,7 @@ function T.ComposeTogetherAfter(c, out, beats)
         if not lead then lead, place, rest = line:match("^(Back in )({p:[^}]+}), (.*)$") end
         local t1, t2 = nil, times[line]
         for m = n - 1, 1, -1 do if times[out[m]] then t1 = times[out[m]]; break end end
-        if lead and t1 and t2 and S.Z[out[n - 1]] ~= S.Z[line] then
+        if lead and t1 and t2 and S.Z[out[n - 1]] ~= S.Z[line] and beats[n] ~= "death" then
             local means, inn
             for _, x in ipairs(c.ownJournal or {}) do
                 if x.t and x.t > t1 and x.t <= t2 and CARRIED[x.k] then
@@ -3518,13 +3566,23 @@ function T.Compose(c)
         if type(said) ~= "table" then return end
         for key in pairs(said) do if (Clean(key):gsub("%-.*$", "")) == who then said[key] = nil end end
     end
+    -- (round 13: in a bonded book a listed companion who was in the party is named all the same:
+    -- "Marrow went with us"; strangers still only when the chapter shows them)
+    local function Listed(w)
+        if T.BondKind(c.person) == "plain" then return false end
+        for _, p in pairs(A.db and A.db.people or {}) do
+            if type(p) == "table" and p.name and (Clean(p.name):gsub("%-.*$", "")) == w then return true end
+        end
+        return false
+    end
+    T.Listed = Listed
     for _, l in ipairs(lines) do
         if not l.drop and l.n > 1 and l.beat == "shared" and OthersLine(l.text) then
             local who, shown, gone = {}, {}, {}
             for w in l.text:gmatch("{n:([^}]+)}") do
                 if "{n:" .. w .. "}" ~= name then
                     who[#who + 1] = w
-                    if Named(w, l) then shown[#shown + 1] = w else gone[#gone + 1] = w end
+                    if Named(w, l) or Listed(w) then shown[#shown + 1] = w else gone[#gone + 1] = w end
                 end
             end
             if #who > 0 and #shown == 0 then l.drop = true; for _, w in ipairs(gone) do Forget(w) end
@@ -3575,7 +3633,7 @@ function T.Compose(c)
         local fold = l.text:match(", with (.-) along%.$")
         if fold then
             local any, who = false, {}
-            for w in fold:gmatch("{n:([^}]+)}") do who[#who + 1] = w; if Named(w, l) then any = true end end
+            for w in fold:gmatch("{n:([^}]+)}") do who[#who + 1] = w; if Named(w, l) or Listed(w) then any = true end end
             if not any and #who > 0 then
                 Rewrite(l, (l.text:gsub(", with .- along%.$", ".")))
                 for _, w in ipairs(who) do Forget(w) end
@@ -3704,6 +3762,8 @@ function T.Compose(c)
     S.EP = S.EP or {}
     for n, l in ipairs(kept) do
         out[n], beats[n] = l.text, l.beat
+        -- (round 13: a line the composer added, the road's, keeps its time for what follows it)
+        if times[l.text] == nil and l.t then times[l.text] = l.t end
         S.EP[l.text] = (l.slot >= 8) and (#episodes) or l.ep.index
         if l.whole then S.Whole = S.Whole or {}; S.Whole[l.text] = true; S.EP[l.text] = l.whole end
     end
@@ -7692,6 +7752,7 @@ function T.Tell(person, days, voice, player, brief)
         if together and ownJournal and PB.alsoThere and not history.othersSaid then history.othersSaid = {} end
         if together and ownJournal and PB.alsoThere then
             local others, seenOther = {}, {}
+            teller.othersKeys = {}
             for _, scene in ipairs(day.scenes) do
                 if scene.kind == "outing" then
                     for _, e in ipairs(ownJournal) do
@@ -7707,19 +7768,19 @@ function T.Tell(person, days, voice, player, brief)
                             local otherWho = (otherPeople and classWord and (otherPeople .. " " .. classWord)) or classWord or otherPeople
                             -- (round 10: one who has a bond on his own card is introduced by it, the same
                             -- in every book: "Marrow, my friend", as his own book calls him)
-                            local otherAs = A.PersonAs and player and player.charKey and A.PersonAs(e.d, player.charKey)
+                            local charKey = (player and player.charKey) or (A.Me and A.Me())
+                            local otherAs = A.PersonAs and charKey and e.d and A.PersonAs(e.d, charKey)
                             local otherBond = otherAs and BONDS[otherAs.bond or ""]
                             if otherBond then otherWho = nil end
                             local short = Clean(e.n):gsub("%-.*$", "")
-                            if otherBond and not history.othersSaid[e.n] then
-                                others[#others + 1] = "{n:" .. short .. "}, " .. teller.base.my .. " " .. (otherBond[otherAs.pronouns or "they"] or otherBond.they)
-                                history.othersSaid[e.n] = true
-                            end
+                            local bondIntro = otherBond and not history.othersSaid[e.n]
+                                and ("{n:" .. short .. "}, " .. teller.base.my .. " " .. (otherBond[otherAs.pronouns or "they"] or otherBond.they)) or nil
                             -- (who they are, the first time this book names them)
-                            if otherBond then
+                            if otherBond then others[#others + 1] = bondIntro or ("{n:" .. short .. "}")
                             elseif otherWho and not history.othersSaid[e.n] then others[#others + 1] = "{n:" .. short .. "}, " .. Article(otherWho)
                             else others[#others + 1] = "{n:" .. short .. "}" end
                             history.othersSaid[e.n] = true
+                            teller.othersKeys[#others] = e.n
                         end
                     end
                 end
@@ -7727,7 +7788,13 @@ function T.Tell(person, days, voice, player, brief)
             if #others > 0 then
                 beat = "shared"
                 if #others == 1 and others[1]:find(", ", 1, true) then others[1] = others[1] .. "," end
-                if #others > 1 then for n2 = 1, #others do others[n2] = others[n2]:gsub(", .*$", "") end end
+                -- (round 13: a list says names only; who lost an introduction to it gets one another day)
+                if #others > 1 then
+                    for n2 = 1, #others do
+                        if others[n2]:find(", ", 1, true) and teller.othersKeys[n2] then history.othersSaid[teller.othersKeys[n2]] = nil end
+                        others[n2] = others[n2]:gsub(", .*$", "")
+                    end
+                end
                 tokens.others = #others == 1 and others[1] or (table.concat(others, ", ", 1, #others - 1) .. " and " .. others[#others])
                 local line = teller:Say(#others > 1 and "alsoTherePlural" or "alsoThere", #others > 1 and PB.alsoTherePlural or PB.alsoThere, rng, tokens)
                 -- (early in the chapter: right after the opening)
@@ -8414,8 +8481,17 @@ function T.Tell(person, days, voice, player, brief)
                     local stopped = ownEnd > e0 + 10 * 60
                     -- (lane C8: the companion stopped before you did: where the record last had the two of you)
                     if stopped then
-                        local st = Stretches(day, person)
-                        if st[#st] and st[#st].zone then endZone = st[#st].zone end
+                        -- (round 13: where the group ended, in the land the player was in at that moment;
+                        -- the companion's last entry is only where its record stopped, not where we parted)
+                        local here
+                        for _, x in ipairs(ownJournal) do
+                            if x.k == "play" and x.z and x.t and x.t <= e0 and (x.e or x.t) >= e0 - 30 and (not here or x.t > here.t) then here = x end
+                        end
+                        if here then endZone = here.z
+                        else
+                            local st = Stretches(day, person)
+                            if st[#st] and st[#st].zone then endZone = st[#st].zone end
+                        end
                     end
                     -- (no hour to say is an empty token, not a banned one: a banned token makes every line of
                     -- the pool a last resort, and the first one was always taken, lane C9)
@@ -8682,6 +8758,8 @@ function T.Tell(person, days, voice, player, brief)
                 history.metBefore = {place = mainZone and A.JournalPlain(Place(mainZone)), clock = (h < 5 and "past midnight") or (h >= 21 and "late in the evening") or ""}
                 history.emptyDays = (history.emptyDays or 0) + 1
                 chapterText, chapter = "", chapter - 1
+                -- (who was introduced in the chapter that is not told is introduced again in the next)
+                history.othersSaid = {}
             end
         elseif history.metBefore and chapterText ~= "" then
             tokens.place, tokens.clock = history.metBefore.place or "the wilds", history.metBefore.clock

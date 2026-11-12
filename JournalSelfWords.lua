@@ -3748,6 +3748,23 @@ W.compose = {
     journeyBack3 = {"In {span}, {we} had fought {our} way to {far} and back.", "{We} had fought {our} way to {far} and back in {span}."},
     journeyFar0 = {"In {span}, {we} had come as far as {far}."},
     journeyHomeFrom = {"From {far} {our} hearthstones brought {us} home, {span} after {we} had set out."},
+    -- (round 15: a companion the record puts with us, not otherwise named that day)
+    joinedPlain = {"{name} joined {us}."},
+    -- (round 15: quest chains the authored story tables do not hold, in their quests' own words:
+    -- the Forever note trail, a blistered note by a burned-out fire in Westfall (79007), a cozy spot
+    -- in the mountains between the Barrens and Desolace (79192), a stash a hundred paces north
+    -- (79980), the eagle's nest on a mountainside (79974), a barricade camp left in a hurry (79975),
+    -- and the writer's pack (79976))
+    questChains = {
+        {qids = {79007, 79008, 79192, 79980, 79974, 79975, 79976},
+            start = "where a blistered note by a burned-out fire set {us} on a trail of notes",
+            road = "where the trail of notes led",
+            steps = {
+                [79974] = "In {zone} {we} found the next hiding place, the eagle's nest on the mountainside.",
+                [79975] = "In {zone} the trail ended at an old barricade, its fire newly fed and its keeper gone, and {we} took the pack left there.",
+                [79976] = "In {zone} the trail ended at an old barricade, its fire newly fed and its keeper gone, and {we} took the pack left there.",
+            }},
+    },
     journeyDonePlain = {"In {zone} {we} saw that work done."},
     journeyDoneRest = {"In {zone} {we} saw the rest of it done."},
     journeyHome0 = {"In {span}, {we} had gone as far as {far}, and the hearthstone brought {us} home."},

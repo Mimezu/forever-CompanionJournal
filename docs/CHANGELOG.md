@@ -1,5 +1,11 @@
 # Companion Journal: changes
 
+## 1.30.0 (2026-11-12)
+
+- Companions are named from the first night they were with you
+- A trail of quests is told as one goal
+- Companion books: the road back as you walked it, partings where they happened
+
 ## 1.29.0 (2026-11-12)
 
 - Everyone is introduced once, when they first appear
