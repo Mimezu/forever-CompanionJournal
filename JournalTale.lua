@@ -2398,9 +2398,9 @@ function T.ComposeRoad(c, lines, EpisodeAt, Place)
                     local either = we2 and "either of us" or "either of you"
                     local them = we2 and "us" or "you both"
                     note = ""
-                    if landsNew == #lands and #lands >= 2 then note = ", none of it seen before by " .. either
-                    elseif landsNew == 1 and #lands == 1 then note = ", ground neither of " .. (we2 and "us" or "you") .. " had seen"
-                    elseif landsNew * 2 >= #lands and landsNew > 0 then note = ", much of it unseen by " .. either end
+                    if landsNew == #lands and #lands >= 2 then note = ", all of it new to " .. (we2 and "me" or "you")
+                    elseif landsNew == 1 and #lands == 1 then note = ", ground new to " .. (we2 and "me" or "you")
+                    elseif landsNew * 2 >= #lands and landsNew > 0 then note = ", much of it new to " .. (we2 and "me" or "you") end
                     if above > 0 then
                         local which = (above == #lands and #lands >= 2 and "all of it ") or (above < #lands and "some of it ") or ""
                         note = note .. (note == "" and ", " or ", and ") .. which .. "country far beyond " .. them
@@ -2753,7 +2753,7 @@ local function Lockstep(day)
 end
 -- A first told as the two's (round 10). {ours}: they began together, so the first is both of
 -- theirs; else "saw it together". Returns the text unchanged when it says no first.
-function T.Ours(text, we, name, ours)
+function T.Ours(text, we, name, ours, history)
     local N = Esc(name)
     local new = text
     -- (the clause that made her a witness goes first)
@@ -2783,9 +2783,16 @@ function T.Ours(text, we, name, ours)
                 :gsub(" well above your level", " well above you both")
             new = new:gsub("you both both", "you both")
         end
-    elseif stripped then
-        -- (met on the road: the place was new to me, and we saw it together)
-        new = new:sub(1, -2) .. ", and " .. (we and (name .. " and I") or ("you and " .. name)) .. " saw it together."
+    elseif stripped or (not text:find(N) and FirstTold(PlainOf(text):lower()) and CountWords(text) <= 14 and text:find("{p:", 1, true)
+        and text:sub(-1) == "." and not text:find(",", 1, true)) then
+        -- (the place was new to me, and we saw it together: the record shows my first, not hers)
+        -- (said three ways in turn across the book, never the same clause every time)
+        local nth = 1
+        if history then history.sharedFirstN = (history.sharedFirstN or 0) + 1; nth = history.sharedFirstN end
+        local pair = we and (name .. " and I") or ("you and " .. name)
+        local ways = {", and " .. pair .. " saw it together", ", and " .. (we and "we" or "you") .. " took it in side by side",
+            ", and " .. (we and "we" or "you") .. " went there together"}
+        new = new:sub(1, -2) .. ways[(nth - 1) % #ways + 1] .. "."
     end
     return new
 end
@@ -2826,6 +2833,8 @@ local function FoldDeaths(c, lines, Live)
             -- (a friend's book keeps his raising me beside his own fall: comradeship both ways)
             local also
             if friend then for _, l in ipairs(g.lines) do if l ~= keep and Rank(l) == 3 and not also then also = l end end end
+            -- (round 16: the wipe and its cost are told: beside the raise, the fall together stays)
+            if not also and Rank(keep) >= 3 then for _, l in ipairs(g.lines) do if l ~= keep and Rank(l) == 2 and not also then also = l end end end
             local later = false
             for _, l in ipairs(g.lines) do
                 if l ~= keep and l ~= also then l.drop = true; if l.t > keep.t then later = true end end
@@ -2898,7 +2907,15 @@ function T.OwnSpine(c, lines, Live)
     -- (the work of the night while the companion was in the group: the companion's record, and the
     -- player's own record inside the companion's outings, where the companion's record kept less)
     local qs, have = {}, {}
-    for _, q in ipairs(f.quests) do qs[#qs + 1] = q; have[QD.Key(q)] = true end
+    -- (round 16: only work done while the group was together, inside an outing; a hand-in before she
+    -- joined, "the Engraved Ring at 21:33, Dahlia at 21:51", is not "we")
+    local function Inside(t)
+        for _, scene in ipairs(c.day and c.day.scenes or {}) do
+            if scene.kind == "outing" and t and t >= (scene.t or 0) - 30 and t <= (scene.e or scene.t or 0) + 30 then return true end
+        end
+        return false
+    end
+    for _, q in ipairs(f.quests) do if Inside(q.t) then qs[#qs + 1] = q; have[QD.Key(q)] = true end end
     for _, scene in ipairs(c.day and c.day.scenes or {}) do
         if scene.kind == "outing" then
             for _, x in ipairs(c.ownJournal or {}) do
@@ -2931,7 +2948,7 @@ function T.OwnSpine(c, lines, Live)
         local story = QD.Story(q)
         local pov = story and story.pov
         local key = QD.Key(q)
-        if pov and #pov > 0 and not seen[key] and added < 4 then
+        if pov and #pov > 0 and not seen[key] and added < 7 then
             seen[key] = true
             -- (the own book told it: most of one of its two lines' matter is in the own night's text)
             local ownTold, hereTold = false, false
@@ -2939,10 +2956,17 @@ function T.OwnSpine(c, lines, Live)
                 local w, n = MatterWords(QD.Fill(v, tok))
                 local inOwn, inHere = 0, 0
                 for x in pairs(w) do if ownWords[x] then inOwn = inOwn + 1 end; if hereWords[x] then inHere = inHere + 1 end end
-                if n >= 4 and inOwn / n >= 0.6 then ownTold = true end
+                if n >= 4 and inOwn / n >= 0.45 then ownTold = true end
                 if n >= 4 and inHere / n >= 0.4 then hereTold = true end
             end
             for line, quest in pairs(S.Q or {}) do if quest == q then for _, x in ipairs(here) do if x == line then hereTold = true end end end end
+            -- (round 16: or a name of its own in the own night's text: the own book told it in its words)
+            local ownPlain = own
+            for _, v in ipairs(pov) do
+                for w in pairs(NamesOf(PlainOf(QD.Fill(v, tok)))) do
+                    if nameCount[w] == 1 and ownPlain:find("%f[%a]" .. w .. "%f[%A]") then ownTold = true end
+                end
+            end
             -- (a name of its own, not the giver's, already in a line of work here: "destroyed the banshee
             -- Nightlash" in a list tells the Nightlash moment)
             local giver = QD.Giver and QD.Giver(story)
@@ -2970,27 +2994,33 @@ function T.OwnSpine(c, lines, Live)
                     if a and a.act then
                         local giver = a.giver or QD.Giver(story)
                         -- (by the quest's own name: the act's words are the spouse's book's list, never shared)
-                        local deed = q.title and ("saw {q:" .. Clean(q.title) .. "} through" .. (giver and (" for " .. giver) or ""))
-                            or (a.act .. ((giver and not a.act:find(tostring(giver):match("(%S+)$") or "", 1, true)) and (" for " .. giver) or ""))
+                        -- (round 16: never a quest's title as an event; the work said by whom it was for)
+                        local deed = giver and ("the work of " .. giver) or nil
                         -- (acts of one stretch are one sentence: "We took ..., took ... and killed ...")
                         local near0
                         for _, l in ipairs(lines) do if Live(l) and l.t and q.t and (not near0 or math.abs(l.t - q.t) < math.abs(near0.t - q.t)) then near0 = l end end
                         local prevAct = c.friendActs and near0 and c.friendActs[near0.ep]
-                        if prevAct and Live(prevAct.line) and q.t and math.abs((prevAct.t or 0) - q.t) <= 30 * 60 and q.title then
-                            prevAct.titles[#prevAct.titles + 1] = "{q:" .. Clean(q.title) .. "}"
-                            if giver and not prevAct.seenG[giver] then prevAct.seenG[giver] = true; prevAct.givers[#prevAct.givers + 1] = giver end
+                        if not deed then hereTold = true
+                        elseif prevAct and Live(prevAct.line) and q.t and math.abs((prevAct.t or 0) - q.t) <= 30 * 60 then
+                            if not prevAct.seenG[giver] then prevAct.seenG[giver] = true; prevAct.givers[#prevAct.givers + 1] = giver end
                             prevAct.t = q.t
-                            local text2 = Cap(b.we) .. " saw " .. List(prevAct.titles) .. " through"
-                                .. (#prevAct.givers > 0 and (", for " .. List(prevAct.givers)) or "") .. "."
-                            prevAct.line.text = S.Carry(prevAct.line.text, text2)
+                            local where = q.z and (" in " .. A.JournalPlain((c.Place or function(z) return z end)(q.z))) or ""
+                            prevAct.line.text = S.Carry(prevAct.line.text, Cap(b.we) .. " saw to work for " .. List(prevAct.givers) .. ".")
                             hereTold = true
                         else
-                            text = Cap(b.we) .. " " .. deed .. "."
-                            c.friendPending = {titles = {q.title and ("{q:" .. Clean(q.title) .. "}") or deed}, givers = {giver}, seenG = {[giver or ""] = true}, t = q.t}
+                            local where = q.z and (" in " .. A.JournalPlain((c.Place or function(z) return z end)(q.z))) or ""
+                            text = Cap(b.we) .. " saw to the work of " .. giver .. where .. "."
+                            c.friendPending = {givers = {giver}, seenG = {[giver] = true}, t = q.t}
                         end
                     end
                 else
                     text = QD.Moment(e, tok, QD.Variant(key, nil, teller.deedOther), true)
+                    -- (round 16: only work the two did; a line of mine alone, "I woke on the cold stone",
+                    -- "Aramis began my training", is the own book's, not hers)
+                    local low = text and (" " .. PlainOf(text):lower() .. " ") or ""
+                    local shared = low:find("[%s%p]we[%s%p]") or low:find("[%s%p]us[%s%p]") or low:find("[%s%p]our[%s%p]")
+                        or low:find("[%s%p]you[%s%p]")
+                    if (e.act and e.act.solo) or (story.pov and story.pov.solo) or not shared or low:find("^ i ") then text = nil end
                 end
                 local near
                 for _, l in ipairs(lines) do if Live(l) and l.t and q.t and (not near or math.abs(l.t - q.t) < math.abs(near.t - q.t)) then near = l end end
@@ -3348,7 +3378,7 @@ function T.ComposeTogether(c, lines)
                     -- (round 11: told from the relationship; the two who began together saw their first
                     -- dungeon at once, a friend's book says the party)
                     local tail = ", " .. teller.base.our .. " first dungeon together."
-                    if close and (history.startedTogether or (c.person and c.person.origin == "together")) then
+                    if T.OURS and close and (history.startedTogether or (c.person and c.person.origin == "together")) then
                         tail = (teller.crowd and "" or " side by side") .. ", the first dungeon either of " .. (we and "us" or "you") .. " had seen."
                     elseif kind == "friend" then
                         tail = ", the first dungeon " .. teller.base.we .. " took on as a party."
@@ -3382,12 +3412,14 @@ function T.ComposeTogether(c, lines)
     -- 8. a first seen together. Round 10: for two who began together (the record's first day, or the
     -- origin on the card) every first is theirs, "new to us both", never "new to me, and Dahlia was
     -- there"; for a close bond met on the road, "saw it together"; a friend keeps the clause.
-    local ours = close and (history.startedTogether or (c.person and c.person.origin == "together"))
+    -- (round 16: off; the record never shows a first of hers, so a first stays mine, "and Dahlia and I
+    -- saw it together"; `T.OURS` brings back "new to us both")
+    local ours = T.OURS and close and (history.startedTogether or (c.person and c.person.origin == "together"))
     c.ours = ours
     if close then
         for _, l in ipairs(lines) do
             if Live(l) then
-                local text = T.Ours(l.text, we, name, ours)
+                local text = T.Ours(l.text, we, name, ours, history)
                 if text ~= l.text then
                     local place = l.text:match("{p:([^}]+)}")
                     if place then history.sharedFirsts = history.sharedFirsts or {}; history.sharedFirsts[#history.sharedFirsts + 1] = place end
@@ -8815,7 +8847,7 @@ function T.Tell(person, days, voice, player, brief)
                 tokens.count, tokens.Count = Words(evenings), Cap(Words(evenings))
                 tokens.first = A.JournalPlain(Place(history.firstZone))
                 local every = gap == 1 and history.streak == history.days
-                local key = (T.BondKind(person) == "close" and (every and "lookBackEvery" or "lookBackClose")) or "lookBackFriend"
+                local key = (T.BondKind(person) == "close" and (every and "lookBackEvery" or "lookBackClose")) or (T.LOOKBACK_FRIEND and "lookBackFriend") or "none"
                 lookBack = PB[key] and teller:Say(key, PB[key], rng, tokens)
             end
             if sumText or endLine then
@@ -8947,7 +8979,7 @@ function T.Tell(person, days, voice, player, brief)
         if not title and not S.planned then
             local key = mainZone and Clean(mainZone):gsub("^[Tt]he ", ""):match("^(%S+)")
             local told = false
-            for i, line in ipairs(out) do if key and outBeat[i] ~= "close" and A.JournalPlain(line):find(key, 1, true) then told = true end end
+            for i, line in ipairs(out) do if key and outBeat[i] ~= "close" and line:find("{p:[^}]*" .. key) then told = true end end
             if not told then
                 for _, line in ipairs(out) do
                     local p = line:match("{p:[^}]+}")

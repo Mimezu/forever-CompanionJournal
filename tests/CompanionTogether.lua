@@ -134,7 +134,8 @@ for _, voice in ipairs({"we", "you"}) do
             end
             check(not bond or (not all:find("crossing", 1, true) and not all:find("hours after", 1, true)), "no counters in a bonded close" .. where)
             if bond == "friend" then
-                check(book[#book]:find("evenings with Dahlia", 1, true), "a friend's look-back" .. where .. ": " .. book[#book])
+                -- (round 16: a friend's book closes on the last shared act, never a counter)
+                check(not book[#book]:find("evenings with", 1, true), "no counter closing a friend's book" .. where .. ": " .. book[#book])
                 check(all:find("called it a night", 1, true) or all:find("own way", 1, true) or all:find(voice == "we" and "Dahlia and I ended" or "You and Dahlia ended", 1, true), "a friend's close" .. where)
             end
             local raise = book[4] or ""

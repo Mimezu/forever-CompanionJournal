@@ -3752,6 +3752,8 @@ W.compose = {
     journeyBack3 = {"In {span}, {we} had fought {our} way to {far} and back.", "{We} had fought {our} way to {far} and back in {span}."},
     journeyFar0 = {"In {span}, {we} had come as far as {far}."},
     journeyHomeFrom = {"From {far} {our} hearthstones brought {us} home, {span} after {we} had set out."},
+    -- (round 17: the arrival in a first land, with the crossings that brought us there)
+    arriveBy = {"{how}, and {we} came to {land}, new to {us}{why}."},
     -- (round 15: a companion the record puts with us, not otherwise named that day)
     joinedPlain = {"{name} joined {us}."},
     -- (round 15: quest chains the authored story tables do not hold, in their quests' own words:

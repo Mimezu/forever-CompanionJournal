@@ -1,5 +1,12 @@
 # Companion Journal: changes
 
+## 1.32.0 (2026-11-12)
+
+- One adventure per paragraph
+- Deaths are worded differently each time
+- Every new land is reached, never jumped to
+- Companion books: no quest titles, "we" only while grouped
+
 ## 1.31.0 (2026-11-12)
 
 - Journeys are told leg by leg, before where they led
