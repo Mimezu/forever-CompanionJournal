@@ -506,7 +506,7 @@ W.dungeon = {
         "{We} went into {dungeonE}, where the dangers far exceeded {our} experience.",
     },
     easy = {
-        "{We} went back into {dungeonE}, its dangers well within {our} strength now.",
+        "{We} went into {dungeonE}, its dangers well within {our} strength by then.",
         "{dungeonE} held little danger for {us} any more.",
     },
 }
@@ -650,6 +650,24 @@ W.bossLordFirst = {
     "{Boss} came first, and {we} killed {him}.",
 }
 W.bossTail = {"After {him}, {we} killed {after} as well.", "{After} fell after {him}."}
+-- (the same beats for a boss the data gives no pronoun for, round 7: no "him" and no guess;
+-- the tail's {him} is then the boss's title or short name)
+W.bossGoalPlain = {
+    "Then came {boss}, the one {we} had come for, and fell.",
+    "Then came {boss}, the one {we} had come for. That fight {we} won.",
+}
+W.bossGoalFirstPlain = {
+    "{We} came to {boss} first, the one {we} had come for, and won that fight.",
+    "{We} came straight to {boss}, the one {we} had come for, and won.",
+}
+W.bossLordPlain = {
+    "Then came {boss}, and fell.",
+    "Then came {boss}. That fight {we} won.",
+}
+W.bossLordFirstPlain = {
+    "{We} came to {boss} first, and won that fight.",
+    "{Boss} came first, and fell.",
+}
 -- Going in with the company named ({names}: the ones the record knows; {count} when more went).
 -- ({namesI}: "Bryn, Grak and I"; {names}: "Bryn and Grak", or "Bryn, Grak and one more" when the
 -- record counted more than it named: never a count the names contradict, round 4)
@@ -688,6 +706,8 @@ W.runLosses = {
     party = {"{Names} fell {tally} along the way.", "{Names} went down {tally} between the fights."},
     partyToo = {"{Names} fell {tally} as well.", "{Names} went down {tally} too."},
     costly = {"{Boss} took {names} down before {he} fell.", "{Names} fell to {boss} before {he} did."},
+    -- (for a boss the data gives no pronoun for)
+    costlyNamed = {"{Names} fell to {boss}, who did not outlive the fight.", "{Boss} took {names} down, and fell not long after."},
     costlyMany = {"{Names} fell to {bosses} in turn, and each of them fell after.", "{Bosses} each took {names} down before they fell."},
 }
 -- A level reached in the run or with its turn-ins, folded into the run's end ({level}).
@@ -3628,7 +3648,20 @@ W.deathRun = {
     rezStranger = {"{by}, a stranger, stopped to raise me.", "{by}, whom I had never met, stopped and raised me."},
     -- someone of the party who is of no list, the first time they are named ({name})
     newcomer = {"a newcomer named {name}", "{name}, who had joined {us} for it,"},
-    -- the count, once, at the end ({count} my deaths, {span}, {tally}: "Dahlia three times and Varreth twice")
+    -- several fights as one sentence (reader G, 2026-11-11): one killer or one kind of killer named
+    -- once ({fam}: "the Rot Hides", "Foe Reaper 4000", "the Mountain buzzards"; {count}: "three
+    -- times", "five times in half an hour"; {more}: " more" after a first fight told on its own;
+    -- {with}: ", Dahlia with me twice and Varreth once" or nothing; {raised}: ", and each time
+    -- Varreth raised me" or nothing)
+    group = {"{Fam} killed me {count}{more}{with}{raised}.", "{Count}{more} {fam} killed me{with}{raised}."},
+    -- the whole stretch in one sentence ({count}: "three times in half an hour")
+    groupAll = {"{Fam} killed me {count}{with}{raised}."},
+    -- one fight in the middle, its killer named
+    groupOne = {"{Fam} got me{with}{raised}.", "{Fam} killed me{with}{raised}."},
+    -- killers of every kind: the count, and the one with a name among them ({named})
+    groupMixed = {"{Count}{more} I died{with}{raised}.", "{Count}{more} I went down{with}{raised}."},
+    groupNamed = {"{Count}{more} I died, once to {named}{with}{raised}."},
+    -- (the count at the end is gone: the group sentence carries it)
     count = {"{Count} deaths in {span}, and {tally} besides.", "{Count} deaths in {span}, and {tally} as well."},
     countAlone = {"{Count} deaths in {span}.", "I died {count} times in {span}."},
     -- a felt line, once a book: the first raise, pointing back to the one who taught it ({teacher},
@@ -3647,9 +3680,14 @@ W.compose = {
     levelIn = {"Level {level} came in {zone}.", "Somewhere in {zone}, level {level} came."},
     -- (lane S: the level as a clause of the deed it came with, when that sentence can take one)
     levelClause = {"and level {level} came with it", "and that took me to level {level}"},
-    left = {"{name} had left us by then.", "{name} was gone by then."},
+    left = {"{name} had left us by then.", "{name} {was} gone by then."},
     -- (lane S: someone named later in the chapter whose joining the teller never said)
     joinedLate = {"{name} had joined us by then.", "{name} was with us by then."},
+    -- (lane P7: the same, for someone the book never named before: who they are, "a Forsaken paladin")
+    joinedLateNew = {"{name}, {who}, had joined us by then.", "{name}, {who}, was with us by then."},
+    -- (lane P7: the level in the close, when its deed could not take it as a clause)
+    closeLevel = {"I was level {level} by the end of it.", "By the end of it I was level {level}."},
+    closeLevels = {"{Count} levels had come by the end of it, and I was level {level}.", "I was level {level} by the end of it, {count} levels on."},
     byWay = {"{We} went on by way of {stops}.", "The road took {us} on by way of {stops}."},
     moveFlew = {"{We} flew to {place}.", "A flight took {us} to {place}."},
     moveVoyage = {"{We} took the {how} to {place}."},

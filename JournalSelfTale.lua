@@ -127,6 +127,8 @@ local function Place(name)
     local rest = name:match("^The (.+)$")
     if rest then return "the {p:" .. rest .. "}" end
     if ARTICLE[name] then return "the {p:" .. name .. "}" end
+    -- ("Shade of Eranikus", "Avatar of Hakkar": a thing of someone takes the article, round 7 2026-11-11)
+    if name:find("^%u%l+ of %u") then return "the {p:" .. name .. "}" end
     return "{p:" .. name .. "}"
 end
 ST.Place = Place
@@ -342,6 +344,8 @@ local function Teller(seed)
                 if value == nil then return "{" .. token .. "}" end
                 return tostring(value)
             end)
+            -- (a list in a subject token takes plural verbs, round 7: "Dahlia and Grosh were gone by then")
+            if A.JournalAgree then text = A.JournalAgree(text) end
             return Cap(text)
         end
         local line = self:Pick(key, list)
@@ -376,6 +380,7 @@ local function Teller(seed)
     end
     return teller
 end
+ST.Teller = Teller
 
 -- Towns --------------------------------------------------------------------------
 local function Town(name)
@@ -1402,6 +1407,10 @@ function ST.Tell(person, days, brief, retell)
         function DR.LevelAtKill(names, s, st)
             local run = s.run
             if not (run and run.level and W.runLevelAt) or DR.levelToldAt == run.level.t then return end
+            -- (one level a run, round 7: a level that came with the turn-ins after it is the one the closure
+            -- tells, "The run took me to level 35", not "Nandos took me to level 34" and then that)
+            local lastLevel = run.levels and run.levels[#run.levels]
+            if lastLevel and lastLevel.t ~= run.level.t then return end
             local levelT = run.level.t
             if levelT < (run.entered or 0) or levelT > (run.left or 0) then return end
             local at
@@ -1412,9 +1421,14 @@ function ST.Tell(person, days, brief, retell)
             if not told then return end
             DR.levelToldAt = levelT
             local number = tostring(run.level.level)
+            DR.levelToldNumber = number
             local last = out[#out] or ""
-            if last:find(Clean(at.name):gsub("%p", "%%%0") .. "}?%.$") and not last:find("%. ") then
-                -- ("We brought down Ghamoo-ra, and level 23 came with it.")
+            local lastWords = 0
+            for _ in last:gmatch("%S+") do lastWords = lastWords + 1 end
+            -- ("We brought down Ghamoo-ra, and level 23 came with it."; a short kill line that names the boss
+            -- anywhere takes the clause too, "I killed Tuten'kash, the great spider ..., and level 40 came with it")
+            if (last:find(Clean(at.name):gsub("%p", "%%%0") .. "}?%.$") or (kinds[#out] == "kill" and lastWords <= 22 and last:find(Clean(at.name), 1, true)))
+                and not last:find("%. ") and not last:find(", and ", 1, true) then
                 out[#out] = last:gsub("%.$", "") .. ", and level " .. number .. " came with it."
                 return
             end
@@ -1462,10 +1476,17 @@ function ST.Tell(person, days, brief, retell)
                 local number
                 for n in A.JournalPlain(out[levelAt]):gmatch("[Ll]evel (%w+)") do number = n end
                 for n in A.JournalPlain(out[levelAt]):gmatch("to (%d+)") do number = n end
+                -- (the level the run told at its kill is not told again by the line that came up with the
+                -- turn-ins: "I reached level 26 on Aku'mai" and then "I was level 26 by then", round 7)
+                if number and DR.levelToldNumber and (number == DR.levelToldNumber or number == Words(tonumber(DR.levelToldNumber) or -1)) then
+                    Remove(levelAt)
+                    return
+                end
                 local prev = levelAt > from and out[levelAt - 1] or nil
                 local words = 0
                 for _ in (prev or ""):gmatch("%S+") do words = words + 1 end
-                if number and prev and words <= 30 and prev:match("%.$") and not prev:find("%. ") and W.runLevelClause then
+                -- (never a third clause: "Dalar said, and such tenacity would be rewarded, and the run took me to level 35")
+                if number and prev and words <= 30 and prev:match("%.$") and not prev:find("%. ") and not prev:find(", and ", 1, true) and W.runLevelClause then
                     local pool = W.runLevelClause
                     if prev:find("came", 1, true) then
                         pool = {}
@@ -1494,6 +1515,23 @@ function ST.Tell(person, days, brief, retell)
                 if not clash then kept[#kept + 1] = line end
             end
             return #kept > 0 and kept or lines
+        end
+        -- The lines of a pool without a given token (a pronoun the data cannot vouch for).
+        function DR.WithoutToken(lines, token)
+            local kept = {}
+            for _, line in ipairs(lines) do if not line:find(token, 1, true) then kept[#kept + 1] = line end end
+            return #kept > 0 and kept or lines
+        end
+        -- A quest line against the record (round 7, 2026-11-11): a sentence that claims a boss's
+        -- death is kept only when that boss was killed today or on an earlier day of this book
+        -- ("Amnennar was destroyed" never follows a run that stopped at Tuten'kash). Returns the
+        -- text left (nil when none) and how many sentences went.
+        function DR.Supported(text)
+            local E = A.JournalEpisodes
+            if not (text and E and E.WithoutUnkilledClaims) then return text, 0 end
+            return E.WithoutUnkilledClaims(text, function(name)
+                return DR.bosses[name] or history.bosses[name] or (DR.dayKills and DR.dayKills[name]) or false
+            end)
         end
         -- The run's second try as a beat: which try, and "went better" when nobody fell after it.
         function DR.BackDownPool(e, s, st, together)
@@ -1704,9 +1742,11 @@ function ST.Tell(person, days, brief, retell)
                 elseif told then
                     local lore = L and L.Boss and L.Boss(c.boss)
                     local E = A.JournalEpisodes
-                    local he = (E and E.BossPronoun and E.BossPronoun(c.boss, lore)) or "he"
+                    local he = E and E.BossPronoun and E.BossPronoun(c.boss, lore)
+                    -- (no pronoun the data vouches for, round 7: the lines that need none)
+                    local pool = (he and W.runLosses.costly) or W.runLosses.costlyNamed or W.runLosses.costly
+                    he = he or (E and E.BossTitle and E.BossTitle(c.boss)) or Place(c.boss)
                     -- (the line before named the boss: the one it killed leads, "Pip fell to Grubbis before he did")
-                    local pool = W.runLosses.costly
                     if (out[#out] or ""):find(Clean(c.boss), 1, true) then
                         local kept = {}
                         for _, line in ipairs(pool) do if line:find("^{Names}") then kept[#kept + 1] = line end end
@@ -3017,8 +3057,10 @@ function ST.Tell(person, days, brief, retell)
                     if not shape then return false end
                     local raw = shape.key
                     local lore = L and L.Boss and L.Boss(raw)
-                    local _, object = E.BossPronoun(raw, lore)
-                    local kt = {We = st.We, we = st.we, us = st.us, our = st.our, him = object}
+                    -- (the pronoun from the data, round 7; none the data vouches for: the beats that need none,
+                    -- and the title or the short name where the tail says "after him")
+                    local pro, object = E.BossPronoun(raw, lore)
+                    local kt = {We = st.We, we = st.we, us = st.us, our = st.our, him = object or E.BossTitle(raw)}
                     kt.boss = Place(raw)
                     -- (who he is, at the climax: the epithet on the first kill, not when the line or two before
                     -- carried its noun, nor one that names the place the run just went into)
@@ -3031,6 +3073,10 @@ function ST.Tell(person, days, brief, retell)
                             if recent:find(word:gsub("s$", ""), 1, true) then echo = true end
                         end
                         if st.dungeonNow and lore.e:find(Clean(st.dungeonNow.name), 1, true) then echo = true end
+                        -- (nor a word of the name itself: "the Shade of Eranikus, the shade of the green dragon consort")
+                        for word in Clean(raw):lower():gmatch("%a%a%a%a+") do
+                            if lore.e:lower():find("%f[%a]" .. word .. "%f[%A]") then echo = true end
+                        end
                         if not echo then kt.boss = kt.boss .. ", " .. lore.e .. "," end
                     end
                     kt.Boss = kt.boss
@@ -3054,6 +3100,7 @@ function ST.Tell(person, days, brief, retell)
                     end
                     -- ("came to X first" only when no kill of the run was told before it)
                     local key = (shape.goal and "bossGoal" or "bossLord") .. ((#shape.before == 0 and not st.killSaid) and "First" or "")
+                        .. ((not pro and W.bossLordPlain) and "Plain" or "")
                     Say(Clean2(teller:Say(key, W[key] or W.bossLord, kt)), true, "kill")
                     if DR.gathered then DR.SayCostly({shape.key}) end
                     DR.LevelAtKill({shape.key}, s, st)
@@ -3113,6 +3160,8 @@ function ST.Tell(person, days, brief, retell)
                     end
                 end
                 DR.GatherLosses(s)
+                DR.dayKills = DR.dayKills or {}
+                for _, b in ipairs(s.bosses or {}) do DR.dayKills[Clean(b.name)] = true end
                 local deathsHere = 0
                 for _, e in ipairs(s.events) do if e.k == "death" then deathsHere = deathsHere + 1 end end
                 -- (the ones a run of deaths does not tell: each on its own line up to two, else counted)
@@ -3299,8 +3348,8 @@ function ST.Tell(person, days, brief, retell)
                             if #pool > 0 then SayRun(teller:Say("deathRunOpen", pool, tokens), true) end
                         end
                     end
-                    local myDeaths, rezzes, walked, fellBefore = 0, 0, 0, {}
-                    for _, it in ipairs(run.items) do if it.k == "me" then myDeaths = myDeaths + 1 elseif it.k == "rez" then rezzes = rezzes + 1 end end
+                    local myDeaths, fellBefore = 0, {}
+                    for _, it in ipairs(run.items) do if it.k == "me" then myDeaths = myDeaths + 1 end end
                     -- the tokens of one fight
                     local function Fight(beat)
                         local counts, order, full = PartyCounts(beat.items)
@@ -3354,26 +3403,6 @@ function ST.Tell(person, days, brief, retell)
                             kind = "deathRun"
                         end
                     end
-                    -- the first fight
-                    local first = beats[1]
-                    local bt = Fight(first)
-                    local pool
-                    if #beats == 1 then
-                        pool = (not bt.foe and DR.meAndPartyPlain) or (bt.count and (bt.meFirst and DR.meThenPartyCount or DR.partyCountThenMe))
-                            or (bt.meFirst and DR.wipeMeFirst or DR.wipePartyFirst)
-                    elseif first.me then
-                        local dayFirst = DayFirstMe(first.me)
-                        pool = (not bt.foe and (bt.party > 0 and DR.meAndPartyPlain or W.death.plain))
-                            or (bt.count and (bt.meFirst and DR.meThenPartyCount or DR.partyCountThenMe))
-                            or (bt.party == 0 and (dayFirst and DR.firstMe or DR.plainMe))
-                            or (bt.meFirst and (dayFirst and DR.firstMeParty or DR.plainMeParty) or (dayFirst and DR.firstPartyMe or DR.plainPartyMe))
-                    else
-                        local early = (first.t - (s.t or first.t)) <= 300 and DR.partyEarly
-                        pool = (bt.count and DR.partyCount) or early or (PartyFirst(first) and DR.firstParty or DR.party)
-                    end
-                    SayRun(teller:Say("deathRunFirst", pool, bt), true)
-                    if first.me then Count(first.me) end
-                    RezLines(first, bt)
                     -- (the first raise of my life points back to the one who taught it, when the book told that)
                     local felt = false
                     history.deathFeltAt = history.deathFeltAt or {}
@@ -3384,89 +3413,175 @@ function ST.Tell(person, days, brief, retell)
                         felt, history.deathFeltAt.taught = true, true
                         SayRun(teller:Say("deathRunFeltTaught", DR.feltTaught, {teacher = "{n:" .. teacher .. "}"}), false)
                     end
-                    Taught(first)
-                    -- the fights between: a named killer told, the raises with who (one told, more folded
-                    -- by who raised me), the rest a count
-                    local folded = {}
-                    for bi = 2, #beats - 1 do
-                        local beat = beats[bi]
-                        local ft = Fight(beat)
-                        if beat.me and beat.rez and ft.foe and (ft.named or (not ft.known and ft.party > 0)) then
-                            if not ft.known and ft.party > 0 and DR.midParty then
-                                SayRun(teller:Say("deathRunMidParty", DR.midParty, ft), true)
-                                RezLines(beat, ft)
-                            else
-                                SayRun(teller:Say("deathRunMid", ft.party > 0 and DR.midRezParty or DR.midRez, ft), true)
+                    -- (the killers of some deaths of mine as one name, when they share one: "the Rot Hides",
+                    -- "Foe Reaper 4000", "the Mountain buzzards"; nil when they do not, or a killer is unknown)
+                    local function Family(from, to)
+                        local names, flags, n = {}, {}, 0
+                        for bi = from, to do
+                            local me = beats[bi].me
+                            if me then
+                                n = n + 1
+                                if not me.e.d then return nil, n end
+                                names[n], flags[n] = Clean(me.e.d), me.e.a
                             end
-                            Count(beat.me)
-                        elseif beat.me and beat.rez and ft.foe then
-                            folded[#folded + 1] = ft
-                            Count(beat.me)
-                        elseif beat.raise then
-                            if ft.party > 0 then SayRun(teller:Say("deathRunMidParty", ft.count and DR.partyCount or DR.party, ft), true) end
-                            if beat.me then walked = walked + 1; Count(beat.me) end
-                            RezLines(beat, ft)
-                            Taught(beat)
-                        elseif beat.me then
-                            walked = walked + 1
-                            Count(beat.me)
-                            if beat.rez then RezLines(beat, ft) end
                         end
+                        if n < 2 or not A.FoeFamily then return nil, n end
+                        return A.FoeFamily(names, flags), n
                     end
-                    -- (each raise told while they are two by different hands; three or more, or the same
-                    -- hand twice, fold into one sentence)
-                    local raisers, seen = {}, {}
-                    for _, ft in ipairs(folded) do
-                        if not seen[ft.byName] then seen[ft.byName] = true; raisers[#raisers + 1] = ft.byName end
-                    end
-                    if #folded >= 3 or (#folded == 2 and #raisers == 1) then
-                        SayRun(teller:Say("deathRunMidMany", #raisers == 1 and DR.midRezSame or DR.midRezMany, {raisers = List(raisers), count = Times(#folded)}), true)
-                    else
-                        for _, ft in ipairs(folded) do SayRun(teller:Say("deathRunMid", ft.party > 0 and DR.midRezParty or DR.midRez, ft), true) end
-                    end
-                    if walked > 0 and #beats > 2 then
-                        local ghost = true
-                        for bi = 2, #beats - 1 do
-                            local b = beats[bi]
-                            if b.me and not b.rez and not (b.me.e.walk and b.me.e.walk > 0) then ghost = false end
+                    -- Several fights as one sentence (reader G, 2026-11-11): the killers named once, my
+                    -- deaths counted, the companions who fell with me by count, a known hand that raised
+                    -- me as a clause. A stranger's raise is a sentence of its own after it, never beside a
+                    -- known name; a companion I raised keeps the raise line where it fell.
+                    local Group
+                    function Group(from, to, more)
+                        -- (a stranger's raise is a sentence at its time: the fights before it as one, then
+                        -- the ones after it as another; the coordinator, 2026-11-11)
+                        for bi = from, to - 1 do
+                            local rez = beats[bi].rez
+                            if rez and not Lane.Known(rez.e.by) then
+                                Group(from, bi, more)
+                                Group(bi + 1, to, true)
+                                return
+                            end
                         end
-                        SayRun(teller:Say("deathRunWalked", (ghost and DR.walked) or DR.diedMore or DR.walked, {count = Times(walked)}), true)
-                    end
-                    -- the last fight
-                    if #beats >= 2 then
-                        local last = beats[#beats]
-                        local lt = Fight(last)
-                        local dayLast = DayLastMe(last.me)
-                        if last.me and not dayLast then
-                            if not lt.foe then pool = lt.party > 0 and DR.meAndPartyPlain or W.death.plain
-                            elseif lt.party == 0 then pool = DR.plainMe
-                            elseif lt.meFirst then pool = DR.plainMeParty
-                            else pool = lt.again and DR.lastPartyAgainMe or DR.plainPartyMe end
-                        elseif last.me then
-                            if not lt.foe then pool = lt.party > 0 and DR.meAndPartyPlain or W.death.plain
-                            elseif lt.party == 0 then pool = lt.named and DR.lastNamed or DR.lastMe
-                            elseif lt.meFirst then pool = lt.named and DR.lastNamedParty or DR.lastMeParty
-                            else pool = lt.again and DR.lastPartyAgainMe or DR.lastPartyMe end
+                        local mine, counts, order, full, hands, handOrder, strangers, raises = {}, {}, {}, {}, {}, {}, {}, {}
+                        for bi = from, to do
+                            local beat = beats[bi]
+                            for _, it in ipairs(beat.items) do
+                                if it.k == "me" then mine[#mine + 1] = it
+                                elseif it.k == "party" then
+                                    local key = Lane.FirstName(it.e.n)
+                                    if not counts[key] then counts[key] = 0; order[#order + 1] = key; full[key] = it.e.n end
+                                    counts[key] = counts[key] + 1
+                                end
+                            end
+                            if beat.rez then
+                                local by = beat.rez.e.by
+                                if Lane.Known(by) then
+                                    local short = N((Clean(by):match("^[^%s%-]+") or by))
+                                    if not hands[short] then hands[short] = 0; handOrder[#handOrder + 1] = short end
+                                    hands[short] = hands[short] + 1
+                                else strangers[#strangers + 1] = beat end
+                            end
+                            if beat.raise then raises[#raises + 1] = beat end
+                        end
+                        for _, key in ipairs(order) do fellBefore[key] = true end
+                        local gt = {us = tokens.us, our = tokens.our, we = tokens.we, more = more and " more" or "", with = "", raised = "", count = Times(#mine)}
+                        local fam = Family(from, to)
+                        if #mine == 1 and mine[1].e.d then gt.fam = Lane.Foe(mine[1].e)
+                        elseif fam then gt.fam = Place(Cap(fam)) end
+                        -- (the whole stretch in one sentence: its span, from three deaths)
+                        if not more and from == 1 and to == #beats and #mine >= 3 then
+                            local seconds = run.items[#run.items].t - run.items[1].t
+                            local minutes = seconds / 60
+                            gt.count = gt.count .. " in " .. (minutes < 8 and "a few minutes" or minutes < 20 and "a quarter of an hour" or minutes < 40 and "half an hour"
+                                or minutes < 75 and "an hour" or Span(seconds))
+                        end
+                        -- the companions who fell, each once, with their counts
+                        if #order > 0 and #mine > 0 then
+                            local repeats = false
+                            for _, key in ipairs(order) do if counts[key] > 1 then repeats = true end end
+                            if not repeats then gt.with = ", " .. NameList(order, full) .. " with me"
+                            else
+                                local parts = {}
+                                for i, key in ipairs(order) do parts[#parts + 1] = N(full[key]) .. (i == 1 and " with me " or " ") .. Times(counts[key]) end
+                                gt.with = ", " .. List(parts)
+                            end
+                        end
+                        -- a known hand (or two) that raised me
+                        if #handOrder == 1 then
+                            local by, n = handOrder[1], hands[handOrder[1]]
+                            if #mine <= 1 then gt.raised = ", and " .. by .. " raised me"
+                            elseif n == #mine then gt.raised = teller.rng() < 0.5 and (", and each time " .. by .. " raised me") or (", and " .. by .. " raised me each time")
+                            else gt.raised = ", and " .. by .. " raised me " .. Times(n) end
+                        elseif #handOrder >= 2 then
+                            local n = 0
+                            for _, by in ipairs(handOrder) do n = n + hands[by] end
+                            gt.raised = ", and " .. List(handOrder) .. " raised me " .. Times(n) .. " between them"
+                        end
+                        local pool
+                        if #mine == 0 then pool = nil
+                        elseif gt.fam then pool = (#mine == 1 and DR.groupOne) or (not more and from == 1 and to == #beats and DR.groupAll) or DR.group
                         else
-                            pool = lt.count and DR.partyCount or (PartyLast(last) and DR.lastParty or DR.party)
+                            -- (one killer with a name among kinds: named here, unless the last fight names it)
+                            local named, namedCount, namedRaw = nil, 0, nil
+                            for _, it in ipairs(mine) do if it.e.d and not OfAKind(it.e) then namedCount = namedCount + 1; named = Lane.Foe(it.e); namedRaw = Clean(it.e.d) end end
+                            local lastMe = to < #beats and beats[#beats].me
+                            if lastMe and lastMe.e.d and Clean(lastMe.e.d) == namedRaw then namedCount = 0 end
+                            if namedCount == 1 and DR.groupNamed then gt.named = named; pool = DR.groupNamed else pool = DR.groupMixed end
                         end
-                        SayRun(teller:Say("deathRunLast", pool, lt), true)
-                        if last.me then Count(last.me) end
-                        RezLines(last, lt)
+                        if pool then SayRun(teller:Say("deathRunGroup", pool, gt), true)
+                        elseif #order > 0 then
+                            -- (nobody killed me in these fights: the party's losses, one sentence)
+                            local bt = {names = NameList(order, full), us = tokens.us, our = tokens.our, count = CountText(counts, order)}
+                            SayRun(teller:Say("deathRunParty", bt.count and DR.partyCount or DR.party, bt), true)
+                        end
+                        for _, it in ipairs(mine) do Count(it) end
+                        if pendingTally then Mark(); Say(pendingTally, false, "deathRun"); pendingTally = nil end
+                        -- (a stranger's raise joins the sentence before it only when that names nobody of ours)
+                        local lineKind = (#order > 0 or #handOrder > 0) and "deathRun" or "rez"
+                        for _, beat in ipairs(strangers) do
+                            Mark()
+                            Say(teller:Say("deathRunRezStranger", DR.rezStranger, {by = N(beat.rez.e.by)}), true, lineKind)
+                            kind = "deathRun"
+                        end
+                        for _, beat in ipairs(raises) do RezLines({raise = beat.raise}, {}); Taught(beat) end
                     end
-                    -- the count, once, when three or more of my deaths include some told only as a count
-                    local foldedAway = walked > 0 or #folded >= 3 or (#folded == 2 and #raisers == 1)
-                    if myDeaths >= 3 and foldedAway then
-                        local counts, order, full = PartyCounts(run.items)
-                        local parts = {}
-                        -- (a companion who fell more than once; one fall was told where it happened)
-                        for _, key in ipairs(order) do if counts[key] >= 2 then parts[#parts + 1] = N(full[key]) .. " " .. Times(counts[key]) end end
-                        local seconds = run.items[#run.items].t - run.items[1].t
-                        local minutes = seconds / 60
-                        local span = minutes < 8 and "a few minutes" or minutes < 20 and "a quarter of an hour" or minutes < 40 and "half an hour"
-                            or minutes < 75 and "an hour" or Span(seconds)
-                        local ct = {count = Words(myDeaths), span = span, tally = #parts > 0 and List(parts) or nil}
-                        SayRun(teller:Say("deathRunCount", (#parts > 0 and DR.count) or DR.countAlone, ct), true)
+                    -- the first fight; or, when one killer (or one kind of killer) took every death of
+                    -- mine, the whole stretch in one sentence
+                    local first = beats[1]
+                    local famAll = Family(1, #beats)
+                    if famAll and myDeaths >= 2 then
+                        Group(1, #beats, false)
+                    else
+                        local bt = Fight(first)
+                        local pool
+                        if #beats == 1 then
+                            pool = (not bt.foe and DR.meAndPartyPlain) or (bt.count and (bt.meFirst and DR.meThenPartyCount or DR.partyCountThenMe))
+                                or (bt.meFirst and DR.wipeMeFirst or DR.wipePartyFirst)
+                        elseif first.me then
+                            local dayFirst = DayFirstMe(first.me)
+                            pool = (not bt.foe and (bt.party > 0 and DR.meAndPartyPlain or W.death.plain))
+                                or (bt.count and (bt.meFirst and DR.meThenPartyCount or DR.partyCountThenMe))
+                                or (bt.party == 0 and (dayFirst and DR.firstMe or DR.plainMe))
+                                or (bt.meFirst and (dayFirst and DR.firstMeParty or DR.plainMeParty) or (dayFirst and DR.firstPartyMe or DR.plainPartyMe))
+                        else
+                            local early = (first.t - (s.t or first.t)) <= 300 and DR.partyEarly
+                            pool = (bt.count and DR.partyCount) or early or (PartyFirst(first) and DR.firstParty or DR.party)
+                        end
+                        SayRun(teller:Say("deathRunFirst", pool, bt), true)
+                        if first.me then Count(first.me) end
+                        RezLines(first, bt)
+                        Taught(first)
+                        if #beats >= 2 then
+                            -- the rest: one sentence when one killer took every death of it; else the fights
+                            -- between as one sentence, and the last fight as its own
+                            local famRest, restMine = Family(2, #beats)
+                            if famRest and restMine >= 2 then
+                                Group(2, #beats, true)
+                            else
+                                if #beats >= 3 then Group(2, #beats - 1, true) end
+                                local last = beats[#beats]
+                                local lt = Fight(last)
+                                local dayLast = DayLastMe(last.me)
+                                if last.me and not dayLast then
+                                    if not lt.foe then pool = lt.party > 0 and DR.meAndPartyPlain or W.death.plain
+                                    elseif lt.party == 0 then pool = DR.plainMe
+                                    elseif lt.meFirst then pool = DR.plainMeParty
+                                    else pool = lt.again and DR.lastPartyAgainMe or DR.plainPartyMe end
+                                elseif last.me then
+                                    if not lt.foe then pool = lt.party > 0 and DR.meAndPartyPlain or W.death.plain
+                                    elseif lt.party == 0 then pool = lt.named and DR.lastNamed or DR.lastMe
+                                    elseif lt.meFirst then pool = lt.named and DR.lastNamedParty or DR.lastMeParty
+                                    else pool = lt.again and DR.lastPartyAgainMe or DR.lastPartyMe end
+                                else
+                                    pool = lt.count and DR.partyCount or (PartyLast(last) and DR.lastParty or DR.party)
+                                end
+                                SayRun(teller:Say("deathRunLast", pool, lt), true)
+                                if last.me then Count(last.me) end
+                                RezLines(last, lt)
+                            end
+                        end
                     end
                     if pendingTally then Say(pendingTally, false, "deathRun"); pendingTally = nil end
                     Title(45, teller:Pick("tDeath", W.titles.death))
@@ -4118,7 +4233,9 @@ function ST.Tell(person, days, brief, retell)
                         st.short = st.lord
                         st.Short = st.lord
                         st.nth = Ordinal(visits + 1)
-                        st.they = (lordHere and L.Boss and L.Boss(lordHere) and L.Boss(lordHere).she) and "she" or "he"
+                        -- (the lord's pronoun from the data, round 7; none the data vouches for leaves the lines that
+                        -- need one unsaid)
+                        st.they = lordHere and A.JournalEpisodes and A.JournalEpisodes.BossPronoun and A.JournalEpisodes.BossPronoun(lordHere) or nil
                         -- (the first dungeon of your life: only when the journal began before dungeons do)
                         local firstEver = history.dungeonsEver == 0 and inside and history.earlyCoverage and not s.seeded
                         st.dungeonSaid = not isDungeon
@@ -4732,6 +4849,11 @@ function ST.Tell(person, days, brief, retell)
                             Title(70, teller:Pick("tUnfinished", W.titles.unfinished))
                         else
                             local pool = (dn.left and W.dungeonUnfinished.left) or W.dungeonUnfinished.ended
+                            if not ut.they then pool = DR.WithoutToken(pool, "{they}") end
+                            -- (the kill the line before named is not named again: "Past Tuten'kash" after "Tuten'kash took me to level 40")
+                            if dn.lastKill and (out[#out] or ""):find(Clean(dn.lastKill), 1, true) then
+                                pool = DR.WithoutToken(DR.WithoutToken(pool, "{lastKill}"), "{LastKill}")
+                            end
                             if not dn.lastKill then
                                 local kept = {}
                                 for _, line in ipairs(pool) do if not line:find("{lastKill}", 1, true) and not line:find("{LastKill}", 1, true) then kept[#kept + 1] = line end end
@@ -5016,12 +5138,18 @@ function ST.Tell(person, days, brief, retell)
                             history.questLore[QD.Key(q)] == true)
                         -- (the run told the kill already today: the turn-in says only what came of it, 2026-11-11)
                         line, own, from = DR.AfterRun(line, own, from, e, variant, Tokens(solo), solo and "I" or st.We, q, st.zoneD, si)
+                        -- (a claim the record cannot carry, round 7: a sentence that says a boss died when no kill
+                        -- of it is recorded, today or before, is left out; nothing left means the plain turn)
+                        do
+                            local kept, dropped = DR.Supported(line)
+                            if dropped > 0 then line, own = kept or ((solo and "I" or st.We) .. " saw " .. Q(q.title) .. " through."), false end
+                        end
                         dayPlan.npcLast = from == "after"
                         plan.meta = {entry = e}
                         Say(line, true, from == "after" and "questOutcome" or "questStart", true)
                         if e.act and e.act.giver then giversNamed[(e.act.giver:match("(%S+)$"))] = true end
                         if not own and from ~= "after" and not brief and not dayPlan.outcomeSaid then
-                            local outcome = QD.Outcome(e, teller.rng())
+                            local outcome = DR.Supported(QD.Outcome(e, teller.rng()))
                             if outcome then dayPlan.outcomeSaid = true; plan.meta = {entry = e, outcome = true}; Say(outcome, true, "questOutcome", true) end
                         end
                         if e.foe and W.questRevenge and not revengeSaid then
@@ -5786,7 +5914,7 @@ function ST.Tell(person, days, brief, retell)
         if chapterWhen and out[1] and out[1]:find(chapterWhen, 1, true) == 1 then history.whenLedAt = index end
         if text ~= "" or #f.quotes > 0 then
             history.chapter = history.chapter + 1
-            stories[day.key] = {text = OneStop(text), title = title and title:gsub("^%l", string.upper) or nil, chapter = history.chapter, quotes = f.quotes}
+            stories[day.key] = {text = OneStop(A.JournalAgree and A.JournalAgree(text) or text), title = title and title:gsub("^%l", string.upper) or nil, chapter = history.chapter, quotes = f.quotes}
         else
             stories[day.key] = {text = "", title = nil, chapter = history.chapter, quotes = {}}
         end

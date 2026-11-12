@@ -543,6 +543,16 @@ function L.Short(name)
     if not titled and first ~= rest and (PLAIN_WORDS[first] or rest:find(" of ", 1, true)) then return name end
     return first
 end
+-- The boss's title in lower case ("the high inquisitor", "the witch doctor"), for a telling that
+-- has no pronoun it can vouch for (JournalEpisodes.BossTitle, 2026-11-11); nil without a rank.
+local NO_TITLE = {Old = true, Mad = true, Guard = true}
+function L.Title(name)
+    if not name then return nil end
+    for _, title in ipairs(TITLES) do
+        if name:sub(1, #title + 1) == title .. " " and not NO_TITLE[title] then return "the " .. title:lower() end
+    end
+    return nil
+end
 -- Dungeon stories: why adventurers go in (the old quests' reasons), and what
 -- it is like inside; detail is one concrete thing seen there. Plain sentences, no "you" or "I": both storytellers use
 -- them, for a first visit (why, then inside) and now and then after.
@@ -2845,6 +2855,16 @@ local encounterRegistry = {
 for name, info in pairs(encounterRegistry) do if not B[name] then B[name] = info end end
 
 function L.Boss(name) return name and B[name] end
+-- Every boss the tables know, sorted (the claim check of both books and StoryLint, 2026-11-11).
+local bossNames
+function L.BossNames()
+    if not bossNames then
+        bossNames = {}
+        for name in pairs(B) do bossNames[#bossNames + 1] = name end
+        table.sort(bossNames)
+    end
+    return bossNames
+end
 function L.ZoneLevels(name) return name and A.LoreZoneLevels and A.LoreZoneLevels[name] end
 function L.DungeonLevels(name) return name and A.LoreDungeonLevels and (A.LoreDungeonLevels[name] or A.LoreDungeonLevels[DUNGEON_ALIASES[name]]) end
 

@@ -1,5 +1,15 @@
 # Companion Journal: changes
 
+## 1.26.0 (2026-11-11)
+
+- A bad stretch of deaths is told in a few sentences, in order
+- A killer met again is named once ("the Rot Hides")
+- People are introduced when they arrive, before anything they do
+- Levels and counts go to the chapter's close, not mid-paragraph
+- Bosses get the right pronoun, or none when unknown
+- A run never says a boss died when it did not
+- "Dahlia and Grosh were", not "was"
+
 ## 1.25.0 (2026-11-11)
 
 - Deaths, levels and rare sightings join the sentence where they happened

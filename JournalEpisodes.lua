@@ -189,18 +189,25 @@ local function Fill(run, scenes, opts)
         end
     end
     Sort(run.quests)
-    -- A level inside the run, or with its turn-ins.
+    -- A level inside the run, or with its turn-ins: the last one reached inside the run (the
+    -- level the run came to, told at the kill it came with; round 7, 2026-11-11), else the first
+    -- with its turn-ins. `levels` holds them all, in time order.
     local until_ = math.max(run.left + E.LEVEL_AFTER, (lastTurnIn or 0) + 60)
+    run.levels = {}
+    local function Level(level, t)
+        if t < run.entered or t > until_ then return end
+        run.levels[#run.levels + 1] = {level = level, t = t}
+        local inside = t <= run.left
+        local had = run.level
+        if not had or (inside and (had.t > run.left or t > had.t)) then run.level = {level = level, t = t} end
+    end
     for _, scene in ipairs(scenes) do
         for _, e in ipairs(scene.events or {}) do
-            if e.k == "mylevel" and not run.level and (e.t or 0) >= run.entered and (e.t or 0) <= until_ then
-                run.level = {level = tonumber(e.d) or e.d, t = e.t or 0}
-            end
+            if e.k == "mylevel" then Level(tonumber(e.d) or e.d, e.t or 0) end
         end
-        if scene.kind == "mylevel" and not run.level and (scene.t or 0) >= run.entered and (scene.t or 0) <= until_ then
-            run.level = {level = tonumber(scene.text) or scene.text, t = scene.t or 0}
-        end
+        if scene.kind == "mylevel" then Level(tonumber(scene.text) or scene.text, scene.t or 0) end
     end
+    Sort(run.levels)
     return run
 end
 
@@ -211,22 +218,182 @@ end
 -- shown (the ones before, the first two when four or more), more (how many the shown leave
 -- out)}. The telling makes beats of it: the ones before fell first, then came the goal, who he
 -- is and why he matters, and the kill; the ones after are a tail.
--- A boss's pronoun, for both books (round 5, 2026-11-11): the bosses the lore knows as
--- women take "she"; a beast, an aberration or an elemental with no such name takes "it";
--- the rest "he". Returns subject, object, possessive.
-E.FEMALE_BOSSES = {["Princess Theradras"] = true, ["Charlga Razorflank"] = true, ["Lady Anacondra"] = true, ["Lady Sarevess"] = true,
-    ["Mother Smolderweb"] = true, ["Onyxia"] = true, ["Baroness Anastari"] = true, ["Lady Illucia Barov"] = true, ["Jandice Barov"] = true,
-    ["Instructor Malicia"] = true, ["Mistress Nagmara"] = true, ["Lady Vespira"] = true, ["Lady Falther'ess"] = true,
-    ["High Priestess Mar'li"] = true, ["High Priestess Jeklik"] = true, ["High Priestess Arlokk"] = true, ["Grand Widow Faerlina"] = true,
-    ["Maexxna"] = true, ["Lady Blaumeux"] = true, ["Princess Huhuran"] = true, ["Princess Yauj"] = true, ["Sister Hatelash"] = true,
-    ["Dustwraith"] = true, ["Hazza'rah"] = false}
-function E.BossPronoun(name, lore)
+-- A boss's pronoun, for both books, from data and never from a hand list (round 7,
+-- 2026-11-11; the list it replaces called Whitemane "him"): a title in the name or a gendered
+-- word in the lore's epithet settles it ("Lady", "Princess", "the quilboar matriarch"); else
+-- the texts the addon holds about the boss (the boss's own lines, the reference note, the
+-- dungeon's story, the quest stories) are read for the pronouns their sentences use of the
+-- name ("Whitemane ... her top lieutenants", "Amnennar ... his mind"); a beast, an aberration
+-- or an elemental with no such word is "it". A boss nobody has written of gets no pronoun:
+-- returns nil, and the telling uses the name or the title (E.BossTitle) instead of a guess.
+-- Returns subject, object, possessive. `lore` is L.Boss(name) (optional).
+local FEMALE_WORDS = {lady = true, princess = true, mother = true, mistress = true, sister = true, baroness = true, priestess = true,
+    widow = true, queen = true, empress = true, matriarch = true, daughter = true, broodmother = true}
+local MALE_WORDS = {lord = true, prince = true, father = true, brother = true, baron = true, king = true, emperor = true, patriarch = true,
+    son = true, mr = true}
+local SHE, HE = {she = true, her = true, hers = true, herself = true}, {he = true, him = true, his = true, himself = true}
+local pronounCache = {}
+local function GenderWords(text)
+    local f, m = 0, 0
+    for word in text:lower():gmatch("%a+") do
+        if FEMALE_WORDS[word] then f = f + 1 elseif MALE_WORDS[word] then m = m + 1 end
+    end
+    return f, m
+end
+-- Sentences of a text that name the boss (the full name, or its last word when it is a name of
+-- its own, "Whitemane"), and the pronouns they use.
+local function PronounsAbout(text, name, short)
+    local f, m = 0, 0
+    text = Clean(text):gsub("{%a:([^}]*)}", "%1")
+    for sentence in (text .. "."):gmatch("[^%.!?]+[%.!?]") do
+        local names = sentence:find(name, 1, true) or (short and sentence:find("%f[%w']" .. short:gsub("%p", "%%%0") .. "%f[^%w']"))
+        if names then
+            for word in sentence:lower():gmatch("%a+") do
+                if SHE[word] then f = f + 1 elseif HE[word] then m = m + 1 end
+            end
+        end
+    end
+    return f, m
+end
+local function Texts(t, value)
+    if type(value) == "string" then t[#t + 1] = value
+    elseif type(value) == "table" then for _, v in pairs(value) do Texts(t, v) end end
+end
+function E.BossGender(name, lore)
     name = Clean(name)
-    if E.FEMALE_BOSSES[name] then return "she", "her", "her" end
-    local kind = lore and lore.kind
-    if (kind == "beast" or kind == "aberration" or kind == "elemental") and not name:find("^%u%a+ %u") then return "it", "it", "its" end
-    if kind == "beast" or kind == "aberration" then return "it", "it", "its" end
-    return "he", "him", "his"
+    if pronounCache[name] ~= nil then return pronounCache[name] or nil end
+    local L = A.Lore
+    lore = lore or (L and L.Boss and L.Boss(name))
+    local result
+    -- (the name's own title, then the epithet's noun)
+    local f, m = GenderWords((name:gsub("'s$", "")))
+    if f == 0 and m == 0 and lore and lore.e then f, m = GenderWords(lore.e) end
+    if f > 0 and m == 0 then result = "she" elseif m > 0 and f == 0 then result = "he" end
+    if not result then
+        local short = L and L.Short and L.Short(name)
+        if short == name or (short and short:find(" ", 1, true)) then short = nil end
+        local texts = {}
+        if lore then Texts(texts, {lore.after, lore.afterMore, lore.afterRace}) end
+        local id = A.LoreNoteResolve and A.LoreNoteResolve("n", name)
+        local note = id and A.GetLoreNote and A.GetLoreNote(id)
+        if note and note.body then texts[#texts + 1] = note.body end
+        for _, story in pairs((L and L.dungeonStory) or {}) do
+            if type(story) == "table" then Texts(texts, {story.why, story.inside, story.detail, story.unfinished, story.again, story.after}) end
+        end
+        for _, q in pairs((L and L.questStoryIDs) or {}) do
+            if type(q) == "table" then Texts(texts, {q.why, q.pov, q.after, q.highlight}) end
+        end
+        local sf, sm = 0, 0
+        for _, text in ipairs(texts) do
+            local a, b = PronounsAbout(text, name, short)
+            sf, sm = sf + a, sm + b
+        end
+        if sf > sm then result = "she" elseif sm > sf then result = "he" end
+    end
+    if not result then
+        local kind = lore and lore.kind
+        if kind == "beast" or kind == "aberration" or kind == "elemental" then result = "it" end
+    end
+    pronounCache[name] = result or false
+    return result
+end
+function E.BossPronoun(name, lore)
+    local g = E.BossGender(name, lore)
+    if g == "she" then return "she", "her", "her" end
+    if g == "he" then return "he", "him", "his" end
+    if g == "it" then return "it", "it", "its" end
+    return nil
+end
+-- What stands in for a pronoun nobody can vouch for: the boss's title in lower case ("the
+-- high inquisitor", "the shade" of "Shade of Eranikus"), else the short name.
+function E.BossTitle(name)
+    name = Clean(name)
+    local L = A.Lore
+    local title = L and L.Title and L.Title(name)
+    if title then return title end
+    local head = name:match("^(%u%l+) of %u")
+    if head then return "the " .. head:lower() end
+    return (L and L.Short and L.Short(name)) or name
+end
+-- A sentence that claims a boss's death or defeat (round 7, 2026-11-11): the name (or its short
+-- form) with a kill or death verb about it, and nothing in the sentence that says it still
+-- stands or that someone only wanted it dead. Both books and StoryLint read the same rule, so
+-- "Amnennar was destroyed" is never printed after a run that stopped at the first boss.
+local CLAIM_AFTER = {" was destroyed", " was dead", " were dead", " was killed", " were killed", " was slain", " were slain", " lay dead",
+    " lies dead", " fell", " died", " was no more", " was finished", " was gone", " did not live", " did not outlive", " was beaten", " was overcome",
+    " was defeated", " had died", " had fallen", " had been killed", " had been destroyed", " was finally dead", " no longer lived",
+    "'s head", "'s heart", "'s skull", "'s death", "'s fall", "'s corpse", "'s body"}
+local CLAIM_BEFORE = {"killed ", "slew ", "slain ", "destroyed ", "brought down ", "cut down ", "put an end to ", "laid waste to ", "ended ",
+    "beheaded ", "finished ", "dealt with ", "defeated ", "overcame ", "struck down ", "put down ", "the death of ", "the fall of ", "the end of ",
+    "an end to ", "rid of "}
+local CLAIM_NOT = {"wanted", "would ", "could ", "to kill", "unbeaten", "still ", "had not", "not yet", "left ", "where ", " stood", "if ",
+    "before ", "until ", "to end ", "to destroy", "to slay", "to put", "to bring", "to finish", "asked ", "sent ", "meant to", "hoped", "must ",
+    "should ", "whether", "orders", "ordered", "wants", "no time", "to see ", "to be ", "the time before", "earlier", "once ", "had lost ",
+    "against", "beat ", "first time", "the first", "the second"}
+function E.ClaimsDeath(sentence, name)
+    local plain = Clean(sentence):gsub("{%a:([^}]*)}", "%1")
+    local L = A.Lore
+    local short = L and L.Short and L.Short(name)
+    local forms = {Clean(name)}
+    -- (a short form that is a name of its own: never "The" of "The Unforgiven")
+    if short and short ~= Clean(name) and not short:find(" ", 1, true) and #short >= 4 and short:lower() ~= "the" then forms[#forms + 1] = short end
+    -- (the clause that names the boss: a claim of it never leans on the clauses around it)
+    local clauses = {}
+    for piece in (plain .. "; "):gmatch("(.-)[;,] ") do
+        local last = clauses[#clauses]
+        local joins = piece:match("^(and) ") or piece:match("^(but) ") or piece:match("^(though) ") or piece:match("^(for) ") or piece:match("^(so) ") or piece:match("^(while) ")
+        if last and not joins then
+            clauses[#clauses] = last .. ", " .. piece
+        else
+            clauses[#clauses + 1] = joins and piece:sub(#joins + 2) or piece
+        end
+    end
+    for _, clause in ipairs(clauses) do
+        local low = clause:lower()
+        local at, after
+        for _, form in ipairs(forms) do
+            local s, e = low:find("%f[%w']" .. form:lower():gsub("%p", "%%%0") .. "%f[^%w]")
+            if s and (not at or s < at) then at, after = s, e end
+        end
+        if at then
+            local blocked = false
+            for _, w in ipairs(CLAIM_NOT) do if low:find(w, 1, true) then blocked = true end end
+            if low:find("%f[%a]me%f[%A]") and (low:find("killed me") or low:find("got me") or low:find("fell to ")) then blocked = true end
+            if not blocked then
+                -- (a list after the name, "Whitemane, Mograine, Herod and Loksey were dead")
+                local tail = clause:sub(after + 1)
+                local n = 1
+                while n > 0 do tail, n = tail:gsub("^,? ?and %u[%w']*", ""); if n == 0 then tail, n = tail:gsub("^, %u[%w']*", "") end end
+                tail = tail:lower()
+                for _, w in ipairs(CLAIM_AFTER) do if tail:sub(1, #w) == w then return true end end
+                local head = low:sub(1, at - 1)
+                for _, w in ipairs(CLAIM_BEFORE) do
+                    local p = head:find(w, 1, true)
+                    if p and #head - (p + #w) < 40 then return true end
+                end
+            end
+        end
+    end
+    return false
+end
+-- The sentences of a text that claim a death the kills do not support are removed: `killed(name)`
+-- says whether a boss was killed (today or before). Returns the text that is left (nil when
+-- none is) and how many sentences went.
+function E.WithoutUnkilledClaims(text, killed, names)
+    if not text or text == "" then return text, 0 end
+    local L = A.Lore
+    names = names or (L and L.BossNames and L.BossNames()) or {}
+    local kept, dropped = {}, 0
+    for sentence in (tostring(text) .. " "):gmatch("(.-[%.!?]['\"]?)%s") do
+        local bad = false
+        for _, name in ipairs(names) do
+            if not killed(name) and E.ClaimsDeath(sentence, name) then bad = true; break end
+        end
+        if bad then dropped = dropped + 1 else kept[#kept + 1] = sentence end
+    end
+    if dropped == 0 then return text, 0 end
+    if #kept == 0 then return nil, dropped end
+    return table.concat(kept, " "), dropped
 end
 
 function E.ShapeKills(names, isGoal, isLord)

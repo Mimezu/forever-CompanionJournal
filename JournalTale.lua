@@ -4758,7 +4758,8 @@ function T.Tell(person, days, voice, player, brief)
                 tokens.lastKill = lastKill and Place(lastKill) or tokens.lord
                 -- (the lord's own pronoun, never the companion's "{they}": that one leaked into later
                 -- lines, "Bryn came along, as he did", 2026-11-06 review)
-                tokens.lordThey = (L.Boss and L.Boss(lordHere) and L.Boss(lordHere).she) and "she" or "he"
+                -- (from the data, round 7 2026-11-11; none the data vouches for bans the line that needs one)
+                tokens.lordThey = (A.JournalEpisodes and A.JournalEpisodes.BossPronoun and A.JournalEpisodes.BossPronoun(lordHere)) or false
                 if lordBeat and PB.dungeonFellShort then
                     Add(teller:Say("dungeonFellShort", PB.dungeonFellShort, rng, tokens))
                     TitleFrom(72, "fellShort")
@@ -4960,8 +4961,62 @@ function T.Tell(person, days, voice, player, brief)
             lastTail = Tail(line)
             return line
         end
+        -- Several deaths of yours as one sentence (reader G, 2026-11-11): from the item at i, the
+        -- deaths of yours left in the moment when one killer (or one kind of killer) took them all
+        -- ("Foe Reaper 4000 killed you three times more, and Faelyn brought you back each time"), or
+        -- the ones between the first and the last when there are three or more of yours ("Twice more
+        -- you died, once to Grimungus, and Pip fell twice"). Their falls inside it by count; a known
+        -- hand's raises as a clause, a stranger's as a sentence after. A raise you gave inside it
+        -- keeps the finer telling.
+        local function RaiserInParty(by, rt)
+            local first = by:match("^(%S+)") or by
+            if first:lower() == tostring(FirstName(person) or ""):lower() then return true end
+            for _, x2 in ipairs(ownJournal or {}) do
+                if x2.k == "with" and x2.n and (Clean(x2.n):gsub("%-.*$", "")):lower() == first:lower() and (x2.t or 0) <= rt and (x2.e or x2.t or 0) >= rt then return true end
+            end
+            return false
+        end
+        local function GroupAt(m, i)
+            if not PB.dieGroup or not A.FoeFamily then return nil end
+            local yours, before = {}, false
+            for j = 1, i - 1 do if m[j].w == "you" then before = true end end
+            for j = i, #m do if m[j].w == "you" then yours[#yours + 1] = j end end
+            if #yours < 2 then return nil end
+            local names, flags = {}, {}
+            for k, j in ipairs(yours) do
+                if not PlainFoe(m[j]) then return nil end
+                names[k], flags[k] = Clean(m[j].d), m[j].a
+            end
+            local fam, to = A.FoeFamily(names, flags), nil
+            if fam then to = #m
+            elseif before and #yours >= 3 then to = yours[#yours] - 1
+            else return nil end
+            -- (a stranger's raise is a sentence at its time: the group ends on the death it answered;
+            -- a stranger's raise on the first death leaves it to its own line)
+            for k, j in ipairs(yours) do
+                if j > to then break end
+                local rt = S.RezAfter(m[j].t)
+                local by = rt and rt ~= true and f.rezBy and f.rezBy[rt]
+                if by and not RaiserInParty(by, rt) and j < to then
+                    if k == 1 then return nil end
+                    to = j
+                    break
+                end
+            end
+            -- (the killers the deaths of the group share, if any)
+            local kept, keptFlags = {}, {}
+            for k, j in ipairs(yours) do if j <= to then kept[#kept + 1] = names[k]; keptFlags[#keptFlags + 1] = flags[k] end end
+            if #kept < 2 then return nil end
+            fam = A.FoeFamily(kept, keptFlags)
+            if not fam and not before then return nil end
+            local t0, t1 = m[i].t or 0, m[to].t or 0
+            for _, t in ipairs(f.rezGivenT or {}) do if t >= t0 and t <= t1 then return nil end end
+            return {from = i, to = to, fam = fam, before = before}
+        end
+        local function Times(n) return n == 1 and "once" or Count(n) end
         for _, m in ipairs(moments) do
         local momentStart = #out
+        local grouped = false
         local i = 1
         while i <= #m do
             local e = m[i]
@@ -4969,7 +5024,87 @@ function T.Tell(person, days, voice, player, brief)
             S.Stamp(e.t, e.z or mainZone) -- (stamped: the death; its raise goes with it)
             S.e = e
             tokens.place = Place(e.z or mainZone or "the wilds")
-            if e.w ~= "you" then
+            local G = GroupAt(m, i)
+            if G then
+                local mine, theirs = {}, 0
+                for j = G.from, G.to do if m[j].w == "you" then mine[#mine + 1] = m[j] else theirs = theirs + 1 end end
+                S.e = mine[1]
+                tokens.more = G.before and " more" or ""
+                tokens.count = Times(#mine)
+                local meWord = (teller.base and teller.base.me) or "you"
+                if not G.before and #mine >= 3 then
+                    local minutes = math.max(1, math.floor(((m[G.to].t or 0) - (m[G.from].t or 0)) / 60 + 0.5))
+                    tokens.count = tokens.count .. " in " .. ((minutes <= 5 and "a few minutes") or (minutes <= 12 and "ten minutes") or (minutes <= 20 and "a quarter of an hour") or (minutes <= 40 and "half an hour") or "an hour")
+                end
+                tokens.fam = G.fam and (G.fam:match("^the (.*)$") and ("the {p:" .. G.fam:match("^the (.*)$") .. "}") or ("{p:" .. G.fam .. "}")) or nil
+                tokens.Fam = tokens.fam and Cap(tokens.fam) or nil
+                tokens.Count = Cap(tokens.count)
+                tokens.with = theirs > 0 and (", and {n:" .. FirstName(person) .. "} fell " .. Times(theirs)) or ""
+                -- the raises that answered these deaths: by hand
+                local hands, handOrder, strangers = {}, {}, {}
+                for _, x in ipairs(mine) do
+                    S.KilledAgain(x.d)
+                    local rt = S.RezAfter(x.t)
+                    if rt then
+                        S.rezTold[rt] = true
+                        local by = rt ~= true and f.rezBy and f.rezBy[rt]
+                        local first, inParty = FirstName(person), true
+                        if by then
+                            first = by:match("^(%S+)") or by
+                            inParty = first:lower() == tostring(FirstName(person) or ""):lower()
+                            for _, x2 in ipairs(ownJournal or {}) do
+                                if x2.k == "with" and x2.n and (Clean(x2.n):gsub("%-.*$", "")):lower() == first:lower() and (x2.t or 0) <= rt and (x2.e or x2.t or 0) >= rt then inParty = true end
+                            end
+                            S.rezHands = S.rezHands or {}
+                            local hand = S.rezHands[first:lower()]
+                            if not hand then
+                                hand = {total = 0, said = 0}
+                                for _, b2 in pairs(f.rezBy) do if (tostring(b2):match("^(%S+)") or tostring(b2)):lower() == first:lower() then hand.total = hand.total + 1 end end
+                                S.rezHands[first:lower()] = hand
+                            end
+                            hand.said = hand.said + 1
+                        else rezSaid = true end
+                        if inParty then
+                            local key = "{n:" .. first .. "}"
+                            if not hands[key] then hands[key] = 0; handOrder[#handOrder + 1] = key end
+                            hands[key] = hands[key] + 1
+                        else strangers[#strangers + 1] = "{n:" .. by .. "}" end
+                    end
+                end
+                tokens.raised = ""
+                if #handOrder == 1 then
+                    local by, n = handOrder[1], hands[handOrder[1]]
+                    -- (the one who fell is the one who raised me: "Pip fell twice and raised me once")
+                    local same = tokens.with ~= "" and by == "{n:" .. FirstName(person) .. "}"
+                    if n == #mine then tokens.raised = (same and " and brought " or (", and " .. by .. " brought ")) .. meWord .. " back each time"
+                    else tokens.raised = (same and " and raised " or (", and " .. by .. " raised ")) .. meWord .. " " .. Times(n) end
+                elseif #handOrder >= 2 then
+                    local n = 0
+                    for _, by in ipairs(handOrder) do n = n + hands[by] end
+                    tokens.raised = ", and " .. List(handOrder) .. " raised " .. meWord .. " " .. Times(n) .. " between them"
+                end
+                if tokens.with ~= "" and tokens.raised:find("^, and ") then tokens.raised = tokens.raised:gsub("^, and ", ", while ") end
+                local pool
+                if G.fam then pool = (not G.before and PB.dieGroupAll) or PB.dieGroup
+                else
+                    -- (one killer with a name among kinds: named here, unless the last death names it)
+                    local named, namedCount, namedRaw = nil, 0, nil
+                    for _, x in ipairs(mine) do if not (Foe(x.d, x.a):find("^an? ")) then namedCount = namedCount + 1; named = Foe(x.d, x.a); namedRaw = Clean(x.d) end end
+                    local last = m[#m]
+                    if last.w == "you" and last.d and Clean(last.d) == namedRaw then namedCount = 0 end
+                    if namedCount == 1 and PB.dieGroupNamed then tokens.named = named; pool = PB.dieGroupNamed else pool = PB.dieGroupMixed end
+                end
+                Add(teller:Say("dieGroup", pool, rng, tokens))
+                TitleFrom(65, "death")
+                mood.grim = true
+                for _, by in ipairs(strangers) do
+                    tokens.raiser = by
+                    Add(teller:Say("rezStranger", PB.rezStranger or PB.rezOther, rng, tokens))
+                end
+                Anchor(mine[#mine], beforeDeath)
+                grouped = true
+                i = G.to + 1
+            elseif e.w ~= "you" then
                 -- theirs, up to your next death of the moment (or a raise you gave between two of theirs)
                 local n, j = 0, i
                 while j <= #m and m[j].w ~= "you" do
@@ -4982,6 +5117,7 @@ function T.Tell(person, days, voice, player, brief)
                 if yours and PlainFoe(yours) and (yours.t or 0) - (m[j - 1].t or 0) <= 10 * 60 and PB.momentBothOnce and PB.momentBothTimes then
                     -- theirs, then yours: one sentence
                     S.e = yours
+                    S.KilledAgain(yours.d)
                     tokens.killer = Foe(yours.d, yours.a)
                     tokens.count = Count(n)
                     local key = (again and n == 1 and PB.momentBothAgain and "momentBothAgain") or (n == 1 and "momentBothOnce") or "momentBothTimes"
@@ -5019,6 +5155,7 @@ function T.Tell(person, days, voice, player, brief)
                 local k, withThem = i + 1, 0
                 while m[k] and m[k].w ~= "you" and (m[k].t or 0) - (e.t or 0) <= 90 do withThem = withThem + 1; k = k + 1 end
                 if withThem > 0 and PlainFoe(e) and PB.dieWithThem then
+                    S.KilledAgain(e.d)
                     tokens.killer = Foe(e.d, e.a)
                     Add(SayD("dieWithThem", PB.dieWithThem))
                     if e.d and not tokens.killer:find("^an? ") and titleRng() < 0.6 and not Recent("from:death", 65) then Title(65, Short(e.d), "from:death")
@@ -5102,8 +5239,9 @@ function T.Tell(person, days, voice, player, brief)
                 end
             end
         end
-        -- (a bad moment, four deaths or more: the count once, folded on its last line)
-        if #m >= 4 and #out > momentStart and PB.deathsCountClause then
+        -- (a bad moment, four deaths or more: the count once, folded on its last line; a group
+        -- sentence carries its own count)
+        if #m >= 4 and #out > momentStart and PB.deathsCountClause and not grouped then
             local last = out[#out]
             local theirs = 0
             for _, x in ipairs(m) do if x.w ~= "you" then theirs = theirs + 1 end end
@@ -5293,6 +5431,21 @@ function T.Tell(person, days, voice, player, brief)
                     local moment = QD.Moment(e, Tok(e.act and e.act.solo), QD.Variant(QD.Key(e.quest), nil, true), true, nil,
                         history.questLore[QD.Key(e.quest)] == true)
                     if history.questLore[QD.Key(e.quest)] ~= true then moment = S.RunQuest(e, moment, Tok(e.act and e.act.solo), QD.Variant(QD.Key(e.quest), nil, true)) end
+                    -- (round 7, 2026-11-11: a sentence that claims a boss's death the record never had, today or
+                    -- on an earlier day, is left out; nothing left means the plain hand-in)
+                    if moment and A.JournalEpisodes and A.JournalEpisodes.WithoutUnkilledClaims then
+                        local function Killed(name)
+                            if history.bosses[name] then return true end
+                            for _, d in ipairs(f.dungeons) do
+                                for _, ev in ipairs(d.events) do if ev.k == "boss" and ev.d and Clean(ev.d) == name then return true end end
+                            end
+                            return false
+                        end
+                        local kept, dropped = A.JournalEpisodes.WithoutUnkilledClaims(moment, Killed)
+                        if dropped > 0 then
+                            moment = kept or ((Tok(e.act and e.act.solo).We or "We") .. " saw {q:" .. tostring(e.quest.title):gsub("[{}]", "") .. "} through.")
+                        end
+                    end
                     -- (round 4: "He hoped to learn ..." with no one named before it: the giver's name)
                     do
                         local pro = moment and (moment:match("^(He) ") or moment:match("^(She) "))
@@ -6698,7 +6851,9 @@ function T.Tell(person, days, voice, player, brief)
                 end
             end
         end
-        stories[day.key] = {text = OneStop(S.planned and T.PlanText(out, outBeat, outT, S.Z, Place, S) or T.Paragraphs(out, outBeat, runGroups)), quotes = f.quotes, chapter = chapter, two = tellsTwo or nil, title = chapterTitle}
+        local chapterText = S.planned and T.PlanText(out, outBeat, outT, S.Z, Place, S) or T.Paragraphs(out, outBeat, runGroups)
+        if A.JournalAgree then chapterText = A.JournalAgree(chapterText) end
+        stories[day.key] = {text = OneStop(chapterText), quotes = f.quotes, chapter = chapter, two = tellsTwo or nil, title = chapterTitle}
 
         -- remember the last three kinds of title.
         if title then

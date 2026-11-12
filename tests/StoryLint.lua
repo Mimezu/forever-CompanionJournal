@@ -101,6 +101,7 @@ Rule("level-twice", true, "the same level number said more than once in a chapte
 Rule("dungeon-twice", true, "a dungeon entered twice in one chapter")
 Rule("death-count-wrong", true, "a death count that does not match the record")
 Rule("pair-three", true, "\"the pair of you\" with three or more present")
+Rule("boss-unkilled", true, "a death or defeat claimed of a boss the record never killed, today or before (\"Amnennar was destroyed\")")
 -- soft: reading faults, counted
 Rule("lower-start", false, "a sentence that starts in lower case")
 Rule("stranger-met-today", false, "someone first met that day called a stranger when they raise you")
@@ -138,6 +139,8 @@ Rule("clock-chain", false, "three or more sentences in a chapter opening on the 
 Rule("lone-seam-line", false, "a short death, rare-creature, level or transit sentence standing between two longer sentences that ignore it")
 Rule("unanchored-the", false, "a chapter opening on \"the <thing>\" (\"with the engraved ring\") the book never showed before")
 Rule("close-untold-place", false, "a close that says where the night began at a place the chapter never told")
+Rule("name-first-in-death", false, "a person first named inside a death sentence or a list of names, with no entry")
+Rule("body-tally", false, "a tally sentence (veins, fish, bars, herbs) in the body of a chapter, not its close")
 
 local function Flag(rule, where, example)
     local r = RULES[rule]
@@ -274,8 +277,15 @@ end
 
 -- The reading ---------------------------------------------------------------------------------
 local DUMP = os.getenv("DUMP")   -- DUMP=<life key> prints every chapter of that life as it is read
+-- (every boss the lore tables know, with its short form, for the claim check)
+local BOSSES = {}
+for _, name in ipairs((A.Lore.BossNames and A.Lore.BossNames()) or {}) do
+    local short = A.Lore.Short and A.Lore.Short(name)
+    BOSSES[#BOSSES + 1] = {name = name, short = (short and short ~= name and not short:find(" ", 1, true) and #short >= 4 and short:lower() ~= "the") and short or nil}
+end
 local function Read(where, plain, rec, present, known, people, bookSeen, book)
     if DUMP and where.life == DUMP then print(("---- %s/%s/%s/%s ch.%d\n%s\n"):format(where.life, where.book, where.teller, where.voice, where.chapter, plain)) end
+    book.killed = book.killed or {}
     local paras = Paragraphs(plain)
     local allSentences = {}
     local placeList = {}
@@ -319,6 +329,16 @@ local function Read(where, plain, rec, present, known, people, bookSeen, book)
             allSentences[#allSentences + 1] = s
             local low = s:lower()
             if s:match("^%l") then Flag("lower-start", where, s) end
+            -- a boss said dead that the record never killed, today or on an earlier day of this book
+            if A.JournalEpisodes and A.JournalEpisodes.ClaimsDeath then
+                for _, b in ipairs(BOSSES) do
+                    if not rec.bosses[b.name] and not book.killed[b.name]
+                        and (s:find(b.name, 1, true) or (b.short and s:find("%f[%w']" .. Esc(b.short) .. "%f[^%w]")))
+                        and A.JournalEpisodes.ClaimsDeath(s, b.name) then
+                        Flag("boss-unkilled", where, b.name .. ": " .. s)
+                    end
+                end
+            end
             -- duplicate name in a list
             local a, b = s:match("(%u[%w']+) and (%u[%w']+)")
             if a and a == b then Flag("dup-name-list", where, s) end
@@ -505,6 +525,35 @@ local function Read(where, plain, rec, present, known, people, bookSeen, book)
             local body = plain:sub(1, #plain - #last)
             if not body:find(bare, 1, true) then Flag("close-untold-place", where, last) end
         end
+        -- lane P7: a person enters the book once, with who they are, before anything they do; a
+        -- tally is never a sentence of the body (the last three sentences are the close)
+        do
+            local names = {}
+            for n in pairs(present) do names[n] = true end
+            for n in pairs(rec.pdeaths) do names[n] = true end
+            for _, n in ipairs(rec.rezBy) do names[n] = true end
+            local before = book.text or ""
+            for name in pairs(names) do
+                local e = Esc(name)
+                if not known[name] and not before:find("%f[%w]" .. e .. "%f[%W]") then
+                    local first
+                    for _, s in ipairs(allSentences) do if s:find("%f[%w]" .. e .. "%f[%W]") then first = s; break end end
+                    if first then
+                        local entry = Any(first, {e .. ", an? ", e .. ", my ", e .. ", whom", e .. ", who ", e .. ", though", "named " .. e, e .. ", a stranger", e .. ", barely",
+                            "joined", "caught up with", "fell in with", "with me", "at my side", "was with", "were with", "came along", "went on together",
+                            "went with", "walked with", "there too", "filled out the party", " along%.", "^With you went", "^With us went", "^With me went", "with you"})
+                        local listed = Any(first, {"%u%l+, " .. e .. "%f[%W]", e .. ", %u%l", " and " .. e .. "%f[%W]", e .. " and %u%l"})
+                        if not entry and (IsDeath(first) or listed) then Flag("name-first-in-death", where, name .. ": " .. first) end
+                    end
+                end
+            end
+            for i, s in ipairs(allSentences) do
+                if i <= #allSentences - 3 then
+                    local low = s:lower()
+                    for _, t in ipairs(TALLY) do if low:find(t) then Flag("body-tally", where, s); break end end
+                end
+            end
+        end
         book.text = (book.text or "") .. " " .. plain
     end
     if deathSentences >= 5 then Flag("death-ledger", where, ("%d death sentences: %s"):format(deathSentences, Short(plain))) end
@@ -567,7 +616,9 @@ local function Tell(life, me, people, source)
                 chaptersRead = chaptersRead + 1
                 local present, known = Party(me.journal, d.key)
                 local where = {life = life, book = "own", teller = teller, voice = "i", chapter = s.chapter or 0, source = source}
-                sentencesRead = sentencesRead + Read(where, A.JournalPlain(s.text), Record(me.journal, d.key), present, known, peopleNames, bookSeen, book)
+                local rec = Record(me.journal, d.key)
+                sentencesRead = sentencesRead + Read(where, A.JournalPlain(s.text), rec, present, known, peopleNames, bookSeen, book)
+                for b in pairs(rec.bosses) do book.killed[b] = true end
             end
         end
         local player = {name = me.name, race = me.race, faction = me.faction, class = me.class, charKey = me.charKey}
@@ -584,7 +635,9 @@ local function Tell(life, me, people, source)
                         local present, known = Party(me.journal, d.key)
                         present[First(person.name)] = nil
                         local where = {life = life, book = First(person.name), teller = teller, voice = voice, chapter = s.chapter or 0, source = source}
-                        sentencesRead = sentencesRead + Read(where, A.JournalPlain(s.text), Record(person.journal, d.key), present, known, peopleNames, cSeen, cbook)
+                        local rec = Record(person.journal, d.key)
+                        sentencesRead = sentencesRead + Read(where, A.JournalPlain(s.text), rec, present, known, peopleNames, cSeen, cbook)
+                        for b in pairs(rec.bosses) do cbook.killed[b] = true end
                     end
                 end
             end

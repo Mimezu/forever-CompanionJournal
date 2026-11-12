@@ -878,7 +878,7 @@ PB.theyDieBoss = {"{boss} killed {name}.", "{name} died fighting {boss}.", "{nam
 -- PB.rez. Truth: the engine picks "close" when the tier is close even if nobody was ever
 -- raised before, so "as {they} had before" can be false. Pick "close" only when
 -- history.rez > 0 (CRITIQUE 6.7).
-PB.rez.new = {"{name} raised {me} from death, a stranger's kindness.", "{name}, barely more than a stranger, brought {me} back from death."}
+PB.rez.new = {"{name} raised {me} from death, early as it was between {us}.", "{name} brought {me} back from death, and it was early days between {us}."}
 PB.rez.companion = {"{name} brought {me} back from death.", "{name} raised {me} from death.", "{name} was there to bring {me} back."}
 PB.rez.close = {
     "{name} brought {me} back, {countTimes} now.",
@@ -1918,7 +1918,8 @@ for w in ("Enforcer Neophyte Cultist Warrior Zealot Gnoll Murloc Spider Duskbat 
     .. "Dwarf Orc Troll Gnome Human Elf Tauren Goblin Naga Dryad Dragonkin Makrura Nerubian Silithid Hornet Hatchling "
     .. "Matriarch Patriarch Broodling Fledgling Spiderling Pup Cub Bull Cow Ram Ewe Doe Buck Toad Frog Lizard Gecko "
     .. "Hide Savage Mongrel Bruiser Lookout Headhunter Axethrower Berserker Mercenary Shredder Operator Deforester Wrangler Drudger "
-    .. "Ursa Frostsaber Walker Shambler Bonewarder Logger Marauder Interloper Snowstrider Runt Myrmidon Snapjaw Nightsaber Wisp"):gmatch("%a+") do
+    .. "Ursa Frostsaber Walker Shambler Bonewarder Logger Marauder Interloper Snowstrider Runt Myrmidon Snapjaw Nightsaber Wisp "
+    .. "Deathwalker Shadowhunter Legionnaire Ambusher Prisoner Moonwalker"):gmatch("%a+") do
     A.FoeKinds[w] = true
 end
 -- (a kind word that is part of a species name keeps its capital when a teller lowers the kind:
@@ -1953,6 +1954,10 @@ function A.FoeNamed(name, flag)
     if words == 1 then return not A.FoeKinds[first or ""] end
     -- ("Son of Arugal", "Servant of Grol": a kind in front of "of" is one of many)
     if name:find(" of ", 1, true) and A.FoeKindsOf[first or ""] then return false end
+    -- ("Atal'ai Deathwalker", "Sen'jin Watcher": the apostrophe in a tribe's name does not make a
+    -- person of a kind, round 7 2026-11-11)
+    if A.FoeKinds[last] and name:find("'", 1, true) and not name:match("[%w']*'[%w']*$") and not name:find(" the ", 1, true)
+        and not name:find(" of ", 1, true) then return false end
     if name:find("'", 1, true) or name:find(" the ", 1, true) or name:find(" of ", 1, true) or name:match("^[Tt]he ") then return true end
     if A.FoeKinds[last] then return false end
     -- (an agent noun at the end is a kind: Tunneler, Gravedigger, Windcaller)
@@ -1997,6 +2002,78 @@ function A.FoeName(name, flag)
         name = name:lower()
     end
     return (name:match("^[aeiouAEIOU]") and "an " or "a ") .. name
+end
+-- The killers of several deaths as one (reader G, 2026-11-11: a repeated killer is named once,
+-- "the Rot Hides killed me three times"). A.FoeFamily(names, flags) -> "the Rot Hides", "the
+-- Mountain buzzards", "the Venture Co.", "Foe Reaper 4000", or nil when the names share nothing
+-- worth a name. The same name every time: a proper name bare, a kind in the plural; different
+-- names: the longest run of words they all share, when it is a known tribe or company
+-- (A.FoeTribes) or two words ending in a kind noun ("Rot Hide" from "Raging Rot Hide", "Rot
+-- Hide Brute" and "Rot Hide Savage"). Plain text, no markup.
+A.FoeTribes = {}
+for pair in ("Defias=the Defias;Scarlet=the Scarlets;Searing Blade=the Searing Blade;Venture Co.=the Venture Co.;Rot Hide=the Rot Hides;"
+    .. "Razormane=the Razormane;Kolkar=the Kolkar;Magram=the Magram;Gelkis=the Gelkis;Galak=the Galak;Grimtotem=the Grimtotem;"
+    .. "Crushridge=the Crushridge;Boulderfist=the Boulderfist;Blackwood=the Blackwood;Vilebranch=the Vilebranch;Witherbark=the Witherbark;"
+    .. "Bloodscalp=the Bloodscalp;Skullsplitter=the Skullsplitters;Winterfall=the Winterfall;Timbermaw=the Timbermaw;Deadwood=the Deadwood;"
+    .. "Nightbane=the Nightbane;Shadowfang=the Shadowfang;Moonrage=the Moonrage;Bloodfury=the Bloodfury;Redridge=the Redridge;"
+    .. "Silvermane=the Silvermane;Syndicate=the Syndicate;Deviate=the Deviate;Burning Blade=the Burning Blade;Blackrock=the Blackrock;"
+    .. "Dark Iron=the Dark Irons;Mosshide=the Mosshides;Riverpaw=the Riverpaw;Twilight=the Twilight's Hammer;Dalaran=the Dalaran;"
+    .. "Moonstalker=the Moonstalkers;Bristleback=the Bristleback;Mottled=the Mottled;Harvest=the Harvest golems;Scourge=the Scourge;"
+    .. "Cursed=the Cursed;Hillsbrad=the Hillsbrad;Wailing=the Wailing;Hatecrest=the Hatecrest;Mirefin=the Mirefin;Smolderthorn=the Smolderthorn;"
+    .. "Blackwater=the Blackwater pirates;Southsea=the Southsea pirates;Zalazane=Zalazane's;Sunscale=the Sunscale;Kodo=the kodo;"
+    .. "Gnoll=the gnolls;Murloc=the murlocs;Quilboar=the quilboar;Ogre=the ogres;Centaur=the centaur;Harpy=the harpies;Troll=the trolls;"
+    .. "Kobold=the kobolds;Gnome=the gnomes;Naga=the naga;Furbolg=the furbolg;Satyr=the satyrs"):gmatch("([^;]+)") do
+    local key, text = pair:match("^(.-)=(.*)$")
+    if key then A.FoeTribes[key] = text end
+end
+local PLURAL_SAME = {spawn = true, kin = true, folk = true, fish = true, deer = true, sheep = true, elk = true, moose = true, kodo = true, naga = true,
+    quilboar = true, furbolg = true, centaur = true, murloc = false}
+local function PluralWord(w)
+    local low = w:lower()
+    if w:find("[^%a]$") or low:find("s$") then return w end
+    for same in pairs(PLURAL_SAME) do if PLURAL_SAME[same] and low:find(same .. "$") then return w end end
+    if low:find("man$") then return w:sub(1, -4) .. (w:sub(-3, -3) == "M" and "Men" or "men") end
+    if low:find("wolf$") or low:find("elf$") then return w:sub(1, -2) .. "ves" end
+    if low:find("[^aeiou]y$") then return w:sub(1, -2) .. "ies" end
+    if low:find("[xz]$") or low:find("ch$") or low:find("sh$") then return w .. "es" end
+    return w .. "s"
+end
+function A.FoeFamily(names, flags)
+    if type(names) ~= "table" or #names == 0 then return nil end
+    local clean = {}
+    for i, n in ipairs(names) do
+        if type(n) ~= "string" or n == "" then return nil end
+        clean[i] = n:gsub("[{}%[%]|]", "")
+    end
+    local same = true
+    for i = 2, #clean do if clean[i] ~= clean[1] then same = false end end
+    if same then
+        local flag = flags and flags[1]
+        if A.FoeNamed(clean[1], flag) then return clean[1] end
+        local shown = A.FoeName(clean[1], flag):gsub("^an? ", "")
+        local before, after = shown:match("^(.-) of (.*)$")
+        local head = before and before:match("(%a+)$") or ""
+        if before and A.FoeKindsOf[head:sub(1, 1):upper() .. head:sub(2)] then return "the " .. PluralWord(before) .. " of " .. after end
+        return "the " .. shown:gsub("(%S+)$", PluralWord)
+    end
+    local words = {}
+    for w in clean[1]:gmatch("%S+") do words[#words + 1] = w end
+    for len = #words, 1, -1 do
+        for start = 1, #words - len + 1 do
+            local run = table.concat(words, " ", start, start + len - 1)
+            local all = true
+            for i = 2, #clean do if not (" " .. clean[i] .. " "):find(" " .. run .. " ", 1, true) then all = false; break end end
+            if all then
+                if A.FoeTribes[run] then return A.FoeTribes[run] end
+                local last = run:match("(%a+)$") or ""
+                if len >= 2 and A.FoeKinds[last] then
+                    if not A.FoeKindsProper[last] then run = run:sub(1, #run - #last) .. last:lower() end
+                    return "the " .. run:gsub("(%S+)$", PluralWord)
+                end
+            end
+        end
+    end
+    return nil
 end
 
 ---------------------------------------------------------------------------
@@ -2106,6 +2183,15 @@ PB.rezOtherClause = {"{raiser} brought {me} back", "{raiser} raised {me}"}
 PB.rezStranger = {"{raiser}, a stranger, stopped to raise {me}.", "{raiser}, a stranger, brought {me} back from death."}
 -- A count folded on the last line of a bad moment (four deaths or more): "..., five deaths in ten minutes between {us}".
 PB.deathsCountClause = {"{count} deaths in {span} between {us}", "{count} deaths between {us} in {span}"}
+-- Several deaths of yours as one sentence (reader G, 2026-11-11): the killer, or the kind of killer,
+-- named once ({fam}: "Foe Reaper 4000", "the Rot Hides", "the Withered Battle boars"; {count}: "three
+-- times", "four times in half an hour"; {more}: " more" after a first death told on its own; {with}:
+-- ", and Pip fell twice" or nothing; {raised}: ", and Faelyn brought you back each time" or nothing).
+PB.dieGroup = {"{Fam} killed {me} {count}{more}{with}{raised}.", "{Count}{more} {fam} killed {me}{with}{raised}."}
+PB.dieGroupAll = {"{Fam} killed {me} {count}{with}{raised}."}
+-- killers of every kind: the count, and the one with a name among them ({named})
+PB.dieGroupMixed = {"{Count}{more} {I} died{with}{raised}.", "{Count}{more} {I} went down{with}{raised}."}
+PB.dieGroupNamed = {"{Count}{more} {I} died, once to {named}{with}{raised}."}
 -- The level a run brought, as a clause on the run's closing sentence ("..., and the run took you
 -- to level 17"): never a tally of its own, never "came with it".
 PB.runLevelClause = {

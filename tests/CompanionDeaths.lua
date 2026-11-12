@@ -5,6 +5,9 @@
 -- retells the descent); deaths in later zones are told in time order with the raise the
 -- companion gave; a generic foe takes "a", a named one none; with three in the party the
 -- chapter never says "the pair of you". Every retell 0-7 in both voices, and the planned path.
+-- Reader G (2026-11-11): several deaths of yours to one killer, or between the first and the
+-- last of a bad moment, are one sentence with the killer named once, the companion's falls by
+-- count and the raises as a clause; the companion is never a stranger in its own book.
 local root = "Interface/AddOns/CompanionJournal/"
 local assertions = 0
 local function check(value, message) assertions = assertions + 1; assert(value, message) end
@@ -350,7 +353,10 @@ local function Fuzz(seed)
             else check(not text:find("went back down", 1, true), "no retry told" .. tag) end
             if wipe then check(Article(text, wipeFoe) and text:find(first .. " fell", 1, true), "the wipe names the foe with its article and their fall" .. tag) end
             for _, foe in ipairs(foes) do
-                if foe[2] then check(Article(text, foe[1]), "your death to " .. foe[1] .. " is told, with 'a'" .. tag)
+                -- (the same killer twice or more is named once, as one: "the Deviate crocolisks killed you twice")
+                local fam = A.FoeFamily({foe[1], foe[1]}, {foe[2], foe[2]})
+                local asOne = fam and (text:find(fam, 1, true) or text:find(fam:gsub("^%l", string.upper), 1, true))
+                if foe[2] then check(Article(text, foe[1]) or asOne, "your death to " .. foe[1] .. " is told, with 'a' or as one of many" .. tag)
                 else check(text:find(foe[1], 1, true) and not Article(text, foe[1]), "your death to " .. foe[1] .. " is told, no article" .. tag) end
             end
             if others >= 1 then check(not text:lower():find("the pair of ", 1, true) and not text:lower():find("the two of ", 1, true), "no 'the pair of you' with three or more" .. tag) end

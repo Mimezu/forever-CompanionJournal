@@ -1,7 +1,9 @@
 -- Run from the client root: lua5.1 Interface/AddOns/CompanionJournal/tests/DeathPassages.lua [print]
--- A run of deaths is one movement, in the order it happened (2026-11-11, round 2): the
--- signal once a chapter, the first death with its killer, the raises with who, the rest a
--- count, the last fight, the count once at the end; no clock words, no judgment. A wipe in
+-- A run of deaths is one movement, in the order it happened (2026-11-11, round 2; reader G
+-- round 4): the signal once a chapter, the first death with its killer, the fights between as
+-- one sentence (a repeated killer named once, "the Venture Co. killed me three times more",
+-- the companions' falls by count, a known hand's raises as a clause, a stranger's raise its
+-- own sentence), the last fight, no second count; no clock words, no judgment. A wipe in
 -- a dungeon told as the first try with its tally; a companion who fell twice (never "Dahlia
 -- and Dahlia"); a friend who raised me known by first name ("Marrow Rotmoor" for
 -- Marrow-Rotmoor), a stranger still a stranger; a lone death one plain sentence; a lone
@@ -299,21 +301,29 @@ do
         local one = chapters[8].plain
         check(one:find("Besseleth ended it", 1, true) or one:find("Besseleth finished it", 1, true), "the named killer ends it, bare (" .. retell .. "): " .. one)
         local firstAt = one:find("Windshear Crag", 1, true) or one:find("went badly", 1, true) or one:find("nearly finished", 1, true)
-        local tallyAt, countAt = one:find("tenth time", 1, true) or one:find("Ten deaths", 1, true), one:find("Five deaths", 1, true) or one:find("five times", 1, true)
-        check(firstAt and tallyAt and countAt and firstAt < tallyAt and tallyAt < countAt, "the tenth death is counted inside the hour, where it fell: " .. one)
-        check(one:find("Five deaths", 1, true) or one:find("five times", 1, true), "the count once at the end: " .. one)
-        check(one:find("Kesh three times", 1, true), "the companion's count folded into it: " .. one)
+        -- (reader G, and the coordinator: the second fight ends on the stranger's raise, told at its
+        -- time; the two fights after it are one sentence, the company named once as "the Venture Co.",
+        -- my deaths counted, Kesh's fall folded in, Kesh's raise a clause)
+        local tallyAt, strangerAt = one:find("tenth time", 1, true) or one:find("Ten deaths", 1, true), one:find("Oswin Harrow", 1, true)
+        local groupAt = one:find("twice more", 1, true) or one:find("Twice more", 1, true)
+        check(firstAt and tallyAt and strangerAt and groupAt and firstAt < tallyAt and tallyAt < strangerAt and strangerAt < groupAt,
+            "the tenth death is counted where it fell, the stranger's raise right after it, the fold after that: " .. one)
+        check(one:find("Venture Co. killed me twice more", 1, true) or one:find("Twice more the Venture Co. killed me", 1, true), "the repeated killer named once, with the count: " .. one)
+        check(one:find("Kesh with me, and Kesh raised me once", 1, true), "the companion's fall folded into it, his raise a clause: " .. one)
+        check(not one:find("Five deaths", 1, true) and not one:find("five times", 1, true) and not one:find("deaths in", 1, true), "no second count at the end: " .. one)
         check(one:find("Oswin Harrow, a stranger", 1, true) or one:find("Oswin Harrow, whom I had never met", 1, true), "the stranger who raised me, by name: " .. one)
-        check(one:find("Kesh raised me", 1, true) or one:find("Kesh brought me back", 1, true) or one:find("Kesh would not let", 1, true), "the friend who raised me, by first name: " .. one)
+        check(one:find("Kesh raised me once", 1, true), "the friend who raised me, by first name, as a clause with its count: " .. one)
+        check(Count(one, "Kesh with me") == 2, "Kesh's falls in the two fights before the last, each where it fell: " .. one)
         check(not one:find("got me first", 1, true) and not one:find("killed me first", 1, true) and not one:find("first to kill me", 1, true),
             "no 'first' when the day had a death before the stretch: " .. one)
-        check(one:find("more I died", 1, true) or one:find("more deaths came", 1, true), "the deaths nobody raised me from are still deaths: " .. one)
+        check(not one:find("walked back", 1, true) and not one:find("more I died", 1, true), "no walk and no second count: the group sentence carries the deaths: " .. one)
         check(not one:find("stood up only because", 1, true) and not one:find("someone stopped for me, or", 1, true), "the raises are not summed twice: " .. one)
-        local from, to = one:find("Windshear Crag", 1, true) or one:find("went badly", 1, true) or one:find("nearly finished", 1, true) or 1, one:find("Five deaths", 1, true) or one:find("five times", 1, true)
+        local from = one:find("Windshear Crag", 1, true) or one:find("went badly", 1, true) or one:find("nearly finished", 1, true) or 1
+        local to = one:find("Besseleth", 1, true)
         local n = 1
         for _ in one:sub(from, to or #one):gmatch("%.%s+%u") do n = n + 1 end
-        check(n <= 10, "a bad hour in ten sentences at most, the tally and a felt line among them: " .. one)
-        check(Count(one, "Logger") + Count(one, "logger") <= 2, "the same kind of killer named twice at most: " .. one)
+        check(n <= 7, "a bad hour in seven sentences at most, the signal, the first fight, the second with its tally and the stranger, the two after as one, and the last: " .. one)
+        check(Count(one, "Logger") + Count(one, "logger") <= 2 and Count(one, "Venture Co%.") <= 3, "the same kind of killer named twice at most, the company once more: " .. one)
     end
     A.db.people.kesh = nil
 end

@@ -1553,6 +1553,38 @@ end
 function A.JournalPlain(text)
     return (tostring(text or ""):gsub("{[pqn]:([^}]*)}", "%1"))
 end
+-- Agreement after a list subject (2026-11-11, round 7), at the fill of a pool line and once more
+-- on the finished chapter, so no pool has to know whether its {names} is one name or three:
+-- "Dahlia and Grosh was gone by then" takes "were"; "Marrow, Grosh and Nahiri and I" is
+-- "Marrow, Grosh, Nahiri and I"; "and I were not" is "and I was not"; a plural place ("the
+-- Hillsbrad Foothills", "the Deadmines") takes "were", after the name or after ", which".
+local PLURAL_PLACE = {"Barrens", "Foothills", "lands", "Mountains", "Steppes", "Glades", "Highlands", "Isles", "Needles", "Deadmines", "Hills"}
+local function PluralPlace(place)
+    for _, suffix in ipairs(PLURAL_PLACE) do if place:find(suffix .. "}$") then return true end end
+    return false
+end
+function A.JournalAgree(text)
+    text = tostring(text or "")
+    if text == "" then return text end
+    -- (a name: marked "{n:Dahlia}" or bare; a place "{p:...}" is never one)
+    local NAME = "{?n?:?%u[%w'%-]*}?"
+    for singular, plural in pairs({was = "were", has = "have", is = "are", does = "do"}) do
+        text = text:gsub("(" .. NAME .. ") and (" .. NAME .. ") " .. singular .. "%f[%A]", function(a, b)
+            return a .. " and " .. b .. " " .. plural
+        end)
+        -- (not "the road between Southshore and Tarren Mill was long")
+        text = text:gsub("between (" .. NAME .. ") and (" .. NAME .. ") " .. plural .. "%f[%A]", "between %1 and %2 " .. singular)
+    end
+    text = text:gsub("(" .. NAME .. ") and (" .. NAME .. ") and I%f[%A]", "%1, %2 and I")
+    text = text:gsub("(%f[%w]%a+ )I were%f[%A]", function(before)
+        local word = before:lower()
+        if word == "if " or word == "though " or word == "wish " or word == "wished " then return before .. "I were" end
+        return before .. "I was"
+    end)
+    text = text:gsub("({p:[^}]*}) was ", function(place) return place .. (PluralPlace(place) and " were " or " was ") end)
+    text = text:gsub("({p:[^}]*}), which was ", function(place) return place .. (PluralPlace(place) and ", which were " or ", which was ") end)
+    return text
+end
 local function Hex(value) return math.floor(math.max(0, math.min(1, value)) * 255 + 0.5) end
 -- Companion links use a distinct ink, separate from the red world names.
 A.JournalLinkColor = {0.23, 0.22, 0.44}

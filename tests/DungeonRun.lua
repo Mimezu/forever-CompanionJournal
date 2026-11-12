@@ -286,6 +286,9 @@ local function CheckChapter(c, expect, label)
     end
     -- a death elsewhere stays outside the run's paragraph
     if expect.elsewhere then check(not para:find(expect.elsewhere, 1, true), "a death elsewhere is not in the run (" .. label .. "):\n" .. plain) end
+    -- (round 7) a list subject never takes a singular verb; a solo "I" never "were"
+    check(not plain:find("%u[%w']+ and %u[%w']+ was%f[%A]") and not plain:find("%u[%w']+ and %u[%w']+ has%f[%A]"), "no singular verb after a list (" .. label .. "):\n" .. plain)
+    check(not plain:find("%f[%w]I were%f[%A]"), "no 'I were' (" .. label .. "):\n" .. plain)
     -- the first dungeon of my life, with going in, not as a last word after the deaths
     if plain:find("first dungeon", 1, true) or plain:find("my first dungeon", 1, true) then
         check(not plain:find("It cost me a death", 1, true), "the first dungeon is said with going in (" .. label .. "):\n" .. plain)
@@ -438,6 +441,108 @@ do
             check(not para:find("got me, and", 1, true) and not para:find("raised me after", 1, true), "no death told one by one (" .. label .. "):\n" .. para)
             told = told + 1
             if show and retell == 0 and not brief then print("[losses] " .. chapters[1].title .. "\n" .. plain .. "\n") end
+        end
+    end
+end
+
+-- Round 7 (2026-11-11): a boss's pronoun from data, never a hand list; a death claimed only of a
+-- boss the record killed; agreement after a list subject.
+do
+    check(E.FEMALE_BOSSES == nil, "no hand list of women bosses")
+    local GENDER = {["High Inquisitor Whitemane"] = "she", ["Princess Theradras"] = "she", ["Charlga Razorflank"] = "she", ["Lady Anacondra"] = "she",
+        ["Lady Sarevess"] = "she", ["Mother Smolderweb"] = "she", ["Onyxia"] = "she", ["Amnennar the Coldbringer"] = "he", ["Edwin VanCleef"] = "he",
+        ["Archmage Arugal"] = "he", ["Taragaman the Hungerer"] = "he", ["Scarlet Commander Mograine"] = "he", ["Mekgineer Thermaplugg"] = "he",
+        ["Mutanus the Devourer"] = "it", ["Aku'mai"] = "it", ["Viscous Fallout"] = "it", ["Tuten'kash"] = "it"}
+    for name, g in pairs(GENDER) do check(E.BossGender(name) == g, "the data knows " .. name .. " as " .. g .. ": " .. tostring(E.BossGender(name))) end
+    local s, o, p = E.BossPronoun("High Inquisitor Whitemane")
+    check(s == "she" and o == "her" and p == "her", "Whitemane's pronouns")
+    check(E.BossPronoun("Grubbis") == nil, "a boss nobody wrote of has no pronoun, never a guess")
+    check(E.BossTitle("High Inquisitor Fairbanks") == "the high inquisitor", "the title stands in: " .. tostring(E.BossTitle("High Inquisitor Fairbanks")))
+    check(E.BossTitle("Shade of Eranikus") == "the shade", "a thing of someone: " .. tostring(E.BossTitle("Shade of Eranikus")))
+    check(E.BossTitle("Grubbis") == "Grubbis", "no title: the name")
+    -- the claim rule
+    local CLAIMS = {
+        {"Amnennar was destroyed, and the Scourge would think twice.", "Amnennar the Coldbringer", true},
+        {"Amnennar was still down there, and I was not.", "Amnennar the Coldbringer", false},
+        {"Past Electrocutioner 6000, we went no further, and left Thermaplugg where he stood.", "Mekgineer Thermaplugg", false},
+        {"Whitemane, Mograine, Herod and Loksey were dead, and the Scarlet Monastery had lost its leaders.", "Scarlet Commander Mograine", true},
+        {"Varimathras wanted High Inquisitor Whitemane dead.", "High Inquisitor Whitemane", false},
+        {"We came up into Westfall with VanCleef's head for Gryan Stoutmantle.", "Edwin VanCleef", true},
+        {"Marrow fell to Lady Anacondra before she did.", "Lady Anacondra", false},
+        {"The first fight with Revelosh went against us, and the second did not.", "Revelosh", false},
+        {"Theradras was dead, and the Keeper gave a token of thanks.", "Princess Theradras", true},
+        {"Raleigh said Whitemane had died for nothing.", "High Inquisitor Whitemane", true},
+        {"You finished The Legend of Stalvan.", "The Unforgiven", false},
+    }
+    for _, c in ipairs(CLAIMS) do check(E.ClaimsDeath(c[1], c[2]) == c[3], "claim rule: " .. c[1]) end
+    local kept, dropped = E.WithoutUnkilledClaims("Amnennar was destroyed, and the Scourge would think twice. A blessing of the Light went with the thanks.", function() return false end)
+    check(dropped == 1 and kept == "A blessing of the Light went with the thanks.", "the claiming sentence goes, the rest stays: " .. tostring(kept))
+    kept, dropped = E.WithoutUnkilledClaims("Amnennar was destroyed.", function(name) return name == "Amnennar the Coldbringer" end)
+    check(dropped == 0 and kept == "Amnennar was destroyed.", "a claim the kills support stays")
+    -- agreement at the fill and on the chapter
+    local AGREE = {
+        {"Dahlia and Grosh was gone by then.", "Dahlia and Grosh were gone by then."},
+        {"{n:Elisabeth} and {n:Pip} was gone by then.", "{n:Elisabeth} and {n:Pip} were gone by then."},
+        {"Marrow, Grosh and Nahiri and I came into the Undercity.", "Marrow, Grosh, Nahiri and I came into the Undercity."},
+        {"Amnennar was still down there, and I were not.", "Amnennar was still down there, and I was not."},
+        {"I crossed {p:the Stonetalon Mountains}, which was new to me.", "I crossed {p:the Stonetalon Mountains}, which were new to me."},
+        {"{p:The Deadmines} was behind us.", "{p:The Deadmines} were behind us."},
+        {"Dahlia was gone by then.", "Dahlia was gone by then."},
+        {"The road between Southshore and Tarren Mill was long.", "The road between Southshore and Tarren Mill was long."},
+        {"If I were a mage, it would have gone otherwise.", "If I were a mage, it would have gone otherwise."},
+        {"{p:Razorfen Downs} was behind me.", "{p:Razorfen Downs} was behind me."},
+    }
+    for _, a in ipairs(AGREE) do check(A.JournalAgree(a[1]) == a[2], "agreement: " .. a[1] .. " -> " .. tostring(A.JournalAgree(a[1]))) end
+    -- the pools that fill a subject with a list, through the teller's own fill
+    local teller = A.SelfTale.Teller and A.SelfTale.Teller("agree") or nil
+    check(teller ~= nil, "the teller's fill can be tested")
+    if teller then
+        for _, pool in ipairs({A.SelfWords.compose.left, A.SelfWords.withMost}) do
+            for _ = 1, 6 do
+                local line = teller:Say("agree", pool, {name = "Dahlia and Grosh", names = "Dahlia and Grosh"})
+                check(line and not line:find(" was ", 1, true) and not line:find(" has ", 1, true), "a list subject takes plural verbs: " .. tostring(line))
+            end
+        end
+    end
+end
+-- A run that stopped short, its quest handed in all the same (a record can hold it): the book
+-- says who still stood and never that the lich was destroyed; a solo "I" never takes "were".
+do
+    local D = {name = "Razorfen Downs", zone = "The Barrens", city = "The Barrens", faction = "Alliance", race = "Dwarf", class = "PRIEST", level = 39,
+        trash = "Withered Battle Boar", bosses = {"Tuten'kash"}, lord = "Amnennar the Coldbringer", later = "Ironforge"}
+    local journal = {}
+    local t0 = At(50, 19.5)
+    local function Add(e) e.pl = e.pl or D.level; journal[#journal + 1] = e end
+    Add({k = "play", t = t0, e = t0 + 600, z = D.zone})
+    Add({k = "town", d = "Ratchet", t = t0 + 60, z = D.zone})
+    local tIn = t0 + 600
+    Add({k = "play", t = tIn, e = tIn + 660, z = D.name})
+    Add({k = "dungeon", d = D.name, z = D.name, t = tIn + 30, r = "healer"})
+    Add({k = "boss", d = "Tuten'kash", z = D.name, t = tIn + 360, n = 1})
+    Add({k = "mylevel", d = "40", t = tIn + 370, z = D.name, pl = 40})
+    local tOut = tIn + 660
+    Add({k = "play", t = tOut, e = tOut + 900, z = D.zone, pl = 40})
+    Add({k = "play", t = tOut + 900, e = tOut + 2400, z = "Ironforge", pl = 40})
+    Add({k = "town", d = "Ironforge", t = tOut + 920, z = "Ironforge", pl = 40})
+    Add({k = "quest", d = "Bring the Light", qid = 3636, ql = 37, t = tOut + 1800, z = "Ironforge", pl = 40})
+    Add({k = "rest", d = "Ironforge", t = tOut + 1900, z = "Ironforge", pl = 40})
+    local me = Person(D, journal)
+    me.charKey = "drshort"
+    for retell = 0, 3 do
+        for _, brief in ipairs({false, true}) do
+            local chapters = Tell(me, brief, retell)
+            local label = "short of the lich, retell " .. retell .. (brief and " Highlights" or "")
+            local plain = chapters[1].plain
+            CleanText(plain, chapters[1].text)
+            for _, s2 in ipairs(Sentences(plain)) do
+                check(not E.ClaimsDeath(s2, "Amnennar the Coldbringer"), "no death claimed of the lich left standing (" .. label .. "): " .. s2)
+                check(not s2:find("destroyed", 1, true), "never 'destroyed' (" .. label .. "): " .. s2)
+            end
+            check(plain:find("Amnennar", 1, true), "the lich who still stood is named (" .. label .. "):\n" .. plain)
+            check(not plain:find("I were", 1, true), "a solo 'I' never takes 'were' (" .. label .. "):\n" .. plain)
+            check(not plain:find("%u[%w']+ and %u[%w']+ was%f[%A]"), "no singular verb after a list (" .. label .. "):\n" .. plain)
+            told = told + 1
+            if show and retell == 0 and not brief then print("[short of the lich] " .. chapters[1].title .. "\n" .. plain .. "\n") end
         end
     end
 end
