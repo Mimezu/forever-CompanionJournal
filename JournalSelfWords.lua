@@ -3703,8 +3703,12 @@ W.compose = {
     crossRunNew = {"By way of {places}, {we} came into {zoneD}, all of it new to {us}."},
     -- (round 11: the legs of a road between told stops, from the record)
     roadLegs = {"By {modes}, {we} came on to {dest}{new}."},
-    roadLegsHearthFrom = {"From {origin}, new to {us}, {our} hearthstones took {us} back to {place}, and by {modes} {we} came on to {dest}{new}."},
-    roadLegsHearth = {"{Our} hearthstones took {us} back to {place}, and by {modes} {we} came on to {dest}{new}."},
+    roadLegsHearthFrom = {"From {origin}, new to {us}, {our} hearthstones took {us} back to {place}. By {modes}, {we} came on to {dest}{new}."},
+    roadLegsHearth = {"{Our} hearthstones took {us} back to {place}. By {modes}, {we} came on to {dest}{new}."},
+    -- (round 16: an errand's road there and back)
+    errandOut = {"{We} went to {zone}."},
+    errandFlew = {"{We} flew to {zone}."},
+    errandBack = {"{Our} hearthstones brought {us} back to {place}."},
     crossOnly = {"{Places} {were} new to {us}."},
     levelBurst = {"By then I was level {level}."},
     -- (lane O8: an adventure's record may say how many went in and that the foes were strong; told

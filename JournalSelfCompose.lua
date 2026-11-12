@@ -376,11 +376,47 @@ local function Select(ctx, lines, inRun, episodes, D)
             end
         end
     end
+    -- (round 16, reader R rule 1: an errand to another land with work in it is a leg of the night:
+    -- its best piece is told, and the composer gives it its road there and back)
+    for _, ep in ipairs(episodes) do
+        for _, sc in ipairs(ep.errands or {}) do
+            local best, told
+            for _, u in ipairs(sel.units or {}) do
+                if (u.t or 0) >= (sc.t or 0) and (u.t or 0) <= (sc.e or sc.t or 0) + 60 then
+                    if u.mode then told = true end
+                    if u.kind == "act" and not u.fallback and u.act and (not best or (u.score or 0) > (best.score or 0)) then best = u end
+                end
+            end
+            if best and not told then
+                best.mode = "act"
+                local it = best.it
+                it.chosen = it.chosen or {}
+                it.chosen[best.act.i] = true
+                it.pick, it.keep = true, true
+                sc.errandTold = true
+            end
+        end
+    end
     -- (lane O8 round 11, reader K rule 1: a completed quest with a named kill, or one that ends a
     -- thread the chapter told (the same people as a told step before it), or the first work of a new
     -- land (why we came), is never dropped; plain errands go first. Told as its bare act.)
     local function Tell(u, kill)
         if u.kind == "scene" then
+            -- (round 16: a kill's scene is told whole when it is short, with who wanted it and why)
+            -- (only when it brings in who wanted it: a giver the chapter's told work has not named)
+            local giverWord = u.giver and tostring(u.giver):match("(%S+)$")
+            local newGiver = giverWord ~= nil
+            for _, o in ipairs(sel.units or {}) do
+                if giverWord and o ~= u and o.mode and (o.t or 0) < (u.t or 0) then
+                    local text_ = (o.plain or "") .. " " .. tostring(o.giver or "") .. " " .. tostring((Sel.Account and Sel.Account(sel, o)) or "")
+                    if text_:find(giverWord, 1, true) then newGiver = false end
+                end
+            end
+            if kill and newGiver and (u.words or 99) <= 55 then
+                u.mode = "full"
+                for _, line in ipairs(u.items or {}) do line.keep = true end
+                return
+            end
             -- (a scene told short: its act as one sentence, the scene's first line)
             if not u.short then return end
             u.mode = "short"
@@ -395,7 +431,11 @@ local function Select(ctx, lines, inRun, episodes, D)
         -- (a kill keeps its deed: the opening is used only when it tells the kill too)
         if kill and lead and not Any(lead:lower(), {"killed", "destroyed", "slew", "beheaded", "put down", "cut down"}) then lead = nil end
         if lead and Any(lead:lower(), {" went to fetch", " went to find", " wanted%.$", " set out to"}) then lead = nil end
-        if lead and Words(lead) <= 32 and not u.kin then
+        -- (round 16: a kill told with who wanted it, the account's short telling when it holds both)
+        local full = kill and Sel.Account and Sel.Account(sel, u)
+        if full and Words(full) <= 55 and Any(full:lower(), {"killed", "destroyed", "slew", "after "}) and u.giver and full:find((tostring(u.giver):match("(%S+)$") or "~"), 1, true) then
+            u.mode, u.tell, u.promote = "full", full, u.promote or u.variant
+        elseif lead and Words(lead) <= 32 and not u.kin then
             u.mode, u.tell, u.promote = "lead", lead, u.promote or u.variant
         else
             u.mode = "act"
@@ -1722,6 +1762,30 @@ function C.Apply(ctx)
             end
         end
     end
+    -- (round 16: the told errand's road there and back, from the record)
+    for _, ep in ipairs(episodes) do
+        for _, sc in ipairs(ep.errands or {}) do
+            if sc.errandTold and P.errandOut then
+                local party = #ep.party > 0
+                local how, hearth
+                for _, s_ in ipairs(ep.scenes or {}) do
+                    for _, e in ipairs(s_.events or {}) do
+                        local t = e.t or 0
+                        if (e.k == "nightflight" or e.k == "taxi") and t >= (sc.t or 0) - 600 and t <= (sc.t or 0) + 60 then how = "flew" end
+                        if e.k == "hearth" and e.d and t >= (sc.t or 0) and t <= (sc.e or sc.t or 0) + 120 then hearth = e.d end
+                    end
+                end
+                for _, e in ipairs(sc.events or {}) do if e.k == "hearth" and e.d then hearth = hearth or e.d end end
+                local tk = {We = party and "We" or "I", we = party and "we" or "I", us = party and "us" or "me", Our = party and "Our" or "My", zone = Place(sc.zone), place = hearth and Place(hearth) or ""}
+                local t0 = (sc.t or 0)
+                lines[#lines + 1] = {cls = "what", t = t0, ep = ep, text = Fill(how and P.errandFlew[1] or P.errandOut[1], tk), major = false, kind = "errand", meta = {t = t0, compose = "errand"}, n = #out + 820 + ep.index}
+                if hearth and P.errandBack then
+                    local t1 = (sc.e or sc.t or 0)
+                    lines[#lines + 1] = {cls = "what", t = t1, ep = ep, text = Fill(P.errandBack[1], tk), major = false, kind = "errand", meta = {t = t1, compose = "errand"}, n = #out + 821 + ep.index}
+                end
+            end
+        end
+    end
     local byEp = {}
     for _, ep in ipairs(episodes) do byEp[ep] = {} end
     for _, l in ipairs(lines) do byEp[l.ep][#byEp[l.ep] + 1] = l end
@@ -2001,14 +2065,29 @@ function C.Apply(ctx)
                             local t = e.t or 0
                             if t >= math.max(before.t, seq[i].t - 3600) and t <= after.t then
                                 if e.k == "hearth" and e.d then hearth = hearth or {t = t, place = e.d, z = e.z}
-                                elseif e.k == "voyage" and e.d and e.d ~= "hearth" and e.d ~= "portal" then legs[#legs + 1] = {t = t, w = (e.d == "boat" and "ship") or e.d}
+                                elseif e.k == "voyage" and e.d and e.d ~= "hearth" and e.d ~= "portal" then legs[#legs + 1] = {t = t, w = (e.d == "boat" and "ship") or e.d, to = e.to}
                                 elseif e.k == "nightflight" or e.k == "taxi" then legs[#legs + 1] = {t = t, w = "flight"} end
                             end
                         end
                     end
                     Sorted(legs, function(a, b) return a.t < b.t end)
+                    -- (round 16, reader R rule 1: every leg in order, with where it took us)
                     local words, seenW = {}, {}
-                    for _, g in ipairs(legs) do if not hearth or g.t > hearth.t then if not seenW[g.w] then seenW[g.w] = true; words[#words + 1] = g.w end end end
+                    for _, g in ipairs(legs) do
+                        if not hearth or g.t > hearth.t then
+                            -- (where the leg took us: a crossing names its continent, a flight the next stay)
+                            local land
+                            if g.to then land = g.to
+                            else
+                                for _, ep_ in ipairs(episodes) do if ep_.t > g.t and not land then land = ep_.zone end end
+                            end
+                            local key = g.w .. ":" .. tostring(land)
+                            if land and Clean(land) ~= Clean(after.ep.zone or "") and not seenW[key] then
+                                seenW[key] = true
+                                words[#words + 1] = ((g.w == "flight" and "a flight") or ("the " .. g.w)) .. " to " .. Place(land)
+                            end
+                        end
+                    end
                     if #words > 0 and hearth then
                         local party = #(after.ep.party or {}) > 0
                         local isNew = false
@@ -2196,7 +2275,7 @@ function C.Apply(ctx)
         -- (round 14, reader P rule 1: setting the hearthstone is bookkeeping, not a moment)
         for _, l in ipairs(lines) do
             local low = Plain(l.text):lower()
-            if not l.drop and not inRun[l] and (low:find("set my hearthstone") or low:find("stone in my pack pointed")) then l.drop = true end
+            if not l.drop and not inRun[l] and (low:find("set my hearthstone") or low:find("stone in my pack pointed") or low:find("by my own count")) then l.drop = true end
         end
     end
     -- (lane O8: "There, Marrow joined me." while Dahlia was already with me is "joined us")

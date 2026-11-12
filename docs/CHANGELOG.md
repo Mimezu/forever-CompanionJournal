@@ -1,5 +1,11 @@
 # Companion Journal: changes
 
+## 1.31.0 (2026-11-12)
+
+- Journeys are told leg by leg, before where they led
+- Kills are told with the reason we went
+- Companion books follow your own book's adventures while they were there
+
 ## 1.30.0 (2026-11-12)
 
 - Companions are named from the first night they were with you
