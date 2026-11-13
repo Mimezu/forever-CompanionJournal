@@ -3765,6 +3765,7 @@ W.compose = {
     arriveBy = {"{how}, and {we} came to {land}, new to {us}{why}."},
     -- (round 23: a main companion away for a while inside the night, and back)
     partedWhile = {"{name} went another way for a while."},
+    leftAtTime = {"{name} left us."},
     rejoined = {"{name} was with me again."},
     -- (round 15: a companion the record puts with us, not otherwise named that day)
     joinedPlain = {"{name} joined {us}."},

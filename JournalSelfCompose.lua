@@ -3012,8 +3012,12 @@ function C.Apply(ctx)
                     table.sort(gone)
                     local names = {}
                     for _, name in ipairs(gone) do names[#names + 1] = "{n:" .. name .. "}" end
-                    local text = Pick("left", P.left, {name = List(names), was = #names > 1 and "were" or "was"})
-                    if text then added[#added + 1] = {cls = "who", t = leftAt, ep = ep, text = text, major = false, kind = nil, meta = {t = leftAt, compose = "left"}, n = #out + #added + 1} end
+                    -- (round 24: a leaving is told at its time, in the stay it happened in, like a join:
+                    -- "Marrow left us." at 00:12, not "Marrow was gone by then" at the next stay's start)
+                    local leftEp = EpisodeAt(leftAt, episodes)
+                    local atTime = P.leftAtTime and leftEp ~= ep and leftEp.kind ~= "dungeon"
+                    local text = atTime and Fill(P.leftAtTime[1], {name = List(names)}) or Pick("left", P.left, {name = List(names), was = #names > 1 and "were" or "was"})
+                    if text then added[#added + 1] = {cls = "who", t = leftAt, ep = atTime and leftEp or ep, text = text, major = false, kind = nil, meta = {t = leftAt, compose = "left"}, n = #out + #added + 1, signMoved = atTime or nil} end
                 end
             end
         end
@@ -4204,11 +4208,11 @@ function C.Apply(ctx)
             -- half an hour or more, is told in one clause by its lands, with a level reached in it)
             local lastToldT = 0
             for _, p_ in ipairs(paragraphs) do for _, x in ipairs(p_.lines) do if not x.toClose and x.cls ~= "close" and (x.t or 0) > lastToldT then lastToldT = x.t end end end
-            local lands_, seenL, lateLevel = {}, {}, nil
+            local lands_, seenL, lateLevel, landT = {}, {}, nil, {}
             for _, ep_ in ipairs(episodes) do
                 if ep_.t > lastToldT + 60 then
                     for _, sc in ipairs(ep_.scenes or {}) do
-                        if sc.zone and not seenL[Clean(sc.zone)] then seenL[Clean(sc.zone)] = true; lands_[#lands_ + 1] = Place(sc.zone) end
+                        if sc.zone and not seenL[Clean(sc.zone)] then seenL[Clean(sc.zone)] = true; lands_[#lands_ + 1] = Place(sc.zone); landT[#lands_] = {sc.t or ep_.t, sc.e or sc.t or ep_.t} end
                     end
                     for _, lv in ipairs(ep_.levels or {}) do lateLevel = tonumber(lv.level) or lateLevel end
                 end
@@ -4217,18 +4221,53 @@ function C.Apply(ctx)
                 -- (round 23, reader X rule 1: the night ends on its goal; what came after is a clause of
                 -- the close, "After Dahlia and Marrow went their way, I went on by way of Orgrimmar and the
                 -- Undercity, and by the time I stopped in Silverpine Forest I was level 19.")
-                local left = {}
-                if who == "I" then
+                -- (round 24, reader Y rule 1: each companion's "we" ends at their own window. The company of
+                -- each land of the late road is who was grouped there; who left is said where they left:
+                -- "After Marrow left, Dahlia and I went on by way of Orgrimmar and the Undercity, where
+                -- Dahlia went her way, and by the time I stopped in Silverpine Forest I was level 19.")
+                local function Company(t0, t1)
+                    local names = {}
                     for name, spans in pairs(windows) do
-                        for _, sp in ipairs(spans) do if sp[2] >= lastToldT - 600 and sp[2] < (D.e or 0) - 60 then left[#left + 1] = name; break end end
+                        for _, sp in ipairs(spans) do if sp[1] <= t1 - 60 and sp[2] >= t0 + 60 then names[#names + 1] = name; break end end
                     end
-                    table.sort(left)
+                    table.sort(names)
+                    return names
                 end
+                local firstT = landT[1] and landT[1][1] or (D.e or 0)
+                local before_ = Company(lastToldT, firstT)
                 local stop = table.remove(lands_)
-                local tail = ((#left > 0) and ("After " .. List(left) .. " went " .. (#left > 1 and "their" or "their") .. " way, ") or "")
-                    .. (#left > 0 and who or Cap(who)) .. ((#lands_ > 0) and (" went on by way of " .. List(lands_) .. ", and") or "")
-                tail = tail .. (lateLevel and (" by the time " .. (who == "I" and "I" or Lower(who)) .. " stopped in " .. stop .. " I was level " .. lateLevel)
-                    or (" stopped at last in " .. stop))
+                local stopT = table.remove(landT)
+                local groups = {}
+                for i_, land in ipairs(lands_) do
+                    local c = Company(landT[i_][1], landT[i_][2])
+                    local key = table.concat(c, ",")
+                    local g = groups[#groups]
+                    if g and g.key == key then g.lands[#g.lands + 1] = land else groups[#groups + 1] = {key = key, company = c, lands = {land}} end
+                end
+                local stopCompany = stopT and Company(stopT[1], stopT[2]) or {}
+                local function WhoOf(c) return #c > 0 and (List(c) .. " and I") or "I" end
+                local function Missing(from, to)
+                    local keep, out_ = {}, {}
+                    for _, n in ipairs(to) do keep[n] = true end
+                    for _, n in ipairs(from) do if not keep[n] then out_[#out_ + 1] = n end end
+                    return out_
+                end
+                local tail = ""
+                local prevC = before_
+                for gi, g in ipairs(groups) do
+                    local gone = Missing(prevC, g.company)
+                    if gi == 1 and #gone > 0 then tail = "After " .. List(gone) .. " left, " end
+                    if gi > 1 and #gone > 0 then tail = tail .. ", where " .. List(gone) .. " left, and " end
+                    tail = tail .. (gi == 1 and WhoOf(g.company) or Lower(WhoOf(g.company))) .. " went on by way of " .. List(g.lands)
+                    prevC = g.company
+                end
+                local goneAtStop = Missing(prevC, stopCompany)
+                if #groups > 0 then
+                    tail = tail .. ((#goneAtStop > 0) and (", where " .. List(goneAtStop) .. " left me,") or ",") .. " and"
+                end
+                local stopWho = WhoOf(stopCompany)
+                tail = tail .. (lateLevel and (" by the time " .. (stopWho == "I" and "I" or Lower(stopWho)) .. " stopped in " .. stop .. " I was level " .. lateLevel)
+                    or (" " .. (stopWho == "I" and "I" or Lower(stopWho)) .. " stopped at last in " .. stop))
                 tail = tail:gsub("^ ", "")
                 text = Cap(tail) .. "."
                 hoursPhrase = nil
@@ -4306,6 +4345,13 @@ function C.Apply(ctx)
         for _, p_ in ipairs(paragraphs) do
             local prevIn = nil
             for _, l in ipairs(p_.lines) do
+                -- (round 24, reader Y rule 2: while anyone is grouped, the hearthstones and the roads are ours)
+                if WithAtDay(windows, (l.t or 0)) and not inRun[l] then
+                    l.text = l.text:gsub("^I used my hearthstone, and was back in ", "We used our hearthstones, and were back in ")
+                        :gsub("^I used my hearthstone, and was in ", "We used our hearthstones, and were in ")
+                        :gsub("^My hearthstone took me ", "Our hearthstones took us "):gsub("^My hearthstone brought me ", "Our hearthstones brought us ")
+                        :gsub("([%.,] )my hearthstone took me ", "%1our hearthstones took us "):gsub("^I flew to ", "We flew to ")
+                end
                 -- (round 23: a companion's first appearance in the book is a joining, never a catching up)
                 if l.cls == "who" and Plain(l.text):find(" caught up with ", 1, true) then
                     local bookBefore_ = (ctx.history and ctx.history.plan and ctx.history.plan.text) or ""

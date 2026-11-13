@@ -2234,6 +2234,8 @@ PB.roadByCraftBond = {"{pairNamed} rode the {craft} to {from} together and walke
 PB.roadByFlight = {"{We} flew to {from}, and from there {pair} went on foot through {lands}{roadNote}."}
 -- A first meeting with nothing shared is no chapter of its own (round 12): the next chapter opens on it.
 PB.metBefore = {"{I} had first met {name} the night before, in {place}, {clock}."}
+-- (round 24: the bond said once, at the first meeting)
+PB.metBeforeBond = {"{name}, {bondWord}, and {I} had first met the night before, in {place}, {clock}."}
 -- A first flight the two took together, from the player's own record (round 13).
 PB.firstFlightOurs = {"{pairNamed} flew for the first time that {part}, out of {zoneD}."}
 PB.firstFlightClose = {"{pairNamed} flew out of {zoneD} together, {my} first flight."}

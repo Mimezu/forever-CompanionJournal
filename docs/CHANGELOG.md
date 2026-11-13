@@ -1,5 +1,11 @@
 # Companion Journal: changes
 
+## 1.38.0 (2026-11-12)
+
+- Companions join and leave at their real times
+- While grouped, hearthstones and flights are "we"
+- Companion books: a friend is named a friend once, threads closed
+
 ## 1.37.0 (2026-11-12)
 
 - Each night ends on its goal, the late road folded into the close

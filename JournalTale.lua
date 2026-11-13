@@ -3116,6 +3116,24 @@ function T.OwnSpine(c, lines, Live)
                 end
             end
             if forceTell then ownTold, hereTold = true, false end
+            -- (round 24: a small thread, three steps or fewer, whose later step the record never holds,
+            -- is not opened: "Migi's lunch" collected and never delivered)
+            if ownTold and not forceTell and story.thread and A.Lore and A.Lore.questStoryIDs then
+                local steps, later = 0, {}
+                for id, st2 in pairs(A.Lore.questStoryIDs) do
+                    if st2.thread == story.thread then
+                        steps = steps + 1
+                        if (st2.level or 0) >= (story.level or 0) and id ~= tonumber(q.qid) then later[#later + 1] = id end
+                    end
+                end
+                if steps <= 3 and #later > 0 then
+                    local done = false
+                    for _, x in ipairs(c.ownJournal or {}) do
+                        if x.k == "quest" then for _, id in ipairs(later) do if tonumber(x.qid) == id then done = true end end end
+                    end
+                    if not done then ownTold = false end
+                end
+            end
             -- (round 23: a setup the book's payoffs need, chosen by the first pass)
             local needed = T.needs and q.qid and T.needs[q.qid]
             if needed and not hereTold then ownTold, forceTell = true, true end
@@ -3492,6 +3510,16 @@ function T.ComposeTogether(c, lines)
             if place then
                 local joinPlace = outing0.zone and (c.Place or function(z) return "{p:" .. Clean(z) .. "}" end)(outing0.zone) or place
                 Rewrite(l1, Cap(PartOf(Hour(mine0.t))) .. " came on, and " .. name .. " joined " .. teller.base.us .. " in " .. joinPlace .. ".")
+            end
+        end
+    end
+    -- (round 24: "where we had left off" only when the night before ended in that land)
+    do
+        local l1 = lines[1]
+        if Live(l1) then
+            local place = l1.text:match("in {p:([^}]+)}, where %a+ had left off")
+            if place and history.lastEndZone and Clean(history.lastEndZone):gsub("^[Tt]he ", "") ~= Clean(place):gsub("^[Tt]he ", "") then
+                Rewrite(l1, (l1.text:gsub(", where %a+ had left off", "", 1)))
             end
         end
     end
@@ -4121,6 +4149,25 @@ function T.ComposeTogetherAfter(c, out, beats)
                 elseif means == "flight" then text = Wew .. " flew on to " .. place .. ", new to " .. me .. "."
                 elseif means == "hearth" then text = (we and "I" or "You") .. " took the hearthstone, and from there " .. (we and "we" or "you") .. " came to " .. place .. ", new to " .. me .. "." end
                 if text then out[n] = S.Carry(line, text) end
+            end
+        end
+    end
+    -- (round 24: "Dahlia and I" twice a chapter at most as a sentence's subject; "we" carries the rest)
+    do
+        local pair = teller.base.pairNamed
+        local used = 0
+        for n = 1, #out do
+            if beats[n] ~= "close" and beats[n] ~= "open" then
+                local line = out[n]
+                local newLine = line:gsub("(^)" .. Esc(Cap(pair)) .. " ", function(start)
+                    used = used + 1
+                    if used > 2 then return start .. (teller.base.I == "I" and "We " or "You ") end
+                end)
+                newLine = newLine:gsub("([%.!] )" .. Esc(Cap(pair)) .. " ", function(stop)
+                    used = used + 1
+                    if used > 2 then return stop .. (teller.base.I == "I" and "We " or "You ") end
+                end)
+                if newLine ~= line then out[n] = S.Carry(line, newLine) end
             end
         end
     end
@@ -8603,6 +8650,15 @@ function T.TellOnce(person, days, voice, player, brief)
                             history.othersSaid[e.n] = true
                             teller.othersKeys[#others] = e.n
                             teller.othersAt = teller.othersAt or {}
+                            -- (round 24: the joiner's own group start, from the joiner's record, when it is later)
+                            local own0 = otherAs and type(otherAs.journal) == "table" and otherAs.journal
+                            if own0 then
+                                local first0
+                                for _, x in ipairs(own0) do
+                                    if x.k == "group" and x.t and x.t >= (scene.t or 0) - 60 and x.t <= (scene.e or scene.t or 0) and (not first0 or x.t < first0) then first0 = x.t end
+                                end
+                                if first0 and first0 > withT then withT = first0 end
+                            end
                             teller.othersAt[#others] = {t = withT, z = scene.zone, before = (e.t or 0) < (scene.t or 0) - 60}
                         end
                     end
@@ -9351,6 +9407,7 @@ function T.TellOnce(person, days, voice, player, brief)
                         if PB[bkey .. shape] then key = bkey .. shape end
                     end
                     endLine = PB[key] and teller:Say(key, PB[key], rng, tokens)
+                    history.lastEndZone = endZone
                     endKey = key
                 end
             elseif t0 and e0 and ownJournal and PB.closeEndShort then
@@ -9602,10 +9659,11 @@ function T.TellOnce(person, days, voice, player, brief)
             end
         elseif history.metBefore and chapterText ~= "" then
             tokens.place, tokens.clock = history.metBefore.place or "the wilds", history.metBefore.clock
-            local met = teller:Say("metBefore", PB.metBefore, rng, tokens)
+            local met = teller:Say("metBefore", (teller.base.bondWord and PB.metBeforeBond) or PB.metBefore, rng, tokens)
             if met then
                 local rest = chapterText:gsub("^The very next day, ", ""):gsub("^The next day, ", ""):gsub("^A day later, ", "")
                     :gsub(" went out a second time", " went out together", 1)
+                    :gsub("^" .. Esc(teller.base.name) .. " and I went out together", "This time we went out together", 1)
                 chapterText = met .. " " .. Cap(rest)
             end
             history.metBefore = nil
