@@ -3356,6 +3356,25 @@ function T.ComposeTogether(c, lines)
             Rewrite(l, text)
         end
     end
+    -- 1a'. round 20: the evening began without the companion (my own record has play well before the
+    -- companion's first outing): the opening says where the companion joined, never "with Marrow along"
+    -- from the start
+    do
+        local l1 = lines[1]
+        local outing0
+        for _, scene in ipairs(c.day and c.day.scenes or {}) do if scene.kind == "outing" and (not outing0 or scene.t < outing0.t) then outing0 = scene end end
+        local mine0
+        for _, x in ipairs(c.ownJournal or {}) do
+            if x.k == "play" and x.t and outing0 and x.t < outing0.t and outing0.t - x.t <= 6 * 3600 and (not mine0 or x.t < mine0.t) then mine0 = x end
+        end
+        if Live(l1) and outing0 and mine0 and outing0.t - mine0.t >= 10 * 60 then
+            local place = l1.text:match("began in (.-), with " .. N .. " along%.$") or l1.text:match("began in (.-), " .. N .. " at [%a]+ side%.$")
+            if place then
+                local joinPlace = outing0.zone and (c.Place or function(z) return "{p:" .. Clean(z) .. "}" end)(outing0.zone) or place
+                Rewrite(l1, Cap(PartOf(Hour(mine0.t))) .. " came on, and " .. name .. " joined " .. teller.base.us .. " in " .. joinPlace .. ".")
+            end
+        end
+    end
     -- 1b. the chapter's opening names the companion when the next lines do not ("The light was
     -- going when we set out" -> "when Dahlia and I set out"), and takes the place of a bare
     -- "That night began in X" that follows it
@@ -3513,8 +3532,8 @@ function T.ComposeTogether(c, lines)
         if Live(l) then
             local spoke = l.text:match("^" .. (we and "I" or "You") .. " spoke with (.-) during %a+ time together%.$")
             if spoke then
-                if close then Rewrite(l, Cap(pairNamed) .. " stood before " .. spoke .. ".")
-                else Rewrite(l, Cap(I) .. " spoke with " .. spoke .. ".") end
+                -- (round 20: the meeting is mine in the record, a solo quest; "Dahlia and I stood before" was not)
+                Rewrite(l, Cap(I) .. " spoke with " .. spoke .. ".")
             elseif l.text:find(" during %a+ time together%.$") then
                 Rewrite(l, (l.text:gsub(" during %a+ time together%.$", ".")))
             end
@@ -3578,6 +3597,21 @@ function T.ComposeTogether(c, lines)
     if kind == "friend" then
         for _, l in ipairs(lines) do
             if Live(l) and l.run and l.beat == "climax" and CountWords(l.text) <= 9 and PlainOf(l.text):find(" had fallen%.$") then l.drop = true end
+        end
+    end
+    -- (round 20: "the one we had come for" only after a line of the run set the goal; else plain)
+    for _, d in ipairs(f.dungeons or {}) do
+        local goal = false
+        for _, l in ipairs(lines) do
+            if Live(l) and l.run == d and (PlainOf(l.text):find(" wanted ", 1, true) or PlainOf(l.text):find(" sent us", 1, true)) then goal = true end
+        end
+        if not goal then
+            for _, l in ipairs(lines) do
+                if Live(l) and l.run == d then
+                    Rewrite(l, (l.text:gsub(", the one we had come for", ""):gsub(", whom we had come down for", ""):gsub(", the one you had come for", "")
+                        :gsub(", whom you had come down for", "")))
+                end
+            end
         end
     end
     -- 6b. the first dungeon the two went into together (the first run in this book)
@@ -3760,6 +3794,28 @@ function T.ComposeTogether(c, lines)
         -- the two did together (or for each other) stay and the rest fold away, the work that sets up
         -- something later kept: lore and someone else's story go first, then the work least ours
         T.BondSpine(c, lines, Live)
+        -- 9h. round 20: a person named only as whom the work was for ("killed Valdred ... for Raleigh"),
+        -- never met before in this book, is not named: the tail goes
+        do
+            history.namesMet = history.namesMet or {}
+            local met = history.namesMet
+            local order = {}
+            for _, l in ipairs(lines) do if Live(l) then order[#order + 1] = l end end
+            table.sort(order, function(a, b) return (a.t or 0) < (b.t or 0) end)
+            for _, l in ipairs(order) do
+                local plain = PlainOf(l.text)
+                for who in plain:gmatch(" for ((%u[%a']+)[%.,])") do end
+                local text = l.text
+                for tail, who in l.text:gmatch("( for ([%u][%a']+))[%.,]") do
+                    local w = Clean(who)
+                    if #w >= 4 and not met[w] and not plain:find(w .. " ", 1, true) and not plain:find(w .. "'", 1, true) then
+                        text = text:gsub(Esc(tail) .. "([%.,])", "%1", 1)
+                    end
+                end
+                if text ~= l.text then Rewrite(l, text) end
+                for w in PlainOf(l.text):gmatch("%u[%a']+") do met[(w:gsub("'s$", ""))] = true end
+            end
+        end
         -- 9b. a land called new that no told moment of the chapter is in goes ("Westfall was new to us
         -- both", with nothing done there): no place is new unless the chapter takes the two there
         for _, l in ipairs(lines) do
@@ -3839,6 +3895,42 @@ function T.ComposeTogetherAfter(c, out, beats)
                 out[n] = S.Carry(line, bridge .. " " .. body); S.Bridge = S.Bridge or {}; S.Bridge[out[n]] = true
             elseif S.bonded and not ours then
                 out[n] = S.Carry(line, Cap(rest))
+            end
+        end
+    end
+    -- (round 20: a bare first after a crossing, a flight or the hearthstone is the arrival:
+    -- "We crossed the sea and came to Westfall, new to me.", never "I had never yet set foot in Westfall.")
+    if S.bonded then
+        for n = 2, #out do
+            local line = out[n]
+            local low = PlainOf(line):lower()
+            local place = line:match("({p:[^}]+})")
+            if beats[n] == "shared" and place and (FirstTold(low) or low:find("had not been", 1, true) or low:find("strange country", 1, true))
+                and CountWords(line) <= 14 and not line:find(",", 1, true) then
+                local t1, t2 = nil, times[line]
+                for m = n - 1, 1, -1 do if times[out[m]] then t1 = times[out[m]]; break end end
+                local means, craft
+                for _, x in ipairs(c.ownJournal or {}) do
+                    if t1 and t2 and x.t and x.t > t1 and x.t <= t2 and CARRIED[x.k] then
+                        local d = x.d or x.k
+                        if d == "zeppelin" or d == "boat" then means = "sea"; craft = d
+                        elseif x.k == "hearth" or d == "hearth" then means = means or "hearth"
+                        elseif x.k == "taxi" or x.k == "nightflight" or d == "flight" then means = means or "flight" end
+                    end
+                end
+                local at = line:find("{p:", 1, true)
+                if at and line:sub(math.max(1, at - 4), at - 1):lower() == "the " then place = "the " .. place end
+                local we = teller.base.I == "I"
+                local Wew, me = we and "We" or "You", we and "me" or "you"
+                local text
+                local pair = Cap(teller.base.pairNamed)
+                local close = T.BondKind(c.person) == "close"
+                if means == "sea" and close then text = pair .. " took the " .. (craft or "ship") .. " across, and " .. place .. " was new to " .. me .. "."
+                elseif means == "sea" then text = Wew .. " crossed the sea and came to " .. place .. ", new to " .. me .. "."
+                elseif means == "flight" and close then text = pair .. " flew on, and " .. place .. " was new to " .. me .. "."
+                elseif means == "flight" then text = Wew .. " flew on to " .. place .. ", new to " .. me .. "."
+                elseif means == "hearth" then text = (we and "I" or "You") .. " took the hearthstone, and from there " .. (we and "we" or "you") .. " came to " .. place .. ", new to " .. me .. "." end
+                if text then out[n] = S.Carry(line, text) end
             end
         end
     end

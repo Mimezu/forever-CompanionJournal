@@ -985,6 +985,25 @@ function C.DangerSentence(evs, k)
         end
     end
     if #own < 2 then return nil end
+    -- (round 21: two deaths with a rescue between them are told in their order: "Bishop Jericho cut us
+    -- down, Marrow brought me back, and then Veni Lace cut us down again")
+    if #own == 2 then
+        local between
+        for _, x in ipairs(evs) do if x.e.k == "rez" and x.t >= own[1].t and x.t < own[2].t and x.e.by then between = x end end
+        local f1, f2 = FoeWords(own[1].e, Place), FoeWords(own[2].e, Place)
+        if between and f1 and f2 then
+            local by = (tostring(between.e.by):gsub("%-.*$", ""))
+            local short = by:gsub(" .*$", "")
+            local raiser = (k.party or {})[short] and short or by
+            local us = #fell > 0 and "us" or "me"
+            local cut = k.killedMe == "cut me down"
+            local verb = cut and ("cut " .. us .. " down") or ("killed " .. us)
+            local x1 = own[1]
+            local zone, sub = x1.e.z or x1.ep.zone, x1.e.sz
+            local where = (sub and Clean(sub) ~= Clean(zone or "")) and ("At " .. Place(sub) .. " ") or ("In " .. Place(zone) .. " ")
+            return where .. f1 .. " " .. verb .. ", " .. raiser .. " brought me back, and then " .. f2 .. " " .. verb .. " again."
+        end
+    end
     local kind = KindOf(killers)
     local who
     if kind and #kind >= 3 then
@@ -1003,7 +1022,10 @@ function C.DangerSentence(evs, k)
     local where = (sub and Clean(sub) ~= Clean(zone or "")) and Place(sub) or Place(zone)
     local verb = (k.killedMe == "cut me down") and "cut me down" or "killed me"
     local named_ = who:find("{", 1, true) and not who:find("^the ")
-    local s = ((sub and Clean(sub) ~= Clean(zone or "")) and "At " or "In ") .. where .. " " .. who .. " " .. verb .. " " .. ((#own >= 3 and "again and again") or (named_ and "in turn") or "more than once")
+    local opener = ((sub and Clean(sub) ~= Clean(zone or "")) and "At " or "In ") .. where .. " "
+    local placeName = Plain((sub and Clean(sub) ~= Clean(zone or "")) and sub or zone or ""):gsub("^[Tt]he ", "")
+    if k.said and placeName ~= "" and k.said:find(placeName, 1, true) then opener = "There " end
+    local s = opener .. who .. " " .. verb .. " " .. ((#own >= 3 and "again and again") or (named_ and "in turn") or "more than once")
     -- (round 18, reader T: no list of who fell; the company falls in "us")
     if #fell > 0 then s = s:gsub(" me down ", " us down "):gsub(" killed me ", " killed us ") end
     if #raisers > 0 then s = s .. ", and " .. List(raisers) .. " brought me back" end
@@ -1032,6 +1054,7 @@ function C.DeathGroup(evs, k)
         local zone, sub = x.e.z or x.ep.zone, x.e.sz
         if sub and said:find((Plain(sub):gsub("^[Tt]he ", "")), 1, true) then return "there" end
         if not sub and said:find((Plain(zone or ""):gsub("^[Tt]he ", "")), 1, true) then return "there" end
+        if sub and k.stay and said:find((Plain(sub):gsub("^[Tt]he ", "")), 1, true) then return "" end
         if sub and Clean(sub) ~= Clean(zone or "") then return "at " .. Place(sub) .. ((k.stay and "") or (" in " .. Place(zone))) end
         -- (in a stay the land is the paragraph's own: not named again)
         if k.stay then return "" end
@@ -2446,20 +2469,31 @@ function C.Apply(ctx)
                     local r = C.EpisodeDanger(ep)
                     local killedMe = (P.journeyKilled and P.journeyKilled[r]) or "killed me"
                     local made = {}
-                    local restOwn = 0
-                    for _, x in ipairs(rest_) do if x.e.k == "death" then restOwn = restOwn + 1 end end
-                    if restOwn >= 2 then
-                        local text = C.DangerSentence(rest_, {Place = Place, killedMe = killedMe, party = partySet})
+                    -- (round 21, reader V rule 2: the deaths in clock order around the work told among them:
+                    -- the deaths between two told steps are one sentence there, a danger sentence for two or
+                    -- more of mine, one death's own moment for one)
+                    local toldT = {}
+                    for _, x in ipairs(byEp[ep]) do if not x.drop and not inRun[x] and x.cls == "quest" then toldT[#toldT + 1] = x.t end end
+                    local parts_ = {}
+                    for _, x in ipairs(rest_) do
+                        local g = parts_[#parts_]
+                        local cut = not g
+                        if g then for _, t in ipairs(toldT) do if t > g[#g].t and t <= x.t then cut = true end end end
+                        if cut then parts_[#parts_ + 1] = {x} else g[#g + 1] = x end
+                    end
+                    local said_ = lead and Plain(lead.text) or ""
+                    for pi, g in ipairs(parts_) do
+                        local gOwn = 0
+                        for _, x in ipairs(g) do if x.e.k == "death" then gOwn = gOwn + 1 end end
+                        local text
+                        if gOwn >= 2 then text = C.DangerSentence(g, {Place = Place, killedMe = killedMe, party = partySet, said = said_})
+                        elseif gOwn == 1 then text = C.DeathGroup(g, {Place = Place, killedMe = killedMe, party = partySet, exact = true, stay = true, Shape = DeathShape, said = said_}) end
+                        if text then said_ = said_ .. " " .. Plain(text) end
                         if text then
-                            local at = rest_[#rest_].t
-                            made[#made + 1] = {cls = "death", t = at, ep = ep, text = text, major = false, kind = "deathGroup", meta = {t = at, compose = "deaths"}, n = #out + 750 + ep.index}
-                        end
-                    elseif restOwn == 1 then
-                        local text = C.DeathGroup(rest_, {Place = Place, killedMe = killedMe, party = partySet, exact = true, stay = true, Shape = DeathShape})
-                        if text then
-                            local at = rest_[1].t
-                            for _, x in ipairs(rest_) do if x.e.k == "death" then at = x.t; break end end
-                            made[#made + 1] = {cls = "death", t = at, ep = ep, text = text, major = false, kind = "deathGroup", meta = {t = at, compose = "deaths"}, n = #out + 750 + ep.index}
+                            local at = g[1].t
+                            for _, x in ipairs(g) do if x.e.k == "death" then at = x.t; break end end
+                            if gOwn >= 2 then at = g[#g].t end
+                            made[#made + 1] = {cls = "death", t = at, ep = ep, text = text, major = false, kind = "deathGroup", meta = {t = at, compose = "deaths"}, n = #out + 750 + ep.index + pi / 100}
                         end
                     end
                     for gi, g in ipairs(namedGroups) do
@@ -4036,6 +4070,9 @@ function C.Apply(ctx)
             local base = ended and ("the night ended " .. where_) or (whoLow .. " slept " .. where_)
             local text
             local meaningful = level and ((gain and gain >= 4) or level % 10 == 0)
+            local chapterText_ = {}
+            for _, p_ in ipairs(paragraphs) do for _, x in ipairs(p_.lines) do if not x.toClose and x.cls ~= "close" then chapterText_[#chapterText_ + 1] = Plain(x.text) end end end
+            chapterText_ = table.concat(chapterText_, " ")
             if sum and Plain(sum.text):find(" still ", 1, true) then
                 -- (the story's open state folds in: "The night ended in the Undercity, while Thule Ravenclaw still held Fenris Keep.")
                 text = Cap(base) .. ", while " .. Lower((sum.text:gsub("%.$", "")))
@@ -4046,15 +4083,36 @@ function C.Apply(ctx)
                 text = Cap(base) .. ", level " .. level .. " now" .. (gain and (" after " .. ({"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"})[gain] .. " levels in a night") or "")
             elseif meaningful then
                 text = "Then " .. base .. ", and I was level " .. level .. " by then"
+            elseif ended and chapterText_:find((Plain(place):gsub("^[Tt]he ", "")), 1, true) and not before:find((Plain(place):gsub("^[Tt]he ", "")), 1, true) then
+                -- (round 21: "The night ended back in Brill", a place the chapter had been to)
+                text = "The night ended back " .. prep .. " " .. place
             elseif shape == 1 then
                 text = "That night " .. base
             elseif shape == 2 then
                 text = Cap(base) .. (ended and "" or " that night")
             else
-                text = "Then " .. base
+                -- (a night that ended without sleep needs no "Then": "The night ended in Brill, the lesson learned.")
+                text = ended and Cap(base) or ("Then " .. base)
             end
             if hours >= 6 * 3600 and hoursPhrase then
                 text = text .. ", " .. Lower(hoursPhrase) .. " after it began"
+            end
+            -- (round 21, reader V rule 1: the night to its true end. A stretch after the last told beat,
+            -- half an hour or more, is told in one clause by its lands, with a level reached in it)
+            local lastToldT = 0
+            for _, p_ in ipairs(paragraphs) do for _, x in ipairs(p_.lines) do if not x.toClose and x.cls ~= "close" and (x.t or 0) > lastToldT then lastToldT = x.t end end end
+            local lands_, seenL, lateLevel = {}, {}, nil
+            for _, ep_ in ipairs(episodes) do
+                if ep_.t > lastToldT + 60 then
+                    for _, sc in ipairs(ep_.scenes or {}) do
+                        if sc.zone and not seenL[Clean(sc.zone)] then seenL[Clean(sc.zone)] = true; lands_[#lands_ + 1] = Place(sc.zone) end
+                    end
+                    for _, lv in ipairs(ep_.levels or {}) do lateLevel = tonumber(lv.level) or lateLevel end
+                end
+            end
+            if (D.e or 0) - lastToldT >= 1800 and #lands_ >= 1 then
+                local tailText = Cap(who) .. " went on by way of " .. List(lands_) .. (lateLevel and (", and there I reached level " .. lateLevel) or "") .. "."
+                text = tailText .. " " .. text:gsub("^Then ", ""):gsub("^%l", string.upper)
             end
             text = text:gsub("^(%l)", string.upper) .. "."
             local newTail = {}
@@ -4065,6 +4123,45 @@ function C.Apply(ctx)
             for _, x in ipairs(newTail) do last.lines[#last.lines + 1] = x end
             last.words = 0
             for _, x in ipairs(last.lines) do last.words = last.words + Words(x.text) end
+        end
+    end
+    -- (round 21: three finishing passes. A step that ends on an unresolved fear, when its other authored
+    -- telling says what happened, is told in that other telling ("his body was still there"). A taking
+    -- told right after a wipe is a taking from before it, "We had taken". Two sentences in a row that
+    -- open on the same land: the second says "There".)
+    do
+        local function FillWe(text, party)
+            return (text:gsub("{We}", party and "We" or "I"):gsub("{we}", party and "we" or "I"):gsub("{us}", party and "us" or "me"):gsub("{our}", party and "our" or "my"):gsub("{Our}", party and "Our" or "My"))
+        end
+        local prevDeath, prevPlain = false, ""
+        for _, p_ in ipairs(paragraphs) do
+            local prevIn = nil
+            for _, l in ipairs(p_.lines) do
+                local plain = Plain(l.text)
+                local story = l.meta and l.meta.entry and l.meta.entry.story
+                story = type(story) == "table" and type(story.pov) == "table" and story.pov or story
+                if l.cls == "quest" and type(story) == "table" and type(story[1]) == "string" and type(story[2]) == "string" then
+                    local lastS = plain:match("([^%.]+)%.$") or ""
+                    if Any(lastS:lower(), {"had feared", "feared that", " wondered "}) then
+                        for _, v in ipairs({story[1], story[2]}) do
+                            local filled = FillWe(v, #l.ep.party > 0)
+                            if not Any(Plain(filled):lower(), {"had feared", "feared that", " wondered "}) and Plain(filled):sub(1, 12) ~= plain:sub(1, 12) then l.text = filled; plain = Plain(filled); break end
+                        end
+                    end
+                end
+                if prevDeath and l.cls == "quest" then l.text = l.text:gsub("^We took ", "We had taken "); plain = Plain(l.text) end
+                prevDeath = l.cls == "death"
+                local inX = plain:match("^In (%u[%a' ]-)[, ]") or plain:match("^In (the %u[%a' ]-)[, ]")
+                if inX and ((prevIn and inX == prevIn) or prevPlain:find(inX, 1, true)) then
+                    l.text = l.text:gsub("^In {p:[^}]*},? ", "There "):gsub("^In [%a' ]-, ", "There "); plain = Plain(l.text)
+                end
+                local fromX = plain:match("^From (the %u[%a' ]-) ") or plain:match("^From (%u[%a' ]-) ")
+                if fromX and prevPlain:find(fromX, 1, true) and not plain:find("new to", 1, true) then
+                    l.text = l.text:gsub("^From {p:[^}]*} ", "From there "); plain = Plain(l.text)
+                end
+                prevIn = plain:match("^In (%u[%a' ]-)[, ]") or plain:match("^In (the %u[%a' ]-)[, ]")
+                prevPlain = plain
+            end
         end
     end
     -- (round 20, the record's order: a deed done elsewhere is told before the road to where it was handed

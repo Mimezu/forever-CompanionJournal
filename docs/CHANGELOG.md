@@ -1,5 +1,11 @@
 # Companion Journal: changes
 
+## 1.35.0 (2026-11-12)
+
+- Each night is told to its true end
+- Deaths and rescues in the order they happened
+- Companion books: "we" only while together, late joins told as joins
+
 ## 1.34.0 (2026-11-12)
 
 - Chapters close on where you ended, with whom, and what is left open
