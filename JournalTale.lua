@@ -2882,6 +2882,15 @@ local function FoldDeaths(c, lines, Live)
             for _, l in ipairs(g.lines) do
                 if l ~= keep and l ~= also then l.drop = true; if l.t > keep.t then later = true end end
             end
+            -- (round 21: the night's worst stretch keeps the companion's falls in it: one danger sentence,
+            -- "It was the worst of the night: Dahlia fell three times on that road, and I four.", no colon)
+            g.mine, g.hers = 0, 0
+            for _, x in ipairs((c.f and c.f.deaths) or {}) do
+                if x.t and x.t >= g.lines[1].t - 60 and x.t <= g.last + 60 then
+                    if x.w == "you" then g.mine = g.mine + 1 else g.hers = g.hers + 1 end
+                end
+            end
+            g.keep = keep
             if later and PB.fallMore and keep.text:sub(-1) == "." and Rank(keep) < 3 then
                 local clause = teller:Say("fallMore", PB.fallMore, rng, tokens)
                 if clause then keep.text = c.S.Carry(keep.text, keep.text:sub(1, -2) .. clause .. ".") end
@@ -2889,7 +2898,42 @@ local function FoldDeaths(c, lines, Live)
         end
     end
 end
-T.FoldDeaths = FoldDeaths
+T.FoldDeaths = function(c, lines, Live)
+    FoldDeaths(c, lines, Live)
+end
+-- (round 21) After the folding: the worst stretch of the night, three falls or more with hers among
+-- them, says how many of hers there were, beside the fall kept.
+function T.WorstStretch(c, lines, Live)
+    local f, teller = c.f or {}, c.teller
+    local name = teller.base.name
+    local groups, cur = {}, nil
+    local ds = {}
+    for _, x in ipairs(f.deaths or {}) do if x.t then ds[#ds + 1] = x end end
+    table.sort(ds, function(a, b) return a.t < b.t end)
+    for _, x in ipairs(ds) do
+        if not cur or x.t - cur.last > 40 * 60 then cur = {t = x.t, last = x.t, mine = 0, hers = 0}; groups[#groups + 1] = cur end
+        cur.last = x.t
+        if x.w == "you" then cur.mine = cur.mine + 1 else cur.hers = cur.hers + 1 end
+    end
+    local worst
+    for _, g in ipairs(groups) do if g.mine + g.hers >= 3 and g.hers >= 2 and (not worst or g.mine + g.hers > worst.mine + worst.hers) then worst = g end end
+    if not worst then return end
+    -- (the kept fall of that stretch: the danger sentence goes before it)
+    local kept
+    for _, l in ipairs(lines) do if Live(l) and l.beat == "death" and l.t and l.t >= worst.t - 60 and l.t <= worst.last + 60 then kept = kept or l end end
+    for _, l in ipairs(lines) do if Live(l) and (PlainOf(l.text):find("worst of the", 1, true) or PlainOf(l.text):find(" fell %a+ times? in it")) then return end end
+    if not kept then return end
+    local we = teller.base.I == "I"
+    local function Times(n) return n == 1 and "once" or n == 2 and "twice" or (Words(n) .. " times") end
+    local history = c.history or {}
+    history.worstN = (history.worstN or 0) + 1
+    local heads = {"It was the worst of the " .. PartOf(Hour(worst.t)) .. ".", "That stretch went hard for us.", "Nothing came easy there."}
+    local head = heads[(history.worstN - 1) % #heads + 1]
+    local text = head .. " " .. name .. " fell " .. Times(worst.hers) .. " in it, and " .. (we and "I" or "you") .. " " .. Times(worst.mine) .. "."
+    if worst.mine == 0 then text = head .. " " .. name .. " fell " .. Times(worst.hers) .. " in it." end
+    c.S.Z[text] = c.S.Z[kept.text]
+    lines[#lines + 1] = {n = kept.n - 0.5, text = text, beat = "death", t = kept.t - 1, ep = kept.ep, added = true}
+end
 -- The own book's told text of each day (round 15): the player's own book, told once and kept, its
 -- composed lines captured as they leave the own composer. Read only: the own book is told as it
 -- would be, and nothing of it is changed. Returns {dayKey = "all the day's text"} or nil.
@@ -2994,12 +3038,15 @@ function T.OwnSpine(c, lines, Live)
         if pov and #pov > 0 and not seen[key] and added < 7 then
             seen[key] = true
             -- (the own book told it: most of one of its two lines' matter is in the own night's text)
-            local ownTold, hereTold = false, false
+            local ownTold, hereTold, forceTell = false, false, false
             for _, v in ipairs(pov) do
                 local w, n = MatterWords(QD.Fill(v, tok))
                 local inOwn, inHere = 0, 0
                 for x in pairs(w) do if ownWords[x] then inOwn = inOwn + 1 end; if hereWords[x] then inHere = inHere + 1 end end
                 if n >= 4 and inOwn / n >= 0.45 then ownTold = true end
+                -- (round 21: a step of a thread the two were on is told even when the own book folded it:
+                -- the ichor Bethor read, the crate back to Podrig; a later line of the book uses it)
+                if story.thread and T.SPINE_ALL_THREADS then ownTold = true end
                 if n >= 4 and inHere / n >= 0.4 then hereTold = true end
             end
             for line, quest in pairs(S.Q or {}) do if quest == q then for _, x in ipairs(here) do if x == line then hereTold = true end end end end
@@ -3023,7 +3070,23 @@ function T.OwnSpine(c, lines, Live)
                         -- (a place is no name of the moment: a land or town is in many lines)
                         local isPlace = false
                         for z in pairs(A.LoreZoneLevels or {}) do if z:find(w, 1, true) then isPlace = true end end
-                        if not isPlace then hereTold = true end
+                        if not isPlace then
+                            hereTold = true
+                            -- (round 21: when the name is only a clause of a list line, "then killed Valdred at the
+                            -- Greymane Wall", the clause leaves the list and the quest's own scene closes the thread)
+                            if story.thread and T.BondKind(c.person) == "close" then
+                                for _, l in ipairs(lines) do
+                                    if Live(l) and not l.run and (l.beat == "quests" or l.beat == "questKey") and PlainOf(l.text):find("%f[%a]" .. w .. "%f[%A]") then
+                                        local head, rest = l.text:match("^(.-), then ([^,]-" .. w .. "[^,]-)%.$")
+                                        if head and rest and head:find("%a$") and head:find("^%a*%s?[Ww]e ") then
+                                            l.text = S.Carry(l.text, head .. ".")
+                                            hereTold = false
+                                            forceTell = true
+                                        end
+                                    end
+                                end
+                            end
+                        end
                     end
                 end
             end
@@ -3044,6 +3107,7 @@ function T.OwnSpine(c, lines, Live)
                     end
                 end
             end
+            if forceTell then ownTold, hereTold = true, false end
             if ownTold and not hereTold then
                 local e = {quest = q, story = story, act = QD.Act and QD.Act(q, story)}
                 local text
@@ -3089,6 +3153,8 @@ function T.OwnSpine(c, lines, Live)
                     S.Z[text] = q.z or S.Z[near.text]
                     S.Q[text] = q
                     S.NoLead = S.NoLead or {}; S.NoLead[text] = true
+                    -- (a thread's closing scene taken out of a list is kept whole by the spine budget)
+                    if forceTell then S.Keep = S.Keep or {}; S.Keep[text] = true end
                     lines[#lines + 1] = {n = #lines + 1.5, text = text, beat = "questKey", t = (runOf and near.t) or q.t or near.t, ep = near.ep, added = true,
                         run = runOf}
                     if runOf then S.R[text] = runOf end
@@ -3691,6 +3757,7 @@ function T.ComposeTogether(c, lines)
     if kind ~= "plain" then
         -- 9. deaths inside the scene, one a stretch (round 10)
         FoldDeaths(c, lines, Live)
+        if T.BondKind(c.person) == "close" then T.WorstStretch(c, lines, Live) end
         -- 9a. round 11: at most one fall of mine alone a chapter, and none when a fall that touched
         -- the two (together, a raise between them) is told
         do
@@ -3814,6 +3881,37 @@ function T.ComposeTogether(c, lines)
                 end
                 if text ~= l.text then Rewrite(l, text) end
                 for w in PlainOf(l.text):gmatch("%u[%a']+") do met[(w:gsub("'s$", ""))] = true end
+            end
+        end
+        -- 9i. round 21: no ledger: a sentence that chains three deeds or more ("We killed ..., took ... and
+        -- gathered ...") keeps its first two; the rest fold
+        for _, l in ipairs(lines) do
+            if Live(l) and (l.beat == "quests" or l.beat == "questKey") and not l.run then
+                local text = l.text
+                local head, last = text:match("^((%a+ %a+ [^%.]-), [^%.]-) and ([^%.]-)%.$")
+                local plain = PlainOf(text)
+                local commas = select(2, plain:match("^[^%.]*"):gsub(",", ""))
+                if commas >= 1 and plain:match("^[^%.]*%.$") and plain:find(" and ", 1, true) then
+                    local parts = {}
+                    local body = text:sub(1, -2)
+                    local lastPart = body:match("^.* and (.-)$")
+                    local front = body:match("^(.*) and .-$")
+                    if lastPart and front then
+                        for piece in (front .. ","):gmatch("(.-),%s*") do parts[#parts + 1] = piece end
+                        parts[#parts + 1] = lastPart
+                    end
+                    -- (only a true list of deeds: each part after the first opens on a past-tense verb)
+                    local VERBS = {took = true, cut = true, found = true, brought = true, slew = true, made = true, gave = true, put = true,
+                        led = true, freed = true, won = true, went = true, set = true}
+                    local deeds = #parts >= 3 and parts[1]:match("^%a*%s?[Ww]e ") ~= nil
+                    for i = 2, #parts do
+                        local w = (parts[i]:gsub("^then ", "")):match("^(%l+)")
+                        if not w or not (w:find("ed$") or VERBS[w]) then deeds = false end
+                    end
+                    if deeds then
+                        Rewrite(l, parts[1] .. " and " .. (parts[2]:gsub("^then ", "")) .. ".")
+                    end
+                end
             end
         end
         -- 9b. a land called new that no told moment of the chapter is in goes ("Westfall was new to us

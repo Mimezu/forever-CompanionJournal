@@ -1,5 +1,11 @@
 # Companion Journal: changes
 
+## 1.36.0 (2026-11-12)
+
+- Steps a later chapter depends on are kept
+- Trips with no quest are told as what they were
+- Companion books: threads closed, her falls in the worst stretches told
+
 ## 1.35.0 (2026-11-12)
 
 - Each night is told to its true end

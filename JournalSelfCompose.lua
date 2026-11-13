@@ -312,6 +312,7 @@ local function Select(ctx, lines, inRun, episodes, D)
                         for _, x in ipairs(story.pov) do if type(x) == "string" then texts[#texts + 1] = x end end
                         if type(story.pov.act) == "string" then texts[#texts + 1] = story.pov.act end
                         for word in giver:gmatch("%a+") do givers[word] = true end
+                        sel.laterText = (sel.laterText or "") .. " " .. Plain(table.concat(texts, " "))
                         for _, x in ipairs(texts) do
                             for name in pairs(C.BareNames(Plain(x), true)) do
                                 later[name] = true
@@ -402,6 +403,9 @@ local function Select(ctx, lines, inRun, episodes, D)
                 it.chosen[best.act.i] = true
                 it.pick, it.keep = true, true
                 sc.errandTold = true
+            elseif not told and not best and #(sc.quests or {}) > 0 then
+                -- (round 22, reader W rule 2: no unit to tell, but the record has the trip and its hand-in)
+                sc.errandBare = true
             end
         end
     end
@@ -505,7 +509,17 @@ local function Select(ctx, lines, inRun, episodes, D)
                     if not inWork then spine = true end
                 end
             end
-            if kill or ends or firstUnit[u] or spine then Tell(u, kill) end
+            -- (round 22, reader W rule 1: chain integrity. A step whose outcome a later chapter's work refers
+            -- to, "Bethor's scroll", "what Bethor had learned", is told: its person, in a possessive or as
+            -- one who learned, found or wrote something, is a setup the later line stands on)
+            local setup = false
+            local laterText = sel.laterText or ""
+            for name in pairs(u.names or {}) do
+                -- (only what someone learned or found: "what Bethor had learned of Thule", never a mere possessive)
+                if #name >= 4 and (laterText:find("%f[%a]" .. name .. " had learned") or laterText:find("%f[%a]" .. name .. " had found")
+                    or laterText:find("%f[%a]" .. name .. " had read") or laterText:find("%f[%a]" .. name .. " had discovered")) then setup = true end
+            end
+            if kill or ends or firstUnit[u] or spine or setup then Tell(u, kill) end
         end
     end
     -- 2. What was decided, back on the lines. A grouped line's kept acts are lines of their own
@@ -1815,7 +1829,7 @@ function C.Apply(ctx)
     -- (round 16: the told errand's road there and back, from the record)
     for _, ep in ipairs(episodes) do
         for _, sc in ipairs(ep.errands or {}) do
-            if sc.errandTold and P.errandOut then
+            if (sc.errandTold or sc.errandBare) and P.errandOut then
                 local party = #ep.party > 0
                 local how, hearth
                 for _, s_ in ipairs(ep.scenes or {}) do
@@ -1828,7 +1842,33 @@ function C.Apply(ctx)
                 for _, e in ipairs(sc.events or {}) do if e.k == "hearth" and e.d then hearth = hearth or e.d end end
                 local tk = {We = party and "We" or "I", we = party and "we" or "I", us = party and "us" or "me", Our = party and "Our" or "My", zone = Place(sc.zone), place = hearth and Place(hearth) or ""}
                 local t0 = (sc.t or 0)
-                lines[#lines + 1] = {cls = "what", t = t0, ep = ep, text = Fill(how and P.errandFlew[1] or P.errandOut[1], tk), major = false, kind = "errand", meta = {t = t0, compose = "errand"}, n = #out + 820 + ep.index}
+                if sc.errandBare and P.errandBare then
+                    -- (whose errand, from the quest's own story)
+                    local giver
+                    local QD = A.QuestDeeds
+                    for _, q in ipairs(sc.quests or {}) do
+                        if QD and QD.Story and not giver then
+                            local ok, story = pcall(QD.Story, {title = q.title, qid = q.qid})
+                            local g = ok and type(story) == "table" and type(story.pov) == "table" and story.pov.giver
+                            if type(g) == "string" and g ~= "" then giver = g end
+                        end
+                    end
+                    tk.errand = giver and ("an errand for " .. Clean(giver):gsub("^Apothecary ", ""):gsub("^Master Apothecary ", "")) or "an errand"
+                    tk.back = hearth and (", and " .. (party and "our" or "my") .. " hearthstones brought " .. (party and "us" or "me") .. " back to " .. Place(hearth)) or ""
+                    lines[#lines + 1] = {cls = "what", t = t0, ep = ep, text = Fill(how and P.errandBare[1] or P.errandBare[2], tk), major = false, kind = "errand", meta = {t = t0, compose = "errand"}, n = #out + 820 + ep.index}
+                    hearth = nil
+                    -- (the stay it came back to needs no road of its own)
+                    for _, ep2 in ipairs(episodes) do
+                        if ep2.t > t0 and ep2.t <= (sc.e or t0) + 300 and tk.back ~= "" then ep2.roadTold = true end
+                    end
+                    -- (the teller's own legs of this trip give way to the one sentence)
+                    for _, x in ipairs(lines) do
+                        if not x.drop and (x.ep == ep or (tk.back ~= "" and Plain(x.text):lower():find("hearthstone", 1, true))) and (x.t or 0) >= t0 - 600 and (x.t or 0) <= (sc.e or t0) + 180
+                            and (x.cls == "night" or x.cls == "voyage" or x.cls == "arrive" or x.cls == "move") then x.drop = true end
+                    end
+                else
+                    lines[#lines + 1] = {cls = "what", t = t0, ep = ep, text = Fill(how and P.errandFlew[1] or P.errandOut[1], tk), major = false, kind = "errand", meta = {t = t0, compose = "errand"}, n = #out + 820 + ep.index}
+                end
                 if hearth and P.errandBack then
                     local t1 = (sc.e or sc.t or 0)
                     lines[#lines + 1] = {cls = "what", t = t1, ep = ep, text = Fill(P.errandBack[1], tk), major = false, kind = "errand", meta = {t = t1, compose = "errand"}, n = #out + 821 + ep.index}
@@ -3889,6 +3929,28 @@ function C.Apply(ctx)
         if #p.lines >= 2 and p.lines[#p.lines].cls == "craft" and not p.lines[#p.lines].toClose then
             local tally = table.remove(p.lines)
             table.insert(p.lines, #p.lines, tally)
+        end
+    end
+    -- (round 22, reader W rule 3: an outing to a new land with no work recorded there is told as what it
+    -- was, before its first sight: "We went there only to see new country, far beyond our level.")
+    if P.roamOnly then
+        for _, p_ in ipairs(paragraphs) do
+            for _, l in ipairs(p_.lines) do
+                local ep = l.ep
+                local low = Plain(l.text):lower()
+                if ep and not ep.roamTold and ep.kind ~= "dungeon" and #(ep.quests or {}) == 0 and (l.cls == "place" or l.cls == "what") and Any(low, {"was new to me", "was new to us", "for the first time"}) then
+                    local isNew = false
+                    for _, f in ipairs(ep.firsts or {}) do if f.what == "zone" then isNew = true end end
+                    if isNew then
+                        ep.roamTold = true
+                        local level = C.EpisodeLevel(ep)
+                        local gap = C.LevelGap(ep.zone, level)
+                        local party = #ep.party > 0
+                        local text = Fill(P.roamOnly[gap >= 5 and 2 or 1], {We = party and "We" or "I", us = party and "us" or "me", our = party and "our" or "my"})
+                        l.text = l.text:gsub("%s*$", "") .. " " .. text
+                    end
+                end
+            end
         end
     end
     -- (round 17, reader S rule 1: one adventure a paragraph. A paragraph that holds the work of three
