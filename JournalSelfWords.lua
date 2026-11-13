@@ -3710,7 +3710,7 @@ W.compose = {
     -- (round 23: threads the record leaves open, said to stay open when the next step never came:
     -- Meal Appeal (97246) is followed by the lunch for Migi (97249))
     openThreads = {
-        [97246] = {next = 97249, text = "The lunch itself would wait for another day."},
+        -- (round 27: a thread with no next step is not opened, never declared waiting; no entries)
     },
     -- (round 22: an errand whose work the book does not tell, from the record's trip and hand-in)
     errandBare = {"{We} flew to {zone} on {errand}{back}.", "{We} went to {zone} on {errand}{back}."},

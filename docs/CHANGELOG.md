@@ -1,5 +1,11 @@
 # Companion Journal: changes
 
+## 1.41.0 (2026-11-13)
+
+- "Us" in a death only when a companion fell then too
+- Places only as precise as the record
+- Companion books: every death of the companion counted right
+
 ## 1.40.0 (2026-11-12)
 
 - Every line sits at the minute it happened

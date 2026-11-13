@@ -1028,13 +1028,18 @@ function C.DangerSentence(evs, k)
             local by = (tostring(between.e.by):gsub("%-.*$", ""))
             local short = by:gsub(" .*$", "")
             local raiser = (k.party or {})[short] and short or by
-            local us = #fell > 0 and "us" or "me"
+            -- (round 27: "us" only when a companion died within the minute of that death of mine)
+            local function UsAt(t)
+                for _, x in ipairs(evs) do if x.e.k == "pdeath" and math.abs(x.t - t) <= 60 then return "us" end end
+                return "me"
+            end
             local cut = k.killedMe == "cut me down"
-            local verb = cut and ("cut " .. us .. " down") or ("killed " .. us)
+            local function Verb(t) local who = UsAt(t); return cut and ("cut " .. who .. " down") or ("killed " .. who) end
+            local verb, verb2 = Verb(own[1].t), Verb(own[2].t)
             local x1 = own[1]
             local zone, sub = x1.e.z or x1.ep.zone, x1.e.sz
             local where = (sub and Clean(sub) ~= Clean(zone or "")) and ("At " .. Place(sub) .. " ") or ("In " .. Place(zone) .. " ")
-            return where .. f1 .. " " .. verb .. ", " .. raiser .. " brought me back, and then " .. f2 .. " " .. verb .. " again."
+            return where .. f1 .. " " .. verb .. ", " .. raiser .. " brought me back, and then " .. f2 .. " " .. verb2 .. " again."
         end
     end
     local kind = KindOf(killers)
@@ -4226,6 +4231,7 @@ function C.Apply(ctx)
             local lastToldT = 0
             for _, p_ in ipairs(paragraphs) do for _, x in ipairs(p_.lines) do if not x.toClose and x.cls ~= "close" and (x.t or 0) > lastToldT then lastToldT = x.t end end end
             local lands_, seenL, lateLevel, landT = {}, {}, nil, {}
+            local lateStop
             for _, ep_ in ipairs(episodes) do
                 if ep_.t > lastToldT + 60 then
                     for _, sc in ipairs(ep_.scenes or {}) do
@@ -4253,6 +4259,7 @@ function C.Apply(ctx)
                 local firstT = landT[1] and landT[1][1] or (D.e or 0)
                 local before_ = Company(lastToldT, firstT)
                 local stop = table.remove(lands_)
+                lateStop = stop
                 local stopT = table.remove(landT)
                 local groups = {}
                 for i_, land in ipairs(lands_) do
@@ -4306,6 +4313,12 @@ function C.Apply(ctx)
                 for i_ = 1, goalEnd do trimmed[#trimmed + 1] = keep[i_] end
                 keep = trimmed
                 newTail = {}
+                -- (round 27: the last level and place, as a clause after the goal: "..., and I was level 19
+                -- by the time I stopped in Silverpine Forest")
+                local endLine = keep[#keep]
+                if endLine and lateLevel and lateStop and endLine.text:match("%.$") then
+                    endLine.text = endLine.text:gsub("%.$", "") .. ", and I was level " .. lateLevel .. " by the time I stopped in " .. lateStop .. "."
+                end
             else
                 local l = {cls = "close", t = D.e or 0, ep = last.ep, text = text, major = true, kind = "close", meta = {t = D.e, compose = "close"}, n = #out + 990, toClose = true}
                 newTail[#newTail + 1] = l
@@ -4384,6 +4397,24 @@ function C.Apply(ctx)
                         :gsub("^I used my hearthstone, and was in ", "We used our hearthstones, and were in ")
                         :gsub("^My hearthstone took me ", "Our hearthstones took us "):gsub("^My hearthstone brought me ", "Our hearthstones brought us ")
                         :gsub("([%.,] )my hearthstone took me ", "%1our hearthstones took us "):gsub("^I flew to ", "We flew to ")
+                end
+                -- (round 27: a join or leave names a place only when the record has that place at that minute)
+                if l.cls == "who" then
+                    local at = l.text:match(" at (the {p:[^}]+})%.$") or l.text:match(" at ({p:[^}]+})%.$") or l.text:match(" at (the %u[%a' ]+)%.$")
+                    if at then
+                        local name_ = Plain(at):gsub("^[Tt]he ", "")
+                        local held = false
+                        -- (the minute is the companion's own: their window's start in the record)
+                        local who_ = Plain(l.text):match("^(%u[%a']+)")
+                        local tJoin = l.t or 0
+                        for _, sp in ipairs(who_ and windows[who_] or {}) do if math.abs(sp[1] - tJoin) <= 3600 then tJoin = sp[1]; break end end
+                        for _, st in ipairs(stretches) do
+                            for _, e in ipairs(st.events or {}) do
+                                if e.t and math.abs(e.t - tJoin) <= 180 and ((type(e.d) == "string" and e.d:find(name_, 1, true)) or (type(e.sz) == "string" and e.sz:find(name_, 1, true))) then held = true end
+                            end
+                        end
+                        if not held then l.text = l.text:gsub(" at " .. Esc(at) .. "%.$", ".") end
+                    end
                 end
                 -- (round 23: a companion's first appearance in the book is a joining, never a catching up)
                 if l.cls == "who" and Plain(l.text):find(" caught up with ", 1, true) then
