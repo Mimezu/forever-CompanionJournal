@@ -3763,6 +3763,9 @@ W.compose = {
     journeyHomeFrom = {"From {far} {our} hearthstones brought {us} home, {span} after {we} had set out."},
     -- (round 17: the arrival in a first land, with the crossings that brought us there)
     arriveBy = {"{how}, and {we} came to {land}, new to {us}{why}."},
+    -- (round 30: firsts the record holds that the teller does not tell)
+    firstSnow = {"In {zone} I saw snow for the first time{life}."},
+    firstRare = {"{We} crossed paths with {beast}, a rare beast."},
     -- (round 23: a main companion away for a while inside the night, and back)
     partedWhile = {"{name} went another way for a while."},
     leftAtTime = {"{name} left us."},

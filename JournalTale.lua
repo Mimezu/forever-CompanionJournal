@@ -2922,9 +2922,18 @@ local function FoldDeaths(c, lines, Live)
                 local raise
                 for _, l in ipairs(g.lines) do if Rank(l) >= 4 then raise = l end end
                 local from = raise and raise.t + 30 or g.lines[1].t - 60
+                -- (round 29: the stretch runs to the next thing told, five minutes at most: a fall two minutes
+                -- after the last line's is in it, and the count is exact)
+                local to = g.last + 5 * 60
+                for _, o in ipairs(lines) do
+                    if Live(o) and o.t and o.beat ~= "death" and o.beat ~= "rez" and o.t > g.last + 30 and o.t < to then to = o.t - 1 end
+                end
+                for _, o in ipairs(lines) do
+                    if not raise and Live(o) and o.t and o.beat ~= "death" and o.beat ~= "rez" and o.t < g.lines[1].t - 30 and o.t > from then from = o.t + 1 end
+                end
                 local mine, hers, zones, zoneSeen, killers, subs = 0, 0, {}, {}, {}, {}
                 for _, x in ipairs((c.f and c.f.deaths) or {}) do
-                    if x.t and x.t >= from and x.t <= g.last + 60 then
+                    if x.t and x.t >= from and x.t <= to then
                         if x.w == "you" then
                             mine = mine + 1
                             if x.d then killers[#killers + 1] = x.d end
@@ -2984,7 +2993,7 @@ local function FoldDeaths(c, lines, Live)
                     for _, x in ipairs(c.ownJournal or {}) do if x.k == "rez" and x.by and x.t then raises[#raises + 1] = {t = x.t, by = Clean(x.by)} end end
                     for _, r in ipairs(raises) do
                         local rt, who = r.t, r.by
-                        if type(rt) == "number" and rt >= from and rt <= g.last + 5 * 60 then
+                        if type(rt) == "number" and rt >= from and rt <= to + 60 then
                             local first = tostring(who):match("^(%S+)")
                             -- (only one of the party: a stranger's raise has its own line)
                             local inParty = first and first:lower() == PlainOf(name):lower()
@@ -3132,6 +3141,16 @@ function T.OwnSpine(c, lines, Live)
             for _, x in ipairs(c.ownJournal or {}) do
                 if x.k == "quest" and x.d and x.t and x.t >= (scene.t or 0) and x.t <= (scene.e or scene.t or 0) then
                     local q = {title = x.d, qid = x.qid, t = x.t, z = x.z, ql = x.ql}
+                    -- (round 29: "we" only where the companion's own record does not contradict it: when her
+                    -- record holds hand-ins of its own within the half hour around mine and not this one, it was mine)
+                    local hers, near = false, false
+                    for _, y in ipairs(c.person and type(c.person.journal) == "table" and c.person.journal or {}) do
+                        if y.k == "quest" and y.t and math.abs(y.t - x.t) <= 30 * 60 then
+                            near = true
+                            if (y.qid and x.qid and tonumber(y.qid) == tonumber(x.qid)) or (y.d and y.d == x.d) then hers = true end
+                        end
+                    end
+                    if near and not hers then have[QD.Key(q)] = true end
                     if not have[QD.Key(q)] then have[QD.Key(q)] = true; qs[#qs + 1] = q end
                 end
             end
@@ -3307,7 +3326,12 @@ function T.OwnSpine(c, lines, Live)
                     -- the two; never "we saw to the work of X")
                     text = QD.Moment(e, tok, QD.Variant(key, nil, teller.deedOther), true)
                     -- (round 23: its background a night the companion missed: this night's act alone)
-                    if useAct and not forceTell and e.act and e.act.act then text = Cap(b.we) .. " " .. e.act.act .. "." end
+                    if useAct and not forceTell and e.act and e.act.act then
+                        text = Cap(b.we) .. " " .. e.act.act .. "."
+                        -- (round 30: the friend's book says a kill from the one who fell)
+                        local k = T.BondKind(c.person) ~= "close" and e.act.act:match("^killed (.+)$")
+                        if k and not k:find(" at the %u") then text = Cap(k) .. " died at " .. b.our .. " hands." end
+                    end
                     if setupAway then
                         local act = e.act and e.act.act and not e.act.solo and e.act.act:gsub(" for %u[%a']+$", "")
                         -- (round 27: the record holds only the hand-in's minute, so the deed is told there, as done before it)
@@ -3318,7 +3342,11 @@ function T.OwnSpine(c, lines, Live)
                         -- (a friend's book says the same deed from the place first)
                         local deed, where
                         if act then deed, where = act:match("^(.-) at (the [%u][%a' ]+)$") end
-                        if deed and T.BondKind(c.person) ~= "close" then text = "At " .. where .. ", " .. b.we .. " " .. deed .. "." end
+                        if deed and T.BondKind(c.person) ~= "close" then text = "At " .. where .. ", " .. b.we .. " " .. deed .. "."
+                        elseif act and T.BondKind(c.person) ~= "close" and act:find("^killed ") then
+                            -- (round 30: the friend's book says a kill from the one who fell, never the close book's words)
+                            text = Cap(act:gsub("^killed ", "")) .. " died at " .. b.our .. " hands."
+                        end
                     end
                     -- (round 16: only work the two did; a line of mine alone, "I woke on the cold stone",
                     -- "Aramis began my training", is the own book's, not hers)
@@ -3903,7 +3931,11 @@ function T.ComposeTogether(c, lines)
                 end
                 local act = prior and QD.Act and QD.Act(q, st)
                 if act and act.act and act.act:find("^learned ") then l.drop = true
-                elseif act and act.act then Rewrite(l, Cap(teller.base.we) .. " " .. act.act .. ".") end
+                elseif act and act.act then
+                    local k = T.BondKind(c.person) ~= "close" and act.act:match("^killed (.+)$")
+                    if k and not k:find(" at the %u") then Rewrite(l, Cap(k) .. " died at " .. teller.base.our .. " hands.")
+                    else Rewrite(l, Cap(teller.base.we) .. " " .. act.act .. ".") end
+                end
             end
         end
     end
@@ -4023,8 +4055,8 @@ function T.ComposeTogether(c, lines)
         end
     end
     if kind ~= "plain" then
-        -- 9. deaths inside the scene, one a stretch (round 10)
-        FoldDeaths(c, lines, Live)
+        -- 9. deaths inside the scene, one a stretch (round 10; round 29: after the own book's work is in,
+        -- below, so a stretch never runs across a deed told between its falls)
         -- (round 22: no "fell N times" tally; the worst stretch keeps her falls as told falls, below)
         if T.WORST_TALLY and T.BondKind(c.person) == "close" then T.WorstStretch(c, lines, Live) end
         -- 9a. round 11: at most one fall of mine alone a chapter, and none when a fall that touched
@@ -4132,6 +4164,7 @@ function T.ComposeTogether(c, lines)
         -- 9f. round 15: the own book's work of the night, while the companion was there
         if T.OWN_SPINE ~= false then T.OwnSpine(c, lines, Live) end
         T.ChainStart(c, lines, Live)
+        FoldDeaths(c, lines, Live)
         -- 9g. round 19: a long chapter keeps to the bond's spine. Chapter I reads best because the two
         -- of them are the subject of nearly every beat; where the night's quests take over, the beats
         -- the two did together (or for each other) stay and the rest fold away, the work that sets up
@@ -4944,6 +4977,84 @@ function T.PlaceFalls(out, beats, S)
         end
     end
 end
+-- (round 30) A wipe leaves nobody out: another of the party who fell in the same minute, from my own
+-- record, is named beside it ("Marrow fell with us.").
+function T.WipeOthers(out, beats, S, ownJournal, person, teller)
+    if type(ownJournal) ~= "table" then return end
+    local mine = Clean(person and person.name or ""):gsub("%-.*$", ""):lower()
+    for n, line in ipairs(out) do
+        local e = S.D and S.D[line]
+        local lowL = PlainOf(line):lower()
+        local counted = lowL:find("twice", 1, true) or lowL:find("times", 1, true) or lowL:find(" each", 1, true) or lowL:find("apiece", 1, true) or lowL:find("once", 1, true)
+        if beats[n] == "death" and e and e.t and not counted and not lowL:find(" rose", 1, true) and not lowL:find("raised", 1, true) then
+            local names, seen = {}, {}
+            for _, x in ipairs(ownJournal) do
+                if x.k == "pdeath" and x.n and x.t and math.abs(x.t - e.t) <= 90 and (not e.z or not x.z or Clean(x.z) == Clean(e.z)) then
+                    local first = (Clean(x.n):gsub("%-.*$", ""))
+                    if first:lower() ~= mine and not seen[first] and not PlainOf(line):find(first, 1, true) then seen[first] = true; names[#names + 1] = first end
+                end
+            end
+            if #names == 1 and line:sub(-1) == "." then
+                out[n] = S.Carry(line, line .. " {n:" .. names[1] .. "} fell with " .. (teller.base.I == "I" and "us" or "you") .. ".")
+            end
+        end
+    end
+end
+-- (round 30) A list line whose clauses other lines of the chapter tell in full keeps only the clauses
+-- told nowhere else ("For Allister, we took the pendants ..., put down the Ravenclaw undead in Beren's
+-- Peril and culled Dalaran's watchers ..." beside the pendants' and the roads' own scenes), or goes.
+function T.TrimToldClauses(out, beats, S)
+    local function W(text)
+        local w, n = {}, 0
+        for x in PlainOf(text):lower():gmatch("[%a']+") do if #x >= 4 and not w[x] then w[x] = true; n = n + 1 end end
+        return w, n
+    end
+    local n = 1
+    while n <= #out do
+        local line = out[n]
+        local plain = PlainOf(line)
+        local head, body = plain:match("^(.-[Ww]e )(.+)%.$")
+        if not head then head, body = plain:match("^(.-[Yy]ou )(.+)%.$") end
+        local qs = S.Qs and S.Qs[line]
+        if (beats[n] == "questKey" or beats[n] == "quests") and head and not body:find("%. ") and qs and #qs >= 2 and not S.R[line] then
+            -- (the clauses: split at commas, and at " and " before a verb of deed)
+            local VERB = {took = true, brought = true, put = true, cut = true, fought = true, found = true, went = true, slew = true, made = true, gave = true, tore = true, carried = true}
+            local parts = {}
+            for seg in (body .. ", "):gmatch("(.-), ") do
+                local rest = seg
+                while true do
+                    local a, v, b = rest:match("^(.-) and (%l+)( .*)$")
+                    if a and (VERB[v] or v:find("ed$")) then parts[#parts + 1] = a; rest = v .. b else break end
+                end
+                parts[#parts + 1] = rest
+            end
+            if #parts == #qs then
+                local keep = {}
+                for _, part in ipairs(parts) do
+                    local w, cnt = W(part)
+                    local told = false
+                    for m, other in ipairs(out) do
+                        if m ~= n and cnt >= 3 then
+                            local ow = W(other)
+                            local hit = 0
+                            for x in pairs(w) do if ow[x] then hit = hit + 1 end end
+                            if hit / cnt >= 0.6 then told = true end
+                        end
+                    end
+                    if not told then keep[#keep + 1] = part end
+                end
+                if #keep == 0 then
+                    table.remove(out, n); table.remove(beats, n); n = n - 1
+                elseif #keep < #parts then
+                    local list = #keep == 1 and keep[1] or (table.concat(keep, ", ", 1, #keep - 1) .. " and " .. keep[#keep])
+                    -- (the line keeps its own markup only where the words are the same: rebuilt plain)
+                    out[n] = S.Carry(line, head .. list .. ".")
+                end
+            end
+        end
+        n = n + 1
+    end
+end
 -- (round 27) The companion's falls as prose, not a roll call: a short "Marrow went down again." or
 -- "Marrow fell there too." right after a fall is joined to it ("..., and he went down again"), and a bare
 -- "Marrow died." says where, from the record.
@@ -5395,6 +5506,21 @@ function T.TellOnce(person, days, voice, player, brief)
         local exploreRanked = false
         for i, e in ipairs(moments) do
             local rank = e.k == "first" and firstRanks[e.d] or ({voyage = 5, close = 4, swim = 3, nightflight = 3, gather = 1, cave = 3, bg = 6})[e.k]
+            -- (round 30, the player: "I just briefly got close to Alterac and went away". A first in a land the
+            -- day only brushed, under a quarter of an hour of my own play there, is not a moment of the book)
+            if rank and not (A.BookVariant and A.BookVariant("teller") == "planned") and e.k == "first" and (e.d == "snow" or e.d == "zone" or e.d == "sunset" or e.d == "landmark") and e.z and ownJournal then
+                local zone = (e.d == "zone" or e.d == "snow") and e.z or nil
+                if zone then
+                    -- (brief: the next stretch elsewhere began within a quarter of an hour, and nothing was done
+                    -- there: no hand-in, no death, no kill in that land that day)
+                    local brief, done = false, false
+                    for _, x in ipairs(ownJournal) do
+                        if x.k == "play" and x.z and x.z ~= zone and x.t and e.t and x.t > e.t and x.t - e.t < 15 * 60 then brief = true end
+                        if (x.k == "quest" or x.k == "death" or x.k == "boss" or x.k == "dungeon") and x.z == zone and x.t and math.abs(x.t - (e.t or 0)) <= 6 * 3600 then done = true end
+                    end
+                    if brief and not done then rank = nil end
+                end
+            end
             -- (a first the book cannot be sure of, begun late, is not claimed)
             if e.k == "first" and SURE_FIRSTS[e.d] and e.u then rank = nil end
             -- (a first zone or continent only where the record places it)
@@ -9763,7 +9889,9 @@ function T.TellOnce(person, days, voice, player, brief)
                 local from = first and first.zone
                 local endZone, endT, ownEnd, crossings, boats = nil, nil, 0, 0, false
                 for _, x in ipairs(ownJournal) do
-                    if x.k == "play" and x.t and x.z and x.t <= e0 + 60 and (x.e or x.t) >= t0 and (not endT or x.t >= endT) then endZone, endT = x.z, x.t end
+                    -- (round 30: a step out of the city for a minute at logout is not where the evening ended)
+                    if x.k == "play" and x.t and x.z and x.t <= e0 + 60 and (x.e or x.t) >= t0 and (not endT or x.t >= endT)
+                        and (not endZone or (x.e or x.t) - x.t >= 300) then endZone, endT = x.z, x.t end
                     if x.k == "play" and x.t and x.t >= t0 and x.t <= e0 + 6 * 3600 then ownEnd = math.max(ownEnd, x.e or x.t) end
                     if x.k == "voyage" and x.t and x.t >= t0 and x.t <= e0 and x.d ~= "hearth" and x.d ~= "portal" then crossings = crossings + 1; if x.d ~= "zeppelin" then boats = true end end
                 end
@@ -9784,7 +9912,8 @@ function T.TellOnce(person, days, voice, player, brief)
                         -- the companion's last entry is only where its record stopped, not where we parted)
                         local here
                         for _, x in ipairs(ownJournal) do
-                            if x.k == "play" and x.z and x.t and x.t <= e0 and (x.e or x.t) >= e0 - 30 and (not here or x.t > here.t) then here = x end
+                            if x.k == "play" and x.z and x.t and x.t <= e0 and (x.e or x.t) >= e0 - 30 and (not here or x.t > here.t)
+                                and (not here or (x.e or x.t) - x.t >= 300) then here = x end
                         end
                         if here then endZone = here.z
                         else
@@ -9994,6 +10123,20 @@ function T.TellOnce(person, days, voice, player, brief)
         if not S.planned and S.bonded and T.ORDER_VERIFY then
             T.SortByRecord(out, outBeat, outT, S)
             T.PlaceFalls(out, outBeat, S)
+            T.WipeOthers(out, outBeat, S, ownJournal, person, teller)
+            T.TrimToldClauses(out, outBeat, S)
+            -- (round 30: a hand-in in the companion's own record too is ours: "I gave the offering stone the
+            -- blood" becomes "We gave ...")
+            if teller.base.I == "I" and type(person.journal) == "table" then
+                for n, line in ipairs(out) do
+                    local q = S.Q and S.Q[line]
+                    if q and q.qid and line:find("^I %l+ ") and not line:find(" my ", 1, true) then
+                        local hers = false
+                        for _, y in ipairs(person.journal) do if y.k == "quest" and tonumber(y.qid) == tonumber(q.qid) then hers = true end end
+                        if hers then out[n] = S.Carry(line, "We " .. line:sub(3)) end
+                    end
+                end
+            end
             -- (round 28: never two lines in a row opening on "Dahlia and I")
             local pairCap = Cap(teller.base.pairNamed or "")
             for n = 2, #out do

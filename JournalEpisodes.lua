@@ -827,7 +827,9 @@ function E.Day(scenes, opts)
         for _, entry in ipairs(last.entries or {}) do
             if (entry.k == "play" or entry.k == "group") and (entry.e or 0) > ownEnd then ownEnd = entry.e end
         end
-        if ownEnd > 0 and (last.e or 0) > ownEnd + 60 then
+        -- (lane O8 round 31: a minute or two on the road out of the last stay is transit, not a stay; the
+        -- night ended in the last outing's own zone unless the crossing held five minutes or more)
+        if ownEnd > 0 and (last.e or 0) >= ownEnd + 300 then
             local known = (opts and opts.isDungeon) or (A.Lore and A.Lore.Dungeon)
             for _, z in ipairs(last.crossed or {}) do
                 local plain, here = Clean(z), Clean(last.zone)

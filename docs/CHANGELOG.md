@@ -1,5 +1,13 @@
 # Companion Journal: changes
 
+## 1.43.0 (2026-11-13)
+
+- Levels at their minute; killers named only for their own victim
+- A first seen only in passing is not a moment or a title
+- Chapter titles come from the story, not quest names
+- Each chapter ends where the night really ended
+- Companion books: counts and "we" checked against the companion's own record
+
 ## 1.42.0 (2026-11-13)
 
 - A level is told after what came just before it

@@ -3948,8 +3948,17 @@ function ST.Tell(person, days, brief, retell)
                         Say(teller:Say("rare", Fresh(W.rare), {what = Q(e.z)}), true, "first")
                         Title(36, teller:Pick("tRare", W.titles.rare))
                     elseif e.k == "first" and not e.u and e.d == "snow" and e.z and W.snowFirst then
-                        Say(teller:Say("snowFirst", Fresh(Unnamed(W.snowFirst, e.z == s.zone and st.zoneSaid)), {zoneD = Place(e.z)}), true, "first")
-                        Title(56, teller:Pick("tSnow", W.titles.snow))
+                        -- (round 30, the player: a first met on a brief crossing, no quest there and a few minutes in the
+                        -- zone, is not a moment and never a title; a first weighs only by what happened there or time spent)
+                        if not (#s.quests == 0 and (function()
+                            local t0, t1 = math.huge, 0
+                            for _, x in ipairs(s.entries) do if x.z == e.z and x.t then t0, t1 = math.min(t0, x.t), math.max(t1, x.t) end end
+                            for _, x in ipairs(s.events) do if x.k == "death" or x.k == "kill" or x.k == "boss" then return false end end
+                            return t1 - t0 < 15 * 60
+                        end)()) then
+                            Say(teller:Say("snowFirst", Fresh(Unnamed(W.snowFirst, e.z == s.zone and st.zoneSaid)), {zoneD = Place(e.z)}), true, "first")
+                            Title(56, teller:Pick("tSnow", W.titles.snow))
+                        end
                     elseif e.k == "first" and not e.u and e.d == "rarebeast" and e.z and W.rareBeastKilled and (function()
                         for _, x in ipairs(s.events) do
                             if x.k == "death" and x.d and Clean(x.d) == Clean(e.z) and (x.t or 0) >= (e.t or 0) and not x.told then return true end
@@ -6003,6 +6012,30 @@ function ST.Tell(person, days, brief, retell)
         local text = plan.text or table.concat(paragraphs, "\n\n")
         if planned then history.plan.text = history.plan.text .. " " .. (A.JournalPlain and A.JournalPlain(text) or text) end
         -- the title: the best of the day that no earlier chapter had
+        -- (round 30, the player: the title comes from the chapter's spine, never from a passing first or a
+        -- level alone; a quest thread of three stages or more that ends this day names the chapter, above a
+        -- milestone level and the hard days. Round 31: in the book's words, the thread's own label
+        -- ("Dalaran's Work at Ambermill", "The Offering Stone at Beren's Peril"), never a quest's title)
+        Title(53, A.QuestDeeds and (function()
+            local count, first, best, bestN = {}, {}, nil, 2
+            for _, st_ in ipairs(f.stretches) do
+                for _, q in ipairs(st_.quests) do
+                    local story = A.QuestDeeds.Story(q.quest or q)
+                    local th = story and story.thread
+                    if th then
+                        count[th] = (count[th] or 0) + 1
+                        first[th] = first[th] or story.threadLabel or (A.Lore and A.Lore.storyThreads and A.Lore.storyThreads[th]) or ""
+                        if count[th] > bestN and threadLast[th] and (threadLast[th] == (q.quest or q)) then best, bestN = th, count[th] end
+                    end
+                end
+            end
+            if not best or first[best] == "" then return nil end
+            local label = first[best]
+            local SMALL = {a = true, an = true, the = true, ["of"] = true, ["for"] = true, ["and"] = true, ["to"] = true, ["in"] = true, ["at"] = true}
+            local n = 0
+            label = label:gsub("(%a[%a']*)", function(w) n = n + 1; if n > 1 and SMALL[w] then return w end return (w:gsub("^%l", string.upper)) end)
+            return label
+        end)() or nil)
         table.sort(titles, function(x, y) return x.rank > y.rank end)
         local title
         for _, t in ipairs(titles) do if not history.titles[t.text] then title = t.text; break end end
