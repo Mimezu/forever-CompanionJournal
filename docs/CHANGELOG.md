@@ -1,5 +1,10 @@
 # Companion Journal: changes
 
+## 1.42.0 (2026-11-13)
+
+- A level is told after what came just before it
+- Companion books: a bad stretch of deaths in one sentence, with its cause
+
 ## 1.41.0 (2026-11-13)
 
 - "Us" in a death only when a companion fell then too

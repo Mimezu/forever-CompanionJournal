@@ -2868,8 +2868,22 @@ function C.Apply(ctx)
         local tokens = {level = tostring(level)}
         -- the deed just before it, the town it came at, or the zone
         local deed
+        -- (round 28, reader AC: in the same minute the record's own order decides: a hand-in written after
+        -- the level in the record is not the level's deed)
+        local order_, levelAt = {}, nil
+        for _, sc in ipairs(ep.scenes or {}) do
+            for i_, e in ipairs(sc.entries or {}) do
+                if e.k == "quest" and e.qid then order_[tonumber(e.qid) or e.qid] = (sc.t or 0) * 1000 + i_ end
+                if e.k == "mylevel" and tonumber(e.d) == tonumber(level) then levelAt = (sc.t or 0) * 1000 + i_ end
+            end
+        end
+        local function After(x)
+            local q = x.meta and ((x.meta.entry and x.meta.entry.quest) or x.meta.e)
+            local qid = q and (tonumber(q.qid) or q.qid)
+            return levelAt and qid and order_[qid] and order_[qid] > levelAt
+        end
         for _, x in ipairs(byEp[ep]) do
-            if not x.drop and (x.cls == "quest" or x.cls == "what") and x.t <= at and at - x.t <= 300 and (not deed or x.t > deed.t) then deed = x end
+            if not x.drop and (x.cls == "quest" or x.cls == "what") and x.t <= at and at - x.t <= 300 and not After(x) and (not deed or x.t > deed.t) then deed = x end
         end
         -- (a hand-in the chapter left out between the deed and the level: the level was not the deed's;
         -- lane O8: one handed in within two minutes of the deed is of the same burst of hand-ins, and
@@ -4012,7 +4026,8 @@ function C.Apply(ctx)
                         local level = C.EpisodeLevel(ep)
                         local gap = C.LevelGap(ep.zone, level)
                         local party = #ep.party > 0
-                        local text = Fill(P.roamOnly[gap >= 5 and 2 or 1], {We = party and "We" or "I", us = party and "us" or "me", our = party and "our" or "my"})
+                        -- (round 28: the land is named, so the claim covers that land alone)
+                        local text = Fill(P.roamOnly[gap >= 5 and 2 or 1], {We = party and "We" or "I", us = party and "us" or "me", our = party and "our" or "my", zone = Place(ep.zone)})
                         l.text = l.text:gsub("%s*$", "") .. " " .. text
                     end
                 end
@@ -4198,6 +4213,34 @@ function C.Apply(ctx)
             local base = ended and ("the night ended " .. where_) or (whoLow .. " slept " .. where_)
             local text
             local meaningful = level and ((gain and gain >= 4) or level % 10 == 0)
+            -- (round 28: a level the close does not carry is told after the told deed the record has just
+            -- before it, "By then I was level 16.", never dropped)
+            if level and not meaningful then
+                local order_, levelAt = {}, nil
+                for _, ep_ in ipairs(episodes) do
+                    for _, sc in ipairs(ep_.scenes or {}) do
+                        for i_, e in ipairs(sc.entries or {}) do
+                            local key = (e.t or 0) * 1000 + i_
+                            if e.k == "quest" and e.qid then order_[tonumber(e.qid) or e.qid] = key end
+                            if e.k == "mylevel" and tonumber(e.d) == level then levelAt = key end
+                        end
+                    end
+                end
+                local best, bestKey, bestP, bestJ
+                for _, p_ in ipairs(paragraphs) do
+                    for j_, x in ipairs(p_.lines) do
+                        local q = x.meta and ((x.meta.entry and x.meta.entry.quest) or x.meta.e)
+                        local qid = q and (tonumber(q.qid) or q.qid)
+                        local k_ = qid and order_[qid]
+                        if x.cls == "quest" and k_ and levelAt and k_ < levelAt and (not bestKey or k_ > bestKey) then best, bestKey, bestP, bestJ = x, k_, p_, j_ end
+                    end
+                end
+                if best and P.levelBurst then
+                    local l_ = {cls = "level", t = best.t, ep = best.ep, text = Fill(P.levelBurst[1], {level = tostring(level)}), major = false, kind = "level", meta = {t = best.t, compose = "level"}, n = (best.n or 0) + 0.5}
+                    table.insert(bestP.lines, bestJ + 1, l_)
+                    level = nil
+                end
+            end
             local chapterText_ = {}
             for _, p_ in ipairs(paragraphs) do for _, x in ipairs(p_.lines) do if not x.toClose and x.cls ~= "close" then chapterText_[#chapterText_ + 1] = Plain(x.text) end end end
             chapterText_ = table.concat(chapterText_, " ")

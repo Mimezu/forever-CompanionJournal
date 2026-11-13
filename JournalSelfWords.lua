@@ -3715,7 +3715,7 @@ W.compose = {
     -- (round 22: an errand whose work the book does not tell, from the record's trip and hand-in)
     errandBare = {"{We} flew to {zone} on {errand}{back}.", "{We} went to {zone} on {errand}{back}."},
     -- (round 22: an outing with no work recorded, told as what it was)
-    roamOnly = {"{We} had no errand there, only new country to see.", "{We} had no errand there, only new country to see, far beyond {our} level."},
+    roamOnly = {"{We} had no errand in {zone}, only new country to see.", "{We} had no errand in {zone}, only new country to see, far beyond {our} level."},
     errandFlew = {"{We} flew to {zone}."},
     errandBack = {"{Our} hearthstones brought {us} back to {place}."},
     crossOnly = {"{Places} {were} new to {us}."},

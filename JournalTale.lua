@@ -2849,8 +2849,15 @@ local function FoldDeaths(c, lines, Live)
     local deaths = {}
     for _, l in ipairs(lines) do if Live(l) and l.beat == "death" and not l.run and l.t then deaths[#deaths + 1] = l end end
     table.sort(deaths, function(a, b) return a.t < b.t end)
+    -- (round 28: a stretch ends where something else was told between two falls)
+    local function Between(t1, t2)
+        for _, o in ipairs(lines) do
+            if Live(o) and o.t and o.beat ~= "death" and o.beat ~= "rez" and o.t > t1 + 30 and o.t < t2 - 30 then return true end
+        end
+        return false
+    end
     for _, l in ipairs(deaths) do
-        if not cur or cur.ep ~= l.ep or l.t - cur.last > 40 * 60 then cur = {ep = l.ep, last = l.t, lines = {}}; groups[#groups + 1] = cur end
+        if not cur or cur.ep ~= l.ep or l.t - cur.last > 40 * 60 or Between(cur.last, l.t) then cur = {ep = l.ep, last = l.t, lines = {}}; groups[#groups + 1] = cur end
         cur.lines[#cur.lines + 1] = l
         cur.last = l.t
     end
@@ -2904,7 +2911,100 @@ local function FoldDeaths(c, lines, Live)
                 return low:find("^she went down", 1) or low:find("^he went down", 1) or low:find(" with her%.") or low:find(" with him%.") or false
             end
             for _, l in ipairs(g.lines) do
-                if l ~= keep and l ~= also and l ~= more and not (bonded and TellsHersOrPronoun(l)) then l.drop = true; if l.t > keep.t then later = true end end
+                if l ~= keep and l ~= also and l ~= more then l.drop = true; if l.t > keep.t then later = true end end
+            end
+            -- (round 28: in a bonded book a stretch with her falls in it is one sentence, its cause and place,
+            -- its counts exact from her journal: "The Rot Hides on Fenris Isle killed Dahlia twice and me three
+            -- times." A first raise keeps its own sentence, and the stretch tells what came after it.)
+            local hersTold = false
+            for _, l in ipairs(g.lines) do if TellsHersOrPronoun(l) then hersTold = true end end
+            if bonded and hersTold then
+                local raise
+                for _, l in ipairs(g.lines) do if Rank(l) >= 4 then raise = l end end
+                local from = raise and raise.t + 30 or g.lines[1].t - 60
+                local mine, hers, zones, zoneSeen, killers, subs = 0, 0, {}, {}, {}, {}
+                for _, x in ipairs((c.f and c.f.deaths) or {}) do
+                    if x.t and x.t >= from and x.t <= g.last + 60 then
+                        if x.w == "you" then
+                            mine = mine + 1
+                            if x.d then killers[#killers + 1] = x.d end
+                        else hers = hers + 1 end
+                        local z = x.z and Clean(x.z)
+                        if z and not zoneSeen[z] then zoneSeen[z] = true; zones[#zones + 1] = z end
+                        subs[#subs + 1] = x.sz or false
+                    end
+                end
+                local Times = function(n) return n == 1 and "once" or n == 2 and "twice" or (Words(n) .. " times") end
+                local More = function(n) return n == 1 and "once more" or n == 2 and "twice more" or (Words(n) .. " more times") end
+                local function Zone(z)
+                    local the = (z:find("s$") or z:find("^Barrens")) and not z:find("^%u%l+'s") and "the " or ""
+                    return the .. "{p:" .. z .. "}"
+                end
+                if hers > 0 then
+                    local place
+                    if #zones == 1 then place = "in " .. Zone(zones[1])
+                    elseif #zones == 2 then place = "in " .. Zone(zones[1]) .. " and " .. Zone(zones[2])
+                    elseif #zones > 2 then
+                        local ps = {}
+                        for _, z in ipairs(zones) do ps[#ps + 1] = Zone(z) end
+                        place = "on the road through " .. table.concat(ps, ", ", 1, #ps - 1) .. " and " .. ps[#ps]
+                    end
+                    local cause
+                    -- (a cause only when one kind killed us all through it: never one foe's name on her falls)
+                    if #killers >= 2 and A.FoeFamily then
+                        local ok, fam = pcall(A.FoeFamily, killers, {})
+                        if ok and type(fam) == "string" then cause = fam end
+                    end
+                    local b = teller.base
+                    local me, I = b.me, b.I
+                    local HT = raise and More or Times
+                    local nm = name
+                    local text
+                    local lead = Cap((place and (place .. ", ") or ""))
+                    if cause and mine > 0 then
+                        text = Cap(cause) .. (place and (" " .. place) or "") .. " killed " .. nm .. " " .. HT(hers) .. " and " .. me .. " " .. Times(mine) .. "."
+                    elseif mine > 0 and mine == hers and not raise and friend and place then
+                        -- (a friend's book says it from the two of them first, never the close book's words)
+                        text = nm .. " and " .. I .. " went down " .. Times(hers) .. " apiece " .. place .. "."
+                        if hers == 1 then text = nm .. " and " .. I .. " both went down " .. place .. "." end
+                    elseif mine > 0 and mine == hers and not raise then
+                        text = lead .. nm .. " and " .. I .. " fell " .. Times(hers) .. " each."
+                        if hers == 1 then text = lead .. nm .. " and " .. I .. " both fell." end
+                    elseif mine > 0 then
+                        text = lead .. nm .. " fell " .. HT(hers) .. ", and " .. I .. " " .. Times(mine) .. "."
+                    else
+                        text = lead .. nm .. " fell " .. HT(hers) .. "."
+                    end
+                    if raise then text = "Then " .. text:gsub("^%u", string.lower) end
+                    -- (who raised me in it, from the record: "and Marrow's prayers brought me back")
+                    local by = {}
+                    -- (my own record's raises too: "by=Marrow Rotmoor")
+                    local raises = {}
+                    for rt, who in pairs((c.f and c.f.rezBy) or {}) do raises[#raises + 1] = {t = rt, by = who} end
+                    for _, x in ipairs(c.ownJournal or {}) do if x.k == "rez" and x.by and x.t then raises[#raises + 1] = {t = x.t, by = Clean(x.by)} end end
+                    for _, r in ipairs(raises) do
+                        local rt, who = r.t, r.by
+                        if type(rt) == "number" and rt >= from and rt <= g.last + 5 * 60 then
+                            local first = tostring(who):match("^(%S+)")
+                            -- (only one of the party: a stranger's raise has its own line)
+                            local inParty = first and first:lower() == PlainOf(name):lower()
+                            for _, x2 in ipairs(c.ownJournal or {}) do
+                                if first and x2.k == "with" and x2.n and (Clean(x2.n):gsub("%-.*$", "")):lower() == first:lower() and (x2.t or 0) <= rt and (x2.e or x2.t or 0) >= rt then inParty = true end
+                            end
+                            if first and inParty and not by[first] then by[first] = true; by[#by + 1] = first end
+                        end
+                    end
+                    if #by == 1 and by[1]:lower() == PlainOf(name):lower() and friend then
+                        text = text:sub(1, -2) .. ", and " .. (teller.base.they or "they") .. " brought " .. me .. " back."
+                    elseif #by == 1 and not friend then text = text .. " {n:" .. by[1] .. "} raised " .. me .. "."
+                    elseif #by == 1 then text = text:sub(1, -2) .. ", and {n:" .. by[1] .. "} brought " .. me .. " back." end
+                    -- (the line it stands in: the stretch's first fall, or the raise's next line)
+                    local host
+                    -- (told where the stretch ended: nothing in it comes before a line told earlier)
+                    for _, l in ipairs(g.lines) do if l ~= raise and (not host or l.t > host.t) then host = l end end
+                    for _, l in ipairs(g.lines) do if l ~= raise and l ~= host then l.drop = true end end
+                    if host then host.drop = nil; host.text = c.S.Carry(host.text, text); g.stretch = host end
+                end
             end
             -- (round 21: the night's worst stretch keeps the companion's falls in it: one danger sentence,
             -- "It was the worst of the night: Dahlia fell three times on that road, and I four.", no colon)
@@ -2915,7 +3015,7 @@ local function FoldDeaths(c, lines, Live)
                 end
             end
             g.keep = keep
-            if later and PB.fallMore and keep.text:sub(-1) == "." and Rank(keep) < 3 then
+            if later and PB.fallMore and keep.text:sub(-1) == "." and Rank(keep) < 3 and not g.stretch and not keep.drop then
                 local clause = teller:Say("fallMore", PB.fallMore, rng, tokens)
                 if clause then keep.text = c.S.Carry(keep.text, keep.text:sub(1, -2) .. clause .. ".") end
             end
@@ -3211,7 +3311,9 @@ function T.OwnSpine(c, lines, Live)
                     if setupAway then
                         local act = e.act and e.act.act and not e.act.solo and e.act.act:gsub(" for %u[%a']+$", "")
                         -- (round 27: the record holds only the hand-in's minute, so the deed is told there, as done before it)
-                        if act then act = act:gsub("^(%l+ed) ", "had %1 ", 1) end
+                        -- (round 28: "had" only for a deed done somewhere else before the hand-in in a city, "had killed
+                        -- Valdred at the Greymane Wall"; a deed that is the hand-in itself stays in the simple past)
+                        if act and act:find(" at the %u") and q.z and IsCity(q.z) then act = act:gsub("^(%l+ed) ", "had %1 ", 1) end
                         text = act and (Cap(b.we) .. " " .. act .. ".") or nil
                         -- (a friend's book says the same deed from the place first)
                         local deed, where
@@ -4469,7 +4571,7 @@ function T.Compose(c)
                 for _, ev in ipairs(d.events) do if ev.k == "boss" and math.abs((ev.t or 0) - (e.t or 0)) <= 5 * 60 then near = true end end
             end
             -- (round 27: a bonded book tells every fall of the companion's own journal, alone or in a city too)
-            if T.BondKind(c.person) ~= "plain" then
+            if false then
                 if l.text:find(" while %a+ were out%.$") then
                     -- (away only when the record had me in another land at that minute)
                     local here
@@ -4832,6 +4934,16 @@ end
 -- their time. T.OrderFaults lists every other line told before a line it came after (a minute's slack);
 -- T.SortByRecord moves each such line back to its minute.
 T.ORDER_VERIFY = true
+-- (round 28) "Dahlia fell there too" after a move: "there" names the fall's own land from the record.
+function T.PlaceFalls(out, beats, S)
+    for n, line in ipairs(out) do
+        local e = S.D and S.D[line]
+        if beats[n] == "death" and e and e.z and not line:find("{p:", 1, true) then
+            local new = line:gsub(" there too%.$", " too, in {p:" .. Clean(e.z) .. "}."):gsub(" there as well%.$", " as well, in {p:" .. Clean(e.z) .. "}.")
+            if new ~= line then out[n] = S.Carry(line, new) end
+        end
+    end
+end
 -- (round 27) The companion's falls as prose, not a roll call: a short "Marrow went down again." or
 -- "Marrow fell there too." right after a fall is joined to it ("..., and he went down again"), and a bare
 -- "Marrow died." says where, from the record.
@@ -4865,10 +4977,17 @@ local function Fixed(line, beat, S)
     if (beat == "level" or beat == "levelMark") and PlainOf(line):find("by the end", 1, true) then return true end
     return S.Pre and S.Pre[line] or false
 end
+-- (round 28: a line that tells several hand-ins stands at the last of them)
+local function LineTime(l, times, S)
+    local t = times[l]
+    for _, q in ipairs(S.Qs and S.Qs[l] or {}) do if t and q.t and q.t > t then t = q.t end end
+    return t
+end
+T.LineTime = LineTime
 function T.OrderFaults(out, beats, times, S)
     local faults, last, lastLine = {}, nil, nil
     for n, l in ipairs(out) do
-        local t = times[l]
+        local t = LineTime(l, times, S)
         if t and not Fixed(l, beats[n], S) and not (S.R and S.R[l]) then
             if last and t < last - 60 then faults[#faults + 1] = {n = n, line = l, t = t, after = lastLine, afterT = last} end
             if not last or t > last then last, lastLine = t, l end
@@ -4888,7 +5007,7 @@ function T.SortByRecord(out, beats, times, S)
         -- (to before the first movable line told later than it; set-ups and a run stay with what they lead)
         local at
         for m = 1, n - 1 do
-            local tm = times[out[m]]
+            local tm = LineTime(out[m], times, S)
             if tm and tm > t + 60 and not Fixed(out[m], beats[m], S) then at = m; break end
         end
         if not at then return end
@@ -5394,7 +5513,7 @@ function T.TellOnce(person, days, voice, player, brief)
             if old and new and old ~= new then
                 if outT[new] == nil then outT[new] = outT[old] end
                 if S.Z[new] == nil then S.Z[new] = S.Z[old] end
-                for _, map in ipairs({S.Q, S.SL, S.D, S.setup, S.setupFor, S.R, S.EP, S.NoLead, S.Keep}) do if map[new] == nil then map[new] = map[old] end end
+                for _, map in ipairs({S.Q, S.Qs, S.SL, S.D, S.setup, S.setupFor, S.R, S.EP, S.NoLead, S.Keep}) do if map[new] == nil then map[new] = map[old] end end
             end
             return new
         end
@@ -9874,7 +9993,14 @@ function T.TellOnce(person, days, voice, player, brief)
         -- (round 26: every told line at its record minute; an inversion the passes left is moved back)
         if not S.planned and S.bonded and T.ORDER_VERIFY then
             T.SortByRecord(out, outBeat, outT, S)
-            T.JoinFalls(out, outBeat, S, teller)
+            T.PlaceFalls(out, outBeat, S)
+            -- (round 28: never two lines in a row opening on "Dahlia and I")
+            local pairCap = Cap(teller.base.pairNamed or "")
+            for n = 2, #out do
+                if pairCap ~= "" and out[n]:sub(1, #pairCap + 1) == pairCap .. " " and out[n - 1]:sub(1, #pairCap + 1) == pairCap .. " " then
+                    out[n] = S.Carry(out[n], (teller.base.I == "I" and "We" or "You") .. out[n]:sub(#pairCap + 1))
+                end
+            end
             if runGroups then
                 runGroups = {}
                 for n = 1, #out do if S.R[out[n]] then runGroups[n] = S.R[out[n]] end end
