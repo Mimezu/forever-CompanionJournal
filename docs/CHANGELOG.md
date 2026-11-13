@@ -1,5 +1,11 @@
 # Companion Journal: changes
 
+## 1.39.0 (2026-11-12)
+
+- Chapters end on the outcome of their goal
+- Travel lines only from what you really did, each once
+- "New to me" unless the book knows it was new to both
+
 ## 1.38.0 (2026-11-12)
 
 - Companions join and leave at their real times

@@ -4275,8 +4275,24 @@ function C.Apply(ctx)
             text = text:gsub("^(%l)", string.upper) .. "."
             local newTail = {}
             if sum then newTail[#newTail + 1] = sum end
-            local l = {cls = "close", t = D.e or 0, ep = last.ep, text = text, major = true, kind = "close", meta = {t = D.e, compose = "close"}, n = #out + 990, toClose = true}
-            newTail[#newTail + 1] = l
+            -- (round 25, reader Z rule 3: a night whose last story is a road's goal answered ends on that
+            -- answer, "the trail ended at an old barricade ... and we took the pack left there"; the road
+            -- home and the late wander are dropped rather than told after it)
+            local goalEnd
+            for i_ = #keep, 1, -1 do
+                local x = keep[i_]
+                if x.meta and x.meta.compose == "journey" and x.meta.key == "done" then goalEnd = i_; break end
+                if x.cls == "quest" or x.cls == "death" then break end
+            end
+            if goalEnd then
+                local trimmed = {}
+                for i_ = 1, goalEnd do trimmed[#trimmed + 1] = keep[i_] end
+                keep = trimmed
+                newTail = {}
+            else
+                local l = {cls = "close", t = D.e or 0, ep = last.ep, text = text, major = true, kind = "close", meta = {t = D.e, compose = "close"}, n = #out + 990, toClose = true}
+                newTail[#newTail + 1] = l
+            end
             last.lines = keep
             for _, x in ipairs(newTail) do last.lines[#last.lines + 1] = x end
             last.words = 0
@@ -4383,6 +4399,48 @@ function C.Apply(ctx)
                 prevIn = plain:match("^In (%u[%a' ]-)[, ]") or plain:match("^In (the %u[%a' ]-)[, ]")
                 prevPlain = plain
             end
+        end
+    end
+    -- (round 25, reader Z: a first is "new to me" unless the record shows it new to each of the company,
+    -- and the book has no such record; the same travel sentence never twice in a chapter, and a return
+    -- by hearthstone runs into the setting out that follows it; a leaving is part of the scene)
+    do
+        local seenTravel = {}
+        for _, p_ in ipairs(paragraphs) do
+            for j, l in ipairs(p_.lines) do
+                l.text = l.text:gsub(" new to us", " new to me"):gsub(" known to us", " known to me"):gsub(" strange to us", " strange to me")
+                    :gsub("where we had never been", "where I had never been")
+                local plain = Plain(l.text)
+                local head = plain:match("^(We used our hearthstones)") or plain:match("^(Our hearthstones took us)") or plain:match("^(I used my hearthstone)")
+                if head then
+                    if seenTravel[head] then
+                        l.text = l.text:gsub("^We used our hearthstones, and were back in ", "Once more our hearthstones took us back to ")
+                            :gsub("^Our hearthstones took us back to ", "Once more our hearthstones carried us back to ")
+                            :gsub("^I used my hearthstone, and was back in ", "Once more my hearthstone took me back to ")
+                    end
+                    seenTravel[head] = true
+                    -- (a return that the next sentence leaves from: one sentence)
+                    local nxt = p_.lines[j + 1]
+                    local place = Plain(l.text):match("back to (.-)%.$") or Plain(l.text):match("back in (.-)%.$")
+                    if nxt and place and Plain(nxt.text):find("^From " .. Esc(place) .. ", ") then
+                        nxt.text = l.text:gsub("%.$", "") .. ", and from there " .. nxt.text:gsub("^From [^,]+, ", "")
+                        l.drop = true
+                    end
+                end
+                -- (a leaving told at its time joins the scene it ended: "..., and there Marrow left us")
+                if l.meta and l.meta.compose == "left" and l.signMoved and j > 1 then
+                    local prev = p_.lines[j - 1]
+                    local name = Plain(l.text):match("^(.-) left us%.$")
+                    if prev and name and prev.text:match("%.$") and not prev.drop then
+                        prev.text = prev.text:gsub("%.$", "") .. ", and there " .. l.text:gsub("^", ""):gsub("%.$", "") .. "."
+                        prev.text = prev.text:gsub(", and there ({?[%u][^}]*}?) left us%.$", ", and there %1 left us.")
+                        l.drop = true
+                    end
+                end
+            end
+            local kept_ = {}
+            for _, l in ipairs(p_.lines) do if not l.drop then kept_[#kept_ + 1] = l end end
+            p_.lines = kept_
         end
     end
     -- (round 20, the record's order: a deed done elsewhere is told before the road to where it was handed

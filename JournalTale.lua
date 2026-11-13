@@ -3752,7 +3752,8 @@ function T.ComposeTogether(c, lines)
                     end
                 end
                 local act = prior and QD.Act and QD.Act(q, st)
-                if act and act.act then Rewrite(l, Cap(teller.base.we) .. " " .. act.act .. ".") end
+                if act and act.act and act.act:find("^learned ") then l.drop = true
+                elseif act and act.act then Rewrite(l, Cap(teller.base.we) .. " " .. act.act .. ".") end
             end
         end
     end
@@ -3967,6 +3968,8 @@ function T.ComposeTogether(c, lines)
         for _, l in ipairs(lines) do
             local low = Live(l) and PlainOf(l.text):lower() or ""
             if l.beat == "shared" and low:find("first saw one of the", 1, true) then l.drop = true end
+            -- (round 25: a cave said with no deed in it, "Night Web's Hollow took us underground for a while")
+            if low:find("took us underground", 1, true) or low:find("took you underground", 1, true) then l.drop = true end
             if (l.beat == "questKey" or l.beat == "quests") and not l.run and CountWords(l.text) <= 18 and low:find(" asked ", 1, true)
                 and not low:find("%. ") and not (low:find(" said", 1, true) or low:find(" told", 1, true) or low:find(" gave", 1, true)
                 or low:find(" thanked", 1, true) or low:find(" called", 1, true)) then l.drop = true end
@@ -4073,6 +4076,48 @@ function T.ComposeTogetherAfter(c, out, beats)
     -- line before and a line that opens on another land: "Back at the Sepulcher by hearthstone, in
     -- Silverpine Forest, Bethor knew ...", not a jump from Duskwood to Silverpine)
     local times = c.times or {}
+    -- (round 25: the moves the record holds between two times, in order: "we took our hearthstones home,
+    -- flew, took the zeppelin and flew again". Never a zeppelin that was not taken.)
+    local function Moves(t1, t2)
+        local list = {}
+        for _, x in ipairs(c.ownJournal or {}) do
+            if x.t and x.t > t1 and x.t <= t2 and CARRIED[x.k] then list[#list + 1] = x end
+        end
+        table.sort(list, function(a, b) return a.t < b.t end)
+        local words, flown = {}, false
+        for _, x in ipairs(list) do
+            local d = x.d or x.k
+            local w
+            if d == "zeppelin" then w = "took the zeppelin"
+            elseif d == "boat" then w = "took the boat"
+            elseif x.k == "hearth" or d == "hearth" then w = "took our hearthstones home"
+            elseif x.k == "taxi" or x.k == "nightflight" or d == "flight" then w = flown and "flew again" or "flew"; flown = true end
+            if w and words[#words] ~= w and not (w == "took our hearthstones home" and (words[#words] or ""):find("hearthstones", 1, true)) then words[#words + 1] = w end
+        end
+        if #words == 0 then return nil end
+        if #words == 1 then return words[1] end
+        return table.concat(words, ", ", 1, #words - 1) .. " and " .. words[#words]
+    end
+    T.Moves = Moves
+    -- (the same moves as things, for a close bond's book: "the hearthstone, two flights and the zeppelin")
+    local function MoveNouns(t1, t2)
+        local hearth, flights, zep, boat = false, 0, false, false
+        for _, x in ipairs(c.ownJournal or {}) do
+            if x.t and x.t > t1 and x.t <= t2 and CARRIED[x.k] then
+                local d = x.d or x.k
+                if d == "zeppelin" then zep = true elseif d == "boat" then boat = true
+                elseif x.k == "hearth" or d == "hearth" then hearth = true
+                elseif x.k == "taxi" or x.k == "nightflight" or d == "flight" then flights = flights + 1 end
+            end
+        end
+        local parts = {}
+        if hearth then parts[#parts + 1] = "the hearthstone" end
+        if flights == 1 then parts[#parts + 1] = "a flight" elseif flights > 1 then parts[#parts + 1] = Words(flights) .. " flights" end
+        if zep then parts[#parts + 1] = "the zeppelin" end
+        if boat then parts[#parts + 1] = "the boat" end
+        if #parts == 0 then return nil end
+        return List(parts)
+    end
     for n = 2, #out do
         local line = out[n]
         local lead, place, rest = line:match("^(In )({p:[^}]+}), (.*)$")
@@ -4103,9 +4148,10 @@ function T.ComposeTogetherAfter(c, out, beats)
             if T.BondKind(c.person) == "close" then Wew = Cap(teller.base.pairNamed) end
             local bridge
             if means == "sea" then bridge = Wew .. " crossed back over the sea."
-            elseif means == "hearth" and inn then bridge = Iw .. " took the hearthstone back to " .. Clean(inn):gsub("^The ", "the ") .. "."
-            elseif means == "hearth" then bridge = Iw .. " took the hearthstone home, and " .. (we and "we" or "you") .. " went on to " .. place .. "."
+            elseif means == "hearth" and inn then bridge = Wew .. " took our hearthstones back to " .. Clean(inn):gsub("^The ", "the ") .. "."
+            elseif means == "hearth" then bridge = Wew .. " took our hearthstones home, and " .. (we and "we" or "you") .. " went on to " .. place .. "."
             elseif means == "flight" then bridge = Wew .. " flew to " .. place .. "." end
+            if not we then bridge = bridge and bridge:gsub(" our hearthstones", " your hearthstones") end
             local first = rest:match("^(%a+)")
             local ours = first == "we" or first == "We" or first == "I" or first == "you" or first == "You" or first == "our" or first == "Our"
             if bridge then
@@ -4113,6 +4159,31 @@ function T.ComposeTogetherAfter(c, out, beats)
                 out[n] = S.Carry(line, bridge .. " " .. body); S.Bridge = S.Bridge or {}; S.Bridge[out[n]] = true
             elseif S.bonded and not ours then
                 out[n] = S.Carry(line, Cap(rest))
+            end
+        end
+    end
+    -- (round 25: any line in another land than the line before, with recorded moves between and no bridge
+    -- yet, takes its moves first: "We took our hearthstones home and flew. We brought Bethor's scroll ...")
+    if S.bonded then
+        for n = 2, #out do
+            local line = out[n]
+            local z1, z2 = S.Z[out[n - 1]], S.Z[line]
+            local t1, t2 = nil, times[line]
+            for m = n - 1, 1, -1 do if times[out[m]] then t1 = times[out[m]]; break end end
+            local low = PlainOf(line):lower()
+            if z1 and z2 and z1 ~= z2 and t1 and t2 and not (S.Bridge and S.Bridge[line]) and not S.R[line] and beats[n] ~= "death" and beats[n] ~= "road"
+                and beats[n - 1] ~= "road" and not low:find("^%a+ took ") and not low:find(" flew", 1, true) and not low:find("zeppelin", 1, true) and not FirstTold(low)
+                and not low:find("had not been", 1, true) and not low:find("strange country", 1, true) then
+                local moves = Moves(t1, t2)
+                if moves then
+                    local who = (T.BondKind(c.person) == "close") and Cap(teller.base.pairNamed) or (teller.base.I == "I" and "We" or "You")
+                    if teller.base.I ~= "I" then moves = moves:gsub("our hearthstones", "your hearthstones") end
+                    local dest = (c.Place or function(z) return "{p:" .. Clean(z) .. "}" end)(z2)
+                    -- ("took our hearthstones home" ends where home is; else the moves end in the line's land)
+                    local tail = moves:find("hearthstones home$") and "" or (" to " .. dest)
+                    out[n] = S.Carry(line, who .. " " .. moves .. tail .. ". " .. line)
+                    S.Bridge = S.Bridge or {}; S.Bridge[out[n]] = true
+                end
             end
         end
     end
@@ -4143,11 +4214,21 @@ function T.ComposeTogetherAfter(c, out, beats)
                 local text
                 local pair = Cap(teller.base.pairNamed)
                 local close = T.BondKind(c.person) == "close"
-                if means == "sea" and close then text = pair .. " took the " .. (craft or "ship") .. " across, and " .. place .. " was new to " .. me .. "."
+                -- (round 25: the recorded moves in order when there were more than one)
+                local moves = t1 and t2 and Moves(t1, t2)
+                if moves and moves:find(" and ", 1, true) then
+                    if not we then moves = moves:gsub("our hearthstones", "your hearthstones") end
+                    means = "moves"
+                    local nouns = MoveNouns(t1, t2)
+                    text = close and nouns and (pair .. " came to " .. place .. " by " .. nouns .. ", and it was new to " .. me .. ".")
+                        or (Wew .. " " .. moves .. ", and came to " .. place .. ", new to " .. me .. ".")
+                end
+                if means == "moves" then
+                elseif means == "sea" and close then text = pair .. " took the " .. (craft or "ship") .. " across, and " .. place .. " was new to " .. me .. "."
                 elseif means == "sea" then text = Wew .. " crossed the sea and came to " .. place .. ", new to " .. me .. "."
                 elseif means == "flight" and close then text = pair .. " flew on, and " .. place .. " was new to " .. me .. "."
                 elseif means == "flight" then text = Wew .. " flew on to " .. place .. ", new to " .. me .. "."
-                elseif means == "hearth" then text = (we and "I" or "You") .. " took the hearthstone, and from there " .. (we and "we" or "you") .. " came to " .. place .. ", new to " .. me .. "." end
+                elseif means == "hearth" then text = Wew .. " took " .. (we and "our" or "your") .. " hearthstones, and from there " .. (we and "we" or "you") .. " came to " .. place .. ", new to " .. me .. "." end
                 if text then out[n] = S.Carry(line, text) end
             end
         end
@@ -4168,6 +4249,22 @@ function T.ComposeTogetherAfter(c, out, beats)
                     if used > 2 then return stop .. (teller.base.I == "I" and "We " or "You ") end
                 end)
                 if newLine ~= line then out[n] = S.Carry(line, newLine) end
+            end
+        end
+    end
+    -- (round 25: the first flight told once: folded into the bat line beside it, "For a small fee Karos
+    -- Razok put us on a bat ... It was the first flight Dahlia and I took together.")
+    for n = 1, #out do
+        local line = out[n]
+        if line and PlainOf(line):find("my first flight", 1, true) then
+            for m = n + 1, math.min(#out, n + 2) do
+                local low = PlainOf(out[m]):lower()
+                if low:find(" bat ", 1, true) or low:find(" bat%p") then
+                    local pair = (T.BondKind(c.person) == "close") and teller.base.pairNamed or (teller.base.I == "I" and "we" or "you")
+                    out[m] = S.Carry(out[m], out[m] .. " It was the first flight " .. pair .. " took together.")
+                    table.remove(out, n); table.remove(beats, n)
+                    break
+                end
             end
         end
     end

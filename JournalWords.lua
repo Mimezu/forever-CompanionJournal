@@ -2245,8 +2245,8 @@ PB.firstFlightFriend = {"{I} took {my} first flight out of {zoneD}, with {name} 
 -- honest ("Dahlia and I and the others"), never "Dahlia and I" standing for five.
 PB.roadOutParty = {"With the rest of the party, {pairNamed} set off walking from {from} into {lands}{roadNote}."}
 PB.roadOnParty = {"With the rest of the party, {pairNamed} kept walking into {lands}{roadNote}."}
-PB.roadOutHardParty = {"With the rest of the party, {pairNamed} fought {our} way out of {from} into {lands}{roadNote}."}
-PB.roadOnHardParty = {"With the rest of the party, {pairNamed} fought {our} way into {lands}{roadNote}."}
+PB.roadOutHardParty = {"With the rest of the party, {pairNamed} set out on foot from {from} into {lands}{roadNote}."}
+PB.roadOnHardParty = {"With the rest of the party, {pairNamed} went on on foot into {lands}{roadNote}."}
 PB.roadByCraftParty = {"With the rest of the party, {pairNamed} rode the {craft} to {from}, then walked on into {lands}{roadNote}."}
 PB.roadBackParty = {"At {far} the party turned for home and went back {backWay}."}
 PB.roadBackHardParty = {"At {far} the party gave ground and fell back {backWay}."}
