@@ -184,7 +184,8 @@ for i, para in ipairs(paras) do
     check(not last:find("mined %a+ veins") and not last:find("cooked %a+ dish") and not last:find("caught %a+ fish"), "no tally ends paragraph " .. i .. ": " .. last)
     if i == #paras then
         check(Find(last, "slept") or Find(last, "ended"), "the chapter closes on the night's end, got: " .. last)
-        check(Find(para, "Bloodhoof Village") and Find(para, "Crossroads"), "the close names where the night ended and where it began")
+        -- (round 20: the close names where the night ended; where it began only when the night was long)
+        check(Find(para, "Bloodhoof Village"), "the close names where the night ended")
     end
 end
 -- the chapter's close is built from the record, never a feeling, never a quest title

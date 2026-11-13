@@ -3910,6 +3910,65 @@ function C.Apply(ctx)
         for _, p_ in ipairs(paragraphs) do for _, x in ipairs(Split(p_)) do split[#split + 1] = x end end
         if #split <= C.MAX_PARAGRAPHS + 2 then paragraphs = split end
     end
+    -- (round 19, reader U rule 1: a paragraph of about six sentences or fewer. A longer one splits at a
+    -- turn nearest its middle: a new giver, a move, a death after work, never inside one quest's
+    -- lines, each half with three sentences or more and a story line in it)
+    do
+        local function Sentences(text) local n = 0; for _ in Plain(text):gmatch("[%.!%?]%s") do n = n + 1 end; return n + 1 end
+        local function Count(lines_) local n = 0; for _, l in ipairs(lines_) do n = n + Sentences(l.text) end; return n end
+        local function Cut(p_)
+            if p_.kind == "dungeon" or Count(p_.lines) <= 7 then return {p_} end
+            local total = Count(p_.lines)
+            local acc, best, bestD = 0, nil, nil
+            for j = 2, #p_.lines do
+                acc = acc + Sentences(p_.lines[j - 1].text)
+                local l, prev = p_.lines[j], p_.lines[j - 1]
+                local inside = (l.meta and prev.meta and l.meta.entry and l.meta.entry == prev.meta.entry) or inRun[l] or inRun[prev]
+                    or l.toClose or l.cls == "close" or l.cls == "level" or prev.cls == "move" or prev.cls == "arrive" or prev.cls == "open" or prev.cls == "who"
+                    -- (a line that points back, "It was for this that Danitha had taught me", stays with what it points at)
+                    or Plain(l.text):match("^It ") ~= nil or Plain(l.text):match("^This ") ~= nil or Plain(l.text):match("^He ") ~= nil
+                    or Plain(l.text):match("^She ") ~= nil or Plain(l.text):match("^They ") ~= nil or Plain(l.text):match("^There ") ~= nil
+                local turn = l.cls == "quest" or l.cls == "move" or l.cls == "arrive" or l.cls == "voyage" or l.cls == "death" or l.cls == "who" or (l.kind == "journey")
+                if turn and not inside and acc >= 3 and total - acc >= 3 and HasStory(p_.lines, j) then
+                    local d = math.abs(acc - total / 2)
+                    if not bestD or d < bestD then best, bestD = j, d end
+                end
+            end
+            if not best then return {p_} end
+            local a_ = {ep = p_.ep, lines = {}, words = 0, kind = p_.kind, weight = p_.weight}
+            local b_ = {ep = p_.ep, lines = {}, words = 0, kind = p_.kind, weight = p_.weight}
+            for j, l in ipairs(p_.lines) do
+                local t_ = j < best and a_ or b_
+                t_.lines[#t_.lines + 1] = l; t_.words = t_.words + Words(l.text)
+            end
+            local out_ = Cut(a_)
+            for _, x in ipairs(Cut(b_)) do out_[#out_ + 1] = x end
+            return out_
+        end
+        local cut = {}
+        for _, p_ in ipairs(paragraphs) do for _, x in ipairs(Cut(p_)) do cut[#cut + 1] = x end end
+        paragraphs = cut
+    end
+    -- (round 19, reader U rules 2 and 3: a thing the book already learned is not learned again, "We
+    -- learned that Thule Ravenclaw still lived" a day after Bethor told it; a hand-in is a handing over,
+    -- "We took two tomes ... for Varimathras" -> "We brought two tomes ... to Varimathras")
+    do
+        local bookBefore = (ctx.history and ctx.history.plan and ctx.history.plan.text) or ""
+        for _, p_ in ipairs(paragraphs) do
+            for _, l in ipairs(p_.lines) do
+                if l.cls == "quest" and not inRun[l] then
+                    local first, rest = l.text:match("^(We learned [^%.]-%.)%s*(.*)$")
+                    if first then
+                        local known = true
+                        for name in Plain(first):gmatch("%u[%a']+ %u[%a']+") do if not bookBefore:find(name, 1, true) then known = false end end
+                        if known and not Plain(first):find("%u[%a']+ %u[%a']+") then known = false end
+                        if known and rest ~= "" then l.text = rest end
+                    end
+                    l.text = l.text:gsub("^We took (.-) for (%u[%w']+)%.$", "We brought %1 to %2."):gsub("^We took ([^%.]-) to ({?%u)", "We brought %1 to %2")
+                end
+            end
+        end
+    end
     -- (round 14: "a newcomer named Borox" after Borox was already named is just "Borox")
     do
         local said_ = ""
@@ -3923,6 +3982,105 @@ function C.Apply(ctx)
                 end
                 l.text = text
                 said_ = said_ .. " " .. Plain(text)
+            end
+        end
+    end
+    -- (lane O8 round 20: the close is what the evening came to, not a level-and-hours pair. Where
+    -- we ended and with whom, the story's state when the chapter's own sum says it ("while Thule
+    -- Ravenclaw still held Fenris Keep"), the level only when it means something (four levels or
+    -- more in a night, or a round number), the hours only when the night was long (six or more);
+    -- one sentence, its shape taking turns through the book.)
+    if C.CLOSE_STORY ~= false and #paragraphs > 0 then
+        local last = paragraphs[#paragraphs]
+        local tail, keep = {}, {}
+        for _, l in ipairs(last.lines) do
+            if l.toClose or l.cls == "close" then tail[#tail + 1] = l else keep[#keep + 1] = l end
+        end
+        local NUM = {one = 1, two = 2, three = 3, four = 4, five = 5, six = 6, seven = 7, eight = 8, nine = 9, ten = 10, eleven = 11, twelve = 12}
+        local level, gain, prep, place, ended, sum, hoursPhrase
+        for _, l in ipairs(tail) do
+            local plain = Plain(l.text)
+            local n = plain:match("[Ll]evel (%d+)")
+            if l.cls == "level" or (n and plain:find("by the end of it", 1, true)) then
+                level = tonumber(n) or level
+                local g = plain:match("^(%a+) levels had come") or plain:match("(%a+) levels on")
+                gain = g and NUM[g:lower()] or gain
+            elseif plain:find("slept", 1, true) or plain:find("ended in", 1, true) or plain:find("night ended", 1, true) then
+                local p_, pl = l.text:match("slept (at) (.-)[,%.]")
+                if not p_ then p_, pl = l.text:match("slept (in) (.-)[,%.]") end
+                if not p_ then pl = l.text:match("ended in (.-)[,%.]"); p_ = pl and "in" end
+                if pl then prep, place = p_, pl end
+                ended = not plain:find("slept", 1, true)
+                hoursPhrase = plain:match("^(%u%l+ %a+ hours?)") or plain:match(", (%a+ %a+ hours?) after") or plain:match(", (%a+ hours?) after")
+            else
+                sum = sum or l
+            end
+        end
+        if place and #tail > 0 then
+            -- (who was with me at the end)
+            local names = {}
+            for name, spans in pairs(windows) do
+                for _, sp in ipairs(spans) do if sp[1] <= (D.e or 0) - 60 and sp[2] >= (D.e or 0) - 120 then names[#names + 1] = name; break end end
+            end
+            table.sort(names)
+            local who = #names > 0 and (List(names) .. " and I") or "I"
+            local whoLow = who
+            local hours = (D.e or 0) - (episodes[1] and episodes[1].t or (D.e or 0))
+            local h = ctx.history or {}
+            h.o8CloseShape = (h.o8CloseShape or 0) + 1
+            local shape = h.o8CloseShape % 3
+            -- (a place the sentence before just named is "there")
+            local before = keep[#keep] and Plain(keep[#keep].text) or ""
+            local where_ = prep .. " " .. place
+            if before:find(Plain(place):gsub("^[Tt]he ", ""), 1, true) then where_ = "there" end
+            local base = ended and ("the night ended " .. where_) or (whoLow .. " slept " .. where_)
+            local text
+            local meaningful = level and ((gain and gain >= 4) or level % 10 == 0)
+            if sum and Plain(sum.text):find(" still ", 1, true) then
+                -- (the story's open state folds in: "The night ended in the Undercity, while Thule Ravenclaw still held Fenris Keep.")
+                text = Cap(base) .. ", while " .. Lower((sum.text:gsub("%.$", "")))
+                sum = nil
+            elseif meaningful and shape == 1 then
+                text = "By the time " .. base .. ", I was level " .. level
+            elseif meaningful and shape == 2 then
+                text = Cap(base) .. ", level " .. level .. " now" .. (gain and (" after " .. ({"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"})[gain] .. " levels in a night") or "")
+            elseif meaningful then
+                text = "Then " .. base .. ", and I was level " .. level .. " by then"
+            elseif shape == 1 then
+                text = "That night " .. base
+            elseif shape == 2 then
+                text = Cap(base) .. (ended and "" or " that night")
+            else
+                text = "Then " .. base
+            end
+            if hours >= 6 * 3600 and hoursPhrase then
+                text = text .. ", " .. Lower(hoursPhrase) .. " after it began"
+            end
+            text = text:gsub("^(%l)", string.upper) .. "."
+            local newTail = {}
+            if sum then newTail[#newTail + 1] = sum end
+            local l = {cls = "close", t = D.e or 0, ep = last.ep, text = text, major = true, kind = "close", meta = {t = D.e, compose = "close"}, n = #out + 990, toClose = true}
+            newTail[#newTail + 1] = l
+            last.lines = keep
+            for _, x in ipairs(newTail) do last.lines[#last.lines + 1] = x end
+            last.words = 0
+            for _, x in ipairs(last.lines) do last.words = last.words + Words(x.text) end
+        end
+    end
+    -- (round 20, the record's order: a deed done elsewhere is told before the road to where it was handed
+    -- in. "From there we went to the Undercity. We stole a lich's spellbook ... and brought it to Bethor."
+    -- becomes "We stole a lich's spellbook from an island in Brightwater Lake. From there we went to the
+    -- Undercity and brought it to Bethor.")
+    for _, p_ in ipairs(paragraphs) do
+        for j = 1, #p_.lines - 1 do
+            local mv, q = p_.lines[j], p_.lines[j + 1]
+            if (mv.cls == "move" or mv.cls == "arrive") and q.cls == "quest" and not inRun[q] then
+                local deed, whom, rest = q.text:match("^(We [^%.]-) and (brought it to [^%.]-)%.%s*(.*)$")
+                if deed and mv.text:match("%.$") and not deed:find(",", 1, true) then
+                    local road = mv.text:gsub("%.$", "")
+                    mv.text = deed .. "."
+                    q.text = road .. " and " .. whom .. "." .. (rest ~= "" and (" " .. rest) or "")
+                end
             end
         end
     end

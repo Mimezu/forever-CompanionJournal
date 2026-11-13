@@ -1,5 +1,11 @@
 # Companion Journal: changes
 
+## 1.34.0 (2026-11-12)
+
+- Chapters close on where you ended, with whom, and what is left open
+- Shorter paragraphs; hand-ins told as handing over
+- Companion books: long chapters keep what you two did together
+
 ## 1.33.0 (2026-11-12)
 
 - Deaths in one place are one sentence about the danger

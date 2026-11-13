@@ -111,7 +111,9 @@ check(#runs == 1, "one road found in the day, got " .. #runs)
 check(runs[1] and runs[1].far == "Loch Modan" and not runs[1].back, "the road's far point is Loch Modan; it did not walk back (the hearthstone did)")
 local para
 for _, p in ipairs(Paragraphs(hard)) do if Find(p, "Loch Modan") and Find(p, "Rharen") then para = p end end
-check(para, "the road is one paragraph with its far point and its dangers: " .. hard)
+check(para, "the road has a paragraph with its far point and its dangers: " .. hard)
+-- (round 19: a long road may run on into a second paragraph; the road is read to the chapter's end)
+if para then para = hard:sub(Index(hard, para)) end
 check(Find(para, "Hillsbrad Foothills") and Find(para, "Arathi Highlands") and Find(para, "Wetlands"), "the lands crossed are named")
 check(Count(para, "new to") + Count(para, "known to") + Count(para, "strange to") == 1, "the firsts fold into one clause")
 check(Find(para, "Dun Algaz"), "the death is told where it fell, at Dun Algaz")

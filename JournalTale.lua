@@ -2457,6 +2457,22 @@ function T.ComposeRoadInner(c, lines, EpisodeAt, Place)
                 local line = teller:Say(key, PB[key], rng, tokens)
                 -- (the steps in a close bond's book only: the friend's book of the same night keeps the goal,
                 -- so the two never say the same sentence)
+                -- (round 18: a friend's book closes the trail too, in a line of its own)
+                if line and chainHit and chainHit.steps and T.BondKind(c.person) == "friend" then
+                    local lastQ
+                    for _, q in ipairs(f.quests or {}) do
+                        if q.qid and chainHit.steps[q.qid] and (q.t or 0) >= from and (q.t or 0) <= to + 60 and (not lastQ or q.t > lastQ.t) then lastQ = q end
+                    end
+                    if not lastQ then
+                        for _, x in ipairs(own) do
+                            if x.k == "quest" and x.qid and chainHit.steps[x.qid] and (x.t or 0) >= from and (x.t or 0) <= to + 60 and (not lastQ or x.t > lastQ.t) then lastQ = x end
+                        end
+                    end
+                    if lastQ then
+                        local text = Cap(teller.base.we) .. " followed the notes to their end in " .. Place(lastQ.z or chain[#chain].zone) .. "."
+                        NewLine(lines, text, "questKey", lastQ.t, EpisodeAt, S, lastQ.z)
+                    end
+                end
                 if line and chainHit and chainHit.steps and T.BondKind(c.person) == "close" then
                     for _, q in ipairs(f.quests or {}) do
                         local step = q.qid and chainHit.steps[q.qid]
@@ -3011,6 +3027,23 @@ function T.OwnSpine(c, lines, Live)
                     end
                 end
             end
+            -- (round 18: the same deed in other words, "We cleared the Scourge from Balnir Farmstead" and
+            -- "We cleared the haven they had made at Balnir Farmstead", is one deed)
+            if ownTold and not hereTold then
+                for _, v in ipairs(pov) do
+                    local first = PlainOf(QD.Fill(v, tok))
+                    for _, x in ipairs(here) do
+                        local xp = PlainOf(x)
+                        for w in first:gmatch("%u[%a']+") do
+                            if #w >= 5 and xp:find("%f[%a]" .. w .. "%f[%A]") then
+                                for vb in first:gmatch("%f[%a][Ww]e (%l+ed)%f[%A]") do
+                                    if #vb >= 5 and xp:find("%f[%a]" .. vb .. "%f[%A]") then hereTold = true end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
             if ownTold and not hereTold then
                 local e = {quest = q, story = story, act = QD.Act and QD.Act(q, story)}
                 local text
@@ -3026,6 +3059,11 @@ function T.OwnSpine(c, lines, Live)
                         or low:find("[%s%p]you[%s%p]")
                     if (e.act and e.act.solo) or (story.pov and story.pov.solo) or not shared or low:find("^ i ") then text = nil end
                 end
+                -- (round 19: an authored line that names a quarter of a city the hand-in was not in, "We learned
+                -- in the Magic Quarter" told at the Sepulcher, loses the clause; the record's place stands)
+                if text and q.z and not IsCity(q.z) then
+                    text = text:gsub(" in the %u%a+ Quarter", ""):gsub(" in the Undercity", "")
+                end
                 local near
                 for _, l in ipairs(lines) do if Live(l) and l.t and q.t and (not near or math.abs(l.t - q.t) < math.abs(near.t - q.t)) then near = l end end
                 -- (round 17: the work of a run told with the run, at its end: "the tomes of the Searing Blade"
@@ -3038,10 +3076,14 @@ function T.OwnSpine(c, lines, Live)
                     if name and (low:find(name:lower(), 1, true) or (low:find("went down into", 1, true) or low:find("caverns", 1, true) or low:find("chasm", 1, true))) and below then runOf = d end
                 end
                 if text and runOf then
-                    for _, l in ipairs(lines) do if Live(l) and l.run == runOf then near = l end end
-                    -- (round 17: inside the run, "We went down into the caverns ... for the tomes" is no second
-                    -- descent: "Down there we also took the tomes ...")
-                    text = text:gsub("^(%a+) went down into [^,]- for the ", function(w) return "Down there " .. w:lower() .. " also took the " end, 1)
+                    -- (round 18: told at its hand-in, in the record's order, saying where the thing came from:
+                    -- "Back in the Undercity, we handed over the spell tomes we had brought out of the caverns
+                    -- beneath Orgrimmar, gifts of the Legion ...")
+                    local place = q.z and A.JournalPlain((c.Place or function(z) return z end)(q.z))
+                    text = text:gsub("^(%a+) went down into ([^,]-) for (the [^,]-), ", function(w, where, what)
+                        return (place and ("Back in " .. place .. ", ") or "Later, ") .. w:lower() .. " handed over " .. what .. " " .. w:lower() .. " had brought out of " .. where .. ", "
+                    end, 1)
+                    runOf = nil
                 end
                 if text and near then
                     S.Z[text] = q.z or S.Z[near.text]
@@ -3062,6 +3104,128 @@ function T.OwnSpine(c, lines, Live)
                 end
             end
         end
+    end
+end
+-- The first step of a quest chain the night holds (round 18): "In Westfall, a blistered note by a
+-- burned-out fire set us on a trail of notes", so a later "the note" is never unintroduced.
+function T.ChainStart(c, lines, Live)
+    local chains = A.SelfWords and A.SelfWords.compose and A.SelfWords.compose.questChains
+    local teller, S = c.teller, c.S
+    if not chains then return end
+    local times = {}
+    for _, scene in ipairs(c.day and c.day.scenes or {}) do
+        if scene.kind == "outing" then
+            for _, x in ipairs(c.ownJournal or {}) do
+                if x.k == "quest" and x.qid and x.t and x.t >= (scene.t or 0) and x.t <= (scene.e or scene.t or 0) then times[x.qid] = x end
+            end
+        end
+    end
+    for _, q in ipairs(c.f and c.f.quests or {}) do if q.qid and not times[q.qid] then times[q.qid] = q end end
+    for _, ch in ipairs(chains) do
+        local q = ch.qids and times[ch.qids[1]]
+        if q and ch.start then
+            local said = false
+            for _, l in ipairs(lines) do if Live(l) and PlainOf(l.text):lower():find("trail of notes", 1, true) and l.t and l.t <= (q.t or 0) then said = true end end
+            if not said then
+                local clause = ch.start:gsub("^where ", ""):gsub("{us}", teller.base.us):gsub("{we}", teller.base.we)
+                local place = q.z and (c.Place or function(z) return "{p:" .. Clean(z) .. "}" end)(q.z)
+                local text = place and ("In " .. place .. ", " .. clause .. ".") or (Cap(clause) .. ".")
+                -- (a friend's book says the same start in its own words)
+                if T.BondKind(c.person) == "friend" and place then
+                    text = Cap(teller.base.we) .. " picked up the trail in " .. place .. ", from a note left by a burned-out fire."
+                end
+                local near
+                for _, l in ipairs(lines) do if Live(l) and l.t and (not near or math.abs(l.t - q.t) < math.abs(near.t - q.t)) then near = l end end
+                if near then
+                    S.Z[text] = q.z
+                    S.NoLead = S.NoLead or {}; S.NoLead[text] = true
+                    lines[#lines + 1] = {n = #lines + 1.5, text = text, beat = "questKey", t = q.t, ep = near.ep, added = true}
+                end
+            end
+        end
+    end
+end
+-- (round 19) How much of a line is the two of them: the share of its sentences whose subject or
+-- object is "we", "us", "our" or her name; and whether it sets up something told later (a name of
+-- its own met again in another line, a quest of a thread).
+T.SPINE_BUDGET = {close = 24, friend = 22}
+function T.BondSpine(c, lines, Live)
+    local teller, S = c.teller, c.S
+    local kind = T.BondKind(c.person)
+    local budget = T.SPINE_BUDGET[kind]
+    if not budget then return end
+    local name = PlainOf(teller.base.name)
+    local we = teller.base.I == "I"
+    local function Sentences(text)
+        local out = {}
+        for sx in (PlainOf(text) .. " "):gmatch("(.-[%.!?])%s+") do out[#out + 1] = sx end
+        return out
+    end
+    local function Ours(sx)
+        local low = " " .. sx:lower() .. " "
+        return low:find("[%s%p]we[%s%p]") or low:find("[%s%p]us[%s%p]") or low:find("[%s%p]our[%s%p]") or sx:find(name, 1, true)
+            or (not we and low:find("[%s%p]you[%s%p]"))
+    end
+    local total = 0
+    for _, l in ipairs(lines) do if Live(l) then total = total + #Sentences(l.text) end end
+    if total <= budget then return end
+    local QD = A.QuestDeeds
+    local FOLDABLE = {questKey = true, quests = true, land = true, landKey = true, consequence = true, again = true, questStart = true, questOutcome = true}
+    local cands = {}
+    -- (a thread told in two or more lines of the chapter is a story of its own here: its lines stay)
+    local threadCount, threadEnds = {}, {}
+    for _, l in ipairs(lines) do
+        local q = Live(l) and S.Q and S.Q[l.text]
+        local st = q and QD and QD.Story and QD.Story(q)
+        if st and st.thread then
+            threadCount[st.thread] = (threadCount[st.thread] or 0) + 1
+            local e = threadEnds[st.thread] or {}
+            if not e.first or (l.t or 0) < (e.first.t or 0) then e.first = l end
+            if not e.last or (l.t or 0) > (e.last.t or 0) then e.last = l end
+            threadEnds[st.thread] = e
+        end
+    end
+    for _, l in ipairs(lines) do
+        if Live(l) and FOLDABLE[l.beat] and not l.run and l.n > 1 then
+            local ss = Sentences(l.text)
+            local ours = 0
+            for _, sx in ipairs(ss) do if Ours(sx) then ours = ours + 1 end end
+            local score = #ss > 0 and ours / #ss or 0
+            -- (a thread's work, or a name met again in another line, sets something up: it stays)
+            local q = S.Q and S.Q[l.text]
+            local st = q and QD and QD.Story and QD.Story(q)
+            -- (its first and last line: the middle of a long thread folds before a deed of its own)
+            local ends = st and st.thread and threadEnds[st.thread]
+            local keeps = st and st.thread and (threadCount[st.thread] or 0) >= 2 and ends and (ends.first == l or ends.last == l) or false
+            -- (a fight is a deed: it outranks an errand)
+            local low = PlainOf(l.text):lower()
+            if low:find(" killed ", 1, true) or low:find(" cut down ", 1, true) or low:find(" fought ", 1, true) or low:find(" ambush", 1, true) then score = score + 0.5 end
+            -- (a fight the two of us fought is a beat of ours: it stays)
+            if low:find("we went in and killed", 1, true) or low:find("we killed ", 1, true) or low:find("we fought ", 1, true) then keeps = true end
+            -- (a setup: the first mention of a name that a later line uses again)
+            for w in PlainOf(l.text):gmatch("%u%l%l%l%l+") do
+                local before, after = false, false
+                for _, x in ipairs(lines) do
+                    if Live(x) and x ~= l and PlainOf(x.text):find("%f[%a]" .. w .. "%f[%A]") then
+                        if (x.t or 0) < (l.t or 0) then before = true else after = true end
+                    end
+                end
+                if after and not before and not (A.LoreZoneLevels and A.LoreZoneLevels[w]) and T.SPINE_NAME_SETUPS then keeps = true end
+            end
+            if l.text:find(teller.base.name, 1, true) or (S.Keep and S.Keep[l.text]) then keeps = true end
+            if PlainOf(l.text):lower():find("trail", 1, true) or PlainOf(l.text):lower():find("note", 1, true) then keeps = true end
+            if not keeps then cands[#cands + 1] = {l = l, score = score, n = #ss, lore = (l.beat == "land" or l.beat == "landKey")} end
+        end
+    end
+    table.sort(cands, function(a, b)
+        if a.lore ~= b.lore then return a.lore end
+        if a.score ~= b.score then return a.score < b.score end
+        return (a.l.t or 0) > (b.l.t or 0)
+    end)
+    for _, cand in ipairs(cands) do
+        if total <= budget then break end
+        cand.l.drop = true
+        total = total - cand.n
     end
 end
 -- Her deed from her record (round 11): her levels against yours that day, else the parts in a run.
@@ -3390,10 +3554,8 @@ function T.ComposeTogether(c, lines)
             end
         end
     end
-    -- 6a'. round 17: the hand-in of a run's work, told later in the night ("Varimathras told us ... We
-    -- took them from the cultists"), stands with the run in a bonded book; and a line of the run that
-    -- opens "We went down into X for ..." after the way in is not a second descent
-    if kind ~= "plain" then
+    -- 6a'. (round 17, off since round 18: a hand-in is told at its own time, in the record's order)
+    if kind ~= "plain" and T.RUN_HANDIN_WITH_RUN then
         for _, d in ipairs(f.dungeons or {}) do
             local runEnd, runEp
             for _, l in ipairs(lines) do
@@ -3592,6 +3754,12 @@ function T.ComposeTogether(c, lines)
         end
         -- 9f. round 15: the own book's work of the night, while the companion was there
         if T.OWN_SPINE ~= false then T.OwnSpine(c, lines, Live) end
+        T.ChainStart(c, lines, Live)
+        -- 9g. round 19: a long chapter keeps to the bond's spine. Chapter I reads best because the two
+        -- of them are the subject of nearly every beat; where the night's quests take over, the beats
+        -- the two did together (or for each other) stay and the rest fold away, the work that sets up
+        -- something later kept: lore and someone else's story go first, then the work least ours
+        T.BondSpine(c, lines, Live)
         -- 9b. a land called new that no told moment of the chapter is in goes ("Westfall was new to us
         -- both", with nothing done there): no place is new unless the chapter takes the two there
         for _, l in ipairs(lines) do
@@ -9062,7 +9230,7 @@ function T.Tell(person, days, voice, player, brief)
                     for pass = 1, 2 do
                         for i, line in ipairs(out) do
                             local b = outBeat[i]
-                            local fits = (pass == 1 and (b == "questKey" or b == "quests" or b == "dungeon" or b == "road"))
+                            local fits = (pass == 1 and (b == "questKey" or b == "quests" or b == "dungeon" or b == "road") and not (S.NoLead and S.NoLead[line]))
                                 or (pass == 2 and (b == "open" or b == "day" or b == "land" or b == "landKey"))
                             if fits and not new then
                                 for at, p in line:gmatch("()({p:[^}]+})") do
