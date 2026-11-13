@@ -3047,6 +3047,9 @@ function T.OwnSpine(c, lines, Live)
             seen[key] = true
             -- (the own book told it: most of one of its two lines' matter is in the own night's text)
             local ownTold, hereTold, forceTell, useAct = false, false, false, false
+            -- (round 26: the thread's set-up came on a night the companion was not in the group: the
+            -- deed alone, or nothing; never Raleigh's words she never heard)
+            local setupAway = false
             for _, v in ipairs(pov) do
                 local w, n = MatterWords(QD.Fill(v, tok))
                 local inOwn, inHere = 0, 0
@@ -3086,7 +3089,7 @@ function T.OwnSpine(c, lines, Live)
                                 for _, l in ipairs(lines) do
                                     if Live(l) and not l.run and (l.beat == "quests" or l.beat == "questKey") and PlainOf(l.text):find("%f[%a]" .. w .. "%f[%A]") then
                                         local head, rest = l.text:match("^(.-), then ([^,]-" .. w .. "[^,]-)%.$")
-                                        if head and rest and head:find("%a$") and head:find("^%a*%s?[Ww]e ") then
+                                        if head and rest and head:find("%a$") and (head:find("^%a*%s?[Ww]e ") or head:find("^%a*%s?[Yy]ou ")) then
                                             l.text = S.Carry(l.text, head .. ".")
                                             hereTold = false
                                             forceTell = true
@@ -3148,7 +3151,7 @@ function T.OwnSpine(c, lines, Live)
                     return false
                 end
                 for _, x in ipairs(c.ownJournal or {}) do
-                    if x.k == "quest" and x.t and q.t and x.t < q.t and q.t - x.t <= 30 * 3600 and x.qid ~= q.qid then
+                    if x.k == "quest" and x.t and q.t and x.t < q.t and x.qid ~= q.qid then
                         local st2 = QD.Story({title = x.d, qid = x.qid})
                         if st2 and st2.thread == story.thread and not Present(x.t) then
                             -- (only the step just before this one: the scene retells that step)
@@ -3166,6 +3169,7 @@ function T.OwnSpine(c, lines, Live)
                             -- before is only its background: this night's act is told instead)
                             if not between and q.t - x.t <= 3600 then ownTold = false
                             elseif not between and x.t < dayStart0 then
+                                setupAway = true
                                 -- (only when the scene speaks of that step: its giver is named in it, "Bethor knew ...")
                                 local g2 = QD.Giver and QD.Giver(st2)
                                 local last = g2 and tostring(g2):match("(%S+)$")
@@ -3188,6 +3192,14 @@ function T.OwnSpine(c, lines, Live)
                     text = QD.Moment(e, tok, QD.Variant(key, nil, teller.deedOther), true)
                     -- (round 23: its background a night the companion missed: this night's act alone)
                     if useAct and not forceTell and e.act and e.act.act then text = Cap(b.we) .. " " .. e.act.act .. "." end
+                    if setupAway then
+                        local act = e.act and e.act.act and not e.act.solo and e.act.act:gsub(" for %u[%a']+$", "")
+                        text = act and (Cap(b.we) .. " " .. act .. ".") or nil
+                        -- (a friend's book says the same deed from the place first)
+                        local deed, where
+                        if act then deed, where = act:match("^(.-) at (the [%u][%a' ]+)$") end
+                        if deed and T.BondKind(c.person) ~= "close" then text = "At " .. where .. ", " .. b.we .. " " .. deed .. "." end
+                    end
                     -- (round 16: only work the two did; a line of mine alone, "I woke on the cold stone",
                     -- "Aramis began my training", is the own book's, not hers)
                     local low = text and (" " .. PlainOf(text):lower() .. " ") or ""
@@ -3227,7 +3239,22 @@ function T.OwnSpine(c, lines, Live)
                     S.NoLead = S.NoLead or {}; S.NoLead[text] = true
                     -- (a thread's closing scene taken out of a list is kept whole by the spine budget)
                     if forceTell then S.Keep = S.Keep or {}; S.Keep[text] = true end
-                    lines[#lines + 1] = {n = #lines + 1.5, text = text, beat = "questKey", t = (runOf and near.t) or q.t or near.t, ep = near.ep, added = true,
+                    -- (round 26: a deed told by the place it was done, "killed Valdred at the Greymane Wall",
+                    -- carries the minute the record was last there, while the two were together, not the hand-in's)
+                    local deedT
+                    if not runOf and q.t and c.person and type(c.person.journal) == "table" then
+                        local plain = PlainOf(text)
+                        local day0 = math.huge
+                        for _, sc in ipairs(c.day and c.day.scenes or {}) do if sc.t and sc.t < day0 then day0 = sc.t end end
+                        for _, x in ipairs(c.ownJournal or {}) do
+                            if x.sz and x.t and x.t < q.t and x.t >= day0 and #x.sz >= 6 and plain:find(Clean(x.sz):gsub("^The ", ""), 1, true) then
+                                local with = false
+                                for _, g in ipairs(c.person.journal) do if g.k == "group" and g.t and x.t >= g.t - 60 and x.t <= (g.e or g.t) + 60 then with = true end end
+                                if with and (not deedT or x.t > deedT) then deedT = x.t end
+                            end
+                        end
+                    end
+                    lines[#lines + 1] = {n = #lines + 1.5, text = text, beat = "questKey", t = (runOf and near.t) or deedT or q.t or near.t, ep = near.ep, added = true,
                         run = runOf}
                     if runOf then S.R[text] = runOf end
                     if c.friendPending then
@@ -3900,7 +3927,11 @@ function T.ComposeTogether(c, lines)
             for _, d in ipairs(lines) do
                 if Live(d) and d.beat == "death" and not d.run and d.t and d.text:sub(-1) == "." and not d.text:find(", and ", 1, true) then
                     for _, r in ipairs(lines) do
-                        if Live(r) and r.beat == "rest" and r.t and r.t >= d.t and r.t - d.t <= 20 * 60 then
+                        local between = false
+                        for _, o in ipairs(lines) do
+                            if o ~= d and o ~= r and Live(o) and o.t and r.t and o.t > d.t + 30 and o.t < r.t - 30 and o.beat ~= "rest" then between = true end
+                        end
+                        if Live(r) and r.beat == "rest" and r.t and r.t >= d.t and r.t - d.t <= 20 * 60 and not between then
                             Rewrite(d, d.text:sub(1, -2) .. ", and afterwards " .. teller.base.we .. " sat by a fire together.")
                             r.drop = true
                             break
@@ -4172,7 +4203,7 @@ function T.ComposeTogetherAfter(c, out, beats)
             for m = n - 1, 1, -1 do if times[out[m]] then t1 = times[out[m]]; break end end
             local low = PlainOf(line):lower()
             if z1 and z2 and z1 ~= z2 and t1 and t2 and not (S.Bridge and S.Bridge[line]) and not S.R[line] and beats[n] ~= "death" and beats[n] ~= "road"
-                and beats[n - 1] ~= "road" and not low:find("^%a+ took ") and not low:find(" flew", 1, true) and not low:find("zeppelin", 1, true) and not FirstTold(low)
+                and (beats[n - 1] ~= "road" or not PlainOf(out[n - 1]):lower():find("hearth", 1, true)) and not low:find("^%a+ took ") and not low:find(" flew", 1, true) and not low:find("zeppelin", 1, true) and not FirstTold(low)
                 and not low:find("had not been", 1, true) and not low:find("strange country", 1, true) then
                 local moves = Moves(t1, t2)
                 if moves then
@@ -4719,6 +4750,60 @@ end
 -- run pass grouped it, a light paragraph joined to its neighbour, a long one split at a turn
 -- (a death after none, a hand-in, a change of place) nearest its middle, eight at most.
 -- Returns the groups table T.Paragraphs reads (line index -> key), or the run groups alone.
+-- (round 26) The record-order verifier of a companion chapter. Every told line carries its record
+-- minute (times[line]); a line with none goes with the line before it. Fixed: the opening, the land,
+-- the closing lines and the level said "by the end"; lines marked S.Pre (a set-up) may stand before
+-- their time. T.OrderFaults lists every other line told before a line it came after (a minute's slack);
+-- T.SortByRecord moves each such line back to its minute.
+T.ORDER_VERIFY = true
+local FIXED_BEAT = {open = true, day = true, land = true, close = true}
+local function Fixed(line, beat, S)
+    if FIXED_BEAT[beat or ""] then return true end
+    if (beat == "level" or beat == "levelMark") and PlainOf(line):find("by the end", 1, true) then return true end
+    return S.Pre and S.Pre[line] or false
+end
+function T.OrderFaults(out, beats, times, S)
+    local faults, last, lastLine = {}, nil, nil
+    for n, l in ipairs(out) do
+        local t = times[l]
+        if t and not Fixed(l, beats[n], S) and not (S.R and S.R[l]) then
+            if last and t < last - 60 then faults[#faults + 1] = {n = n, line = l, t = t, after = lastLine, afterT = last} end
+            if not last or t > last then last, lastLine = t, l end
+        end
+    end
+    return faults
+end
+function T.SortByRecord(out, beats, times, S)
+    for _ = 1, #out do
+        local faults = T.OrderFaults(out, beats, times, S)
+        local f = faults[1]
+        if not f then return end
+        local n, t = f.n, f.t
+        -- (the line and the untimed lines after it go together)
+        local stop = n
+        while stop < #out and not times[out[stop + 1]] and not Fixed(out[stop + 1], beats[stop + 1], S) do stop = stop + 1 end
+        -- (to before the first movable line told later than it; set-ups and a run stay with what they lead)
+        local at
+        for m = 1, n - 1 do
+            local tm = times[out[m]]
+            if tm and tm > t + 60 and not Fixed(out[m], beats[m], S) then at = m; break end
+        end
+        if not at then return end
+        while at > 1 and S.R[out[at]] and S.R[out[at - 1]] == S.R[out[at]] do at = at - 1 end
+        while at > 1 and S.Pre and S.Pre[out[at - 1]] do at = at - 1 end
+        local moved, movedB = {}, {}
+        for k = n, stop do moved[#moved + 1], movedB[#movedB + 1] = out[k], beats[k] end
+        for k = stop, n, -1 do table.remove(out, k); table.remove(beats, k) end
+        for k = #moved, 1, -1 do
+            local line = moved[k]
+            if k == 1 then
+                local plain = line:gsub("^Then (%l)", function(x) return x:upper() end)
+                if plain ~= line then line = S.Carry(moved[k], plain) end
+            end
+            table.insert(out, at, line); table.insert(beats, at, movedB[k])
+        end
+    end
+end
 function T.ComposeParagraphs(out, beats, S, runGroups)
     if not S or not S.EP or #out == 0 then return runGroups end
     local blocks, lastEp = {}, nil
@@ -4747,7 +4832,7 @@ function T.ComposeParagraphs(out, beats, S, runGroups)
                 -- (round 11: a paragraph that opens on a journey's bridge stays its own adventure)
                 local bridged = S.Bridge and S.Bridge[out[b.lines[1]]]
                 local nextBridged = nxt and S.Bridge and S.Bridge[out[nxt.lines[1]]]
-                if nxt and not nxt.run and not nextBridged and (b.words + nxt.words <= T.MAX_WORDS or b.words < T.MIN_WORDS / 2) then Merge(i, i + 1); changed = true; break
+                if nxt and not nxt.run and (not nextBridged or i == 1) and (b.words + nxt.words <= T.MAX_WORDS or b.words < T.MIN_WORDS / 2) then Merge(i, i + 1); changed = true; break
                 elseif prev and not prev.run and not bridged then Merge(i - 1, i); changed = true; break end
             end
         end
@@ -8756,7 +8841,7 @@ function T.TellOnce(person, days, voice, player, brief)
                                 end
                                 if first0 and first0 > withT then withT = first0 end
                             end
-                            teller.othersAt[#others] = {t = withT, z = scene.zone, before = (e.t or 0) < (scene.t or 0) - 60}
+                            teller.othersAt[#others] = {t = withT, z = scene.zone, before = (e.t or 0) < (scene.t or 0) - 60, late = withT - (scene.t or withT) > 10 * 60}
                         end
                     end
                 end
@@ -8771,7 +8856,8 @@ function T.TellOnce(person, days, voice, player, brief)
                     tokens.others = who:find(", ", 1, true) and (who .. ",") or who
                     -- (round 17: one in the group before the companion came is "already with me", never "joined")
                     local before = at and at.before and PB.alsoThereBefore
-                    local line = teller:Say(before and "alsoThereBefore" or "alsoThere", before or PB.alsoThere, rng, tokens)
+                    local joined = not before and at and at.late and PB.alsoThereJoined
+                    local line = teller:Say((before and "alsoThereBefore") or (joined and "alsoThereJoined") or "alsoThere", before or joined or PB.alsoThere, rng, tokens)
                     if line then Add(line) end
                 end
                 others = {}
@@ -9680,6 +9766,14 @@ function T.TellOnce(person, days, voice, player, brief)
                         for n = 1, #out do if S.R[out[n]] == d then runGroups[n] = d end end
                     end
                 end
+            end
+        end
+        -- (round 26: every told line at its record minute; an inversion the passes left is moved back)
+        if not S.planned and S.bonded and T.ORDER_VERIFY then
+            T.SortByRecord(out, outBeat, outT, S)
+            if runGroups then
+                runGroups = {}
+                for n = 1, #out do if S.R[out[n]] then runGroups[n] = S.R[out[n]] end end
             end
         end
         if not S.planned and S.Day then runGroups = T.ComposeParagraphs(out, outBeat, S, runGroups) or runGroups end

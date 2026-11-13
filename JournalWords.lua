@@ -2253,7 +2253,10 @@ PB.roadBackHardParty = {"At {far} the party gave ground and fell back {backWay}.
 PB.killRollGoalMidParty = {"With the others, {name} and I cut through {before} to {lordText}, whom {we} had come down for, and then {after}."}
 PB.killRollGoalLastParty = {"With the others, {name} and I cut through {before}, and last of all {lordText}, whom {we} had come down for."}
 -- One already in the group before the companion joined: never "joined" (round 17).
-PB.alsoThereBefore = {"{others} was already with {me}.", "{others} had been with {me} since the {part} began."}
+PB.alsoThereBefore = {"{others} was already with {me}.", "{others} was already at {my} side."}
+-- (round 26) One who joined the two later in the outing, told at the minute he joined: never "was
+-- along as well", which puts him beside what came before.
+PB.alsoThereJoined = {"{others} joined {pairObj}.", "{others} caught up with {pairObj}.", "{others} found {pairObj} and joined the party."}
 -- The road and the run told from a close bond: the two side by side.
 PB.roadOutBond = {"From {from}, {pairNamed} set off on foot side by side through {lands}{roadNote}.", "{pairNamed} left {from} on foot together, through {lands}{roadNote}."}
 PB.roadOnBond = {"From there {pairNamed} walked on together through {lands}{roadNote}.", "Side by side, {pairNamed} went on foot through {lands}{roadNote}."}

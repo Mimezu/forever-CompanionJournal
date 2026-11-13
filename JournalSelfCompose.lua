@@ -530,7 +530,15 @@ local function Select(ctx, lines, inRun, episodes, D)
                         and ((o.plain or "") .. " " .. tostring(o.giver or "")):find(giverWord, 1, true) then closes = true end
                 end
             end
-            if kill or ends or firstUnit[u] or spine or setup or closes then Tell(u, kill) end
+            if kill or ends or firstUnit[u] or spine or setup then Tell(u, kill)
+            elseif closes then
+                -- (round 26: the closing hand-over as its own act, at its own place and minute)
+                u.mode = "act"
+                local it = u.it
+                it.chosen = it.chosen or {}
+                it.chosen[u.act.i] = true
+                it.pick, it.keep = true, true
+            end
         end
     end
     -- 2. What was decided, back on the lines. A grouped line's kept acts are lines of their own
@@ -1157,7 +1165,7 @@ function C.DeathGroup(evs, k)
             elseif shape % 3 == 2 and #others > 0 then
                 c = List(others) .. " and I fell to " .. foe .. where_
             elseif shape % 3 == 0 and w ~= "" then
-                c = Cap(w) .. ", " .. foe .. " " .. (cut and "cut down " or "killed ") .. List(all)
+                c = Cap(w) .. ", " .. foe .. " " .. ((all[1] == "us all" and (cut and "cut us all down" or "killed us all")) or ((cut and "cut down " or "killed ") .. List(all)))
             else
                 c = foe .. " " .. (cut and "cut " or "killed ") .. List(all) .. (cut and " down" or "") .. where_
             end
@@ -2300,6 +2308,10 @@ function C.Apply(ctx)
                 local name = plain:match("^(%u[%a']+) caught up") or plain:match("^(%u[%a']+), [^,]+, was with us") or plain:match("^(%u[%a']+) joined")
                     or plain:match("^(%u[%a']+), [^,]+, was with me")
                 local at = name and firstSign[name]
+                -- (round 26: the record's own minute of the joining, the window's start, when it has one)
+                for _, sp in ipairs(name and windows[name] or {}) do
+                    if at and sp[1] <= at and sp[1] > l.t + 300 then at = sp[1] + 120 end
+                end
                 if at and at > l.t + 300 then
                     -- (only within the same evening's stay: never across a crossing)
                     local ep = EpisodeAt(at, episodes)
@@ -2555,10 +2567,15 @@ function C.Apply(ctx)
                     local toldT = {}
                     for _, x in ipairs(byEp[ep]) do if not x.drop and not inRun[x] and x.cls == "quest" then toldT[#toldT + 1] = x.t end end
                     local parts_ = {}
+                    -- (round 26: a companion's joining inside the stretch cuts it too, so a raise by one who
+                    -- had not joined yet is never told after their joining)
+                    local cuts = {}
+                    for _, t in ipairs(toldT) do cuts[#cuts + 1] = t end
+                    for _, spans in pairs(windows) do for _, sp in ipairs(spans) do if sp[1] > ep.t + 60 then cuts[#cuts + 1] = sp[1] end end end
                     for _, x in ipairs(rest_) do
                         local g = parts_[#parts_]
                         local cut = not g
-                        if g then for _, t in ipairs(toldT) do if t > g[#g].t and t <= x.t then cut = true end end end
+                        if g then for _, t in ipairs(cuts) do if t > g[#g].t and t <= x.t then cut = true end end end
                         if cut then parts_[#parts_ + 1] = {x} else g[#g + 1] = x end
                     end
                     local said_ = lead and Plain(lead.text) or ""
@@ -4430,8 +4447,15 @@ function C.Apply(ctx)
                 -- (a leaving told at its time joins the scene it ended: "..., and there Marrow left us")
                 if l.meta and l.meta.compose == "left" and l.signMoved and j > 1 then
                     local prev = p_.lines[j - 1]
+                    local nxt = p_.lines[j + 1]
                     local name = Plain(l.text):match("^(.-) left us%.$")
-                    if prev and name and prev.text:match("%.$") and not prev.drop then
+                    local raw = l.text:match("^(.-) left us%.$")
+                    -- (round 26: at the minute it happened; the step after, when it is nearer, opens on it)
+                    local prevNear = prev and math.abs((l.t or 0) - (prev.t or 0)) <= 120
+                    if name and nxt and not prevNear and not nxt.drop and Plain(nxt.text):match("^We ") and (nxt.t or 0) - (l.t or 0) <= 900 then
+                        nxt.text = "After " .. raw .. " left us, we " .. nxt.text:gsub("^We ", "")
+                        l.drop = true
+                    elseif prev and name and prevNear and prev.text:match("%.$") and not prev.drop then
                         prev.text = prev.text:gsub("%.$", "") .. ", and there " .. l.text:gsub("^", ""):gsub("%.$", "") .. "."
                         prev.text = prev.text:gsub(", and there ({?[%u][^}]*}?) left us%.$", ", and there %1 left us.")
                         l.drop = true
@@ -4441,6 +4465,32 @@ function C.Apply(ctx)
             local kept_ = {}
             for _, l in ipairs(p_.lines) do if not l.drop then kept_[#kept_ + 1] = l end end
             p_.lines = kept_
+        end
+    end
+    -- (round 26, reader AA: class work is the character's own: "I went to join their order", not "we";
+    -- and the chapter opens where the record's first outing was)
+    do
+        for _, p_ in ipairs(paragraphs) do
+            for _, l in ipairs(p_.lines) do
+                local e = l.meta and l.meta.entry
+                local st = e and e.story
+                local cls_ = (st and (st.class or (type(st.thread) == "string" and st.thread:find("^class")))) or (e and e.act and e.act.solo)
+                    or (type(st) == "table" and type(st.pov) == "table" and st.pov.solo)
+                if l.cls == "quest" and cls_ and not inRun[l] then
+                    l.text = l.text:gsub("^We ", "I "):gsub("([%.!] )We ", "%1I ")
+                end
+            end
+        end
+        local firstRaw
+        local dayFrom, dayTo = (episodes[1] and episodes[1].t or 0) - 1800, (episodes[1] and episodes[1].t or 0) + 600
+        for _, e in ipairs(ctx.person and type(ctx.person.journal) == "table" and ctx.person.journal or {}) do
+            if e.t and e.z and e.t >= dayFrom and e.t <= dayTo and (not firstRaw or e.t < firstRaw.t) then firstRaw = e end
+        end
+        local opener = paragraphs[1] and paragraphs[1].lines[1]
+        if firstRaw and opener and opener.cls == "open" then
+            -- (only a bare opening line: one that tells something there keeps its place)
+            local named = opener.text:match("^The %a+ began in {p:([^}]+)}%.$")
+            if named and Clean(named) ~= Clean(firstRaw.z) then opener.text = opener.text:gsub("began in {p:[^}]+}", "began in " .. Place(firstRaw.z), 1) end
         end
     end
     -- (round 20, the record's order: a deed done elsewhere is told before the road to where it was handed
@@ -4459,6 +4509,56 @@ function C.Apply(ctx)
                 end
             end
         end
+    end
+    -- (round 26, the clock verifier: inside a paragraph a line earlier than the one before it by more than
+    -- five minutes moves back to its place; what remains out of order across paragraphs is counted in
+    -- C.TimeFaults[day]. Exempt: the opening, the close and level, dungeon runs, the folds and summaries
+    -- that speak of a stretch, and a step told as backstory.)
+    do
+        local function Exempt(l)
+            return l.cls == "open" or l.cls == "close" or l.toClose or l.cls == "level" or inRun[l] or l.kind == "fold" or l.kind == "first"
+                or (l.meta and (l.meta.compose == "journey" or l.meta.compose == "cross" or l.meta.compose == "close" or l.meta.backstory or l.meta.deedMoved))
+                or l.cls == "place" or l.cls == "what" and not (l.meta and l.meta.compose)
+        end
+        for _, p_ in ipairs(paragraphs) do
+            if p_.kind ~= "dungeon" then
+                local j = 2
+                while j <= #p_.lines do
+                    local l = p_.lines[j]
+                    if not Exempt(l) and l.t then
+                        local maxT, at = nil, nil
+                        for k_ = 1, j - 1 do
+                            local o = p_.lines[k_]
+                            if not Exempt(o) and o.t then maxT = math.max(maxT or 0, o.t) end
+                        end
+                        if maxT and l.t < maxT - 300 then
+                            for k_ = 1, j - 1 do
+                                local o = p_.lines[k_]
+                                if not at and not Exempt(o) and o.t and o.t > l.t + 60 then at = k_ end
+                            end
+                            if at and not (l.meta and p_.lines[at].meta and l.meta.entry and l.meta.entry == p_.lines[at].meta.entry) then
+                                table.remove(p_.lines, j); table.insert(p_.lines, at, l)
+                            end
+                        end
+                    end
+                    j = j + 1
+                end
+            end
+        end
+        local faults, maxT = 0, nil
+        for _, p_ in ipairs(paragraphs) do
+            for _, l in ipairs(p_.lines) do
+                if not Exempt(l) and l.t and p_.kind ~= "dungeon" then
+                    if maxT and l.t < maxT - 600 then
+                        faults = faults + 1
+                        if C.Debug then C.Debug(("timefault %s < %s: %s"):format(Clock(l.t), Clock(maxT), Plain(l.text):sub(1, 70))) end
+                    end
+                    maxT = math.max(maxT or 0, l.t)
+                end
+            end
+        end
+        C.TimeFaults = C.TimeFaults or {}
+        C.TimeFaults[tostring(ctx.day and ctx.day.key or "")] = faults
     end
     -- 7. Write back, one paragraph id per scene.
     -- (a level number is said once a chapter: a line of the composer's that repeats one goes)

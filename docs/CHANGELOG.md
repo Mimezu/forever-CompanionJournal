@@ -1,5 +1,11 @@
 # Companion Journal: changes
 
+## 1.40.0 (2026-11-12)
+
+- Every line sits at the minute it happened
+- Class quests stay "I" even in a group
+- Each chapter starts where the night really began
+
 ## 1.39.0 (2026-11-12)
 
 - Chapters end on the outcome of their goal
