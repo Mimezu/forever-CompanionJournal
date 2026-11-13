@@ -394,6 +394,9 @@ function Sel.Budget(sel)
         end
     end
     local function Greedy()
+      -- (1.43.1: whether two pieces name the same people does not change while the budget is
+      -- filled; asked once a pair, not once a pair each round)
+      local namedMemo = {}
       while true do
         local best, bestScore
         for _, u in ipairs(units) do
@@ -402,14 +405,17 @@ function Sel.Budget(sel)
                     + ((u.imp >= 4 and (u.spine or u.kind == "scene") or (u.spine and u.setup)) and 4 or (u.spine and 1) or 0) + (u.own and 2 or 0)
                 -- (a thread that already holds three told steps needs a further one less)
                 local same = 0
-                for _, o in ipairs(units) do if o ~= u and o.mode and u.own and o.own == u.own then same = same + 1 end end
+                if u.own then for _, o in ipairs(units) do if o ~= u and o.mode and o.own == u.own then same = same + 1 end end end
                 if same >= 3 and not u.after then score = score - 2 end
                 -- (what is begun is finished: the next step of a told one, most of all of an
                 -- errand's, when the telling names the same people; one more piece of work for
                 -- the same giver counts for little. And a step the day goes on from.)
                 local follow, on = 0, 0
+                local namedOf = namedMemo[u]
+                if not namedOf then namedOf = {}; namedMemo[u] = namedOf end
                 for _, o in ipairs(units) do
-                    local named = Shares(u, o, true) or Shares(o, u, true)
+                    local named = namedOf[o]
+                    if named == nil then named = Shares(u, o, true) or Shares(o, u, true); namedOf[o] = named end
                     if o.mode and named then follow = math.max(follow, (o.i > u.i and 2) or (o.side and 4) or 3)
                     elseif o.mode and o.i < u.i and o.chain == u.chain and Shares(u, o) then follow = math.max(follow, 1) end
                     if u.side and o.i > u.i and not o.nowhere and named then on = 2 end

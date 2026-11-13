@@ -337,6 +337,14 @@ function E.ClaimsDeath(sentence, name)
     local forms = {Clean(name)}
     -- (a short form that is a name of its own: never "The" of "The Unforgiven")
     if short and short ~= Clean(name) and not short:find(" ", 1, true) and #short >= 4 and short:lower() ~= "the" then forms[#forms + 1] = short end
+    -- (1.43.1: a sentence that holds none of the forms anywhere claims nothing; the clauses below are
+    -- pieces of the same text, so the full check only runs when one is there. A form with a comma or a
+    -- semicolon could span two joined clauses, and always takes the full check.)
+    local lowPlain, present = plain:lower(), false
+    for _, form in ipairs(forms) do
+        if form:find("[,;]") or lowPlain:find(form:lower(), 1, true) then present = true; break end
+    end
+    if not present then return false end
     -- (the clause that names the boss: a claim of it never leans on the clauses around it)
     local clauses = {}
     for piece in (plain .. "; "):gmatch("(.-)[;,] ") do
@@ -387,6 +395,30 @@ end
 -- The sentences of a text that claim a death the kills do not support are removed: `killed(name)`
 -- says whether a boss was killed (today or before). Returns the text that is left (nil when
 -- none is) and how many sentences went.
+-- (1.43.1) The lower-case forms of a boss name E.ClaimsDeath looks for, kept per name (they hang on
+-- Lore.Short alone); a sentence without any of them anywhere cannot claim that boss's death.
+local formsMemo, formsShort = {}, nil
+-- (and per sentence, the names of a list it mentions at all, in the list's order)
+local mentionMemo, mentionList, mentionCount = {}, nil, 0
+local function LowForms(name)
+    local L = A.Lore
+    local Short = L and L.Short
+    if Short ~= formsShort then formsMemo, formsShort, mentionList = {}, Short, nil end
+    local forms = formsMemo[name]
+    if forms then return forms end
+    local short = Short and Short(name)
+    forms = {Clean(name):lower()}
+    if short and short ~= Clean(name) and not short:find(" ", 1, true) and #short >= 4 and short:lower() ~= "the" then forms[#forms + 1] = short:lower() end
+    for _, form in ipairs(forms) do if form:find("[,;]") then forms.always = true end end
+    if type(name) == "string" then formsMemo[name] = forms end
+    return forms
+end
+local function Mentions(low, name)
+    local forms = LowForms(name)
+    if forms.always then return true end
+    for _, form in ipairs(forms) do if low:find(form, 1, true) then return true end end
+    return false
+end
 function E.WithoutUnkilledClaims(text, killed, names)
     if not text or text == "" then return text, 0 end
     local L = A.Lore
@@ -394,7 +426,17 @@ function E.WithoutUnkilledClaims(text, killed, names)
     local kept, dropped = {}, 0
     for sentence in (tostring(text) .. " "):gmatch("(.-[%.!?]['\"]?)%s") do
         local bad = false
-        for _, name in ipairs(names) do
+        local low = Clean(sentence):gsub("{%a:([^}]*)}", "%1"):lower()
+        LowForms(names[1] or "")
+        if names ~= mentionList then mentionMemo, mentionList, mentionCount = {}, names, 0 end
+        local named = mentionMemo[low]
+        if not named then
+            named = {}
+            for _, name in ipairs(names) do if Mentions(low, name) then named[#named + 1] = name end end
+            if mentionCount >= 4000 then mentionMemo, mentionCount = {}, 0 end
+            mentionMemo[low], mentionCount = named, mentionCount + 1
+        end
+        for _, name in ipairs(named) do
             if not killed(name) and E.ClaimsDeath(sentence, name) then bad = true; break end
         end
         if bad then dropped = dropped + 1 else kept[#kept + 1] = sentence end

@@ -610,10 +610,15 @@ local function Chapters(person)
     local function Story(day, teller)
         teller = teller or "you"
         if not stories[teller] then
+            -- (told once and kept while nothing it hangs on changes: JournalTellCache.lua)
+            local Kept = A.TellCache
             if person.self then
-                stories[teller] = A.SelfTale and A.SelfTale.Tell(person, days, styleMode == "storyBrief") or {}
+                stories[teller] = A.SelfTale and (Kept and Kept.Self(person, days, styleMode == "storyBrief")
+                    or A.SelfTale.Tell(person, days, styleMode == "storyBrief")) or {}
             else
-                stories[teller] = A.JournalTale and A.JournalTale.Tell(person, days, teller, state.owner and A.CharacterPlayer(state.owner), styleMode == "storyBrief") or {}
+                local player = state.owner and A.CharacterPlayer(state.owner)
+                stories[teller] = A.JournalTale and (Kept and Kept.Tale(person, days, teller, player, styleMode == "storyBrief")
+                    or A.JournalTale.Tell(person, days, teller, player, styleMode == "storyBrief")) or {}
             end
         end
         return stories[teller][day.key]

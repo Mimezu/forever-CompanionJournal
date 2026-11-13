@@ -3075,9 +3075,14 @@ function T.OwnTold(charKey)
     if not (A.SelfPerson and A.SelfTale and A.SelfTale.Tell and A.JournalBook and A.SelfCompose and A.SelfCompose.Apply) then return nil end
     local me = A.SelfPerson(charKey)
     if not me then return nil end
+    -- (1.43.1: the own book's days are read once per telling of a companion book, not once a chapter;
+    -- T.ownKeys lives only while T.Tell runs)
+    local key = T.ownKeys and T.ownKeys[charKey]
+    if key and ownCache[key] then return ownCache[key] end
     local days = A.JournalBook(me)
     local last = days[#days]
-    local key = tostring(charKey) .. ":" .. #days .. ":" .. tostring(last and last.key) .. ":" .. tostring(#(me.journal or {}))
+    key = tostring(charKey) .. ":" .. #days .. ":" .. tostring(last and last.key) .. ":" .. tostring(#(me.journal or {}))
+    if T.ownKeys then T.ownKeys[charKey] = key end
     if ownCache[key] then return ownCache[key] end
     if T.ownBusy then return nil end
     T.ownBusy = true
@@ -5233,13 +5238,22 @@ end
 -- three days before, that no chapter told (Bethor reading the ichor before the scroll; Podrig's order
 -- before the crate comes back; the ferry before the ring). Pass 2 tells the book again with those
 -- steps required: the spine takes them whatever the own book did, and the spine budget keeps them.
+local TellPasses
 function T.Tell(person, days, voice, player, brief)
+    if T.ownKeys then return TellPasses(person, days, voice, player, brief) end
+    T.ownKeys = {}
+    local ok, stories = pcall(TellPasses, person, days, voice, player, brief)
+    T.ownKeys = nil
+    if not ok then error(stories, 0) end
+    return stories
+end
+function TellPasses(person, days, voice, player, brief)
     if brief or T.TWO_PASS == false or T.inPass or T.BondKind(person) == "plain" then
         return T.TellOnce(person, days, voice, player, brief)
     end
     T.inPass = true
     T.collect = {}
-    local ok1 = pcall(T.TellOnce, person, days, voice, player, brief)
+    local ok1, first = pcall(T.TellOnce, person, days, voice, player, brief)
     local collect = T.collect
     T.collect = nil
     T.inPass = false
@@ -5274,7 +5288,9 @@ function T.Tell(person, days, voice, player, brief)
             end
         end
     end
-    if next(needs) == nil then return T.TellOnce(person, days, voice, player, brief) end
+    -- (1.43.1: with nothing to require, pass 2 would tell the same book again; the first pass's book
+    -- is it, word for word, since the first pass only collects)
+    if next(needs) == nil then return first end
     T.needs = needs
     local ok2, stories = pcall(T.TellOnce, person, days, voice, player, brief)
     T.needs = nil

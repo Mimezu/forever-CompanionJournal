@@ -530,8 +530,7 @@ local SHORT = {["Edwin VanCleef"] = "VanCleef", ["Emperor Dagran Thaurissan"] = 
 local PLAIN_WORDS = {Ancient = true, Lost = true, Stone = true, Twilight = true, Crimson = true, Scarlet = true, Shadow = true, Dark = true,
     Black = true, Red = true, White = true, Great = true, Death = true, Blood = true, Iron = true, Fire = true, Golem = true, War = true,
     Shade = true, Avatar = true, Spirit = true, Grand = true, Elder = true, Chief = true, Mountain = true, Deep = true, Hive = true}
-function L.Short(name)
-    if not name then return nil end
+local function ShortOf(name)
     if SHORT[name] then return SHORT[name] end
     local rest = name
     local titled = false
@@ -542,6 +541,16 @@ function L.Short(name)
     local first = rest:match("^(%S+)") or rest
     if not titled and first ~= rest and (PLAIN_WORDS[first] or rest:find(" of ", 1, true)) then return name end
     return first
+end
+-- (pure, and asked for every boss name of every sentence the claim check reads: kept per name, 1.43.1)
+local shortMemo = {}
+function L.Short(name)
+    if not name then return nil end
+    local known = shortMemo[name]
+    if known then return known end
+    known = ShortOf(name)
+    if type(name) == "string" then shortMemo[name] = known end
+    return known
 end
 -- The boss's title in lower case ("the high inquisitor", "the witch doctor"), for a telling that
 -- has no pronoun it can vouch for (JournalEpisodes.BossTitle, 2026-11-11); nil without a rank.

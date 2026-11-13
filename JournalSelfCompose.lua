@@ -716,7 +716,7 @@ for word in ("The This That Then There Here After Before When While With From In
     .. "Scarlet Scourge Forsaken Deathguard Deathguards Executor Captain Light Crusade Alliance Horde Magistrate Apothecary Novice Shadow Priest Father "
     .. "Doctor Lady Lord Dark Cult Damned Argent Dawn Keep Mills Hollow Vale Farmstead Lake Rest Tower Camp Village Glades Quarter Watch Graves Haunt "
     .. "Bridge Farm Mass Trade Magic Undercity Brill Sepulcher Orgrimmar Kalimdor Eastern Kingdoms Silverpine Tirisfal Forest Isle Hill Ridge"):gmatch("%S+") do BARE_SKIP[word] = true end
-function C.BareNames(text, strict)
+local function BareNamesOf(text, strict)
     local words, opens = {}, {}
     for before, w in text:gmatch("(%p?)%s*([%a'][%a']*)") do words[#words + 1] = w; opens[#words] = (before == "." or before == "!" or before == "?") end
     local names = {}
@@ -737,6 +737,17 @@ function C.BareNames(text, strict)
         end
     end
     return names
+end
+-- (1.43.1: pure, and read again for the same quest lines each chapter: kept per text. The set
+-- returned is shared; read it, never write to it.)
+local bareMemo = {[true] = {}, [false] = {}}
+function C.BareNames(text, strict)
+    local memo = bareMemo[strict and true or false]
+    local known = memo[text]
+    if known then return known end
+    known = BareNamesOf(text, strict)
+    memo[text] = known
+    return known
 end
 
 -- One chapter -------------------------------------------------------------------------------

@@ -67,8 +67,11 @@ function R.Episodes(days)
 end
 function R.Build(person, edition, player)
     local episodes = R.Episodes(A.JournalBook(person))
-    local stories = person.self and A.SelfTale.Tell(person, episodes, edition == "fire")
-        or A.JournalTale.Tell(person, episodes, "we", player, edition == "fire")
+    local Kept = A.TellCache
+    local stories = person.self and (Kept and Kept.Told("reader:self", person, episodes, {fire = edition == "fire"}, function()
+            return A.SelfTale.Tell(person, episodes, edition == "fire") end) or A.SelfTale.Tell(person, episodes, edition == "fire"))
+        or (Kept and Kept.Told("reader:tale", person, episodes, {fire = edition == "fire", player = player or false}, function()
+            return A.JournalTale.Tell(person, episodes, "we", player, edition == "fire") end) or A.JournalTale.Tell(person, episodes, "we", player, edition == "fire"))
     local chapters, byKey = {}, {}
     for _, episode in ipairs(episodes) do
         local story = stories[episode.key]

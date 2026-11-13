@@ -72,7 +72,8 @@ if gen then
             end
         end
     end
-    check(chapters >= 20, "the generated companions told chapters: " .. chapters)
+    -- (1.43.1: a two-pass book with nothing to require is told once, not twice: half the count)
+    check(chapters >= 12, "the generated companions told chapters: " .. chapters)
 end
 
 -- 3. The real books, from a COPY of the saved variables
