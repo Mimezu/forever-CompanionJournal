@@ -2878,9 +2878,17 @@ local function FoldDeaths(c, lines, Live)
             if friend then for _, l in ipairs(g.lines) do if l ~= keep and Rank(l) == 3 and not also then also = l end end end
             -- (round 16: the wipe and its cost are told: beside the raise, the fall together stays)
             if not also and Rank(keep) >= 3 then for _, l in ipairs(g.lines) do if l ~= keep and Rank(l) == 2 and not also then also = l end end end
+            -- (round 22: in a stretch of four falls or more, a close bond's book tells one more of hers, at its
+            -- own time, so her falls are in it without a tally)
+            local more
+            if T.BondKind(c.person) == "close" and #g.lines >= 3 then
+                for _, l in ipairs(g.lines) do
+                    if l ~= keep and l ~= also and not more and l.text:find(name, 1, true) then more = l end
+                end
+            end
             local later = false
             for _, l in ipairs(g.lines) do
-                if l ~= keep and l ~= also then l.drop = true; if l.t > keep.t then later = true end end
+                if l ~= keep and l ~= also and l ~= more then l.drop = true; if l.t > keep.t then later = true end end
             end
             -- (round 21: the night's worst stretch keeps the companion's falls in it: one danger sentence,
             -- "It was the worst of the night: Dahlia fell three times on that road, and I four.", no colon)
@@ -3035,10 +3043,10 @@ function T.OwnSpine(c, lines, Live)
         local story = QD.Story(q)
         local pov = story and story.pov
         local key = QD.Key(q)
-        if pov and #pov > 0 and not seen[key] and added < 7 then
+        if pov and #pov > 0 and not seen[key] and (added < 7 or (T.needs and q.qid and T.needs[q.qid])) then
             seen[key] = true
             -- (the own book told it: most of one of its two lines' matter is in the own night's text)
-            local ownTold, hereTold, forceTell = false, false, false
+            local ownTold, hereTold, forceTell, useAct = false, false, false, false
             for _, v in ipairs(pov) do
                 local w, n = MatterWords(QD.Fill(v, tok))
                 local inOwn, inHere = 0, 0
@@ -3108,6 +3116,50 @@ function T.OwnSpine(c, lines, Live)
                 end
             end
             if forceTell then ownTold, hereTold = true, false end
+            -- (round 23: a setup the book's payoffs need, chosen by the first pass)
+            local needed = T.needs and q.qid and T.needs[q.qid]
+            if needed and not hereTold then ownTold, forceTell = true, true end
+            -- (round 22: presence per scene. The quest's authored scene tells the earlier step of its thread
+            -- too, "We slipped the pendant out of the crate", "We learned that Thule still lived"; when that
+            -- step was done while the companion was not in the group, the scene is not theirs)
+            if ownTold and not hereTold and story.thread and c.person and type(c.person.journal) == "table" then
+                local function Present(t)
+                    for _, x in ipairs(c.person.journal) do
+                        if x.k == "group" and x.t and t >= x.t - 60 and t <= (x.e or x.t) + 60 then return true end
+                    end
+                    return false
+                end
+                for _, x in ipairs(c.ownJournal or {}) do
+                    if x.k == "quest" and x.t and q.t and x.t < q.t and q.t - x.t <= 30 * 3600 and x.qid ~= q.qid then
+                        local st2 = QD.Story({title = x.d, qid = x.qid})
+                        if st2 and st2.thread == story.thread and not Present(x.t) then
+                            -- (only the step just before this one: the scene retells that step)
+                            local between = false
+                            for _, y in ipairs(c.ownJournal or {}) do
+                                if y.k == "quest" and y.t and y.t > x.t and y.t < q.t then
+                                    local st3 = QD.Story({title = y.d, qid = y.qid})
+                                    if st3 and st3.thread == story.thread then between = true end
+                                end
+                            end
+                            -- (the step told inside this scene: within the hour before, or on a night before)
+                            local dayStart0 = math.huge
+                            for _, sc in ipairs(c.day and c.day.scenes or {}) do if sc.t and sc.t < dayStart0 then dayStart0 = sc.t end end
+                            -- (within the hour the scene is the missed step itself: left out; a step of a night
+                            -- before is only its background: this night's act is told instead)
+                            if not between and q.t - x.t <= 3600 then ownTold = false
+                            elseif not between and x.t < dayStart0 then
+                                -- (only when the scene speaks of that step: its giver is named in it, "Bethor knew ...")
+                                local g2 = QD.Giver and QD.Giver(st2)
+                                local last = g2 and tostring(g2):match("(%S+)$")
+                                local giver0 = QD.Giver and QD.Giver(story)
+                                if last and #last >= 4 and not (giver0 and tostring(giver0):find(last, 1, true)) then
+                                    for _, v in ipairs(pov) do if PlainOf(QD.Fill(v, tok)):find(last, 1, true) then useAct = true end end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
             if ownTold and not hereTold then
                 local e = {quest = q, story = story, act = QD.Act and QD.Act(q, story)}
                 local text
@@ -3116,6 +3168,8 @@ function T.OwnSpine(c, lines, Live)
                     -- (round 17: a friend's book too tells the work from the quest's own text, its own line of
                     -- the two; never "we saw to the work of X")
                     text = QD.Moment(e, tok, QD.Variant(key, nil, teller.deedOther), true)
+                    -- (round 23: its background a night the companion missed: this night's act alone)
+                    if useAct and not forceTell and e.act and e.act.act then text = Cap(b.we) .. " " .. e.act.act .. "." end
                     -- (round 16: only work the two did; a line of mine alone, "I woke on the cold stone",
                     -- "Aramis began my training", is the own book's, not hers)
                     local low = text and (" " .. PlainOf(text):lower() .. " ") or ""
@@ -3639,6 +3693,41 @@ function T.ComposeTogether(c, lines)
             end
         end
     end
+    -- (round 22: a run's hand-in told later says its taking as past, never as if fetched after the ask:
+    -- "Varimathras told us ... We had taken them from the cultists, and he said ...")
+    if kind ~= "plain" then
+        for _, l in ipairs(lines) do
+            local q = Live(l) and not l.run and S.Q and S.Q[l.text]
+            if q and S.RQ and S.RQ[q] then
+                local text = l.text:gsub("([%.!] )We took ", "%1We had taken "):gsub("([%.!] )We killed ", "%1We had killed ")
+                    :gsub("([%.!] )We brought ", "%1We had brought ")
+                Rewrite(l, text)
+            end
+        end
+    end
+    -- (round 22: a scene that retells a step of a prior night, "Bethor knew the maker of the ichor ... He
+    -- wrote out a scroll" handed in the next evening, is told as this night's own act: "We carried
+    -- Bethor's scroll back to Renferrel")
+    if kind ~= "plain" then
+        local QD = A.QuestDeeds
+        local dayStart = math.huge
+        for _, scene in ipairs(c.day and c.day.scenes or {}) do if scene.t and scene.t < dayStart then dayStart = scene.t end end
+        for _, l in ipairs(lines) do
+            local q = Live(l) and not l.run and S.Q and S.Q[l.text]
+            local st = q and QD and QD.Story and QD.Story(q)
+            if st and st.thread and not PlainOf(l.text):find("^%a*%s?[Ww]e ") then
+                local prior = false
+                for _, x in ipairs(c.ownJournal or {}) do
+                    if x.k == "quest" and x.t and x.t < dayStart and dayStart - x.t <= 30 * 3600 and x.qid ~= q.qid then
+                        local st2 = QD.Story({title = x.d, qid = x.qid})
+                        if st2 and st2.thread == st.thread then prior = true end
+                    end
+                end
+                local act = prior and QD.Act and QD.Act(q, st)
+                if act and act.act then Rewrite(l, Cap(teller.base.we) .. " " .. act.act .. ".") end
+            end
+        end
+    end
     -- 6a'. (round 17, off since round 18: a hand-in is told at its own time, in the record's order)
     if kind ~= "plain" and T.RUN_HANDIN_WITH_RUN then
         for _, d in ipairs(f.dungeons or {}) do
@@ -3757,7 +3846,8 @@ function T.ComposeTogether(c, lines)
     if kind ~= "plain" then
         -- 9. deaths inside the scene, one a stretch (round 10)
         FoldDeaths(c, lines, Live)
-        if T.BondKind(c.person) == "close" then T.WorstStretch(c, lines, Live) end
+        -- (round 22: no "fell N times" tally; the worst stretch keeps her falls as told falls, below)
+        if T.WORST_TALLY and T.BondKind(c.person) == "close" then T.WorstStretch(c, lines, Live) end
         -- 9a. round 11: at most one fall of mine alone a chapter, and none when a fall that touched
         -- the two (together, a raise between them) is told
         do
@@ -3981,6 +4071,8 @@ function T.ComposeTogetherAfter(c, out, beats)
             -- a speaker somewhere he was not, "In Silverpine Forest, Bethor knew ...")
             local we = teller.base.I == "I"
             local Iw, Wew = we and "I" or "You", we and "We" or "You"
+            -- (round 23: a close bond's bridge names the two, the friend's says "we": never the same sentence)
+            if T.BondKind(c.person) == "close" then Wew = Cap(teller.base.pairNamed) end
             local bridge
             if means == "sea" then bridge = Wew .. " crossed back over the sea."
             elseif means == "hearth" and inn then bridge = Iw .. " took the hearthstone back to " .. Clean(inn):gsub("^The ", "the ") .. "."
@@ -4573,7 +4665,61 @@ function T.ComposeParagraphs(out, beats, S, runGroups)
     return groups
 end
 
+-- The two-pass telling (round 23). A bonded companion's book is told twice. Pass 1 tells it as it
+-- stands and collects every quest each chapter told. From those it chooses the setups the payoffs
+-- need: an earlier step of a told quest's thread, done while the companion was in the group, within
+-- three days before, that no chapter told (Bethor reading the ichor before the scroll; Podrig's order
+-- before the crate comes back; the ferry before the ring). Pass 2 tells the book again with those
+-- steps required: the spine takes them whatever the own book did, and the spine budget keeps them.
 function T.Tell(person, days, voice, player, brief)
+    if brief or T.TWO_PASS == false or T.inPass or T.BondKind(person) == "plain" then
+        return T.TellOnce(person, days, voice, player, brief)
+    end
+    T.inPass = true
+    T.collect = {}
+    local ok1 = pcall(T.TellOnce, person, days, voice, player, brief)
+    local collect = T.collect
+    T.collect = nil
+    T.inPass = false
+    if not ok1 then return T.TellOnce(person, days, voice, player, brief) end
+    local QD = A.QuestDeeds
+    local needs = {}
+    local told = {}
+    for _, list in pairs(collect) do for _, q in ipairs(list) do if q.qid then told[q.qid] = true end end end
+    local function Present(t)
+        for _, x in ipairs(type(person.journal) == "table" and person.journal or {}) do
+            if x.k == "group" and x.t and t >= x.t - 60 and t <= (x.e or x.t) + 60 then return true end
+        end
+        return false
+    end
+    local charKey = (player and player.charKey) or (A.Me and A.Me())
+    local me = A.SelfPerson and A.SelfPerson(charKey)
+    local own = me and me.journal or {}
+    for _, list in pairs(collect) do
+        for _, q in ipairs(list) do
+            local st = QD and QD.Story and QD.Story(q)
+            if st and st.thread and q.t then
+                -- (the step just before it in its thread: the one the told scene stands on)
+                -- (read only: the record's entries are never written to)
+                local prev, prevSt
+                for _, x in ipairs(own) do
+                    if x.k == "quest" and x.qid and x.t and x.t < q.t - 30 and q.t - x.t <= 72 * 3600 and x.qid ~= q.qid then
+                        local st2 = QD.Story({title = x.d, qid = x.qid})
+                        if st2 and st2.thread == st.thread and (not prev or x.t > prev.t) then prev, prevSt = x, st2 end
+                    end
+                end
+                if prev and not told[prev.qid] and Present(prev.t) and prevSt.pov then needs[prev.qid] = true end
+            end
+        end
+    end
+    if next(needs) == nil then return T.TellOnce(person, days, voice, player, brief) end
+    T.needs = needs
+    local ok2, stories = pcall(T.TellOnce, person, days, voice, player, brief)
+    T.needs = nil
+    if ok2 then return stories end
+    return T.TellOnce(person, days, voice, player, brief)
+end
+function T.TellOnce(person, days, voice, player, brief)
     player = player or T.Player()
     local teller = Teller(person, voice, player)
     -- (lane C9 round 10: a quest's two point-of-view lines go one to a close bond's book, the other
@@ -4908,7 +5054,7 @@ function T.Tell(person, days, voice, player, brief)
         -- level of yours they told; S.setup / S.setupFor what a line points back to, for felt lines;
         -- S.ME moment line -> its event and S.peak line -> "death" / "figure" / "city", for T.PlanShape)
         local S = {Z = {}, M = {}, z = nil, moment = false, Q = {}, Qs = {}, SL = {}, D = {}, LV = {}, setup = {}, setupFor = {}, ME = {}, peak = {},
-            R = {}, r = nil, RQ = {}, RQL = {}, EP = {},
+            R = {}, r = nil, RQ = {}, RQL = {}, EP = {}, NoLead = {}, Keep = {},
             planned = not brief and A.BookVariant ~= nil and A.BookVariant("teller") == "planned"}
         function S.Stamp(t, z, q) lineT, S.z, S.q = t, z, q end
         -- (a line rewritten in place keeps the stamp of what it was)
@@ -4916,7 +5062,7 @@ function T.Tell(person, days, voice, player, brief)
             if old and new and old ~= new then
                 if outT[new] == nil then outT[new] = outT[old] end
                 if S.Z[new] == nil then S.Z[new] = S.Z[old] end
-                for _, map in ipairs({S.Q, S.SL, S.D, S.setup, S.setupFor, S.R, S.EP}) do if map[new] == nil then map[new] = map[old] end end
+                for _, map in ipairs({S.Q, S.SL, S.D, S.setup, S.setupFor, S.R, S.EP, S.NoLead, S.Keep}) do if map[new] == nil then map[new] = map[old] end end
             end
             return new
         end
@@ -9465,6 +9611,12 @@ function T.Tell(person, days, voice, player, brief)
             history.metBefore = nil
         end
         stories[day.key] = {text = OneStop(chapterText), quotes = f.quotes, chapter = chapter, two = tellsTwo or nil, title = chapterTitle}
+        -- (round 23: the quests this chapter told, for the two-pass telling's first pass)
+        if T.collect then
+            local told = {}
+            for _, line in ipairs(out) do local q = S.Q and S.Q[line]; if q then told[#told + 1] = q end end
+            T.collect[day.key] = told
+        end
 
         -- remember the last three kinds of title.
         if title then

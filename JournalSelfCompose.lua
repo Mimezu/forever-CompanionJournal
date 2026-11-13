@@ -519,7 +519,18 @@ local function Select(ctx, lines, inRun, episodes, D)
                 if #name >= 4 and (laterText:find("%f[%a]" .. name .. " had learned") or laterText:find("%f[%a]" .. name .. " had found")
                     or laterText:find("%f[%a]" .. name .. " had read") or laterText:find("%f[%a]" .. name .. " had discovered")) then setup = true end
             end
-            if kill or ends or firstUnit[u] or spine or setup then Tell(u, kill) end
+            -- (round 23, reader X rule 3: a chain's closing step, a handing over for someone a step told
+            -- earlier that day named, is told: Falgan's orders, Migi's lunch)
+            local closes = false
+            local giverWord = u.giver and tostring(u.giver):match("(%S+)$")
+            local verb = type(act) == "string" and act:match("^(%a+) ")
+            if giverWord and verb and ({brought = true, took = true, delivered = true, carried = true, gave = true, handed = true})[verb] then
+                for _, o in ipairs(sel.units or {}) do
+                    if o ~= u and o.mode and (o.t or 0) < (u.t or 0) and (u.t or 0) - (o.t or 0) <= 3600
+                        and ((o.plain or "") .. " " .. tostring(o.giver or "")):find(giverWord, 1, true) then closes = true end
+                end
+            end
+            if kill or ends or firstUnit[u] or spine or setup or closes then Tell(u, kill) end
         end
     end
     -- 2. What was decided, back on the lines. A grouped line's kept acts are lines of their own
@@ -2299,6 +2310,31 @@ function C.Apply(ctx)
             end
         end
     end
+    -- (round 23, the pronoun follows the group: a main companion's absence of ten minutes or more inside
+    -- the night, with something told while they were away, is shown where it happened, "Dahlia went her
+    -- own way for a while." and "Dahlia was with me again." A shorter gap changes nothing.)
+    if P.partedWhile and P.rejoined then
+        for name, spans in pairs(windows) do
+            local total = 0
+            for _, sp in ipairs(spans) do total = total + (sp[2] - sp[1]) end
+            if total >= 600 then
+                for k_ = 1, #spans - 1 do
+                    local a_, b_ = spans[k_][2], spans[k_ + 1][1]
+                    if b_ - a_ >= 600 then
+                        local toldInside = false
+                        for _, l in ipairs(lines) do
+                            if not l.drop and not inRun[l] and l.t > a_ and l.t < b_ and (l.cls == "quest" or l.cls == "death" or l.cls == "what") then toldInside = true end
+                        end
+                        if toldInside then
+                            local ep1, ep2 = EpisodeAt(a_, episodes), EpisodeAt(b_, episodes)
+                            lines[#lines + 1] = {cls = "who", t = a_, ep = ep1, text = Fill(P.partedWhile[1], {name = "{n:" .. name .. "}"}), major = false, meta = {t = a_, compose = "parted"}, n = #out + 380 + ep1.index, signMoved = true}
+                            lines[#lines + 1] = {cls = "who", t = b_, ep = ep2, text = Fill(P.rejoined[1], {name = "{n:" .. name .. "}"}), major = false, meta = {t = b_, compose = "rejoined"}, n = #out + 381 + ep2.index, signMoved = true}
+                        end
+                    end
+                end
+            end
+        end
+    end
     -- (round 15, reader Q rule 1: everyone the record puts in the group for ten minutes or more is
     -- named the first time they are there; a companion the chapter never names gets a line at the
     -- start of their time with us, "Marrow, a Forsaken priest, joined us")
@@ -2349,6 +2385,10 @@ function C.Apply(ctx)
             for name in pairs(keyOf) do
                 if not named[name] and plain:find("%f[%a]" .. Esc(name) .. "%f[%A]") then
                     named[name] = true
+                    -- (round 23: a first meeting in the book is a joining, never a catching up)
+                    if l.cls == "who" and not bookBefore:find("%f[%a]" .. Esc(name) .. "%f[%A]") and plain:find(" caught up with ", 1, true) then
+                        l.text = l.text:gsub(" caught up with ", " joined "); plain = Plain(l.text)
+                    end
                     if l.cls == "who" and not bookBefore:find("%f[%a]" .. Esc(name) .. "%f[%A]") and not plain:find(Esc(name) .. ", an? ") and not plain:find("my wife") and not plain:find("my friend") then
                         local role = Role(name)
                         -- (no card to say who they are: a newcomer, who "joined" rather than "caught up")
@@ -4156,7 +4196,8 @@ function C.Apply(ctx)
                 -- (a night that ended without sleep needs no "Then": "The night ended in Brill, the lesson learned.")
                 text = ended and Cap(base) or ("Then " .. base)
             end
-            if hours >= 6 * 3600 and hoursPhrase then
+            -- (round 23: no "nearly seven hours" ending; the hours only when they are the story, twelve or more)
+            if hours >= 12 * 3600 and hoursPhrase then
                 text = text .. ", " .. Lower(hoursPhrase) .. " after it began"
             end
             -- (round 21, reader V rule 1: the night to its true end. A stretch after the last told beat,
@@ -4173,8 +4214,24 @@ function C.Apply(ctx)
                 end
             end
             if (D.e or 0) - lastToldT >= 1800 and #lands_ >= 1 then
-                local tailText = Cap(who) .. " went on by way of " .. List(lands_) .. (lateLevel and (", and there I reached level " .. lateLevel) or "") .. "."
-                text = tailText .. " " .. text:gsub("^Then ", ""):gsub("^%l", string.upper)
+                -- (round 23, reader X rule 1: the night ends on its goal; what came after is a clause of
+                -- the close, "After Dahlia and Marrow went their way, I went on by way of Orgrimmar and the
+                -- Undercity, and by the time I stopped in Silverpine Forest I was level 19.")
+                local left = {}
+                if who == "I" then
+                    for name, spans in pairs(windows) do
+                        for _, sp in ipairs(spans) do if sp[2] >= lastToldT - 600 and sp[2] < (D.e or 0) - 60 then left[#left + 1] = name; break end end
+                    end
+                    table.sort(left)
+                end
+                local stop = table.remove(lands_)
+                local tail = ((#left > 0) and ("After " .. List(left) .. " went " .. (#left > 1 and "their" or "their") .. " way, ") or "")
+                    .. (#left > 0 and who or Cap(who)) .. ((#lands_ > 0) and (" went on by way of " .. List(lands_) .. ", and") or "")
+                tail = tail .. (lateLevel and (" by the time " .. (who == "I" and "I" or Lower(who)) .. " stopped in " .. stop .. " I was level " .. lateLevel)
+                    or (" stopped at last in " .. stop))
+                tail = tail:gsub("^ ", "")
+                text = Cap(tail) .. "."
+                hoursPhrase = nil
             end
             text = text:gsub("^(%l)", string.upper) .. "."
             local newTail = {}
@@ -4185,6 +4242,56 @@ function C.Apply(ctx)
             for _, x in ipairs(newTail) do last.lines[#last.lines + 1] = x end
             last.words = 0
             for _, x in ipairs(last.lines) do last.words = last.words + Words(x.text) end
+        end
+    end
+    -- (round 23, reader X rule 3: a step that ends on its setup, when its act says what was done, ends on
+    -- that: "We brought Migi a lunch topped with sweetglaze crumbs." / "We took a copy of the Scarlet
+    -- deployment orders.")
+    do
+        local STOP = {their = true, there = true, which = true, after = true, about = true}
+        for _, p_ in ipairs(paragraphs) do
+            for idx, l in ipairs(p_.lines) do
+                local entry = l.meta and l.meta.entry
+                local act = entry and entry.act and entry.act.act
+                local nextSame = p_.lines[idx + 1] and p_.lines[idx + 1].meta and p_.lines[idx + 1].meta.entry == entry
+                if l.cls == "quest" and type(act) == "string" and not nextSame and not inRun[l] then
+                    local verb = act:match("^(%a+) ")
+                    if verb and ({brought = true, took = true, delivered = true, carried = true, gave = true, handed = true})[verb] then
+                        local text_ = {}
+                        for _, x in ipairs(p_.lines) do if x.meta and x.meta.entry == entry then text_[#text_ + 1] = Plain(x.text):lower() end end
+                        text_ = table.concat(text_, " ")
+                        local words, missing = 0, 0
+                        for w in act:lower():gsub("^%a+ ", ""):gmatch("%a+") do
+                            if #w >= 5 and not STOP[w] then words = words + 1; if not text_:find(w, 1, true) then missing = missing + 1 end end
+                        end
+                        -- (a step that already hands something over is closed)
+                        local handed = Any(text_, {"brought", "carried", " took ", "handed", " gave ", "delivered"})
+                        if words >= 2 and missing * 2 >= words and not handed then
+                            local party = #(l.ep.party or {}) > 0
+                            l.text = l.text:gsub("%s*$", "") .. " " .. (party and "We " or "I ") .. act .. "."
+                        end
+                    end
+                end
+            end
+        end
+    end
+    -- (round 23: a chain the record leaves open is said to stay open, in one plain clause, when its next
+    -- step is not in the record of the days after: W.compose.openThreads[qid] = {next = qid, text = ...})
+    if P.openThreads then
+        local done = {}
+        for _, e in ipairs(ctx.person and type(ctx.person.journal) == "table" and ctx.person.journal or {}) do
+            if e.k == "quest" and tonumber(e.qid) then done[tonumber(e.qid)] = e.t or 0 end
+        end
+        for _, p_ in ipairs(paragraphs) do
+            for idx, l in ipairs(p_.lines) do
+                local q = l.meta and l.meta.entry and l.meta.entry.quest
+                local qid = q and tonumber(q.qid)
+                local open = qid and P.openThreads[qid]
+                local nextSame = p_.lines[idx + 1] and p_.lines[idx + 1].meta and l.meta and p_.lines[idx + 1].meta.entry == l.meta.entry
+                if open and not nextSame and not done[open.next] then
+                    l.text = l.text:gsub("%s*$", "") .. " " .. open.text
+                end
+            end
         end
     end
     -- (round 21: three finishing passes. A step that ends on an unresolved fear, when its other authored
@@ -4199,6 +4306,12 @@ function C.Apply(ctx)
         for _, p_ in ipairs(paragraphs) do
             local prevIn = nil
             for _, l in ipairs(p_.lines) do
+                -- (round 23: a companion's first appearance in the book is a joining, never a catching up)
+                if l.cls == "who" and Plain(l.text):find(" caught up with ", 1, true) then
+                    local bookBefore_ = (ctx.history and ctx.history.plan and ctx.history.plan.text) or ""
+                    local name_ = Plain(l.text):match("^(%u[%a']+)")
+                    if name_ and not bookBefore_:find("%f[%a]" .. Esc(name_) .. "%f[%A]") then l.text = l.text:gsub(" caught up with ", " joined ") end
+                end
                 local plain = Plain(l.text)
                 local story = l.meta and l.meta.entry and l.meta.entry.story
                 story = type(story) == "table" and type(story.pov) == "table" and story.pov or story

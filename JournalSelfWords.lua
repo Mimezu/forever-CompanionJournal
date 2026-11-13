@@ -3707,6 +3707,11 @@ W.compose = {
     roadLegsHearth = {"{Our} hearthstones took {us} back to {place}. By {modes}, {we} came on to {dest}{new}."},
     -- (round 16: an errand's road there and back)
     errandOut = {"{We} went to {zone}."},
+    -- (round 23: threads the record leaves open, said to stay open when the next step never came:
+    -- Meal Appeal (97246) is followed by the lunch for Migi (97249))
+    openThreads = {
+        [97246] = {next = 97249, text = "The lunch itself would wait for another day."},
+    },
     -- (round 22: an errand whose work the book does not tell, from the record's trip and hand-in)
     errandBare = {"{We} flew to {zone} on {errand}{back}.", "{We} went to {zone} on {errand}{back}."},
     -- (round 22: an outing with no work recorded, told as what it was)
@@ -3758,6 +3763,9 @@ W.compose = {
     journeyHomeFrom = {"From {far} {our} hearthstones brought {us} home, {span} after {we} had set out."},
     -- (round 17: the arrival in a first land, with the crossings that brought us there)
     arriveBy = {"{how}, and {we} came to {land}, new to {us}{why}."},
+    -- (round 23: a main companion away for a while inside the night, and back)
+    partedWhile = {"{name} went another way for a while."},
+    rejoined = {"{name} was with me again."},
     -- (round 15: a companion the record puts with us, not otherwise named that day)
     joinedPlain = {"{name} joined {us}."},
     -- (round 15: quest chains the authored story tables do not hold, in their quests' own words:

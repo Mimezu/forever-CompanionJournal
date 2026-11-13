@@ -1,5 +1,12 @@
 # Companion Journal: changes
 
+## 1.37.0 (2026-11-12)
+
+- Each night ends on its goal, the late road folded into the close
+- A companion leaving and coming back is told
+- Open threads are closed or said to wait
+- Companion books keep the step a later scene needs
+
 ## 1.36.0 (2026-11-12)
 
 - Steps a later chapter depends on are kept
