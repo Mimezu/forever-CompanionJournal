@@ -1,5 +1,14 @@
 # Companion Journal: changes
 
+## 1.49.0 (2026-11-14)
+
+- The Road: a map for each chapter, from the map mark
+- Story view and Hero path, with replay and sounds
+- Deaths, levels, stays, flights and voyages on the map
+- The road walked with a companion drawn double
+- The Atlas bookmark: every road, played day by day
+- Record the road: off until you turn it on
+
 ## 1.48.0 (2026-11-14)
 
 - Settings > Keys: Open the book (new), Add target
