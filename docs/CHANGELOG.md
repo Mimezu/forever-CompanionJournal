@@ -2,7 +2,8 @@
 
 ## 1.43.1 (2026-11-13)
 
-- The book opens faster: a book is told once and kept until its journal, its settings or Retell change; the storytellers do the same work in about a third of the time. Not a word of the books changes
+- The book opens faster; told books are kept in memory
+- Same text, word for word
 
 ## 1.43.0 (2026-11-13)
 
