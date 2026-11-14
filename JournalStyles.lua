@@ -31,13 +31,13 @@ local FACES = {friz = "Fonts\\FRIZQT__.TTF", book = "Fonts\\MORPHEUS.TTF", narro
 local DIALOGUE_FONT = "Interface\\AddOns\\DialogueUI\\Fonts\\frizqt__.ttf"
 local DIARY_SIZE = 14
 local DIARY_SPACING = 0.35 * DIARY_SIZE
-local function BodySize(ctx) return ctx.reading and 16 or DIARY_SIZE end
-local function BodySpacing(ctx) return ctx.reading and 5.6 or DIARY_SPACING end
+local function BodySize() return DIARY_SIZE end
+local function BodySpacing() return DIARY_SPACING end
 -- A modest half-em pause distinguishes paragraphs without adding an empty
 -- line or combining a large gap with first-line indentation. Existing body
 -- leading stays near 135%; headings, drop caps and quoted notes keep their look.
 -- Typography reference: practicaltypography.com/space-between-paragraphs.html
-local function ParagraphGap(ctx) return ctx.reading and 8 or 7 end
+local function ParagraphGap() return 7 end
 local function HasDialogueUI()
     local info = (C_AddOns and C_AddOns.GetAddOnInfo) or GetAddOnInfo
     if not info then return false end
@@ -66,7 +66,7 @@ end
 
 local S = {}
 A.JournalStyles = S
-local DropCap -- also used by the Chronicle in the dedicated reading view
+local DropCap
 
 local function Colored(text, colors) return A.JournalColored(text, colors) end
 local function Entries(scene) return #scene.entries > 0 and scene.entries or nil end
@@ -234,7 +234,6 @@ function S.b(ctx, days, person, mode)
         local height = h1 + 1 + h2 + 5 + 12
         ctx.Place(head, 0, y, width, height)
         y = y - height - 10
-        local first = true
         for _, p in ipairs(DayParagraphs(person, day, mode, "you", ctx)) do
             if p.heading then
                 local block = ctx.Block()
@@ -248,14 +247,9 @@ function S.b(ctx, days, person, mode)
                 local text = Colored(p.text, BOOK_MARKUP)
                 local h
                 -- The reading font (as the diary's); Morpheus stays for dates and headings.
-                if ctx.reading and first then
-                    h = DropCap(ctx, block, width, p.text, Font("dialogue", BodySize(ctx)), BodySpacing(ctx), BOOK_MARKUP)
-                else
-                    h = Paragraph(ctx, block, "text", Font("dialogue", BodySize(ctx)), INK, BodySpacing(ctx), 0, 0, width, text)
-                end
+                h = Paragraph(ctx, block, "text", Font("dialogue", BodySize(ctx)), INK, BodySpacing(ctx), 0, 0, width, text)
                 ctx.Place(block, 0, y, width, h)
                 y = y - h - ParagraphGap(ctx)
-                first = false
             end
         end
         y = y - 12

@@ -1,5 +1,13 @@
 # Companion Journal: changes
 
+## 1.44.0 (2026-11-13)
+
+- Settings redesigned: a grouped menu, titled pages, label and switch columns
+- Switches written in ink on the paper
+- Shorter setting notes
+- Reading view removed
+- No page holding only a chapter's closing flourish
+
 ## 1.43.1 (2026-11-13)
 
 - The book opens faster; told books are kept in memory

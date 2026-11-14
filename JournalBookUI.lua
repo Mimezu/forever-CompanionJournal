@@ -33,24 +33,24 @@ local state = {key = nil, index = nil, view = "journal", settings = "reading", n
 -- choice of each is the default. stage: the build stage that brings it.
 local BUILT = 8
 local VARIANTS = {
-    {key = "loreNote", label = "Lore notes", stage = 2,
+    {key = "loreNote", label = "Lore notes", group = "Book", stage = 2,
         choices = {{"letter", "Letter over the book"}, {"tucked", "Tucked at the edge"}, {"slip", "Slip (before)"}}},
-    {key = "marks", label = "Bookmarks", stage = 2,
+    {key = "marks", label = "Bookmarks", group = "Book", stage = 2,
         choices = {{"c", "Tools | journals"}, {"a", "Sections + pins"}, {"b", "Pins only"}}},
-    {key = "toolsSide", label = "Bookmarks C: the tools' side", stage = 2,
+    {key = "toolsSide", label = "Tools' side", group = "Book", stage = 2,
         choices = {{"left", "Tools left"}, {"right", "Tools right"}}},
-    {key = "add", label = "Adding someone", stage = 4,
+    {key = "add", label = "Adding someone", group = "Book", stage = 4,
         choices = {{"a", "Smart button"}, {"b", "Three steps"}, {"c", "Today's flow"}}},
-    {key = "ribbon", label = "Unread ribbons", stage = 5,
+    {key = "ribbon", label = "Unread ribbons", group = "Book", stage = 5,
         choices = {{"a", "Every unread"}, {"b", "Newest + marks"}, {"c", "First unread"}}},
-    {key = "portraitWhen", label = "Portraits: when", stage = 8,
+    {key = "portraitWhen", label = "When", group = "Portraits", stage = 8,
         choices = {{"off", "Off"}, {"start", "Book start"}, {"ten", "Every 10 levels"}, {"level", "Each level"}}},
-    {key = "portraitWhere", label = "Portraits: where", stage = 8,
+    {key = "portraitWhere", label = "Where", group = "Portraits", stage = 8,
         choices = {{"a", "Plate"}, {"b", "Facing page"}, {"c", "Cameo"}, {"d", "Contents"}, {"e", "Margin"}}},
-    {key = "portraitFrame", label = "Portraits: frame", stage = 8,
+    {key = "portraitFrame", label = "Frame", group = "Portraits", stage = 8,
         choices = {{"a", "Painted"}, {"b", "Cameo"}, {"c", "Scrapbook"}, {"d", "Plain"}}},
     -- (the story planner, 2026-11-09: a companion's chapter told in time order, in movements)
-    {key = "teller", label = "Storyteller", stage = 8,
+    {key = "teller", label = "Storyteller", group = "Story", stage = 8,
         choices = {{"current", "Current"}, {"planned", "Planned (new)"}}},
 }
 function A.BookVariant(key)
@@ -164,9 +164,9 @@ local function PageArrow(button, which)
     button:SetHighlightTexture("Interface\\Buttons\\UI-Common-MouseHilight", "ADD")
 end
 -- A choice written on the paper: ink, and the quest log's bar when chosen.
-local function PaperChoice(parent, label, onClick)
+local function PaperChoice(parent, label, onClick, ink)
     local button = CreateFrame("Button", nil, parent)
-    button.paper = true
+    button.paper, button.ink = true, ink
     button.bar = button:CreateTexture(nil, "BACKGROUND")
     button.bar:SetAllPoints(); button.bar:SetTexture("Interface\\QuestFrame\\UI-QuestLogTitleHighlight")
     button.bar:SetBlendMode("ADD"); button.bar:SetVertexColor(0.85, 0.6, 0.25, 0.7); button.bar:Hide()
@@ -180,6 +180,7 @@ local function PaperChoice(parent, label, onClick)
     button.width = math.floor(math.max(button.label:GetStringWidth() or 0, #label * 5) + 20)
     button:SetSize(button.width, 20)
     button:SetScript("OnClick", onClick)
+    if ink then button.width = button.width + 6; button:SetSize(button.width, 22) end
     if A.StyleBookControl then
         button.paper = false
         button.bar:Hide(); hover:Hide()
@@ -246,6 +247,7 @@ local function Toggle(parent, label, width, title, tip, onClick)
     return button
 end
 local function SetChosen(button, chosen)
+    if button.ink and A.StyleBookControl then A.StyleBookControl(button, chosen); return end
     if button.paper then
         button.bar:SetShown(chosen and true or false)
         local color = chosen and CHAPTER or INK_SOFT
@@ -993,7 +995,35 @@ local function FillList(items)
         row:ClearAllPoints(); row:SetPoint("TOPLEFT", 0, y); row:SetWidth(width)
         row.key, row.section, row.action = nil, nil, data.action
         if row.ribbon then ShowRibbon(row, nil) end
-        if data.kind == "gap" then
+        if row.band then row.band:Hide(); row.branch:Hide(); row.twig:Hide() end
+        if data.kind == "nav" then
+            -- (Settings: words on the paper, children under a thin branch, the open page on a warm band)
+            if not row.band then
+                row.band = row:CreateTexture(nil, "BACKGROUND", nil, 1)
+                row.band:SetColorTexture(0.55, 0.36, 0.14, 0.24)
+                row.branch = row:CreateTexture(nil, "ARTWORK"); row.branch:SetWidth(1)
+                row.twig = row:CreateTexture(nil, "ARTWORK"); row.twig:SetHeight(1); row.twig:SetWidth(8)
+                for _, t in ipairs({row.branch, row.twig}) do t:SetColorTexture(INK_SOFT[1], INK_SOFT[2], INK_SOFT[3], 0.45) end
+            end
+            local indent = data.child and 26 or 8
+            row:SetHeight(data.child and 26 or 30)
+            row.select:Hide(); row.icon:Hide(); row.classBar:Hide(); row.sub:SetText("")
+            row.name:ClearAllPoints(); row.name:SetPoint("LEFT", indent, 0); row.name:SetWidth(width - indent - 8)
+            row.name:SetFontObject(Font(data.child and "QuestFontNormalSmall" or "QuestFont", "GameFontNormal"))
+            if row.name.SetShadowOffset then row.name:SetShadowOffset(0, 0) end
+            local color = data.selected and INK or (data.child and INK_SOFT or INK)
+            row.name:SetTextColor(color[1], color[2], color[3])
+            row.name:SetText(data.label)
+            row.band:ClearAllPoints(); row.band:SetPoint("TOPLEFT", indent - 8, 0); row.band:SetPoint("BOTTOMRIGHT")
+            row.band:SetShown(data.selected and true or false)
+            if data.child then
+                row.branch:ClearAllPoints(); row.branch:SetPoint("TOPLEFT", 13, 2)
+                row.branch:SetPoint("BOTTOMLEFT", 13, data.last and 13 or 0); row.branch:Show()
+                row.twig:ClearAllPoints(); row.twig:SetPoint("LEFT", 13, 0); row.twig:Show()
+            end
+            row:Show()
+            y = y - (data.child and 26 or 30)
+        elseif data.kind == "gap" then
             row:Hide()
             y = y - (data.size or 6)
         elseif data.kind == "section" then
@@ -2436,67 +2466,103 @@ local function SectionText(section, text, y, font, color, width)
     label:SetText(text)
     return label
 end
--- A label and a row of switches: choices {{value, label}, ...}.
+-- A group on a settings page: its name in small capitals, then a quiet rule to the edge.
+local function SectionGroup(section, y, label)
+    local width = math.max(200, (book.panel.child:GetWidth() or 340) - 8)
+    if y < -4 then y = y - 14 end
+    local head = SectionText(section, label:upper(), y, "GameFontNormalSmall", INK_SOFT)
+    if head.SetShadowOffset then head:SetShadowOffset(0, 0) end
+    local rule = section:CreateTexture(nil, "ARTWORK")
+    rule:SetColorTexture(INK_SOFT[1], INK_SOFT[2], INK_SOFT[3], 0.35); rule:SetHeight(1)
+    local headWidth = math.ceil(head:GetStringWidth() or 60)
+    rule:SetPoint("TOPLEFT", 4 + headWidth + 10, y - 6); rule:SetWidth(math.max(10, width - headWidth - 10))
+    return y - 24
+end
+-- A setting: the label in the left column, its switches in the right; an On/Off
+-- pair is one checkbox before its label. choices {{value, label}, ...}.
 local function SectionChoice(section, y, label, choices, get, set, note)
     local width = math.max(200, (book.panel.child:GetWidth() or 340) - 8)
     local onOff = #choices == 2 and choices[1][1] == true and choices[2][1] == false
+    local labelFont = Font("QuestFontNormalSmall", "GameFontNormal")
     if onOff then
-        -- (an On/Off pair is one checkbox)
         local check = CreateFrame("CheckButton", nil, section, "UICheckButtonTemplate")
         check:SetSize(24, 24); check:SetPoint("TOPLEFT", 0, y + 3)
         check:SetScript("OnClick", function(self) set(self:GetChecked() and true or false); A.RefreshBook() end)
-        local text = SectionText(section, label, y - 2, Font("QuestFontNormalSmall", "GameFontNormal"), INK)
+        local text = SectionText(section, label, y - 2, labelFont, INK)
         text:ClearAllPoints(); text:SetPoint("LEFT", check, "RIGHT", 4, 0)
         text:SetWidth(width - 36); text:SetWordWrap(true)
         if text.SetShadowOffset then text:SetShadowOffset(0, 0) end
         section.updates[#section.updates + 1] = function() check:SetChecked(get() == true) end
         y = y - math.max(26, TextHeight(text, width - 36) + 8)
         if note then
-            local noteText = SectionText(section, note, y, "GameFontHighlightSmall", INK_SOFT, width - 28)
-            noteText:ClearAllPoints(); noteText:SetPoint("TOPLEFT", 28, y)
-            y = y - TextHeight(noteText, width - 28)
+            local noteText = SectionText(section, note, y + 4, "GameFontHighlightSmall", INK_SOFT, width - 28)
+            noteText:ClearAllPoints(); noteText:SetPoint("TOPLEFT", 28, y + 4)
+            if noteText.SetShadowOffset then noteText:SetShadowOffset(0, 0) end
+            y = y - TextHeight(noteText, width - 28) + 2
         end
-        return y - 12
+        return y - 4
     end
-    local head = SectionText(section, label, y, Font("QuestFont_Shadow_Small", "GameFontNormal"), CHAPTER)
-    if head.SetShadowOffset then head:SetShadowOffset(0, 0) end
-    local x, buttons = 4, {}
+    local buttons, widest = {}, 0
     for _, choice in ipairs(choices) do
-        local button, w
-        button = PaperChoice(section, choice[2], function() set(choice[1]); A.RefreshBook() end)
-        w = button.width
-        -- (a row that would run off the page wraps)
-        if x + w > width and x > 4 then x = 4; y = y - 24 end
-        button:SetPoint("TOPLEFT", x, y - 20)
-        x = x + w + 4
+        local button = PaperChoice(section, choice[2], function() set(choice[1]); A.RefreshBook() end, true)
+        widest = math.max(widest, button.width)
         buttons[#buttons + 1] = {button = button, value = choice[1]}
+    end
+    -- (the label's column; a narrow page puts the label above its switches)
+    local column = section.column or math.max(110, math.min(170, math.floor(width * 0.36)))
+    local stacked = widest > width - column
+    local head = SectionText(section, label, y - 4, labelFont, INK, stacked and width or column - 10)
+    head:SetWordWrap(true)
+    if head.SetShadowOffset then head:SetShadowOffset(0, 0) end
+    local left = stacked and 4 or column
+    local top = stacked and (y - TextHeight(head, width) - 8) or y
+    local x, row = left, top
+    for _, item in ipairs(buttons) do
+        local w = item.button.width
+        if x + w > width + 4 and x > left then x = left; row = row - 26 end
+        item.button:SetPoint("TOPLEFT", x, row)
+        x = x + w + 6
     end
     section.updates[#section.updates + 1] = function()
         local current = get()
         for _, item in ipairs(buttons) do SetChosen(item.button, item.value == current) end
     end
-    y = y - 44
+    y = math.min(row - 26, stacked and row - 26 or (y - TextHeight(head, column - 10) - 8))
     if note then
-        local noteText = SectionText(section, note, y, "GameFontHighlightSmall", INK_SOFT, width)
-        y = y - TextHeight(noteText, width) - 2
+        local noteText = SectionText(section, note, y + 2, "GameFontHighlightSmall", INK_SOFT, width - left + 4)
+        noteText:ClearAllPoints(); noteText:SetPoint("TOPLEFT", left, y + 2)
+        if noteText.SetShadowOffset then noteText:SetShadowOffset(0, 0) end
+        y = y - TextHeight(noteText, width - left + 4)
     end
-    return y - 10
+    return y - 8
 end
+-- The settings menu: a page per leaf, grouped as the book is.
+local SETTINGS_MENU = {
+    {label = "Book", open = "reading", children = {{"reading", "Pages"}, {"extras", "Extras"}}},
+    {label = "People", open = "world", children = {{"world", "In the world"}, {"adding", "Adding"}}},
+    {key = "recording", label = "Recording"},
+    {key = "testing", label = "Try styles", gapBefore = true},
+}
+local SETTINGS_TITLES = {reading = "Pages", extras = "Extras", world = "People in the world",
+    adding = "Adding people", recording = "Recording", testing = "Try styles"}
 local function FillSettings()
     local db = A.db
-    local sections = {
-        {kind = "row", label = "Reading", sub = "What the pages show", icon = "Interface\\Icons\\INV_Misc_Book_11",
-            selected = state.settings == "reading", action = function() state.settings = "reading"; A.RefreshBook() end},
-        {kind = "row", label = "Testing", sub = "Choose the variants to try", icon = "Interface\\Icons\\INV_Misc_Gear_01",
-            selected = state.settings == "testing", action = function() state.settings = "testing"; A.RefreshBook() end},
-        {kind = "row", label = "People in the world", sub = "Nameplates, icons and recognition", icon = "Interface\\Icons\\INV_Misc_GroupNeedMore",
-            selected = state.settings == "world", action = function() state.settings = "world"; A.RefreshBook() end},
-        {kind = "row", label = "Adding people", sub = "Groups, campfires and blocked names", icon = "Interface\\Icons\\INV_Misc_GroupNeedMore",
-            selected = state.settings == "adding", action = function() state.settings = "adding"; A.RefreshBook() end},
-        {kind = "row", label = "Recording", sub = "Adventures and crossing paths", icon = "Interface\\Icons\\INV_Misc_Book_11",
-            selected = state.settings == "recording", action = function() state.settings = "recording"; A.RefreshBook() end},
-    }
-    FillList(sections)
+    if not SETTINGS_TITLES[state.settings or ""] then state.settings = "reading" end
+    local items = {}
+    local function Open(key) return function() state.settings = key; A.RefreshBook() end end
+    for _, entry in ipairs(SETTINGS_MENU) do
+        if entry.gapBefore then items[#items + 1] = {kind = "gap", size = 14} end
+        if entry.children then
+            items[#items + 1] = {kind = "nav", label = entry.label, action = Open(entry.open)}
+            for i, child in ipairs(entry.children) do
+                items[#items + 1] = {kind = "nav", label = child[2], child = true, last = i == #entry.children,
+                    selected = child[1] == state.settings, action = Open(child[1])}
+            end
+        else
+            items[#items + 1] = {kind = "nav", label = entry.label, selected = entry.key == state.settings, action = Open(entry.key)}
+        end
+    end
+    FillList(items)
     for name, section in pairs(book.sections) do section:SetShown(name == state.settings) end
     -- (a new section starts at its top)
     if book.panel.lastSection ~= state.settings then
@@ -2506,41 +2572,44 @@ local function FillSettings()
     local section
     if state.settings == "reading" then
         section = Section("reading", function(sec)
-            local y = -4
+            sec.column = 120
+            local y = SectionGroup(sec, -4, "Text")
             y = SectionChoice(sec, y, "Show", {{"all", "Everything"}, {"highlights", "Highlights"}},
                 function() return A.JournalMode() end, function(v) db.journalMode = v end)
             y = SectionChoice(sec, y, "Told", {{"simple", "Simple"}, {"story", "Story"}},
                 function() return A.JournalVoice() end, function(v) db.journalVoice = v end)
+            y = SectionGroup(sec, y, "Look")
             y = SectionChoice(sec, y, "Page style", {{"a", "A"}, {"b", "B"}, {"c", "C"}, {"d", "D"}, {"e", "E"}},
                 function() return A.JournalStyle() end, function(v) db.journalStyle = v end,
-                "A: today, B: chronicle, C: margins, D: diary, E: ledger.")
-            y = SectionChoice(sec, y, "Pages", {{"one", "Single page"}, {"two", "Two-page spread"}},
+                "Today, chronicle, margins, diary, ledger")
+            y = SectionChoice(sec, y, "Pages", {{"one", "One"}, {"two", "Two"}},
                 function() return db.bookSpread or "one" end, function(v) db.bookSpread = v end)
-            y = SectionChoice(sec, y, "Book size", {{"a", "A"}, {"b", "B"}, {"c", "C"}},
+            return SectionChoice(sec, y, "Book size", {{"a", "Small"}, {"b", "Medium"}, {"c", "Large"}},
                 function() return db.bookSize end, function(v) db.bookSize = v; book:SetSize(SIZES[v][1], SIZES[v][2]) end,
-                "Or drag the bottom-right corner for your own size.")
+                "Or drag the corner")
+        end)
+    elseif state.settings == "extras" then
+        section = Section("extras", function(sec)
+            local y = SectionGroup(sec, -4, "On the page")
             y = SectionChoice(sec, y, "Today, so far", {{true, "On"}, {false, "Off"}},
-                function() return db.bookToday ~= false end, function(v) db.bookToday = v end,
-                "Today's chapter of your own journal, told as it stands, marked as still being written.")
+                function() return db.bookToday ~= false end, function(v) db.bookToday = v end)
             y = SectionChoice(sec, y, "Names open their journal", {{true, "On"}, {false, "Off"}},
                 function() return db.bookLinks ~= false end, function(v) db.bookLinks = v end)
             y = SectionChoice(sec, y, "Timeline", {{true, "On"}, {false, "Off"}},
-                function() return db.bookTimeline ~= false end, function(v) db.bookTimeline = v end,
-                "Under a companion's page: their chapters, with the deaths, dungeons and levels marked.")
+                function() return db.bookTimeline ~= false end, function(v) db.bookTimeline = v end)
+            y = SectionGroup(sec, y, "Around the book")
             y = SectionChoice(sec, y, "New chapter notice", {{true, "On"}, {false, "Off"}},
-                function() return db.bookNotice == true end, function(v) db.bookNotice = v end,
-                "When you rest at an inn or in a city and today's chapter is new.")
+                function() return db.bookNotice == true end, function(v) db.bookNotice = v end)
             return SectionChoice(sec, y, "Minimap button", {{true, "On"}, {false, "Off"}},
-                function() return db.bookMinimap ~= false end, function(v) db.bookMinimap = v; if A.UpdateBookMinimap then A.UpdateBookMinimap() end end,
-                "Opens the book. A red dot when something is unread.")
+                function() return db.bookMinimap ~= false end, function(v) db.bookMinimap = v; if A.UpdateBookMinimap then A.UpdateBookMinimap() end end)
         end)
     elseif state.settings == "testing" then
         section = Section("testing", function(sec)
-            local y = -4
-            SectionText(sec, "Variants to try in game. Each stays until you choose another.", y, "GameFontHighlightSmall", INK_SOFT, book.panel.child:GetWidth() - 8)
-            y = y - 26
+            sec.column = 120
+            local y, group = -4, nil
             for _, variant in ipairs(VARIANTS) do
-                local note = variant.stage > BUILT and ("Coming with stage " .. variant.stage .. ".") or nil
+                if variant.group ~= group then group = variant.group; y = SectionGroup(sec, y, group) end
+                local note = variant.stage > BUILT and ("Coming with stage " .. variant.stage) or nil
                 y = SectionChoice(sec, y, variant.label, variant.choices,
                     function() return A.BookVariant(variant.key) end, function(v) SetVariant(variant.key, v) end, note)
             end
@@ -2548,7 +2617,8 @@ local function FillSettings()
         end)
     else
         section = Section(state.settings, function(sec)
-            return A.BuildBookWorldSettings(sec, state.settings, {Choice = SectionChoice, Button = PaperChoice})
+            return A.BuildBookWorldSettings(sec, state.settings, {Choice = SectionChoice, Group = SectionGroup,
+                Button = function(parent, label, action) return PaperChoice(parent, label, action, true) end})
         end)
     end
     section:Show()
@@ -2566,6 +2636,66 @@ local function FillNPCs()
     state.npc = book.npcManager.selected
 end
 
+-- Settings' two titles, set like a chapter's: centred in Morpheus under the page's
+-- ornate head, a red rule beneath; the menu and the settings start below them.
+local SETTINGS_TOP, SETTINGS_BODY = 38, 90
+local function SettingsHeads(shown)
+    if not book.sectionHeading then return end
+    if not book.settingsTitle then
+        local font
+        if CreateFont then
+            font = CreateFont("CompanionJournalSettingsTitle")
+            local locale = GetLocale and GetLocale()
+            local latin = not locale or ({enUS = 1, enGB = 1, frFR = 1, deDE = 1, esES = 1, esMX = 1, itIT = 1, ptBR = 1})[locale]
+            if font.SetFont then font:SetFont(latin and "Fonts\\MORPHEUS.TTF" or (STANDARD_TEXT_FONT or "Fonts\\FRIZQT__.TTF"), 22, "") end
+            if font.SetShadowOffset then font:SetShadowOffset(0, 0) end
+        end
+        book.settingsTitle = book:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+        book.settingsRules = {}
+        for i, title in ipairs({book.settingsTitle, book.sectionHeading}) do
+            if font then title:SetFontObject(font) end
+            title:SetTextColor(INK[1], INK[2], INK[3]); title:SetJustifyH("CENTER"); title:SetWordWrap(false)
+            if title.SetShadowOffset then title:SetShadowOffset(0, 0) end
+            local rule = book:CreateTexture(nil, "ARTWORK")
+            rule:SetTexture("Interface\\AddOns\\CompanionJournal\\Media\\Ornaments\\rule")
+            rule:SetVertexColor(CHAPTER[1], CHAPTER[2], CHAPTER[3], 0.9); rule:SetSize(180, 11)
+            book.settingsRules[i] = rule
+        end
+        book.settingsVersion = book:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+        book.settingsVersion:SetTextColor(INK_SOFT[1], INK_SOFT[2], INK_SOFT[3], 0.8)
+        if book.settingsVersion.SetShadowOffset then book.settingsVersion:SetShadowOffset(0, 0) end
+        local meta = (C_AddOns and C_AddOns.GetAddOnMetadata) or GetAddOnMetadata
+        local version = meta and meta("CompanionJournal", "Version")
+        book.settingsVersion:SetText(version and ("Version " .. version) or "")
+    end
+    local pieces = {book.settingsTitle, book.sectionHeading, book.settingsRules[1], book.settingsRules[2], book.settingsVersion}
+    for _, piece in ipairs(pieces) do piece:SetShown(shown) end
+    -- (the panel's viewport: under the title in Settings, the page's own box otherwise)
+    local box = book.panel.box
+    book.panel.scroll:ClearAllPoints()
+    book.panel.scroll:SetPoint("TOPLEFT", box[1], -(shown and SETTINGS_BODY or box[2]))
+    book.panel.scroll:SetPoint("BOTTOMRIGHT", -box[3], box[4])
+    if not shown then return end
+    book.name:Hide()
+    local cbox = book.contents.box
+    for i, item in ipairs({{book.settingsTitle, book.left, cbox}, {book.sectionHeading, book.right, box}}) do
+        local title, page, margins = item[1], item[2], item[3]
+        local shift = math.floor(((margins[1] or 0) - (margins[3] or 0)) / 2)
+        title:ClearAllPoints(); title:SetPoint("TOP", page, "TOP", shift, -SETTINGS_TOP)
+        title:SetWidth(math.max(120, page:GetWidth() - (margins[1] or 0) - (margins[3] or 0)))
+        local rule = book.settingsRules[i]
+        rule:ClearAllPoints(); rule:SetPoint("TOP", page, "TOP", shift, -(SETTINGS_TOP + 30))
+    end
+    book.settingsTitle:SetText("Settings")
+    book.sectionHeading:SetText(SETTINGS_TITLES[state.settings] or "Settings")
+    book.settingsVersion:ClearAllPoints()
+    book.settingsVersion:SetPoint("BOTTOM", book.left, "BOTTOM", math.floor(((cbox[1] or 0) - (cbox[3] or 0)) / 2), 6)
+    -- (the menu starts where the settings do)
+    book.contents.scroll:ClearAllPoints()
+    book.contents.scroll:SetPoint("TOPLEFT", cbox[1], -SETTINGS_BODY)
+    book.contents.scroll:SetPoint("BOTTOMRIGHT", -cbox[3], cbox[4] + 32)
+end
+
 -- Draw the book.
 function A.RefreshBook(toEnd, reusePages)
     if book and book.notePopup then book.notePopup:Hide() end
@@ -2578,13 +2708,7 @@ function A.RefreshBook(toEnd, reusePages)
     book.contents.scroll:Show()
     book.panel.scroll:Show()
     book.name:SetShown(state.view ~= "people" and state.view ~= "npcs"); book.summary:SetShown(state.view ~= "people" and state.view ~= "npcs")
-    if book.sectionHeading then
-        book.sectionHeading:SetShown(state.view == "settings")
-        book.sectionHeading:ClearAllPoints(); book.sectionHeading:SetPoint("TOPLEFT", book.right, "TOPLEFT", 34, 34)
-        book.sectionHeading:SetWidth(book.right:GetWidth() - 68)
-        local titles = {reading = "Reading", testing = "Try different styles", world = "People in the world", adding = "Adding people", recording = "Recording"}
-        book.sectionHeading:SetText(titles[state.settings] or "Settings")
-    end
+    SettingsHeads(state.view == "settings")
     for key, button in pairs(book.sizeButtons) do SetChosen(button, db.bookSize == key) end
     FillBookmarks()
     local other = state.view ~= "journal"
@@ -2612,7 +2736,7 @@ function A.RefreshBook(toEnd, reusePages)
             for _, section in pairs(book.sections) do section:Hide() end
             if not book.manager then book.manager = A.CreateBookManager(book, {IsPinned = IsPinned, TogglePin = TogglePin}) end
             book.manager:Refresh()
-        elseif state.view == "settings" then FillSettings() else FillNPCs() end
+        elseif state.view == "settings" then SettingsHeads(true); FillSettings() else FillNPCs() end
         return
     end
     book.addBar:Show(); book.addBar:Update()

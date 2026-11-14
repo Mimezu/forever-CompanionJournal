@@ -29,6 +29,18 @@ function A.StyleBookControl(button, chosen)
         end
         local hover=button:CreateTexture(nil,'HIGHLIGHT'); hover:SetAllPoints(); hover:SetColorTexture(1,.7,.2,.12)
     end
+    -- (Settings: ink on the paper, a warm wash when chosen)
+    if button.ink then
+        button.fill:SetColorTexture(.55,.36,.14,chosen and .28 or 0)
+        for _,edge in ipairs(button.edges) do edge:SetColorTexture(.25,.14,.05,chosen and .85 or .4); edge:Show() end
+        if button.label then
+            button.label:SetFontObject('GameFontNormalSmall')
+            button.labelColor=chosen and {.20,.11,.04} or {.36,.22,.08}
+            button.label:SetTextColor(unpack(button.labelColor))
+            if button.label.SetShadowOffset then button.label:SetShadowOffset(0,0) end
+        end
+        return
+    end
     for _,edge in ipairs(button.edges) do edge:SetColorTexture(chosen and 1 or .42,chosen and .82 or .32,chosen and 0 or .19,1); edge:Show() end
     if button.label then
         button.label:SetFontObject('GameFontHighlightSmall')
@@ -334,18 +346,21 @@ function A.BuildBookWorldSettings(section, category, ui)
         local button = ui.Button(section, label, action)
         button:SetPoint("TOPLEFT", 4, y); y = y - 34
     end
+    -- (a group: small capitals and a rule, from the book; plain soft text otherwise)
+    local function Group(label)
+        if ui.Group then y = ui.Group(section, y, label); return end
+        local text = section:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+        text:SetPoint("TOPLEFT", 4, y); text:SetTextColor(unpack(SOFT)); text:SetText(label)
+        if text.SetShadowOffset then text:SetShadowOffset(0, 0) end
+        y = y - 18
+    end
     if category == "world" then
         local width = math.max(200, (section.layoutWidth or 340) - 8)
         local function WorldCheck(key, label)
             Check(key, label)
             y = y + 6 -- compact spacing between the simple world checkboxes
         end
-        local function Heading(label)
-            local text = section:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
-            text:SetPoint("TOPLEFT", 4, y); text:SetTextColor(unpack(SOFT)); text:SetText(label)
-            if text.SetShadowOffset then text:SetShadowOffset(0, 0) end
-            y = y - 18
-        end
+        local function Heading(label) Group(label) end
         local function PreviewButton(label, x, row, w, action, color)
             local button = ui.Button(section, label, action)
             button:SetPoint("TOPLEFT", x, row); button:SetSize(w, 26)
@@ -367,7 +382,7 @@ function A.BuildBookWorldSettings(section, category, ui)
         WorldCheck("enabled", "Enable Companion Journal")
         Heading("Nameplates")
         WorldCheck("peopleIcons", "Show people's icons")
-        local glyph = PreviewButton("Default icon for new people", 4, y, math.min(width, 240), function(button)
+        local glyph = PreviewButton("Icon for new people", 4, y, math.min(width, 240), function(button)
             A.PickGlyph(button, db.peopleNewGlyph or "diamond", db.colors.people, function(v) A.SetOption("peopleNewGlyph", v) end, true)
         end)
         section.updates[#section.updates + 1] = function()
@@ -393,7 +408,7 @@ function A.BuildBookWorldSettings(section, category, ui)
         Heading("Remembering people")
         WorldCheck("peopleLastSeen", "Remember when and where we met")
         WorldCheck("peopleRecognize", "Recognize my other characters' people")
-        Heading("Recognition colours")
+        Heading("Colours")
         local cell = (width - 8) / 3
         for i, entry in ipairs({{"recognizedCompanion", "Companion"}, {"recognizedAcquaintance", "Acquaintance"}, {"recognizedRival", "Rival"}}) do
             local key = entry[1]
@@ -409,13 +424,15 @@ function A.BuildBookWorldSettings(section, category, ui)
         end
         y = y - 30
     elseif category == "recording" then
-        Check("peopleJournal", "Record our adventures", "Keep quests, dungeons, levels and time together in the journal.")
-        Check("journalSeen", "Record when we cross paths", "Adds occasional encounters outside your shared travels; requires recording to be enabled.")
-        Check("moreMoments", "Record more moments", "In your own journal: books and plaques read, areas discovered, flight paths, spells from a trainer, reputation standings, duels, trade-skill ranks, honorable kills, rare creatures killed, and raising a companion from death.")
+        Group("Journal")
+        Check("peopleJournal", "Record our adventures")
+        Check("journalSeen", "Record when we cross paths", "Needs recording on")
+        Check("moreMoments", "Record more moments", "Your own journal only")
     elseif category == "adding" then
+        Group("Groups")
         Check("peopleAutoGroup", "Remember groupmates as acquaintances")
         Check("peopleGroupIcon", "Give new groupmates the group icon")
-        Check("peopleGroupPrompt", "Ask when groupmates leave", "Requires groupmate recording above. Offers a choice instead of adding them automatically.")
+        Check("peopleGroupPrompt", "Ask when groupmates leave", "Needs groupmates remembered")
         -- (Preview sits at the end of the style choices' row, the same height as they are.
         -- The section frame is only a holder, so anchor from its left, never its right.)
         local rowY = y
@@ -430,10 +447,13 @@ function A.BuildBookWorldSettings(section, category, ui)
         section.updates[#section.updates + 1] = function()
             previewButton:SetText(A.IsGroupPromptPreview and A.IsGroupPromptPreview() and "Hide preview" or "Preview")
         end
-        Check("peopleAutoCampfire", "Remember people at my campfire", "Experimental: friendly players nearby with the same readable campfire timer; unavailable in combat or instances. No journal; gone after 2 hours.")
+        Group("Campfires")
+        Check("peopleAutoCampfire", "Remember people at my campfire", "No journal; gone after 2 hours")
         Check("peopleCampfireIcon", "Give them the campfire icon")
+        Group("Elsewhere")
         Check("peopleMenu", "Add people from right-click menus")
-        Action("Manage blocked people", function() A.OpenBookPeople(nil, "blocked") end)
+        y = y - 4
+        Action("Blocked people", function() A.OpenBookPeople(nil, "blocked") end)
     end
     return y
 end

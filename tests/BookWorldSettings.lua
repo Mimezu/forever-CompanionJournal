@@ -75,7 +75,7 @@ N.db.peopleIconSide = nil
 check(ForeverNamesAPI.PeopleIconPosition() == "left", "getter honors unmigrated legacy placement")
 check(N.db.peopleIconSide == nil, "reading a setting does not migrate it")
 
-local icon = buttons["Default icon for new people"]
+local icon = buttons["Icon for new people"]
 check(icon.preview.texture == A.GlyphPath("diamond") and icon.preview.tint[1] == .8, "default icon visibly previews the selected glyph and color")
 icon.scripts.OnClick(icon)
 local glyphPicker = named.CompanionJournalGlyphPopover

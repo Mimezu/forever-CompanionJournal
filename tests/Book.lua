@@ -334,7 +334,7 @@ do
     lacks(A.JournalColored("{n:A stranger} and {p:Undercity}", {}), "|H", "unmapped names and places do not acquire false links")
     for _, style in ipairs({"a", "b", "c", "d", "e"}) do
         local ctx = Stand()
-        ctx.width, ctx.reading = 180, true
+        ctx.width = 180
         function ctx.Story() return {text = markup, quotes = {}, chapter = 1, title = "Together"} end
         A.JournalStyles[style](ctx, {saturday}, person, "storyBrief")
         local labels, capLinked = {}, false
@@ -351,7 +351,7 @@ do
         for _, word in ipairs({"of", "the", "Long", "Remembered", "Name"}) do
             has(joined, word, style .. ": full alias stays linked across line breaks")
         end
-        if style == "b" or style == "d" then check(capLinked, style .. ": opening capital remains clickable") end
+        if style == "d" then check(capLinked, style .. ": opening capital remains clickable") end
     end
     A.bookLinks = nil
 end
