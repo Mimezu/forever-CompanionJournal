@@ -183,17 +183,30 @@ clock = clock + 600
 A.JournalSeen(aeryn)
 check(aeryn.journal[#aeryn.journal].c == 2 and #aeryn.journal == 7, "second sighting merges into the same line")
 
--- 7. Levels you witness.
+-- 7. Levels you witness: together (grouped and close by) only.
 units.nameplate1 = {"Aeryn", "MAGE", 22, "Horde"}
 clock = clock + 400
+local before = #aeryn.journal
 A.UpdatePersonFromUnit(aeryn, "nameplate1", true)
-check(aeryn.level == 22 and aeryn.journal[#aeryn.journal].k == "level" and aeryn.journal[#aeryn.journal].d == 22, "level-up noted")
+check(aeryn.level == 22 and #aeryn.journal == before, "a level noticed while apart updates the card, no line")
+local keepMembers = members
+members = {{"Aeryn", "MAGE", 22, "Horde"}, {"Brom", "WARRIOR", 21, "Horde"}}
+A.JournalGroupChanged()
+far.Aeryn = true
+before = #aeryn.journal
+A.NotePersonLevel(aeryn, 23)
+check(aeryn.level == 23 and #aeryn.journal == before, "grouped but far away: no line")
+far.Aeryn = nil
+A.NotePersonLevel(aeryn, 24)
+check(aeryn.journal[#aeryn.journal].k == "level" and aeryn.journal[#aeryn.journal].d == 24, "grouped and close by: level-up noted")
 -- A lower level is a new character with the same name: the card follows it, no level line.
 local lines = #aeryn.journal
 A.NotePersonLevel(aeryn, 4)
 check(aeryn.level == 4 and #aeryn.journal == lines, "a lower level replaces the card's level without a journal line")
 A.NotePersonLevel(aeryn, 5)
 check(aeryn.level == 5 and aeryn.journal[#aeryn.journal].k == "level" and aeryn.journal[#aeryn.journal].d == 5, "levels climb again from there")
+members = keepMembers
+A.JournalGroupChanged()
 
 -- 8. Your own lines, and removing a line.
 local line = A.JournalWrite(aeryn, "  She saved me from the Defias.  ")
@@ -219,7 +232,7 @@ check(all:find("Together you defeated Rhahk'Zor and Sneed in The Deadmines.", 1,
 check(all:find("The Defias Brotherhood", 1, true) and all:find("Hidden Enemies", 1, true), "quests done together")
 check(not all:find("Camping 101", 1, true), "not a quest only you had")
 check(all:find("(2 times)", 1, true), "merged sightings counted")
-check(all:find("Aeryn had grown to level 22.", 1, true), "level sentence")
+check(all:find("Aeryn had grown to level 24.", 1, true) and not all:find("level 22", 1, true), "level sentence: the one seen together only")
 
 -- 10. Adding the stranger (after the group): what was kept aside starts
 -- their journal, and you met when you first grouped.

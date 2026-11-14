@@ -423,7 +423,7 @@ function A.UpdatePersonFromUnit(person, unit, force)
     level = okLevel and Public(level) and tonumber(level)
     if level and level > 0 then A.NotePersonLevel(person, level) end
 end
--- The journal notes the levels you witnessed going up. A lower level than the card
+-- The journal notes the levels you see going up (together: see A.JournalLevel). A lower level than the card
 -- holds means a new character with the same name (a card from the beta, a reroll):
 -- the card takes the level it sees, and no level line is written.
 function A.NotePersonLevel(person, level)

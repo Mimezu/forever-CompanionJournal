@@ -172,10 +172,6 @@ function A.JournalSeen(person)
     A.JournalAdd(person, {k = "seen"})
 end
 
-function A.JournalLevel(person, level)
-    if not A.JournalOn() then return end
-    A.JournalAdd(person, {k = "level", d = level})
-end
 
 function A.JournalCampfire(person)
     if not A.JournalOn() or not person then return end
@@ -531,6 +527,17 @@ A.JournalWatchParty = WatchParty
 local function Near(unit)
     local near, checked = Ask(UnitInRange, unit)
     return near == true and checked ~= false
+end
+-- A level they reached, written only when you were together for it: grouped (an
+-- outing open) and close by. One noticed later, at a higher level, only updates
+-- their card: the book never tells a level-up you did not see.
+function A.JournalLevel(person, level)
+    if not A.JournalOn() or not person then return end
+    local key = A.PersonKey and A.PersonKey(person.name)
+    if not key or not sessions[key] then return end
+    for unit, unitKey in pairs(partyKeys) do
+        if unitKey == key and Near(unit) then A.JournalAdd(person, {k = "level", d = level}); return end
+    end
 end
 -- Resting together: an inn or a city, with them close by (in range). Once
 -- per place and outing.

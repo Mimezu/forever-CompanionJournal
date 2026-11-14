@@ -708,13 +708,13 @@ function A.JournalBook(person)
         end
         day.scenes[#day.scenes + 1] = scene
     end
-    -- In a companion's book, a day with no time together keeps no quests: they prove
-    -- nothing shared (a quest everyone carries, finished while they were far away).
+    -- In a companion's book, a day with no time together is not told: a quest or a level
+    -- alone proves nothing shared (a quest everyone carries, a level noticed later).
     if not person.self then
         local kept = {}
         for _, day in ipairs(days) do
             local together = false
-            for _, scene in ipairs(day.scenes) do if scene.kind ~= "quest" then together = true; break end end
+            for _, scene in ipairs(day.scenes) do if scene.kind ~= "quest" and scene.kind ~= "level" then together = true; break end end
             if together then kept[#kept + 1] = day end
         end
         days = kept

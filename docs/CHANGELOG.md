@@ -1,5 +1,10 @@
 # Companion Journal: changes
 
+## 1.45.3 (2026-11-14)
+
+- Level-ups written only when together and close by
+- Companion books: a level alone is not a day
+
 ## 1.45.2 (2026-11-13)
 
 - Settings menu centred under its title
