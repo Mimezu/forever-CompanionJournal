@@ -23,7 +23,7 @@ local CIRCLE_ORDER = {
 }
 
 local book
-local BuildAddBar, BuildWizard -- (below; Build uses them)
+local BuildWizard -- (below; Build uses them)
 local Portrait, LookFor -- (portraits, below; the contents page uses them)
 -- view: "journal" (contents + chapters), "settings" or "npcs".
 local state = {key = nil, index = nil, view = "journal", settings = "reading", npc = nil,
@@ -39,8 +39,6 @@ local VARIANTS = {
         choices = {{"c", "Tools | journals"}, {"a", "Sections + pins"}, {"b", "Pins only"}}},
     {key = "toolsSide", label = "Tools' side", group = "Book", stage = 2,
         choices = {{"left", "Tools left"}, {"right", "Tools right"}}},
-    {key = "add", label = "Adding someone", group = "Book", stage = 4,
-        choices = {{"a", "Smart button"}, {"b", "Three steps"}, {"c", "Today's flow"}}},
     {key = "ribbon", label = "Unread ribbons", group = "Book", stage = 5,
         choices = {{"a", "Every unread"}, {"b", "Newest + marks"}, {"c", "First unread"}}},
     {key = "portraitWhen", label = "When", group = "Portraits", stage = 8,
@@ -210,25 +208,11 @@ local function SlimScrollBar(scroll)
     track:SetColorTexture(0.30, 0.18, 0.07, 0.25)
 end
 
--- A small switch button: dark leather, a thin rim, gold when chosen.
+-- A small switch button: the book's one control (ink on the paper; A.StyleBookControl).
 local function Toggle(parent, label, width, title, tip, onClick)
     local button = CreateFrame("Button", nil, parent)
     button:SetSize(width, 19)
-    button.fill = button:CreateTexture(nil, "BACKGROUND")
-    button.fill:SetAllPoints()
-    button.edges = {}
-    for _, side in ipairs({"TOP", "BOTTOM", "LEFT", "RIGHT"}) do
-        local edge = button:CreateTexture(nil, "BORDER")
-        if side == "TOP" or side == "BOTTOM" then
-            edge:SetPoint(side .. "LEFT"); edge:SetPoint(side .. "RIGHT"); edge:SetHeight(1)
-        else
-            edge:SetPoint("TOP" .. side); edge:SetPoint("BOTTOM" .. side); edge:SetWidth(1)
-        end
-        button.edges[#button.edges + 1] = edge
-    end
-    local hover = button:CreateTexture(nil, "HIGHLIGHT")
-    hover:SetAllPoints(); hover:SetColorTexture(1, 0.7, 0.2, 0.12)
-    button.label = button:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+    button.label = button:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
     button.label:SetPoint("CENTER", 0, 0)
     button.label:SetText(label)
     button:SetScript("OnClick", onClick)
@@ -240,10 +224,7 @@ local function Toggle(parent, label, width, title, tip, onClick)
         GameTooltip:Show()
     end)
     button:SetScript("OnLeave", function() GameTooltip:Hide() end)
-    -- (unchosen until told otherwise: the leather and the dim rim)
-    button.fill:SetColorTexture(0.18, 0.13, 0.07, 1)
-    for _, edge in ipairs(button.edges) do edge:SetColorTexture(0.42, 0.32, 0.19, 1) end
-    button.label:SetTextColor(0.91, 0.85, 0.69)
+    if A.StyleBookControl then A.StyleBookControl(button, false) end
     return button
 end
 local function SetChosen(button, chosen)
@@ -254,11 +235,7 @@ local function SetChosen(button, chosen)
         button.label:SetTextColor(color[1], color[2], color[3])
         return
     end
-    if chosen then button.fill:SetColorTexture(0.29, 0.20, 0.06, 1) else button.fill:SetColorTexture(0.18, 0.13, 0.07, 1) end
-    for _, edge in ipairs(button.edges) do
-        if chosen then edge:SetColorTexture(1, 0.82, 0, 1) else edge:SetColorTexture(0.42, 0.32, 0.19, 1) end
-    end
-    if chosen then button.label:SetTextColor(1, 0.82, 0) else button.label:SetTextColor(0.91, 0.85, 0.69) end
+    if A.StyleBookControl then A.StyleBookControl(button, chosen) end
 end
 
 -- Small, scrollable popovers keep note actions out of the reading page and
@@ -965,6 +942,7 @@ local function ContentsRow(index)
     local hover = row:CreateTexture(nil, "HIGHLIGHT")
     hover:SetAllPoints(); hover:SetColorTexture(1, 0.7, 0.2, 0.10)
     hover:SetTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight"); hover:SetBlendMode("ADD"); hover:SetVertexColor(0.85, 0.6, 0.25, 0.4)
+    row.hover = hover
     row.icon = row:CreateTexture(nil, "ARTWORK")
     row.icon:SetSize(20, 20); row.icon:SetPoint("LEFT", 6, 0)
     row.name = row:CreateFontString(nil, "ARTWORK", "GameFontNormal")
@@ -996,6 +974,14 @@ local function FillList(items)
         row.key, row.section, row.action = nil, nil, data.action
         if row.ribbon then ShowRibbon(row, nil) end
         if row.band then row.band:Hide(); row.branch:Hide(); row.twig:Hide() end
+        -- (the settings menu: a soft wash on hover, as quiet as the chosen page's band)
+        if row.hover then
+            if data.kind == "nav" then
+                row.hover:SetTexture(nil); row.hover:SetBlendMode("BLEND"); row.hover:SetColorTexture(0.55, 0.36, 0.14, 0.12)
+            else
+                row.hover:SetTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight"); row.hover:SetBlendMode("ADD"); row.hover:SetVertexColor(0.85, 0.6, 0.25, 0.4)
+            end
+        end
         if data.kind == "nav" then
             -- (Settings: words on the paper, children under a thin branch, the open page on a warm band)
             if not row.band then
@@ -1425,7 +1411,6 @@ local function Build()
     book.cardHost:SetFrameLevel(book.right:GetFrameLevel() + 5)
     book.cardHost.child:SetHeight(440)
     book.wizard = BuildWizard()
-    book.addBar = BuildAddBar()
     book.contents.scroll:SetPoint("BOTTOMRIGHT", -book.contents.box[3], book.contents.box[4] + 32)
 
     -- Bookmarks down the right edge: your journal, pinned companions; NPCs and Settings at the bottom.
@@ -1447,6 +1432,7 @@ local function Build()
 
     -- Writing a line, Retell, and Close, at the bottom.
     local input = CreateFrame("EditBox", nil, book, "InputBoxTemplate")
+    if A.InkEditBox then A.InkEditBox(input) end
     input:SetPoint("BOTTOMLEFT", 30, 18); input:SetSize(320, 22)
     input:SetAutoFocus(false); input:SetMaxLetters(300)
     local hint = input:CreateFontString(nil, "ARTWORK", "GameFontDisableSmall")
@@ -1498,9 +1484,9 @@ local function Build()
     book:Hide()
 end
 
--- The right page, or the adding wizard over it (Adding someone B).
+-- The right page, or the adding steps over it.
 local function PlaceWizard()
-    local adding = state.wizard ~= nil and A.BookVariant("add") == "b"
+    local adding = state.wizard ~= nil
     book.cardHost:ClearAllPoints(); book.cardHost:SetAllPoints(book.right)
     book.cardHost:SetShown(adding)
     book.wizard:SetShown(adding); book.wizard:Update()
@@ -1508,9 +1494,7 @@ local function PlaceWizard()
     if A.db.bookSpread ~= "two" then book.contents:Show() end
 end
 
--- Adding someone (Settings > Testing): A, one smart button that names your
--- target; B, three steps (who, list and bond, look) on the right page;
--- C, today's flow (Add my target, or type a name).
+-- Your target, if any: their name, and their key when already in your book.
 local function TargetInfo()
     local okPlayer, player = pcall(UnitExists, "target")
     if not okPlayer or player ~= true then return nil end
@@ -1533,75 +1517,15 @@ local function AddTyped(text)
     if person then print("Companion Journal: added " .. (person.name or text) .. " to your list.") end
     return key
 end
-function BuildAddBar()
-    local bar = CreateFrame("Frame", nil, book.contents)
-    local function ActionButton()
-        local button = CreateFrame("Button", nil, bar)
-        button.label = button:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
-        button.label:SetPoint("CENTER"); button:SetFontString(button.label)
-        A.StyleBookControl(button, false)
-        return button
-    end
-    -- (inside the page's margins, clear of the burnt edge)
-    local box = book.contents.box
-    bar:SetPoint("BOTTOMLEFT", box[1] - 4, box[4] - 4); bar:SetPoint("BOTTOMRIGHT", -(box[3] - 20), box[4] - 4); bar:SetHeight(28)
-    local rule = bar:CreateTexture(nil, "ARTWORK")
-    rule:SetPoint("TOPLEFT", 0, 4); rule:SetPoint("TOPRIGHT", 0, 4); rule:SetHeight(1)
-    rule:SetColorTexture(INK_SOFT[1], INK_SOFT[2], INK_SOFT[3], 0.5)
-    -- A and B: one button.
-    bar.main = ActionButton()
-    bar.main:SetPoint("LEFT", 0, 0); bar.main:SetSize(200, 24)
-    bar.main:SetScript("OnClick", function()
-        local variant = A.BookVariant("add")
-        if variant == "b" then
-            state.wizard = {step = 1, circle = "companion", bond = "none"}
-            A.RefreshBook()
-            return
-        end
-        local target = TargetInfo()
-        if target and target.key then OpenAdded(target.key); return end
-        local _, key = A.AddTargetPerson()
-        OpenAdded(key)
-    end)
-    -- C: Add my target, or a typed name.
-    bar.target = ActionButton()
-    bar.target:SetPoint("LEFT", 0, 0); bar.target:SetSize(118, 24); bar.target:SetText("Add my target")
-    bar.target:SetScript("OnClick", function() local _, key = A.AddTargetPerson(); OpenAdded(key) end)
-    bar.name = CreateFrame("EditBox", nil, bar, "InputBoxTemplate")
-    bar.name:SetPoint("LEFT", bar.target, "RIGHT", 10, 0); bar.name:SetSize(110, 22)
-    bar.name:SetAutoFocus(false); bar.name:SetMaxLetters(60)
-    bar.hint = bar.name:CreateFontString(nil, "ARTWORK", "GameFontDisableSmall")
-    bar.hint:SetPoint("LEFT", 4, 0); bar.hint:SetText("Name")
-    bar.name:SetScript("OnTextChanged", function(self) bar.hint:SetShown((self:GetText() or "") == "") end)
-    bar.name:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
-    local function Typed() local key = AddTyped(bar.name:GetText()); bar.name:SetText(""); bar.name:ClearFocus(); OpenAdded(key) end
-    bar.name:SetScript("OnEnterPressed", Typed)
-    bar.add = ActionButton()
-    bar.add:SetPoint("LEFT", bar.name, "RIGHT", 4, 0); bar.add:SetSize(50, 24); bar.add:SetText("Add")
-    bar.add:SetScript("OnClick", Typed)
-    function bar:Update()
-        local variant = A.BookVariant("add")
-        self.main:SetShown(variant ~= "c")
-        for _, part in ipairs({self.target, self.name, self.add}) do part:SetShown(variant == "c") end
-        if variant == "b" then
-            self.main:SetText("+ Add someone"); self.main:SetEnabled(true)
-        elseif variant == "a" then
-            local target = TargetInfo()
-            if target and target.key then
-                local person = A.People[target.key]
-                self.main:SetText("Open " .. (person and (person.display or ShortName(person.name)) or (target.name or "them")))
-                self.main:SetEnabled(not (person and person.npc))
-            elseif target then
-                self.main:SetText(target.name and ("Add " .. ShortName(target.name)) or "Add my target"); self.main:SetEnabled(true)
-            else
-                self.main:SetText("Add my target"); self.main:SetEnabled(false)
-            end
-        end
-    end
-    -- (the smart button follows your target)
-    bar:RegisterEvent("PLAYER_TARGET_CHANGED")
-    bar:SetScript("OnEvent", function(self) if book:IsShown() then self:Update() end end)
-    return bar
+-- Adding someone, one way (the ribbon, the gamepad): your target, added or opened;
+-- with no one targeted, the three steps on the right page (a groupmate, or a name).
+local function AddSomeone()
+    local target = TargetInfo()
+    if target and target.key then OpenAdded(target.key); return end
+    if target then local _, key = A.AddTargetPerson(); OpenAdded(key); return end
+    state.view = "journal"
+    state.wizard = {step = 1, circle = "companion", bond = "none"}
+    A.RefreshBook()
 end
 -- The three steps (variant B), on the right page.
 local RECENT = 6
@@ -1660,6 +1584,7 @@ function BuildWizard()
     end
     Label(who, "Or a name", -170)
     who.name = CreateFrame("EditBox", nil, who, "InputBoxTemplate")
+    if A.InkEditBox then A.InkEditBox(who.name) end
     who.name:SetPoint("TOPLEFT", 10, -190); who.name:SetSize(180, 22); who.name:SetAutoFocus(false); who.name:SetMaxLetters(60)
     who.name:SetScript("OnEnterPressed", function(self)
         local text = (self:GetText() or ""):gsub("^%s+", ""):gsub("%s+$", "")
@@ -1700,6 +1625,7 @@ function BuildWizard()
     Title(look, "3 \194\183 Their name in your book")
     Label(look, "Display name (optional)", -36)
     look.display = CreateFrame("EditBox", nil, look, "InputBoxTemplate")
+    if A.InkEditBox then A.InkEditBox(look.display) end
     look.display:SetPoint("TOPLEFT", 10, -56); look.display:SetSize(180, 22); look.display:SetAutoFocus(false); look.display:SetMaxLetters(60)
     look.display:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
     look.note = look:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
@@ -1937,6 +1863,7 @@ local function TitleBlock(page)
     t.hit = CreateFrame("Button", nil, t)
     t.hit:SetPoint("TOPLEFT", t.name, "TOPLEFT"); t.hit:SetPoint("BOTTOMRIGHT", t.name, "BOTTOMRIGHT")
     t.edit = CreateFrame("EditBox", nil, t, "InputBoxTemplate")
+    if A.InkEditBox then A.InkEditBox(t.edit) end
     t.edit:SetSize(160, 22); t.edit:SetPoint("TOP", t.name, "BOTTOM", 0, -2); t.edit:SetAutoFocus(false); t.edit:SetMaxLetters(40)
     t.edit:SetFrameLevel(t:GetFrameLevel() + 4)
     t.edit.hint = t.edit:CreateFontString(nil, "ARTWORK", "GameFontDisableSmall")
@@ -2286,11 +2213,7 @@ local function FillLabelledMarks()
         {title = "Companions", tip = "Your people, their stories and settings.", color = {0.24, 0.16, 0.07}, chosen = state.view == "people",
             action = function() A.OpenBookPeople(state.view == "journal" and state.key and A.People[state.key] and not A.People[state.key].npc and state.key or nil) end},
         {title = "Add someone", tip = "Your target, a groupmate, or a name.", color = {0.24, 0.16, 0.07},
-            action = function()
-                -- (the same as the contents page's add button: a smart add, or the three steps)
-                local click = book.addBar.main:GetScript("OnClick")
-                if click then click(book.addBar.main) end
-            end},
+            action = AddSomeone},
         {title = "NPCs", tip = "The NPCs you noted.", color = {0.18, 0.15, 0.12}, chosen = state.view == "npcs", gapBefore = true,
             action = function() state.view = "npcs"; A.RefreshBook() end},
         {title = "Settings", tip = "Reading, testing variants, and all settings.", color = {0.18, 0.15, 0.12}, chosen = state.view == "settings",
@@ -2396,6 +2319,7 @@ local function FillBookmarks()
     local bottom = {
         {title = "Companions", tip = "Your people, their stories and settings.", icon = "Interface\\Icons\\Spell_Holy_PrayerOfSpirit", chosen = state.view == "people", utility = true,
             action = function() A.OpenBookPeople(state.view == "journal" and state.key and A.People[state.key] and not A.People[state.key].npc and state.key or nil) end},
+        {title = "Add someone", tip = "Your target, a groupmate, or a name.", icon = "Interface\\Icons\\INV_Misc_GroupNeedMore", utility = true, action = AddSomeone},
         {title = "NPCs", tip = "The NPCs you noted.", icon = "Interface\\Icons\\INV_Misc_Note_02", chosen = state.view == "npcs", utility = true,
             action = function() state.view = "npcs"; A.RefreshBook() end},
         {title = "Settings", tip = "Reading, testing variants, and all settings.", icon = "Interface\\Icons\\Trade_Engineering",
@@ -2636,63 +2560,77 @@ local function FillNPCs()
     state.npc = book.npcManager.selected
 end
 
--- Settings' two titles, set like a chapter's: centred in Morpheus under the page's
--- ornate head, a red rule beneath; the menu and the settings start below them.
-local SETTINGS_TOP, SETTINGS_BODY = 38, 90
-local function SettingsHeads(shown)
+-- The page titles of Settings, Companions and NPCs, set like a chapter's: centred in
+-- Morpheus under the page's ornate head, a red rule beneath, at the same height on
+-- every page; what the page holds starts below them (HEAD and BODY: below the book's top).
+local HEAD, BODY = 126, 178
+A.BookBodyTop = function() return BODY - 40 end -- (the managers' pages start 40 below the top)
+local function PageTop()
+    local managing = state.view == "people" or state.view == "npcs"
+    return managing and 40 or (state.view == "journal" and 76 or 88)
+end
+local function PageHeads(left, right)
     if not book.sectionHeading then return end
     if not book.settingsTitle then
         local font
         if CreateFont then
-            font = CreateFont("CompanionJournalSettingsTitle")
+            font = CreateFont("CompanionJournalPageTitle")
             local locale = GetLocale and GetLocale()
             local latin = not locale or ({enUS = 1, enGB = 1, frFR = 1, deDE = 1, esES = 1, esMX = 1, itIT = 1, ptBR = 1})[locale]
             if font.SetFont then font:SetFont(latin and "Fonts\\MORPHEUS.TTF" or (STANDARD_TEXT_FONT or "Fonts\\FRIZQT__.TTF"), 22, "") end
             if font.SetShadowOffset then font:SetShadowOffset(0, 0) end
         end
-        book.settingsTitle = book:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+        book.settingsTitle = book:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
         book.settingsRules = {}
         for i, title in ipairs({book.settingsTitle, book.sectionHeading}) do
             if font then title:SetFontObject(font) end
+            title:SetDrawLayer("OVERLAY")
             title:SetTextColor(INK[1], INK[2], INK[3]); title:SetJustifyH("CENTER"); title:SetWordWrap(false)
             if title.SetShadowOffset then title:SetShadowOffset(0, 0) end
-            local rule = book:CreateTexture(nil, "ARTWORK")
+            local rule = book:CreateTexture(nil, "OVERLAY")
             rule:SetTexture("Interface\\AddOns\\CompanionJournal\\Media\\Ornaments\\rule")
             rule:SetVertexColor(CHAPTER[1], CHAPTER[2], CHAPTER[3], 0.9); rule:SetSize(180, 11)
             book.settingsRules[i] = rule
         end
-        book.settingsVersion = book:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
-        book.settingsVersion:SetTextColor(INK_SOFT[1], INK_SOFT[2], INK_SOFT[3], 0.8)
+        book.settingsVersion = book:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+        book.settingsVersion:SetTextColor(INK_SOFT[1], INK_SOFT[2], INK_SOFT[3], 0.7)
         if book.settingsVersion.SetShadowOffset then book.settingsVersion:SetShadowOffset(0, 0) end
         local meta = (C_AddOns and C_AddOns.GetAddOnMetadata) or GetAddOnMetadata
         local version = meta and meta("CompanionJournal", "Version")
         book.settingsVersion:SetText(version and ("Version " .. version) or "")
     end
-    local pieces = {book.settingsTitle, book.sectionHeading, book.settingsRules[1], book.settingsRules[2], book.settingsVersion}
-    for _, piece in ipairs(pieces) do piece:SetShown(shown) end
-    -- (the panel's viewport: under the title in Settings, the page's own box otherwise)
-    local box = book.panel.box
-    book.panel.scroll:ClearAllPoints()
-    book.panel.scroll:SetPoint("TOPLEFT", box[1], -(shown and SETTINGS_BODY or box[2]))
-    book.panel.scroll:SetPoint("BOTTOMRIGHT", -box[3], box[4])
-    if not shown then return end
-    book.name:Hide()
-    local cbox = book.contents.box
-    for i, item in ipairs({{book.settingsTitle, book.left, cbox}, {book.sectionHeading, book.right, box}}) do
-        local title, page, margins = item[1], item[2], item[3]
-        local shift = math.floor(((margins[1] or 0) - (margins[3] or 0)) / 2)
-        title:ClearAllPoints(); title:SetPoint("TOP", page, "TOP", shift, -SETTINGS_TOP)
-        title:SetWidth(math.max(120, page:GetWidth() - (margins[1] or 0) - (margins[3] or 0)))
-        local rule = book.settingsRules[i]
-        rule:ClearAllPoints(); rule:SetPoint("TOP", page, "TOP", shift, -(SETTINGS_TOP + 30))
+    local margins = {book.contents.box, book.panel.box}
+    for i, item in ipairs({{book.settingsTitle, book.left, left}, {book.sectionHeading, book.right, right}}) do
+        local title, page, text = item[1], item[2], item[3]
+        local box, rule = margins[i], book.settingsRules[i]
+        title:SetShown(text ~= nil); rule:SetShown(text ~= nil)
+        if text then
+            local shift = math.floor(((box[1] or 0) - (box[3] or 0)) / 2)
+            local y = HEAD - PageTop()
+            title:ClearAllPoints(); title:SetPoint("TOP", page, "TOP", shift, -y)
+            title:SetWidth(math.max(120, page:GetWidth() - (box[1] or 0) - (box[3] or 0)))
+            title:SetText(text)
+            rule:ClearAllPoints(); rule:SetPoint("TOP", page, "TOP", shift, -(y + 30))
+        end
     end
-    book.settingsTitle:SetText("Settings")
-    book.sectionHeading:SetText(SETTINGS_TITLES[state.settings] or "Settings")
-    book.settingsVersion:ClearAllPoints()
-    book.settingsVersion:SetPoint("BOTTOM", book.left, "BOTTOM", math.floor(((cbox[1] or 0) - (cbox[3] or 0)) / 2), 6)
-    -- (the menu starts where the settings do)
+    if left then book.name:Hide() end
+    book.settingsVersion:SetShown(state.view == "settings")
+    if state.view == "settings" then
+        local cbox = book.contents.box
+        book.settingsVersion:ClearAllPoints()
+        book.settingsVersion:SetPoint("BOTTOM", book.left, "BOTTOM", math.floor(((cbox[1] or 0) - (cbox[3] or 0)) / 2), 52)
+    end
+end
+-- Settings' viewports: the menu and the page start under the titles.
+local function SettingsViewport(on)
+    local box, cbox, body = book.panel.box, book.contents.box, BODY - PageTop()
+    if not box or not cbox then return end
+    book.panel.scroll:ClearAllPoints()
+    book.panel.scroll:SetPoint("TOPLEFT", box[1], -(on and body or box[2]))
+    book.panel.scroll:SetPoint("BOTTOMRIGHT", -box[3], box[4])
+    if not on then return end
     book.contents.scroll:ClearAllPoints()
-    book.contents.scroll:SetPoint("TOPLEFT", cbox[1], -SETTINGS_BODY)
+    book.contents.scroll:SetPoint("TOPLEFT", cbox[1], -body)
     book.contents.scroll:SetPoint("BOTTOMRIGHT", -cbox[3], cbox[4] + 32)
 end
 
@@ -2708,7 +2646,7 @@ function A.RefreshBook(toEnd, reusePages)
     book.contents.scroll:Show()
     book.panel.scroll:Show()
     book.name:SetShown(state.view ~= "people" and state.view ~= "npcs"); book.summary:SetShown(state.view ~= "people" and state.view ~= "npcs")
-    SettingsHeads(state.view == "settings")
+    PageHeads(nil, nil); SettingsViewport(false)
     for key, button in pairs(book.sizeButtons) do SetChosen(button, db.bookSize == key) end
     FillBookmarks()
     local other = state.view ~= "journal"
@@ -2720,7 +2658,7 @@ function A.RefreshBook(toEnd, reusePages)
     if other then
         ContentsPortrait(nil)
         if A.CloseLoreNote then A.CloseLoreNote() end
-        book.cardHost:Hide(); book.addBar:Hide(); book.timeline:Hide()
+        book.cardHost:Hide(); book.timeline:Hide()
         -- (Settings and NPCs: the contents page lists their sections)
         book.contents:Show(); book.leftPage:Hide()
         book.classIcon:Hide(); book.pin:Hide(); DrawPinRibbon(false)
@@ -2736,10 +2674,12 @@ function A.RefreshBook(toEnd, reusePages)
             for _, section in pairs(book.sections) do section:Hide() end
             if not book.manager then book.manager = A.CreateBookManager(book, {IsPinned = IsPinned, TogglePin = TogglePin}) end
             book.manager:Refresh()
-        elseif state.view == "settings" then SettingsHeads(true); FillSettings() else FillNPCs() end
+            PageHeads("Companions", book.manager.Title and book.manager:Title())
+        elseif state.view == "settings" then
+            PageHeads("Settings", SETTINGS_TITLES[state.settings] or "Settings"); SettingsViewport(true); FillSettings()
+        else FillNPCs(); local m = book.npcManager; PageHeads("NPCs", m and m.Title and m:Title()) end
         return
     end
-    book.addBar:Show(); book.addBar:Update()
 
     local person = Shown()
     if not person then
@@ -3239,11 +3179,7 @@ function A.BookPad(button)
         local person = state.view == "journal" and state.key and A.People[state.key]
         if person and not person.npc then A.OpenPersonCard(state.key) end
     elseif button == "PAD4" then
-        if state.view == "npcs" and book.npcManager then book.npcManager:AddTarget()
-        else
-            local click = book.addBar.main:IsShown() and book.addBar.main:GetScript("OnClick")
-            if click then click(book.addBar.main) else local _, key = A.AddTargetPerson(); OpenAdded(key) end
-        end
+        AddSomeone()
     elseif button == "PAD3" then
         state.view = state.view == "settings" and "journal" or "settings"
         A.RefreshBook()

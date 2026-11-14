@@ -95,7 +95,6 @@ local function upvalue(fn, name, replacement)
 end
 local Build = upvalue(upvalue(A.OpenBook, "open"), "Build")
 for _, name in ipairs({"BuildWizard"}) do upvalue(Build, name, function() return object() end) end
-upvalue(Build, "BuildAddBar", function() local f = object(); f.Update = function() end; return f end)
 Build()
 local book, state = upvalue(A.RefreshBook, "book"), upvalue(A.RefreshBook, "state")
 book.origin = true; book:Show()

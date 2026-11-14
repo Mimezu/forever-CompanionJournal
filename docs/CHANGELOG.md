@@ -1,5 +1,13 @@
 # Companion Journal: changes
 
+## 1.45.0 (2026-11-13)
+
+- Adding someone: the ribbon only (target, or name and groupmates)
+- Companions and NPCs pages titled like Settings
+- Every button and field written in ink on the paper
+- Red ink for Remove and Never add again
+- Softer hover in the settings menu
+
 ## 1.44.1 (2026-11-13)
 
 - Quests shared only with companions close by

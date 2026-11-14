@@ -114,14 +114,10 @@ character='writer-forever'; manager:Refresh()
 check(manager.selected=='npc:1' and button(manager.form,'Remove'),'NPC selection survives visibility filtering and return')
 click(button(manager.form,'All characters')); check(cards['npc:1'].only==nil,'all characters clears owner restriction')
 
--- Both mouse and gamepad use this guarded manager action.
-local adds=0; local addTarget=A.AddTargetPerson
-A.AddTargetPerson=function(...) adds=adds+1; return addTarget(...) end
-target.player=true; manager:AddTarget()
-check(adds==0 and not cards['npc:9'],'NPC target action rejects players before calling AddTargetPerson')
-target.player=false; target.id=nil; manager:AddTarget(); check(adds==0,'missing/invalid NPC target rejected')
-target.id=9; click(manager.targetButton)
-check(adds==1 and cards['npc:9'] and cards['npc:9'].npc and manager.selected=='npc:9','real NPC target add creates and selects NPC card')
+-- NPCs are added through the book's one add action (the ribbon): a targeted NPC becomes a card.
+target.player=false; target.id=9; local _,added=A.AddTargetPerson(); manager:Select(added); manager:Refresh()
+check(cards['npc:9'] and cards['npc:9'].npc and manager.selected=='npc:9','a targeted NPC becomes a card and is selected')
+check(manager.targetButton==nil,'no second add button on the NPC page')
 manager:Select('dahlia-forever','companion','others'); manager:Refresh()
 check(manager.selected==nil and manager.mode=='here' and manager.circle=='npc','NPC manager cannot select a player or leave its locked category')
 edit(manager.listUI.pools.edit[1],'hearth')
@@ -148,13 +144,12 @@ click(button(manager.listUI,'<')); check(manager.page==1,'NPC page action return
 
 local companion=A.CreateBookManager(book,{IsPinned=function() return false end,TogglePin=function() end})
 manager=companion; companion:Refresh()
-check(button(companion.listUI,'My characters') and button(companion.listUI,'Companions') and button(companion.listUI,'Add'),'companion list retains categories, character switching and manual add')
+check(button(companion.listUI,'My characters') and button(companion.listUI,'Companions') and not button(companion.listUI,'Add'),'companion list keeps categories and character switching; adding is the ribbon')
 click(button(companion.listUI,'Dahlia-Forever'))
 check(button(companion.form,'Read journal') and button(companion.form,'Pin') and text(companion.form,'Your story together'),'companion card retains journal and relationship controls')
 check(closes>0 and refreshes>10,'manager interactions refresh cards and close inactive pickers')
 local pronouns=button(companion.form,'They')
-check(pronouns.height==20 and pronouns.width<48 and pronouns.edges[1].color[1]==1,'compact About-style selected control has thin gold edge')
-check(companion.targetButton.fill.color[4]==1 and companion.targetButton.height==20,'manager actions use flat compact opaque controls')
+check(pronouns.height==20 and pronouns.width<48 and pronouns.edges[1].color[4]==.85,'a chosen switch is inked darker')
 for _,row in ipairs(companion.listUI.pools.button) do
     if row:IsShown() and row.label.text=='Dahlia-Forever' then check(not row.edges[1]:IsShown() and row.height==33,'list row styling stays distinct from choice controls') end
 end

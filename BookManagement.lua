@@ -7,8 +7,8 @@ local INK, SOFT = {0.20,0.11,0.04}, {0.36,0.22,0.08}
 local BASE_W, BASE_H = 360, 448
 local PW, PH = BASE_W, BASE_H
 local categories = {{'companion','Companions',88},{'acquaintance','Acquaintances',106},{'campfire','Campfire',76},{'rival','Rivals',78}}
--- The same flat leather switches as the journal's About card. Settings and
--- managers share this small control without a Blizzard bevel or a larger panel.
+-- The book's one control: ink on the paper, a thin rim, a warm wash when chosen
+-- (red ink for an action that removes). Every button and switch in the book uses it.
 function A.StyleBookControl(button, chosen)
     if not button.bookStateHooks and button.HookScript then
         button.bookStateHooks = true
@@ -29,13 +29,16 @@ function A.StyleBookControl(button, chosen)
         end
         local hover=button:CreateTexture(nil,'HIGHLIGHT'); hover:SetAllPoints(); hover:SetColorTexture(1,.7,.2,.12)
     end
-    -- (Settings: ink on the paper, a warm wash when chosen)
-    if button.ink then
-        button.fill:SetColorTexture(.55,.36,.14,chosen and .28 or 0)
-        for _,edge in ipairs(button.edges) do edge:SetColorTexture(.25,.14,.05,chosen and .85 or .4); edge:Show() end
+    if not button.leather then
+        local red=button.danger
+        button.fill:SetColorTexture(red and .55 or .55,red and .14 or .36,red and .08 or .14,chosen and .28 or (red and .08 or 0))
+        for _,edge in ipairs(button.edges) do
+            if red then edge:SetColorTexture(.45,.10,.05,.7) else edge:SetColorTexture(.25,.14,.05,chosen and .85 or .4) end
+            edge:Show()
+        end
         if button.label then
             button.label:SetFontObject('GameFontNormalSmall')
-            button.labelColor=chosen and {.20,.11,.04} or {.36,.22,.08}
+            button.labelColor=red and {.42,.10,.04} or chosen and {.20,.11,.04} or {.36,.22,.08}
             button.label:SetTextColor(unpack(button.labelColor))
             if button.label.SetShadowOffset then button.label:SetShadowOffset(0,0) end
         end
@@ -48,6 +51,19 @@ function A.StyleBookControl(button, chosen)
         button.label:SetTextColor(unpack(button.labelColor))
         if button.label.SetShadowOffset then button.label:SetShadowOffset(0,0) end
     end
+end
+-- An edit box written on the paper: no frame, a faint wash and an ink line under it.
+function A.InkEditBox(box)
+    for _,key in ipairs({'Left','Middle','Right'}) do if type(box[key])=='table' and box[key].SetAlpha then box[key]:SetAlpha(0) end end
+    if not box.inkLine then
+        box.inkFill=box:CreateTexture(nil,'BACKGROUND'); box.inkFill:SetPoint('TOPLEFT',-4,1); box.inkFill:SetPoint('BOTTOMRIGHT',2,-1)
+        box.inkFill:SetColorTexture(.55,.36,.14,.10)
+        box.inkLine=box:CreateTexture(nil,'BORDER'); box.inkLine:SetPoint('BOTTOMLEFT',-4,-1); box.inkLine:SetPoint('BOTTOMRIGHT',2,-1); box.inkLine:SetHeight(1)
+        box.inkLine:SetColorTexture(.36,.22,.08,.55)
+    end
+    if box.SetFontObject then box:SetFontObject('GameFontHighlightSmall') end
+    if box.SetTextColor then box:SetTextColor(.20,.11,.04) end
+    if box.hint and box.hint.SetTextColor then box.hint:SetTextColor(.36,.22,.08,.7) end
 end
 local function Tip(control, text)
     control:SetScript('OnEnter',function(self)
@@ -70,7 +86,7 @@ local function Surface(parent)
                 c=parent:CreateFontString(nil,'ARTWORK','GameFontHighlight'); c:SetJustifyH('LEFT'); c:SetWordWrap(false)
                 if c.SetShadowOffset then c:SetShadowOffset(0,0) end
             elseif kind=='edit' then
-                c=CreateFrame('EditBox',nil,parent,'InputBoxTemplate'); c:SetAutoFocus(false)
+                c=CreateFrame('EditBox',nil,parent,'InputBoxTemplate'); c:SetAutoFocus(false); A.InkEditBox(c)
                 c:SetScript('OnEscapePressed',function(box) box:ClearFocus() end)
             elseif kind=='rule' then
                 c=parent:CreateTexture(nil,'ARTWORK'); c:SetColorTexture(.42,.26,.09,.35)
@@ -104,7 +120,7 @@ local function Surface(parent)
         -- Template hover/disabled states otherwise restore a larger font,
         -- making labels jump in size as the pointer moves between controls.
         c:SetNormalFontObject('GameFontNormalSmall'); c:SetHighlightFontObject('GameFontHighlightSmall'); c:SetDisabledFontObject('GameFontDisableSmall')
-        c:SetEnabled(true); c:SetText(label); A.StyleBookControl(c,chosen)
+        c:SetEnabled(true); c:SetText(label); c.danger=nil; A.StyleBookControl(c,chosen)
         c.label:ClearAllPoints(); c.label:SetPoint('LEFT',4,0); c.label:SetPoint('RIGHT',-4,0); c.label:SetJustifyH('CENTER'); c.label:SetWordWrap(false)
         c.icon:ClearAllPoints(); c.icon:SetPoint('LEFT',5,0); c.icon:SetSize(22,22); c.icon:Hide(); c.classIcon:Hide(); c.sub:Hide(); c.swatch:Hide(); c.focus:Hide()
         c:SetScript('OnClick',action); c:SetScript('OnDoubleClick',nil); Tip(c,nil); return c
@@ -129,7 +145,7 @@ local function Surface(parent)
         Tip(c,hint)
         if hint and (value or '')=='' then
             if not c.hint then c.hint=c:CreateFontString(nil,'OVERLAY','GameFontDisableSmall'); c.hint:SetPoint('LEFT',4,0); c.hint:SetJustifyH('LEFT') end
-            c.hint:SetWidth(w-16); c.hint:SetText(hint); c.hint:Show()
+            c.hint:SetWidth(w-16); c.hint:SetText(hint); c.hint:SetTextColor(.36,.22,.08,.7); c.hint:Show()
         elseif c.hint then c.hint:Hide() end
         c:SetScript('OnTextChanged',function(box) if box.hint then box.hint:SetShown((box:GetText() or '')=='') end end)
         return c
@@ -177,39 +193,33 @@ function A.CreateBookManager(book,kit)
         table.sort(filtered,function(a,b) return (a.card.display or a.card.name or a.key):lower()<(b.card.display or b.card.name or b.key):lower() end)
         return filtered
     end
-    function m:AddTarget()
-        if self.npcOnly then
-            local ok,player=pcall(UnitIsPlayer,'target')
-            if not ok or (issecretvalue and issecretvalue(player)) or player~=false or not (A.NPCID and A.NPCID('target')) then
-                print('Companion Journal: target an NPC first.'); return
-            end
-        end
-        self:FinishEditing()
-        local p,k=A.AddTargetPerson()
-        if p and k then self:Select(k) end
-        A.RefreshBook()
-        return p,k
+    -- The right page's title: whose card is open, or the page itself.
+    function m:Title()
+        local p=self.selected and (A.People[self.selected] or (A.db.peopleBlocked or {})[self.selected])
+        if not p and self.selected and self.rows then for _,r in ipairs(self.rows) do if r.key==self.selected then p=r.card end end end
+        if p then return p.display or (p.name and p.name:gsub('%-.*$','')) or self.selected end
+        return self.npcOnly and 'Your NPCs' or 'Your companions'
     end
     function m:Refresh()
         if self.npcOnly then self.mode,self.circle='here','npc' end
         book.contents.scroll:Hide(); book.panel.scroll:Hide()
-        -- (margins clear of the pages' printed corners: 32 a side, 22 on top, 56 below)
+        -- (margins clear of the pages' printed corners: 32 a side, 56 below; on top, the
+        -- book's page titles, the list's first row (its title row, now the page's) tucked under)
+        local top=A.BookBodyTop and A.BookBodyTop() or 22
         local roomW=math.min(book.contents:GetWidth(),book.panel:GetWidth())-64
-        local roomH=math.min(book.contents:GetHeight(),book.panel:GetHeight())-78
+        local roomH=math.min(book.contents:GetHeight(),book.panel:GetHeight())-top-56
         local scale=math.min(1,roomW/BASE_W,roomH/BASE_H)
         PW,PH=math.floor(roomW/scale),math.floor(roomH/scale)
-        for _,surface in ipairs({self.left,self.right}) do
+        for i,surface in ipairs({self.left,self.right}) do
             surface:SetScale(scale); surface:SetSize(PW,PH); surface:ClearAllPoints()
-            surface:SetPoint('TOP',surface:GetParent(),'TOP',0,-22/scale); surface:Show()
+            surface:SetPoint('TOP',surface:GetParent(),'TOP',0,-top/scale+(i==1 and 28 or 0)); surface:Show()
         end
         local low=PH-BASE_H
         local s=self.listUI; s:Begin()
-        s:Text((self.npcOnly or self.circle=='npc') and 'NPCs' or 'Companions',0,0,PW,'GameFontNormalLarge')
         if not self.npcOnly then s:Choices({{'here','This character'},{'others','My characters'}},self.mode,0,28,260,function(v) self:FinishEditing(); self.mode,self.selected,self.page,self.armed=v,nil,1,nil end) end
         local searchY=self.npcOnly and 38 or 60
-        local search=s:Edit(self.query,0,searchY,234,function(v) self.query,self.page=v or '',1; A.RefreshBook() end,100,'Search names')
+        local search=s:Edit(self.query,0,searchY,PW,function(v) self.query,self.page=v or '',1; A.RefreshBook() end,100,'Search names')
         search:SetScript('OnTextChanged',function(box,user) if box.hint then box.hint:SetShown((box:GetText() or '')=='') end; if user then self.query,self.page=box:GetText() or '',1; A.RefreshBook() end end)
-        self.targetButton=s:Button(self.npcOnly and 'Add target NPC' or 'Add my target',240,searchY,120,function() self:AddTarget() end)
         if not self.npcOnly and self.mode=='here' then
             s:Choices(categories,self.circle,0,94,PW,function(v) self:FinishEditing(); self.circle,self.page,self.selected,self.armed=v,1,nil,nil end)
         elseif not self.npcOnly then
@@ -247,20 +257,11 @@ function A.CreateBookManager(book,kit)
         s:Button('>',96,384+low,28,function() self.page=self.page+1; A.RefreshBook() end):SetEnabled(self.page<pages)
         local noun=self.npcOnly and (#list==1 and 'NPC' or 'NPCs') or self.circle=='companion' and self.mode=='here' and (#list==1 and 'companion' or 'companions') or (#list==1 and 'person' or 'people')
         local count=s:Text(#list..' '..noun,144,388+low,PW-144); count:SetJustifyH('RIGHT'); count:SetTextColor(unpack(SOFT))
-        s:Rule(408+low)
-        if self.npcOnly then
-            s:Text('Target an NPC to add their card.',0,420+low,PW):SetTextColor(unpack(SOFT))
-        else
-            local add=s:Edit(self.addName,0,420+low,PW-110,function(v) self.addName=v end,80,'Name or Name-Realm')
-            local function Add() local name=add:GetText(); add:ClearFocus(); if name and name:match('%S') then local p,k=A.AddPerson(name); if p and k then self.addName=nil; self:Select(k); A.RefreshBook() end end end
-            add:SetScript('OnEnterPressed',Add); s:Button('Add',PW-102,420+low,102,Add)
-        end
         s:Finish()
         local f=self.form; f:Begin()
         if selected then
             local key,p=selected.key,selected.card
-            f:Text(p.display or p.name or key,0,0,PW-164,'GameFontNormalLarge')
-            f:Text(A.PersonSummary(p),0,25,PW):SetTextColor(unpack(SOFT))
+            f:Text(A.PersonSummary(p),0,4,p.npc and PW or PW-164):SetTextColor(unpack(SOFT))
             if self.mode=='others' then
                 f:Text('Known by your other characters',0,70,PW)
                 local note=f:Text(p.note or 'No note.',0,106,PW); note:SetWordWrap(true); note:SetHeight(80)
@@ -307,8 +308,8 @@ function A.CreateBookManager(book,kit)
                     if self.armed~=kind then self.armed=kind; A.RefreshBook(); return end
                     self.selected,self.armed=nil,nil; if block then A.BlockPerson(key) else A.RemovePerson(key) end
                 end
-                local remove=f:Button(self.armed=='remove' and 'Confirm remove' or 'Remove',0,420+low,172,function() Remove(false) end); remove.fill:SetColorTexture(.27,.10,.07,1)
-                if not p.npc then local block=f:Button(self.armed=='block' and 'Confirm block' or 'Never add again',PW-180,420+low,180,function() Remove(true) end); block.fill:SetColorTexture(.27,.10,.07,1) end
+                local remove=f:Button(self.armed=='remove' and 'Confirm remove' or 'Remove',0,420+low,172,function() Remove(false) end); remove.danger=true; A.StyleBookControl(remove,false)
+                if not p.npc then local block=f:Button(self.armed=='block' and 'Confirm block' or 'Never add again',PW-180,420+low,180,function() Remove(true) end); block.danger=true; A.StyleBookControl(block,false) end
             end
             if not p.npc and self.circle~='blocked' then
                 local owners=A.OtherJournals(key)
@@ -320,10 +321,7 @@ function A.CreateBookManager(book,kit)
                 end
             end
         else
-            f:Text(self.npcOnly and 'Your NPCs' or 'Your companions',0,0,PW,'GameFontNormalLarge')
-            local label=f:Text(self.npcOnly and 'Choose an NPC on the left to edit their name, icon, colour, note and visibility.' or 'Choose someone on the left to read their journal or edit their card.',0,48,PW); label:SetWordWrap(true); label:SetHeight(60)
-            local detail=f:Text(self.npcOnly and 'Share an NPC card across your characters, or keep it just for this one.' or 'Their settings shape your story together.',0,128,PW)
-            if self.npcOnly then detail:SetWordWrap(true); detail:SetHeight(40) end
+            local label=f:Text(self.npcOnly and 'Choose an NPC.' or 'Choose someone.',0,4,PW); label:SetJustifyH('CENTER'); label:SetTextColor(unpack(SOFT))
         end
         if self.mode=='others' then
             local ready=0; for _,r in ipairs(A.OthersPeople(self.character)) do if r.usable and (r.rel.circle or 'companion')=='companion' then ready=ready+1 end end
