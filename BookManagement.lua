@@ -65,6 +65,39 @@ function A.InkEditBox(box)
     if box.SetTextColor then box:SetTextColor(.20,.11,.04) end
     if box.hint and box.hint.SetTextColor then box.hint:SetTextColor(.36,.22,.08,.7) end
 end
+-- A glyph drawn in ink on the paper: the same shape four times behind it, a pixel
+-- out each way, in dark ink: a 1px outline that sets it on the page.
+local OUTLINE={{1,0},{-1,0},{0,1},{0,-1}}
+function A.InkOutline(icon)
+    if not icon.outline then
+        icon.outline={}
+        local parent=icon:GetParent()
+        for i in ipairs(OUTLINE) do icon.outline[i]=parent:CreateTexture(nil,'ARTWORK',nil,-1) end
+    end
+    local path=icon.GetTexture and icon:GetTexture()
+    local w,h=22,22; if icon.GetSize then w,h=icon:GetSize() end
+    for i,o in ipairs(OUTLINE) do
+        local t=icon.outline[i]
+        if path then t:SetTexture(path) end
+        t:SetVertexColor(.20,.11,.04,.85); t:SetSize(w or 22,h or 22)
+        t:ClearAllPoints(); t:SetPoint('CENTER',icon,'CENTER',o[1],o[2])
+        t:SetShown(icon:IsShown() and path~=nil)
+    end
+end
+-- A class crest: the class icon cut round, in a thin ring of ink.
+local function Round(frame,texture)
+    if not frame.CreateMaskTexture or not texture.AddMaskTexture then return end
+    local mask=frame:CreateMaskTexture()
+    mask:SetTexture('Interface\\CharacterFrame\\TempPortraitAlphaMask','CLAMPTOBLACKADDITIVE','CLAMPTOBLACKADDITIVE')
+    mask:SetAllPoints(texture); texture:AddMaskTexture(mask)
+end
+local function Crest(parent)
+    local crest=CreateFrame('Frame',nil,parent); crest:SetSize(24,24)
+    crest.ring=crest:CreateTexture(nil,'BORDER'); crest.ring:SetAllPoints(); crest.ring:SetColorTexture(.25,.14,.05,.8)
+    crest.icon=crest:CreateTexture(nil,'ARTWORK'); crest.icon:SetSize(22,22); crest.icon:SetPoint('CENTER')
+    Round(crest,crest.ring); Round(crest,crest.icon)
+    return crest
+end
 local function Tip(control, text)
     control:SetScript('OnEnter',function(self)
         if self.label and self.labelColor and self:IsEnabled() then self.label:SetTextColor(unpack(self.labelColor)) end
@@ -95,7 +128,7 @@ local function Surface(parent)
                 c.label=c:CreateFontString(nil,'ARTWORK','GameFontHighlightSmall'); c:SetFontString(c.label)
                 A.StyleBookControl(c,false)
                 c.icon=c:CreateTexture(nil,'ARTWORK'); c.icon:SetSize(22,22); c.icon:SetPoint('LEFT',5,0)
-                c.classIcon=c:CreateTexture(nil,'ARTWORK'); c.classIcon:SetSize(20,20); c.classIcon:SetPoint('RIGHT',-5,0)
+                c.crest=Crest(c); c.crest:SetPoint('RIGHT',-6,0); c.classIcon=c.crest.icon
                 c.swatch=c:CreateTexture(nil,'ARTWORK'); c.swatch:SetPoint('TOPLEFT',5,-5); c.swatch:SetPoint('BOTTOMRIGHT',-5,5)
                 c.sub=c:CreateFontString(nil,'ARTWORK','GameFontHighlightSmall'); c.sub:SetJustifyH('LEFT'); c.sub:SetTextColor(unpack(SOFT)); c.sub:SetWordWrap(false)
                 if c.sub.SetShadowOffset then c.sub:SetShadowOffset(0,0) end
@@ -122,7 +155,8 @@ local function Surface(parent)
         c:SetNormalFontObject('GameFontNormalSmall'); c:SetHighlightFontObject('GameFontHighlightSmall'); c:SetDisabledFontObject('GameFontDisableSmall')
         c:SetEnabled(true); c:SetText(label); c.danger=nil; A.StyleBookControl(c,chosen)
         c.label:ClearAllPoints(); c.label:SetPoint('LEFT',4,0); c.label:SetPoint('RIGHT',-4,0); c.label:SetJustifyH('CENTER'); c.label:SetWordWrap(false)
-        c.icon:ClearAllPoints(); c.icon:SetPoint('LEFT',5,0); c.icon:SetSize(22,22); c.icon:Hide(); c.classIcon:Hide(); c.sub:Hide(); c.swatch:Hide(); c.focus:Hide()
+        c.icon:ClearAllPoints(); c.icon:SetPoint('LEFT',5,0); c.icon:SetSize(22,22); c.icon:Hide(); c.classIcon:Hide(); c.crest:Hide(); c.sub:Hide(); c.swatch:Hide(); c.focus:Hide()
+        if c.icon.outline then for _,t in ipairs(c.icon.outline) do t:Hide() end end
         c:SetScript('OnClick',action); c:SetScript('OnDoubleClick',nil); Tip(c,nil); return c
     end
     function s:Choices(items,value,x,y,w,set)
@@ -251,11 +285,11 @@ function A.CreateBookManager(book,kit)
             button.label:SetTextColor(unpack(INK)); button.label:SetFontObject('GameFontHighlight'); if button.label.SetShadowOffset then button.label:SetShadowOffset(0,0) end
             button.label:ClearAllPoints(); button.label:SetPoint('TOPLEFT',32,-3); button.label:SetSize(PW-82,14); button.label:SetJustifyH('LEFT')
             local glyph=A.IconGlyph('people',p)
-            if glyph~='none' then button.icon:SetTexture(A.GlyphPath(glyph)); button.icon:SetVertexColor(unpack(A.IconColor('people',p))); button.icon:Show() end
-            A.SetPersonClassIcon(button.classIcon,p.class)
+            if glyph~='none' then button.icon:SetTexture(A.GlyphPath(glyph)); button.icon:SetVertexColor(unpack(A.IconColor('people',p))); button.icon:Show(); A.InkOutline(button.icon) end
+            A.SetPersonClassIcon(button.classIcon,p.class); button.crest:SetShown(button.classIcon:IsShown())
             button.sub:ClearAllPoints(); button.sub:SetPoint('TOPLEFT',32,-18); button.sub:SetSize(PW-66,12)
             button.sub:SetText(self.npcOnly and ((p.only and 'This character' or 'All characters')..'  |  '..(p.zone or 'Location not recorded')) or self.circle=='blocked' and 'Never added automatically' or self.mode=='others' and r.knowers and r.knowers[1] and ('Known by '..r.knowers[1].name) or ('Last seen: '..(p.zone or 'not recorded'))); button.sub:Show()
-            if p.level then s:Text(tostring(p.level),PW-54,y+7,25) end
+            if p.level then local lv=s:Text(tostring(p.level),PW-70,y+10,32); lv:SetJustifyH('RIGHT'); lv:SetTextColor(unpack(SOFT)) end
             if not p.npc and self.circle~='blocked' then button:SetScript('OnDoubleClick',function() A.OpenBook(r.key,self.mode=='others' and r.from or nil) end) end
             Tip(button,p.name or r.key)
         end

@@ -34,7 +34,7 @@ local state = {key = nil, index = nil, view = "journal", settings = "reading", n
 local BUILT = 8
 local VARIANTS = {
     {key = "loreNote", label = "Lore notes", group = "Book", stage = 2,
-        choices = {{"letter", "Letter over the book"}, {"tucked", "Tucked at the edge"}, {"slip", "Slip (before)"}}},
+        choices = {{"folded", "Folded paper"}, {"letter", "Letter over the book"}, {"tucked", "Tucked at the edge"}, {"slip", "Slip (before)"}}},
     {key = "marks", label = "Bookmarks", group = "Book", stage = 2,
         choices = {{"c", "Tools | journals"}, {"a", "Sections + pins"}, {"b", "Pins only"}}},
     {key = "toolsSide", label = "Tools' side", group = "Book", stage = 2,
@@ -103,6 +103,23 @@ end
 -- The book's look: the spellbook's pages, cloth ribbons, ink on paper.
 local function HasAtlas(name) return C_Texture and C_Texture.GetAtlasInfo and C_Texture.GetAtlasInfo(name) ~= nil end
 local function Font(name, fallback) return _G[name] and name or fallback end
+-- The book's heading face (the quest log's Morpheus, or the locale's own face), one
+-- font object per size, shared by every title in the book and its notes.
+local titleFonts = {}
+function A.BookTitleFont(size)
+    size = size or 22
+    if titleFonts[size] then return titleFonts[size] end
+    if not CreateFont then return nil end
+    local font = CreateFont("CompanionJournalTitle" .. size)
+    local locale = GetLocale and GetLocale()
+    local latin = not locale or ({enUS = 1, enGB = 1, frFR = 1, deDE = 1, esES = 1, esMX = 1, itIT = 1, ptBR = 1})[locale]
+    local path = QuestFont_Super_Huge and QuestFont_Super_Huge.GetFont and QuestFont_Super_Huge:GetFont()
+    if not latin then path = STANDARD_TEXT_FONT or path end
+    if font.SetFont then font:SetFont(path or "Fonts\\MORPHEUS.TTF", size, "") end
+    if font.SetShadowOffset then font:SetShadowOffset(0, 0) end
+    titleFonts[size] = font
+    return font
+end
 -- The pages: the spellbook's pair (burnt outer edges; they meet at the fold,
 -- and the spellbook's top bar finishes their top edge).
 local PAGES_B = {left = "spellbook-background-evergreen-left", right = "spellbook-background-evergreen-right"}
@@ -1835,14 +1852,7 @@ end
 -- The journal's title page: the journal's first page opens with the name, who
 -- they are, and the quest log's flourish, above the portrait and the first chapter.
 -- A click on the name gives them a last name.
-local function TitleFont()
-    if A.bookTitleFont then return A.bookTitleFont end
-    local font = CreateFont("CompanionJournalTitleFont")
-    local path = QuestFont_Super_Huge and QuestFont_Super_Huge.GetFont and QuestFont_Super_Huge:GetFont()
-    font:SetFont(path or "Fonts\\MORPHEUS.TTF", 30, "")
-    A.bookTitleFont = font
-    return font
-end
+local function TitleFont() return A.BookTitleFont(30) end
 local function TitleBlock(page)
     if page.titleBlock then return page.titleBlock end
     local t = CreateFrame("Frame", nil, page)
@@ -2573,14 +2583,7 @@ end
 local function PageHeads(left, right)
     if not book.sectionHeading then return end
     if not book.settingsTitle then
-        local font
-        if CreateFont then
-            font = CreateFont("CompanionJournalPageTitle")
-            local locale = GetLocale and GetLocale()
-            local latin = not locale or ({enUS = 1, enGB = 1, frFR = 1, deDE = 1, esES = 1, esMX = 1, itIT = 1, ptBR = 1})[locale]
-            if font.SetFont then font:SetFont(latin and "Fonts\\MORPHEUS.TTF" or (STANDARD_TEXT_FONT or "Fonts\\FRIZQT__.TTF"), 22, "") end
-            if font.SetShadowOffset then font:SetShadowOffset(0, 0) end
-        end
+        local font = A.BookTitleFont(22)
         book.settingsTitle = book:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
         book.settingsRules = {}
         for i, title in ipairs({book.settingsTitle, book.sectionHeading}) do

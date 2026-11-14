@@ -108,6 +108,30 @@ local function Make()
         local texture = Piece(key, "parchmentpopup-filigree", "ARTWORK", 5)
         texture:SetBlendMode("ADD"); texture:SetAlpha(0.45)
     end
+    -- Folded paper: a light sheet laid on the book, folded in four and opened again.
+    -- A soft shadow under it, a faint grain, a hairline edge, two creases, and the
+    -- half past the fold a shade darker. Plain game textures; no art of its own.
+    slip.fold = {}
+    local function Fold(key, layer, sub, r, g, b, a)
+        local texture = slip:CreateTexture(nil, layer, nil, sub)
+        texture:SetColorTexture(r, g, b, a); texture:Hide()
+        slip.fold[key] = texture
+        return texture
+    end
+    Fold("shadow", "BACKGROUND", -8, 0, 0, 0, 0.32)
+    Fold("shadow2", "BACKGROUND", -8, 0, 0, 0, 0.16)
+    Fold("paper", "BACKGROUND", -7, 0.93, 0.87, 0.74, 1)
+    local grain = Fold("grain", "BACKGROUND", -6, 1, 1, 1, 1)
+    grain:SetAtlas("parchmentpopup-background"); grain:SetAlpha(0.35)
+    Fold("shade", "BACKGROUND", -5, 0.30, 0.18, 0.06, 0.05)
+    for _, edge in ipairs({"edgeTop", "edgeBottom", "edgeLeft", "edgeRight"}) do Fold(edge, "BORDER", 0, 0.30, 0.18, 0.07, 0.45) end
+    Fold("creaseV", "BORDER", 1, 0.30, 0.18, 0.07, 0.16); Fold("creaseVLight", "BORDER", 1, 1, 1, 1, 0.35)
+    Fold("creaseH", "BORDER", 1, 0.30, 0.18, 0.07, 0.13); Fold("creaseHLight", "BORDER", 1, 1, 1, 1, 0.30)
+    slip.ornament = slip:CreateTexture(nil, "ARTWORK", nil, 6)
+    slip.ornament:SetTexture("Interface\\AddOns\\CompanionJournal\\Media\\Ornaments\\rule")
+    slip.ornament:SetVertexColor(0.42, 0.10, 0.04, 0.9); slip.ornament:SetSize(170, 11); slip.ornament:Hide()
+    slip.footRule = slip:CreateTexture(nil, "ARTWORK", nil, 6)
+    slip.footRule:SetColorTexture(0.36, 0.22, 0.08, 0.3); slip.footRule:SetHeight(1); slip.footRule:Hide()
     slip.rule = slip:CreateTexture(nil, "ARTWORK", nil, 6)
     slip.rule:SetTexture("Interface\\QuestFrame\\UI-HorizontalBreak")
     slip.rule:SetVertexColor(0.62, 0.42, 0.22, 0.9); slip.rule:Hide()
@@ -228,11 +252,12 @@ function A.OpenLoreNote(id, anchor, context)
     local parent = Owner(anchor, context)
     if not parent or not parent.GetWidth or not parent.GetHeight or not parent.IsShown or not parent:IsShown() then return false end
     local style = A.BookVariant and A.BookVariant("loreNote") or "slip"
-    if style ~= "letter" and style ~= "tucked" then style = "slip" end
+    if style ~= "letter" and style ~= "tucked" and style ~= "folded" then style = "slip" end
+    local folded = style == "folded"
     local top = parent.rightPage and 94 or parent.page and 48 or 12
     local bottom = parent.rightPage and 60 or 24
     local width, height = math.min(400, parent:GetWidth() - 24), math.min(405, parent:GetHeight() - top - bottom)
-    if style == "letter" then
+    if style == "letter" or folded then
         width, height = math.min(460, parent:GetWidth() - 120), math.min(480, parent:GetHeight() - (parent.rightPage and 110 or 60))
     elseif style == "tucked" then
         width, height = 310, math.min(440, parent:GetHeight() - (parent.rightPage and 150 or 80))
@@ -248,7 +273,7 @@ function A.OpenLoreNote(id, anchor, context)
     dismiss:SetFrameStrata(parent.GetFrameStrata and parent:GetFrameStrata() or "DIALOG")
     dismiss:SetFrameLevel(level + 1)
     slip:SetParent(parent); slip:ClearAllPoints()
-    if style == "letter" then
+    if style == "letter" or folded then
         -- (centred over the book, across the fold)
         slip:SetPoint("CENTER", parent, "CENTER", 0, parent.rightPage and -12 or 0)
     elseif style == "tucked" then
@@ -263,11 +288,14 @@ function A.OpenLoreNote(id, anchor, context)
     slip:SetSize(width, height)
     -- (the paper: the old slip, or the document's own parchment)
     local kit = style ~= "slip"
+    local parchment = kit and not folded
     slip.backing:SetShown(not kit); slip.paper:SetShown(not kit)
     if slip.SetBackdropBorderColor then slip:SetBackdropBorderColor(0.45, 0.29, 0.13, kit and 0 or 1) end
     local scale = math.min(width, height) / 820
-    for key, texture in pairs(slip.kit) do texture:SetShown(kit); texture:ClearAllPoints() end
-    if kit then
+    for key, texture in pairs(slip.kit) do texture:SetShown(parchment); texture:ClearAllPoints() end
+    for _, texture in pairs(slip.fold) do texture:SetShown(folded) end
+    slip.ornament:SetShown(folded); slip.footRule:SetShown(folded)
+    if parchment then
         local k, c = slip.kit, math.floor(167 * scale + 0.5)
         k.topleft:SetSize(c, c); k.topleft:SetPoint("TOPLEFT")
         k.topright:SetSize(c, c); k.topright:SetPoint("TOPRIGHT")
@@ -291,9 +319,11 @@ function A.OpenLoreNote(id, anchor, context)
     -- (the text's room inside the paper)
     local padX, padTop, padBottom = 18, 16, 0
     if kit then padX, padTop, padBottom = 36, 34, 18 end
+    if folded then padX, padTop, padBottom = 34, 28, 6 end
     slip.heading:ClearAllPoints(); slip.heading:SetPoint("TOPLEFT", padX, -padTop); slip.heading:SetPoint("TOPRIGHT", -(kit and padX or 45), -padTop)
     slip.heading:SetJustifyH(kit and "CENTER" or "LEFT")
-    if kit and QuestFont_Huge then slip.heading:SetFontObject(QuestFont_Huge) elseif not kit then slip.heading:SetFontObject(GameFontNormalLarge) end
+    if folded and A.BookTitleFont and A.BookTitleFont(22) then slip.heading:SetFontObject(A.BookTitleFont(22))
+    elseif kit and QuestFont_Huge then slip.heading:SetFontObject(QuestFont_Huge) elseif not kit then slip.heading:SetFontObject(GameFontNormalLarge) end
     slip.heading:SetTextColor(0.37, 0.10, 0.06); slip.heading:SetShadowOffset(0, 0)
     slip.caption:SetJustifyH(kit and "CENTER" or "LEFT")
     slip.close:ClearAllPoints(); slip.close:SetPoint("TOPRIGHT", kit and -(padX - 14) or -9, kit and -(padTop - 10) or -9)
@@ -318,14 +348,18 @@ function A.OpenLoreNote(id, anchor, context)
     slip.caption:SetText(entry.kind .. "  |  " .. (entry.setting or "Classic / Forever") ..
         (entry.contextLabel and ("\n" .. entry.contextLabel) or ""))
     local bodyY = captionY + math.max(14, slip.caption:GetStringHeight()) + 12
-    slip.rule:SetShown(kit)
-    if kit then
+    slip.rule:SetShown(kit and not folded)
+    if folded then
+        -- (the book's own red rule under the title)
+        slip.ornament:ClearAllPoints(); slip.ornament:SetPoint("TOP", slip, "TOP", 0, -(bodyY - 4))
+        bodyY = bodyY + 16
+    elseif kit then
         -- (the quest log's flourish under the title, as in the journal)
         slip.rule:ClearAllPoints(); slip.rule:SetSize(math.min(170, width - padX * 2), 20)
         slip.rule:SetPoint("TOP", slip, "TOP", 0, -(bodyY - 6))
         bodyY = bodyY + 20
     end
-    local capacity = height - bodyY - 94 - padBottom
+    local capacity = height - bodyY - (folded and 70 or 94) - padBottom
     if capacity < 24 then A.CloseLoreNote(); return false end
     slip.body:ClearAllPoints(); slip.body:SetPoint("TOPLEFT", padX, -bodyY)
     slip.body:SetWidth(width - padX * 2)
@@ -350,6 +384,40 @@ function A.OpenLoreNote(id, anchor, context)
         if target then button.label:SetText((kit and "See also: " or "Read: ") .. A.GetKnownLoreNote(target, knowledge).title); button:Show() else button:Hide() end
     end
     slip.back:SetShown(#trail > 0)
+    if folded then
+        -- (as tall as its words: one leaf shrinks the sheet; the footer follows it)
+        local shown = 0
+        for _, button in ipairs(slip.related) do if button:IsShown() then shown = shown + 1 end end
+        local footer = 38 + shown * 18 + padBottom
+        if #slip.leaves == 1 then
+            local textHeight = math.ceil(slip.body:GetStringHeight() or capacity)
+            height = math.max(200, math.min(height, bodyY + textHeight + 22 + footer))
+            slip:SetSize(width, height)
+        end
+        local f = slip.fold
+        f.shadow:ClearAllPoints(); f.shadow:SetPoint("TOPLEFT", 5, -7); f.shadow:SetPoint("BOTTOMRIGHT", 7, -9)
+        f.shadow2:ClearAllPoints(); f.shadow2:SetPoint("TOPLEFT", 2, -3); f.shadow2:SetPoint("BOTTOMRIGHT", 11, -13)
+        for _, key in ipairs({"paper", "grain"}) do f[key]:ClearAllPoints(); f[key]:SetAllPoints() end
+        f.shade:ClearAllPoints(); f.shade:SetPoint("TOPLEFT", slip, "TOP"); f.shade:SetPoint("BOTTOMRIGHT")
+        f.edgeTop:ClearAllPoints(); f.edgeTop:SetPoint("TOPLEFT"); f.edgeTop:SetPoint("TOPRIGHT"); f.edgeTop:SetHeight(1)
+        f.edgeBottom:ClearAllPoints(); f.edgeBottom:SetPoint("BOTTOMLEFT"); f.edgeBottom:SetPoint("BOTTOMRIGHT"); f.edgeBottom:SetHeight(1)
+        f.edgeLeft:ClearAllPoints(); f.edgeLeft:SetPoint("TOPLEFT"); f.edgeLeft:SetPoint("BOTTOMLEFT"); f.edgeLeft:SetWidth(1)
+        f.edgeRight:ClearAllPoints(); f.edgeRight:SetPoint("TOPRIGHT"); f.edgeRight:SetPoint("BOTTOMRIGHT"); f.edgeRight:SetWidth(1)
+        f.creaseV:ClearAllPoints(); f.creaseV:SetPoint("TOP"); f.creaseV:SetPoint("BOTTOM"); f.creaseV:SetWidth(1)
+        f.creaseVLight:ClearAllPoints(); f.creaseVLight:SetPoint("TOP", 1, 0); f.creaseVLight:SetPoint("BOTTOM", 1, 0); f.creaseVLight:SetWidth(1)
+        f.creaseH:ClearAllPoints(); f.creaseH:SetPoint("LEFT", 0, 0); f.creaseH:SetPoint("RIGHT", 0, 0); f.creaseH:SetHeight(1)
+        f.creaseHLight:ClearAllPoints(); f.creaseHLight:SetPoint("LEFT", 0, -1); f.creaseHLight:SetPoint("RIGHT", 0, -1); f.creaseHLight:SetHeight(1)
+        f.shade:ClearAllPoints(); f.shade:SetPoint("TOPLEFT", slip, "TOP", 1, 0); f.shade:SetPoint("BOTTOMRIGHT")
+        -- (the footer: a quiet rule, See also on the left, Sources on the right)
+        slip.footRule:ClearAllPoints(); slip.footRule:SetPoint("BOTTOMLEFT", padX, footer - 6); slip.footRule:SetPoint("BOTTOMRIGHT", -padX, footer - 6)
+        slip.heading:SetTextColor(0.42, 0.10, 0.04)
+        slip.caption:SetTextColor(0.36, 0.22, 0.08)
+        slip.body:SetTextColor(0.20, 0.11, 0.04)
+        slip.close.label:SetText("\195\151")
+    else
+        slip.caption:SetTextColor(0.43, 0.34, 0.23)
+        slip.body:SetTextColor(0.17, 0.12, 0.07)
+    end
     if slip.SetPropagateKeyboardInput and not (InCombatLockdown and InCombatLockdown()) then slip:SetPropagateKeyboardInput(true) end
     dismiss:Show(); slip:Show()
     return true

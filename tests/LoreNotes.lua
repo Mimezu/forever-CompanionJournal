@@ -429,7 +429,7 @@ A.db.characters.Neige.journal[1].qid = 6402
 A.RefreshOpenLoreNote()
 Check(not table.concat(slip.leaves):find("Onyxia", 1, true), "corrected history reprojects open note")
 A.CloseLoreNote()
-for _, style in ipairs({"slip", "letter", "tucked"}) do
+for _, style in ipairs({"slip", "letter", "tucked", "folded"}) do
     A.BookVariant = function() return style end
     Check(A.OpenLoreNote("npc:bolvar", book, {owner = book}), "reference opens in style " .. style)
     Check(not table.concat(slip.leaves):find("Onyxia", 1, true), "style cannot bypass knowledge: " .. style)

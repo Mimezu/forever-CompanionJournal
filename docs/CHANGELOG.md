@@ -1,5 +1,12 @@
 # Companion Journal: changes
 
+## 1.46.0 (2026-11-14)
+
+- Lore notes on folded paper, sized to their words
+- Class icons round, in a thin ink ring
+- Companion icons outlined in ink
+- One heading font for every title
+
 ## 1.45.3 (2026-11-14)
 
 - Level-ups written only when together and close by
