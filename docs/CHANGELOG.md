@@ -1,5 +1,10 @@
 # Companion Journal: changes
 
+## 1.48.0 (2026-11-14)
+
+- Settings > Keys: Open the book (new), Add target
+- Page in Options > AddOns: Open, minimap icon, keys
+
 ## 1.47.0 (2026-11-14)
 
 - Six painted papers for lore notes, in Try styles

@@ -1,4 +1,7 @@
 <Bindings>
+	<Binding name="COMPANIONJOURNAL_TOGGLE" category="BINDING_CATEGORY_COMPANIONJOURNAL">
+		CompanionJournal_ToggleBook()
+	</Binding>
 	<!-- Same name as in Forever Names 1.9: a key you already bound keeps working. -->
 	<Binding name="FOREVERNAMES_TAG_TARGET" category="BINDING_CATEGORY_COMPANIONJOURNAL">
 		CompanionJournal_TagTarget()

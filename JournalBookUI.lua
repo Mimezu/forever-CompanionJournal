@@ -2477,10 +2477,29 @@ local SETTINGS_MENU = {
     {label = "Book", open = "reading", children = {{"reading", "Pages"}, {"extras", "Extras"}}},
     {label = "People", open = "world", children = {{"world", "In the world"}, {"adding", "Adding"}}},
     {key = "recording", label = "Recording"},
+    {key = "keys", label = "Keys"},
     {key = "testing", label = "Try styles", gapBefore = true},
 }
 local SETTINGS_TITLES = {reading = "Pages", extras = "Extras", world = "People in the world",
-    adding = "Adding people", recording = "Recording", testing = "Try styles"}
+    adding = "Adding people", recording = "Recording", keys = "Keys", testing = "Try styles"}
+-- A key binding on a settings page: the label in the left column, the key on a
+-- paper button in the right (click, then press the new key), a quiet line under it.
+local function SectionKey(section, y, label, action)
+    local width = math.max(200, (book.panel.child:GetWidth() or 340) - 8)
+    local column = section.column or math.max(110, math.min(170, math.floor(width * 0.36)))
+    local head = SectionText(section, label, y - 4, Font("QuestFontNormalSmall", "GameFontNormalSmall"), INK, column - 10)
+    if head.SetShadowOffset then head:SetShadowOffset(0, 0) end
+    local button = PaperChoice(section, A.Keys.NONE, nil, true)
+    button:SetPoint("TOPLEFT", column, y)
+    local status = SectionText(section, "", y - 24, "GameFontHighlightSmall", INK_SOFT, width - column)
+    status:ClearAllPoints(); status:SetPoint("TOPLEFT", column, y - 24)
+    if status.SetShadowOffset then status:SetShadowOffset(0, 0) end
+    local setter = A.Keys.Setter(button, action, status, function(b)
+        b:SetWidth(math.max(70, math.floor((b.label:GetStringWidth() or 40) + 26)))
+    end)
+    section.updates[#section.updates + 1] = function() setter:Refresh() end
+    return y - 44
+end
 local function FillSettings()
     local db = A.db
     if not SETTINGS_TITLES[state.settings or ""] then state.settings = "reading" end
@@ -2538,6 +2557,12 @@ local function FillSettings()
                 function() return db.bookNotice == true end, function(v) db.bookNotice = v end)
             return SectionChoice(sec, y, "Minimap button", {{true, "On"}, {false, "Off"}},
                 function() return db.bookMinimap ~= false end, function(v) db.bookMinimap = v; if A.UpdateBookMinimap then A.UpdateBookMinimap() end end)
+        end)
+    elseif state.settings == "keys" then
+        section = Section("keys", function(sec)
+            local y = SectionGroup(sec, -4, "Key bindings")
+            for _, item in ipairs(A.Keys.ACTIONS) do y = SectionKey(sec, y, item.label, item.action) end
+            return y
         end)
     elseif state.settings == "testing" then
         section = Section("testing", function(sec)
@@ -2985,6 +3010,8 @@ function A.OpenBookSettings(section)
     book:Show(); book:Raise(); A.RefreshBook()
 end
 function A.BookIsOpen() return book ~= nil and book:IsShown() end
+-- (the minimap button and the Open key)
+function A.ToggleBook() if A.BookIsOpen() then book:Hide() else A.OpenBook() end end
 -- (the journal changed: redraw if it is the one open)
 -- A line written into someone else's journal (a crossed path, a gather count) is
 -- not a reason to lay the open book out again; the pages are the shown journal's.
@@ -3084,7 +3111,7 @@ function A.UpdateBookMinimap()
             end)
         end)
         minimap:SetScript("OnDragStop", function(self) self:SetScript("OnUpdate", nil) end)
-        minimap:SetScript("OnClick", function() if A.BookIsOpen() then book:Hide() else A.OpenBook() end end)
+        minimap:SetScript("OnClick", function() A.ToggleBook() end)
         minimap:SetScript("OnEnter", function(self)
             GameTooltip:SetOwner(self, "ANCHOR_LEFT")
             GameTooltip:SetText("Companion Journal", 1, 0.82, 0)

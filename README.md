@@ -19,7 +19,7 @@ Restart the game after an update that adds files.
 
 - Add people: target + key binding "Add target to Companion Journal", or right-click their name.
 - Groupmates are offered when the group ends.
-- Settings are in the book: Book, People, Recording, Try styles.
+- Settings are in the book: Book, People, Recording, Keys, Try styles. Also in Esc > Options > AddOns.
 - Story mode tells each day as a chapter. Retell gives new words, same facts.
 - Click a note to edit it. Right-click a line to remove it.
 - Works alone or with Forever Names.
