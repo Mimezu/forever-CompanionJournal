@@ -468,6 +468,7 @@ function A.BuildBookWorldSettings(section, category, ui)
         Check("peopleJournal", "Record our adventures")
         Check("journalSeen", "Record when we cross paths", "Needs recording on")
         Check("moreMoments", "Record more moments", "Your own journal only")
+        Check("roadRecord", "Record the road", "For the maps; about 25 KB an evening")
     elseif category == "adding" then
         Group("Groups")
         Check("peopleAutoGroup", "Remember groupmates as acquaintances")

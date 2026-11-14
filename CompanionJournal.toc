@@ -33,6 +33,8 @@ LoreDiscoveryData.lua
 Journal.lua
 JournalSelf.lua
 JournalBook.lua
+Road.lua
+RoadModel.lua
 JournalEpisodes.lua
 JournalTellers.lua
 JournalFeel.lua

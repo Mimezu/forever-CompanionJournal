@@ -75,6 +75,7 @@ function A.SetOption(key, value)
     A.db[key] = value
     if A.UpdatePeopleHooks then A.UpdatePeopleHooks() end
     if A.UpdatePlateEvents then A.UpdatePlateEvents() end
+    if key == "roadRecord" and A.Road then A.Road.Reset(); A.Road.Start() end
     A.Refresh()
 end
 
