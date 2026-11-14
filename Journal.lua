@@ -527,6 +527,11 @@ local function WatchParty(on)
     if not on then partyDead = {} end
 end
 A.JournalWatchParty = WatchParty
+-- Close by: in range, as the game reports it for a groupmate.
+local function Near(unit)
+    local near, checked = Ask(UnitInRange, unit)
+    return near == true and checked ~= false
+end
 -- Resting together: an inn or a city, with them close by (in range). Once
 -- per place and outing.
 local restedAt = setmetatable({}, {__mode = "k"})
@@ -681,7 +686,9 @@ local function ScanQuests()
         if level and level > 0 then questLevels[questID] = level end
         local with = questWith[questID]
         for key, unit in pairs(party) do
-            if OnQuest(unit, questID) then
+            -- (on it with you means close by: a quest everyone carries, a crafting or
+            -- account-wide one, is not shared with a groupmate on the other side of the world)
+            if OnQuest(unit, questID) and Near(unit) then
                 if not with then with = {}; questWith[questID] = with end
                 with[key] = true
             end
@@ -730,7 +737,7 @@ function A.JournalQuest(questID)
         -- Turned in before a check saw it done: the companions on it with you.
         local with = questWith[questID]
         EachPartyUnit(function(unit, key)
-            if sessions[key] and ((with and with[key]) or OnQuest(unit, questID)) then together[key] = true end
+            if sessions[key] and ((with and with[key]) or (OnQuest(unit, questID) and Near(unit))) then together[key] = true end
         end)
     end
     questWith[questID], questWatched[questID] = nil, nil

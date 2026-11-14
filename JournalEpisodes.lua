@@ -179,7 +179,7 @@ local function Fill(run, scenes, opts)
                         -- (the quest's level, from the record's entry, for the odds at the entry)
                         local ql
                         for _, x in ipairs(scene.entries or {}) do
-                            if x.k == "quest" and x.d == q.title and (not q.qid or x.qid == q.qid) then ql = ql or tonumber(x.ql) end
+                            if x.k == "quest" and x.d == q.title and (not q.qid or x.qid == q.qid) then ql = ql or A.QuestLevelReal(x.ql, x.pl or x.ol) end
                         end
                         run.quests[#run.quests + 1] = {quest = q, scene = scene, t = t, level = ql}
                         if not lastTurnIn or t > lastTurnIn then lastTurnIn = t end
@@ -684,7 +684,7 @@ local function Finish(ep)
     for _, f in ipairs(ep.firsts) do
         if f.what == "continent" then w = w + 15 elseif f.what == "zone" then w = w + 6 elseif f.what == "dungeon" then w = w + 10 end
     end
-    for _, q in ipairs(ep.quests) do w = w + math.min(3, (tonumber(q.quest.ql) or 0) / 10) end
+    for _, q in ipairs(ep.quests) do w = w + math.min(3, (A.QuestLevelReal(q.quest.ql, q.quest.pl) or 0) / 10) end
     ep.weight = w
     -- the facts a close can use
     if ep.kind == "dungeon" and ep.run then

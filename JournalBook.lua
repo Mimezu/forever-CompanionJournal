@@ -1,4 +1,12 @@
 local _, A = ...
+-- A quest's level as a measure of its danger. Set at the cap for someone far below it,
+-- or fifteen levels above them, the number cannot be danger: it marks work with no real
+-- level, a crafting errand or a fetch quest anyone can do. Nil then.
+function A.QuestLevelReal(ql, pl)
+    ql, pl = tonumber(ql), tonumber(pl)
+    if ql and pl and (ql - pl >= 15 or (ql >= 60 and pl < 50)) then return nil end
+    return ql
+end
 -- The journal as a book: days made of scenes, and the prose the journal
 -- window's styles lay out. Two modes:
 --   "all"        every adventure, one paragraph per scene;
@@ -699,6 +707,17 @@ function A.JournalBook(person)
             days[#days + 1] = day
         end
         day.scenes[#day.scenes + 1] = scene
+    end
+    -- In a companion's book, a day with no time together keeps no quests: they prove
+    -- nothing shared (a quest everyone carries, finished while they were far away).
+    if not person.self then
+        local kept = {}
+        for _, day in ipairs(days) do
+            local together = false
+            for _, scene in ipairs(day.scenes) do if scene.kind ~= "quest" then together = true; break end end
+            if together then kept[#kept + 1] = day end
+        end
+        days = kept
     end
     for _, day in ipairs(days) do
         local seenZones = {}

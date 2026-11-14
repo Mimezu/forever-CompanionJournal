@@ -6509,6 +6509,7 @@ function T.TellOnce(person, days, voice, player, brief)
             for _, quest in ipairs(f.quests) do
                 local lore = L.Quest and L.Quest(quest.title)
                 local ql, kind = quest.level or (lore and lore.level), quest.kind or (lore and lore.kind)
+                ql = A.QuestLevelReal(ql, quest.pl or level)
                 if (ql and (quest.pl or level) and ql - (quest.pl or level) >= 3) or kind == 1 or kind == 81 or kind == 62 then quickNotable = true end
                 local story = L.QuestStory and L.QuestStory(quest.title, quest.qid)
                 if story and story.after and #story.after > 0 and not history.questLore[quest.qid or quest.title] then quickNotable = true end
@@ -6556,6 +6557,7 @@ function T.TellOnce(person, days, voice, player, brief)
                 local lore = L.Quest and L.Quest(quest.title)
                 local ql, kind = quest.level or (lore and lore.level), quest.kind or (lore and lore.kind)
                 local pl = quest.pl or level
+                ql = A.QuestLevelReal(ql, pl)
                 -- ("work meant for more seasoned adventurers" is said once in a book, for a quest
                 -- four levels or more above you; "work meant for a full party" one chapter in four)
                 if deedsToday then -- (the deeds below tell the work by what was done, not by its title)
@@ -8475,6 +8477,7 @@ function T.TellOnce(person, days, voice, player, brief)
                 local ql = quest.level or (lore and lore.level)
                 local kind = quest.kind or (lore and lore.kind)
                 local pl = quest.pl or level
+                ql = A.QuestLevelReal(ql, pl)
                 if ql and pl then
                     local diff = ql - pl
                     if not hardestDiff or diff > hardestDiff then hardest, hardestDiff = quest, diff end
@@ -9525,6 +9528,7 @@ function T.TellOnce(person, days, voice, player, brief)
                     if A.Lore and A.Lore.QuestStory and A.Lore.QuestStory(quest.title, quest.qid) then return false end
                     local lore = L.Quest and L.Quest(quest.title)
                     local ql, kind = quest.level or (lore and lore.level), quest.kind or (lore and lore.kind)
+                    ql = A.QuestLevelReal(ql, quest.pl)
                     if (ql and quest.pl and ql - quest.pl >= 3) or kind == 1 or kind == 81 or kind == 62 then return false end
                 end
                 return true

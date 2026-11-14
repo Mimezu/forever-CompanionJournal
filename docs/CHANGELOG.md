@@ -1,5 +1,11 @@
 # Companion Journal: changes
 
+## 1.44.1 (2026-11-13)
+
+- Quests shared only with companions close by
+- Companion books: a day with no time together is not told
+- Crafting and cap-level errands are never "hard work"
+
 ## 1.44.0 (2026-11-13)
 
 - Settings redesigned: a grouped menu, titled pages, label and switch columns

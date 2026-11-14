@@ -45,6 +45,8 @@ function UnitIsPlayer() return true end
 function UnitGUID(unit) return unit == "player" and "Player-1-00000001" or nil end
 local units = {}
 local function Member(unit) return units[unit] or members[tonumber(unit:match("%d+") or 0)] end
+local far = {}
+function UnitInRange(unit) local m = Member(unit); return not (m and far[m[1]]), true end
 function UnitFullName(unit) local m = Member(unit); if m then return m[1], "Forever" end end
 function UnitClass(unit) local m = Member(unit); if m then return m[2], m[2] end end
 function UnitLevel(unit) local m = Member(unit); return m and m[3] or 0 end
@@ -268,6 +270,18 @@ clock = clock + 5
 Fire("UNIT_QUEST_LOG_CHANGED", "party1")
 TurnIn(11)
 check(aeryn.journal[#aeryn.journal].k == "quest" and aeryn.journal[#aeryn.journal].d == "A Letter", "a letter you both carried")
+
+-- 13b. A quest everyone carries (a crafting errand) is not shared with a groupmate far away.
+questLog, complete[12] = {12}, false
+onQuest = {Aeryn = {[12] = true}}
+far.Aeryn = true
+Fire("UNIT_QUEST_LOG_CHANGED", "player")
+complete[12] = true
+Fire("UNIT_QUEST_LOG_CHANGED", "player")
+count = #aeryn.journal
+TurnIn(12)
+check(#aeryn.journal == count, "far away: their journal does not take the quest")
+far.Aeryn = nil
 
 -- 14. Always on with the journal: no setting of its own.
 check(A.defaults.journalGroupmates == nil, "kept-aside memories have no option")

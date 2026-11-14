@@ -467,7 +467,7 @@ PB.questOne = {
 -- PB.questHard
 PB.questHard = {
     "{we} finished {quest}, work usually left to more seasoned adventurers.",
-    "{quest} called for more experience than {we} had, but it was finished.",
+    "{we} finished {quest}, though it was meant for someone more seasoned.",
     "The work on {quest} called for a seasoned hand, and {we} saw it through.",
 }
 

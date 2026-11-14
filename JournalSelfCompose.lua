@@ -896,10 +896,10 @@ end
 -- A quest's level and mine when it was handed in, from the record's own line.
 function C.QuestLevel(ep, q)
     local quest = q.quest or q
-    if tonumber(quest.ql) then return tonumber(quest.ql), tonumber(quest.pl) end
+    if tonumber(quest.ql) then return A.QuestLevelReal(quest.ql, quest.pl), tonumber(quest.pl) end
     for _, sc in ipairs(ep.scenes or {}) do
         for _, e in ipairs(sc.entries or {}) do
-            if e.k == "quest" and ((quest.qid and e.qid == quest.qid) or (quest.title and e.d == quest.title)) then return tonumber(e.ql), tonumber(e.pl or e.ol) end
+            if e.k == "quest" and ((quest.qid and e.qid == quest.qid) or (quest.title and e.d == quest.title)) then return A.QuestLevelReal(e.ql, e.pl or e.ol), tonumber(e.pl or e.ol) end
         end
     end
     return nil
