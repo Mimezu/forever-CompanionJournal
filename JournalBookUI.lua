@@ -2564,6 +2564,7 @@ end
 -- Morpheus under the page's ornate head, a red rule beneath, at the same height on
 -- every page; what the page holds starts below them (HEAD and BODY: below the book's top).
 local HEAD, BODY = 126, 178
+local MENU_WIDTH = 210 -- (the settings menu's column)
 A.BookBodyTop = function() return BODY - 40 end -- (the managers' pages start 40 below the top)
 local function PageTop()
     local managing = state.view == "people" or state.view == "npcs"
@@ -2629,9 +2630,15 @@ local function SettingsViewport(on)
     book.panel.scroll:SetPoint("TOPLEFT", box[1], -(on and body or box[2]))
     book.panel.scroll:SetPoint("BOTTOMRIGHT", -box[3], box[4])
     if not on then return end
+    -- (the menu: a column centred under the title, as wide as its words need)
+    local half = book.left:GetWidth() or 400
+    local width = math.min(MENU_WIDTH, half - cbox[1] - cbox[3])
+    local left = math.floor(half / 2 + ((cbox[1] or 0) - (cbox[3] or 0)) / 2 - width / 2)
     book.contents.scroll:ClearAllPoints()
-    book.contents.scroll:SetPoint("TOPLEFT", cbox[1], -body)
-    book.contents.scroll:SetPoint("BOTTOMRIGHT", -cbox[3], cbox[4] + 32)
+    book.contents.scroll:SetPoint("TOPLEFT", left, -body)
+    book.contents.scroll:SetPoint("BOTTOM", 0, cbox[4] + 32)
+    book.contents.scroll:SetWidth(width)
+    book.contentsChild:SetWidth(width)
 end
 
 -- Draw the book.

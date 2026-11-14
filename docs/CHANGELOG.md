@@ -1,5 +1,9 @@
 # Companion Journal: changes
 
+## 1.45.2 (2026-11-13)
+
+- Settings menu centred under its title
+
 ## 1.45.1 (2026-11-13)
 
 - Companions and NPCs pages keep the journal's margins
