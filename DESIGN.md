@@ -308,9 +308,8 @@ Read the README entries 1.6.0 to 1.12.0 for the full list. In short:
    logged-in character has actually learned (quest presented vs turned in). Hidden
    identities (Dathrohan/Balnazzar, Moira's child) stay hidden until the exact quest
    evidence exists [SI: .../editorial-20261029/checkpoint.txt].
-5. **Pages that turn, Reading view editions** (Original, Your tale, Our story, By the fire),
-   the Companions/NPCs/Settings pages inside the book (`BookManagement.lua`,
-   `JournalPagination.lua`, `JournalReader.lua`).
+5. **Pages that turn**, the Companions/NPCs/Settings pages inside the book (`BookManagement.lua`,
+   `JournalPagination.lua`).
 6. **Evidence discipline.** `STORY_RULES.txt`; quest IDs preserved in new records; a coverage
    tool (`tools/StoryCoverage.lua`); boss consequences bounded by evidence (Majordomo's
    surrender and Celebras's release are not kills; no "Naralex awakened" unless recorded).
@@ -609,7 +608,7 @@ Details and API evidence: `SI: cj-overnight-20261105\moments\DESIGN-moments.md`.
 the original page), `JournalUI.lua` (reading choices, ways into a journal), `JournalBookUI.lua` (the
 book, the only window since 1.16.0; variants through `A.BookVariant(key)` and `db.bookVariants`; one skin, the spellbook pages, since 1.17.0),
 `BookManagement.lua` (Companions, NPCs, Settings pages), `JournalPagination.lua`,
-`JournalReader.lua` (Reading view editions), `LoreNotesUI.lua` (the parchment slip).
+`LoreNotesUI.lua` (the parchment slip).
 
 ### 7.5 Where to add a new condition or narrated moment
 
@@ -670,10 +669,9 @@ SI: journal-voice/PLAN.md]:
 
 Book (layout B): Settings > Reading (Everything/Highlights, Simple/Story, page style A-E,
 book size A/B/C or drag, One/Two pages, extras: Today so far, Names open their journal,
-Reading view, Timeline, New chapter notice, portraits), Settings > Testing (bookmarks
+Timeline, New chapter notice, portraits), Settings > Testing (bookmarks
 A/B/C, adding, unread ribbons, portraits when/where/frame), People in the
-world, Adding people, Recording. Reading view editions: Original, Your tale, Our story,
-By the fire. (Layout A, the list window, was removed in 1.16.0.)
+world, Adding people, Recording. (Layout A, the list window, was removed in 1.16.0.)
 
 ### 7.8 Simulators (offline, lua5.1, run from the live client root)
 

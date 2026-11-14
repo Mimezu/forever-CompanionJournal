@@ -156,10 +156,6 @@ for _, size in ipairs({{"minimum", 760, 520}, {"a", 860, 580}, {"b", 1000, 660},
                         check(bounds(control).top < bounds(book.rightRule).bottom, "page navigation clears the rule")
                     end
                     check(bounds(book.retell).right < right.left, "writing action clears the binding")
-                    if marks ~= "c" then
-                        inside(book.readView, book.paperRight, "Reading view button fits its leaf")
-                        check(bounds(book.next).right < bounds(book.readView).left, "Reading view button clears page navigation")
-                    end
                     check(bounds(book.summary).bottom > bounds(book.contents.scroll).top, "header summary clears contents text")
                     check(bounds(book.timeline).top < bounds(book.right).bottom + book.rightPage.box[4], "timeline clears reserved narrative text")
                     inside(book.corner, book.paperRight, "page curl follows the physical paper corner")

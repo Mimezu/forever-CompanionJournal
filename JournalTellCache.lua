@@ -62,7 +62,7 @@ function C.Open(person)
     return false
 end
 
--- The key of one telling. `kind` names the teller ("self", "tale", "reader:..."), `args` the
+-- The key of one telling. `kind` names the teller ("self", "tale"), `args` the
 -- arguments it was given after the days.
 function C.Key(kind, person, days, args)
     local buf = {kind, ":", tostring(A.Me and A.Me() or ""), ":"}

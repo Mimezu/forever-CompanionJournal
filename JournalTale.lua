@@ -5606,7 +5606,7 @@ function T.TellOnce(person, days, voice, player, brief)
         end
         -- A dungeon visit must not make its completed quests depend on a
         -- randomly selected title/count sentence later in the telling.
-        if questScenes < 1 or (questScenes < 2 and not day.readerEpisode and #f.dungeons == 0) then multiQuestPlan = nil
+        if questScenes < 1 or (questScenes < 2 and #f.dungeons == 0) then multiQuestPlan = nil
         else table.sort(multiQuestPlan, function(a, b)
             if a.quest.t ~= b.quest.t then return a.quest.t < b.quest.t end
             return a.order < b.order

@@ -5655,11 +5655,11 @@ function ST.Tell(person, days, brief, retell)
                 and (index - (history.hearthSaid or -99)) >= 4 and teller.rng() < 0.6 then
                 history.hearthSaid = index
                 Say(teller:Say("hearthHome", W.hearthHome, {place = Place(hearth.d)}))
-            elseif h < 4 and not last.open and not (day.readerEpisode and nextDay and nextDay.sourceDay == day.sourceDay) and teller.rng() < (profile.night and 0.25 or 0.6) then
+            elseif h < 4 and not last.open and teller.rng() < (profile.night and 0.25 or 0.6) then
                 -- (a night player's late hours are not news every chapter)
                 plan.meta = {close = "late", t = last.e}
                 Say(teller:Say("late", W.late, {}))
-            elseif f.together >= 4 * 3600 and not (day.readerEpisode and nextDay and nextDay.sourceDay == day.sourceDay) and teller.rng() < 0.4 then
+            elseif f.together >= 4 * 3600 and teller.rng() < 0.4 then
                 plan.meta = {close = "long", t = last.e}
                 Say(teller:Say("long", W.long, {span = Span(f.together)}))
             end

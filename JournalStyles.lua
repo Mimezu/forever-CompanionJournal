@@ -145,7 +145,7 @@ local function DayParagraphs(person, day, mode, voice, ctx)
         if story then
             if story.text ~= "" or #story.quotes > 0 then
                 local title = story.title and A.JournalPlain(story.title) or nil
-                paragraphs[1] = {heading = (day.readerEdition == "fire" and "Episode " or "Chapter ") .. A.JournalTale.Roman(story.chapter) .. (title and ("  \194\183  " .. title) or "")}
+                paragraphs[1] = {heading = "Chapter " .. A.JournalTale.Roman(story.chapter) .. (title and ("  \194\183  " .. title) or "")}
             end
             -- Scene breaks belong to the prose. Give each scene its own block so
             -- Diary's word-by-word ink layout keeps them, too.
@@ -220,9 +220,9 @@ function S.b(ctx, days, person, mode)
         -- The day opens like a chapter: weekday, date, an ornamental rule.
         local head = ctx.Block()
         local h1 = Paragraph(ctx, head, "weekday", Font("narrow", 11), SOFT, 0, 0, 0, width,
-            day.readerEdition and day.readerDate or day.weekday:upper(), "CENTER")
+            day.weekday:upper(), "CENTER")
         local h2 = 0
-        if not day.readerEdition then
+        do
             h2 = Paragraph(ctx, head, "date", Font("book", 21), RUBRIC, 0, 0, -(h1 + 1), width,
                 day.dayNumber .. " " .. day.month .. " " .. day.year, "CENTER")
         end

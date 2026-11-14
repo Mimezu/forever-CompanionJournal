@@ -144,7 +144,7 @@ end
 -- Run RefreshBook with UI-only helpers stubbed, keeping portrait preparation,
 -- eligible-leaf selection, contents scheduling and navigation unchanged.
 local book = Object()
-for _, key in ipairs({"contents", "panel", "name", "summary", "readView", "footer", "input", "write", "retell", "cardHost", "quill", "flip", "addBar", "timeline", "classIcon", "pin", "chapterLabel", "prev", "next", "left", "right"}) do book[key] = Object() end
+for _, key in ipairs({"contents", "panel", "name", "summary", "footer", "input", "write", "retell", "cardHost", "quill", "flip", "addBar", "timeline", "classIcon", "pin", "chapterLabel", "prev", "next", "left", "right"}) do book[key] = Object() end
 book.contents.box, book.contents.scroll, book.contents.portrait = {20, 20, 20, 20}, Object(), Object()
 book.panel.scroll = Object()
 book.leftPage, book.rightPage = Page(), Page()

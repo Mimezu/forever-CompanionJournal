@@ -430,7 +430,7 @@ local function Page(parent, side, paged)
     rim:SetColorTexture(0, 0, 0, 0.45)
     -- (the text's box on the page: left, top, right, bottom)
     page.box = {14, 12, 30, 12}
-    -- (a "single" page, as the reading view's, keeps the quest parchment: its torn edges finish it)
+    -- (a "single" page keeps the quest parchment: its torn edges finish it)
     local spellbook = side ~= "single"
     if spellbook then
         SetBookPage(page.paper, side)
@@ -911,7 +911,7 @@ local function PageChapters(page, person, chapters, style, mode, Story, prepare)
             if not n or n < 1 then n = page.ctx.Lines(fs.cjFont or "QuestFont", spacing, fs:GetWidth(), fs:GetText()) end
             n = math.max(1, n or 1)
             local step = (height + spacing) / n
-            for i = 0, n - 1 do lines[#lines + 1] = {top + i * step, top + (i + 1) * step - spacing} end
+            for i = 0, n - 1 do lines[#lines + 1] = {top + i * step, top + (i + 1) * step - spacing, words = true} end
         end
         for i = 1, page.used do
             local block = page.blocks[i]
@@ -925,6 +925,15 @@ local function PageChapters(page, person, chapters, style, mode, Story, prepare)
         local fullCapacity = math.max(80, (page:GetHeight() or 500) - page.box[2] - page.box[4] - 3)
         local capacity = math.max(80, fullCapacity - (page.topInset or 0))
         local slices = A.JournalPageSlices(page.contentHeight, capacity, lines, boundaries, fullCapacity)
+        -- (a page holding no words, only the closing flourish, is not turned to)
+        while #slices > 1 do
+            local last, worded = slices[#slices], false
+            for _, row in ipairs(lines) do
+                if row.words and row[2] > last.offset + 0.5 and row[1] < last.offset + last.extent - 0.5 then worded = true; break end
+            end
+            if worded then break end
+            slices[#slices] = nil
+        end
         for part, slice in ipairs(slices) do
             leaves[#leaves + 1] = {day = chapter.day, classic = chapter.classic, offset = slice.offset,
                 extent = slice.extent, part = part, parts = #slices, chapterIndex = ci, inset = page.inset or 0}
@@ -1185,15 +1194,13 @@ local function LayoutPages()
             rule:SetWidth(half - 48); rule:SetShown(state.view == "journal")
         end
     end
-    -- Keep the writing controls clear of navigation, including the Reading view
-    -- button used by the older bookmark variants, at the minimum window size.
-    local readingButton = A.BookVariant("marks") ~= "c"
+    -- Keep the writing controls clear of navigation at the minimum window size.
     if book.input then book.input:SetWidth(math.max(140, math.min(240, half - 230))) end
     -- (the chapter arrows: under the right page)
     if book.chapterLabel then
-        book.chapterLabel:SetWidth(readingButton and 100 or 110)
+        book.chapterLabel:SetWidth(110)
         book.chapterLabel:ClearAllPoints()
-        book.chapterLabel:SetPoint("CENTER", book.right, "BOTTOM", readingButton and -38 or 0, 44 - bottom)
+        book.chapterLabel:SetPoint("CENTER", book.right, "BOTTOM", 0, 44 - bottom)
     end
 end
 
@@ -1395,7 +1402,7 @@ local function Build()
     book.marks = {}
 
     -- The footer of the pages: the chapter arrows, under the page they turn.
-    -- (Show, Told and Pages are in Settings > Reading; Reading view is a tools' ribbon)
+    -- (Show, Told and Pages are in Settings > Reading)
     local footer = CreateFrame("Frame", nil, book)
     footer:SetPoint("BOTTOMLEFT", 22, 16); footer:SetPoint("BOTTOMRIGHT", -22, 16); footer:SetHeight(26)
     book.footer = footer
@@ -1407,9 +1414,6 @@ local function Build()
     book.next = Toggle(footer, ">", 26, "Next page", nil, function() A.BookTurn(1) end)
     book.next:SetPoint("LEFT", book.chapterLabel, "RIGHT", 4, 0)
     PageArrow(book.prev, "Prev"); PageArrow(book.next, "Next")
-    -- (bookmarks A and B have no tools' ribbons, so they keep this button)
-    book.readView = Toggle(footer, "Reading view", 84, "Reading view", "Compare Original, Your tale, Our story and By the fire.", function() A.BookReader(true) end)
-    book.readView:SetPoint("RIGHT", 0, 0)
 
     -- Writing a line, Retell, and Close, at the bottom.
     local input = CreateFrame("EditBox", nil, book, "InputBoxTemplate")
@@ -2086,115 +2090,6 @@ local function FillTimeline(chapters, person)
     for i = #chapters + 1, #strip.marks do strip.marks[i]:Hide() end
 end
 
--- A focused reader with comparable editions and independent page positions.
-local reader
-local function ReaderEdition() return A.JournalReader and A.JournalReader.Valid(A.db.readerEdition) or "original" end
-local function SaveReaderPlace()
-    if reader and reader.placeKey then
-        reader.places = reader.places or {}
-        reader.places[reader.placeKey] = reader.index or 1
-    end
-end
-local function DrawReader(reusePages)
-    local person = Shown()
-    if not reader or not person then return end
-    local edition = ReaderEdition()
-    local choices = A.JournalReader and A.JournalReader.Companions(person) or {}
-    local player = A.CharacterPlayer and ((person.self and A.CharacterPlayer(person.charKey)) or (state.owner and A.CharacterPlayer(state.owner))) or nil
-    if edition == "ours" then
-        local choice = choices[1]
-        for _, candidate in ipairs(choices) do if candidate.key == reader.companionKey then choice = candidate end end
-        reader.companionKey = choice and choice.key or nil
-        person = choice and choice.person or person
-    end
-    reader.companions = choices
-    reader.subject = person
-    reader.placeKey = tostring(state.key) .. ":" .. (state.owner or "") .. ":" .. edition .. ":" .. (edition == "ours" and (reader.companionKey or "") or "")
-    for key, button in pairs(reader.editions) do SetChosen(button, key == edition) end
-    local chapters, styleKey, styleMode, Story
-    local width = math.min(660, math.max(440, (UIParent:GetWidth() or 1024) - 80))
-    local limit = math.min(740, math.max(360, (UIParent:GetHeight() or 900) - 80))
-    -- A folio has a fixed page size. Only a change to the available screen
-    -- dimensions can reflow it; short pages leave quiet space on the paper.
-    if reader.layoutWidth ~= width or reader.layoutHeight ~= limit then reusePages = false end
-    reader.layoutWidth, reader.layoutHeight = width, limit
-    reader:SetWidth(width)
-    reader.heading:SetWidth(width - 110)
-    reader.status:SetShown(width >= 600)
-    reader.mode:SetShown(width >= 640)
-    reader.page.child:SetWidth(width - 38 - reader.page.pad)
-    reader:SetHeight(limit)
-    if GameTooltip then GameTooltip:Hide() end
-    if reusePages and reader.pageCache then
-        local cache = reader.pageCache
-        chapters, styleKey, styleMode, Story = cache.leaves, cache.style, cache.mode, cache.story
-    else
-        if edition == "original" then
-            chapters, styleKey, styleMode, Story = Chapters(person)
-        elseif edition == "ours" and #choices == 0 then
-            chapters, styleKey, styleMode, Story = {}, "b", "story", function() end
-        else
-            chapters, Story = A.JournalReader.Build(person, edition, player)
-            styleKey, styleMode = "b", "story"
-        end
-        chapters = PageChapters(reader.page, person, chapters, styleKey, styleMode, Story)
-        reader.pageCache = {leaves = chapters, style = styleKey, mode = styleMode, story = Story}
-    end
-    if reader.jumpDay then
-        local found
-        for i, leaf in ipairs(chapters) do
-            local day = leaf.day and leaf.day.sourceDay or ChapterDay(leaf)
-            if day == reader.jumpDay then
-                if not found or leaf.offset <= (reader.jumpOffset or 0) then reader.index, found = i, true end
-            elseif not found and day and day > reader.jumpDay then reader.index = i; break end
-        end
-        reader.jumpDay = nil
-        reader.jumpOffset = nil
-    end
-    reader.index = math.max(1, math.min(reader.index or (reader.places and reader.places[reader.placeKey]) or 1, #chapters))
-    local leaf = chapters[reader.index]
-    DrawChapter(reader.page, person, leaf, styleKey, styleMode, Story)
-    reader.page.empty:SetText(edition == "ours" and #choices == 0 and "No shared adventures recorded yet.\nChoose Original or Your tale to read your own history." or "No recorded adventures to tell yet.")
-    reader.leaves = chapters
-    local name = person.self and (person.name or "My") or (person.display or ShortName(person.name or "Companion"))
-    reader.heading:SetText(edition == "ours" and ("Our story with " .. name) or (name .. "'s journal"))
-    local running = {tale = "A LIFE IN CHAPTERS", ours = "ADVENTURES TOGETHER", fire = "BY THE FIRE"}
-    reader.runningTitle:SetText(running[edition] or (person.self and "A PERSONAL CHRONICLE" or "ADVENTURES TOGETHER"))
-    reader.status:SetText(reader.page.today:IsShown() and "Today \194\183 In progress" or "")
-    reader.page.today:Hide()
-    reader.mode:SetText(edition == "original" and ((A.JournalVoice() == "story" and "Story" or "Simple") .. " \194\183 "
-        .. (A.JournalMode() == "all" and "Everything" or "Highlights")) or edition == "fire" and "Short telling" or "Full telling")
-    local chapterCount = chapters[#chapters] and chapters[#chapters].chapterIndex or 0
-    reader.chapterPrev:SetEnabled(leaf and leaf.chapterIndex > 1 or false)
-    reader.chapterNext:SetEnabled(leaf and leaf.chapterIndex < chapterCount or false)
-    reader.subjectButton.label:SetText(edition == "ours" and (reader.companionKey and ("With " .. name .. (#choices > 1 and "  >" or "")) or "No companion history")
-        or ((edition == "fire" and "Episode " or "Chapter ") .. (leaf and leaf.chapterIndex or 0) .. " of " .. chapterCount))
-    reader.subjectButton:SetEnabled(edition == "ours" and #choices > 1)
-    reader.label:SetText(#chapters == 0 and "" or ("Page " .. reader.index .. " of " .. #chapters))
-    reader.prev:SetEnabled(reader.index > 1); reader.next:SetEnabled(reader.index < #chapters)
-    SaveReaderPlace()
-end
-function A.SetReaderEdition(edition)
-    if not A.JournalReader then return end
-    edition = A.JournalReader.Valid(edition)
-    if A.db.readerEdition == edition then return end
-    SaveReaderPlace()
-    if A.CloseLoreNote then A.CloseLoreNote() end
-    A.db.readerEdition = edition
-    if reader then
-        reader.index, reader.jumpDay, reader.jumpOffset, reader.pageCache = nil, nil, nil, nil
-        if reader:IsShown() then DrawReader() end
-    end
-end
-local function ReaderChapter(delta)
-    if A.CloseLoreNote then A.CloseLoreNote() end
-    local leaf = reader.leaves and reader.leaves[reader.index]
-    if not leaf then return end
-    local target = leaf.chapterIndex + delta
-    for i, candidate in ipairs(reader.leaves) do
-        if candidate.chapterIndex == target then reader.index = i; DrawReader(true); return end
-    end
-end
 -- The art board (/cj artboard): candidate art for the book, as the game draws it,
 -- each with its name and size, to choose from a screenshot.
 local ARTBOARD = {
@@ -2267,129 +2162,6 @@ function A.BookArtboard()
     end
     artboard:SetSize(COLS * CELL_W + 16, -y + 8)
     artboard:Show()
-end
-
-function A.BookReader(open)
-    if not reader then
-        reader = CreateFrame("Frame", "CompanionJournalReader", UIParent)
-        reader:SetSize(660, 620); reader:SetPoint("CENTER")
-        reader:SetFrameStrata("FULLSCREEN_DIALOG"); reader:EnableMouse(true); reader:SetToplevel(true)
-        reader:SetClampedToScreen(true)
-        if UISpecialFrames then table.insert(UISpecialFrames, "CompanionJournalReader") end
-        -- The folio's header, chapter and footer share one sheet of paper.
-        -- Their existing rows still reserve the same space for pagination.
-        local ground = reader:CreateTexture(nil, "BACKGROUND")
-        ground:SetAllPoints(); ground:SetAtlas("QuestBG-Parchment")
-        reader.paper = ground
-        reader.borderLines = {}
-        for _, side in ipairs({"TOP", "BOTTOM", "LEFT", "RIGHT"}) do
-            local edge = reader:CreateTexture(nil, "BORDER")
-            if side == "TOP" or side == "BOTTOM" then
-                edge:SetPoint(side .. "LEFT"); edge:SetPoint(side .. "RIGHT"); edge:SetHeight(1)
-            else
-                edge:SetPoint("TOP" .. side); edge:SetPoint("BOTTOM" .. side); edge:SetWidth(1)
-            end
-            edge:SetColorTexture(0.48, 0.36, 0.20, 0.85)
-            reader.borderLines[#reader.borderLines + 1] = edge
-        end
-        local heading = reader:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-        heading:SetText("Reading view")
-        heading:SetWordWrap(false); heading:SetWidth(480)
-        heading:SetPoint("TOP", 0, -16); heading:SetHeight(18)
-        heading:SetJustifyH("CENTER")
-        heading:SetTextColor(unpack(INK)); heading:SetShadowOffset(0, 0)
-        reader.heading = heading
-        reader:SetMovable(true)
-        local drag = CreateFrame("Frame", nil, reader)
-        drag:SetPoint("TOPLEFT", 5, -3); drag:SetPoint("TOPRIGHT", -36, -3); drag:SetHeight(34)
-        drag:EnableMouse(true); drag:RegisterForDrag("LeftButton")
-        drag:SetScript("OnDragStart", function() reader:StartMoving() end)
-        drag:SetScript("OnDragStop", function() reader:StopMovingOrSizing() end)
-        reader.close = Toggle(reader, "x", 22, "Close reading view", "Return to the journal.", function() reader:Hide() end)
-        reader.close:SetPoint("TOPRIGHT", -9, -12)
-        reader.editions = {}
-        for i, choice in ipairs(A.JournalReader and A.JournalReader.choices or {{"original", "Original"}}) do
-            local key = choice[1]
-            local button = Toggle(reader, choice[2], 96, choice[2], choice[3], function() A.SetReaderEdition(key) end)
-            button:SetPoint("TOP", (i - 2.5) * 100, -46)
-            reader.editions[key] = button
-        end
-        reader.subjectButton = Toggle(reader, "", 260, "Shared history", "In Our story, click to choose another companion with recorded adventures.", function()
-            SaveReaderPlace()
-            local at = 1
-            for i, choice in ipairs(reader.companions or {}) do if choice.key == reader.companionKey then at = i end end
-            local choice = reader.companions[at % #reader.companions + 1]
-            reader.companionKey, reader.index, reader.pageCache = choice.key, nil, nil
-            DrawReader()
-        end)
-        reader.subjectButton:SetPoint("TOP", 0, -74)
-        reader.subjectButton.label:SetWidth(244); reader.subjectButton.label:SetWordWrap(false)
-        reader.chapterPrev = Toggle(reader, "<", 26, "Previous chapter", nil, function() ReaderChapter(-1) end)
-        reader.chapterPrev:SetPoint("RIGHT", reader.subjectButton, "LEFT", -6, 0)
-        reader.chapterNext = Toggle(reader, ">", 26, "Next chapter", nil, function() ReaderChapter(1) end)
-        reader.chapterNext:SetPoint("LEFT", reader.subjectButton, "RIGHT", 6, 0)
-        reader:SetScript("OnHide", function()
-            SaveReaderPlace()
-            if A.CloseLoreNote then A.CloseLoreNote() end
-            if reader.restoreBook and book then
-                reader.restoreBook = nil
-                book:Show(); A.RefreshBook()
-            end
-        end)
-        -- Keep the measured chapter box, using the folio's full sheet behind it.
-        reader.page = Page(reader, "single", true)
-        reader.page.paper:Hide()
-        if reader.page.GetRegions then
-            for _, region in ipairs({reader.page:GetRegions()}) do
-                if region.GetDrawLayer and region:GetDrawLayer() == "BACKGROUND" then region:Hide() end
-            end
-        end
-        reader.page.owner = reader
-        reader.page:SetPoint("TOPLEFT", 22, -104); reader.page:SetPoint("BOTTOMRIGHT", -16, 46)
-        reader.page.box = {46, 54, 52, 34}; reader.page.pad = 98
-        reader.page.ctx.reading = true
-        reader.page.turn = function(delta) reader.index = (reader.index or 1) + delta; DrawReader(true) end
-        reader.page.scroll:ClearAllPoints()
-        reader.page.scroll:SetPoint("TOPLEFT", 46, -54); reader.page.scroll:SetPoint("BOTTOMRIGHT", -52, 34)
-        reader.page.child:SetWidth(660 - 38 - 98)
-        SlimScrollBar(reader.page.scroll)
-        local runningTitle = reader.page:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
-        runningTitle:SetPoint("TOP", 0, -23); runningTitle:SetTextColor(unpack(INK_SOFT))
-        runningTitle:SetShadowOffset(0, 0)
-        reader.runningTitle = runningTitle
-        -- Fine inset rules give the folio a finished edge without covering its
-        -- parchment or competing with the chapter's own red ornaments.
-        for _, side in ipairs({"LEFT", "RIGHT"}) do
-            local rule = reader.page:CreateTexture(nil, "BORDER")
-            local x = side == "LEFT" and 20 or -20
-            rule:SetPoint("TOP" .. side, x, -20); rule:SetPoint("BOTTOM" .. side, x, 20)
-            rule:SetWidth(1); rule:SetColorTexture(0.42, 0.24, 0.10, 0.22)
-        end
-        reader.status = reader:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
-        reader.status:SetPoint("BOTTOMLEFT", 28, 23); reader.status:SetWidth(170); reader.status:SetJustifyH("LEFT")
-        reader.status:SetTextColor(unpack(INK_SOFT)); reader.status:SetShadowOffset(0, 0)
-        reader.mode = reader:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
-        reader.mode:SetPoint("BOTTOMRIGHT", -24, 23); reader.mode:SetWidth(150); reader.mode:SetJustifyH("RIGHT")
-        reader.mode:SetTextColor(unpack(INK_SOFT)); reader.mode:SetShadowOffset(0, 0)
-        -- (the chapter arrows in the window's footer, as in the book)
-        reader.label = reader:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
-        reader.label:SetPoint("BOTTOM", 0, 22); reader.label:SetWidth(120); reader.label:SetJustifyH("CENTER")
-        reader.label:SetTextColor(unpack(INK_SOFT)); reader.label:SetShadowOffset(0, 0)
-        reader.prev = Toggle(reader, "<", 26, "Previous page", nil, function() reader.index = reader.index - 1; DrawReader(true) end)
-        reader.prev:SetPoint("RIGHT", reader.label, "LEFT", -4, 0)
-        reader.next = Toggle(reader, ">", 26, "Next page", nil, function() reader.index = reader.index + 1; DrawReader(true) end)
-        reader.next:SetPoint("LEFT", reader.label, "RIGHT", 4, 0)
-    end
-    if open == false then reader:Hide(); return end
-    reader.jumpDay = state.leaves and ChapterDay(state.leaves[state.index or 1])
-    reader.jumpOffset = state.leaves and state.leaves[state.index or 1] and state.leaves[state.index or 1].offset
-    reader.index = nil
-    if ReaderEdition() ~= "original" then reader.jumpDay, reader.jumpOffset = nil, nil end
-    reader.restoreBook = book and book:IsShown() or reader.restoreBook
-    if A.CloseLoreNote then A.CloseLoreNote() end
-    if book then book:Hide() end
-    reader:Show(); reader:Raise()
-    DrawReader()
 end
 
 -- A bookmark on the right edge of the book.
@@ -2489,7 +2261,6 @@ local function FillLabelledMarks()
                 local click = book.addBar.main:GetScript("OnClick")
                 if click then click(book.addBar.main) end
             end},
-        {title = "Reading view", tip = "Compare four ways to read your adventures.", color = {0.24, 0.16, 0.07}, action = function() A.BookReader(true) end},
         {title = "NPCs", tip = "The NPCs you noted.", color = {0.18, 0.15, 0.12}, chosen = state.view == "npcs", gapBefore = true,
             action = function() state.view = "npcs"; A.RefreshBook() end},
         {title = "Settings", tip = "Reading, testing variants, and all settings.", color = {0.18, 0.15, 0.12}, chosen = state.view == "settings",
@@ -2798,11 +2569,7 @@ end
 -- Draw the book.
 function A.RefreshBook(toEnd, reusePages)
     if book and book.notePopup then book.notePopup:Hide() end
-    if not book or not book:IsShown() then
-        if not reusePages and reader and reader:IsShown() then DrawReader() end
-        return
-    end
-    if not reusePages and reader and reader:IsShown() then DrawReader() end
+    if not book or not book:IsShown() then return end
     local db = A.db
     LayoutPages()
     if book.heading then book.heading:SetText("Companion Journal") end
@@ -2819,7 +2586,6 @@ function A.RefreshBook(toEnd, reusePages)
         book.sectionHeading:SetText(titles[state.settings] or "Settings")
     end
     for key, button in pairs(book.sizeButtons) do SetChosen(button, db.bookSize == key) end
-    book.readView:SetShown(A.BookVariant("marks") ~= "c")
     FillBookmarks()
     local other = state.view ~= "journal"
     book.panel:SetShown(other)
@@ -3055,12 +2821,11 @@ function A.BookJump(key)
     local day
     local person = Shown()
     if person then
-        local chapters = reader and reader:IsShown() and reader.leaves or state.leaves or Chapters(person)
-        local index = reader and reader:IsShown() and reader.index or state.index
+        local chapters = state.leaves or Chapters(person)
+        local index = state.index
         local chapter = chapters[index or #chapters]
         day = chapter and (chapter.day and (chapter.day.sourceDay or chapter.day.key) or chapter.classic and chapter.classic.key)
     end
-    if reader and reader:IsShown() then reader.jumpDay, reader.jumpOffset = day, 0 end
     local owner = state.owner or SelfOf(state.key)
     A.OpenBook(key, owner and owner ~= A.Me() and A.PersonAs(key, owner) and owner or nil)
     state.jumpDay = day
@@ -3097,7 +2862,6 @@ function A.OpenBook(key, charKey)
             if not A.PersonAs(key, charKey) then return end
         elseif not person then return end
     end
-    if reader and reader:IsShown() then reader.restoreBook = nil; reader:Hide() end
     if not book then Build() end
     if not key and A.FindPerson then
         local person, found = A.FindPerson("target")
@@ -3124,7 +2888,6 @@ end
 function A.OpenBookPeople(key, circle, mode)
     if not A.db then return end
     if not book then Build() end
-    if reader and reader:IsShown() then reader.restoreBook = nil; reader:Hide() end
     if not book.manager then book.manager = A.CreateBookManager(book, {IsPinned = IsPinned, TogglePin = TogglePin}) end
     if key or circle or mode then book.manager:Select(key, circle, mode) end
     CommitRead(); state.view = "people"
@@ -3142,7 +2905,6 @@ end
 function A.OpenBookSettings(section)
     if not A.db then return end
     if not book then Build() end
-    if reader and reader:IsShown() then reader.restoreBook = nil; reader:Hide() end
     CommitRead(); state.view, state.settings = "settings", section or state.settings
     book:Show(); book:Raise(); A.RefreshBook()
 end
@@ -3160,11 +2922,7 @@ end
 local baseRefresh = A.RefreshJournal
 function A.RefreshJournal(person, scrollToEnd)
     if baseRefresh then baseRefresh(person, scrollToEnd) end
-    if book and book:IsShown() then
-        if ShowsJournalOf(person, Shown()) then A.RefreshBook() end
-    elseif reader and reader:IsShown() then
-        if ShowsJournalOf(person, Shown()) or ShowsJournalOf(person, reader.subject) then DrawReader() end
-    end
+    if book and book:IsShown() and ShowsJournalOf(person, Shown()) then A.RefreshBook() end
 end
 
 -- The new-chapter notice, when you rest (an inn, a city) and today's chapter is new.
@@ -3330,14 +3088,6 @@ end
 function A.BookPad(button)
     if button == "PAD2" and A.LoreNoteIsOpen and A.LoreNoteIsOpen() then A.CloseLoreNote(); return end
     if not book or not book:IsShown() then return end
-    if reader and reader:IsShown() then
-        if button == "PADLSHOULDER" and reader.index > 1 then reader.index = reader.index - 1; DrawReader()
-        elseif button == "PADRSHOULDER" then reader.index = reader.index + 1; DrawReader()
-        elseif button == "PAD2" then reader:Hide()
-        elseif button == "PADDUP" then Scroll(reader.page, -40)
-        elseif button == "PADDDOWN" then Scroll(reader.page, 40) end
-        return
-    end
     if button == "PADDLEFT" then state.focus = "contents"
     elseif button == "PADDRIGHT" then state.focus = "page"
     elseif button == "PADDUP" or button == "PADDDOWN" then
