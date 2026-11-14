@@ -194,6 +194,10 @@ check(A.RoadModel.WithAt(model, t0 + 30).key == "dahlia-noir" and A.RoadModel.Wi
 local hers = A.RoadModel.Build({{k = "group", t = t0, e = deathAt}}, key, "alberich-realm", "dahlia-noir")
 local last = hers.pieces[#hers.pieces].points
 check(#hers.pieces == 1 and last[#last].t <= deathAt + 60, "a companion's map keeps only the road you shared")
+-- In Dahlia's book, built from your own journal: only the stretch she was with you.
+local fromMine = A.RoadModel.Build(journal, key, "alberich-realm", "dahlia-noir")
+local lastMine = fromMine.pieces[#fromMine.pieces].points
+check(#fromMine.pieces == 1 and lastMine[#lastMine].t <= deathAt + 60, "her map from your journal: only the stretch she was with you")
 -- A day before the recorder: its zones, one wash each.
 local old = A.RoadModel.Build({{k = "play", t = 100, e = 4000, z = "Durotar"}, {k = "death", t = 200, z = "Durotar"}}, Road.DayOf(100), "alberich-realm")
 check(not old.recorded and #old.stays == 1 and old.stays[1].map == 1411 and old.stays[1].guess, "a day before the recorder: a wash for its zone")

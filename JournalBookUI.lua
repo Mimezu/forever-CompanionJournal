@@ -23,6 +23,7 @@ local CIRCLE_ORDER = {
 }
 
 local book
+function A.BookFrame() return book end
 local BuildWizard -- (below; Build uses them)
 local Portrait, LookFor -- (portraits, below; the contents page uses them)
 -- view: "journal" (contents + chapters), "settings" or "npcs".
@@ -880,6 +881,8 @@ local function DrawChapter(page, person, chapter, style, styleMode, Story)
     -- (today's chapter of your own journal: still being written)
     local day = chapter and (chapter.day and chapter.day.key or chapter.classic and chapter.classic.key)
     page.today:SetShown(A.db.bookToday ~= false and person.self and day ~= nil and day == DayKeyOf(time and time() or 0))
+    -- (the road: a small map crest on a chapter's first page)
+    if A.RoadMap then A.RoadMap.Mark(page, person, chapter) end
     if chapter and chapter.offset then
         -- A fixed viewport shows a physical page of the laid-out chapter.
         -- It has no scrollbar or free scrolling; boundaries fall between lines.
@@ -2226,6 +2229,8 @@ local function FillLabelledMarks()
             action = function() A.OpenBookPeople(state.view == "journal" and state.key and A.People[state.key] and not A.People[state.key].npc and state.key or nil) end},
         {title = "Add someone", tip = "Your target, a groupmate, or a name.", color = {0.24, 0.16, 0.07},
             action = AddSomeone},
+        {title = "Atlas", tip = "Every road you walked.", color = {0.24, 0.16, 0.07},
+            action = function() if A.RoadMap then A.RoadMap.OpenAtlas(A.SelfPerson and A.SelfPerson(state.owner or SelfOf(state.key))) end end},
         {title = "NPCs", tip = "The NPCs you noted.", color = {0.18, 0.15, 0.12}, chosen = state.view == "npcs", gapBefore = true,
             action = function() state.view = "npcs"; A.RefreshBook() end},
         {title = "Settings", tip = "Reading, testing variants, and all settings.", color = {0.18, 0.15, 0.12}, chosen = state.view == "settings",

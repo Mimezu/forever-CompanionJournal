@@ -83,7 +83,8 @@ end
 local sizes = {}
 function M.Yards(map)
     if sizes[map] then return sizes[map][1], sizes[map][2] end
-    local w, h = C_Map and Ask(C_Map.GetMapWorldSize, map)
+    local w, h
+    if C_Map then w, h = Ask(C_Map.GetMapWorldSize, map) end
     if not (w and h and w > 0) then
         local _, a = Ask(C_Map.GetWorldPosFromMapPos, map, CreateVector2D and CreateVector2D(0, 0))
         local _, b = Ask(C_Map.GetWorldPosFromMapPos, map, CreateVector2D and CreateVector2D(1, 1))
@@ -144,7 +145,7 @@ function M.PlaceAt(model, t)
                 if not bestGap or gap < bestGap then best, bestGap = {map = piece.map, x = pts[k].x, y = pts[k].y}, gap end
                 if pts[k].t > t then break end
             end
-        elseif piece.kind == "flight" and t >= piece.from.t and t <= piece.to.t then
+        elseif piece.from and t >= piece.from.t and t <= piece.to.t then
             return {map = piece.from.map, x = piece.from.x, y = piece.from.y, air = true}
         end
     end
@@ -178,6 +179,11 @@ function M.Build(journal, day, character, companionKey)
         if e.t and DayOf(e.t) == day then
             if e.k == "with" and e.d then
                 model.together[#model.together + 1] = {t = e.t, e = e.e or e.t, key = e.d, name = e.n}
+                if companionKey and e.d == companionKey then
+                    -- (in their book: the time they were in your group)
+                    windows = windows or {}
+                    windows[#windows + 1] = {t = e.t, e = e.e or e.t}
+                end
             elseif (e.k == "group" or e.k == "outing") and companionKey then
                 windows = windows or {}
                 windows[#windows + 1] = {t = e.t, e = e.e or e.t}
@@ -198,6 +204,22 @@ function M.Build(journal, day, character, companionKey)
             local kept = {}
             for _, p in ipairs(piece.points) do if Inside(p.t) then kept[#kept + 1] = p end end
             if #kept > 1 then model.pieces[#model.pieces + 1] = {kind = piece.kind, map = piece.map, points = kept} end
+        end
+    end
+    -- Voyages (a boat, a zeppelin): from the last step before the journal's voyage line to
+    -- the first step after it, drawn dotted like a flight.
+    for _, e in ipairs(journal or {}) do
+        if e.k == "voyage" and e.t and DayOf(e.t) == day and Inside(e.t) then
+            local before, after
+            for _, piece in ipairs(model.pieces) do
+                for _, p in ipairs(piece.points or {}) do
+                    if p.t <= e.t + 30 and (not before or p.t > before.t) then before = {map = piece.map, x = p.x, y = p.y, t = p.t} end
+                    if p.t >= e.t and (not after or p.t < after.t) then after = {map = piece.map, x = p.x, y = p.y, t = p.t} end
+                end
+            end
+            if before and after and before.map ~= after.map then
+                model.pieces[#model.pieces + 1] = {kind = "voyage", how = e.d, from = before, to = after}
+            end
         end
     end
     -- Times: the day's first and last moment.

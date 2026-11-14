@@ -52,6 +52,7 @@ LoreNotesUI.lua
 JournalUI.lua
 BookManagement.lua
 JournalBookUI.lua
+RoadMap.lua
 Plates.lua
 API.lua
 AddOnSettings.lua

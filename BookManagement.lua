@@ -91,13 +91,16 @@ local function Round(frame,texture)
     mask:SetTexture('Interface\\CharacterFrame\\TempPortraitAlphaMask','CLAMPTOBLACKADDITIVE','CLAMPTOBLACKADDITIVE')
     mask:SetAllPoints(texture); texture:AddMaskTexture(mask)
 end
-local function Crest(parent)
-    local crest=CreateFrame('Frame',nil,parent); crest:SetSize(24,24)
+local function Crest(parent,size)
+    size=size or 24
+    local crest=CreateFrame('Frame',nil,parent); crest:SetSize(size,size)
     crest.ring=crest:CreateTexture(nil,'BORDER'); crest.ring:SetAllPoints(); crest.ring:SetColorTexture(.25,.14,.05,.8)
-    crest.icon=crest:CreateTexture(nil,'ARTWORK'); crest.icon:SetSize(22,22); crest.icon:SetPoint('CENTER')
+    crest.icon=crest:CreateTexture(nil,'ARTWORK'); crest.icon:SetSize(size-2,size-2); crest.icon:SetPoint('CENTER')
     Round(crest,crest.ring); Round(crest,crest.icon)
     return crest
 end
+-- (shared: the Road's map draws its marks and its walker as crests too)
+A.BookCrest=Crest
 local function Tip(control, text)
     control:SetScript('OnEnter',function(self)
         if self.label and self.labelColor and self:IsEnabled() then self.label:SetTextColor(unpack(self.labelColor)) end
@@ -469,6 +472,7 @@ function A.BuildBookWorldSettings(section, category, ui)
         Check("journalSeen", "Record when we cross paths", "Needs recording on")
         Check("moreMoments", "Record more moments", "Your own journal only")
         Check("roadRecord", "Record the road", "For the maps; about 25 KB an evening")
+        Check("roadSounds", "Sounds when a road replays")
     elseif category == "adding" then
         Group("Groups")
         Check("peopleAutoGroup", "Remember groupmates as acquaintances")

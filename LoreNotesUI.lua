@@ -85,8 +85,9 @@ local function PaperRoom(paper, width)
     local side = math.max(paper.inner[1] - paper.sheet[1], paper.sheet[3] - paper.inner[3]) * s
     return s, math.floor(side + 30), math.floor((paper.inner[2] - paper.sheet[2]) * s + 22), math.floor((paper.sheet[4] - paper.inner[4]) * s + 4)
 end
--- Lay the paper over the slip (the slip is the sheet's box) at this width and height.
-local function LayPaper(paper, width, height)
+-- Lay a paper over a frame (the frame is the sheet's box) at this width and height.
+-- Shared: the lore note and the Road's map sheet (A.LayPaperOn).
+local function LayPaperOn(frame, paper, width, height)
     local s = PaperRoom(paper, width)
     local topEdge, bottomEdge = paper.inner[2] + 12, paper.inner[4] - 12
     local bands = {{0, topEdge, true}}
@@ -104,20 +105,22 @@ local function LayPaper(paper, width, height)
     -- (the drawn height: the sheet's, plus the shadow room above and below it)
     local drawn = height + (paper.sheet[2] + (TEX_H - 1 - paper.sheet[4])) * s
     local stretch = math.max(0.3, (drawn - fixed * s) / (plain * s))
-    slip.paperBands = slip.paperBands or {}
+    frame.paperBands = frame.paperBands or {}
     local y = paper.sheet[2] * s
     for i, band in ipairs(bands) do
-        local texture = slip.paperBands[i]
-        if not texture then texture = slip:CreateTexture(nil, "BACKGROUND", nil, -7); slip.paperBands[i] = texture end
+        local texture = frame.paperBands[i]
+        if not texture then texture = frame:CreateTexture(nil, "BACKGROUND", nil, -7); frame.paperBands[i] = texture end
         local h = (band[2] - band[1]) * s * (band[3] and 1 or stretch)
         texture:SetTexture(PAPER_DIR .. paper.file)
         texture:SetTexCoord(0, 1, band[1] / TEX_H, band[2] / TEX_H)
-        texture:ClearAllPoints(); texture:SetPoint("TOPLEFT", slip, "TOPLEFT", -paper.sheet[1] * s, y)
+        texture:ClearAllPoints(); texture:SetPoint("TOPLEFT", frame, "TOPLEFT", -paper.sheet[1] * s, y)
         texture:SetSize(TEX_W * s, math.max(1, h)); texture:Show()
         y = y - h
     end
-    for i = #bands + 1, #slip.paperBands do slip.paperBands[i]:Hide() end
+    for i = #bands + 1, #frame.paperBands do frame.paperBands[i]:Hide() end
 end
+A.LayPaperOn, A.PaperRoom = LayPaperOn, PaperRoom
+local function LayPaper(paper, width, height) LayPaperOn(slip, paper, width, height) end
 local function HidePaper()
     for _, texture in ipairs(slip and slip.paperBands or {}) do texture:Hide() end
 end
