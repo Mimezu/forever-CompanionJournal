@@ -118,15 +118,25 @@ local function Make()
         slip.fold[key] = texture
         return texture
     end
-    Fold("shadow", "BACKGROUND", -8, 0, 0, 0, 0.32)
-    Fold("shadow2", "BACKGROUND", -8, 0, 0, 0, 0.16)
-    Fold("paper", "BACKGROUND", -7, 0.93, 0.87, 0.74, 1)
+    for i = 1, 4 do Fold("shadow" .. i, "BACKGROUND", -8, 0, 0, 0, 0.07) end
+    Fold("paper", "BACKGROUND", -7, 0.91, 0.84, 0.69, 1)
     local grain = Fold("grain", "BACKGROUND", -6, 1, 1, 1, 1)
     grain:SetAtlas("parchmentpopup-background"); grain:SetAlpha(0.35)
     Fold("shade", "BACKGROUND", -5, 0.30, 0.18, 0.06, 0.05)
     for _, edge in ipairs({"edgeTop", "edgeBottom", "edgeLeft", "edgeRight"}) do Fold(edge, "BORDER", 0, 0.30, 0.18, 0.07, 0.45) end
-    Fold("creaseV", "BORDER", 1, 0.30, 0.18, 0.07, 0.16); Fold("creaseVLight", "BORDER", 1, 1, 1, 1, 0.35)
-    Fold("creaseH", "BORDER", 1, 0.30, 0.18, 0.07, 0.13); Fold("creaseHLight", "BORDER", 1, 1, 1, 1, 0.30)
+    -- (a crease is no line: a soft shade fading into the fold on one side, a soft
+    -- light fading out of it on the other; without gradients, no crease at all)
+    for _, key in ipairs({"creaseV", "creaseVLight", "creaseH", "creaseHLight"}) do Fold(key, "BACKGROUND", -4, 1, 1, 1, 1) end
+    local soft = CreateColor and slip.fold.creaseV.SetGradient
+    local function Fade(texture, orientation, r, g, b, from, to)
+        texture:SetColorTexture(1, 1, 1, 1)
+        local ok = soft and pcall(texture.SetGradient, texture, orientation, CreateColor(r, g, b, from), CreateColor(r, g, b, to))
+        texture.soft = ok and true or false
+    end
+    Fade(slip.fold.creaseV, "HORIZONTAL", 0.30, 0.18, 0.07, 0, 0.09)
+    Fade(slip.fold.creaseVLight, "HORIZONTAL", 1, 1, 1, 0.22, 0)
+    Fade(slip.fold.creaseH, "VERTICAL", 0.30, 0.18, 0.07, 0.08, 0)
+    Fade(slip.fold.creaseHLight, "VERTICAL", 1, 1, 1, 0, 0.20)
     slip.ornament = slip:CreateTexture(nil, "ARTWORK", nil, 6)
     slip.ornament:SetTexture("Interface\\AddOns\\CompanionJournal\\Media\\Ornaments\\rule")
     slip.ornament:SetVertexColor(0.42, 0.10, 0.04, 0.9); slip.ornament:SetSize(170, 11); slip.ornament:Hide()
@@ -388,28 +398,46 @@ function A.OpenLoreNote(id, anchor, context)
         -- (as tall as its words: one leaf shrinks the sheet; the footer follows it)
         local shown = 0
         for _, button in ipairs(slip.related) do if button:IsShown() then shown = shown + 1 end end
-        local footer = 38 + shown * 18 + padBottom
+        local lines = math.max(1, shown)
+        local footer = 14 + lines * 18 + 10 + (#slip.leaves > 1 and 22 or 0)
         if #slip.leaves == 1 then
             local textHeight = math.ceil(slip.body:GetStringHeight() or capacity)
-            height = math.max(200, math.min(height, bodyY + textHeight + 22 + footer))
+            height = math.max(170, math.min(height, bodyY + textHeight + 20 + footer))
             slip:SetSize(width, height)
         end
+        local base = 12 + (#slip.leaves > 1 and 22 or 0)
+        local row = 0
+        for _, button in ipairs(slip.related) do
+            if button:IsShown() then
+                button:ClearAllPoints(); button:SetPoint("BOTTOMLEFT", padX - 4, base + (lines - 1 - row) * 18)
+                button:SetWidth(width - padX * 2 - 70); row = row + 1
+            end
+        end
+        slip.sources:ClearAllPoints(); slip.sources:SetPoint("BOTTOMRIGHT", -(padX - 8), base - 2)
+        slip.previous:ClearAllPoints(); slip.previous:SetPoint("BOTTOM", -40, 8)
+        slip.next:ClearAllPoints(); slip.next:SetPoint("BOTTOM", 40, 8)
+        slip.pageNumber:ClearAllPoints(); slip.pageNumber:SetPoint("BOTTOM", 0, 14)
+        slip.back:ClearAllPoints(); slip.back:SetPoint("BOTTOMLEFT", padX - 8, 8)
         local f = slip.fold
-        f.shadow:ClearAllPoints(); f.shadow:SetPoint("TOPLEFT", 5, -7); f.shadow:SetPoint("BOTTOMRIGHT", 7, -9)
-        f.shadow2:ClearAllPoints(); f.shadow2:SetPoint("TOPLEFT", 2, -3); f.shadow2:SetPoint("BOTTOMRIGHT", 11, -13)
+        -- (the shadow: four veils, each a little wider, the sheet lifted a touch)
+        for i = 1, 4 do
+            local veil = f["shadow" .. i]
+            veil:ClearAllPoints(); veil:SetPoint("TOPLEFT", -i, -(2 + i)); veil:SetPoint("BOTTOMRIGHT", i, -(4 + i * 2))
+        end
         for _, key in ipairs({"paper", "grain"}) do f[key]:ClearAllPoints(); f[key]:SetAllPoints() end
-        f.shade:ClearAllPoints(); f.shade:SetPoint("TOPLEFT", slip, "TOP"); f.shade:SetPoint("BOTTOMRIGHT")
         f.edgeTop:ClearAllPoints(); f.edgeTop:SetPoint("TOPLEFT"); f.edgeTop:SetPoint("TOPRIGHT"); f.edgeTop:SetHeight(1)
         f.edgeBottom:ClearAllPoints(); f.edgeBottom:SetPoint("BOTTOMLEFT"); f.edgeBottom:SetPoint("BOTTOMRIGHT"); f.edgeBottom:SetHeight(1)
         f.edgeLeft:ClearAllPoints(); f.edgeLeft:SetPoint("TOPLEFT"); f.edgeLeft:SetPoint("BOTTOMLEFT"); f.edgeLeft:SetWidth(1)
         f.edgeRight:ClearAllPoints(); f.edgeRight:SetPoint("TOPRIGHT"); f.edgeRight:SetPoint("BOTTOMRIGHT"); f.edgeRight:SetWidth(1)
-        f.creaseV:ClearAllPoints(); f.creaseV:SetPoint("TOP"); f.creaseV:SetPoint("BOTTOM"); f.creaseV:SetWidth(1)
-        f.creaseVLight:ClearAllPoints(); f.creaseVLight:SetPoint("TOP", 1, 0); f.creaseVLight:SetPoint("BOTTOM", 1, 0); f.creaseVLight:SetWidth(1)
-        f.creaseH:ClearAllPoints(); f.creaseH:SetPoint("LEFT", 0, 0); f.creaseH:SetPoint("RIGHT", 0, 0); f.creaseH:SetHeight(1)
-        f.creaseHLight:ClearAllPoints(); f.creaseHLight:SetPoint("LEFT", 0, -1); f.creaseHLight:SetPoint("RIGHT", 0, -1); f.creaseHLight:SetHeight(1)
+        -- (each crease: a 7px shade ending at the fold, a 7px light starting from it)
+        f.creaseV:ClearAllPoints(); f.creaseV:SetPoint("TOPRIGHT", slip, "TOP"); f.creaseV:SetPoint("BOTTOMRIGHT", slip, "BOTTOM"); f.creaseV:SetWidth(7)
+        f.creaseVLight:ClearAllPoints(); f.creaseVLight:SetPoint("TOPLEFT", slip, "TOP"); f.creaseVLight:SetPoint("BOTTOMLEFT", slip, "BOTTOM"); f.creaseVLight:SetWidth(7)
+        f.creaseH:ClearAllPoints(); f.creaseH:SetPoint("TOPLEFT", slip, "LEFT", 0, 7); f.creaseH:SetPoint("BOTTOMRIGHT", slip, "RIGHT"); f.creaseH:SetHeight(7)
+        f.creaseHLight:ClearAllPoints(); f.creaseHLight:SetPoint("TOPLEFT", slip, "LEFT"); f.creaseHLight:SetPoint("BOTTOMRIGHT", slip, "RIGHT", 0, -7); f.creaseHLight:SetHeight(7)
+        for _, key in ipairs({"creaseV", "creaseVLight", "creaseH", "creaseHLight"}) do f[key]:SetShown(f[key].soft == true) end
         f.shade:ClearAllPoints(); f.shade:SetPoint("TOPLEFT", slip, "TOP", 1, 0); f.shade:SetPoint("BOTTOMRIGHT")
         -- (the footer: a quiet rule, See also on the left, Sources on the right)
-        slip.footRule:ClearAllPoints(); slip.footRule:SetPoint("BOTTOMLEFT", padX, footer - 6); slip.footRule:SetPoint("BOTTOMRIGHT", -padX, footer - 6)
+        slip.footRule:ClearAllPoints(); slip.footRule:SetPoint("BOTTOMLEFT", padX, base + lines * 18 + 4); slip.footRule:SetPoint("BOTTOMRIGHT", -padX, base + lines * 18 + 4)
         slip.heading:SetTextColor(0.42, 0.10, 0.04)
         slip.caption:SetTextColor(0.36, 0.22, 0.08)
         slip.body:SetTextColor(0.20, 0.11, 0.04)

@@ -1,5 +1,10 @@
 # Companion Journal: changes
 
+## 1.46.1 (2026-11-14)
+
+- Lore note footer sits below the text
+- Softer shadow and creases on the folded paper
+
 ## 1.46.0 (2026-11-14)
 
 - Lore notes on folded paper, sized to their words
