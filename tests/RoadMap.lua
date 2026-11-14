@@ -31,6 +31,7 @@ function Frame:IsShown() return self.shown end
 function Frame:SetScript(k, fn) self.scripts[k] = fn end
 function Frame:GetScript(k) return self.scripts[k] end
 function Frame:SetText(t) self.text = t end
+function Frame:SetFrameStrata(v) self.strata = v end
 function Frame:GetText() return self.text end
 function Frame:GetStringWidth() return #(self.text or "") * 6 end
 function Frame:SetPoint(...) self.points[#self.points + 1] = {...} end
@@ -127,6 +128,7 @@ local day = Road.DayOf(clock)
 Map.OpenDay(nil, day)
 local sheet = _G.CompanionJournalRoad
 check(sheet and sheet:IsShown(), "the day's map opens")
+check(sheet.strata == "FULLSCREEN", "the map lies above the book (its own layer)")
 local labels = {}
 for _, tab in ipairs(sheet.tabs) do if tab:IsShown() then labels[#labels + 1] = tab.label.text end end
 check(table.concat(labels, "|") == "Mulgore|Durotar|Kalimdor|World", "tabs: the zones in order, their continent, the world: " .. table.concat(labels, "|"))

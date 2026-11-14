@@ -24,6 +24,8 @@ local CIRCLE_ORDER = {
 
 local book
 function A.BookFrame() return book end
+-- Going anywhere else in the book folds the Road's map away.
+local function CloseRoad() if A.RoadMap and A.RoadMap.IsOpen() then A.RoadMap.Close() end end
 local BuildWizard -- (below; Build uses them)
 local Portrait, LookFor -- (portraits, below; the contents page uses them)
 -- view: "journal" (contents + chapters), "settings" or "npcs".
@@ -2154,7 +2156,7 @@ local function Bookmark(index)
     mark.chosen:SetAllPoints(); mark.chosen:SetColorTexture(1, 0.82, 0, 0.25)
     local hover = mark:CreateTexture(nil, "HIGHLIGHT")
     hover:SetAllPoints(); hover:SetColorTexture(1, 1, 1, 0.15)
-    mark:SetScript("OnClick", function(self) if self.action then self.action() end end)
+    mark:SetScript("OnClick", function(self) CloseRoad(); if self.action then self.action() end end)
     mark:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         GameTooltip:SetText(self.title or "", 1, 0.82, 0)
@@ -2188,7 +2190,7 @@ local function LabelMark(index)
     mark.tail = mark:CreateTexture(nil, "BACKGROUND", nil, 1); mark.tail:Hide()
     mark.icon = mark:CreateTexture(nil, "ARTWORK")
     mark.icon:SetSize(16, 16); mark.icon:Hide()
-    mark:SetScript("OnClick", function(self) if self.action then self.action() end end)
+    mark:SetScript("OnClick", function(self) CloseRoad(); if self.action then self.action() end end)
     mark:SetScript("OnEnter", function(self)
         if not self.tip then return end
         GameTooltip:SetOwner(self, "ANCHOR_TOP")
@@ -2229,7 +2231,7 @@ local function FillLabelledMarks()
             action = function() A.OpenBookPeople(state.view == "journal" and state.key and A.People[state.key] and not A.People[state.key].npc and state.key or nil) end},
         {title = "Add someone", tip = "Your target, a groupmate, or a name.", color = {0.24, 0.16, 0.07},
             action = AddSomeone},
-        {title = "Atlas", tip = "Every road you walked.", color = {0.24, 0.16, 0.07},
+        {title = "Atlas", tip = "Every road you walked.", color = {0.24, 0.16, 0.07}, chosen = A.RoadMap and A.RoadMap.IsAtlas() or nil,
             action = function() if A.RoadMap then A.RoadMap.OpenAtlas(A.SelfPerson and A.SelfPerson(state.owner or SelfOf(state.key))) end end},
         {title = "NPCs", tip = "The NPCs you noted.", color = {0.18, 0.15, 0.12}, chosen = state.view == "npcs", gapBefore = true,
             action = function() state.view = "npcs"; A.RefreshBook() end},
@@ -2372,6 +2374,8 @@ local function FillBookmarks()
     for n, item in ipairs(bottom) do Place(item, -(height - 70) + (#bottom - n) * 42) end
     for n = count + 1, #book.marks do book.marks[n]:Hide() end
 end
+-- (the Road's map opens and folds over the book: its ribbon follows)
+function A.RefreshBookmarks() if book and book:IsShown() then FillBookmarks() end end
 
 -- The Settings view: the menu on the left, a section on the right.
 local function Section(name, build)
@@ -2940,6 +2944,7 @@ end
 
 -- Turn physical pages; a long chapter can occupy several consecutive leaves.
 function A.BookTurn(delta)
+    CloseRoad()
     if A.CloseLoreNote then A.CloseLoreNote() end
     if state.view == "people" and book.manager then book.manager.page = book.manager.page + delta; A.RefreshBook(); return end
     if state.view == "npcs" and book.npcManager then book.npcManager.page = book.npcManager.page + delta; A.RefreshBook(); return end
@@ -2955,6 +2960,7 @@ end
 -- Open the book: on a journal (a person's key, or "self:<character>"), or by the
 -- opening rule: your target when they are in your list, else your own journal.
 function A.OpenBook(key, charKey)
+    CloseRoad()
     if not A.db then return end
     charKey = charKey ~= A.Me() and charKey or nil
     if key and not SelfOf(key) then
@@ -2992,6 +2998,7 @@ function A.OpenBook(key, charKey)
     A.RefreshBook(state.index == nil)
 end
 function A.OpenBookPeople(key, circle, mode)
+    CloseRoad()
     if not A.db then return end
     if not book then Build() end
     if not book.manager then book.manager = A.CreateBookManager(book, {IsPinned = IsPinned, TogglePin = TogglePin}) end
@@ -3009,6 +3016,7 @@ function A.OpenPersonCard(key)
     end
 end
 function A.OpenBookSettings(section)
+    CloseRoad()
     if not A.db then return end
     if not book then Build() end
     CommitRead(); state.view, state.settings = "settings", section or state.settings

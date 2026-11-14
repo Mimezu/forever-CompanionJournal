@@ -490,10 +490,16 @@ local function Make()
     if sheet then return end
     local book = A.BookFrame and A.BookFrame()
     sheet = CreateFrame("Frame", "CompanionJournalRoad", book or UIParent)
-    sheet:SetFrameStrata("DIALOG"); sheet:EnableMouse(true); sheet:SetToplevel(true)
+    -- (the book is on the DIALOG layer and its pages climb high within it: the sheet lies
+    -- one layer up, so no page, text or ribbon can draw over the map; everything made
+    -- inside the sheet takes its layer)
+    sheet:SetFrameStrata("FULLSCREEN"); sheet:EnableMouse(true); sheet:SetToplevel(true)
     if UISpecialFrames then table.insert(UISpecialFrames, "CompanionJournalRoad") end
     sheet:Hide()
-    sheet:SetScript("OnHide", function() state.playing = false; sheet:SetScript("OnUpdate", nil) end)
+    sheet:SetScript("OnHide", function()
+        state.playing = false; sheet:SetScript("OnUpdate", nil)
+        if A.RefreshBookmarks then A.RefreshBookmarks() end
+    end)
     sheet.title = sheet:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     if A.BookTitleFont and A.BookTitleFont(20) then sheet.title:SetFontObject(A.BookTitleFont(20)) end
     sheet.title:SetTextColor(RED[1], RED[2], RED[3]); if sheet.title.SetShadowOffset then sheet.title:SetShadowOffset(0, 0) end
@@ -719,6 +725,7 @@ function Map.OpenDay(person, day)
     sheet:Show()
     Tabs()
     Map.SetView(first and first.map or WORLD)
+    if A.RefreshBookmarks then A.RefreshBookmarks() end
     if A.SetPersonClassIcon and sheet.walker.icon then A.SetPersonClassIcon(sheet.walker.icon, (A.SelfPerson and A.SelfPerson(character) or {}).class) end
     Sound("page")
 end
@@ -778,9 +785,11 @@ function Map.OpenAtlas(person)
     sheet:Show()
     Tabs()
     Map.SetView(continents[#continents] or WORLD)
+    if A.RefreshBookmarks then A.RefreshBookmarks() end
     Sound("page")
 end
 function Map.IsOpen() return sheet and sheet:IsShown() or false end
+function Map.IsAtlas() return Map.IsOpen() and state.atlas == true end
 function Map.Close() if sheet then sheet:Hide() end end
 
 -- The map mark on a chapter's opening page: a small crest with a map, top right.

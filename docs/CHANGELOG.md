@@ -1,5 +1,11 @@
 # Companion Journal: changes
 
+## 1.49.1 (2026-11-14)
+
+- The map lies above the book; no page shows through
+- Going elsewhere in the book folds the map away
+- The Atlas ribbon shows when it is open
+
 ## 1.49.0 (2026-11-14)
 
 - The Road: a map for each chapter, from the map mark
