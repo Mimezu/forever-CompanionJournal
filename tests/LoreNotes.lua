@@ -153,6 +153,7 @@ function methods:SetWidth(w) self.width = w end
 function methods:SetHeight(h) self.height = h end
 function methods:GetWidth() return self.width end
 function methods:GetHeight() return self.height end
+function methods:SetTexCoord(...) self.texCoord = {...} end
 function methods:IsShown() return self.shown end
 function methods:Show() self.shown = true end
 function methods:Hide()
@@ -429,13 +430,25 @@ A.db.characters.Neige.journal[1].qid = 6402
 A.RefreshOpenLoreNote()
 Check(not table.concat(slip.leaves):find("Onyxia", 1, true), "corrected history reprojects open note")
 A.CloseLoreNote()
-for _, style in ipairs({"slip", "letter", "tucked", "folded"}) do
+for _, style in ipairs({"slip", "letter", "tucked", "folded", "paper1", "paper2", "paper3", "paper4", "paper5", "paper6"}) do
     A.BookVariant = function() return style end
     Check(A.OpenLoreNote("npc:bolvar", book, {owner = book}), "reference opens in style " .. style)
     Check(not table.concat(slip.leaves):find("Onyxia", 1, true), "style cannot bypass knowledge: " .. style)
     sourcesButton.scripts.OnEnter(sourcesButton)
     Check(not table.concat(GameTooltip.lines):find("Masquerade", 1, true), "style source hover respects knowledge: " .. style)
     for _, button in ipairs(slip.related) do Check(button.noteID ~= "npc:onyxia", "style related links respect knowledge: " .. style) end
+    -- A painted paper: its bands, laid top to bottom, cover the sheet and its shadow exactly,
+    -- and only the plain paper between the edges and the fold is stretched.
+    local paper = A.LorePapers[style]
+    if paper then
+        local bands, total = {}, 0
+        for _, band in ipairs(slip.paperBands or {}) do if band:IsShown() then bands[#bands + 1] = band; total = total + band.height end end
+        local s = slip:GetWidth() / (paper.sheet[3] - paper.sheet[1] + 1)
+        local expected = slip:GetHeight() + (paper.sheet[2] + (511 - paper.sheet[4])) * s
+        Check(#bands == (paper.crease and 5 or 3), "paper bands: edges, fold and plain paper: " .. style)
+        Check(math.abs(total - expected) < 0.5, "paper bands cover the sheet and its shadow: " .. style)
+        Check(bands[1].height == (paper.inner[2] + 12) * s, "the top edge is drawn as painted: " .. style)
+    end
     A.CloseLoreNote()
 end
 print(string.format("LoreNotes: %d assertions; %d curated, %d regional, %d title contexts, %d exact quest stages across %d packs", count,

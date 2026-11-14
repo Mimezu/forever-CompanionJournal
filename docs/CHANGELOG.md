@@ -1,5 +1,10 @@
 # Companion Journal: changes
 
+## 1.47.0 (2026-11-14)
+
+- Six painted papers for lore notes, in Try styles
+- Each keeps its edges and fold at any height
+
 ## 1.46.1 (2026-11-14)
 
 - Lore note footer sits below the text

@@ -61,6 +61,66 @@ function A.HandleLoreNoteKey(key)
     if key == "ESCAPE" and A.LoreNoteIsOpen() then return A.CloseLoreNote() end
     return false
 end
+-- The papers (Settings > Try styles > Lore notes): sheets painted for the book (Astra,
+-- 2026-11-14; StorageInvestigation/cj-paper-20261114), each a 1024x512 texture holding
+-- the sheet and its soft shadow. In texture pixels: the sheet's box, the straight box
+-- inside it that text may use (on a slanted sheet, inside the slant), and the row of
+-- its horizontal fold. The sheet keeps its width; to fit the words it grows or shrinks
+-- in height by stretching only plain paper: its top and bottom edges and its fold are
+-- drawn as painted.
+local PAPER_DIR = "Interface\\AddOns\\CompanionJournal\\Media\\Papers\\"
+local PAPERS = {
+    paper1 = {file = "handmade-slant", sheet = {91, 26, 925, 473}, inner = {103, 43, 914, 455}, crease = 254},
+    paper2 = {file = "handmade-straight", sheet = {66, 27, 950, 470}, inner = {67, 28, 950, 470}, crease = 252},
+    paper3 = {file = "folded-cream", sheet = {45, 29, 971, 469}, inner = {46, 30, 971, 468}, crease = 250},
+    paper4 = {file = "folded-cream-slant", sheet = {54, 27, 963, 470}, inner = {61, 46, 957, 452}, crease = 248},
+    paper5 = {file = "honey-vellum-slant", sheet = {62, 27, 954, 471}, inner = {69, 41, 948, 458}},
+    paper6 = {file = "handmade-ivory-slant", sheet = {87, 26, 930, 472}, inner = {93, 43, 922, 456}, crease = 255},
+}
+A.LorePapers = PAPERS
+local TEX_W, TEX_H = 1024, 512
+-- The paper's scale on screen, and the text's room inside it (left/right, top, bottom).
+local function PaperRoom(paper, width)
+    local s = width / (paper.sheet[3] - paper.sheet[1] + 1)
+    local side = math.max(paper.inner[1] - paper.sheet[1], paper.sheet[3] - paper.inner[3]) * s
+    return s, math.floor(side + 30), math.floor((paper.inner[2] - paper.sheet[2]) * s + 22), math.floor((paper.sheet[4] - paper.inner[4]) * s + 4)
+end
+-- Lay the paper over the slip (the slip is the sheet's box) at this width and height.
+local function LayPaper(paper, width, height)
+    local s = PaperRoom(paper, width)
+    local topEdge, bottomEdge = paper.inner[2] + 12, paper.inner[4] - 12
+    local bands = {{0, topEdge, true}}
+    local c = paper.crease
+    if c and c - 24 > topEdge + 8 and c + 24 < bottomEdge - 8 then
+        bands[#bands + 1] = {topEdge, c - 24}; bands[#bands + 1] = {c - 24, c + 24, true}; bands[#bands + 1] = {c + 24, bottomEdge}
+    else
+        bands[#bands + 1] = {topEdge, bottomEdge}
+    end
+    bands[#bands + 1] = {bottomEdge, TEX_H, true}
+    local fixed, plain = 0, 0
+    for _, band in ipairs(bands) do
+        if band[3] then fixed = fixed + band[2] - band[1] else plain = plain + band[2] - band[1] end
+    end
+    -- (the drawn height: the sheet's, plus the shadow room above and below it)
+    local drawn = height + (paper.sheet[2] + (TEX_H - 1 - paper.sheet[4])) * s
+    local stretch = math.max(0.3, (drawn - fixed * s) / (plain * s))
+    slip.paperBands = slip.paperBands or {}
+    local y = paper.sheet[2] * s
+    for i, band in ipairs(bands) do
+        local texture = slip.paperBands[i]
+        if not texture then texture = slip:CreateTexture(nil, "BACKGROUND", nil, -7); slip.paperBands[i] = texture end
+        local h = (band[2] - band[1]) * s * (band[3] and 1 or stretch)
+        texture:SetTexture(PAPER_DIR .. paper.file)
+        texture:SetTexCoord(0, 1, band[1] / TEX_H, band[2] / TEX_H)
+        texture:ClearAllPoints(); texture:SetPoint("TOPLEFT", slip, "TOPLEFT", -paper.sheet[1] * s, y)
+        texture:SetSize(TEX_W * s, math.max(1, h)); texture:Show()
+        y = y - h
+    end
+    for i = #bands + 1, #slip.paperBands do slip.paperBands[i]:Hide() end
+end
+local function HidePaper()
+    for _, texture in ipairs(slip and slip.paperBands or {}) do texture:Hide() end
+end
 local function Make()
     if slip then return end
     -- A book-sized input layer consumes the first outside click, including clicks
@@ -262,8 +322,9 @@ function A.OpenLoreNote(id, anchor, context)
     local parent = Owner(anchor, context)
     if not parent or not parent.GetWidth or not parent.GetHeight or not parent.IsShown or not parent:IsShown() then return false end
     local style = A.BookVariant and A.BookVariant("loreNote") or "slip"
-    if style ~= "letter" and style ~= "tucked" and style ~= "folded" then style = "slip" end
-    local folded = style == "folded"
+    local paper = PAPERS[style]
+    if style ~= "letter" and style ~= "tucked" and style ~= "folded" and not paper then style = "slip" end
+    local folded = style == "folded" or paper ~= nil
     local top = parent.rightPage and 94 or parent.page and 48 or 12
     local bottom = parent.rightPage and 60 or 24
     local width, height = math.min(400, parent:GetWidth() - 24), math.min(405, parent:GetHeight() - top - bottom)
@@ -303,7 +364,8 @@ function A.OpenLoreNote(id, anchor, context)
     if slip.SetBackdropBorderColor then slip:SetBackdropBorderColor(0.45, 0.29, 0.13, kit and 0 or 1) end
     local scale = math.min(width, height) / 820
     for key, texture in pairs(slip.kit) do texture:SetShown(parchment); texture:ClearAllPoints() end
-    for _, texture in pairs(slip.fold) do texture:SetShown(folded) end
+    for _, texture in pairs(slip.fold) do texture:SetShown(folded and not paper) end
+    if not paper then HidePaper() end
     slip.ornament:SetShown(folded); slip.footRule:SetShown(folded)
     if parchment then
         local k, c = slip.kit, math.floor(167 * scale + 0.5)
@@ -330,6 +392,7 @@ function A.OpenLoreNote(id, anchor, context)
     local padX, padTop, padBottom = 18, 16, 0
     if kit then padX, padTop, padBottom = 36, 34, 18 end
     if folded then padX, padTop, padBottom = 34, 28, 6 end
+    if paper then local _; _, padX, padTop, padBottom = PaperRoom(paper, width) end
     slip.heading:ClearAllPoints(); slip.heading:SetPoint("TOPLEFT", padX, -padTop); slip.heading:SetPoint("TOPRIGHT", -(kit and padX or 45), -padTop)
     slip.heading:SetJustifyH(kit and "CENTER" or "LEFT")
     if folded and A.BookTitleFont and A.BookTitleFont(22) then slip.heading:SetFontObject(A.BookTitleFont(22))
@@ -399,13 +462,14 @@ function A.OpenLoreNote(id, anchor, context)
         local shown = 0
         for _, button in ipairs(slip.related) do if button:IsShown() then shown = shown + 1 end end
         local lines = math.max(1, shown)
-        local footer = 14 + lines * 18 + 10 + (#slip.leaves > 1 and 22 or 0)
+        local inset = paper and padBottom or 0
+        local footer = 14 + lines * 18 + 10 + (#slip.leaves > 1 and 22 or 0) + inset
         if #slip.leaves == 1 then
             local textHeight = math.ceil(slip.body:GetStringHeight() or capacity)
             height = math.max(170, math.min(height, bodyY + textHeight + 20 + footer))
             slip:SetSize(width, height)
         end
-        local base = 12 + (#slip.leaves > 1 and 22 or 0)
+        local base = 12 + inset + (#slip.leaves > 1 and 22 or 0)
         local row = 0
         for _, button in ipairs(slip.related) do
             if button:IsShown() then
@@ -414,10 +478,11 @@ function A.OpenLoreNote(id, anchor, context)
             end
         end
         slip.sources:ClearAllPoints(); slip.sources:SetPoint("BOTTOMRIGHT", -(padX - 8), base - 2)
-        slip.previous:ClearAllPoints(); slip.previous:SetPoint("BOTTOM", -40, 8)
-        slip.next:ClearAllPoints(); slip.next:SetPoint("BOTTOM", 40, 8)
-        slip.pageNumber:ClearAllPoints(); slip.pageNumber:SetPoint("BOTTOM", 0, 14)
-        slip.back:ClearAllPoints(); slip.back:SetPoint("BOTTOMLEFT", padX - 8, 8)
+        slip.previous:ClearAllPoints(); slip.previous:SetPoint("BOTTOM", -40, 8 + inset)
+        slip.next:ClearAllPoints(); slip.next:SetPoint("BOTTOM", 40, 8 + inset)
+        slip.pageNumber:ClearAllPoints(); slip.pageNumber:SetPoint("BOTTOM", 0, 14 + inset)
+        slip.back:ClearAllPoints(); slip.back:SetPoint("BOTTOMLEFT", padX - 8, 8 + inset)
+        if paper then LayPaper(paper, width, height) end
         local f = slip.fold
         -- (the shadow: four veils, each a little wider, the sheet lifted a touch)
         for i = 1, 4 do
@@ -434,7 +499,7 @@ function A.OpenLoreNote(id, anchor, context)
         f.creaseVLight:ClearAllPoints(); f.creaseVLight:SetPoint("TOPLEFT", slip, "TOP"); f.creaseVLight:SetPoint("BOTTOMLEFT", slip, "BOTTOM"); f.creaseVLight:SetWidth(7)
         f.creaseH:ClearAllPoints(); f.creaseH:SetPoint("TOPLEFT", slip, "LEFT", 0, 7); f.creaseH:SetPoint("BOTTOMRIGHT", slip, "RIGHT"); f.creaseH:SetHeight(7)
         f.creaseHLight:ClearAllPoints(); f.creaseHLight:SetPoint("TOPLEFT", slip, "LEFT"); f.creaseHLight:SetPoint("BOTTOMRIGHT", slip, "RIGHT", 0, -7); f.creaseHLight:SetHeight(7)
-        for _, key in ipairs({"creaseV", "creaseVLight", "creaseH", "creaseHLight"}) do f[key]:SetShown(f[key].soft == true) end
+        for _, key in ipairs({"creaseV", "creaseVLight", "creaseH", "creaseHLight"}) do f[key]:SetShown(f[key].soft == true and not paper) end
         f.shade:ClearAllPoints(); f.shade:SetPoint("TOPLEFT", slip, "TOP", 1, 0); f.shade:SetPoint("BOTTOMRIGHT")
         -- (the footer: a quiet rule, See also on the left, Sources on the right)
         slip.footRule:ClearAllPoints(); slip.footRule:SetPoint("BOTTOMLEFT", padX, base + lines * 18 + 4); slip.footRule:SetPoint("BOTTOMRIGHT", -padX, base + lines * 18 + 4)

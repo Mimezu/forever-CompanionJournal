@@ -34,7 +34,9 @@ local state = {key = nil, index = nil, view = "journal", settings = "reading", n
 local BUILT = 8
 local VARIANTS = {
     {key = "loreNote", label = "Lore notes", group = "Book", stage = 2,
-        choices = {{"folded", "Folded paper"}, {"letter", "Letter over the book"}, {"tucked", "Tucked at the edge"}, {"slip", "Slip (before)"}}},
+        choices = {{"folded", "Folded paper"}, {"paper1", "Handmade"}, {"paper2", "Handmade, straight"}, {"paper3", "Folded cream"},
+            {"paper4", "Cream, slanted"}, {"paper5", "Honey vellum"}, {"paper6", "Ivory"},
+            {"letter", "Letter over the book"}, {"tucked", "Tucked at the edge"}, {"slip", "Slip (before)"}}},
     {key = "marks", label = "Bookmarks", group = "Book", stage = 2,
         choices = {{"c", "Tools | journals"}, {"a", "Sections + pins"}, {"b", "Pins only"}}},
     {key = "toolsSide", label = "Tools' side", group = "Book", stage = 2,
