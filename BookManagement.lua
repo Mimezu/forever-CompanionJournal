@@ -205,14 +205,22 @@ function A.CreateBookManager(book,kit)
         book.contents.scroll:Hide(); book.panel.scroll:Hide()
         -- (margins clear of the pages' printed corners: 32 a side, 56 below; on top, the
         -- book's page titles, the list's first row (its title row, now the page's) tucked under)
+        -- (each sheet sits inside its own page's text box, as Settings does: the binding
+        -- margin on the inner side, the outer margin on the other, both pages alike)
         local top=A.BookBodyTop and A.BookBodyTop() or 22
-        local roomW=math.min(book.contents:GetWidth(),book.panel:GetWidth())-64
+        local pages={book.contents,book.panel}
+        -- (the margins are the journal's own, mirrored at the binding and grown with the book)
+        local boxes={book.leftPage and book.leftPage.box or book.contents.box,book.rightPage and book.rightPage.box or book.panel.box}
+        local function Room(i) local box=boxes[i] or {32,0,32,0}; return pages[i]:GetWidth()-box[1]-box[3] end
+        local roomW=math.min(Room(1),Room(2))
         local roomH=math.min(book.contents:GetHeight(),book.panel:GetHeight())-top-56
         local scale=math.min(1,roomW/BASE_W,roomH/BASE_H)
         PW,PH=math.floor(roomW/scale),math.floor(roomH/scale)
         for i,surface in ipairs({self.left,self.right}) do
+            local page=pages[i]; local box=boxes[i] or {32,0,32,0}
+            local x=box[1]+math.floor((Room(i)-PW*scale)/2)
             surface:SetScale(scale); surface:SetSize(PW,PH); surface:ClearAllPoints()
-            surface:SetPoint('TOP',surface:GetParent(),'TOP',0,-top/scale+(i==1 and 28 or 0)); surface:Show()
+            surface:SetPoint('TOPLEFT',page,'TOPLEFT',x/scale,-top/scale+(i==1 and 28 or 0)); surface:Show()
         end
         local low=PH-BASE_H
         local s=self.listUI; s:Begin()

@@ -1,5 +1,9 @@
 # Companion Journal: changes
 
+## 1.45.1 (2026-11-13)
+
+- Companions and NPCs pages keep the journal's margins
+
 ## 1.45.0 (2026-11-13)
 
 - Adding someone: the ribbon only (target, or name and groupmates)
