@@ -1,5 +1,10 @@
 # Companion Journal: changes
 
+## 1.49.2 (2026-11-14)
+
+- Only recipes count as things made, not spells cast
+- A sleep is a night away, not a /reload
+
 ## 1.49.1 (2026-11-14)
 
 - The map lies above the book; no page shows through

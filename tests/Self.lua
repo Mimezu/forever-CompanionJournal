@@ -552,4 +552,34 @@ do
     UnitName, UnitIsPlayer, A.SelfWords = oldName, oldPlayer, oldWords
 end
 
+-- A sleep is a night away: a /reload or a short break while resting is not one.
+do
+    local function Sleeps() local n = 0; for _, e in ipairs(journal) do if e.k == "sleep" then n = n + 1 end end; return n end
+    local before = Sleeps()
+    resting, subzone = true, "Canals"
+    Fire("PLAYER_LOGOUT"); clock = clock + 20; Fire("PLAYER_ENTERING_WORLD")
+    check(Sleeps() == before, "a /reload while resting is not a sleep")
+    Fire("PLAYER_LOGOUT"); clock = clock + 10 * 3600; Fire("PLAYER_ENTERING_WORLD")
+    check(Sleeps() == before + 1, "logging out at the inn for the night is")
+    resting = false
+end
+-- Only the open window's recipes are things made: a spell cast at the forge is not.
+do
+    C_Spell = {GetSpellName = function(id) return ({[2657] = "Smelt Copper", [635] = "Holy Light"})[id] end}
+    C_TradeSkillUI = {GetBaseProfessionInfo = function() return {professionName = "Mining"} end}
+    GetNumTradeSkills = function() return 2 end
+    GetTradeSkillInfo = function(i) return ({"Smelting", "Smelt Copper"})[i], i == 1 and "header" or "easy" end
+    local before = #journal
+    Fire("TRADE_SKILL_SHOW")
+    for _ = 1, 4 do Fire("UNIT_SPELLCAST_SUCCEEDED", "player", "cast", 2657) end
+    for _ = 1, 3 do Fire("UNIT_SPELLCAST_SUCCEEDED", "player", "cast", 635) end
+    Fire("TRADE_SKILL_CLOSE")
+    local craft
+    for i = before + 1, #journal do if journal[i].k == "craft" then craft = journal[i] end end
+    check(craft and craft.c == 4 and #craft.m == 1 and craft.m[1] == "Smelt Copper", "Holy Light at the forge is not a thing made")
+    craft.m[#craft.m + 1] = "Holy Light"
+    Fire("TRADE_SKILL_SHOW"); Fire("TRADE_SKILL_CLOSE")
+    check(#craft.m == 1, "an old line loses the cast that was not a recipe")
+    GetNumTradeSkills, GetTradeSkillInfo = nil, nil
+end
 io.write("PASS: " .. assertions .. " own-journal assertions\n")

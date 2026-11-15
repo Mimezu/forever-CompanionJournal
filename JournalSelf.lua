@@ -84,6 +84,20 @@ local function Journal()
     local person = A.SelfJournalOn() and A.SelfPerson()
     return person and person.journal
 end
+-- A sleep is a night away. Logging out while resting writes one, but a /reload does the
+-- same and so does a short break or a turn on another character: a sleep followed by
+-- anything within two hours, or the last line when you are back within two hours, was
+-- not a night. 2026-11-14: "Then I slept in the Undercity" after a few reloads there.
+local NIGHT = 2 * 3600
+function A.ForgetShortSleeps(journal, now)
+    if type(journal) ~= "table" then return end
+    local after = now
+    for i = #journal, 1, -1 do
+        local entry = journal[i]
+        if entry.k == "sleep" and entry.t and after and after - entry.t < NIGHT then table.remove(journal, i)
+        elseif entry.t then after = entry.t end
+    end
+end
 
 -- Firsts: things done once, ever, per character (the tram, a first flight, a
 -- first visit to a zone at a level that fits it). {k = "first", d = what}.
@@ -616,12 +630,44 @@ local crafted = setmetatable({}, {__mode = "k"}) -- stretch -> profession -> ent
 -- on Find Minerals).
 local NOT_MADE = {["Smelting"] = true, ["Find Minerals"] = true, ["Find Herbs"] = true, ["Find Treasure"] = true,
     ["Find Fish"] = true, ["Disenchant"] = true, ["Prospecting"] = true}
+-- The open window's recipes, by name (the classic trade skill and craft lists): a cast
+-- counts as a thing made only if it is one of them. 2026-11-14: "I smelted copper, tin
+-- and holy light" after a paladin healed at the forge with Mining open.
+local recipes -- name -> true, or nil when the window's list cannot be read
+local function ReadRecipes()
+    local names, any = {}, false
+    if GetNumTradeSkills and GetTradeSkillInfo then
+        for i = 1, (tonumber(Ask(GetNumTradeSkills)) or 0) do
+            local name, kind = Ask(GetTradeSkillInfo, i)
+            if Text(name) and kind ~= "header" and kind ~= "subheader" then names[name] = true; any = true end
+        end
+    end
+    if GetNumCrafts and GetCraftInfo then
+        for i = 1, (tonumber(Ask(GetNumCrafts)) or 0) do
+            local name, _, kind = Ask(GetCraftInfo, i)
+            if Text(name) and kind ~= "header" then names[name] = true; any = true end
+        end
+    end
+    return any and names or nil
+end
+-- Things already written that were not made (the casts counted before this rule): out of
+-- the window's lines, once its recipes are known.
+local function TidyCrafts(names)
+    local journal = names and profession and Journal()
+    for _, entry in ipairs(journal or {}) do
+        if entry.k == "craft" and entry.d == profession and type(entry.m) == "table" then
+            for i = #entry.m, 1, -1 do if not names[entry.m[i]] then table.remove(entry.m, i) end end
+        end
+    end
+end
 local function Crafted(spellID)
     if not stretch or not profession then return end
     local made
     if C_Spell and C_Spell.GetSpellName then made = Text(Ask(C_Spell.GetSpellName, spellID))
     elseif GetSpellInfo then made = Text(Ask(GetSpellInfo, spellID)) end
     if made and (made == profession or NOT_MADE[made]) then return end
+    recipes = recipes or ReadRecipes()
+    if recipes and not (made and recipes[made]) then return end
     -- Where the client can say so, only a recipe of the open window counts.
     if C_TradeSkillUI and C_TradeSkillUI.GetRecipeInfo then
         local info = Ask(C_TradeSkillUI.GetRecipeInfo, spellID)
@@ -1325,6 +1371,7 @@ events:SetScript("OnEvent", function(_, event, ...)
     if A.MoreMomentsOn() then MoreEvent(event, ...) end
     if event == "PLAYER_ENTERING_WORLD" or event == "ZONE_CHANGED_NEW_AREA" then
         if event == "PLAYER_ENTERING_WORLD" then
+            A.ForgetShortSleeps(Journal(), Now())
             Settle()
             settledAt = Now()
             C_Timer.After(35, function() if A.SelfJournalOn() then CheckGuild(); CheckHome() end end)
@@ -1337,6 +1384,7 @@ events:SetScript("OnEvent", function(_, event, ...)
         CheckUnderground()
         CheckTown()
     elseif event == "PLAYER_LOGOUT" then
+        -- (resting when you log out: a sleep, unless you are back soon: see ForgetShortSleeps)
         if Ask(IsResting) == true and stretch then Add({k = "sleep", d = SubZone() or Zone()}) end
         -- (a /reload too: the stretch goes on when you are back in the same zone)
         if stretch then stretch.u = Now(); stretch.e = stretch.u end
@@ -1406,8 +1454,10 @@ events:SetScript("OnEvent", function(_, event, ...)
         elseif spellName and (spellName:find("^Portal:") or spellName:find("^Teleport:")) then travelSpell = {how = "portal", t = Now()} end
     elseif event == "TRADE_SKILL_SHOW" or event == "CRAFT_SHOW" then
         profession = ProfessionName() or "crafting"
+        recipes = ReadRecipes()
+        TidyCrafts(recipes)
     elseif event == "TRADE_SKILL_CLOSE" or event == "CRAFT_CLOSE" then
-        profession = nil
+        profession, recipes = nil, nil
     elseif event == "ENCOUNTER_START" then
         local _, name = ...
         encounter, fallen = Text(name), false
