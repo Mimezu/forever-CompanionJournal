@@ -91,7 +91,8 @@ C_Map = {
 }
 C_MapExplorationInfo = {GetExploredMapTextures = function() return {{textureWidth = 300, textureHeight = 200, offsetX = 10, offsetY = 20, fileDataIDs = {1, 2}, numTexturesWide = 1, numTexturesTall = 1}} end}
 function UnitPosition() return player.y * Size(player.map), MAPS[player.map].ox + player.x * Size(player.map) end
-function UnitOnTaxi() return false end
+local onTaxi = false
+function UnitOnTaxi() return onTaxi end
 function IsInInstance() return false end
 function UnitAffectingCombat() return false end
 function UnitIsGhost() return false end
@@ -353,6 +354,52 @@ do
     bridge = 0
     for _, item in ipairs(stb.drawn) do if item.blobs and not item.stay and not item.travel then bridge = bridge + 1 end end
     check(bridge == 0, "not across a hearthstone")
+end
+
+-- 16. The walker glides: on foot between two recorded steps, in the air along the drawn arc,
+-- and a replay moves it a little each frame, never in jumps.
+do
+    A.db.road = {}; Road.Reset()
+    clock = os.time({year = 2026, month = 11, day = 29, hour = 20, min = 0})
+    player.map, player.x, player.y = 1412, 0.2, 0.5
+    Look(0)
+    for _ = 1, 40 do player.x = player.x + 0.005; Look(2) end
+    onTaxi = true; for _ = 1, 30 do Look(2) end; onTaxi = false
+    player.x, player.y = 0.6, 0.2
+    Look(2)
+    for _ = 1, 20 do player.y = player.y + 0.005; Look(2) end
+    local key = Road.DayOf(clock)
+    Map.OpenDay(nil, key)
+    local sw = Upvalue(Map.Hover, "state")
+    local road
+    for _, piece in ipairs(sw.model.pieces) do if piece.points and not road then road = piece end end
+    local a, b = road.points[3], road.points[4]
+    local x1 = Map.WalkerAt(a.t)
+    local x2 = Map.WalkerAt(b.t)
+    local xm = Map.WalkerAt((a.t + b.t) / 2)
+    check(xm > x1 and xm < x2 and math.abs(xm - (x1 + x2) / 2) < 0.5, "on foot: halfway in time is halfway between the steps")
+    local flight
+    for _, piece in ipairs(sw.model.pieces) do if piece.kind == "flight" then flight = piece end end
+    local c
+    for _, curve in ipairs(sw.curves) do if curve.t0 == flight.from.t then c = curve end end
+    local fx, fy = Map.WalkerAt((flight.from.t + flight.to.t) / 2)
+    local ex = 0.25 * c.ax + 0.5 * c.mx + 0.25 * c.bx
+    local ey = 0.25 * c.ay + 0.5 * c.my + 0.25 * c.by
+    check(c and math.abs(fx - ex) < 0.01 and math.abs(fy - ey) < 0.01, "in the air: on the dotted arc, halfway along it")
+    -- (a replay at x16: each frame a small step, never a jump)
+    sw.speed = 16
+    Map.Play()
+    local lastX, lastY, worst = nil, nil, 0
+    for _ = 1, 300 do
+        if sheet.scripts.OnUpdate then sheet.scripts.OnUpdate(sheet, 1 / 60) end
+        local p = sheet.walker.points[1]
+        if p and sheet.walker:IsShown() then
+            if lastX then worst = math.max(worst, math.sqrt((p[4] - lastX) ^ 2 + (p[5] - lastY) ^ 2)) end
+            lastX, lastY = p[4], p[5]
+        end
+    end
+    check(worst * sw.scale < 25, "a frame moves the walker a few pixels at most: " .. string.format("%.1f", worst * sw.scale))
+    Map.Stop(); sw.speed = 1
 end
 
 -- 8. A chapter's map mark opens its day.

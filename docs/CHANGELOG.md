@@ -1,5 +1,12 @@
 # Companion Journal: changes
 
+## 1.50.6 (2026-11-15)
+
+- Replay: your crest glides between steps
+- It flies, sails and hearths along the drawn curves
+- Zooming is instant; the map redraws when the wheel rests
+- Lighter replay frames
+
 ## 1.50.5 (2026-11-15)
 
 - Zeppelins and boats drawn from coast to coast

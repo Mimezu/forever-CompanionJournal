@@ -265,7 +265,7 @@ local function DrawView()
     Map.Pan(state.panX or 0, state.panY or 0)
     local px = 1 / scale -- (one screen pixel in map units)
     for _, key in ipairs({"lines", "blobs", "marks"}) do Pool(ink, key) end
-    state.drawn, state.drawnMarks, state.hover = {}, {}, {}
+    state.drawn, state.drawnMarks, state.hover, state.curves = {}, {}, {}, {}
     local story = state.mode == "story"
     local models = state.atlas and state.atlasModels or {state.model}
     -- The road, piece by piece.
@@ -360,6 +360,7 @@ local function DrawView()
                     local bow = piece.kind == "flight" and 0.15 or piece.kind == "hearth" and 0.22 or 0.08
                     local color = TRAVEL_INK[piece.kind] or INK
                     local mx, my = (ax + bx) / 2 - (by - ay) * bow, (ay + by) / 2 + (bx - ax) * bow
+                    state.curves[#state.curves + 1] = {t0 = piece.from.t, t1 = piece.to.t, ax = ax, ay = ay, mx = mx, my = my, bx = bx, by = by}
                     local length = math.sqrt((bx - ax) ^ 2 + (by - ay) ^ 2)
                     local dots = math.max(3, math.min(80, math.floor(length / (7 * px))))
                     for k = 1, dots - 1 do
@@ -398,6 +399,7 @@ local function DrawView()
                         local length = math.sqrt((bx - ax) ^ 2 + (by - ay) ^ 2)
                         if length > 3 * px and length < 0.35 * math.max(w, h) then
                             local mx, my = (ax + bx) / 2 - (by - ay) * 0.12, (ay + by) / 2 + (bx - ax) * 0.12
+                            state.curves[#state.curves + 1] = {t0 = a.t, t1 = b.t, ax = ax, ay = ay, mx = mx, my = my, bx = bx, by = by}
                             local dots = math.max(2, math.floor(length / (6 * px)))
                             for k = 1, dots - 1 do
                                 local u = k / dots
@@ -485,6 +487,36 @@ local function DrawView()
     Map.SetTime(state.time or math.huge, true)
 end
 
+-- Where the walker is at a moment, on this view (map units of the art), gliding: on foot,
+-- between the two recorded steps around that moment; in the air, at sea, by hearthstone or
+-- over a short break, along the same curve the map draws. Nil when the road was not there.
+local function Bend(c, u)
+    local v = 1 - u
+    return v * v * c.ax + 2 * v * u * c.mx + u * u * c.bx, v * v * c.ay + 2 * v * u * c.my + u * u * c.by
+end
+function Map.WalkerAt(t)
+    for _, c in ipairs(state.curves or {}) do
+        if t >= c.t0 and t <= c.t1 then return Bend(c, c.t1 > c.t0 and (t - c.t0) / (c.t1 - c.t0) or 1) end
+    end
+    for _, piece in ipairs(state.model and state.model.pieces or {}) do
+        local pts = piece.points
+        if pts and #pts > 0 and t >= pts[1].t and t <= pts[#pts].t then
+            -- (the two steps around t, found by halves: a long day stays cheap every frame)
+            local lo, hi = 1, #pts
+            while hi - lo > 1 do
+                local mid = math.floor((lo + hi) / 2)
+                if pts[mid].t <= t then lo = mid else hi = mid end
+            end
+            local a, b = pts[lo], pts[hi]
+            local u = b.t > a.t and math.max(0, math.min(1, (t - a.t) / (b.t - a.t))) or 0
+            local vx, vy = Place(piece.map, state.view, a.x + (b.x - a.x) * u, a.y + (b.y - a.y) * u)
+            if vx then return vx * state.w, vy * state.h end
+            return nil
+        end
+    end
+    return nil
+end
+
 -- Time: what is shown up to a moment (the replay and the slider) ---------------------------
 local function Show(item, shown)
     if item.line then item.line:SetShown(shown) end
@@ -518,13 +550,16 @@ function Map.SetTime(t, quiet)
         item.shown = shown
         Show(item, shown)
     end
-    -- The walker: your class crest where you were then.
+    -- The walker: your class crest where you were then, gliding (see Map.WalkerAt).
     local walker = sheet.walker
-    local place = state.model and not state.atlas and t ~= math.huge and Model.PlaceAt(state.model, t)
-    local vx, vy
-    if place then vx, vy = Place(place.map, state.view, place.x, place.y) end
-    walker:SetShown(vx ~= nil)
-    if vx then walker:ClearAllPoints(); walker:SetPoint("CENTER", sheet.ink, "TOPLEFT", vx * state.w, -vy * state.h) end
+    local wx, wy, place
+    if state.model and not state.atlas and t ~= math.huge then
+        wx, wy = Map.WalkerAt(t)
+        if not wx then place = Model.PlaceAt(state.model, t) end
+    end
+    local vx = wx
+    walker:SetShown(wx ~= nil)
+    if wx then walker:ClearAllPoints(); walker:SetPoint("CENTER", sheet.ink, "TOPLEFT", wx, -wy) end
     -- The slider and the clock.
     local u
     if state.atlas then
@@ -533,13 +568,20 @@ function Map.SetTime(t, quiet)
     else
         u = t == math.huge and 1 or Map.ShareAt(t)
     end
-    sheet.knob:ClearAllPoints(); sheet.knob:SetPoint("CENTER", sheet.track, "LEFT", u * sheet.track:GetWidth(), 0)
+    -- (both are touched only when what they show changes: a pixel, a minute)
+    local knobX = math.floor(u * sheet.track:GetWidth() + 0.5)
+    if knobX ~= sheet.knobX then
+        sheet.knobX = knobX
+        sheet.knob:ClearAllPoints(); sheet.knob:SetPoint("CENTER", sheet.track, "LEFT", knobX, 0)
+    end
+    local text
     if state.atlas then
         local day = state.atlasDays and state.atlasDays[math.max(1, math.min(#state.atlasDays, math.floor(u * (#state.atlasDays - 1) + 1.5)))]
-        sheet.clock:SetText(t == math.huge and "" or (day or ""))
+        text = t == math.huge and "" or (day or "")
     else
-        sheet.clock:SetText(t == math.huge and "" or Clock(t))
+        text = t == math.huge and "" or Clock(t)
     end
+    if text ~= sheet.clockText then sheet.clockText = text; sheet.clock:SetText(text) end
     -- On a zone's tab, the map follows the walker into the next zone.
     if place and not vx and state.playing and state.zoneView and place.map ~= state.view then
         for _, zone in ipairs(state.model.zones) do
@@ -838,10 +880,20 @@ function Map.Zoom(factor)
     local newScale = state.base * new
     state.panX = cx - midX - (ax - state.w / 2) * newScale
     state.panY = cy - midY + (ay - state.h / 2) * newScale
-    -- (redrawn: lines keep their width on screen at any zoom)
-    local t = state.time
-    DrawView()
-    if t then Map.SetTime(t, true) end
+    -- (at once: the drawing as it is, scaled; then, when the wheel rests, drawn again so
+    -- lines keep their width on screen: zooming never waits for a redraw)
+    state.scale = newScale
+    sheet.art:SetScale(math.max(0.05, newScale))
+    Map.Pan(state.panX, state.panY)
+    local token = {}
+    state.zoomToken = token
+    local function Redraw()
+        if state.zoomToken ~= token or not sheet:IsShown() then return end
+        local t = state.time
+        DrawView()
+        if t then Map.SetTime(t, true) end
+    end
+    if C_Timer and C_Timer.After then C_Timer.After(0.15, Redraw) else Redraw() end
 end
 
 local hoverWait = 0
