@@ -1,5 +1,12 @@
 # Companion Journal: changes
 
+## 1.50.2 (2026-11-15)
+
+- Story: one road where you passed many times
+- Hero path: every pass, early hours paler
+- A companion's trace: thin, beside the road, with a key
+- Out-and-back roads keep their far end
+
 ## 1.50.1 (2026-11-14)
 
 - Replay: Play and Pause always answer

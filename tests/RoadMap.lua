@@ -31,6 +31,8 @@ function Frame:IsShown() return self.shown end
 function Frame:SetScript(k, fn) self.scripts[k] = fn end
 function Frame:GetScript(k) return self.scripts[k] end
 function Frame:SetText(t) self.text = t end
+function Frame:SetThickness(v) self.thick = v end
+function Frame:SetColorTexture(r, g, b, a) self.color = {r, g, b, a} end
 function Frame:SetFrameStrata(v) self.strata = v end
 function Frame:GetText() return self.text end
 function Frame:GetStringWidth() return #(self.text or "") * 6 end
@@ -141,14 +143,19 @@ check(sheet.art.tiles and #sheet.art.tiles >= 14, "the zone's art and its explor
 -- (the death: two red strokes; Dahlia: a second line beside the shared stretch)
 local story = Shown("lines")
 
--- 2. Hero path draws the true line: more strokes than the story.
+-- 2. Hero path: the true line, finer; Story: a bolder road (merging is section 13).
+local function Thickest() local m = 0; for _, l in ipairs(rawget(sheet.ink, "cjPools").lines) do if l:IsShown() and l.thick and l.color and l.color[1] < 0.3 then m = math.max(m, l.thick) end end; return m end
+local storyInk = Thickest()
 sheet.hero.scripts.OnClick(sheet.hero)
-check(Shown("lines") > story, "the hero path keeps every step")
+check(Thickest() < storyInk and Shown("lines") > 10, "the hero path is the finer true line")
 sheet.story.scripts.OnClick(sheet.story)
 
 -- 3. The continent shows both zones' roads.
 for _, tab in ipairs(sheet.tabs) do if tab.label.text == "Kalimdor" then tab.scripts.OnClick(tab) end end
-check(Shown("lines") > story, "the continent shows the whole evening")
+local stc = (function() for i = 1, 80 do local k, v = debug.getupvalue(Map.Hover, i); if k == "state" then return v end; if not k then break end end end)()
+local maps = {}
+for _, item in ipairs(stc.drawn) do if item.map then maps[item.map] = true end end
+check(maps[1412] and maps[1411], "the continent shows the whole evening, both zones")
 for _, tab in ipairs(sheet.tabs) do if tab.label.text == "Mulgore" then tab.scripts.OnClick(tab) end end
 
 -- 4. The replay: the walker walks, the moments sound as they are passed, the map follows
@@ -275,6 +282,34 @@ sheet.play.scripts.OnClick(sheet.play)
 local frames = 0
 while st.playing and frames < 1000 do Frame(0.25); frames = frames + 1 end
 check(frames >= 200, "a day of zones only plays for its minute, not an instant: " .. frames .. " frames")
+
+-- 13. Story and Hero path read the day differently: the same track walked three times is one
+-- road in the story and three passes in the hero path; the hero path's early hours are paler.
+do
+    A.db.road = {}; Road.Reset()
+    clock = os.time({year = 2026, month = 11, day = 25, hour = 20, min = 0})
+    player.map, player.x, player.y = 1412, 0.2, 0.5
+    Look(0)
+    local start = clock
+    for pass = 1, 3 do
+        local dir = pass % 2 == 1 and 1 or -1
+        for _ = 1, 40 do player.x = player.x + dir * 0.004; Look(2) end
+    end
+    journal[#journal + 1] = {k = "with", d = "dahlia-noir", n = "Dahlia-Noir", t = start, e = clock}
+    local passDay = Road.DayOf(clock)
+    Map.OpenDay(nil, passDay)
+    local function Count() local n = 0; for _, item in ipairs(rawget(sheet.ink, "cjPools").lines) do if item:IsShown() then n = n + 1 end end; return n end
+    local storyLines = Count()
+    sheet.hero.scripts.OnClick(sheet.hero)
+    local heroLines = Count()
+    check(heroLines > storyLines * 2, "three passes: one road in the story (" .. storyLines .. "), all three in the hero path (" .. heroLines .. ")")
+    local st = Upvalue(Map.Hover, "state")
+    local first, last
+    for _, item in ipairs(st.drawn) do if item.line then first = first or item; last = item end end
+    check(first.line.color[4] < last.line.color[4], "the hero path's early ink is paler than its late ink")
+    check(sheet.keys[1].text:IsShown() and sheet.keys[1].text.text == "With Dahlia", "the key names the companion")
+    sheet.story.scripts.OnClick(sheet.story)
+end
 
 -- 8. A chapter's map mark opens its day.
 local page = New("Frame"); page.box = {70, 70, 76, 56}

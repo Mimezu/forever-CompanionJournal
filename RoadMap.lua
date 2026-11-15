@@ -75,11 +75,14 @@ local function Simplify(pts, tol)
         local span = table.remove(stack)
         local a, b = pts[span[1]], pts[span[2]]
         local dx, dy = b.x - a.x, b.y - a.y
-        local len = math.sqrt(dx * dx + dy * dy)
+        local len2 = dx * dx + dy * dy
         local far, at = 0, nil
         for i = span[1] + 1, span[2] - 1 do
             local p = pts[i]
-            local d = len > 0 and math.abs(dy * p.x - dx * p.y + b.x * a.y - b.y * a.x) / len or math.sqrt((p.x - a.x) ^ 2 + (p.y - a.y) ^ 2)
+            -- (to the segment, not the line through it: an out-and-back trip's turn lies on
+            -- that line, and would be dropped as if it were on the way)
+            local u = len2 > 0 and math.max(0, math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / len2)) or 0
+            local d = math.sqrt((p.x - a.x - u * dx) ^ 2 + (p.y - a.y - u * dy) ^ 2)
             if d > far then far, at = d, i end
         end
         if at and far > tol then
@@ -89,6 +92,24 @@ local function Simplify(pts, tol)
     end
     local out = {}
     for i = 1, #pts do if keep[i] then out[#out + 1] = pts[i] end end
+    return out
+end
+-- Long stretches cut into short ones (at most step apart), so smoothing rounds a turn by a
+-- few pixels and never shortens the road (a hairpin between two long stretches once lost a
+-- quarter of them to Chaikin's corner cuts).
+local function Densify(pts, step)
+    if #pts < 2 or not step or step <= 0 then return pts end
+    local out = {pts[1]}
+    for i = 2, #pts do
+        local a, b = pts[i - 1], pts[i]
+        local len = math.sqrt((b.x - a.x) ^ 2 + (b.y - a.y) ^ 2)
+        local n = math.floor(len / step)
+        for k = 1, n do
+            local u = k / (n + 1)
+            out[#out + 1] = {x = a.x + (b.x - a.x) * u, y = a.y + (b.y - a.y) * u, t = a.t + (b.t - a.t) * u}
+        end
+        out[#out + 1] = b
+    end
     return out
 end
 -- Chaikin: corners cut twice, a hand-drawn road.
@@ -117,7 +138,7 @@ local function Thin(pts, step)
     out[#out + 1] = pts[#pts]
     return out
 end
-Map.Simplify, Map.Smooth, Map.Thin = Simplify, Smooth, Thin
+Map.Simplify, Map.Smooth, Map.Thin, Map.Densify = Simplify, Smooth, Thin, Densify
 
 -- The map art ------------------------------------------------------------------------
 -- The zone's tiles and the parts you have explored, tinted to the paper's inks.
@@ -246,8 +267,58 @@ local function DrawView()
     local story = state.mode == "story"
     local models = state.atlas and state.atlasModels or {state.model}
     -- The road, piece by piece.
+    --   Story: the day as you would draw it from memory. Smoothed, and a pass over ground
+    --   already inked is not drawn again, so six trips along one track are one road.
+    --   Hero path: every step of every pass, the day's early hours fainter than its last.
+    -- A companion's trace runs beside the stretches walked together, thin, in their colour
+    -- (Story: once per stretch of ground too).
+    local CELL = 7 * px
+    local function Hash() return {} end
+    local roadInk, traceInk = Hash(), Hash()
+    local function Key(x, y) return math.floor(x / CELL) .. ":" .. math.floor(y / CELL) end
+    local function Near(hash, x, y)
+        local cx, cy = math.floor(x / CELL), math.floor(y / CELL)
+        for i = -1, 1 do
+            for j = -1, 1 do
+                for _, q in ipairs(hash[(cx + i) .. ":" .. (cy + j)] or {}) do
+                    if (q[1] - x) ^ 2 + (q[2] - y) ^ 2 <= CELL * CELL then return true end
+                end
+            end
+        end
+        return false
+    end
+    local function Covered(hash, a, b)
+        return Near(hash, a.x, a.y) and Near(hash, (a.x + b.x) / 2, (a.y + b.y) / 2) and Near(hash, b.x, b.y)
+    end
+    local function Commit(hash, a, b)
+        for _, q in ipairs({{a.x, a.y}, {(a.x + b.x) / 2, (a.y + b.y) / 2}, {b.x, b.y}}) do
+            local key = Key(q[1], q[2])
+            hash[key] = hash[key] or {}
+            table.insert(hash[key], q)
+        end
+    end
+    -- (ink counts as already drawn only once the pen is a few cells past it: the road's own
+    -- last strokes must not hide its next ones)
+    local pending = {}
+    local function Mark(hash, a, b)
+        pending[hash] = pending[hash] or {}
+        local list = pending[hash]
+        list[#list + 1] = {a, b}
+        while #list > 0 do
+            local first = list[1]
+            if (first[2].x - b.x) ^ 2 + (first[2].y - b.y) ^ 2 < (3 * CELL) ^ 2 then break end
+            Commit(hash, first[1], first[2]); table.remove(list, 1)
+        end
+    end
+    local function Settle()
+        for hash, list in pairs(pending) do for _, seg in ipairs(list) do Commit(hash, seg[1], seg[2]) end end
+        pending = {}
+    end
+    local merge = story and not state.atlas
+    local companions = {}
     for mi, model in ipairs(models) do
         local age = state.atlas and (0.30 + 0.62 * mi / #models) or 1
+        local t0, t1 = model.t0 or 0, model.t1 or 1
         for _, piece in ipairs(model.pieces) do
             if piece.points then
                 local pts = {}
@@ -255,32 +326,46 @@ local function DrawView()
                     local vx, vy = Place(piece.map, view, p.x, p.y)
                     if vx then pts[#pts + 1] = {x = vx * w, y = vy * h, t = p.t} end
                 end
-                if story or state.atlas then pts = Smooth(Simplify(pts, (state.atlas and 3 or 2.2) * px))
+                if state.atlas then pts = Smooth(Densify(Simplify(pts, 3 * px), 10 * px))
+                elseif story then pts = Smooth(Densify(Simplify(pts, 5 * px), 10 * px))
                 else pts = Thin(pts, 1.6 * px) end
                 -- (a very long day stays light to draw: fewer points until it fits)
                 local limit, step = story and STORY_LIMIT or HERO_LIMIT, 3 * px
                 while #pts > limit do pts = Thin(pts, step); step = step * 2 end
                 local ghost = piece.kind == "ghost"
-                local thick = (story and 2.4 or 1.5) * px
+                local thick = (story and 2.4 or 1.4) * px
                 for k = 2, #pts do
                     local a, b = pts[k - 1], pts[k]
+                    local with = not state.atlas and Model.WithAt(model, b.t)
+                    local item = {t = b.t, x = b.x, y = b.y, map = piece.map, day = model.day}
                     if not ghost or k % 2 == 0 then
-                        local line = Line(ink, a.x, a.y, b.x, b.y, thick, INK, (ghost and 0.45 or 0.88) * age)
-                        local item = {t = b.t, x = b.x, y = b.y, line = line, map = piece.map, day = model.day}
-                        local with = not state.atlas and Model.WithAt(model, b.t)
-                        if with then
-                            -- (the road walked together: a second line beside it, in their colour)
-                            local dx, dy = b.x - a.x, b.y - a.y
-                            local len = math.sqrt(dx * dx + dy * dy)
-                            if len > 0 then
-                                local ox, oy = -dy / len * 2.6 * px, dx / len * 2.6 * px
-                                item.line2 = Line(ink, a.x + ox, a.y + oy, b.x + ox, b.y + oy, 1.4 * px, Companion(with.key), 0.85)
-                                item.with = with.name
+                        if not (merge and not ghost and Covered(roadInk, a, b)) then
+                            local alpha = ghost and 0.45 or 0.88
+                            if not story and not state.atlas then
+                                -- (Hero path: the hour shows in the ink, the evening's start palest)
+                                alpha = alpha * (0.40 + 0.60 * math.max(0, math.min(1, (b.t - t0) / math.max(1, t1 - t0))))
+                            end
+                            item.line = Line(ink, a.x, a.y, b.x, b.y, thick, INK, alpha * age)
+                            if merge and not ghost then Mark(roadInk, a, b) end
+                        end
+                    end
+                    if with and not ghost and not (merge and Covered(traceInk, a, b)) then
+                        local dx, dy = b.x - a.x, b.y - a.y
+                        local len = math.sqrt(dx * dx + dy * dy)
+                        if len > 0 then
+                            local ox, oy = -dy / len * 3.6 * px, dx / len * 3.6 * px
+                            item.line2 = Line(ink, a.x + ox, a.y + oy, b.x + ox, b.y + oy, 1.1 * px, Companion(with.key), 0.75)
+                            item.with = with.name
+                            if merge then Mark(traceInk, a, b) end
+                            if with.key and not companions[with.key] then
+                                companions[with.key] = true
+                                companions[#companions + 1] = {key = with.key, name = with.name}
                             end
                         end
-                        state.drawn[#state.drawn + 1] = item
                     end
+                    if item.line or item.line2 then state.drawn[#state.drawn + 1] = item end
                 end
+                Settle()
             elseif piece.from then
                 -- A flight or a voyage: a dotted line (an arc for a wyvern, a gentler one at
                 -- sea), with a small ring where it began and where it ended.
@@ -375,9 +460,29 @@ local function DrawView()
         end
     end
     for _, key in ipairs({"lines", "blobs", "marks"}) do Finish(ink, key) end
+    Map.Key(companions)
     table.sort(state.drawn, function(a, b) return a.t < b.t end)
     state.shownTo = nil
     Map.SetTime(state.time or math.huge, true)
+end
+
+-- The key: a short line in each companion's colour and their name, for the traces drawn
+-- on this view (up to two; none when you walked alone).
+function Map.Key(companions)
+    if not sheet or not sheet.keys then return end
+    local x = 0
+    for i, entry in ipairs(sheet.keys) do
+        local who = companions and companions[i]
+        entry.text:SetShown(who ~= nil); entry.swatch:SetShown(who ~= nil)
+        if who then
+            local color = Companion(who.key)
+            entry.swatch:SetColorTexture(color[1], color[2], color[3], 0.85)
+            entry.text:SetText("With " .. (who.name or "?"):gsub("%-.*$", ""))
+            entry.text:ClearAllPoints(); entry.text:SetPoint("RIGHT", sheet.close, "LEFT", -14 - x, 0)
+            entry.swatch:ClearAllPoints(); entry.swatch:SetPoint("RIGHT", entry.text, "LEFT", -6, 0)
+            x = x + (entry.text:GetStringWidth() or 60) + 36
+        end
+    end
 end
 
 -- Time: what is shown up to a moment (the replay and the slider) ---------------------------
@@ -586,6 +691,13 @@ local function Make()
     sheet.facts = sheet:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     sheet.facts:SetTextColor(SOFT[1], SOFT[2], SOFT[3]); if sheet.facts.SetShadowOffset then sheet.facts:SetShadowOffset(0, 0) end
     sheet.close = InkButton(sheet, "\195\151", 22, function() sheet:Hide() end)
+    sheet.keys = {}
+    for i = 1, 2 do
+        local swatch = sheet:CreateTexture(nil, "OVERLAY"); swatch:SetSize(18, 2); swatch:Hide()
+        local text = sheet:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); text:Hide()
+        text:SetTextColor(SOFT[1], SOFT[2], SOFT[3]); if text.SetShadowOffset then text:SetShadowOffset(0, 0) end
+        sheet.keys[i] = {swatch = swatch, text = text}
+    end
     sheet.tabs = {}
     -- The map: a clipped area with the art, and the ink over it.
     sheet.area = CreateFrame("Frame", nil, sheet)
