@@ -17,6 +17,9 @@ local INK = {0.24, 0.13, 0.05}
 local SOFT = {0.36, 0.22, 0.08}
 local RED = {0.55, 0.08, 0.04}
 local PAPER_INK = {0.91, 0.84, 0.69} -- (the paper, for the hollow of a ring)
+-- Travel the road cannot walk, each in its own ink: flights and voyages a blue-black sea ink,
+-- a hearthstone a soft arcane violet. Walking stays brown.
+local TRAVEL_INK = {flight = {0.18, 0.30, 0.46}, voyage = {0.18, 0.30, 0.46}, hearth = {0.45, 0.25, 0.58}}
 local WORLD = 947
 local PAPER = "paper3" -- (the folded cream: a map is a sheet folded in four)
 local B = "Interface\\Icons\\"
@@ -354,7 +357,8 @@ local function DrawView()
                 local bx, by = Place(piece.to.map, view, piece.to.x, piece.to.y)
                 if ax and bx then
                     ax, ay, bx, by = ax * w, ay * h, bx * w, by * h
-                    local bow = piece.kind == "flight" and 0.15 or 0.08
+                    local bow = piece.kind == "flight" and 0.15 or piece.kind == "hearth" and 0.22 or 0.08
+                    local color = TRAVEL_INK[piece.kind] or INK
                     local mx, my = (ax + bx) / 2 - (by - ay) * bow, (ay + by) / 2 + (bx - ax) * bow
                     local length = math.sqrt((bx - ax) ^ 2 + (by - ay) ^ 2)
                     local dots = math.max(3, math.min(80, math.floor(length / (7 * px))))
@@ -362,11 +366,11 @@ local function DrawView()
                         local u = k / dots
                         local x = (1 - u) ^ 2 * ax + 2 * (1 - u) * u * mx + u ^ 2 * bx
                         local y = (1 - u) ^ 2 * ay + 2 * (1 - u) * u * my + u ^ 2 * by
-                        local dot = Blob(ink, x, y, 2.6 * px, 0.75 * age)
+                        local dot = Blob(ink, x, y, 2.6 * px, 0.8 * age, color)
                         state.drawn[#state.drawn + 1] = {t = piece.from.t + (piece.to.t - piece.from.t) * u, x = x, y = y, blobs = {dot}, day = model.day, travel = piece}
                     end
                     for i, end_ in ipairs({{ax, ay, piece.from.t}, {bx, by, piece.to.t}}) do
-                        local ring = {Blob(ink, end_[1], end_[2], 8 * px, 0.9 * age), Blob(ink, end_[1], end_[2], 4.4 * px, 1, PAPER_INK)}
+                        local ring = {Blob(ink, end_[1], end_[2], 8 * px, 0.9 * age, color), Blob(ink, end_[1], end_[2], 4.4 * px, 1, PAPER_INK)}
                         state.drawn[#state.drawn + 1] = {t = end_[3], x = end_[1], y = end_[2], blobs = ring, day = model.day, travel = piece, landing = i == 2}
                     end
                 end
@@ -875,7 +879,8 @@ function Map.Hover(_, elapsed)
         if best.stay then line = line .. "  " .. math.floor(best.stay.secs / 60 + 0.5) .. " min" end
         GameTooltip:SetText(line, 1, 0.9, 0.7)
         if best.travel then
-            local how = best.travel.kind == "flight" and "Flight" or ("By " .. (best.travel.how or "ship"))
+            local how = best.travel.kind == "flight" and "Flight" or best.travel.kind == "hearth" and "Hearthstone"
+                or ("By " .. (best.travel.how or "ship"))
             GameTooltip:SetText(how .. "  " .. Clock(best.travel.from.t) .. " \226\128\147 " .. Clock(best.travel.to.t), 1, 0.9, 0.7)
         end
         if best.with then GameTooltip:AddLine("With " .. best.with:gsub("%-.*$", ""), 0.85, 0.85, 0.85) end

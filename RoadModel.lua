@@ -206,19 +206,42 @@ function M.Build(journal, day, character, companionKey)
             if #kept > 1 then model.pieces[#model.pieces + 1] = {kind = piece.kind, map = piece.map, points = kept} end
         end
     end
-    -- Voyages (a boat, a zeppelin): from the last step before the journal's voyage line to
-    -- the first step after it, drawn dotted like a flight.
+    -- Travel the road cannot walk: voyages (a boat, a zeppelin) and hearthstones, from the
+    -- last step before to the first step after, drawn dotted in their own ink.
+    -- Voyages are found where the road changes continent nearest the journal's voyage line
+    -- (written on arrival: 2026-11-15, Undercity to Orgrimmar drew nothing when both ends
+    -- were looked for around that line). A hearthstone runs from the cast to where you land.
+    local steps = {}
+    for _, piece in ipairs(model.pieces) do
+        for _, p in ipairs(piece.points or {}) do steps[#steps + 1] = {map = piece.map, x = p.x, y = p.y, t = p.t} end
+    end
+    table.sort(steps, function(a, b) return a.t < b.t end)
+    local continents = {}
+    local function ContinentOf(map)
+        if continents[map] == nil then continents[map] = M.Continent(map) or false end
+        return continents[map]
+    end
     for _, e in ipairs(journal or {}) do
-        if e.k == "voyage" and e.t and DayOf(e.t) == day and Inside(e.t) then
-            local before, after
-            for _, piece in ipairs(model.pieces) do
-                for _, p in ipairs(piece.points or {}) do
-                    if p.t <= e.t + 30 and (not before or p.t > before.t) then before = {map = piece.map, x = p.x, y = p.y, t = p.t} end
-                    if p.t >= e.t and (not after or p.t < after.t) then after = {map = piece.map, x = p.x, y = p.y, t = p.t} end
+        if e.t and DayOf(e.t) == day and Inside(e.t) and (e.k == "voyage" or e.k == "hearth") then
+            local from, to
+            if e.k == "voyage" then
+                local best
+                for i = 2, #steps do
+                    local a, b = steps[i - 1], steps[i]
+                    local ca, cb = ContinentOf(a.map), ContinentOf(b.map)
+                    if ca and cb and ca ~= cb and b.t >= e.t - 1800 and a.t <= e.t + 300 then
+                        local off = math.abs(b.t - e.t)
+                        if not best or off < best then best, from, to = off, a, b end
+                    end
+                end
+            else
+                for _, step in ipairs(steps) do
+                    if step.t <= e.t + 5 then from = step end
+                    if not to and step.t > e.t + 5 and step.t <= e.t + 300 then to = step end
                 end
             end
-            if before and after and before.map ~= after.map then
-                model.pieces[#model.pieces + 1] = {kind = "voyage", how = e.d, from = before, to = after}
+            if from and to and (from.map ~= to.map or math.abs(from.x - to.x) + math.abs(from.y - to.y) > 0.02) then
+                model.pieces[#model.pieces + 1] = {kind = e.k, how = e.d, from = from, to = to}
             end
         end
     end

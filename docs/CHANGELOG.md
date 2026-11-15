@@ -1,5 +1,11 @@
 # Companion Journal: changes
 
+## 1.50.5 (2026-11-15)
+
+- Zeppelins and boats drawn from coast to coast
+- Hearthstones drawn, from the cast to where you land
+- Travel in its own inks: blue at sea and in the air, violet by hearth
+
 ## 1.50.4 (2026-11-15)
 
 - Map art: explored areas in their right place

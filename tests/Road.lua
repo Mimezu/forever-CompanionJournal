@@ -12,6 +12,8 @@ local MAPS = {
     [1411] = {mapID = 1411, mapType = 3, parentMapID = 1414, name = "Durotar", ox = 4000, oy = 0},
     [2000] = {mapID = 2000, mapType = 4, parentMapID = 1412, name = "Cave", ox = 1000, oy = 1000, size = 400},
     [1414] = {mapID = 1414, mapType = 2, parentMapID = 947, name = "Kalimdor", ox = 0, oy = 0, size = 8000},
+    [1420] = {mapID = 1420, mapType = 3, parentMapID = 1415, name = "Tirisfal Glades", ox = 20000, oy = 0},
+    [1415] = {mapID = 1415, mapType = 2, parentMapID = 947, name = "Eastern Kingdoms", ox = 20000, oy = 0, size = 8000},
 }
 local function Size(map) return MAPS[map].size or 4000 end
 function CreateVector2D(x, y) return {x = x, y = y} end
@@ -203,5 +205,35 @@ local old = A.RoadModel.Build({{k = "play", t = 100, e = 4000, z = "Durotar"}, {
 check(not old.recorded and #old.stays == 1 and old.stays[1].map == 1411 and old.stays[1].guess, "a day before the recorder: a wash for its zone")
 check(#old.marks == 1 and old.marks[1].guess, "its marks sit in the zone, marked as a guess")
 check(#A.RoadModel.Days({{k = "play", t = 100, e = 200, z = "Durotar"}}, "alberich-realm") >= 2, "the adventure's days: roads and zones")
+
+-- 14. Travel the road cannot walk: a zeppelin from Tirisfal to Durotar (its journal line
+-- written on arrival) is a voyage between the two coasts; a hearthstone, a trip from the
+-- cast to where you land.
+A.db.road = {}; Road.Reset()
+clock = os.time({year = 2026, month = 11, day = 22, hour = 20, min = 0})
+player.map, player.x, player.y = 1420, 0.6, 0.6
+Look(0); Walk(60)
+local boarded = clock
+player.hidden = true; clock = clock + 200; Look(2); player.hidden = false   -- (at sea: no place)
+player.map, player.x, player.y = 1411, 0.5, 0.3
+Look(2)
+local arrived = clock
+Walk(60)
+local hearthAt = clock
+player.x, player.y = 0.1, 0.9
+clock = clock + 20; Look(2)                                                  -- (home: a long jump)
+Walk(30)
+local tday = Road.DayOf(clock)
+local trip = A.RoadModel.Build({
+    {k = "voyage", d = "zeppelin", from = "Eastern Kingdoms", to = "Kalimdor", t = arrived, z = "Durotar"},
+    {k = "hearth", d = "Razor Hill", t = hearthAt, z = "Durotar"},
+}, tday, "alberich-realm")
+local voyage, hearth
+for _, piece in ipairs(trip.pieces) do
+    if piece.kind == "voyage" then voyage = piece end
+    if piece.kind == "hearth" then hearth = piece end
+end
+check(voyage and voyage.from.map == 1420 and voyage.to.map == 1411 and voyage.from.t <= boarded + 2, "the zeppelin: from Tirisfal's tower to Durotar")
+check(hearth and hearth.from.map == 1411 and math.abs(hearth.to.x - 0.1) < 0.01, "the hearthstone: from the cast to where you landed")
 
 print("Road: " .. checks .. " checks passed (an hour of riding: " .. bytes .. " bytes)")
