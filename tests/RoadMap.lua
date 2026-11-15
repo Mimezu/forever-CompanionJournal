@@ -307,7 +307,14 @@ do
     local first, last
     for _, item in ipairs(st.drawn) do if item.line then first = first or item; last = item end end
     check(first.line.color[4] < last.line.color[4], "the hero path's early ink is paler than its late ink")
-    check(sheet.keys[1].text:IsShown() and sheet.keys[1].text.text == "With Dahlia", "the key names the companion")
+    -- (no second path for a companion: one road; the hover still names who was there)
+    local colours = {}
+    for _, l in ipairs(rawget(sheet.ink, "cjPools").lines) do if l:IsShown() and l.color then colours[string.format("%.2f", l.color[3])] = true end end
+    local n = 0; for _ in pairs(colours) do n = n + 1 end
+    check(n == 1, "one ink for the road, no companion line")
+    local withItem
+    for _, item in ipairs(st.drawn) do if item.with then withItem = item end end
+    check(withItem and withItem.with == "Dahlia-Noir", "the road still knows who walked it")
     sheet.story.scripts.OnClick(sheet.story)
 end
 

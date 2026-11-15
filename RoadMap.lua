@@ -239,12 +239,6 @@ local function Place(map, view, x, y)
     if not vx or vx < -0.02 or vx > 1.02 or vy < -0.02 or vy > 1.02 then return nil end
     return vx, vy
 end
-local function Companion(key)
-    local person = key and A.People and A.People[key]
-    local color = person and person.class and RAID_CLASS_COLORS and RAID_CLASS_COLORS[person.class]
-    if not color then return {0.20, 0.30, 0.55} end
-    return {color.r * 0.55 + INK[1] * 0.45, color.g * 0.55 + INK[2] * 0.45, color.b * 0.55 + INK[3] * 0.45}
-end
 
 local function DrawView()
     local s = sheet
@@ -270,11 +264,8 @@ local function DrawView()
     --   Story: the day as you would draw it from memory. Smoothed, and a pass over ground
     --   already inked is not drawn again, so six trips along one track are one road.
     --   Hero path: every step of every pass, the day's early hours fainter than its last.
-    -- A companion's trace runs beside the stretches walked together, thin, in their colour
-    -- (Story: once per stretch of ground too).
     local CELL = 7 * px
-    local function Hash() return {} end
-    local roadInk, traceInk = Hash(), Hash()
+    local roadInk = {}
     local function Key(x, y) return math.floor(x / CELL) .. ":" .. math.floor(y / CELL) end
     local function Near(hash, x, y)
         local cx, cy = math.floor(x / CELL), math.floor(y / CELL)
@@ -315,7 +306,6 @@ local function DrawView()
         pending = {}
     end
     local merge = story and not state.atlas
-    local companions = {}
     for mi, model in ipairs(models) do
         local age = state.atlas and (0.30 + 0.62 * mi / #models) or 1
         local t0, t1 = model.t0 or 0, model.t1 or 1
@@ -326,8 +316,8 @@ local function DrawView()
                     local vx, vy = Place(piece.map, view, p.x, p.y)
                     if vx then pts[#pts + 1] = {x = vx * w, y = vy * h, t = p.t} end
                 end
-                if state.atlas then pts = Smooth(Densify(Simplify(pts, 3 * px), 10 * px))
-                elseif story then pts = Smooth(Densify(Simplify(pts, 5 * px), 10 * px))
+                if state.atlas then pts = Smooth(Densify(Simplify(pts, 3 * px), 40 * px))
+                elseif story then pts = Smooth(Densify(Simplify(pts, 2.2 * px), 30 * px))
                 else pts = Thin(pts, 1.6 * px) end
                 -- (a very long day stays light to draw: fewer points until it fits)
                 local limit, step = story and STORY_LIMIT or HERO_LIMIT, 3 * px
@@ -337,7 +327,7 @@ local function DrawView()
                 for k = 2, #pts do
                     local a, b = pts[k - 1], pts[k]
                     local with = not state.atlas and Model.WithAt(model, b.t)
-                    local item = {t = b.t, x = b.x, y = b.y, map = piece.map, day = model.day}
+                    local item = {t = b.t, x = b.x, y = b.y, map = piece.map, day = model.day, with = with and with.name}
                     if not ghost or k % 2 == 0 then
                         if not (merge and not ghost and Covered(roadInk, a, b)) then
                             local alpha = ghost and 0.45 or 0.88
@@ -349,21 +339,7 @@ local function DrawView()
                             if merge and not ghost then Mark(roadInk, a, b) end
                         end
                     end
-                    if with and not ghost and not (merge and Covered(traceInk, a, b)) then
-                        local dx, dy = b.x - a.x, b.y - a.y
-                        local len = math.sqrt(dx * dx + dy * dy)
-                        if len > 0 then
-                            local ox, oy = -dy / len * 3.6 * px, dx / len * 3.6 * px
-                            item.line2 = Line(ink, a.x + ox, a.y + oy, b.x + ox, b.y + oy, 1.1 * px, Companion(with.key), 0.75)
-                            item.with = with.name
-                            if merge then Mark(traceInk, a, b) end
-                            if with.key and not companions[with.key] then
-                                companions[with.key] = true
-                                companions[#companions + 1] = {key = with.key, name = with.name}
-                            end
-                        end
-                    end
-                    if item.line or item.line2 then state.drawn[#state.drawn + 1] = item end
+                    if item.line then state.drawn[#state.drawn + 1] = item end
                 end
                 Settle()
             elseif piece.from then
@@ -460,40 +436,35 @@ local function DrawView()
         end
     end
     for _, key in ipairs({"lines", "blobs", "marks"}) do Finish(ink, key) end
-    Map.Key(companions)
     table.sort(state.drawn, function(a, b) return a.t < b.t end)
     state.shownTo = nil
     Map.SetTime(state.time or math.huge, true)
 end
 
--- The key: a short line in each companion's colour and their name, for the traces drawn
--- on this view (up to two; none when you walked alone).
-function Map.Key(companions)
-    if not sheet or not sheet.keys then return end
-    local x = 0
-    for i, entry in ipairs(sheet.keys) do
-        local who = companions and companions[i]
-        entry.text:SetShown(who ~= nil); entry.swatch:SetShown(who ~= nil)
-        if who then
-            local color = Companion(who.key)
-            entry.swatch:SetColorTexture(color[1], color[2], color[3], 0.85)
-            entry.text:SetText("With " .. (who.name or "?"):gsub("%-.*$", ""))
-            entry.text:ClearAllPoints(); entry.text:SetPoint("RIGHT", sheet.close, "LEFT", -14 - x, 0)
-            entry.swatch:ClearAllPoints(); entry.swatch:SetPoint("RIGHT", entry.text, "LEFT", -6, 0)
-            x = x + (entry.text:GetStringWidth() or 60) + 36
-        end
-    end
-end
-
 -- Time: what is shown up to a moment (the replay and the slider) ---------------------------
 local function Show(item, shown)
-    for _, key in ipairs({"line", "line2"}) do if item[key] then item[key]:SetShown(shown) end end
+    if item.line then item.line:SetShown(shown) end
     for _, part in ipairs(item.blobs or item.parts or {}) do part:SetShown(shown) end
 end
 function Map.SetTime(t, quiet)
     if not sheet or not state.drawn then return end
     state.time = t
-    for _, item in ipairs(state.drawn) do Show(item, item.t <= t) end
+    -- (the drawn list is in time order: only the items between the old and the new moment
+    -- change; a replay frame touches a handful, not the whole map)
+    local drawn = state.drawn
+    local shownTo = state.shownTo
+    if not shownTo then
+        shownTo = 0
+        for i, item in ipairs(drawn) do
+            local shown = item.t <= t
+            Show(item, shown)
+            if shown then shownTo = i end
+        end
+    else
+        while shownTo < #drawn and drawn[shownTo + 1].t <= t do shownTo = shownTo + 1; Show(drawn[shownTo], true) end
+        while shownTo > 0 and drawn[shownTo].t > t do Show(drawn[shownTo], false); shownTo = shownTo - 1 end
+    end
+    state.shownTo = shownTo
     for _, item in ipairs(state.drawnMarks) do
         local shown = item.t <= t
         if shown and not item.shown and not quiet and state.playing then
@@ -691,13 +662,6 @@ local function Make()
     sheet.facts = sheet:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     sheet.facts:SetTextColor(SOFT[1], SOFT[2], SOFT[3]); if sheet.facts.SetShadowOffset then sheet.facts:SetShadowOffset(0, 0) end
     sheet.close = InkButton(sheet, "\195\151", 22, function() sheet:Hide() end)
-    sheet.keys = {}
-    for i = 1, 2 do
-        local swatch = sheet:CreateTexture(nil, "OVERLAY"); swatch:SetSize(18, 2); swatch:Hide()
-        local text = sheet:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); text:Hide()
-        text:SetTextColor(SOFT[1], SOFT[2], SOFT[3]); if text.SetShadowOffset then text:SetShadowOffset(0, 0) end
-        sheet.keys[i] = {swatch = swatch, text = text}
-    end
     sheet.tabs = {}
     -- The map: a clipped area with the art, and the ink over it.
     sheet.area = CreateFrame("Frame", nil, sheet)
@@ -836,8 +800,15 @@ function Map.Zoom(factor)
     if t then Map.SetTime(t, true) end
 end
 
-function Map.Hover()
+local hoverWait = 0
+function Map.Hover(_, elapsed)
     if not sheet or not state.drawn or not GameTooltip then return end
+    -- (twenty looks a second are plenty for a tooltip)
+    if elapsed then
+        hoverWait = hoverWait - elapsed
+        if hoverWait > 0 then return end
+        hoverWait = 0.05
+    end
     local scale = sheet.art:GetEffectiveScale()
     local cx, cy = GetCursorPosition()
     local x, y = cx / scale - sheet.art:GetLeft(), sheet.art:GetTop() - cy / scale

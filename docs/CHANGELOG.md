@@ -1,5 +1,12 @@
 # Companion Journal: changes
 
+## 1.50.3 (2026-11-15)
+
+- One road line; the companion line is gone
+- Story: the lighter, more fluid road again
+- Replay: each frame touches only what changes
+- Hover: lighter on the map
+
 ## 1.50.2 (2026-11-15)
 
 - Story: one road where you passed many times
