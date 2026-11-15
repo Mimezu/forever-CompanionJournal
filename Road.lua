@@ -1,6 +1,6 @@
 local _, A = ...
--- The Road: where you went, for the book's maps (docs/HERO-PATH.md). Off until
--- "Record the road" is on (Settings > Recording).
+-- The Road: where you went, for the book's maps (docs/HERO-PATH.md). On unless
+-- "Record the road" is turned off (Settings > Recording).
 --
 -- Every 2 s while you move, a point every 12 yards on the zone's own map. Kept per
 -- character and per day (the book's day: play past midnight belongs to the evening):
@@ -15,7 +15,7 @@ local _, A = ...
 
 local Road = {}
 A.Road = Road
-A.defaults.roadRecord = false
+A.defaults.roadRecord = true
 
 local SAMPLE = 2        -- seconds between looks
 local STEP = 12         -- yards between kept points
@@ -249,5 +249,10 @@ function Road.Reset() Close(); flight = nil; lastLook = nil end
 local events = CreateFrame and CreateFrame("Frame")
 if events then
     events:RegisterEvent("PLAYER_ENTERING_WORLD")
-    events:SetScript("OnEvent", function() Close(); Road.Start() end)
+    events:SetScript("OnEvent", function()
+        -- (1.49.3: on by default; a book saved with the old "off" default, never chosen, is
+        -- switched on once; a later "off" stays off)
+        if A.db and not A.db.roadDefaultOn then A.db.roadDefaultOn = true; A.db.roadRecord = true end
+        Close(); Road.Start()
+    end)
 end

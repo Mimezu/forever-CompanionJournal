@@ -1,5 +1,9 @@
 # Companion Journal: changes
 
+## 1.49.3 (2026-11-14)
+
+- Record the road: on by default
+
 ## 1.49.2 (2026-11-14)
 
 - Only recipes count as things made, not spells cast

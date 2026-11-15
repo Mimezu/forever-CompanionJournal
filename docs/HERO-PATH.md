@@ -95,8 +95,8 @@ styles we just made.
 
 ## Following the house rules
 
-- A setting, **Record the road**, starts off (every new feature is opt-in). Once it is on,
-  the map appears in chapters.
+- A setting, **Record the road**, is on by default (the user's choice, 2026-11-14) and can be
+  turned off in Settings > Recording.
 - The UI uses few words: tabs, ▶, ×1 ×4 ×16, and hover text.
 - The map art and sounds are the game's own. The paper is ours.
 - **Performance:** a cap on drawn segments, as Social Diary and LoreForever do (≈450 per
