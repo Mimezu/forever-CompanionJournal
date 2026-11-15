@@ -406,8 +406,13 @@ function Map.SetTime(t, quiet)
     walker:SetShown(vx ~= nil)
     if vx then walker:ClearAllPoints(); walker:SetPoint("CENTER", sheet.ink, "TOPLEFT", vx * state.w, -vy * state.h) end
     -- The slider and the clock.
-    local t0, t1 = state.t0 or 0, state.t1 or 1
-    local u = t == math.huge and 1 or math.max(0, math.min(1, (t - t0) / math.max(1, t1 - t0)))
+    local u
+    if state.atlas then
+        local count = #(state.atlasDays or {})
+        u = (t == math.huge or count < 2) and 1 or math.max(0, math.min(1, ((t or 1) - 1) / (count - 1)))
+    else
+        u = t == math.huge and 1 or Map.ShareAt(t)
+    end
     sheet.knob:ClearAllPoints(); sheet.knob:SetPoint("CENTER", sheet.track, "LEFT", u * sheet.track:GetWidth(), 0)
     if state.atlas then
         local day = state.atlasDays and state.atlasDays[math.max(1, math.min(#state.atlasDays, math.floor(u * (#state.atlasDays - 1) + 1.5)))]
@@ -424,32 +429,38 @@ function Map.SetTime(t, quiet)
 end
 
 -- Replay ------------------------------------------------------------------------------
--- The day replays in about a minute at x1: time spent standing still or riding a long
--- straight road counts little; the walking counts.
+-- One playhead, state.share (0 at the day's start, 1 at its end), moved by Play, shown by
+-- the slider, set by dragging it: the three always agree. The share is of the day's
+-- "effort": every step counts, but a pause counts at most WAIT seconds, so a day replays
+-- its walking, not its idling. About DAY_SECONDS for a day at x1.
+local WAIT, DAY_SECONDS = 20, 60
+-- The effort table: {t, w} rising with time, from the day's first moment to its last.
 local function Effort()
-    local list = {}
-    if state.atlas then
-        for i in ipairs(state.atlasDays or {}) do list[#list + 1] = {t = state.t0 + (i - 1), w = i - 1} end
-        state.efforts = list
-        return
-    end
     local times = {}
-    for _, piece in ipairs(state.model.pieces) do
-        for _, p in ipairs(piece.points or {}) do times[#times + 1] = p.t end
-        if piece.from then times[#times + 1] = piece.from.t; times[#times + 1] = piece.to.t end
+    if not state.atlas and state.model then
+        for _, piece in ipairs(state.model.pieces) do
+            for _, p in ipairs(piece.points or {}) do times[#times + 1] = p.t end
+            if piece.from then times[#times + 1] = piece.from.t; times[#times + 1] = piece.to.t end
+        end
+        for _, mark in ipairs(state.model.marks) do times[#times + 1] = mark.t end
     end
-    for _, mark in ipairs(state.model.marks) do times[#times + 1] = mark.t end
+    if state.t0 then times[#times + 1] = state.t0 end
+    if state.t1 then times[#times + 1] = state.t1 end
     table.sort(times)
-    local w = 0
+    local list, w = {}, 0
     for i, t in ipairs(times) do
-        if i > 1 then w = w + math.min(t - times[i - 1], 20) end
+        if i > 1 then w = w + math.min(t - times[i - 1], WAIT) end
         list[#list + 1] = {t = t, w = w}
     end
+    -- (nothing to walk: the day's hours, evenly)
+    if w <= 0 then list = {{t = state.t0 or 0, w = 0}, {t = state.t1 or state.t0 or 0, w = 1}} end
     state.efforts = list
 end
-local function TimeAtEffort(w)
+-- The playhead's time, and a time's playhead.
+local function TimeAt(share)
     local list = state.efforts
-    if not list or #list == 0 then return state.t1 or 0 end
+    if not list then return state.t1 or 0 end
+    local w = share * list[#list].w
     for i = 2, #list do
         if list[i].w >= w then
             local a, b = list[i - 1], list[i]
@@ -459,26 +470,46 @@ local function TimeAtEffort(w)
     end
     return list[#list].t
 end
-local function OnUpdate(_, elapsed)
-    if not state.playing then return end
-    local total = state.efforts and #state.efforts > 0 and state.efforts[#state.efforts].w or 1
-    local duration = (state.atlas and math.max(4, #(state.atlasDays or {}))) or 60
-    state.effort = (state.effort or 0) + elapsed * total / duration * state.speed
-    if state.effort >= total then
-        state.playing = false; sheet:SetScript("OnUpdate", nil); Map.SetTime(math.huge); Map.Controls()
+local function ShareAt(t)
+    local list = state.efforts
+    if not list or t == math.huge then return 1 end
+    if t <= list[1].t then return 0 end
+    for i = 2, #list do
+        if list[i].t >= t then
+            local a, b = list[i - 1], list[i]
+            local u = b.t > a.t and (t - a.t) / (b.t - a.t) or 1
+            return (a.w + (b.w - a.w) * u) / list[#list].w
+        end
+    end
+    return 1
+end
+Map.TimeAt, Map.ShareAt = TimeAt, ShareAt
+
+-- Running and stopping: the only two places the replay's clock is started or stopped.
+local OnUpdate
+local function Stop()
+    state.playing = false
+    if sheet then sheet:SetScript("OnUpdate", nil) end
+    Map.Controls()
+end
+local function Run()
+    state.playing = true
+    sheet:SetScript("OnUpdate", OnUpdate)
+    Map.Controls()
+end
+function OnUpdate(_, elapsed)
+    if not state.playing then sheet:SetScript("OnUpdate", nil); return end
+    state.share = math.min(1, (state.share or 0) + elapsed * (state.speed or 1) / DAY_SECONDS)
+    if state.share >= 1 then
+        Stop()
+        Map.SetTime(math.huge)
         if state.tour then Map.TourNext() end
         return
     end
-    if state.atlas then
-        local index = math.floor(state.effort) + 1
-        local day = state.atlasDays[index]
-        Map.SetTime(day and state.atlasTimes[day] or math.huge)
-        return
-    end
-    Map.SetTime(TimeAtEffort(state.effort))
+    Map.SetTime(TimeAt(state.share))
 end
 function Map.Play()
-    if state.playing then state.playing = false; sheet:SetScript("OnUpdate", nil); Map.Controls(); return end
+    if state.playing then Stop(); return end
     if state.atlas then
         -- (the Atlas plays the whole adventure: every day's replay, one after another)
         if #(state.atlasDays or {}) == 0 then return end
@@ -486,13 +517,52 @@ function Map.Play()
         Map.TourDay()
         return
     end
-    Effort()
-    if not state.time or state.time == math.huge or state.time >= (state.t1 or 0) then state.effort = 0 end
-    state.playing = true
+    if not state.efforts then Effort() end
+    -- (from the start when the whole day is shown or the end was reached; else from here)
+    if state.time == math.huge or not state.share or state.share >= 1 then state.share = 0 end
     Sound("play")
-    sheet:SetScript("OnUpdate", OnUpdate)
-    Map.Controls()
+    Map.SetTime(TimeAt(state.share), true)
+    Run()
 end
+Map.Stop = Stop
+
+-- The slider: press and drag to move the playhead; it lets go when the button is up,
+-- wherever the cursor is (no drag registration: a dragged frame never hears its mouse-up).
+-- Playing before, playing after. Silent while you scrub.
+local function ScrubTo()
+    local track = sheet.track
+    local x = GetCursorPosition() / track:GetEffectiveScale()
+    local u = math.max(0, math.min(1, (x - (track:GetLeft() or 0)) / math.max(1, track:GetWidth())))
+    if state.atlas then
+        local count = #(state.atlasDays or {})
+        if count == 0 then return end
+        local day = state.atlasDays[math.max(1, math.min(count, math.floor(u * (count - 1) + 1.5)))]
+        Map.SetTime(u >= 1 and math.huge or state.atlasTimes[day], true)
+        return
+    end
+    if not state.efforts then Effort() end
+    state.share = u
+    Map.SetTime(u >= 1 and math.huge or TimeAt(u), true)
+end
+local function EndScrub()
+    if not state.scrubbing then return end
+    state.scrubbing = false
+    if sheet then sheet.track:SetScript("OnUpdate", nil) end
+    if state.resume and (state.share or 1) < 1 then Run() end
+    state.resume = nil
+end
+local function BeginScrub(button)
+    if button and button ~= "LeftButton" then return end
+    state.resume = state.playing
+    if state.playing then Stop() end
+    state.scrubbing = true
+    ScrubTo()
+    sheet.track:SetScript("OnUpdate", function()
+        if IsMouseButtonDown and not IsMouseButtonDown("LeftButton") then EndScrub(); return end
+        ScrubTo()
+    end)
+end
+Map.EndScrub = EndScrub
 
 -- The sheet ---------------------------------------------------------------------------
 local function Make()
@@ -507,7 +577,7 @@ local function Make()
     sheet:Hide()
     sheet:SetScript("OnHide", function()
         state.tour = nil
-        state.playing = false; sheet:SetScript("OnUpdate", nil)
+        EndScrub(); Stop()
         if A.RefreshBookmarks then A.RefreshBookmarks() end
     end)
     sheet.title = sheet:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
@@ -558,24 +628,8 @@ local function Make()
     sheet.knob = sheet.track:CreateTexture(nil, "OVERLAY")
     sheet.knob:SetTexture("Interface\\CharacterFrame\\TempPortraitAlphaMask"); sheet.knob:SetSize(9, 9)
     sheet.knob:SetVertexColor(RED[1], RED[2], RED[3], 1)
-    local function Scrub()
-        local x = GetCursorPosition() / sheet.track:GetEffectiveScale()
-        local u = math.max(0, math.min(1, (x - sheet.track:GetLeft()) / sheet.track:GetWidth()))
-        state.playing = false; sheet:SetScript("OnUpdate", nil)
-        if state.atlas then
-            local day = state.atlasDays[math.max(1, math.floor(u * (#state.atlasDays - 1) + 1.5))]
-            Map.SetTime(state.atlasTimes[day] or math.huge)
-        else
-            Map.SetTime((state.t0 or 0) + u * ((state.t1 or 0) - (state.t0 or 0)))
-        end
-        Effort()
-        local t = state.time or 0
-        for _, e in ipairs(state.efforts or {}) do if e.t <= t then state.effort = e.w end end
-        Map.Controls()
-    end
-    sheet.track:RegisterForDrag("LeftButton")
-    sheet.track:SetScript("OnMouseDown", function(self) Scrub(); self:SetScript("OnUpdate", Scrub) end)
-    sheet.track:SetScript("OnMouseUp", function(self) self:SetScript("OnUpdate", nil) end)
+    sheet.track:SetScript("OnMouseDown", function(_, button) BeginScrub(button) end)
+    sheet.track:SetScript("OnMouseUp", function() EndScrub() end)
     sheet.clock = sheet:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     sheet.clock:SetTextColor(SOFT[1], SOFT[2], SOFT[3]); if sheet.clock.SetShadowOffset then sheet.clock:SetShadowOffset(0, 0) end
     -- Hover: the time and what was happening at the nearest bit of road or moment.
@@ -816,8 +870,11 @@ function Map.OpenDay(person, day, touring)
     state.atlas, state.person, state.day = false, person, day
     state.model = Model.Build(journal, day, character, companion)
     state.t0, state.t1 = state.model.t0, state.model.t1
-    state.time, state.playing, state.effort = math.huge, false, 0
+    if state.playing then Stop() end
+    EndScrub()
+    state.time, state.share, state.efforts = math.huge, 1, nil
     Layout()
+    Effort()
     sheet.title:SetText(Map.DayTitle(day))
     sheet.prevDay:Show(); sheet.nextDay:Show()
     sheet.prevDay:SetEnabled(Map.Neighbour(-1) ~= nil); sheet.nextDay:SetEnabled(Map.Neighbour(1) ~= nil)
@@ -837,11 +894,9 @@ function Map.TourDay()
     local tour = state.tour
     if not tour then return end
     Map.OpenDay(tour.person, tour.days[tour.index], true)
-    Effort()
-    state.effort, state.time, state.playing = 0, state.t0, true
-    Map.SetTime(state.t0 or math.huge, true)
-    sheet:SetScript("OnUpdate", OnUpdate)
-    Map.Controls()
+    state.share = 0
+    Map.SetTime(TimeAt(0), true)
+    Run()
 end
 function Map.TourNext()
     local tour = state.tour
@@ -929,7 +984,9 @@ function Map.OpenAtlas(person)
     state.atlasContinents = continents
     state.model = {zones = {}, marks = {}, pieces = {}, stays = {}}
     state.t0, state.t1 = 1, math.max(1, #state.atlasDays)
-    state.time, state.playing, state.effort = math.huge, false, 0
+    if state.playing then Stop() end
+    EndScrub()
+    state.time, state.share, state.efforts = math.huge, 1, nil
     Layout()
     sheet.title:SetText("The Road")
     local zoneCount = 0

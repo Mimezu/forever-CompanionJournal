@@ -59,6 +59,8 @@ SOUNDKIT = {IG_ABILITY_PAGE_TURN = 1, IG_QUEST_FAILED = 2, IG_QUEST_LIST_COMPLET
 function PlaySound(id) played[#played + 1] = id end
 local cursor = {0, 0}
 function GetCursorPosition() return cursor[1], cursor[2] end
+local buttonDown = false
+function IsMouseButtonDown() return buttonDown end
 RAID_CLASS_COLORS = {MAGE = {r = 0.4, g = 0.8, b = 1}}
 
 -- The world: Mulgore (1412) and Durotar (1411) side by side on Kalimdor (1414), Kalimdor in
@@ -231,6 +233,48 @@ for _ = 1, 4000 do
 end
 local count = 0; for _ in pairs(seen) do count = count + 1 end
 check(count == 2 and st9.atlas and not st9.tour, "every day replayed, then back to the Atlas")
+
+-- 12. Play, pause and the slider, the way a hand uses them.
+Map.OpenDay(nil, day)
+local st = Upvalue(Map.Hover, "state")
+local function Frame(dt) if sheet.scripts.OnUpdate then sheet.scripts.OnUpdate(sheet, dt or 0.25) end end
+local function TrackFrame() if sheet.track.scripts.OnUpdate then sheet.track.scripts.OnUpdate(sheet.track) end end
+sheet.play.scripts.OnClick(sheet.play)
+check(st.playing and sheet.scripts.OnUpdate and sheet.play.label.text == "Pause", "Play plays")
+for _ = 1, 20 do Frame() end
+local share = st.share
+check(share > 0 and share < 1, "the playhead moves")
+sheet.play.scripts.OnClick(sheet.play)
+check(not st.playing and sheet.scripts.OnUpdate == nil and sheet.play.label.text == "Play", "Pause pauses")
+Frame(); Frame()
+check(st.share == share, "paused, the playhead stays")
+sheet.play.scripts.OnClick(sheet.play)
+check(st.playing and st.share == share, "Play again goes on from there, not from the start")
+-- the knob is where the playhead is
+sheet.track.w = 400
+Frame()
+local knobX = sheet.knob.points[1][4]
+check(math.abs(knobX - st.share * 400) < 0.01, "the slider shows the playhead")
+-- grabbing the slider while playing: paused while held, playing again on release
+cursor[1] = 100; buttonDown = true
+sheet.track.scripts.OnMouseDown(sheet.track, "LeftButton")
+check(not st.playing and math.abs(st.share - 0.25) < 1e-6, "held: the playhead follows the slider, paused")
+cursor[1] = 300; TrackFrame()
+check(math.abs(st.share - 0.75) < 1e-6, "dragging moves it")
+-- released away from the slider: no mouse-up reaches it, the button is simply up
+buttonDown = false; cursor[1] = 50; TrackFrame()
+check(sheet.track.scripts.OnUpdate == nil and math.abs(st.share - 0.75) < 1e-6, "let go anywhere: the playhead stays where it was left")
+check(st.playing, "and it plays on, as before it was grabbed")
+TrackFrame(); cursor[1] = 10
+check(math.abs(st.share - 0.75) < 0.02, "it no longer follows the mouse")
+Map.Stop()
+-- a day with zones only still takes its time
+local quietDay = Road.DayOf(t0 - 86400)
+Map.OpenDay(nil, quietDay)
+sheet.play.scripts.OnClick(sheet.play)
+local frames = 0
+while st.playing and frames < 1000 do Frame(0.25); frames = frames + 1 end
+check(frames >= 200, "a day of zones only plays for its minute, not an instant: " .. frames .. " frames")
 
 -- 8. A chapter's map mark opens its day.
 local page = New("Frame"); page.box = {70, 70, 76, 56}

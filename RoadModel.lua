@@ -162,7 +162,7 @@ local MARKS = {
     dungeon = function(e) return "dungeon", e.d or "A dungeon" end,
     hearth = function(e) return "hearth", "Hearthstone" .. (e.d and (" to " .. e.d) or "") end,
     voyage = function(e) return "voyage", "By " .. (e.d or "ship") .. (e.to and (" to " .. e.to) or "") end,
-    first = function(e) return "first", "A first" end,
+    first = function() return "first", "A first" end,
     rez = function(e) return "rez", "Raised" .. (e.by and (" by " .. e.by) or "") end,
 }
 M.MARKS = MARKS

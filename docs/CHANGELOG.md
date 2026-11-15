@@ -1,5 +1,12 @@
 # Companion Journal: changes
 
+## 1.50.1 (2026-11-14)
+
+- Replay: Play and Pause always answer
+- The slider lets go when you do, anywhere
+- The slider and the replay move together
+- A day of zones only plays for its minute
+
 ## 1.50.0 (2026-11-14)
 
 - Map: the wheel zooms, drag to move; pages stay put
