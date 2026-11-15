@@ -1,5 +1,10 @@
 # Companion Journal: changes
 
+## 1.50.4 (2026-11-15)
+
+- Map art: explored areas in their right place
+- Short breaks in the road joined by a dotted curve
+
 ## 1.50.3 (2026-11-15)
 
 - One road line; the companion line is gone

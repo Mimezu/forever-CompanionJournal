@@ -169,22 +169,27 @@ local function DrawArt(art, map)
         local tile = Tile()
         tile:SetTexture(file); tile:SetSize(tw, th); tile:SetPoint("TOPLEFT", art, "TOPLEFT", col * tw, -row * th)
     end
+    -- The explored areas: each one a grid of the layer's own tile size (not the area's own
+    -- count of textures, which can disagree), its last row and column cut from the smallest
+    -- power-of-two file that holds them (the way Social Diary lays them; 2026-11-15: pieces
+    -- drawn at 256 and the wrong count landed as misplaced blocks in a corner).
+    local function FileSize(pixels) local size = 16; while size < pixels do size = size * 2 end; return size end
     local overlays = C_MapExplorationInfo and Ask(C_MapExplorationInfo.GetExploredMapTextures, map)
     for _, o in ipairs(type(overlays) == "table" and overlays or {}) do
-        if not o.isShownByMouseOver and o.fileDataIDs then
-            local wide, tall = o.numTexturesWide or 1, o.numTexturesTall or 1
+        local aw, ah = o.textureWidth, o.textureHeight
+        if not o.isShownByMouseOver and o.fileDataIDs and aw and aw > 0 and ah and ah > 0 then
+            local wide, tall = math.ceil(aw / tw), math.ceil(ah / th)
             for r = 1, tall do
+                local ch = r < tall and th or ah - (tall - 1) * th
+                local fh = r < tall and th or FileSize(ch)
                 for c = 1, wide do
                     local file = o.fileDataIDs[(r - 1) * wide + c]
                     if file then
-                        local cw = c < wide and 256 or (o.textureWidth - 256 * (wide - 1))
-                        local ch = r < tall and 256 or (o.textureHeight - 256 * (tall - 1))
-                        local pw, ph = 16, 16
-                        while pw < cw do pw = pw * 2 end
-                        while ph < ch do ph = ph * 2 end
+                        local cw = c < wide and tw or aw - (wide - 1) * tw
+                        local fw = c < wide and tw or FileSize(cw)
                         local tile = Tile()
-                        tile:SetTexture(file); tile:SetSize(cw, ch); tile:SetTexCoord(0, cw / pw, 0, ch / ph)
-                        tile:SetPoint("TOPLEFT", art, "TOPLEFT", (o.offsetX or 0) + 256 * (c - 1), -((o.offsetY or 0) + 256 * (r - 1)))
+                        tile:SetTexture(file); tile:SetSize(cw, ch); tile:SetTexCoord(0, cw / fw, 0, ch / fh)
+                        tile:SetPoint("TOPLEFT", art, "TOPLEFT", (o.offsetX or 0) + tw * (c - 1), -((o.offsetY or 0) + th * (r - 1)))
                     end
                 end
             end
@@ -363,6 +368,41 @@ local function DrawView()
                     for i, end_ in ipairs({{ax, ay, piece.from.t}, {bx, by, piece.to.t}}) do
                         local ring = {Blob(ink, end_[1], end_[2], 8 * px, 0.9 * age), Blob(ink, end_[1], end_[2], 4.4 * px, 1, PAPER_INK)}
                         state.drawn[#state.drawn + 1] = {t = end_[3], x = end_[1], y = end_[2], blobs = ring, day = model.day, travel = piece, landing = i == 2}
+                    end
+                end
+            end
+        end
+        -- Bridges: where the road broke for a moment (a city's gate, a lift, a loading screen),
+        -- a soft dotted curve joins one stretch to the next: within ten minutes, not across a
+        -- hearthstone (its own mark) and not where a flight or voyage already draws the way.
+        if not state.atlas then
+            local roads = {}
+            for _, piece in ipairs(model.pieces) do if piece.points and #piece.points > 0 then roads[#roads + 1] = piece end end
+            table.sort(roads, function(x, y) return x.points[1].t < y.points[1].t end)
+            local jumps = {}
+            for _, mark in ipairs(model.marks) do if mark.kind == "hearth" then jumps[#jumps + 1] = mark.t end end
+            for _, piece in ipairs(model.pieces) do if piece.from then jumps[#jumps + 1] = piece.from.t end end
+            for i = 2, #roads do
+                local a, b = roads[i - 1].points[#roads[i - 1].points], roads[i].points[1]
+                local jumped = false
+                for _, t in ipairs(jumps) do if t >= a.t - 30 and t <= b.t + 30 then jumped = true end end
+                if not jumped and b.t - a.t <= 600 then
+                    local ax, ay = Place(roads[i - 1].map, view, a.x, a.y)
+                    local bx, by = Place(roads[i].map, view, b.x, b.y)
+                    if ax and bx then
+                        ax, ay, bx, by = ax * w, ay * h, bx * w, by * h
+                        local length = math.sqrt((bx - ax) ^ 2 + (by - ay) ^ 2)
+                        if length > 3 * px and length < 0.35 * math.max(w, h) then
+                            local mx, my = (ax + bx) / 2 - (by - ay) * 0.12, (ay + by) / 2 + (bx - ax) * 0.12
+                            local dots = math.max(2, math.floor(length / (6 * px)))
+                            for k = 1, dots - 1 do
+                                local u = k / dots
+                                local x = (1 - u) ^ 2 * ax + 2 * (1 - u) * u * mx + u ^ 2 * bx
+                                local y = (1 - u) ^ 2 * ay + 2 * (1 - u) * u * my + u ^ 2 * by
+                                local dot = Blob(ink, x, y, 2.4 * px, 0.6)
+                                state.drawn[#state.drawn + 1] = {t = a.t + (b.t - a.t) * u, x = x, y = y, blobs = {dot}, day = model.day, map = roads[i].map}
+                            end
+                        end
                     end
                 end
             end

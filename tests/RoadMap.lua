@@ -47,6 +47,7 @@ function Frame:GetTop() return 700 end
 function Frame:GetFrameLevel() return 1 end
 function Frame:IsEnabled() return true end
 function Frame:SetTexture(t) self.texture = t end
+function Frame:SetTexCoord(...) self.coords = {...} end
 for _, make in ipairs({"CreateTexture", "CreateFontString", "CreateLine", "CreateMaskTexture"}) do
     Frame[make] = function(self) local child = New(make); child.parent = self; return child end
 end
@@ -88,7 +89,7 @@ C_Map = {
     GetMapArtLayers = function() return {{layerWidth = 1002, layerHeight = 668, tileWidth = 256, tileHeight = 256}} end,
     GetMapArtLayerTextures = function() local t = {}; for i = 1, 12 do t[i] = 100 + i end; return t end,
 }
-C_MapExplorationInfo = {GetExploredMapTextures = function() return {{textureWidth = 300, textureHeight = 200, offsetX = 10, offsetY = 20, fileDataIDs = {1, 2}, numTexturesWide = 2, numTexturesTall = 1}} end}
+C_MapExplorationInfo = {GetExploredMapTextures = function() return {{textureWidth = 300, textureHeight = 200, offsetX = 10, offsetY = 20, fileDataIDs = {1, 2}, numTexturesWide = 1, numTexturesTall = 1}} end}
 function UnitPosition() return player.y * Size(player.map), MAPS[player.map].ox + player.x * Size(player.map) end
 function UnitOnTaxi() return false end
 function IsInInstance() return false end
@@ -316,6 +317,42 @@ do
     for _, item in ipairs(st.drawn) do if item.with then withItem = item end end
     check(withItem and withItem.with == "Dahlia-Noir", "the road still knows who walked it")
     sheet.story.scripts.OnClick(sheet.story)
+end
+
+-- 14. Explored areas: laid on the layer's own tiles (not the area's own texture count, which
+-- can disagree), the last column cut from the smallest file that holds it.
+do
+    Map.OpenDay(nil, day)
+    local pieces = {}
+    for _, tile in ipairs(sheet.art.tiles) do if tile:IsShown() and (tile.texture == 1 or tile.texture == 2) then pieces[tile.texture] = tile end end
+    check(pieces[1] and pieces[2], "an area of 300 by 200 is two tiles wide, whatever count it claims")
+    check(pieces[1].w == 256 and pieces[2].w == 44 and pieces[2].points[1][4] == 10 + 256, "the second tile is the area's last 44 pixels, beside the first")
+    check(math.abs(pieces[2].coords[2] - 44 / 64) < 1e-6 and math.abs(pieces[1].coords[4] - 200 / 256) < 1e-6, "cut from files of 64 and 256")
+end
+-- 15. Bridges: a short break in the road is joined by a dotted curve; a hearthstone is not.
+do
+    A.db.road = {}; Road.Reset()
+    clock = os.time({year = 2026, month = 11, day = 28, hour = 20, min = 0})
+    player.map, player.x, player.y = 1412, 0.3, 0.5
+    Look(0)
+    for _ = 1, 30 do player.x = player.x + 0.004; Look(2) end
+    -- (two minutes unseen: a loading screen, a lift; the road breaks)
+    for _ = 1, 3 do clock = clock + 40 end
+    player.x = player.x + 0.03
+    Look(2)
+    for _ = 1, 30 do player.x = player.x + 0.004; Look(2) end
+    local key = Road.DayOf(clock)
+    check(#Road.Day("me", key) == 2, "the road broke in two")
+    Map.OpenDay(nil, key)
+    local stb = Upvalue(Map.Hover, "state")
+    local bridge = 0
+    for _, item in ipairs(stb.drawn) do if item.blobs and not item.stay and not item.travel then bridge = bridge + 1 end end
+    check(bridge >= 2, "a dotted bridge joins the two stretches: " .. bridge .. " dots")
+    journal[#journal + 1] = {k = "hearth", d = "Brill", t = clock - 60 - 80, z = "Mulgore"}
+    Map.OpenDay(nil, key)
+    bridge = 0
+    for _, item in ipairs(stb.drawn) do if item.blobs and not item.stay and not item.travel then bridge = bridge + 1 end end
+    check(bridge == 0, "not across a hearthstone")
 end
 
 -- 8. A chapter's map mark opens its day.
