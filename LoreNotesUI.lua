@@ -435,15 +435,6 @@ function A.OpenLoreNote(id, anchor, context)
         slip.rule:SetPoint("TOP", slip, "TOP", 0, -(bodyY - 6))
         bodyY = bodyY + 20
     end
-    local capacity = height - bodyY - (folded and 70 or 94) - padBottom
-    if capacity < 24 then A.CloseLoreNote(); return false end
-    slip.body:ClearAllPoints(); slip.body:SetPoint("TOPLEFT", padX, -bodyY)
-    slip.body:SetWidth(width - padX * 2)
-    slip.leaves = A.LoreNotePages(entry.body, function(text)
-        slip.body:SetText(text); return slip.body:GetStringHeight()
-    end, capacity)
-    slip.capacity, slip.leaf = capacity, 1
-    Turn(0)
     local related = {}
     for _, target in ipairs(entry.related or {}) do
         if target ~= id and A.GetKnownLoreNote(target, knowledge) then related[#related + 1] = target end
@@ -454,6 +445,21 @@ function A.OpenLoreNote(id, anchor, context)
         local note = target and A.GetKnownLoreNote(target, knowledge)
         if note and (note.kind == "Place" or note.kind == "Region" or note.kind == "City") then related[1] = target end
     end
+    -- (the folded papers: room for the text is what the footer leaves: its rule, one line a
+    -- "See also" (at least one, for Sources), the page row, the paper's own bottom edge)
+    local footerRoom = 94
+    if folded then
+        footerRoom = 14 + math.max(1, math.min(#related, #slip.related)) * 18 + 10 + 22 + (paper and padBottom or 0) + 10
+    end
+    local capacity = height - bodyY - footerRoom - (folded and 0 or padBottom)
+    if capacity < 24 then A.CloseLoreNote(); return false end
+    slip.body:ClearAllPoints(); slip.body:SetPoint("TOPLEFT", padX, -bodyY)
+    slip.body:SetWidth(width - padX * 2)
+    slip.leaves = A.LoreNotePages(entry.body, function(text)
+        slip.body:SetText(text); return slip.body:GetStringHeight()
+    end, capacity)
+    slip.capacity, slip.leaf = capacity, 1
+    Turn(0)
     for i, button in ipairs(slip.related) do
         local target = related[i]; button.noteID = target
         button:SetWidth(width - (kit and padX * 2 or 30))

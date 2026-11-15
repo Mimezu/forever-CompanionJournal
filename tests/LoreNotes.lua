@@ -451,5 +451,21 @@ for _, style in ipairs({"slip", "letter", "tucked", "folded", "paper1", "paper2"
     end
     A.CloseLoreNote()
 end
+-- On every paper, a long note with three "See also" links keeps its words above the footer
+-- (2026-11-14: Undercity's last lines ran under its links on the painted papers).
+for _, style in ipairs({"folded", "paper1", "paper2", "paper3", "paper4", "paper5", "paper6"}) do
+    A.BookVariant = function() return style end
+    -- (the folded papers need a book's room; the small test book is narrower than they allow)
+    for _, parent in ipairs({book}) do
+        Check(A.OpenLoreNote("place:long-ui-test", parent, {owner = parent}), "long note opens on " .. style)
+        local rule = slip.footRule.point[3]
+        for i = 1, #slip.leaves do
+            if i > 1 then slip.next.leftClick(slip.next) end
+            local bottom = -slip.body.point[3] + slip.body:GetStringHeight()
+            Check(bottom <= slip:GetHeight() - rule - 4, "the words end above the footer on " .. style .. " (leaf " .. i .. ")")
+        end
+        A.CloseLoreNote()
+    end
+end
 print(string.format("LoreNotes: %d assertions; %d curated, %d regional, %d title contexts, %d exact quest stages across %d packs", count,
     before.curated, before.regional, before.questTitle, before.questID, before.packs))

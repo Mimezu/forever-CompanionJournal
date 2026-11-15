@@ -1,5 +1,13 @@
 # Companion Journal: changes
 
+## 1.50.0 (2026-11-14)
+
+- Map: the wheel zooms, drag to move; pages stay put
+- Zoom in from world to continent to zone, and out again
+- Day arrows beside the date
+- Atlas Play: every day replayed in turn
+- Lore notes: long text no longer runs under the links
+
 ## 1.49.3 (2026-11-14)
 
 - Record the road: on by default

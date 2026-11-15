@@ -77,6 +77,7 @@ C_Map = {
     GetPlayerMapPosition = function() return {x = player.x, y = player.y} end,
     GetMapInfo = function(map) return MAPS[map] end,
     GetMapChildrenInfo = function() return {MAPS[1412], MAPS[1411], MAPS[1414]} end,
+    GetMapInfoAtPosition = function(map, x) if map == 1414 then return x < 0.5 and MAPS[1412] or MAPS[1411] end; if map == 947 then return MAPS[1414] end end,
     GetMapWorldSize = function(map) return Size(map), Size(map) end,
     GetWorldPosFromMapPos = function(map, v) return 1, {x = MAPS[map].ox + v.x * Size(map), y = v.y * Size(map)} end,
     GetMapPosFromWorldPos = function(_, w, map) return map, {x = (w.x - MAPS[map].ox) / Size(map), y = w.y / Size(map)} end,
@@ -194,9 +195,42 @@ Map.OpenAtlas(nil)
 check(sheet:IsShown() and sheet.title.text == "The Road", "the Atlas opens")
 check(sheet.facts.text:find("1 days", 1, true) or sheet.facts.text:find("days", 1, true), "the Atlas counts the days")
 check(Shown("lines") > 5, "the Atlas inks every road")
+
+-- 9. The wheel: zooms the map around the cursor, never past its edges; deep into a
+-- continent opens the zone under the cursor; out of a zone goes back to its continent.
+Map.OpenDay(nil, day)
+local st9 = Upvalue(Map.Hover, "state")
+local base = st9.scale
+cursor[1], cursor[2] = 100, 500
+sheet.area.scripts.OnMouseWheel(sheet.area, 1)
+check(math.abs(st9.scale - base * 1.25) < 1e-6 and st9.zoom == 1.25, "the wheel zooms in")
+for _ = 1, 30 do sheet.area.scripts.OnMouseWheel(sheet.area, -1) end
+check(st9.view == 947 or st9.view == 1414, "zooming out of a zone goes up to its continent, then the world")
+Map.SetView(1414)
+for _ = 1, 8 do sheet.area.scripts.OnMouseWheel(sheet.area, 1) end
+check(MAPS[st9.view] and MAPS[st9.view].mapType == 3, "zooming deep into the continent opens a zone")
+check(sheet.scripts.OnMouseWheel ~= nil, "the sheet keeps the wheel from the book's pages")
+-- 10. The day arrows: to the day before, and back.
+journal[#journal + 1] = {k = "play", t = t0 - 86400, e = t0 - 86400 + 3600, z = "Durotar"}
+Map.OpenDay(nil, day)
+check(sheet.prevDay:IsShown() and Map.Neighbour(-1) ~= nil and Map.Neighbour(1) == nil, "an earlier day, no later one")
+sheet.prevDay.scripts.OnClick(sheet.prevDay)
+check(st9.day ~= day, "the arrow opens the day before")
+sheet.nextDay.scripts.OnClick(sheet.nextDay)
+check(st9.day == day, "and back")
+-- 11. The Atlas plays the adventure as a tour of each day's replay, then comes back.
+Map.OpenAtlas(nil)
+check(not sheet.prevDay:IsShown(), "the Atlas has no day arrows")
 Map.Play()
-for _ = 1, 40 do if sheet.scripts.OnUpdate then sheet.scripts.OnUpdate(sheet, 0.25) end end
-check(sheet.scripts.OnUpdate == nil, "the adventure plays to its end")
+check(st9.tour and not st9.atlas, "the tour opens the first day")
+local seen = {}
+for _ = 1, 4000 do
+    if st9.tour then seen[st9.day] = true end
+    if sheet.scripts.OnUpdate then sheet.scripts.OnUpdate(sheet, 0.25) elseif st9.tour then Map.TourDay() end
+    if st9.atlas then break end
+end
+local count = 0; for _ in pairs(seen) do count = count + 1 end
+check(count == 2 and st9.atlas and not st9.tour, "every day replayed, then back to the Atlas")
 
 -- 8. A chapter's map mark opens its day.
 local page = New("Frame"); page.box = {70, 70, 76, 56}

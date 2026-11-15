@@ -234,11 +234,12 @@ local function DrawView()
     if not w then w, h = 1002, 668 end
     -- (the area's size as laid out, not as the frame reports it before it is drawn)
     local areaW, areaH = state.areaW or s.area:GetWidth(), state.areaH or s.area:GetHeight()
-    local scale = math.max(0.05, math.min(areaW / w, areaH / h))
+    local base = math.max(0.05, math.min(areaW / w, areaH / h))
+    local scale = base * (state.zoom or 1)
     art:SetSize(w, h); art:SetScale(math.max(0.05, scale))
-    art:ClearAllPoints(); art:SetPoint("CENTER", s.area, "CENTER", 0, 0)
     ink:SetAllPoints(art)
-    state.w, state.h, state.scale = w, h, scale
+    state.w, state.h, state.scale, state.base = w, h, scale, base
+    Map.Pan(state.panX or 0, state.panY or 0)
     local px = 1 / scale -- (one screen pixel in map units)
     for _, key in ipairs({"lines", "blobs", "marks"}) do Pool(ink, key) end
     state.drawn, state.drawnMarks, state.hover = {}, {}, {}
@@ -465,6 +466,7 @@ local function OnUpdate(_, elapsed)
     state.effort = (state.effort or 0) + elapsed * total / duration * state.speed
     if state.effort >= total then
         state.playing = false; sheet:SetScript("OnUpdate", nil); Map.SetTime(math.huge); Map.Controls()
+        if state.tour then Map.TourNext() end
         return
     end
     if state.atlas then
@@ -477,6 +479,13 @@ local function OnUpdate(_, elapsed)
 end
 function Map.Play()
     if state.playing then state.playing = false; sheet:SetScript("OnUpdate", nil); Map.Controls(); return end
+    if state.atlas then
+        -- (the Atlas plays the whole adventure: every day's replay, one after another)
+        if #(state.atlasDays or {}) == 0 then return end
+        state.tour = {days = state.atlasDays, index = 1, person = state.atlasPerson}
+        Map.TourDay()
+        return
+    end
     Effort()
     if not state.time or state.time == math.huge or state.time >= (state.t1 or 0) then state.effort = 0 end
     state.playing = true
@@ -497,6 +506,7 @@ local function Make()
     if UISpecialFrames then table.insert(UISpecialFrames, "CompanionJournalRoad") end
     sheet:Hide()
     sheet:SetScript("OnHide", function()
+        state.tour = nil
         state.playing = false; sheet:SetScript("OnUpdate", nil)
         if A.RefreshBookmarks then A.RefreshBookmarks() end
     end)
@@ -572,9 +582,92 @@ local function Make()
     sheet.area:EnableMouse(true)
     sheet.area:SetScript("OnEnter", function(self) self:SetScript("OnUpdate", Map.Hover) end)
     sheet.area:SetScript("OnLeave", function(self) self:SetScript("OnUpdate", nil); if GameTooltip then GameTooltip:Hide() end end)
-    sheet.area:SetScript("OnMouseUp", function()
-        if state.atlas and state.hoverDay then Map.OpenDay(state.atlasPerson, state.hoverDay) end
+    -- The wheel belongs to the map while the sheet is open (the book's pages wait): over
+    -- the map it zooms around the cursor; drag to move a zoomed map.
+    sheet:EnableMouseWheel(true)
+    sheet:SetScript("OnMouseWheel", function() end)
+    sheet.area:EnableMouseWheel(true)
+    sheet.area:SetScript("OnMouseWheel", function(_, delta) Map.Zoom(delta > 0 and 1.25 or 0.8) end)
+    sheet.area:SetScript("OnMouseDown", function(self, button)
+        if button ~= "LeftButton" then return end
+        local cx, cy = GetCursorPosition()
+        local scale = self:GetEffectiveScale()
+        state.drag = {x = cx / scale, y = cy / scale, panX = state.panX or 0, panY = state.panY or 0, moved = false}
+        self:SetScript("OnUpdate", function()
+            local nx, ny = GetCursorPosition()
+            local d = state.drag
+            if not d then return end
+            local dx, dy = nx / scale - d.x, ny / scale - d.y
+            if math.abs(dx) + math.abs(dy) > 3 then d.moved = true end
+            if d.moved then Map.Pan(d.panX + dx, d.panY + dy) end
+            Map.Hover()
+        end)
     end)
+    sheet.area:SetScript("OnMouseUp", function(self)
+        local dragged = state.drag and state.drag.moved
+        state.drag = nil
+        self:SetScript("OnUpdate", Map.Hover)
+        if not dragged and state.atlas and state.hoverDay then Map.OpenDay(state.atlasPerson, state.hoverDay) end
+    end)
+    -- The day before and the day after, beside the date: no need to go back to the book.
+    local function Arrow(text, delta)
+        local button = InkButton(sheet, text, 22, function() Map.Step(delta) end)
+        button:SetScript("OnEnter", function(self)
+            local day = Map.Neighbour(delta)
+            if not day or not GameTooltip then return end
+            GameTooltip:SetOwner(self, "ANCHOR_TOP"); GameTooltip:SetText(Map.DayTitle(day), 1, 0.9, 0.7); GameTooltip:Show()
+        end)
+        button:SetScript("OnLeave", function() if GameTooltip then GameTooltip:Hide() end end)
+        return button
+    end
+    sheet.prevDay, sheet.nextDay = Arrow("<", -1), Arrow(">", 1)
+end
+
+-- Zoom and pan: the map's place in its area (pan, in screen units from the middle), kept
+-- inside so the map always covers what it can of the area.
+function Map.Pan(x, y)
+    if not sheet then return end
+    local w, h, scale = state.w or 1, state.h or 1, state.scale or 1
+    local areaW, areaH = state.areaW or sheet.area:GetWidth(), state.areaH or sheet.area:GetHeight()
+    local maxX, maxY = math.max(0, (w * scale - areaW) / 2), math.max(0, (h * scale - areaH) / 2)
+    state.panX, state.panY = math.max(-maxX, math.min(maxX, x)), math.max(-maxY, math.min(maxY, y))
+    sheet.art:ClearAllPoints()
+    sheet.art:SetPoint("CENTER", sheet.area, "CENTER", state.panX / scale, state.panY / scale)
+end
+function Map.Zoom(factor)
+    if not sheet or not state.w then return end
+    local old = state.zoom or 1
+    -- (the spot under the cursor stays under it)
+    local areaScale = sheet.area:GetEffectiveScale()
+    local cx, cy = GetCursorPosition()
+    cx, cy = cx / areaScale, cy / areaScale
+    local midX = (sheet.area:GetLeft() or 0) + (state.areaW or 0) / 2
+    local midY = (sheet.area:GetTop() or 0) - (state.areaH or 0) / 2
+    local scale = state.scale
+    local ax = (cx - midX - (state.panX or 0)) / scale + state.w / 2
+    local ay = -(cy - midY - (state.panY or 0)) / scale + state.h / 2
+    -- Across levels: deep into a continent (or the world) opens the zone (or continent)
+    -- under the cursor; out of a zone at its widest goes up to its continent, then the world.
+    local kind = Model.MapType(state.view)
+    if factor > 1 and old >= 3 and kind and kind <= 2 then
+        local below = C_Map and C_Map.GetMapInfoAtPosition and select(2, pcall(C_Map.GetMapInfoAtPosition, state.view, ax / state.w, ay / state.h))
+        if type(below) == "table" and below.mapID and below.mapID ~= state.view and (below.mapType == 3 or below.mapType == 2) then
+            Sound("page"); Map.SetView(below.mapID); return
+        end
+    elseif factor < 1 and old <= 1 and kind and kind >= 2 and state.view ~= WORLD then
+        local up = kind == 2 and WORLD or Model.Continent(state.view)
+        if up and up ~= state.view then Sound("page"); Map.SetView(up); return end
+    end
+    local new = math.max(1, math.min(8, old * factor))
+    if new == old then return end
+    state.zoom = new
+    local newScale = state.base * new
+    state.panX = cx - midX - (ax - state.w / 2) * newScale
+    state.panY = cy - midY + (ay - state.h / 2) * newScale
+    -- (redrawn: lines keep their width on screen at any zoom)
+    local t = state.time
+    DrawView()
+    if t then Map.SetTime(t, true) end
 end
 
 function Map.Hover()
@@ -627,8 +720,14 @@ local function Layout()
     if paper and A.PaperRoom then local _; _, side, top, bottom = A.PaperRoom(paper, width) end
     -- (a map sheet wants a little more air than a note: never closer than this to its edges)
     side, top, bottom = math.max(side, 36), math.max(top, 28), math.max(bottom, 18)
-    sheet.title:ClearAllPoints(); sheet.title:SetPoint("TOPLEFT", side, -top + 4)
-    sheet.facts:ClearAllPoints(); sheet.facts:SetPoint("LEFT", sheet.title, "RIGHT", 12, -1)
+    -- ("< 10 November >": the arrows hold the date between them; the Atlas has none)
+    local arrows = not state.atlas
+    sheet.prevDay:ClearAllPoints(); sheet.prevDay:SetPoint("TOPLEFT", side, -top + 4)
+    sheet.title:ClearAllPoints()
+    if arrows then sheet.title:SetPoint("LEFT", sheet.prevDay, "RIGHT", 8, -1) else sheet.title:SetPoint("TOPLEFT", side, -top + 4) end
+    sheet.nextDay:ClearAllPoints(); sheet.nextDay:SetPoint("LEFT", sheet.title, "RIGHT", 8, 1)
+    sheet.prevDay:SetShown(arrows); sheet.nextDay:SetShown(arrows)
+    sheet.facts:ClearAllPoints(); sheet.facts:SetPoint("LEFT", arrows and sheet.nextDay or sheet.title, "RIGHT", 12, -1)
     sheet.close:ClearAllPoints(); sheet.close:SetPoint("TOPRIGHT", -side + 6, -top + 6)
     sheet.area:ClearAllPoints()
     sheet.area:SetPoint("TOPLEFT", side, -(top + 54)); sheet.area:SetPoint("BOTTOMRIGHT", -side, bottom + 34)
@@ -687,6 +786,7 @@ function Map.Controls()
     for _, button in ipairs(sheet.speeds) do Chosen(button, button.speed == state.speed) end
 end
 function Map.SetView(map)
+    if map ~= state.view then state.zoom, state.panX, state.panY = 1, 0, 0 end
     state.view = map
     state.zoneView = false
     for _, zone in ipairs(state.model and state.model.zones or {}) do if zone.map == map then state.zoneView = true end end
@@ -709,18 +809,20 @@ local function Whose(person)
     for k, p in pairs(A.People or {}) do if p == person then key = k end end
     return me, self and self.journal or {}, key or person.__key
 end
-function Map.OpenDay(person, day)
+function Map.OpenDay(person, day, touring)
     Make()
+    if not touring then state.tour = nil end
     local character, journal, companion = Whose(person)
     state.atlas, state.person, state.day = false, person, day
     state.model = Model.Build(journal, day, character, companion)
     state.t0, state.t1 = state.model.t0, state.model.t1
     state.time, state.playing, state.effort = math.huge, false, 0
     Layout()
-    local y, m, d = day:match("^(%d+)%-(%d+)%-(%d+)$")
-    local title = y and date and time and date("%d %B", time({year = tonumber(y), month = tonumber(m), day = tonumber(d), hour = 12}))
-    sheet.title:SetText((string.gsub(title or day, "^0", "")))
-    sheet.facts:SetText(state.model.recorded and "" or "No road recorded; zones only")
+    sheet.title:SetText(Map.DayTitle(day))
+    sheet.prevDay:Show(); sheet.nextDay:Show()
+    sheet.prevDay:SetEnabled(Map.Neighbour(-1) ~= nil); sheet.nextDay:SetEnabled(Map.Neighbour(1) ~= nil)
+    sheet.facts:SetText(state.tour and string.format("Day %d of %d", state.tour.index, #state.tour.days)
+        or (state.model.recorded and "" or "No road recorded; zones only"))
     local first = state.model.zones[1]
     sheet:Show()
     Tabs()
@@ -728,6 +830,58 @@ function Map.OpenDay(person, day)
     if A.RefreshBookmarks then A.RefreshBookmarks() end
     if A.SetPersonClassIcon and sheet.walker.icon then A.SetPersonClassIcon(sheet.walker.icon, (A.SelfPerson and A.SelfPerson(character) or {}).class) end
     Sound("page")
+end
+-- The tour: each day of the adventure replayed in turn, on its own zones; back to the
+-- Atlas at the end.
+function Map.TourDay()
+    local tour = state.tour
+    if not tour then return end
+    Map.OpenDay(tour.person, tour.days[tour.index], true)
+    Effort()
+    state.effort, state.time, state.playing = 0, state.t0, true
+    Map.SetTime(state.t0 or math.huge, true)
+    sheet:SetScript("OnUpdate", OnUpdate)
+    Map.Controls()
+end
+function Map.TourNext()
+    local tour = state.tour
+    if not tour then return end
+    tour.index = tour.index + 1
+    if tour.index > #tour.days then
+        state.tour = nil
+        Map.OpenAtlas(tour.person)
+        return
+    end
+    -- (a breath between two days)
+    if C_Timer and C_Timer.After then C_Timer.After(0.8, function() if state.tour == tour then Map.TourDay() end end)
+    else Map.TourDay() end
+end
+-- The day's name for the title and the arrows' hover ("10 November").
+function Map.DayTitle(day)
+    local y, m, d = (day or ""):match("^(%d+)%-(%d+)%-(%d+)$")
+    local title = y and date and time and date("%d %B", time({year = tonumber(y), month = tonumber(m), day = tonumber(d), hour = 12}))
+    return (string.gsub(title or day or "", "^0", ""))
+end
+-- The day before or after this one that has a map (a road or zones), or nil.
+function Map.Neighbour(delta)
+    if state.atlas or not state.day then return nil end
+    local character, journal = Whose(state.person)
+    local days = Model.Days(journal, character)
+    for i, day in ipairs(days) do
+        if day == state.day then return days[i + delta] end
+    end
+    return nil
+end
+-- To the next or previous day, keeping the view (Story or Hero path) and, when the new
+-- day was there too, the same zone or continent.
+function Map.Step(delta)
+    local day = Map.Neighbour(delta)
+    if not day then return end
+    local keep = state.view
+    Map.OpenDay(state.person, day)
+    for _, tab in ipairs(sheet.tabs) do
+        if tab:IsShown() and tab.map == keep and keep ~= state.view then Map.SetView(keep); break end
+    end
 end
 -- The Atlas: the whole adventure on the world, every road, the older the fainter.
 function Map.OpenAtlas(person)
