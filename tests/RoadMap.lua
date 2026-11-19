@@ -48,6 +48,7 @@ function Frame:GetFrameLevel() return 1 end
 function Frame:IsEnabled() return true end
 function Frame:SetTexture(t) self.texture = t end
 function Frame:SetTexCoord(...) self.coords = {...} end
+function Frame:SetDrawLayer(layer, sub) self.layer, self.sublevel = layer, sub end
 for _, make in ipairs({"CreateTexture", "CreateFontString", "CreateLine", "CreateMaskTexture"}) do
     Frame[make] = function(self) local child = New(make); child.parent = self; return child end
 end
@@ -329,6 +330,39 @@ do
     check(pieces[1] and pieces[2], "an area of 300 by 200 is two tiles wide, whatever count it claims")
     check(pieces[1].w == 256 and pieces[2].w == 44 and pieces[2].points[1][4] == 10 + 256, "the second tile is the area's last 44 pixels, beside the first")
     check(math.abs(pieces[2].coords[2] - 44 / 64) < 1e-6 and math.abs(pieces[1].coords[4] - 200 / 256) < 1e-6, "cut from files of 64 and 256")
+end
+-- 14b. Explored areas drawn over the base (one shared layer drew the base's parchment over
+-- them in an undefined order, 2026-11-19), and placed as the world map places them.
+do
+    local base, area = 0, 0
+    for _, tile in ipairs(sheet.art.tiles) do
+        if tile:IsShown() then
+            if tile.texture == 1 or tile.texture == 2 then
+                area = area + 1; check(tile.layer == "ARTWORK", "an explored area is drawn over the base")
+            else
+                base = base + 1; check(tile.layer == "BACKGROUND", "the base is drawn under the explored areas")
+            end
+        end
+    end
+    check(base > 0 and area == 2, "both base and areas are drawn")
+    -- Hillsbrad's eastern area (384 x 384 at 605, 75; four files) on 256 tiles.
+    local p = Map.AreaPieces({textureWidth = 384, textureHeight = 384, offsetX = 605, offsetY = 75, fileDataIDs = {11, 12, 13, 14}}, 256, 256)
+    check(#p == 4, "a 384 area is two by two tiles")
+    check(p[1].file == 11 and p[1].x == 605 and p[1].y == 75 and p[1].w == 256 and p[1].h == 256 and p[1].u == 1 and p[1].v == 1, "first tile at the offset, whole")
+    check(p[2].file == 12 and p[2].x == 861 and p[2].y == 75 and p[2].w == 128 and p[2].u == 1, "second tile beside it, the last 128 pixels of a 128 file")
+    check(p[3].file == 13 and p[3].x == 605 and p[3].y == 331 and p[3].h == 128 and p[3].v == 1, "the second row below, files row by row")
+    check(p[4].file == 14 and p[4].x == 861 and p[4].y == 331, "the last tile in the corner")
+    -- A 129-pixel area: one tile, cut from a 256 file; a 300 x 40 one: its last row from a 64 file.
+    p = Map.AreaPieces({textureWidth = 129, textureHeight = 128, offsetX = 108, offsetY = 482, fileDataIDs = {21}}, 256, 256)
+    check(#p == 1 and p[1].w == 129 and math.abs(p[1].u - 129 / 256) < 1e-9 and p[1].v == 1, "129 wide is cut from a 256 file")
+    p = Map.AreaPieces({textureWidth = 300, textureHeight = 40, offsetX = 0, offsetY = 0, fileDataIDs = {31, 32}}, 256, 256)
+    check(#p == 2 and p[1].h == 40 and math.abs(p[1].v - 40 / 64) < 1e-9 and math.abs(p[2].u - 44 / 64) < 1e-9, "40 high from a 64 file")
+    -- Other tile sizes: the layer's own, not 256.
+    p = Map.AreaPieces({textureWidth = 300, textureHeight = 100, offsetX = 5, offsetY = 6, fileDataIDs = {41, 42, 43}}, 128, 128)
+    check(#p == 3 and p[3].x == 5 + 256 and p[3].w == 44, "laid on the layer's own tile size")
+    -- Left off, as the world map leaves them: mouse-over areas and empty ones.
+    check(Map.AreaPieces({textureWidth = 256, textureHeight = 256, offsetX = 0, offsetY = 0, fileDataIDs = {1}, isShownByMouseOver = true}, 256, 256) == nil, "mouse-over areas are left off")
+    check(Map.AreaPieces({textureWidth = 0, textureHeight = 256, fileDataIDs = {1}}, 256, 256) == nil, "an empty area is left off")
 end
 -- 15. Bridges: a short break in the road is joined by a dotted curve; a hearthstone is not.
 do

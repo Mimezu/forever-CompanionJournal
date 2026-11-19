@@ -1,5 +1,10 @@
 # Companion Journal: changes
 
+## 1.52.1 (2026-11-19)
+
+- Maps show all you explored, as your world map does
+- Inn marks only for real rests (half an hour or more)
+
 ## 1.52.0 (2026-11-19)
 
 - Opens on your own journal; within five minutes, where you left it

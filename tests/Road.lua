@@ -192,6 +192,15 @@ for _, mark in ipairs(model.marks) do if mark.kind == "death" then death = mark 
 check(death and death.map == 1412 and math.abs(death.x - deathX) < 0.003 and not death.guess, "the death sits on the road where it happened")
 check(#model.stays == 1 and model.stays[1].secs >= 280 and math.abs(model.stays[1].x - deathX) < 0.01, "a five-minute pause is a stay")
 check(A.RoadModel.WithAt(model, t0 + 30).key == "dahlia-noir" and A.RoadModel.WithAt(model, clock) == nil, "the stretch walked with Dahlia")
+-- A rest mark only for a real rest: five minutes in a rested place is passing through.
+local function Rests(m) local n = 0; for _, mark in ipairs(m.marks) do if mark.text and mark.text:find("^Rested") then n = n + 1 end end; return n end
+journal[#journal + 1] = {k = "rest", d = "the inn", t = deathAt}
+check(Rests(A.RoadModel.Build(journal, key, "alberich-realm")) == 0, "a five-minute pause in a rested place: no rest mark")
+local stay = A.RoadModel.REST_STAY
+A.RoadModel.REST_STAY = 240
+check(Rests(A.RoadModel.Build(journal, key, "alberich-realm")) == 1, "a stay as long as a real rest: its mark")
+A.RoadModel.REST_STAY = stay
+table.remove(journal)
 -- In Dahlia's book: only the road walked with her (her outing with you).
 local hers = A.RoadModel.Build({{k = "group", t = t0, e = deathAt}}, key, "alberich-realm", "dahlia-noir")
 local last = hers.pieces[#hers.pieces].points

@@ -167,6 +167,16 @@ local MARKS = {
 }
 M.MARKS = MARKS
 
+-- A rest worth a mark: the road stayed there half an hour or more, starting within a few
+-- minutes of entering the rested place (walking through a town is not a rest). 2026-11-19.
+M.REST_STAY = 1800
+local function RealRest(model, t)
+    for _, stay in ipairs(model.stays) do
+        if not stay.guess and stay.secs >= M.REST_STAY and stay.t <= t + 300 and stay.e >= t then return true end
+    end
+    return false
+end
+
 -- The day's model for a person's book (yours, or a companion's: then only the road walked
 -- with them). journal: the entries of that book; day: "YYYY-MM-DD"; character: whose road.
 function M.Build(journal, day, character, companionKey)
@@ -283,7 +293,7 @@ function M.Build(journal, day, character, companionKey)
     -- Marks: the journal's moments, on the road by their time (or the zone's middle).
     for _, e in ipairs(journal or {}) do
         local how = e.t and DayOf(e.t) == day and MARKS[e.k]
-        if how and (e.k ~= "death" or e.w == nil or e.w == "you") and Inside(e.t) then
+        if how and (e.k ~= "death" or e.w == nil or e.w == "you") and Inside(e.t) and (e.k ~= "rest" or RealRest(model, e.t)) then
             local kind, text = how(e)
             local at = M.PlaceAt(model, e.t)
             if not at then

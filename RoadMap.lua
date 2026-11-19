@@ -151,13 +151,46 @@ local function ArtSize(map)
     if not layer then return nil end
     return layer.layerWidth, layer.layerHeight, layer.tileWidth or 256, layer.tileHeight or 256
 end
+-- One explored area cut into its pieces, as Blizzard's MapExplorationPinMixin:RefreshOverlays
+-- cuts it: a grid of the layer's tile size (tw by th) from the area's offset, its files row
+-- by row; the last row and column only as big as the area needs, cut from the smallest
+-- power-of-two file from 16 up that holds them. A piece: file, x, y (layer pixels from the
+-- top left), w, h, and the share of its file used (u, v). Nil for an area the world map
+-- draws only under the mouse, or one without size or files.
+local function FileSize(pixels) local size = 16; while size < pixels do size = size * 2 end; return size end
+local function AreaPieces(o, tw, th)
+    local aw, ah = o.textureWidth, o.textureHeight
+    if o.isShownByMouseOver or type(o.fileDataIDs) ~= "table" or not aw or aw <= 0 or not ah or ah <= 0 then return nil end
+    local pieces = {}
+    local wide, tall = math.ceil(aw / tw), math.ceil(ah / th)
+    for r = 1, tall do
+        local ch = r < tall and th or ah - (tall - 1) * th
+        local fh = r < tall and th or FileSize(ch)
+        for c = 1, wide do
+            local file = o.fileDataIDs[(r - 1) * wide + c]
+            if file then
+                local cw = c < wide and tw or aw - (wide - 1) * tw
+                local fw = c < wide and tw or FileSize(cw)
+                pieces[#pieces + 1] = {file = file, x = (o.offsetX or 0) + tw * (c - 1), y = (o.offsetY or 0) + th * (r - 1),
+                    w = cw, h = ch, u = cw / fw, v = ch / fh}
+            end
+        end
+    end
+    return pieces
+end
+Map.AreaPieces = AreaPieces
 local function DrawArt(art, map)
     art.tiles = art.tiles or {}
     local used = 0
-    local function Tile()
+    -- (the base on BACKGROUND, the explored areas on ARTWORK over it, as on the world map:
+    -- on one shared layer the order is undefined, and the base's plain parchment tiles were
+    -- drawn over most areas, 2026-11-19 Hillsbrad bug. The pool is shared, so every tile is
+    -- given its layer each time it is taken.)
+    local function Tile(layer)
         used = used + 1
         local tile = art.tiles[used]
-        if not tile then tile = art:CreateTexture(nil, "BACKGROUND"); art.tiles[used] = tile end
+        if not tile then tile = art:CreateTexture(nil, layer); art.tiles[used] = tile end
+        tile:SetDrawLayer(layer, 0)
         tile:ClearAllPoints(); tile:SetTexCoord(0, 1, 0, 1); tile:Show()
         tile:SetVertexColor(1, 0.93, 0.80); tile:SetAlpha(0.88)
         if tile.SetDesaturation then tile:SetDesaturation(0.35) end
@@ -169,33 +202,17 @@ local function DrawArt(art, map)
     local cols = math.max(1, math.ceil(w / tw))
     for i, file in ipairs(type(files) == "table" and files or {}) do
         local col, row = (i - 1) % cols, math.floor((i - 1) / cols)
-        local tile = Tile()
+        local tile = Tile("BACKGROUND")
         tile:SetTexture(file); tile:SetSize(tw, th); tile:SetPoint("TOPLEFT", art, "TOPLEFT", col * tw, -row * th)
     end
-    -- The explored areas: each one a grid of the layer's own tile size (not the area's own
-    -- count of textures, which can disagree), its last row and column cut from the smallest
-    -- power-of-two file that holds them (the way Social Diary lays them; 2026-11-15: pieces
-    -- drawn at 256 and the wrong count landed as misplaced blocks in a corner).
-    local function FileSize(pixels) local size = 16; while size < pixels do size = size * 2 end; return size end
+    -- The explored areas, the same ones the player's world map shows: a classic zone's base is
+    -- only its frame, the inside plain parchment, and every coloured part is an explored area.
     local overlays = C_MapExplorationInfo and Ask(C_MapExplorationInfo.GetExploredMapTextures, map)
     for _, o in ipairs(type(overlays) == "table" and overlays or {}) do
-        local aw, ah = o.textureWidth, o.textureHeight
-        if not o.isShownByMouseOver and o.fileDataIDs and aw and aw > 0 and ah and ah > 0 then
-            local wide, tall = math.ceil(aw / tw), math.ceil(ah / th)
-            for r = 1, tall do
-                local ch = r < tall and th or ah - (tall - 1) * th
-                local fh = r < tall and th or FileSize(ch)
-                for c = 1, wide do
-                    local file = o.fileDataIDs[(r - 1) * wide + c]
-                    if file then
-                        local cw = c < wide and tw or aw - (wide - 1) * tw
-                        local fw = c < wide and tw or FileSize(cw)
-                        local tile = Tile()
-                        tile:SetTexture(file); tile:SetSize(cw, ch); tile:SetTexCoord(0, cw / fw, 0, ch / fh)
-                        tile:SetPoint("TOPLEFT", art, "TOPLEFT", (o.offsetX or 0) + tw * (c - 1), -((o.offsetY or 0) + th * (r - 1)))
-                    end
-                end
-            end
+        for _, p in ipairs(AreaPieces(o, tw, th) or {}) do
+            local tile = Tile("ARTWORK")
+            tile:SetTexture(p.file); tile:SetSize(p.w, p.h); tile:SetTexCoord(0, p.u, 0, p.v)
+            tile:SetPoint("TOPLEFT", art, "TOPLEFT", p.x, -p.y)
         end
     end
     for i = used + 1, #art.tiles do art.tiles[i]:Hide() end
