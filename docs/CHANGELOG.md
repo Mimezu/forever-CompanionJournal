@@ -1,5 +1,11 @@
 # Companion Journal: changes
 
+## 1.52.0 (2026-11-19)
+
+- Opens on your own journal; within five minutes, where you left it
+- A companion's newer chapter still opens first; acquaintances never do
+- Your book is told ahead while you play: opens at once
+
 ## 1.51.2 (2026-11-19)
 
 - No more holes where the game flips maps at a zone border

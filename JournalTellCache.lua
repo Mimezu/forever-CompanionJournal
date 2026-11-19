@@ -21,7 +21,9 @@ C.OPEN_STEP = 300
 C.MAX = 12                  -- books kept at once (the oldest goes first)
 -- (saved settings the tellers never read and the book changes as you read or move it)
 C.SKIP = {bookRead = true, bookPins = true, bookSize = true, bookSpread = true, bookWidth = true, bookHeight = true,
-    bookMinimapAngle = true, bookMinimap = true, groupPromptPoint = true, bookNotice = true, bookNoticed = true}
+    bookMinimapAngle = true, bookMinimap = true, groupPromptPoint = true, bookNotice = true, bookNoticed = true,
+    -- (the Road's points: read by the maps only, and they grow every evening)
+    road = true, roadRecord = true, roadDefaultOn = true, roadSounds = true, deathShots = true}
 C.hits, C.misses = 0, 0
 
 local store, order = {}, {}
@@ -100,7 +102,18 @@ function C.Key(kind, person, days, args)
     return table.concat(buf)
 end
 
-local function Remember(key, stories)
+-- The newest telling kept for one book (its teller, person and arguments, whatever the saved
+-- data): handed back while a fresh telling runs in the background.
+local latest = {}
+local function Identity(kind, person, args)
+    local buf = {kind, ":", tostring(A.Me and A.Me() or ""), ":"}
+    if type(person) == "table" then buf[#buf + 1] = tostring(person.charKey or rawget(person, "__key") or person.__key or person.name) end
+    buf[#buf + 1] = "|"
+    Put(buf, args or {}, 1)
+    return table.concat(buf)
+end
+local function Remember(key, stories, ident)
+    if ident then latest[ident] = key end
     if not store[key] then order[#order + 1] = key end
     store[key] = stories
     while #order > C.MAX do
@@ -111,25 +124,84 @@ end
 -- Told once per key: `tell()` gives the book (a table of chapters by day key), which is kept and
 -- handed back on every later call with the same key. The book handed back is shared: read it,
 -- never write to it.
-function C.Told(kind, person, days, args, tell)
+-- opts.background: when this book was told before, hand back that telling at once and tell
+-- it afresh in the background (opts.ready() is called when the fresh one is kept).
+function C.Told(kind, person, days, args, tell, opts)
     if not C.ON then return tell() end
     local key = C.Key(kind, person, days, args)
     local stories = store[key]
     if stories then C.hits = C.hits + 1; return stories end
+    local ident = Identity(kind, person, args)
+    if opts and opts.background and C.Background then
+        local stale = latest[ident] and store[latest[ident]]
+        if stale then
+            C.Background(key, ident, tell, opts.ready)
+            return stale, true
+        end
+    end
     C.misses = C.misses + 1
     stories = tell()
     -- (a telling that changed the saved variables would never match its key again: keep it only
     -- when the key still holds)
-    if type(stories) == "table" and C.Key(kind, person, days, args) == key then Remember(key, stories) end
+    if type(stories) == "table" and C.Key(kind, person, days, args) == key then Remember(key, stories, ident) end
     return stories
 end
 
 -- The own book, as SelfTale.Tell(person, days, brief, retell) tells it.
-function C.Self(person, days, brief, retell)
+function C.Self(person, days, brief, retell, opts)
     return C.Told("self", person, days, {brief = brief and true or false, retell = retell or false}, function()
         return A.SelfTale.Tell(person, days, brief, retell)
-    end)
+    end, opts)
 end
+-- The own book told ahead, in the background, so the book opens on it at once (while you play,
+-- after a new entry; at login). Nothing happens when it is already kept.
+function C.WarmSelf(person, days, brief)
+    if not C.ON or not C.Background then return end
+    local args = {brief = brief and true or false, retell = false}
+    local key = C.Key("self", person, days, args)
+    if store[key] then return end
+    C.Background(key, Identity("self", person, args), function() return A.SelfTale.Tell(person, days, brief, false) end)
+end
+
+-- In the background (1.51.3): a telling runs in a coroutine, a few milliseconds a frame, pausing
+-- between days (A.TellStep, called by the teller); the book stays smooth meanwhile. One at a
+-- time: a newer request replaces an older one. Only tellers that never pause inside a pcall
+-- may run here (the own book's); the companions' tellers run as before.
+C.BUDGET = 6 -- milliseconds a frame
+local job
+local function Clock() return debugprofilestop and debugprofilestop() or 0 end
+function A.TellStep()
+    if job and job.co == coroutine.running() and Clock() - job.slice > C.BUDGET then coroutine.yield() end
+end
+local driver
+local function Run()
+    local current = job
+    if not current then if driver then driver:SetScript("OnUpdate", nil) end; return end
+    current.slice = Clock()
+    local ok, result = coroutine.resume(current.co)
+    if job ~= current then return end
+    if not ok then job = nil; return end
+    if coroutine.status(current.co) == "dead" then
+        job = nil
+        if type(result) == "table" then Remember(current.key, result, current.ident) end
+        for _, ready in ipairs(current.ready) do pcall(ready) end
+    end
+end
+function C.Background(key, ident, tell, ready)
+    if job and job.key == key then
+        if ready then job.ready[#job.ready + 1] = ready end
+        return
+    end
+    job = {key = key, ident = ident, co = coroutine.create(tell), ready = {ready}, slice = Clock()}
+    if not driver and CreateFrame then driver = CreateFrame("Frame") end
+    if driver and driver.SetScript then
+        driver:SetScript("OnUpdate", Run)
+    else
+        -- (no frames: at once, to the end)
+        while job do Run() end
+    end
+end
+function C.Busy() return job ~= nil end
 -- A companion's book, as JournalTale.Tell(person, days, voice, player, brief) tells it.
 function C.Tale(person, days, voice, player, brief)
     return C.Told("tale", person, days, {voice = voice or false, player = player or false, brief = brief and true or false}, function()
@@ -138,5 +210,5 @@ function C.Tale(person, days, voice, player, brief)
 end
 
 function C.Clear()
-    store, order = {}, {}
+    store, order, latest, job = {}, {}, {}, nil
 end

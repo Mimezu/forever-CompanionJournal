@@ -24,6 +24,7 @@ local CIRCLE_ORDER = {
 
 local book
 function A.BookFrame() return book end
+local REMEMBER = 300 -- seconds the book reopens where you left it
 -- Going anywhere else in the book folds the Road's map away.
 local function CloseRoad() if A.RoadMap and A.RoadMap.IsOpen() then A.RoadMap.Close() end end
 local BuildWizard -- (below; Build uses them)
@@ -624,7 +625,10 @@ local function Chapters(person)
             -- (told once and kept while nothing it hangs on changes: JournalTellCache.lua)
             local Kept = A.TellCache
             if person.self then
-                stories[teller] = A.SelfTale and (Kept and Kept.Self(person, days, styleMode == "storyBrief")
+                -- (in the background when told before: the book opens at once on the last telling
+                -- and turns to the fresh one when it is ready)
+                stories[teller] = A.SelfTale and (Kept and Kept.Self(person, days, styleMode == "storyBrief", nil, {background = true,
+                    ready = function() if book and book:IsShown() and state.view == "journal" then A.RefreshBook() end end})
                     or A.SelfTale.Tell(person, days, styleMode == "storyBrief")) or {}
             else
                 local player = state.owner and A.CharacterPlayer(state.owner)
@@ -1522,6 +1526,7 @@ local function Build()
     book.input, book.write, book.retell, book.close, book.noteDate, book.writeHint = input, write, retell, close, noteDate, hint
     book:SetScript("OnSizeChanged", function() if book:IsShown() then A.RefreshBook() end end)
     book:SetScript("OnHide", function()
+        state.closedAt = time and time() or 0
         CommitRead()
         if book.manager then book.manager:Hide() end
         if book.npcManager then book.npcManager:Hide() end
@@ -2997,16 +3002,27 @@ function A.OpenBook(key, charKey)
         elseif not person then return end
     end
     if not book then Build() end
-    if not key and A.FindPerson then
-        local person, found = A.FindPerson("target")
-        if person and found and not person.npc then key = found end
+    -- Opening without a page asked for: where you left it, when that was a few minutes ago;
+    -- otherwise your own journal, unless a companion has a new chapter newer than all of
+    -- yours (an acquaintance, a campfire or a rival never opens the book). 2026-11-19: "it's
+    -- always opening to something different".
+    if not key and state.closedAt and (time and time() or 0) - state.closedAt <= REMEMBER and state.key then
+        if state.view ~= "journal" then
+            book:Show(); book:Raise(); A.RefreshBook(nil, true)
+            return
+        end
+        key, charKey = state.key, state.owner
     end
     if not key then
-        local unread = AllUnread()
-        -- (your own journal first, when it has something new)
         local me = A.Me and A.Me()
-        for _, item in ipairs(unread) do if item.key == "self:" .. (me or "") then key = item.key end end
-        key = key or (unread[1] and unread[1].key)
+        local own = me and ("self:" .. me)
+        local newest
+        for _, item in ipairs(AllUnread()) do
+            if item.key == own then break end
+            local person = A.People[item.key]
+            if person and A.PersonCircle and A.PersonCircle(person) == "companion" then newest = item.key; break end
+        end
+        key = newest
         if key then state.jumpUnread = true end
     end
     if not key then
@@ -3057,10 +3073,38 @@ local function ShowsJournalOf(person, shown)
     if person.self or shown.self then return person.self and shown.self and person.charKey == shown.charKey or false end
     return shown == person or (shown.journal ~= nil and shown.journal == person.journal)
 end
+-- Your book told ahead while you play (JournalTellCache.lua, in the background, a few
+-- milliseconds a frame): eight seconds after a new line and out of combat, and once at
+-- login. So the book opens at once instead of telling every chapter first.
+local warmAt
+local function WarmOwn()
+    warmAt = nil
+    if not A.TellCache or not A.TellCache.WarmSelf or not A.SelfPerson or A.JournalVoice() ~= "story" then return end
+    if InCombatLockdown and InCombatLockdown() then
+        warmAt = (time and time() or 0) + 8
+        if C_Timer and C_Timer.After then C_Timer.After(8, WarmOwn) end
+        return
+    end
+    local person = A.SelfPerson()
+    if not person then return end
+    A.TellCache.WarmSelf(person, A.JournalBook(person), A.JournalMode() ~= "all")
+end
+local function WarmSoon()
+    if warmAt or not (C_Timer and C_Timer.After) then return end
+    warmAt = (time and time() or 0) + 8
+    C_Timer.After(8, WarmOwn)
+end
+A.WarmOwnBook = WarmSoon
+local warmer = CreateFrame and CreateFrame("Frame")
+if warmer then
+    warmer:RegisterEvent("PLAYER_ENTERING_WORLD")
+    warmer:SetScript("OnEvent", function() if C_Timer and C_Timer.After then C_Timer.After(20, WarmOwn) end end)
+end
 local baseRefresh = A.RefreshJournal
 function A.RefreshJournal(person, scrollToEnd)
     if baseRefresh then baseRefresh(person, scrollToEnd) end
-    if book and book:IsShown() and ShowsJournalOf(person, Shown()) then A.RefreshBook() end
+    if book and book:IsShown() and ShowsJournalOf(person, Shown()) then A.RefreshBook()
+    elseif person and person.self then WarmSoon() end
 end
 
 -- The new-chapter notice, when you rest (an inn, a city) and today's chapter is new.

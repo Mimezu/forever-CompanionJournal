@@ -220,7 +220,13 @@ SlashCmdList.COMPANIONJOURNAL = function(message)
         local count = message:lower():match("^%s*testleave%s+(%S+)")
         if count == "me" then A.SimulateGroupLeave(5, true) else A.SimulateGroupLeave(tonumber(count) or 1) end
     elseif A.OpenBook then
-        -- (a targeted player from your list opens straight to their journal)
-        A.OpenBook()
+        -- (/cj with a player from your list targeted opens their journal; otherwise the book's own
+        -- rule: where you left it, or your journal)
+        local key
+        if A.FindPerson then
+            local person, found = A.FindPerson("target")
+            if person and found and not person.npc then key = found end
+        end
+        A.OpenBook(key)
     end
 end

@@ -876,6 +876,8 @@ function ST.Tell(person, days, brief, retell)
     end
     history.questZones = {}
     for index, day in ipairs(days) do
+        -- (between days, a telling in the background may pause for the next frame: JournalTellCache.lua)
+        if A.TellStep then A.TellStep() end
         local f = Facts(day)
         if index == 1 then
             local beginning = f.stretches[1]
