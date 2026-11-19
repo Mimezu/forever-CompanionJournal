@@ -1,5 +1,9 @@
 # Companion Journal: changes
 
+## 1.51.1 (2026-11-19)
+
+- The timeline takes the map to the zone you were in
+
 ## 1.51.0 (2026-11-19)
 
 - Map: click to play or pause

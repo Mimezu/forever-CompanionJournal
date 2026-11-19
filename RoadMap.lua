@@ -522,7 +522,9 @@ local function Show(item, shown)
     if item.line then item.line:SetShown(shown) end
     for _, part in ipairs(item.blobs or item.parts or {}) do part:SetShown(shown) end
 end
-function Map.SetTime(t, quiet)
+-- follow: the map turns to the zone you were in (the replay, the slider, a death's cross);
+-- without it a zone tab you chose stays, so you can look around while paused.
+function Map.SetTime(t, quiet, follow)
     if not sheet or not state.drawn then return end
     state.time = t
     -- (the drawn list is in time order: only the items between the old and the new moment
@@ -583,9 +585,9 @@ function Map.SetTime(t, quiet)
     end
     if text ~= sheet.clockText then sheet.clockText = text; sheet.clock:SetText(text) end
     -- On a zone's tab, the map follows the walker into the next zone.
-    if place and not vx and state.playing and state.zoneView and place.map ~= state.view then
+    if place and not vx and (state.playing or follow) and state.zoneView and place.map ~= state.view then
         for _, zone in ipairs(state.model.zones) do
-            if zone.map == place.map then Sound("page"); Map.SetView(place.map); return end
+            if zone.map == place.map then if not quiet then Sound("page") end; Map.SetView(place.map); return end
         end
     end
 end
@@ -704,7 +706,7 @@ local function ScrubTo()
     end
     if not state.efforts then Effort() end
     state.share = u
-    Map.SetTime(u >= 1 and math.huge or TimeAt(u), true)
+    Map.SetTime(u >= 1 and math.huge or TimeAt(u), true, true)
 end
 local function EndScrub()
     if not state.scrubbing then return end
@@ -1165,7 +1167,7 @@ function Map.Ticks()
                     tick:SetScript("OnClick", function(self)
                         if state.playing then Stop() end
                         state.share = ShareAt(self.mark.t)
-                        Map.SetTime(self.mark.t, true)
+                        Map.SetTime(self.mark.t, true, true)
                     end)
                     sheet.ticks[used] = tick
                 end

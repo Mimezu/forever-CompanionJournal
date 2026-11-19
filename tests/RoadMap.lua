@@ -432,6 +432,31 @@ do
     card:Hide()
 end
 
+-- 18. The slider takes the map along: dragging to a moment in Durotar turns a zone tab to
+-- Durotar; a tab picked by hand while paused stays.
+do
+    A.db.road = {}; Road.Reset()
+    clock = os.time({year = 2026, month = 11, day = 30, hour = 20, min = 0})
+    player.map, player.x, player.y = 1412, 0.3, 0.5
+    Look(0)
+    for _ = 1, 40 do player.x = player.x + 0.004; Look(2) end
+    player.map, player.x = 1411, 0.05
+    for _ = 1, 40 do player.x = player.x + 0.004; Look(2) end
+    local evening = Road.DayOf(clock)
+    Map.OpenDay(nil, evening)
+    local sf = Upvalue(Map.Hover, "state")
+    for _, tab in ipairs(sheet.tabs) do if tab.label.text == "Mulgore" then tab.scripts.OnClick(tab) end end
+    check(sf.view == 1412, "on Mulgore's tab")
+    sheet.track.w = 400
+    cursor[1] = 395; buttonDown = true
+    sheet.track.scripts.OnMouseDown(sheet.track, "LeftButton")
+    buttonDown = false
+    if sheet.track.scripts.OnUpdate then sheet.track.scripts.OnUpdate(sheet.track) end
+    check(sf.view == 1411, "dragged to the evening's end: the map turns to Durotar")
+    for _, tab in ipairs(sheet.tabs) do if tab.label.text == "Mulgore" then tab.scripts.OnClick(tab) end end
+    check(sf.view == 1412, "Mulgore picked by hand while paused: it stays")
+end
+
 -- 8. A chapter's map mark opens its day.
 local page = New("Frame"); page.box = {70, 70, 76, 56}
 Map.Mark(page, {self = true}, {day = {key = day}, part = 1})
