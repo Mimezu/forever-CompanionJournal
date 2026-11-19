@@ -1,5 +1,9 @@
 # Companion Journal: changes
 
+## 1.51.2 (2026-11-19)
+
+- No more holes where the game flips maps at a zone border
+
 ## 1.51.1 (2026-11-19)
 
 - The timeline takes the map to the zone you were in

@@ -397,7 +397,18 @@ local function DrawView()
                     if ax and bx then
                         ax, ay, bx, by = ax * w, ay * h, bx * w, by * h
                         local length = math.sqrt((bx - ax) ^ 2 + (by - ay) ^ 2)
-                        if length > 3 * px and length < 0.35 * math.max(w, h) then
+                        if b.t - a.t <= 15 and length < 0.1 * math.max(w, h) then
+                            -- (a step across a zone's border, or the game flipping between two
+                            -- maps along it: one road, joined in the road's own ink. 2026-11-18,
+                            -- Hillsbrad and Alterac: dozens of flips, each one a hole)
+                            local alpha = 0.88
+                            if not story then
+                                alpha = alpha * (0.40 + 0.60 * math.max(0, math.min(1, (b.t - (model.t0 or 0)) / math.max(1, (model.t1 or 1) - (model.t0 or 0)))))
+                            end
+                            local line = Line(ink, ax, ay, bx, by, (story and 2.4 or 1.4) * px, INK, alpha)
+                            state.drawn[#state.drawn + 1] = {t = b.t, x = bx, y = by, line = line, day = model.day, map = roads[i].map}
+                            state.curves[#state.curves + 1] = {t0 = a.t, t1 = b.t, ax = ax, ay = ay, mx = (ax + bx) / 2, my = (ay + by) / 2, bx = bx, by = by}
+                        elseif length > 3 * px and length < 0.35 * math.max(w, h) then
                             local mx, my = (ax + bx) / 2 - (by - ay) * 0.12, (ay + by) / 2 + (bx - ax) * 0.12
                             state.curves[#state.curves + 1] = {t0 = a.t, t1 = b.t, ax = ax, ay = ay, mx = mx, my = my, bx = bx, by = by}
                             local dots = math.max(2, math.floor(length / (6 * px)))

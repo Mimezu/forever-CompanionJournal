@@ -457,6 +457,41 @@ do
     check(sf.view == 1412, "Mulgore picked by hand while paused: it stays")
 end
 
+-- 19. Along a zone's border the game flips between two maps every few seconds (Hillsbrad
+-- and Alterac, 2026-11-18): the road is one line, joined at every flip, no holes.
+do
+    A.db.road = {}; Road.Reset()
+    clock = os.time({year = 2026, month = 12, day = 1, hour = 20, min = 0})
+    -- (a neighbour whose map overlaps Mulgore's east edge, as real zone maps overlap at
+    -- their borders: a place there is on both)
+    MAPS[1500] = {mapID = 1500, mapType = 3, parentMapID = 1414, name = "Borderland", ox = 3600}
+    player.map, player.x, player.y = 1412, 0.92, 0.3
+    Look(0)
+    for i = 1, 60 do
+        local wx = 0.92 * 4000 + i * 4                  -- walking east along the border
+        player.y = player.y + 0.003
+        if (math.floor(i / 2)) % 2 == 0 then player.map, player.x = 1412, wx / 4000
+        else player.map, player.x = 1500, (wx - 3600) / 4000 end
+        Look(2)
+    end
+    local key = Road.DayOf(clock)
+    check(#Road.Day("me", key) > 10, "the record breaks at every flip")
+    Map.OpenDay(nil, key)
+    local sj = Upvalue(Map.Hover, "state")
+    sheet.hero.scripts.OnClick(sheet.hero)
+    -- every road stroke's end is the next one's start (in time order): one unbroken line
+    local strokes = {}
+    for _, item in ipairs(sj.drawn) do if item.line and item.line:IsShown() then strokes[#strokes + 1] = item.line end end
+    local holes = 0
+    for k = 2, #strokes do
+        local a, b = strokes[k - 1], strokes[k]
+        if math.abs(a.x2 - b.x1) > 0.5 or math.abs(a.y2 - b.y1) > 0.5 then holes = holes + 1 end
+    end
+    check(#strokes > 20 and holes == 0, "one unbroken line across the flips (" .. holes .. " holes)")
+    sheet.story.scripts.OnClick(sheet.story)
+    MAPS[1500] = nil
+end
+
 -- 8. A chapter's map mark opens its day.
 local page = New("Frame"); page.box = {70, 70, 76, 56}
 Map.Mark(page, {self = true}, {day = {key = day}, part = 1})
