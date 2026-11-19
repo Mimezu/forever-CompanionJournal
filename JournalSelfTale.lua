@@ -802,6 +802,129 @@ local function ZoneSight(Say, teller, zone, Pick, avoid, short, brief, faction)
     -- (the draw is made as before; the short telling keeps the sight and leaves the stakes out)
     if zs.stakes and not short and teller.rng() < 0.7 and not brief then Say(One(zs.stakes), true, "lore") end
 end
+-- A move to the place the sentence before already put us in says nothing (2026-11-19): "We came out
+-- of the dark into the Undercity again. We went on to the Undercity." drops the second sentence.
+local MOVE_SAY = {"From there we went on to ", "From there I went on to ", "From there we went to ", "From there I went to ",
+    "We went on to ", "I went on to "}
+local function TidyMoves(text)
+    if type(text) ~= "string" then return text end
+    for _, lead in ipairs(MOVE_SAY) do
+        local from = 1
+        while true do
+            local a, b, pre, place = text:find(lead .. "([%a ]-){p:([^}]+)}%.", from)
+            if not a then break end
+            local dropped = false
+            if (pre == "" or pre == "the ") and (a == 1 or text:sub(a - 1, a - 1):match("%s")) then
+                local prev = text:sub(1, a - 1):gsub("%s+$", "")
+                local sentence = prev:match("[%.!]%s+([^%.!]+%.)$") or prev
+                local last
+                for p_ in sentence:gmatch("{p:([^}]+)}") do last = p_ end
+                -- (or the next two sentences take us into it themselves: "From there we went to the
+                -- Wailing Caverns. The Druids ... We went down into the Wailing Caverns.")
+                local after = text:sub(b + 1):match("^%s*([^%.]*%.[^%.]*%.?)") or ""
+                if after:find("into {p:" .. place .. "}", 1, true) or after:find("into the {p:" .. place .. "}", 1, true) then last = place end
+                if last and last == place then
+                    text = text:sub(1, a - 1) .. text:sub(b + 1):gsub("^ +", "")
+                    dropped = true
+                end
+            end
+            from = dropped and a or b + 1
+        end
+    end
+    -- (a meeting in the place the sentence before named needs no place: "Friday evening, I spent more
+    -- time in Orgrimmar. I spoke with Thrall in Orgrimmar." -> "I spoke with Thrall.", 2026-11-19)
+    do
+        local from = 1
+        while true do
+            local a, b, name, place = text:find("I [%a ]- ({n:[^}]+}) in t?h?e? ?{p:([^}]+)}%.", from)
+            if not a then break end
+            local prev = text:sub(1, a - 1):gsub("%s+$", "")
+            local sentence = prev:match("[%.!]%s+([^%.!]+%.)$") or prev
+            if (a == 1 or text:sub(a - 1, a - 1):match("%s")) and sentence:find("{p:" .. place .. "}", 1, true) then
+                local said = text:sub(a, b):gsub(" in t?h?e? ?{p:[^}]+}%.$", ".")
+                text = text:sub(1, a - 1) .. said .. text:sub(b + 1)
+                b = a + #said - 1
+            end
+            from = b + 1
+        end
+    end
+    -- (a foe whose death the chapter told is not announced dead again: "Then came Rath'mael ... We
+    -- killed him. ... Rath'mael was dead. Deathguard Kristof ..." drops the third sentence, 2026-11-19)
+    do
+        local from = 1
+        while true do
+            local a, b, who = text:find("%f[%w{]([%u][%w']+) was dead%. ", from)
+            if not a then break end
+            local dropped = false
+            local before = text:sub(1, a - 1)
+            if a > 1 and before:sub(-1):match("%s") then
+                local i = 1
+                while true do
+                    local x = before:find("{p:" .. who, i, true)
+                    if not x then break end
+                    local near = before:sub(x, x + 220):lower()
+                    if near:find("killed", 1, true) or near:find(" fell", 1, true) or near:find("brought down", 1, true) or near:find("put an end", 1, true) then
+                        text = before .. text:sub(b + 1)
+                        dropped = true
+                        break
+                    end
+                    i = x + 1
+                end
+            end
+            from = dropped and a or b + 1
+        end
+    end
+    -- (a companion the chapter already showed with me, falling at my side, does not join afterwards
+    -- unless they left between: "Dahlia and Sheezall went down first ... Dahlia caught up with me
+    -- there." drops the join, 2026-11-19)
+    for _, shape in ipairs({"There, ({n:[^}]+}) joined [mu][es]%.", "({n:[^}]+}) joined [mu][es] there%.", "({n:[^}]+}) joined [mu][es]%.",
+        "({n:[^}]+}) caught up with [mu][es] there%.", "({n:[^}]+}) caught up with [mu][es]%."}) do
+        local from = 1
+        while true do
+            local a, b, who = text:find(shape, from)
+            if not a then break end
+            local before = text:sub(1, a - 1)
+            local dropped = false
+            if (a == 1 or before:sub(-1):match("%s")) and before:find(who, 1, true) then
+                local lastSeen = 0
+                local i = 1
+                while true do
+                    local x = before:find(who, i, true)
+                    if not x then break end
+                    lastSeen, i = x, x + 1
+                end
+                local leftSince = before:sub(lastSeen):find(" left ", 1, true) or before:sub(lastSeen):find(" left%.") or before:find(who .. "[^%.]- left", 1)
+                if not leftSince then
+                    text = before .. text:sub(b + 1):gsub("^ +", "")
+                    dropped = true
+                end
+            end
+            from = dropped and a or b + 1
+        end
+    end
+    -- (a notable figure's lore line follows the sentence that names the figure; one left behind
+    -- after another moment, "Riptear got me. Once the ranger-general of Quel'Thalas, she ...", moves
+    -- to just after the meeting, or goes when the chapter never names the figure, 2026-11-19)
+    for figure, pool in pairs((A.SelfWords and A.SelfWords.notableNPCs) or {}) do
+        for _, line in ipairs(pool) do
+            local a, b = text:find(line, 1, true)
+            if a then
+                local prev = text:sub(1, a - 1):gsub("%s+$", "")
+                local sentence = prev:match("[%.!]%s+([^%.!]+%.)$") or prev
+                local short = figure:match("(%S+)$")
+                if not (sentence:find(figure, 1, true) or sentence:find(short, 1, true)) then
+                    text = text:sub(1, a - 1) .. text:sub(b + 1):gsub("^ +", "")
+                    local at = text:find(figure, 1, true)
+                    local stop = at and (text:find("%.%s", at) or text:find("%.$", at))
+                    if stop then text = text:sub(1, stop) .. " " .. line .. text:sub(stop + 1) end
+                end
+            end
+        end
+    end
+    text = text:gsub(" +\n", "\n"):gsub("\n\n\n+", "\n\n"):gsub("%s+$", "")
+    return text
+end
+ST.TidyMoves = TidyMoves
 function ST.Tell(person, days, brief, retell)
     local W = A.SelfWords or {}
     local L = A.Lore
@@ -5712,7 +5835,12 @@ function ST.Tell(person, days, brief, retell)
                     local text = out[n]
                     if text:match("^There, %a") then text = text:gsub("^There, (%a)", function(c) return c:upper() end)
                     elseif text:match("^There I ") then text = text:gsub("^There I ", "I ")
-                    elseif text:match(" there%.$") and not text:find("%. ") then text = text:gsub(" there%.$", ".") end
+                    -- ("there" after a preposition is the sentence's object, not a place echo: "It went
+                    -- badly from there." keeps it, 2026-11-19)
+                    elseif text:match(" there%.$") and not text:find("%. ")
+                        and not ({from = 1, to = 1, out = 1, of = 1, back = 1, up = 1, down = 1, over = 1, through = 1, into = 1})[(text:match(" (%a+) there%.$") or ""):lower()] then
+                        text = text:gsub(" there%.$", ".")
+                    end
                     out[n] = text
                 end
             end
@@ -6011,7 +6139,7 @@ function ST.Tell(person, days, brief, retell)
             paragraphWords = paragraphWords + Words2(sentence)
         end
         if #paragraph > 0 then paragraphs[#paragraphs + 1] = table.concat(paragraph, " ") end
-        local text = plan.text or table.concat(paragraphs, "\n\n")
+        local text = TidyMoves(plan.text or table.concat(paragraphs, "\n\n"))
         if planned then history.plan.text = history.plan.text .. " " .. (A.JournalPlain and A.JournalPlain(text) or text) end
         -- the title: the best of the day that no earlier chapter had
         -- (round 30, the player: the title comes from the chapter's spine, never from a passing first or a

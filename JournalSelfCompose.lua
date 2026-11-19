@@ -131,7 +131,15 @@ end
 local function TimeOf(n, ctx)
     local meta = ctx.metas[n] or {}
     local s = ctx.stretches[ctx.scenes[n] or 0]
-    return meta.t or ctx.times[n] or (s and s.t) or 0
+    -- (2026-11-19: a lore line comments on the line before it in the same stay and never goes back
+    -- before it: "The devourer in Naralex's dream was dead." after Mutanus fell; the stay's start
+    -- had put it before the run)
+    local t = meta.t or ctx.times[n] or (s and s.t) or 0
+    if n > 1 and ctx.kinds and ctx.kinds[n] == "lore" and ctx.scenes[n] and ctx.scenes[n] == ctx.scenes[n - 1] then
+        local before = TimeOf(n - 1, ctx)
+        if before > t then return before end
+    end
+    return t
 end
 local function EpisodeAt(t, episodes)
     for _, ep in ipairs(episodes) do if t >= ep.t and t < ep.until_ then return ep end end
@@ -1762,7 +1770,13 @@ function C.Apply(ctx)
                 end
                 local peril = false
                 for _, l in ipairs(lines) do if l.ep == ep and not l.drop and l.kind == "peril" then peril = true end end
-                if f.dangerous and not peril then Line(at + 1, "adventureDanger", P.adventureDanger) end
+                -- (2026-11-19: the danger line once a chapter, and the book walks its variants in turn,
+                -- so "Nothing there died easily." is never said twice in a chapter or two chapters running)
+                local h = ctx.history or {}
+                if f.dangerous and not peril and h.dangerDay ~= (ctx.day and ctx.day.key or "") and type(P.adventureDanger) == "table" and #P.adventureDanger > 0 then
+                    h.dangerDay, h.dangerN = ctx.day and ctx.day.key or "", (h.dangerN or 0) + 1
+                    Line(at + 1, "adventureDanger", {P.adventureDanger[(h.dangerN - 1) % #P.adventureDanger + 1]})
+                end
             end
         end
     end
@@ -1811,6 +1825,14 @@ function C.Apply(ctx)
                             local victim = type(act) == "string" and act:match("killed (%u[%w']+)")
                             if victim then
                                 rest = rest:gsub(" the (hands)", " " .. victim .. "'s %1", 1):gsub(" the (head)", " " .. victim .. "'s %1", 1):gsub(" the (heart)", " " .. victim .. "'s %1", 1)
+                            end
+                            -- (2026-11-19: the hand-in that opened on "her"/"him", whose person the moved sentence
+                            -- named, names them: "We brought her enough" -> "We brought Zamah enough")
+                            local giver_ = l.meta.entry and l.meta.entry.act and l.meta.entry.act.giver
+                            giver_ = type(giver_) == "string" and giver_ or (type(act) == "string" and act:match(" for ([%u][%a' ]+)$"))
+                            local short_ = type(giver_) == "string" and giver_:match("(%u[%a']+)$")
+                            if short_ and (rest:match("^[WI]e? %a+ her ") or rest:match("^[WI]e? %a+ him ")) then
+                                rest = rest:gsub("^([WI]e? %a+ )h[ei][rm] ", "%1" .. short_ .. " ", 1)
                             end
                             l.text = rest
                         else
@@ -2239,6 +2261,12 @@ function C.Apply(ctx)
                             for _, f in ipairs(hep.firsts or {}) do if f.what == "zone" and Clean(f.z or hep.zone or "") == Clean(hearth.z) then firstHere = true end end
                             if firstHere then tk.origin, pool = Place(hearth.z), P.roadLegsHearthFrom end
                         end
+                        -- (2026-11-19: the next thing told is back where the hearthstone landed, so the legs
+                        -- went out from there and the record tells no stop between: "...back to the Undercity,
+                        -- and from there we went on by the zeppelin to Kalimdor", never "came on to the Undercity")
+                        if Clean(after.ep.zone or "") == Clean(hearth.place or "") and P.roadLegsHearthOn then pool = P.roadLegsHearthOn end
+                        -- (and a hearthstone home to the place the reader is already in says nothing)
+                        if Clean(before.ep.zone or "") == Clean(hearth.place or "") and P.roadLegs then pool = P.roadLegs end
                         local text = pool and Pick("roadLegs", pool, tk, true)
                         if text then last.text, last.cls, last.legs = text, "voyage", true; after.ep.roadTold = true end
                     end
@@ -2838,7 +2866,9 @@ function C.Apply(ctx)
                         lines[#lines + 1] = l; byEp[ep][#byEp[ep] + 1] = l
                     end
                 end
-                if D and #tailNames > 0 then
+                -- (2026-11-19: a dungeon run tells its own going in, at its start; a crossing line into it
+                -- came out after the run, "By way of Ashenvale, new to me, we came into Blackfathom Deeps")
+                if D and #tailNames > 0 and D.kind ~= "dungeon" then
                     -- (the next stop's own road line and plain "first time" line give way to the fold)
                     local newToo = IsFirst(D)
                     for _, x in ipairs(byEp[D]) do
@@ -4053,6 +4083,25 @@ function C.Apply(ctx)
         local told_ = {}
         for _, p_ in ipairs(paragraphs) do for _, x in ipairs(p_.lines) do told_[#told_ + 1] = Plain(x.text) end end
         told_ = table.concat(told_, " ")
+        -- (2026-11-19: the quests a kept line already tells, by id, so a step told in its own words is
+        -- never told again by its act: "We attacked the Azurelode Mine and its foreman." after the scene)
+        local toldQ = {}
+        local function MarkQ(q_)
+            if type(q_) == "table" then
+                if q_.qid then toldQ[tonumber(q_.qid) or q_.qid] = true end
+                if type(q_.title) == "string" and not q_.qid then toldQ[q_.title] = true end
+            end
+        end
+        for _, p_ in ipairs(paragraphs) do
+            for _, x in ipairs(p_.lines) do
+                local m = x.meta or {}
+                if m.entry then MarkQ(m.entry.quest) end
+                if m.e and m.e.k == "quest" then MarkQ(m.e) end
+                if type(m.fold) == "table" and type(m.fold.entries) == "table" then
+                    for _, fe in ipairs(m.fold.entries) do if type(fe) == "table" then MarkQ(fe.quest or fe) end end
+                end
+            end
+        end
         local bookBefore = (ctx.history and ctx.history.plan and ctx.history.plan.text) or ""
         local function Insert(t, text, ep)
             local l = {cls = "what", t = t, ep = ep, text = text, major = false, kind = "first", meta = {t = t, compose = "first30"}, n = #out + 970}
@@ -4074,9 +4123,12 @@ function C.Apply(ctx)
                     elseif e.k == "first" and e.d == "rarebeast" and P.firstRare then
                         -- (the record keeps the beast's name in the zone field and the zone in the subzone)
                         local beast = (type(e.z) == "string" and e.z ~= sc.zone and e.z) or (type(e.sz) == "string" and e.sz ~= sc.zone and e.sz)
-                        if beast and not told_:find(beast, 1, true) then
+                        -- (2026-11-19: one sighting a chapter, the book walking the variants in turn)
+                        local h_ = ctx.history or {}
+                        if beast and not told_:find(beast, 1, true) and h_.rareDay ~= (ctx.day and ctx.day.key or "") then
                             local party = party_(e.t or ep.t)
-                            Insert(e.t or ep.t, Fill(P.firstRare[1], {beast = (beast:find(" ", 1, true) and "the " or "") .. Place(beast), We = party and "We" or "I"}), ep)
+                            h_.rareDay, h_.rareN = ctx.day and ctx.day.key or "", (h_.rareN or 0) + 1
+                            Insert(e.t or ep.t, Fill(P.firstRare[(h_.rareN - 1) % #P.firstRare + 1], {beast = (beast:find(" ", 1, true) and "the " or "") .. Place(beast), We = party and "We" or "I", we = party and "we" or "I"}), ep)
                             told_ = told_ .. " " .. beast
                         end
                     end
@@ -4085,7 +4137,8 @@ function C.Apply(ctx)
             for _, q in ipairs(ep.quests or {}) do
                 local QD = A.QuestDeeds
                 local quest = q.quest or {}
-                if QD and QD.Story and quest.title and not told_:find(quest.title, 1, true) then
+                if QD and QD.Story and quest.title and not told_:find(quest.title, 1, true)
+                    and not toldQ[tonumber(quest.qid) or quest.qid or quest.title] then
                     local ok, story = pcall(QD.Story, {title = quest.title, qid = quest.qid})
                     local act = ok and type(story) == "table" and type(story.pov) == "table" and story.pov.act
                     local giver = ok and type(story) == "table" and type(story.pov) == "table" and story.pov.giver
@@ -4105,6 +4158,9 @@ function C.Apply(ctx)
                             if c and said == "" and not c:find("{", 1, true) then said = ", " .. c end
                         end
                         local sense = type(story.after) == "table" and type(story.after[1]) == "string" and not story.after[1]:find("{[%a]+}") and (" " .. story.after[1]) or ""
+                        -- (the sense that names the act's own receiver tells the act again: "We brought lake
+                        -- moss ... to Faranell. Faranell received new specimens ...", 2026-11-19)
+                        if name_ and sense:find("%f[%a]" .. Esc(name_) .. "%f[%A]") then sense = "" end
                         Insert(q.t or ep.t, (party and "We " or "I ") .. act .. said .. "." .. sense, ep)
                         told_ = told_ .. " " .. act
                     end
@@ -4128,7 +4184,13 @@ function C.Apply(ctx)
                         local gap = C.LevelGap(ep.zone, level)
                         local party = #ep.party > 0
                         -- (round 28: the land is named, so the claim covers that land alone)
-                        local text = Fill(P.roamOnly[gap >= 5 and 2 or 1], {We = party and "We" or "I", us = party and "us" or "me", our = party and "our" or "my", zone = Place(ep.zone)})
+                        -- (2026-11-19: the sentence it follows already named the land, or its level, so neither
+                        -- is said twice: "Stranglethorn Vale was new to me, and I was early for it. We had no
+                        -- errand there, only new country to see.")
+                        local saidLevel = Any(low, {"early", "young", "level", "beyond", "above", "too soon", "before my time"})
+                        local saidZone = low:find(Plain(Place(ep.zone)):lower(), 1, true)
+                        local text = Fill(P.roamOnly[(gap >= 5 and not saidLevel) and 2 or 1], {We = party and "We" or "I", us = party and "us" or "me", our = party and "our" or "my", zone = Place(ep.zone)})
+                        if saidZone then text = text:gsub(" in " .. Esc(Place(ep.zone)) .. ",", " there,") end
                         l.text = l.text:gsub("%s*$", "") .. " " .. text
                     end
                 end
@@ -4242,7 +4304,12 @@ function C.Apply(ctx)
                         if known and not Plain(first):find("%u[%a']+ %u[%a']+") then known = false end
                         if known and rest ~= "" then l.text = rest end
                     end
-                    l.text = l.text:gsub("^We took (.-) for (%u[%w']+)%.$", "We brought %1 to %2."):gsub("^We took ([^%.]-) to ({?%u)", "We brought %1 to %2")
+                    -- (a road, a flight or a ship taken is travel, not a handing over: "We took the long road
+                    -- out of Silverpine to Tarren Mill" stays, 2026-11-19)
+                    local obj_ = (Plain(l.text):match("^We took (.-) to %u") or Plain(l.text):match("^We took (.-) for %u") or ""):lower()
+                    if not Any(obj_, {"road", " way", "path", "trail", "flight", "lift", "zeppelin", "boat", "ship", "bat ", "wyvern", "hearthstone", "portal", "tram"}) then
+                        l.text = l.text:gsub("^We took (.-) for (%u[%w']+)%.$", "We brought %1 to %2."):gsub("^We took ([^%.]-) to ({?%u)", "We brought %1 to %2")
+                    end
                 end
             end
         end
@@ -4351,8 +4418,11 @@ function C.Apply(ctx)
                             end
                         end
                     end
-                    local l_ = {cls = "level", t = best.t, ep = best.ep, text = Fill(P.levelBurst[1], {level = tostring(level)}), major = false, kind = "level", meta = {t = best.t, compose = "level"}, n = (best.n or 0) + 0.5}
+                    local l_ = {cls = "level", t = best.t, ep = best.ep, text = Fill((P.levelBurstTurn or P.levelBurst)[((ctx.history or {}).levelBurstN or 0) % #(P.levelBurstTurn or P.levelBurst) + 1], {level = tostring(level)}), major = false, kind = "level", meta = {t = best.t, compose = "level"}, n = (best.n or 0) + 0.5}
                     table.insert(bestP.lines, bestJ + 1, l_)
+                    -- (2026-11-19: the book walks the level sentence's variants, so "By then I was level N."
+                    -- does not close chapter after chapter)
+                    if ctx.history then ctx.history.levelBurstN = (ctx.history.levelBurstN or 0) + 1 end
                     level = nil
                 end
             end
@@ -4507,7 +4577,25 @@ function C.Apply(ctx)
                         for _, x in ipairs(p_.lines) do if x.meta and x.meta.entry == entry then text_[#text_ + 1] = Plain(x.text):lower() end end
                         text_ = table.concat(text_, " ")
                         local words, missing = 0, 0
-                        for w in act:lower():gsub("^%a+ ", ""):gmatch("%a+") do
+                        -- (a name of several words is one word here, told when any part of it is: "Lumina
+                        -- Windsinger" is in "Lumina meant to ...", 2026-11-19)
+                        local names_, rest_, run_ = {}, {}, nil
+                        for w in act:gsub("^%a+ ", ""):gmatch("%S+") do
+                            if w:match("^%u") then run_ = run_ and (run_ .. " " .. w) or w
+                            else
+                                if run_ then names_[#names_ + 1] = run_; run_ = nil end
+                                rest_[#rest_ + 1] = w
+                            end
+                        end
+                        if run_ then names_[#names_ + 1] = run_ end
+                        local body_ = table.concat(rest_, " ")
+                        for _, run in ipairs(names_) do
+                            local found = false
+                            for w in run:lower():gmatch("%a+") do if #w >= 4 and text_:find(w, 1, true) then found = true end end
+                            words = words + 1
+                            if not found then missing = missing + 1 end
+                        end
+                        for w in body_:lower():gmatch("%a+") do
                             if #w >= 5 and not STOP[w] then words = words + 1; if not text_:find(w, 1, true) then missing = missing + 1 end end
                         end
                         -- (a step that already hands something over is closed)

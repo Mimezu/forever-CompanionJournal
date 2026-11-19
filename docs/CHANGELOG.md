@@ -1,5 +1,13 @@
 # Companion Journal: changes
 
+## 1.53.0 (2026-11-19)
+
+- Storyteller: no quest or move told twice; no going "to" where you already are
+- Fewer repeated lines (danger, rare beasts, guard deaths, level)
+- Hearthstone then zeppelin reads as one trip
+- Lore lines follow the fight they belong to
+- Grammar fixes ("It went badly from.", "brought the long road")
+
 ## 1.52.2 (2026-11-19)
 
 - Forever lore: Dalaran's barrier is down; the Kirin Tor rebuild and hold the roads

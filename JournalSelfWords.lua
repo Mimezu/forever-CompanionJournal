@@ -1593,6 +1593,7 @@ W.oncePerBook = {
     "Somebody bought my {what} at the auction house. I never learned who.",
     "It was a long swim in {place}, and I made it without drowning.",
     "The guards of {place} killed me, as guards will.",
+    "The guards at {place} did their job, and I died of it.",
     "Of all things, it was {foe} that killed me.",
     "{Foe} killed me {inZone}. At my level, that takes some doing.",
     "The lava killed me. It was as hot as it looked.",
@@ -3705,6 +3706,7 @@ W.compose = {
     roadLegs = {"By {modes}, {we} came on to {dest}{new}."},
     roadLegsHearthFrom = {"From {origin}, new to {us}, {our} hearthstones took {us} back to {place}. By {modes}, {we} came on to {dest}{new}."},
     roadLegsHearth = {"{Our} hearthstones took {us} back to {place}. By {modes}, {we} came on to {dest}{new}."},
+    roadLegsHearthOn = {"{Our} hearthstones took {us} back to {place}, and from there {we} went on by {modes}."},
     -- (round 16: an errand's road there and back)
     errandOut = {"{We} went to {zone}."},
     -- (round 23: threads the record leaves open, said to stay open when the next step never came:
@@ -3720,6 +3722,8 @@ W.compose = {
     errandBack = {"{Our} hearthstones brought {us} back to {place}."},
     crossOnly = {"{Places} {were} new to {us}."},
     levelBurst = {"By then I was level {level}."},
+    -- (said in turn across the book where the composer places a burst's level line; 2026-11-19)
+    levelBurstTurn = {"By then I was level {level}.", "I had reached level {level} along the way.", "I was level {level} by the end of it."},
     -- (lane O8: an adventure's record may say how many went in and that the foes were strong; told
     -- in passing, never as a count of elites)
     -- (the company of an adventure, by who they were or as strangers, and their parting; the
@@ -3765,7 +3769,8 @@ W.compose = {
     arriveBy = {"{how}, and {we} came to {land}, new to {us}{why}."},
     -- (round 30: firsts the record holds that the teller does not tell)
     firstSnow = {"In {zone} I saw snow for the first time{life}."},
-    firstRare = {"{We} crossed paths with {beast}, a rare beast."},
+    firstRare = {"{We} crossed paths with {beast}, a rare beast.", "{We} came on {beast}, which few people ever see.",
+        "{We} saw {beast}, and few people have.", "Few ever see {beast}, and {we} did."},
     -- (round 23: a main companion away for a while inside the night, and back)
     partedWhile = {"{name} went another way for a while."},
     leftAtTime = {"{name} left us."},
