@@ -2536,12 +2536,14 @@ P.questIDs[544].source[2] = "https://classicdb.ch/?quest=544"
 
 P.threads.world_dalaran = "Magus Wordeen's Dalaran inquiry"
 q(545, "Dalaran Patrols", "Alterac Mountains", 35, "dalaran", 3,
-    "Dalaran's great dome kept its purpose hidden. Some said it was for protection, others for the wizards' seclusion. Magus Wordeen cared more about the magical treasures that might remain in the ruins outside it.",
-    "Magus Wordeen wanted to search Dalaran's ruined outskirts for magical treasures. Wizards and their enslaved elementals still patrolled outside the dome, and he called for an attack to thin their ranks.",
+    "The wizards of Dalaran had raised a great dome over their city. Some said it was for protection, others for seclusion. Magus Wordeen cared more about the magical treasures that might remain in the ruined outskirts.",
+    "Magus Wordeen wanted to search Dalaran's ruined outskirts for magical treasures. Wizards and their enslaved elementals still patrolled the ruins, and he called for an attack to thin their ranks.",
     "Dalaran summoners and their elemental slaves were defeated among the ruins. Wordeen judged the outskirts safe enough to search, with care.",
     "The fighting thinned the wizard patrols and their bound elementals. Wordeen thought a cautious search of the outskirts could now begin.", true)
 P.questIDs[545].threadLabel = P.threads.world_dalaran
 P.questIDs[545].source[2] = "https://classicdb.ch/?quest=545"
+-- Forever: the dome is told only as raised in the past; the barrier is down
+-- (corpus #95981; LoreForever Z_alterac, Wordeen's follow-up in the sewers).
 
 -- Exact-stage source/editorial review: v2/editorial-20261016/.
 P.threads.world_redridge = "Lakeshire's bridge repairs"
@@ -8574,9 +8576,9 @@ local POV_W2 = {
     [544] = {act = "took the stolen bloodstones back from Lordamere Internment Camp", giver = "Magus Wordeen",
         "Magus Wordeen sent {us} after four Forsaken who had fled to Dalaran with bloodstones stolen from the Dark Lady's vault, only to be shut in Lordamere Internment Camp. {We} broke in for the artifacts, and Wordeen called the fate of Kegan and the others justice.",
         "{We} went into Lordamere Internment Camp for the four bloodstones the fugitives had carried off from the Undercity. Magus Wordeen took back the wedge, the marble, the shard and the oval, long missed by the apothecaries."},
-    [545] = {act = "thinned the wizard patrols outside Dalaran's dome", giver = "Magus Wordeen",
-        "Magus Wordeen cared little why the wizards had raised their great dome over Dalaran, only for the treasures that might lie in the ruins outside it. {We} hunted the summoners and their bound elementals until he judged the outskirts safe enough to search.",
-        "Outside Dalaran's dome, wizards still patrolled the ruins with elemental slaves at their side. {We} thinned their ranks for Magus Wordeen, who thought a careful search could now begin."},
+    [545] = {act = "thinned the wizard patrols in Dalaran's ruined outskirts", giver = "Magus Wordeen",
+        "Magus Wordeen cared little why the wizards had once raised a great dome over Dalaran, only for the treasures that might lie in the ruined outskirts. {We} hunted the summoners and their bound elementals until he judged the outskirts safe enough to search.",
+        "In Dalaran's ruined outskirts, wizards still patrolled with elemental slaves at their side. {We} thinned their ranks for Magus Wordeen, who thought a careful search could now begin."},
     [602] = {act = "took the elemental bracers to Archmage Ansirem", giver = "Baron Revilgaz",
         "Baron Revilgaz sent {us} north with a bag of water elemental bracers for Archmage Ansirem Runeweaver, sure no mage could resist a puzzle. {We} found him among the ruins of Dalaran, and he knew the Stone of the Tides well.",
         "In the ruins of Dalaran {we} showed Archmage Ansirem the bracers from Booty Bay. He had once written a tome on the Gurubashi Empire, and found magic on one of them that he could study."},

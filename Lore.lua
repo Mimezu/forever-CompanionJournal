@@ -1408,14 +1408,16 @@ L.zoneStory = {
             "The Syndicate held Durnholde and raided the farms below.",
             "The Forsaken raided the farms, and the farmers took up arms.",
             "Durnholde had been the prison where Aedelas Blackmoore raised Thrall as a slave, and the Syndicate held it now."}},
+    -- Dalaran in Forever: the barrier is down and the Kirin Tor rebuild the city
+    -- (corpus #95981 Watching the Roads; LoreForever Z_alterac, facts only).
     ["Alterac Mountains"] = {
         sight = {"Snow covered the high passes of the mountains, above the pine woods.",
-            "On the shore of the lake, the city of Dalaran sat inside a great violet dome.",
+            "On the shore of the lake, the mages of Dalaran were rebuilding their broken city.",
             "Ruins of the city of Alterac lay under the snow, and ogres camped among them.",
             "The passes of the mountains led into the Alterac Valley, where the Frostwolf orcs and the Stormpike dwarves fought.",
             "Lordamere Lake lay below the mountains, and the Syndicate held Dandred's Fold on its northwestern shore."},
         stakes = {"The Syndicate and the ogres held what remained of the kingdom of Alterac.",
-            "The wizards of Dalaran worked behind their dome, and let no one in.",
+            "Since Dalaran's barrier had come down, the Kirin Tor kept a tight grip on the roads.",
             "The Syndicate were the old nobles of Alterac, turned thieves.",
             "Alterac had betrayed the Alliance in the Second War, and the Alliance had broken up the kingdom for it.",
             "The Crushridge ogres held the ruins of the capital, and the Syndicate held the town of Strahnbrad below it."}},
@@ -1821,7 +1823,8 @@ function L.ZoneStory(name) return name and L.zoneStory[name] end
 -- (Riverglades, Shen'dralas, Zephras Isle, Mount Hyjal (Forever)), LoreForever
 -- (zone:riverglades, subzone:sunnyglade, zone:shendralas, subzone:valley-of-bones,
 -- zone:hyjal, zone:darkspearislands; facts only, CC BY-SA) and, for Zephras, the
--- quest corpus (#92460, #92472, #92473, #94414). The story packs append more.
+-- quest corpus (#92460, #92472, #92473, #94414; skycutters to Dalaran and Mulgore
+-- #94946 and the Ansirem/Muln lines near it). The story packs append more.
 L.zoneStory["Riverglades"] = {setting = "Forever",
     sight = {"Farms and logging camps lay along the rivers of the valley, down to the Forbidding Sea.",
         "The stone tower of {p:Sunnyglade} still stood over the ruins of the town.",
@@ -1868,7 +1871,7 @@ L.zoneStory["Zephras Isle"] = L.zoneStory["Zephras Isle"] or {setting = "Forever
         "The shen'dorei of the island descended from Highborne exiles who had fled Prince Tortheldrin's Eldre'Thalas.",
         "Valanaar and Shen'dar Village were the island's towns, and each had a Calmbreeze Inn.",
         "High Order researchers drew readings from the great windstones at the Overlook Standing Stones.",
-        "Skycutters carried travellers off the island and down to {p:Mulgore}, far below."},
+        "Skycutters carried travellers off the island, down to {p:Mulgore} or to Dalaran, far below."},
     stakes = {"The air elementals who had shared the island were gone, and the magic holding it aloft was fading.",
         "The Al'Aketh cult worshipped Al'Akir the Windlord, and its zealots grew bolder by the day.",
         "The Windshapers sought the wind spirits that had vanished, and the High Order turned to the old arcane magic instead.",

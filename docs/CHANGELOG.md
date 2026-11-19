@@ -1,5 +1,10 @@
 # Companion Journal: changes
 
+## 1.52.2 (2026-11-19)
+
+- Forever lore: Dalaran's barrier is down; the Kirin Tor rebuild and hold the roads
+- Kirin Tor in the Alliance; skycutters to Dalaran
+
 ## 1.52.1 (2026-11-19)
 
 - Maps show all you explored, as your world map does

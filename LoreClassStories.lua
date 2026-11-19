@@ -1703,7 +1703,7 @@ local POV = {
         "Invisible creatures wandered the Blue Recluse, and {my} trainer feared a mana rift had opened there. {I} read the cantation of manifestation in the tavern, subdued the creatures it revealed, and sealed them in containment coffers.",
         "{I} went into the Blue Recluse with a cantation and empty coffers, and came back with the coffers full. {My} trainer would study how the creatures had slipped into the world, and said {my} value to the society of mages had grown."},
     [1939] = {act = "climbed to High Sorcerer Andromath", solo = true,
-        "High Sorcerer Andromath, one of the most powerful mages not locked away in Dalaran, asked to see {me}. {I} climbed to the top of the Wizard's Sanctum, and he hoped {I} had time to listen to an old man's words.",
+        "High Sorcerer Andromath, one of the most powerful mages outside Dalaran, asked to see {me}. {I} climbed to the top of the Wizard's Sanctum, and he hoped {I} had time to listen to an old man's words.",
         "Counsel with Andromath was high counsel indeed, and {I} went up the Wizard's Sanctum when he sent for {me}. He greeted {me} with pleasure, an old man with words to share."},
     [1940] = {act = "hunted carrion recluses for pristine spider silk", giver = "High Sorcerer Andromath", solo = true,
         "Andromath judged {my} service worthy of a finer robe, one for an adept mage. {I} hunted the carrion recluse spiders of Duskwood for their most pristine silk, and Wynne Larson set straight to work on it.",
