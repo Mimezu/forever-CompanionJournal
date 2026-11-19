@@ -549,6 +549,8 @@ function A.BookLinkable(frame)
     frame:SetScript("OnHyperlinkClick", function(self, link)
         local key = type(link) == "string" and link:match("^cjperson:(.+)$")
         if key and A.BookJump then A.BookJump(key) end
+        local death = type(link) == "string" and tonumber(link:match("^cjdeath:(%d+)$"))
+        if death and A.OpenDeathCard then A.OpenDeathCard({t = death}, A.BookFrame and A.BookFrame() or self) end
         local id = type(link) == "string" and link:match("^cjlore:(.+)$")
         if id and A.OpenLoreNote then
             local page = self.cjPage
@@ -559,6 +561,14 @@ function A.BookLinkable(frame)
         local key = type(link) == "string" and link:match("^cjperson:(.+)$")
         local person = key and A.People[key]
         if not person then
+            local death = type(link) == "string" and tonumber(link:match("^cjdeath:(%d+)$"))
+            if death then
+                GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+                GameTooltip:SetText(date and date("%H:%M", death) or "", 1, 0.82, 0)
+                GameTooltip:AddLine("Click to see the moment.", 0.9, 0.9, 0.9, true)
+                GameTooltip:Show()
+                return
+            end
             local id = type(link) == "string" and link:match("^cjlore:(.+)$")
             local note = id and A.GetKnownLoreNote and A.GetKnownLoreNote(id)
             if note then
@@ -607,7 +617,7 @@ local function Chapters(person)
         return list, style, styleMode, nil
     end
     local days = A.JournalBook(person)
-    local stories = {}
+    local stories, linked = {}, {}
     local function Story(day, teller)
         teller = teller or "you"
         if not stories[teller] then
@@ -622,7 +632,19 @@ local function Chapters(person)
                     or A.JournalTale.Tell(person, days, teller, player, styleMode == "storyBrief")) or {}
             end
         end
-        return stories[teller][day.key]
+        local story = stories[teller][day.key]
+        if story and person.self and A.DeathLinks and type(story.text) == "string" then
+            linked[teller] = linked[teller] or {}
+            local copy = linked[teller][day.key]
+            if not copy then
+                copy = {}
+                for k, v in pairs(story) do copy[k] = v end
+                copy.text = A.DeathLinks(story.text, day)
+                linked[teller][day.key] = copy
+            end
+            return copy
+        end
+        return story
     end
     for _, day in ipairs(days) do
         if styleMode == "story" or styleMode == "storyBrief" then

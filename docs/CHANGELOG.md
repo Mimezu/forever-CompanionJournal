@@ -1,5 +1,13 @@
 # Companion Journal: changes
 
+## 1.51.0 (2026-11-19)
+
+- Map: click to play or pause
+- Deaths on the replay's timeline
+- A death's card: cause, hour, place, picture
+- Death links in chapters open the card
+- Pictures of deaths: Frame Gambit's clean shot, WoW Helper's thumbnail
+
 ## 1.50.6 (2026-11-15)
 
 - Replay: your crest glides between steps

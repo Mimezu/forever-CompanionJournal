@@ -70,7 +70,7 @@ local db = {enabled = true, peopleJournal = true, colors = {people = {1, 1, 1}},
         }}}}}}
 
 local A = {defaults = {colors = {}}}
-for _, file in ipairs({"People.lua", "Characters.lua", "Journal.lua", "JournalSelf.lua", "JournalBook.lua"}) do
+for _, file in ipairs({"People.lua", "Characters.lua", "Journal.lua", "JournalSelf.lua", "JournalBook.lua", "DeathShots.lua"}) do
     assert(loadfile(root .. file))("CompanionJournal", A)
 end
 A.Refresh = function() end
@@ -581,5 +581,15 @@ do
     Fire("TRADE_SKILL_SHOW"); Fire("TRADE_SKILL_CLOSE")
     check(#craft.m == 1, "an old line loses the cast that was not a recipe")
     GetNumTradeSkills, GetTradeSkillInfo = nil, nil
+end
+-- A death asks for its picture (Frame Gambit's clean screenshot) and keeps the time asked.
+do
+    local taken = 0
+    FrameGambit_CleanScreenshot = function() taken = taken + 1 end
+    A.db.deathShots = true
+    dead = true; Fire("PLAYER_DEAD"); RunTimers(); dead = false
+    local death = Last("death")
+    check(taken == 1 and death and death.shot and math.abs(death.shot - death.t) <= 2, "a death asks for its picture and keeps when")
+    FrameGambit_CleanScreenshot = nil
 end
 io.write("PASS: " .. assertions .. " own-journal assertions\n")

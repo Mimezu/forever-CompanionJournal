@@ -473,6 +473,7 @@ function A.BuildBookWorldSettings(section, category, ui)
         Check("moreMoments", "Record more moments", "Your own journal only")
         Check("roadRecord", "Record the road", "For the maps; about 25 KB an evening")
         Check("roadSounds", "Sounds when a road replays")
+        Check("deathShots", "Pictures of deaths", "Needs Frame Gambit and WoW Helper")
     elseif category == "adding" then
         Group("Groups")
         Check("peopleAutoGroup", "Remember groupmates as acquaintances")

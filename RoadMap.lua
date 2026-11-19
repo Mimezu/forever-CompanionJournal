@@ -823,7 +823,19 @@ local function Make()
         local dragged = state.drag and state.drag.moved
         state.drag = nil
         self:SetScript("OnUpdate", Map.Hover)
-        if not dragged and state.atlas and state.hoverDay then Map.OpenDay(state.atlasPerson, state.hoverDay) end
+        if dragged then return end
+        -- (a click, like a video player's: on a death, its card; in the Atlas, that day;
+        -- anywhere else, play or pause)
+        Map.Hover()
+        local item = state.hoverItem
+        if item and item.mark and item.mark.kind == "death" and A.OpenDeathCard then
+            if state.playing then Stop() end
+            A.OpenDeathCard(item.mark, sheet)
+        elseif state.atlas then
+            if state.hoverDay then Map.OpenDay(state.atlasPerson, state.hoverDay) end
+        else
+            Map.Play()
+        end
     end)
     -- The day before and the day after, beside the date: no need to go back to the book.
     local function Arrow(text, delta)
@@ -916,9 +928,12 @@ function Map.Hover(_, elapsed)
         local d = (item.x - x) ^ 2 + (item.y - y) ^ 2
         if d <= reach * reach and (not bestD or d < bestD) then best, bestD = item, d end
     end
-    for _, item in ipairs(state.drawnMarks or {}) do Near(item) end
+    -- (a death's cross first: it is what a click opens; then the other marks; then the road)
+    for _, item in ipairs(state.drawnMarks or {}) do if item.mark.kind == "death" then Near(item) end end
+    if not best then for _, item in ipairs(state.drawnMarks or {}) do Near(item) end end
     if not best then for _, item in ipairs(state.drawn) do Near(item) end end
     state.hoverDay = best and best.day or nil
+    state.hoverItem = best
     if not best then GameTooltip:Hide(); return end
     GameTooltip:SetOwner(sheet.area, "ANCHOR_CURSOR")
     if state.atlas then
@@ -1064,6 +1079,8 @@ function Map.OpenDay(person, day, touring)
     sheet:Show()
     Tabs()
     Map.SetView(first and first.map or WORLD)
+    -- (the slider's width is known once the sheet is laid out: the marks follow a frame later)
+    if C_Timer and C_Timer.After then C_Timer.After(0, Map.Ticks) else Map.Ticks() end
     if A.RefreshBookmarks then A.RefreshBookmarks() end
     if A.SetPersonClassIcon and sheet.walker.icon then A.SetPersonClassIcon(sheet.walker.icon, (A.SelfPerson and A.SelfPerson(character) or {}).class) end
     Sound("page")
@@ -1117,6 +1134,49 @@ function Map.Step(delta)
     for _, tab in ipairs(sheet.tabs) do
         if tab:IsShown() and tab.map == keep and keep ~= state.view then Map.SetView(keep); break end
     end
+end
+-- Deaths on the slider, like chapters on a video player's timeline: a small red cross at
+-- each, its hour and cause on hover; a click takes the replay there.
+function Map.Ticks()
+    if not sheet then return end
+    sheet.ticks = sheet.ticks or {}
+    local used = 0
+    local width = sheet.track:GetWidth() or 0
+    if not state.atlas and state.model and width > 0 then
+        if not state.efforts then Effort() end
+        for _, mark in ipairs(state.model.marks) do
+            if mark.kind == "death" then
+                used = used + 1
+                local tick = sheet.ticks[used]
+                if not tick then
+                    tick = CreateFrame("Button", nil, sheet.track)
+                    tick:SetSize(12, 14)
+                    tick.label = tick:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+                    tick.label:SetPoint("CENTER"); tick.label:SetText("\195\151")
+                    tick.label:SetTextColor(RED[1], RED[2], RED[3])
+                    if tick.label.SetShadowOffset then tick.label:SetShadowOffset(0, 0) end
+                    tick:SetScript("OnEnter", function(self)
+                        if not GameTooltip then return end
+                        GameTooltip:SetOwner(self, "ANCHOR_TOP")
+                        GameTooltip:SetText(Clock(self.mark.t) .. "  " .. (self.mark.text or ""), 1, 0.9, 0.7)
+                        GameTooltip:Show()
+                    end)
+                    tick:SetScript("OnLeave", function() if GameTooltip then GameTooltip:Hide() end end)
+                    tick:SetScript("OnClick", function(self)
+                        if state.playing then Stop() end
+                        state.share = ShareAt(self.mark.t)
+                        Map.SetTime(self.mark.t, true)
+                    end)
+                    sheet.ticks[used] = tick
+                end
+                tick.mark = mark
+                tick:ClearAllPoints(); tick:SetPoint("CENTER", sheet.track, "LEFT", ShareAt(mark.t) * width, 0)
+                tick:SetFrameLevel(sheet.track:GetFrameLevel() + 2)
+                tick:Show()
+            end
+        end
+    end
+    for i = used + 1, #sheet.ticks do sheet.ticks[i]:Hide() end
 end
 -- The Atlas: the whole adventure on the world, every road, the older the fainter.
 function Map.OpenAtlas(person)

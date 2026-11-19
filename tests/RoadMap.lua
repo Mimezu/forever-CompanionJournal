@@ -111,7 +111,7 @@ A.BookFrame = function() return book end
 A.StyleBookControl = function(button, chosen) button.chosen = chosen end
 A.BookCrest = function(parent) local c = New("Frame"); c.icon = New("Texture"); c.parent = parent; return c end
 A.SetPersonClassIcon = function(tex, class) tex.class = class end
-for _, file in ipairs({"Road.lua", "RoadModel.lua", "RoadMap.lua"}) do assert(loadfile(root .. file))("CompanionJournal", A) end
+for _, file in ipairs({"Road.lua", "RoadModel.lua", "RoadMap.lua", "DeathShots.lua"}) do assert(loadfile(root .. file))("CompanionJournal", A) end
 local Map, Road = A.RoadMap, A.Road
 
 -- An evening: Mulgore with Dahlia, a long stop, a death, then Durotar.
@@ -400,6 +400,36 @@ do
     end
     check(worst * sw.scale < 25, "a frame moves the walker a few pixels at most: " .. string.format("%.1f", worst * sw.scale))
     Map.Stop(); sw.speed = 1
+end
+
+-- 17. Like a video player: a click on the map plays and pauses; a click on a death opens its
+-- card; the deaths sit on the slider as small red crosses.
+do
+    Map.OpenDay(nil, day)
+    local sv = Upvalue(Map.Hover, "state")
+    sheet.track.w = 400
+    Map.Ticks()
+    local tick = sheet.ticks and sheet.ticks[1]
+    check(tick and tick:IsShown() and tick.mark.kind == "death", "the death is on the slider")
+    check(math.abs(tick.points[1][4] - Map.ShareAt(tick.mark.t) * 400) < 0.01, "at its moment of the replay")
+    tick.scripts.OnClick(tick)
+    check(sv.time == tick.mark.t, "its cross takes the replay there")
+    -- a click on empty ground: play, then pause
+    cursor[1], cursor[2] = 5, 695
+    sheet.area.scripts.OnMouseDown(sheet.area, "LeftButton"); sheet.area.scripts.OnMouseUp(sheet.area)
+    check(sv.playing, "a click plays")
+    sheet.area.scripts.OnMouseDown(sheet.area, "LeftButton"); sheet.area.scripts.OnMouseUp(sheet.area)
+    check(not sv.playing, "a second click pauses")
+    -- a click on the death's X: its card
+    Map.SetTime(math.huge, true)
+    local d
+    for _, item in ipairs(sv.drawnMarks) do if item.mark.kind == "death" then d = item end end
+    cursor[1], cursor[2] = d.x, 700 - d.y
+    sheet.area.scripts.OnMouseDown(sheet.area, "LeftButton"); sheet.area.scripts.OnMouseUp(sheet.area)
+    local card = _G.CompanionJournalDeathCard
+    check(card and card:IsShown() and card.title.text == "Fell to a duskbat", "a click on the X opens the death's card")
+    check(not sv.playing, "and does not start the replay")
+    card:Hide()
 end
 
 -- 8. A chapter's map mark opens its day.

@@ -1478,6 +1478,8 @@ events:SetScript("OnEvent", function(_, event, ...)
         if pendingClose then pendingClose.died = true end
         if encounter then fallen = true end
         local boss, where = encounter, InstanceName() or Zone()
+        -- (the moment itself, without the interface: DeathShots.lua; its time goes on the line)
+        local shotAt = A.DeathShot and A.DeathShot()
         C_Timer.After(1, function()
             local killer, env = DeathCause()
             -- "a Kobold Tunneler": an ordinary foe you had targeted gets its article.
@@ -1490,7 +1492,7 @@ events:SetScript("OnEvent", function(_, event, ...)
                 race, class = Text(Ask(UnitRace, "target")), Text(Ask(UnitClass, "target"))
             end
             Add({k = "death", w = "you", d = (race or class) and nil or killer, a = article, env = env, boss = boss, z = where, sz = SubZone(),
-                pr = race, pc = class})
+                pr = race, pc = class, shot = shotAt})
         end)
     elseif event == "PLAYER_LEVEL_UP" then
         local level = ...
