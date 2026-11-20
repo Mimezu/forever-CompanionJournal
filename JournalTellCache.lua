@@ -145,21 +145,12 @@ end
 -- Told once per key: `tell()` gives the book (a table of chapters by day key), which is kept and
 -- handed back on every later call with the same key. The book handed back is shared: read it,
 -- never write to it.
--- opts.background: when this book was told before, hand back that telling at once and tell
--- it afresh in the background (opts.ready() is called when the fresh one is kept).
-function C.Told(kind, person, days, args, tell, opts)
+function C.Told(kind, person, days, args, tell)
     if not C.ON then return tell() end
     local key = C.Key(kind, person, days, args)
     local stories = store[key]
     if stories then C.hits = C.hits + 1; return stories end
     local ident = Identity(kind, person, args)
-    if opts and opts.background and C.Background then
-        local stale = latest[ident] and store[latest[ident]]
-        if stale then
-            C.Background(key, ident, tell, opts.ready)
-            return stale, true
-        end
-    end
     C.misses = C.misses + 1
     stories = tell()
     -- (a telling that changed the saved variables would never match its key again: keep it only
@@ -169,10 +160,10 @@ function C.Told(kind, person, days, args, tell, opts)
 end
 
 -- The own book, as SelfTale.Tell(person, days, brief, retell) tells it.
-function C.Self(person, days, brief, retell, opts)
+function C.Self(person, days, brief, retell)
     return C.Told("self", person, days, {brief = brief and true or false, retell = retell or false}, function()
         return A.SelfTale.Tell(person, days, brief, retell)
-    end, opts)
+    end)
 end
 -- A companion's book, as JournalTale.Tell(person, days, voice, player, brief) tells it.
 function C.Tale(person, days, voice, player, brief)
@@ -285,14 +276,6 @@ local function Enqueue(request, first)
     end
     if first then table.insert(queue, 1, request) else queue[#queue + 1] = request end
     Drive()
-end
--- (the old way in: a telling under a known key; key nil: the job builds its own key)
-function C.Background(key, ident, tell, ready)
-    if key ~= nil and job and job.key == key then
-        if ready then job.ready[#job.ready + 1] = ready end
-        return
-    end
-    Enqueue({key = key, ident = ident, fn = tell, ready = {ready}}, true)
 end
 function C.Busy() return job ~= nil or #queue > 0 end
 
