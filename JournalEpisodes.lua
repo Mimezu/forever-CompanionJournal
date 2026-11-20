@@ -289,7 +289,6 @@ local function StoryIndex(L)
     storyIndex = {nq = nq, nd = nd, quests = quests, dungeons = dungeons, text = table.concat(texts, "\0"), counts = {}}
     return storyIndex
 end
-E.StoryIndex = function() return StoryIndex(A.Lore) end
 -- The indexes a telling reads, built ahead (JournalTellCache.lua calls this at the top of a
 -- background telling, where it may pause): the stories, the boss names' forms.
 function E.WarmIndexes()
@@ -959,9 +958,9 @@ function E.Day(scenes, opts)
                     other.levels = kept
                 end
             end
-            Finish(ep)
         end
     end
+    -- (after the moves above: a later run can take quests from an earlier one)
     for _, ep in ipairs(episodes) do Finish(ep) end
     -- (a stay whose only work was the run's hand-in is a stop on the way, not field work)
     for _, ep in ipairs(episodes) do
