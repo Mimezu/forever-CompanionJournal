@@ -750,6 +750,8 @@ for word in ("The This That Then There Here After Before When While With From In
     .. "Scarlet Scourge Forsaken Deathguard Deathguards Executor Captain Light Crusade Alliance Horde Magistrate Apothecary Novice Shadow Priest Father "
     .. "Doctor Lady Lord Dark Cult Damned Argent Dawn Keep Mills Hollow Vale Farmstead Lake Rest Tower Camp Village Glades Quarter Watch Graves Haunt "
     .. "Bridge Farm Mass Trade Magic Undercity Brill Sepulcher Orgrimmar Kalimdor Eastern Kingdoms Silverpine Tirisfal Forest Isle Hill Ridge"):gmatch("%S+") do BARE_SKIP[word] = true end
+-- (a place preposition before a name: "in ruined Shadowvale" is a place)
+local PLACE = {at = true, ["in"] = true, of = true, from = true, near = true, beneath = true, below = true, around = true, into = true, through = true, across = true, past = true, beyond = true, inside = true, outside = true}
 local function BareNamesOf(text, strict)
     local words, opens = {}, {}
     for before, w in text:gmatch("(%p?)%s*([%a'][%a']*)") do words[#words + 1] = w; opens[#words] = (before == "." or before == "!" or before == "?") end
@@ -762,7 +764,6 @@ local function BareNamesOf(text, strict)
             -- (a name after "the" is a thing or a place, not a person)
             local titled = before and (before:match("^%u") or before:lower() == "the")
             -- (a place preposition before the name, with or without one plain word between: "in ruined Shadowvale")
-            local PLACE = {at = true, ["in"] = true, of = true, from = true, near = true, beneath = true, below = true, around = true, into = true, through = true, across = true, past = true, beyond = true, inside = true, outside = true}
             if strict and before and (PLACE[before:lower()] or (before:match("^%l") and before2 and PLACE[before2:lower()])) then titled = true end
             local described = before2 and before2:lower() == "the" and before and before:match("^%l")
             local tail = text:find(name .. ", an? ") or text:find(name .. ", the ") or text:find(name .. "'s? of the ")
