@@ -216,7 +216,7 @@ Add("humanoid", {
     ["Kresh"] = {e = "the great turtle of the caverns", kind = "beast"},
     ["Skum"] = {e = "the thunder lizard of the deep pools", kind = "beast"},
     ["Verdan the Everliving"] = {e = "a keeper of the grove gone wrong in the dream", kind = "elemental"},
-    ["Mutanus the Devourer"] = {e = "the murloc horror in Naralex's dream", kind = "aberration", last = true, after = "The devourer in Naralex's dream was dead.", afterMore = {"Naralex's nightmare had one horror fewer.", "The deepest pool of the caverns had lost its horror."}},
+    ["Mutanus the Devourer"] = {e = "the murloc horror in Naralex's dream", kind = "aberration", last = true, after = "The thing that had haunted Naralex's sleep was dead.", afterMore = {"Naralex's nightmare had one horror fewer.", "The deepest pool of the caverns had lost its horror."}},
     ["Mad Magglish"] = {e = "a goblin who wandered too deep"},
 })
 -- The Deadmines

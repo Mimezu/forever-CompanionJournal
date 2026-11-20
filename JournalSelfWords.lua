@@ -529,7 +529,7 @@ W.dungeonWithAgain = {
 }
 W.dungeonRegular = {
     "Back {we} went into {dungeonE}, {our} {nth} time there.",
-    "{We} went into {dungeonE} once more, the {nth} time.",
+    "{We} went into {dungeonE} a {nth} time.",
     "Once more {we} went into {dungeonE}, {our} {nth} run.",
 }
 -- The very first dungeon of your life, after it.

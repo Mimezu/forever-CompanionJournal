@@ -807,8 +807,9 @@ end
 -- of the dark into the Undercity again. We went on to the Undercity." drops the second sentence.
 local MOVE_SAY = {"From there we went on to ", "From there I went on to ", "From there we went to ", "From there I went to ",
     "We went on to ", "I went on to "}
-local function TidyMoves(text)
+local function TidyMoves(text, h)
     if type(text) ~= "string" then return text end
+    h = h or {}
     for _, lead in ipairs(MOVE_SAY) do
         local from = 1
         while true do
@@ -830,6 +831,72 @@ local function TidyMoves(text)
                 end
             end
             from = dropped and a or b + 1
+        end
+    end
+    -- (one place named sentence after sentence, 2026-11-20: "After Orgrimmar came the Wailing Caverns."
+    -- before a sentence that goes into them goes; "The guards at the Wailing Caverns" right after a
+    -- sentence that named them is "The guards there"; "I went down into the Wailing Caverns and spent
+    -- a while in the dark." when the paragraph already took us in goes)
+    do
+        local from = 1
+        while true do
+            local a, b, place = text:find("After {p:[^}]+} came t?h?e? ?{p:([^}]+)}%.", from)
+            if not a then break end
+            local nxt = text:sub(b + 1):match("^%s*([^%.]*%.)") or ""
+            local from_ = text:sub(a, b):match("^After ({p:[^}]+})")
+            if nxt:find("into {p:" .. place .. "}", 1, true) or nxt:find("into the {p:" .. place .. "}", 1, true) then
+                text = text:sub(1, a - 1) .. text:sub(b + 1):gsub("^ +", "")
+                from = a
+            elseif from_ and not text:sub(1, a - 1):find(from_, 1, true) then
+                -- (a land the chapter never told is not a landmark: "After Mulgore came the Hillsbrad
+                -- Foothills." -> "Next came the Hillsbrad Foothills.")
+                local said = text:sub(a, b):gsub("^After {p:[^}]+} came ", "Next came ")
+                text = text:sub(1, a - 1) .. said .. text:sub(b + 1)
+                from = a + #said
+            else
+                from = b + 1
+            end
+        end
+        for _, pr in ipairs({{" at the ", " there"}, {" at ", " there"}, {"guards of the ", "guards there"}}) do
+            local prep = pr[1]
+            local from_ = 1
+            while true do
+                local a, b, place = text:find(prep .. "{p:([^}]+)}", from_)
+                if not a then break end
+                local prev = text:sub(1, a):match("([^%.]*%.)%s+[^%.]*$") or ""
+                local here = text:sub(1, a):match("([^%.]*)$") or ""
+                if prev:find("{p:" .. place .. "}", 1, true) and not here:find("{p:", 1, true) and not here:find("into", 1, true) then
+                    text = text:sub(1, a - 1) .. pr[2] .. text:sub(b + 1)
+                    from_ = a + #pr[2]
+                else
+                    from_ = b + 1
+                end
+            end
+        end
+        from = 1
+        while true do
+            local a, b, place = text:find("I went down into t?h?e? ?{p:([^}]+)} and spent a while in the dark%.", from)
+            if not a then break end
+            local para = text:sub(1, a - 1):match("([^\n]*)$") or ""
+            if para:find("into {p:" .. place .. "}", 1, true) or para:find("into the {p:" .. place .. "}", 1, true) then
+                text = text:sub(1, a - 1) .. text:sub(b + 1):gsub("^ +", "")
+                from = a
+            else
+                from = b + 1
+            end
+        end
+    end
+    -- (a way out of a city the chapter never took us into is a plain going out: "We rode the lift
+    -- back up into the grey light of Tirisfal Glades" with no Undercity told before -> "We went out
+    -- into Tirisfal Glades", 2026-11-20)
+    for _, exit in ipairs({{"rode the lift back up into the grey light of ", "Undercity"}, {"came up out of the city into ", "Undercity", "Orgrimmar", "Thunder Bluff", "Ironforge", "Stormwind", "Darnassus"},
+        {"went back out through the great gate into ", "Orgrimmar"}, {"left the city by the great gate, back into ", "Orgrimmar"},
+        {"rode the lift back down to the plains of ", "Thunder Bluff"}, {"took the lift down into ", "Thunder Bluff"}}) do
+        local a = text:find(exit[1], 1, true)
+        if a then
+            local named = false
+            for i = 2, #exit do if text:sub(1, a):find("{p:" .. exit[i], 1, true) then named = true end end
+            if not named then text = text:sub(1, a - 1) .. "went out into " .. text:sub(a + #exit[1]) end
         end
     end
     -- (a meeting in the place the sentence before named needs no place: "Friday evening, I spent more
@@ -873,6 +940,59 @@ local function TidyMoves(text)
                 end
             end
             from = dropped and a or b + 1
+        end
+    end
+    -- (a land is new once a chapter: "...we came on to the Barrens, new to me. Dahlia and I came into the
+    -- Barrens, where I had never been." drops the second sentence, 2026-11-20)
+    for _, shape in ipairs({"[%.\n] *[%a{}:']+[%a{}:' ]- came into t?h?e? ?{p:([^}]+)}, where [IiWw]e? ?had never been%.", "[%.\n] *T?h?e? ?{p:([^}]+)} w[ae][sr]e? new to [mu][es]%."}) do
+        local from = 1
+        while true do
+            local a, b, place = text:find(shape, from)
+            if not a then break end
+            a = a + 1
+            while text:sub(a, a):match("%s") do a = a + 1 end
+            if true then
+                local before = text:sub(1, a - 1)
+                local said = before:find("{p:" .. place .. "}, new to", 1, true) or before:find("{p:" .. place .. "}, where I had never been", 1, true)
+                    or before:find("{p:" .. place .. "}, where we had never been", 1, true) or before:find("{p:" .. place .. "} was new to", 1, true)
+                    or before:find("{p:" .. place .. "} were new to", 1, true)
+                if said then
+                    text = before .. text:sub(b + 1):gsub("^ +", "")
+                    from = a
+                else
+                    from = b + 1
+                end
+            else
+                from = b + 1
+            end
+        end
+    end
+    -- (a company the chapter already set out with is not named again at a going-in: "The following
+    -- night, Dahlia, Marrow and I set out ... With Dahlia and Marrow, we went into Excavation Site"
+    -- -> "We went into Excavation Site", 2026-11-20)
+    do
+        local function Known(group, before)
+            local any = false
+            for name in group:gmatch("{n:[^}]+}") do
+                any = true
+                local last
+                local i = 1
+                while true do
+                    local x = before:find(name, i, true)
+                    if not x then break end
+                    last, i = x, x + 1
+                end
+                local after_ = last and before:sub(last) or ""
+                if not last or after_:find(" left us", 1, true) or after_:find(" left me", 1, true) or after_:find(" left,", 1, true) or after_:find(" left%.") then return false end
+            end
+            return any and not group:gsub("{n:[^}]+}", ""):gsub(",", ""):gsub(" and ", ""):find("%S")
+        end
+        local a, b, group, rest = text:find("With ([^,]-), we went (%a* ?into )")
+        if a and Known(group, text:sub(1, a - 1)) then text = text:sub(1, a - 1) .. "We went " .. rest .. text:sub(b + 1) end
+        a, b, group = text:find(" went %a* ?into [^%.]- with ([^%.]-)%.")
+        if a then
+            local w = text:find(" with " .. group .. ".", a, true)
+            if w and Known(group, text:sub(1, a - 1)) then text = text:sub(1, w - 1) .. "." .. text:sub(w + #(" with " .. group .. ".")) end
         end
     end
     -- (a companion the chapter already showed with me, falling at my side, does not join afterwards
@@ -922,7 +1042,48 @@ local function TidyMoves(text)
             end
         end
     end
+    -- (deaths told alike, 2026-11-20: the long "X cut me down, R brought me back, and then Z cut me
+    -- down again, while A and B fell around me" is one sentence once a book, two sentences after; and
+    -- "cut me down" takes its turn with other verbs through the book, never twice in a chapter)
+    do
+        local a, b = text:find("[^%.]- brought me back, and then [^%.]-%.")
+        if a then
+            if h.longDeath then
+                local sent = text:sub(a, b):gsub(", ([^,]-) brought me back, and then (%S)", function(r, c) return ", and " .. r .. " brought me back. Then " .. c end, 1)
+                text = text:sub(1, a - 1) .. sent .. text:sub(b + 1)
+            else
+                h.longDeath = true
+            end
+        end
+        -- (the hearthstone's words in turn through the book, 2026-11-20)
+        for _, set in ipairs({{"Our hearthstones took us back to ", "Our hearthstones carried us back to ", "We used our hearthstones to go back to "},
+            {"My hearthstone took me back to ", "My hearthstone carried me back to ", "I used my hearthstone to go back to "}}) do
+            local from = 1
+            while true do
+                local x, y = text:find(set[1], from, true)
+                if not x then break end
+                h.hearthN = (h.hearthN or 0) + 1
+                local pick = set[(h.hearthN - 1) % #set + 1]
+                text = text:sub(1, x - 1) .. pick .. text:sub(y + 1)
+                from = x + #pick
+            end
+        end
+        local VERBS = {{" cut me down", " killed me", " brought me down", " struck me down"}, {" cut us down", " killed us", " brought us down", " struck us down"}}
+        for _, set in ipairs(VERBS) do
+            local from, inChapter = 1, 0
+            while true do
+                local x, y = text:find(set[1], from, true)
+                if not x then break end
+                inChapter = inChapter + 1
+                h.cutN = (h.cutN or 0) + 1
+                local pick = set[(inChapter > 1 or h.cutN % 2 == 0) and ((h.cutN % (#set - 1)) + 2) or 1]
+                text = text:sub(1, x - 1) .. pick .. text:sub(y + 1)
+                from = x + #pick
+            end
+        end
+    end
     text = text:gsub(" +\n", "\n"):gsub("\n\n\n+", "\n\n"):gsub("%s+$", "")
+    if A.ShortRepeatNames then text = A.ShortRepeatNames(text) end
     return text
 end
 ST.TidyMoves = TidyMoves
@@ -4453,7 +4614,14 @@ function ST.Tell(person, days, brief, retell, capture)
                         end
                         if isDungeon then outAfter = (s.e - s.t) end
                         local fled = not inside and outAfter and outAfter <= 300 and (danger == "daring" or danger == "reckless")
-                        local visits = history.dungeonVisits[e.d] or 0
+                        -- (2026-11-20: an evening the book told us going in counts as a visit for the words, even
+                        -- with no fight on record, so the run after "I went back into the Wailing Caverns" is the
+                        -- third, not "a second time"; a first sparse visit still keeps the place's introduction)
+                        history.dungeonDays = history.dungeonDays or {}
+                        local visits = math.max(history.dungeonVisits[e.d] or 0, (history.dungeonVisits[e.d] or 0) >= 1 and ((history.dungeonDays[e.d] or {n = 0}).n - (((history.dungeonDays[e.d] or {}).day == index) and 1 or 0)) or 0)
+                        if not fled and (history.dungeonDays[e.d] or {}).day ~= index then
+                            history.dungeonDays[e.d] = {n = ((history.dungeonDays[e.d] or {}).n or 0) + 1, day = index}
+                        end
                         local story = L and L.DungeonStory and L.DungeonStory(e.d)
                         -- The run's place in this book's history of the place (2026-11-06): the lord of the
                         -- place (Lore's `last`; a wing's own lord where the bosses point to a wing), whether
@@ -4575,6 +4743,7 @@ function ST.Tell(person, days, brief, retell, capture)
                                 for _, b in ipairs(s.bosses) do if (history.killers[b.name] or 0) > 0 and not history.avenged[b.name] then return true end end
                             end)() then
                                 Say(teller:Say("dungeonDiedBefore", W.dungeonDiedBefore, st), true)
+                                if st.dungeonNow then st.dungeonNow.beforeSaid = true end
                             end
                             if story and story.again then
                                 history.againN = (history.againN or 0) + 1
@@ -4582,7 +4751,14 @@ function ST.Tell(person, days, brief, retell, capture)
                                     local bossesHere = {}
                                     for _, b in ipairs(s.bosses) do bossesHere[#bossesHere + 1] = b.name end
                                     local lines = (L.WithoutBosses and L.WithoutBosses(story.again, bossesHere)) or story.again
-                                    Say(PickLore(lines), false, "lore")
+                                    -- ("before" said once on a return: after "I had died in there the time before" no
+                                    -- line of the place "the same as before", 2026-11-20)
+                                    if (out[#out] or ""):find("before", 1, true) or (out[#out - 1] or ""):find("before", 1, true) then
+                                        local kept = {}
+                                        for _, x in ipairs(lines) do if not x:find("before", 1, true) then kept[#kept + 1] = x end end
+                                        lines = kept
+                                    end
+                                    if #lines > 0 then Say(PickLore(lines), false, "lore") end
                                 end
                             end
                         end
@@ -4990,6 +5166,9 @@ function ST.Tell(person, days, brief, retell, capture)
                 local dn = st.dungeonNow
                 local consequence = false
                 if dn then
+                    -- (2026-11-20: what is said after the fights is timed at the last fight, so the composer
+                    -- never puts "This time the run ended at Kresh" or the lord's fall before the run)
+                    plan.event = {t = (function() local t_ for _, x in ipairs(s.events) do if x.k == "boss" and x.t then t_ = x.t end end return t_ end)(), k = "runEnd"}
                     local firstBoss
                     for _, x in ipairs(s.events) do if x.k == "boss" and not firstBoss then firstBoss = x end end
                     local role = dn.role or (L and L.Role and L.Role(dn.r, firstBoss and firstBoss.me))
@@ -5099,7 +5278,15 @@ function ST.Tell(person, days, brief, retell, capture)
                             Say(teller:Say("dungeonFellShort", W.dungeonFellShort, ut), true)
                             Title(72, teller:Pick("tFellShort", W.titles.fellShort))
                         elseif dn.lordDoneBefore and W.dungeonShortVeteran and dn.lastKill then
-                            Say(teller:Say("dungeonShortVeteran", W.dungeonShortVeteran, ut), true)
+                            -- (2026-11-20: "before" once a run; after "I had died in there the time before" the
+                            -- veteran's line that needs no "before")
+                            local vet = W.dungeonShortVeteran
+                            if dn.beforeSaid then
+                                vet = {}
+                                for _, x in ipairs(W.dungeonShortVeteran) do if not x:find("before", 1, true) then vet[#vet + 1] = x end end
+                                if #vet == 0 then vet = W.dungeonShortVeteran end
+                            end
+                            Say(teller:Say("dungeonShortVeteran", vet, ut), true)
                             Title(70, teller:Pick("tUnfinished", W.titles.unfinished))
                         else
                             local pool = (dn.left and W.dungeonUnfinished.left) or W.dungeonUnfinished.ended
@@ -6149,7 +6336,7 @@ function ST.Tell(person, days, brief, retell, capture)
             paragraphWords = paragraphWords + Words2(sentence)
         end
         if #paragraph > 0 then paragraphs[#paragraphs + 1] = table.concat(paragraph, " ") end
-        local text = TidyMoves(plan.text or table.concat(paragraphs, "\n\n"))
+        local text = TidyMoves(plan.text or table.concat(paragraphs, "\n\n"), history)
         if planned then history.plan.text = history.plan.text .. " " .. (A.JournalPlain and A.JournalPlain(text) or text) end
         -- the title: the best of the day that no earlier chapter had
         -- (round 30, the player: the title comes from the chapter's spine, never from a passing first or a

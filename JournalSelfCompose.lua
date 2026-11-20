@@ -1623,6 +1623,10 @@ function C.TellExpedition(run, k)
         if step then Add(g.ep, g.t, Fill(step, T({zone = Place(g.zone)})), "done")
         else
             local pool = (gi == 1 and P.journeyDonePlain) or P.journeyDoneRest
+            -- (2026-11-20: "that work" answers a goal the opening named; with none named, or a dungeon run
+            -- told next that is the work, "In the Wetlands we saw that work done." names nothing)
+            if not goal then pool = nil end
+            for _, x in ipairs(eps) do if x.kind == "dungeon" and (x.t or 0) >= (g.ep.t or 0) then pool = nil end end
             if pool then Add(g.ep, g.t, Pick(gi == 1 and "journeyDonePlain" or "journeyDoneRest", pool, T({zone = Place(g.zone)})), "done") end
         end
     end
@@ -2359,7 +2363,20 @@ function C.Apply(ctx)
         if l.kind == "open" and Words(plain) <= 10 and ((hadMe and shortStay) or not Any(low, {"day", "night", "evening", "morning", "afternoon", "later", "week", "with ", " and i ", "again", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"})) then
             local others = 0
             for _, x in ipairs(byEp[l.ep]) do if x ~= l and not x.drop and (x.cls == "quest" or x.cls == "what" or x.cls == "place") then others = others + 1 end end
-            if others >= 1 then l.drop = true end
+            if others >= 1 then
+                l.drop = true
+                -- (2026-11-20: the chapter keeps its time: the first real thing takes it, "That evening, I
+                -- went back to Brill with the engraved ring." rather than opening bare on an errand)
+                local first
+                for _, x in ipairs(byEp[l.ep]) do
+                    if x ~= l and not x.drop and (x.cls == "quest" or x.cls == "what" or x.cls == "place") and (not first or x.t < first.t) then first = x end
+                end
+                local hour = tonumber(date and date("%H", D.t or l.t or 0) or "") or 20
+                local when = (hour >= 5 and hour < 12 and "That morning") or (hour >= 12 and hour < 17 and "That afternoon") or (hour >= 17 and hour < 22 and "That evening") or "That night"
+                if first and (first.text:match("^I ") or first.text:match("^We ")) and not Plain(first.text):lower():find("^%a+ %a+ ?%a* ?that %a+") then
+                    first.text = when .. ", " .. (first.text:match("^I ") and first.text or ("w" .. first.text:sub(2)))
+                end
+            end
         end
     end
     -- a city quarter named in a line told outside any city (the stay contradicts it)
@@ -4564,7 +4581,13 @@ function C.Apply(ctx)
                 local sameCo = #groups > 0 and table.concat(groups[#groups].company, ",") == table.concat(stopCompany, ",")
                 local stopSubj = sameCo and "" or (" " .. stopWho)
                 tail = tail .. (lateLevel and (" by the time " .. (sameCo and (#stopCompany > 0 and "we" or "I") or stopWho) .. " stopped in " .. stop .. " I was level " .. lateLevel)
-                    or (stopSubj .. " stopped at last in " .. stop))
+                    -- (2026-11-20: the close takes its words in turn through the book, not "stopped at last
+                    -- in" every evening)
+                    or (stopSubj .. ({" stopped at last in ", " stopped for the night in ", " called it a night in "})[(function()
+                        local h_ = ctx.history or {}
+                        h_.stopN = (h_.stopN or 0) + 1
+                        return (h_.stopN - 1) % 3 + 1
+                    end)()] .. stop))
                 tail = tail:gsub("^ ", "")
                 text = Cap(tail) .. "."
                 hoursPhrase = nil
@@ -4642,7 +4665,10 @@ function C.Apply(ctx)
                         end
                         -- (a step that already hands something over is closed)
                         local handed = Any(text_, {"brought", "carried", " took ", "handed", " gave ", "delivered"})
-                        if words >= 2 and missing * 2 >= words and not handed then
+                        -- (2026-11-20: a step whose setup holds half the act already, or "took up" a task, is
+                        -- closed: "If the lost envoys of the Earthen Ring were found ..." needs no "I took up
+                        -- the search for the missing envoys of the Earthen Ring.")
+                        if words >= 2 and missing * 2 > words and not handed and not act:find("^took up ") then
                             local party = #(l.ep.party or {}) > 0
                             l.text = l.text:gsub("%s*$", "") .. " " .. (party and "We " or "I ") .. act .. "."
                         end

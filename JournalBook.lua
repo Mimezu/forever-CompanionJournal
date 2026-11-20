@@ -2299,6 +2299,17 @@ function QD.ShowsAt(text, qid, title)
             local at2 = other ~= piece and plain:find(other, 1, true)
             if at2 and (not at or at2 < at) then at = at2 end
         end
+        -- (2026-11-20: a person named in full once is told by the short name after, "Executor Zygand"
+        -- -> "Zygand" (A.ShortRepeatNames): a piece still matches with a two-word name shortened)
+        if not at and kind ~= "title" then
+            for w1, w2 in piece:gmatch("(%u[%l']+) (%u[%l']+)") do
+                for _, short in ipairs({w1, w2}) do
+                    local other = piece:gsub(w1 .. " " .. w2, short, 1)
+                    local at2 = plain:find(other, 1, true) or plain:find((other:gsub("^%u", string.lower)), 1, true) or plain:find((other:gsub("^%l", string.upper)), 1, true)
+                    if at2 and (not at or at2 < at) then at = at2 end
+                end
+            end
+        end
         if at and (not bestAt or at < bestAt) then bestKind, bestAt = kind, at end
     end
     local L = A.Lore

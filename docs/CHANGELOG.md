@@ -1,5 +1,17 @@
 # Companion Journal: changes
 
+## 1.55.1 (2026-11-20)
+
+- Storyteller: dungeon returns counted and told after the run
+- Deaths, night stops, hearthstones: varied wording
+- A place, a new land, a full name: not repeated
+- Lore lines for Mutanus, Rath'mael, Renferrel reworded
+
+## 1.55.0 (2026-11-20)
+
+- Pictures of level-ups, as of deaths
+- A small photo in the chapter; click for its card
+
 ## 1.54.0 (2026-11-20)
 
 - The book opens and turns pages without freezing the game

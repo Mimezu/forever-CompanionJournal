@@ -10253,7 +10253,7 @@ function T.TellOnce(person, days, voice, player, brief)
             end
             history.metBefore = nil
         end
-        stories[day.key] = {text = OneStop(chapterText), quotes = f.quotes, chapter = chapter, two = tellsTwo or nil, title = chapterTitle}
+        stories[day.key] = {text = OneStop(A.ShortRepeatNames and A.ShortRepeatNames(chapterText) or chapterText), quotes = f.quotes, chapter = chapter, two = tellsTwo or nil, title = chapterTitle}
         -- (round 23: the quests this chapter told, for the two-pass telling's first pass)
         if T.collect then
             local told = {}

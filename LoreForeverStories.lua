@@ -99,7 +99,8 @@ q(92421, "Light's Justice", "Ruins of Lordaeron", 22, "ruins", 4,
 q(92422, "The Wrath of Rath'mael", "Ruins of Lordaeron", 22, "ruins", 6,
     "Scouts at {p:Lordamere Overlook} reported an unholy fog in the streets and graveyard of the fallen city. A necromancer named Rath'mael was behind it.",
     "Under the fog, the Scourge moved unseen above the {p:Undercity}. Deathguard Kristof in {p:Brill} wanted its maker driven out and could not afford to wait.",
-    "Rath'mael was dead. Deathguard Kristof expected the Scourge to find another like him, but hoped their ranks would thin in the meantime.",
+    -- (2026-11-20: the outcome no longer opens on the kill the run already told; corpus #92422)
+    "With Rath'mael gone, Deathguard Kristof expected the Scourge to find another like him, but hoped their ranks would thin in the meantime.",
     "The necromancer behind the fog had fallen, though Deathguard Kristof expected another of his kind to take his place.",
     false, {"part1_corpus.txt #92422 (Deathguard Kristof in Brill)"}).highlight = {
     "Rath'mael, the necromancer who had hidden the Scourge in fog, was dead.",

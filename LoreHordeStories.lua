@@ -3715,7 +3715,8 @@ local POV = {
     -- Hillsbrad: the Tarren Mill campaign.
     [493] = {act = "carried Renferrel's findings to Apothecary Lydon in Tarren Mill", giver = "Apothecary Renferrel",
         "The Dark Lady pressed the apothecaries hard for their plague, and Renferrel sent {us} far south with his latest findings for Apothecary Lydon. {We} kept to the roads and followed the signs into the Hillsbrad Foothills, and Lydon called the work most excellent.",
-        "{We} took the long road out of Silverpine to Tarren Mill, sure of {our} way by then, with Renferrel's research. Apothecary Lydon was anxious to study it."},
+        -- (2026-11-20: a hand-in, not a road; corpus #493, "I am anxious to study his work")
+        "{We} carried Renferrel's research the long way south to Tarren Mill, sure of {our} way by then, and Apothecary Lydon was anxious to study it."},
     [527] = {act = "raided the northern farms of Hillsbrad Fields", giver = "High Executor Darthalia",
         "High Executor Darthalia of Tarren Mill wanted the humans quelled until the apothecaries had their plague. Her first order was the northernmost farms of Hillsbrad Fields. {We} raided them and killed Farmer Ray and Farmer Getz with their workers, and her sources told her {we} had performed well.",
         "{We} stood at attention for High Executor Darthalia and took her first orders west to Hillsbrad's farms. The landowners and their workers died, and Darthalia said the fighting had gone well."},

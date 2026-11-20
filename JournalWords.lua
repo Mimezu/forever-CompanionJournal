@@ -2398,3 +2398,64 @@ if PB.voice and PB.voice.we and PB.voice.you then
     PB.voice.we.theyDieMoment = {"{name} died {count} in {place}, with me there."}
     PB.voice.you.theyDieMoment = {"{my} party lost {name} {count} in {place}."}
 end
+
+-- A person's full name said twice in one paragraph (2026-11-20): the second time by the short name.
+-- "Executor Zygand ... Executor Zygand" -> "... Zygand"; "Coleman Farthing ... Coleman Farthing" ->
+-- "... Coleman". Titled names keep the last word, plain names the first. Places, groups and names in
+-- marks ({n:}, {p:}, {q:}) are left alone: a name after "the" is a group or a title of rank, and a
+-- name whose last word is a kind of place is a place.
+local NAME_TITLES = {Executor = true, ["High Executor"] = true, Deathguard = true, Apothecary = true, ["Master Apothecary"] = true,
+    Magistrate = true, Captain = true, ["Shadow Priest"] = true, Novice = true, Deathstalker = true, Commander = true,
+    Sergeant = true, Farmer = true, Magus = true, Archmage = true, Foreman = true, Baron = true, Mountaineer = true,
+    Scout = true, Grunt = true, Warlord = true, Overlord = true, Chieftain = true, Elder = true, Brother = true, Sister = true}
+local NAME_PLACE = {Keep = true, Glades = true, Forest = true, Hollow = true, Isle = true, Mine = true, Village = true, Tavern = true,
+    Hold = true, Vale = true, Mountains = true, Fields = true, Farm = true, Farmstead = true, Lake = true, Wall = true, Peril = true,
+    Overlook = true, Camp = true, Quarter = true, Haunt = true, Mills = true, Ruins = true, Crossroads = true, Spire = true, Pass = true,
+    Cave = true, Caverns = true, Deeps = true, Chasm = true, Ridge = true, Coast = true, Barrens = true, Highlands = true, Foothills = true,
+    Wetlands = true, Downs = true, Woods = true, Bay = true, River = true, Bluff = true, Watch = true, Tower = true, Inn = true,
+    Graves = true, Square = true, Gate = true, Gates = true, Valley = true, End = true, Lady = true, Crusade = true, Blade = true,
+    Ring = true, Society = true, Dawn = true, Brotherhood = true, Hills = true, Point = true, Post = true, Outpost = true, Harbor = true,
+    Strand = true, Grove = true, Marsh = true, Steppes = true, Canyon = true, Peak = true, Mesa = true, City = true, Kingdoms = true,
+    Sea = true, Sepulcher = true, Shard = true, Gem = true, Wand = true, Stone = true, Serum = true, Stout = true, Blood = true}
+local NAME_PLACE_FIRST = {Lake = true, Mount = true, Fort = true, Camp = true, Port = true, Dun = true, Ruins = true, Grand = true, The = true,
+    Dark = true, Royal = true, Scarlet = true, Searing = true, Earthen = true, Argent = true, Burning = true, Emerald = true, Moonsilver = true}
+local NAME_NOT_FIRST = {}
+for w in ("At In On To From Then When After Before With By For Of As But And Once There Here His Her Their Our My We I He She They It "
+    .. "Back Up Inside Outside Over Near Through Under Past Into Across Along Beyond Behind Without Every Each One Two A An That This "
+    .. "These Those Some No Not So Yet Still Only Even Later Soon Next Last First Out Down Off What Who Why How Where While Until Since "
+    .. "Though If Shadow High Master Old Young Little Great Every Both Most Many Few Your You Its Like Nothing Everything Nobody Somebody "
+    .. "Far North South East West Northern Southern Eastern Western"):gmatch("%S+") do NAME_NOT_FIRST[w] = true end
+local NAME_VERBS = {}
+for w in ("said had wanted was were called asked gave took kept sent hoped knew thanked told swore set explained admitted believed "
+    .. "expected praised promised found would could did needed meant waited judged named handed looked read spoke agreed paid "
+    .. "welcomed warned feared and who whom himself herself"):gmatch("%S+") do NAME_VERBS[w] = true end
+function A.ShortRepeatNames(text)
+    if type(text) ~= "string" or text == "" then return text end
+    local out = {}
+    for para in (text .. "\n\n"):gmatch("(.-)\n\n") do
+        local seen = {}
+        -- (a plain name is a person only when some mention of it in the paragraph is followed by a
+        -- person's verb: "Coleman Farthing had worked"; "Raven Hill, and" is a place)
+        local person = {}
+        for w1, w2, verb in para:gmatch("(%u[%l']+) (%u[%l']+) (%l+)") do
+            if NAME_VERBS[verb] and verb ~= "and" then person[w1 .. " " .. w2] = true end
+        end
+        local result = para:gsub("()(%u[%l']+) (%u[%l']+)", function(at, w1, w2)
+            local prevChar = para:sub(at - 1, at - 1)
+            if prevChar == ":" or prevChar == "{" or prevChar == "'" or para:sub(math.max(1, at - 4), at - 1):find("[Tt]he $") then return nil end
+            if NAME_NOT_FIRST[w1] or NAME_PLACE_FIRST[w1] or NAME_PLACE[w2] or w1:find("'s$") or w2:find("'s$") then return nil end
+            local full = w1 .. " " .. w2
+            -- (what follows says it is a person: a stop, or a person's verb; "Rot Hide brute" and
+            -- "Raging Rot Hide" are creatures)
+            local after = para:sub(at + #full, at + #full + 14)
+            if after:match("^ %u") then return nil end
+            local nextWord = after:match("^ (%l+)")
+            if not NAME_TITLES[w1] and ((nextWord and not NAME_VERBS[nextWord]) or not person[full]) then return nil end
+            if seen[full] then return (NAME_TITLES[w1] and w2 or w1) end
+            seen[full] = true
+            return nil
+        end)
+        out[#out + 1] = result
+    end
+    return table.concat(out, "\n\n")
+end
