@@ -13,15 +13,19 @@ local function Hash(text)
     for i = 1, #text do h = (h * 33 + text:byte(i)) % 2147483647 end
     return h
 end
+-- (a table that is called like a function, its state in `x`: a kept telling saves and restores it,
+-- JournalSelfFreeze.lua)
+local RNG = {__call = function(self, n)
+    local x = (self.x * 16807) % 2147483647
+    self.x = x
+    local r = (x - 1) / 2147483646
+    if n then return math.floor(r * n) + 1 end
+    return r
+end}
 local function Rng(seed)
-    local x = Hash(seed) % 2147483646 + 1
-    return function(n)
-        x = (x * 16807) % 2147483647
-        local r = (x - 1) / 2147483646
-        if n then return math.floor(r * n) + 1 end
-        return r
-    end
+    return setmetatable({x = Hash(seed) % 2147483646 + 1}, RNG)
 end
+ST.RNG = RNG
 local NUMBERS = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen",
     "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty"}
 local TENS = {[20] = "twenty", [30] = "thirty", [40] = "forty", [50] = "fifty", [60] = "sixty", [70] = "seventy", [80] = "eighty", [90] = "ninety"}
@@ -1153,7 +1157,17 @@ function ST.Tell(person, days, brief, retell, capture)
         if last.open then return false end
         return not time or time() - endT >= (A.NIGHT_AWAY or 16200)
     end
-    for index, day in ipairs(days) do
+    -- (finished days told before, with the memory at their end: the telling goes on after them,
+    -- JournalSelfFreeze.lua)
+    local fz = A.SelfFreeze and A.SelfFreeze.Begin(person, days, brief, retell, capture, planned)
+    local startAt = 1
+    if fz and fz.resume then
+        startAt = fz.resume.upto + 1
+        history, teller = fz.resume.history, fz.resume.teller
+        for key, story in pairs(fz.resume.stories) do stories[key] = story end
+    end
+    for index = startAt, #days do
+        local day = days[index]
         -- (between days, a telling in the background may pause for the next frame: JournalTellCache.lua)
         if A.TellStep then A.TellStep() end
         local f = Facts(day)
@@ -6337,6 +6351,7 @@ function ST.Tell(person, days, brief, retell, capture)
         else
             stories[day.key] = {text = "", title = nil, chapter = history.chapter, quotes = {}}
         end
+        if fz and index == fz.freezeAt then A.SelfFreeze.Keep(fz, index, stories, history, teller) end
     end
     return stories
 end

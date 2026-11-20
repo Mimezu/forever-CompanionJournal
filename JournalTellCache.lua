@@ -42,6 +42,9 @@ local function InJob()
     local co = coroutine.running()
     return job ~= nil and co ~= nil and job.cos[co] == true
 end
+-- (a telling running in the background job right now: only there are finished days kept,
+-- JournalSelfFreeze.lua)
+function C.InJob() return InJob() end
 
 -- A value as text: tables by their pairs (an unchanged table walks in the same order; a changed
 -- one at worst misses), strings with their length so no two values read the same.

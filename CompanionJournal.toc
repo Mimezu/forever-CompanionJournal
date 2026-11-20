@@ -46,6 +46,7 @@ JournalSelfStyle.lua
 JournalSelfPlan.lua
 JournalSelfTale.lua
 JournalTellCache.lua
+JournalSelfFreeze.lua
 JournalStyles.lua
 JournalPagination.lua
 LoreNotesUI.lua

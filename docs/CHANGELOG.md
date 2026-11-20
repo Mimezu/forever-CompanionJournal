@@ -1,5 +1,10 @@
 # Companion Journal: changes
 
+## 1.55.5 (2026-11-20)
+
+- No more stutter every few seconds while you play: finished chapters (three days back) are told once and kept for the session, and a new line tells only the days after them. The kept chapters stay word for word; an update, Retell or a changed setting tells the whole book again
+- Book telling in the background takes shorter pauses on long days
+
 ## 1.55.4 (2026-11-20)
 
 - A chapter ends on "the night" only after you logged out 4½ hours or more; today's chapter while you play ends on its last deed
