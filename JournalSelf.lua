@@ -79,7 +79,6 @@ local function Add(entry)
     local person = A.SelfPerson()
     return person and A.JournalAdd(person, entry)
 end
-A.SelfAdd = Add
 local function Journal()
     local person = A.SelfJournalOn() and A.SelfPerson()
     return person and person.journal
@@ -132,7 +131,6 @@ local CLASS_SPELLS = {
 }
 CLASS_SPELLS[18960] = {"moonglade", 10}
 CLASS_SPELLS[688] = {"imp", 1} -- (a warlock's first demon)
-A.SelfClassSpells = CLASS_SPELLS
 -- Someone of your party died (Journal.lua sees it): kept in your own journal too.
 function A.SelfPartyDeath(name, boss)
     if not A.SelfJournalOn() or not name then return end
@@ -158,7 +156,6 @@ local function First(key, entry)
     entry.k = "first"
     Add(entry)
 end
-A.SelfStartLevel = StartLevel
 -- Places that are a moment the first time you stand in them.
 local LANDMARKS = {["Blackrock Mountain"] = true, ["The Dark Portal"] = true, ["Darkmoon Faire"] = true, ["Gurubashi Arena"] = true,
     ["The Great Lift"] = true, ["Mirage Raceway"] = true, ["Nesingwary's Expedition"] = true}
@@ -222,7 +219,6 @@ local function CheckVoyage(zone)
     end
     lastZone = zone
 end
-A.SelfContinent = Continent
 
 -- Milestones of a life -------------------------------------------------------------
 -- Famous items: the first time they are yours.
@@ -254,7 +250,6 @@ local function SetName(setID)
     local name = info and Text(Ask(info, setID))
     return name
 end
-A.SelfItemInfo = ItemInfo
 
 -- Stretches of play, zone by zone ------------------------------------------------
 local stretch -- the open "play" entry
@@ -435,7 +430,6 @@ function A.SelfParty(members, complete, inGroup)
         for key in pairs(memberPending) do if not members[key] then memberPending[key] = nil end end
     end
 end
-A.SelfMembersClose = MembersClose -- (the tests)
 
 -- Dungeons, bosses, deaths ------------------------------------------------------------
 local inside -- the instance you are in (written once per visit)
@@ -601,8 +595,6 @@ local function GatheredName(name)
     table.sort(names, function(a, b) if counts[a] ~= counts[b] then return counts[a] > counts[b] end return a < b end)
     entry.m = {names[1], names[2], names[3]}
 end
-A.SelfGatheredName = GatheredName
-A.SelfGatherKind = GatherKind
 
 -- Crafting: while a profession window is open, each successful cast is
 -- something you made. One line per profession and stretch:
@@ -794,8 +786,6 @@ local function CheckElite()
     if eliteFight and eliteFight.entry ~= entry then EliteFightEnd(now) end
     if not eliteFight then eliteFight = {entry = entry, t = now} end
 end
-A.SelfEliteCheck = CheckElite -- (the tests)
-A.SelfEliteFightEnd = EliteFightEnd -- (the tests)
 
 -- More moments (A.MoreMomentsOn) -------------------------------------------------------
 local function Num(value) return Public(value) and tonumber(value) or nil end
@@ -904,11 +894,9 @@ local function InfoMessage(errorType, message)
         Learned(nil, spell)
     end
 end
-A.SelfInfoMessage = InfoMessage
 -- A standing reached with a faction (friendly 5, honored 6, revered 7, exalted 8):
 -- the standings are kept on the character; the first look only seeds them.
 local STANDINGS = {[5] = "friendly", [6] = "honored", [7] = "revered", [8] = "exalted"}
-A.SelfStandings = STANDINGS
 local repQueued = false
 -- (only a standing already read this session counts as "before": the first look after
 -- a login, a /reload or turning the setting on only seeds, so a standing reached while
@@ -933,7 +921,6 @@ local function ScanReputation()
         end
     end
 end
-A.SelfScanReputation = ScanReputation
 -- A duel's end comes as a system message naming both duellists; yours are kept
 -- ({k = "duel", d = the other, w = "won" | "lost", fled = they or you left the ring}).
 local duelPatterns
@@ -989,7 +976,6 @@ local function ScanSkills()
         end
     end
 end
-A.SelfScanSkills = ScanSkills
 -- Honorable kills in the open world, counted per stretch ({k = "hk", c = n}).
 local lastHK
 local hkAt = setmetatable({}, {__mode = "k"})
@@ -1067,7 +1053,6 @@ local function MoneyChanged()
         if before < copper and now >= copper then First("gold:" .. mark[1], {d = "gold", c = mark[1], gate = mark[2]}) end
     end
 end
-A.SelfMoneyChanged = MoneyChanged -- (the tests)
 -- The first talent point to spend, at level ten: the game's own event, confirmed
 -- by its own reader (a point already earned before the journal began is not told).
 local function TalentEarned()
@@ -1110,7 +1095,6 @@ local function RankChanged()
     if not title then return end
     Add({k = "rank", d = title, c = rank, n = GetPVPLifetimeStats and Num((Ask(GetPVPLifetimeStats))) or nil})
 end
-A.SelfRankChanged = RankChanged -- (the tests)
 -- A battleground match at its end screen (PVP_MATCH_COMPLETE): the result, the
 -- length, my own score line, the battleground's own marks (flags, bases, towers,
 -- graveyards) and listed people on my side, written onto the `bg` entry that
@@ -1228,7 +1212,6 @@ local function MatchComplete(winner, duration)
         ReadMatch(entry)
     end
 end
-A.SelfMatchComplete = MatchComplete -- (the tests)
 local MORE_EVENTS = {"ITEM_TEXT_BEGIN", "UI_INFO_MESSAGE", "LEARNED_SPELL_IN_SKILL_LINE", "TRAINER_SHOW", "TRAINER_CLOSED", "UPDATE_FACTION",
     "SKILL_LINES_CHANGED", "PLAYER_REGEN_ENABLED", "PLAYER_MONEY", "CHARACTER_POINTS_CHANGED", "PLAYER_PVP_RANK_CHANGED",
     "MAJOR_FACTION_RENOWN_LEVEL_CHANGED", "PVP_MATCH_COMPLETE"}
@@ -1354,7 +1337,7 @@ local function CheckHome()
     if mine.home and mine.home ~= home then Add({k = "home", d = home}) end
     mine.home = home
 end
-A.SelfCheckGuild, A.SelfCheckHome = CheckGuild, CheckHome
+A.SelfCheckHome = CheckHome
 -- Class milestones from the spells you know.
 local function CheckSpells()
     local known = IsPlayerSpell or IsSpellKnown
@@ -1363,7 +1346,6 @@ local function CheckSpells()
         if Ask(known, id) == true then First("class:" .. info[1], {d = "class", z = info[1], gate = info[2]}) end
     end
 end
-A.SelfCheckSpells = CheckSpells
 local restedAt = setmetatable({}, {__mode = "k"})
 local auctionPattern -- (the auction-sold message as a pattern, built on first use)
 events:SetScript("OnEvent", function(_, event, ...)
