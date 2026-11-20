@@ -84,7 +84,6 @@ local function IsTown(name)
 end
 -- (a clock for the debug hook only; the game has no os, so it uses its own date)
 local function Clock(t) return (date and date("%H:%M", t or 0)) or tostring(t) end
-local function Has(list, item) for _, x in ipairs(list) do if x == item then return true end end return false end
 local function Sorted(list, less) table.sort(list, less); return list end
 local function Plural(name)
     local n = Clean(name)
@@ -130,7 +129,6 @@ local FURNITURE = {"stopped at ", "stopped in ", "stopped a while", "took a room
 local NIGHT = {"after dark", "by night", "at night", "was night when", "was dark when", "in the dark%.", "lights of the towns"}
 local FIRST = {"first time", "my first", "the first ", "for the first", "had never", "never been", "new to me", "new country", "first dungeon",
     "first flight", "first sight"}
-local FIRST_WEIGHT = {continent = 6, dungeon = 5, rezother = 4, zeppelin = 3, boat = 3, tram = 3, flight = 2, zone = 1}
 
 -- The kinds of a line, as the composer sees them.
 local function Classify(n, ctx, ep)
@@ -182,14 +180,6 @@ local function EpisodeAt(t, episodes)
     for _, ep in ipairs(episodes) do if t >= ep.t and t < ep.until_ then return ep end end
     if t < episodes[1].t then return episodes[1] end
     return episodes[#episodes]
-end
--- Is anyone of the stretch's party with me at this time? (nil when the stretch has no party)
-local function WithAt(s, t)
-    if not s or #(s.with or {}) == 0 then return nil end
-    for _, w in ipairs(s.with) do
-        for _, span in ipairs(w.spans or {{s.t, s.e}}) do if t >= span[1] and t <= span[2] then return true end end
-    end
-    return false
 end
 -- The day's party windows by name, from every stay's spans, joined across a short gap.
 local function DayWindows(stretches)
@@ -1083,11 +1073,6 @@ function C.DangerSentence(evs, k)
             local by = (tostring(between.e.by):gsub("%-.*$", ""))
             local short = by:gsub(" .*$", "")
             local raiser = (k.party or {})[short] and short or by
-            -- (round 27: "us" only when a companion died within the minute of that death of mine)
-            local function UsAt(t)
-                for _, x in ipairs(evs) do if x.e.k == "pdeath" and math.abs(x.t - t) <= 60 then return "us" end end
-                return "me"
-            end
             local cut = k.killedMe == "cut me down"
             local function Verb(t) return cut and "cut me down" or "killed me" end
             local verb, verb2 = Verb(own[1].t), Verb(own[2].t)
@@ -1596,9 +1581,6 @@ function C.TellExpedition(run, k)
     local lastBeat
     local saidBack = false
     for gi, group in ipairs(placeGroups) do
-        -- (the way back is "the way back" only when no goal lay on it)
-        local goalAfter = false
-        for _, g in ipairs(run.goals or {}) do if group[1] and g.t > group[1].t and Clean(g.zone) ~= Clean(run.far) then goalAfter = true end end
         local backNow = farEnd and group[1] and group[1].t > farEnd and not saidBack
         if backNow then saidBack = true end
         local text = C.DeathGroup(group, {Place = Place, killedMe = killedMe, party = partySet, exact = true, road = true, Shape = k.Shape,
@@ -1766,13 +1748,6 @@ function C.Apply(ctx)
     if A.TellStep then A.TellStep() end
     -- 2. Drops: furniture, cave mouths, lone companion deaths in a city, the teller's own close.
     local nightSaid = false
-    local function EventsNear(s, t, span, kinds_)
-        for _, e in ipairs(s and s.events or {}) do
-            if kinds_[e.k] and (e.t or 0) > t and (e.t or 0) - t <= span then return true end
-        end
-        for _, q in ipairs(s and s.quests or {}) do if kinds_.quest and (q.t or 0) > t and (q.t or 0) - t <= span then return true end end
-        return false
-    end
     -- (lane U: the planned telling's selection of the work, before the episodes take their lines)
     local sel = Select(ctx, lines, inRun, episodes, D)
     -- (lane O8: an adventure's record may carry who went with us and how strong the foes were,
@@ -3804,7 +3779,6 @@ function C.Apply(ctx)
         local lastPlain = Plain(lastLine.text):lower()
         local party = false
         for _, ep in ipairs(episodes) do if #ep.party > 0 then party = true end end
-        local we, us = party and "we" or "I", party and "us" or "me"
         local phrases = {}
         local ranked = {}
         for _, ep in ipairs(episodes) do ranked[#ranked + 1] = ep end
@@ -4590,7 +4564,6 @@ function C.Apply(ctx)
                     end)()] .. stop))
                 tail = tail:gsub("^ ", "")
                 text = Cap(tail) .. "."
-                hoursPhrase = nil
             end
             text = text:gsub("^(%l)", string.upper) .. "."
             local newTail = {}
