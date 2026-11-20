@@ -174,9 +174,14 @@ local function ZoneFirsts(zone, current)
     -- A first visit, when your level fits the zone (an old hand in Westfall is not new there).
     local range = A.LoreZoneLevels and A.LoreZoneLevels[zone]
     local level = tonumber(Ask(UnitLevel, "player"))
-    local been = false
-    for _, entry in ipairs(Journal() or {}) do if entry.k == "play" and entry.z == zone and entry ~= current then been = true; break end end
-    if range and level and level <= range[2] + 3 and not been then First("zone:" .. zone, {d = "zone", z = zone}) end
+    if not (range and level and level <= range[2] + 3) then return end
+    -- (the journal is walked only while this first is still to come)
+    local firsts = Firsts()
+    if not firsts or firsts["zone:" .. zone] then return end
+    for _, entry in ipairs(Journal() or {}) do
+        if entry.k == "play" and entry.z == zone and entry ~= current then return end
+    end
+    First("zone:" .. zone, {d = "zone", z = zone})
 end
 
 -- Voyages: crossing to another continent ------------------------------------------
