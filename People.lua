@@ -65,9 +65,17 @@ function A.PeopleActive()
     return db.peopleRename or db.peopleIcons or db.peopleTooltip or db.peopleLastSeen
 end
 
+-- The game can give an empty realm (Forever, 2026-11-20): the last one it gave is kept.
 local function HomeRealm()
-    return Text(GetNormalizedRealmName and GetNormalizedRealmName()) or Text(GetRealmName and GetRealmName()) or ""
+    local realm = Text(GetNormalizedRealmName and GetNormalizedRealmName()) or Text(GetRealmName and GetRealmName())
+    local db = A.db
+    if realm then
+        if db and db.homeRealm ~= realm then db.homeRealm = realm end
+        return realm
+    end
+    return db and Text(db.homeRealm) or ""
 end
+A.HomeRealm = HomeRealm
 -- "Name-Realm", realm without spaces; the key is the lower-cased form.
 function A.PersonKey(name, realm)
     name = Text(name)

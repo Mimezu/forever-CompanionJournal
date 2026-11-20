@@ -1,5 +1,10 @@
 # Companion Journal: changes
 
+## 1.55.3 (2026-11-20)
+
+- Fixed: journal and companions gone when the game gives no realm name. Your record keeps your first + last name, the last realm is kept, and entries written meanwhile go back into your journal
+- Another character with the same first name gets a journal of his own
+
 ## 1.55.2 (2026-11-20)
 
 - First crafted epic recorded

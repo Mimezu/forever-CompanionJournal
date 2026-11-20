@@ -32,12 +32,118 @@ A.defaults.colors.recognizedRival = {0.9, 0.22, 0.16}
 local me
 -- Early in loading the game still calls you "Unknown": never a character.
 local function Unknown(name) return name == UNKNOWNOBJECT or name == UNKNOWN or name == "Unknown" end
+-- No realm from the game and none kept yet: the realm of the record written last.
+local function LastRecord(rec)
+    local j = type(rec) == "table" and type(rec.journal) == "table" and rec.journal
+    local last = j and j[#j]
+    return type(last) == "table" and tonumber(last.t) or 0
+end
+local function SeedHomeRealm()
+    local all = A.db and type(A.db.characters) == "table" and A.db.characters
+    if not all then return end
+    local best, bestT
+    for key, rec in pairs(all) do
+        local realm = type(key) == "string" and type(rec) == "table" and rec.uniqueName ~= key and key:match("^[^%-]+%-(.+)$")
+        local t = realm and LastRecord(rec) or 0
+        if t > 0 and (not bestT or t > bestT) then best, bestT = realm, t end
+    end
+    if best then A.db.homeRealm = best end
+end
+-- A record made under the bare name while the realm was empty goes back into the real one.
+local function Fold(into, from)
+    if type(from.journal) == "table" and #from.journal > 0 then
+        into.journal = type(into.journal) == "table" and into.journal or {}
+        local list = into.journal
+        for _, e in ipairs(from.journal) do list[#list + 1] = e end
+        local order = {}
+        for i, e in ipairs(list) do order[e] = i end
+        table.sort(list, function(a, b)
+            local ta, tb = tonumber(a.t) or 0, tonumber(b.t) or 0
+            if ta ~= tb then return ta < tb end
+            return order[a] < order[b]
+        end)
+    end
+    for _, field in ipairs({ "firsts", "loreDiscoveries", "people", "rep", "skills" }) do
+        if type(from[field]) == "table" then
+            into[field] = type(into[field]) == "table" and into[field] or {}
+            for k, v in pairs(from[field]) do
+                if into[field][k] == nil then into[field][k] = v end
+            end
+        end
+    end
+end
+local function FoldBare(name, key)
+    local db = A.db
+    local all = type(db.characters) == "table" and db.characters
+    local bare = name:lower()
+    if not all or bare == key then return end
+    local from, into = all[bare], all[key]
+    if type(from) ~= "table" or type(into) ~= "table" or from.name ~= into.name then return end
+    if (from.uniqueName and from.uniqueName ~= into.uniqueName) or (from.class and into.class and from.class ~= into.class)
+        or (from.race and into.race and from.race ~= into.race) then return end
+    Fold(into, from)
+    all[bare] = nil
+    local road = type(db.road) == "table" and db.road
+    if road and type(road[bare]) == "table" then
+        road[key] = type(road[key]) == "table" and road[key] or {}
+        for day, list in pairs(road[bare]) do
+            if type(list) == "table" then
+                road[key][day] = type(road[key][day]) == "table" and road[key][day] or {}
+                for _, s in ipairs(list) do table.insert(road[key][day], s) end
+            end
+        end
+        road[bare] = nil
+    end
+    if type(db.bookRead) == "table" then db.bookRead["self:" .. bare] = nil end
+end
+-- Forever: first and last name are unique (the game gives the last name in the realm's place).
+-- The record holds it (uniqueName), so it is found again whatever the realm says, and another
+-- character of the same first name gets a record of his own.
+local myId
+local function UniqueName(name)
+    if not UnitFullName then return nil end
+    local ok, _, last = pcall(UnitFullName, "player")
+    last = ok and Text(last)
+    return last and (name .. "-" .. last):gsub("%s", ""):lower() or nil
+end
+-- A record without a unique name yet is this character's only if what it holds agrees.
+local function Agrees(rec, name)
+    if type(rec) ~= "table" or rec.name ~= name then return false end
+    local okClass, _, class = pcall(UnitClass, "player")
+    class = okClass and Text(class)
+    local okRace, _, race = pcall(UnitRace, "player")
+    race = okRace and Text(race)
+    return not (rec.class and class and rec.class ~= class) and not (rec.race and race and rec.race ~= race)
+end
 function A.Me()
     if me then return me end
     local ok, name = pcall(UnitName, "player")
     name = ok and Text(name)
     if not name or Unknown(name) or not A.PersonKey then return nil end
-    me = (A.PersonKey(name))
+    myId = UniqueName(name)
+    local all = A.db and type(A.db.characters) == "table" and A.db.characters
+    if myId and all then
+        for key, rec in pairs(all) do
+            if type(rec) == "table" and rec.uniqueName == myId then
+                me = key
+                FoldBare(name, key)
+                return me
+            end
+        end
+    end
+    if A.HomeRealm and A.HomeRealm() == "" then SeedHomeRealm() end
+    local key = (A.PersonKey(name))
+    if A.HomeRealm and A.HomeRealm() == "" then
+        -- Still no realm: the unique name, or (none either) a key not kept, so a later call can still find it.
+        if not myId then return key end
+        key = myId
+    end
+    local rec = all and all[key]
+    if myId and type(rec) == "table" and rec.uniqueName ~= myId then
+        if not rec.uniqueName and Agrees(rec, name) then rec.uniqueName = myId else key = myId end
+    end
+    me = key
+    FoldBare(name, key)
     return me
 end
 local function Characters(create)
@@ -58,7 +164,7 @@ function A.MyCharacter(create)
     local mine = all[key]
     if type(mine) ~= "table" then
         if not create then return nil end
-        mine = {people = {}}
+        mine = {people = {}, uniqueName = myId}
         all[key] = mine
     end
     mine.people = type(mine.people) == "table" and mine.people or {}
