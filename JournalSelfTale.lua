@@ -8,28 +8,6 @@ local _, A = ...
 local ST = {}
 A.SelfTale = ST
 
--- A short scene is authored as a whole: purpose, action and consequence.
--- Only an exact matching stage may opt in; old title-only records keep their
--- conservative full scene. Never infer compression from importance or length.
-local function CompactQuest(quest, story, brief)
-    local precise = quest and quest.qid and A.Lore.questStoryIDs[tonumber(quest.qid)]
-    return brief and precise == story and precise.title == quest.title
-        and type(story.highlight) == "table" and #story.highlight > 0
-end
-local function CompactBeat(story, previous)
-    if previous and story.thread and previous.thread then
-        return story.thread == previous.thread and "questOutcome" or "questTurn"
-    end
-    return "questStart"
-end
-local function QuestEnding(quest, story, brief, rng)
-    -- Use the existing outcome draw for either edition, leaving later choices
-    -- unchanged when an author adds a compact scene or another short variant.
-    local draw = rng()
-    local lines = CompactQuest(quest, story, brief) and story.highlight or story.after
-    return lines[math.floor(draw * #lines) + 1]
-end
-
 local function Hash(text)
     local h = 5381
     for i = 1, #text do h = (h * 33 + text:byte(i)) % 2147483647 end
