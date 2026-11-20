@@ -3338,8 +3338,7 @@ function T.OwnSpine(c, lines, Live)
             if ownTold and not hereTold then
                 local e = {quest = q, story = story, act = QD.Act and QD.Act(q, story)}
                 local text
-                if false then
-                else
+                do
                     -- (round 17: a friend's book too tells the work from the quest's own text, its own line of
                     -- the two; never "we saw to the work of X")
                     text = QD.Moment(e, tok, QD.Variant(key, nil, teller.deedOther), true)
@@ -4622,15 +4621,7 @@ function T.Compose(c)
                 for _, ev in ipairs(d.events) do if ev.k == "boss" and math.abs((ev.t or 0) - (e.t or 0)) <= 5 * 60 then near = true end end
             end
             -- (round 27: a bonded book tells every fall of the companion's own journal, alone or in a city too)
-            if false then
-                if l.text:find(" while %a+ were out%.$") then
-                    -- (away only when the record had me in another land at that minute)
-                    local here
-                    for _, x in ipairs(c.ownJournal or {}) do if x.k == "play" and x.z and (x.t or 0) <= (e.t or 0) and (x.e or x.t or 0) >= (e.t or 0) then here = x.z end end
-                    local away = here and e.z and Clean(here) ~= Clean(e.z)
-                    Rewrite(l, (l.text:gsub(" while %a+ were out%.$", away and (", away from " .. teller.base.me .. ".") or ".")))
-                end
-            elseif not near or IsCity(e.z or S.Z[l.text]) then l.drop = true end
+            if not near or IsCity(e.z or S.Z[l.text]) then l.drop = true end
         elseif l.beat == "rest" and work and not low:find("first", 1, true) and not T.KeepFire(c, l, fireKept) then
             l.drop = true
         elseif l.beat == "rest" and work and not low:find("first", 1, true) then
