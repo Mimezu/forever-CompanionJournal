@@ -554,10 +554,8 @@ local function Teller(person, voice, player)
         text = Cap(text):gsub("{[pqn]:[^}]*}", function(span) spans[#spans + 1] = span; return "\1" .. #spans .. "\2" end)
         text = text:gsub("([%.!%?]%s+)(%l)", function(stop, letter) return stop .. letter:upper() end)
         text = text:gsub("\1(%d+)\2", function(i) return spans[tonumber(i)] end)
-        local lastSentence = text:match("([^%.!%?]+[%.!%?]?)%s*$") or text
         self.lastFirst = Plain(text):match("^([%a']+)")
         self.lastFirst = self.lastFirst and self.lastFirst:lower()
-        if lastSentence ~= text then self.lastFirst = self.lastFirst end
         -- the bans wait until the line is written (Add); a dropped line bans nothing.
         self.pendingTokens = tokens
         for _ in text:gmatch("road") do self.roads = (self.roads or 0) + 1 end
@@ -959,7 +957,10 @@ end
 local PLAN_OPEN = {open = true, day = true, prologue = true, recap = true, greeting = true}
 -- (connectives that tied a line to the one before it in the old order; wrong once it moves)
 local PLAN_LEADS = {"Then, ", "Then ", "After that, ", "Later that day, ", "Later, ", "Before long, ", "Also, "}
-local PLAN_GAP, PLAN_GAP_AFTER_DEATH, PLAN_AFTERMATH, PLAN_NEXT = 45 * 60, 20 * 60, 5 * 60, 10 * 60
+local PLAN_GAP, PLAN_NEXT = 45 * 60, 10 * 60
+-- (a true list of deeds: each part after the first opens on a past-tense verb, one of these or "-ed")
+local DEED_VERBS = {took = true, cut = true, found = true, brought = true, slew = true, made = true, gave = true, put = true,
+    led = true, freed = true, won = true, went = true, set = true}
 local HOUR_WORDS = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve"}
 -- (first words that take a small letter behind an anchor; a name keeps its capital)
 local PLAN_SMALL = {}
@@ -2408,7 +2409,6 @@ function T.ComposeRoadInner(c, lines, EpisodeAt, Place)
                 -- beyond them; a friend's keeps "new to me ... well above my level")
                 if T.BondKind(c.person) == "close" then
                     local we2 = teller.base.I == "I"
-                    local either = we2 and "either of us" or "either of you"
                     local them = we2 and "us" or "you both"
                     note = ""
                     if landsNew == #lands and #lands >= 2 then note = ", all of it new to " .. (we2 and "me" or "you")
@@ -2939,7 +2939,7 @@ local function FoldDeaths(c, lines, Live)
                 for _, o in ipairs(lines) do
                     if not raise and Live(o) and o.t and o.beat ~= "death" and o.beat ~= "rez" and o.t < g.lines[1].t - 30 and o.t > from then from = o.t + 1 end
                 end
-                local mine, hers, zones, zoneSeen, killers, subs = 0, 0, {}, {}, {}, {}
+                local mine, hers, zones, zoneSeen, killers = 0, 0, {}, {}, {}
                 for _, x in ipairs((c.f and c.f.deaths) or {}) do
                     if x.t and x.t >= from and x.t <= to then
                         if x.w == "you" then
@@ -2948,7 +2948,6 @@ local function FoldDeaths(c, lines, Live)
                         else hers = hers + 1 end
                         local z = x.z and Clean(x.z)
                         if z and not zoneSeen[z] then zoneSeen[z] = true; zones[#zones + 1] = z end
-                        subs[#subs + 1] = x.sz or false
                     end
                 end
                 local Times = function(n) return n == 1 and "once" or n == 2 and "twice" or (Words(n) .. " times") end
@@ -4197,7 +4196,6 @@ function T.ComposeTogether(c, lines)
             table.sort(order, function(a, b) return (a.t or 0) < (b.t or 0) end)
             for _, l in ipairs(order) do
                 local plain = PlainOf(l.text)
-                for who in plain:gmatch(" for ((%u[%a']+)[%.,])") do end
                 local text = l.text
                 for tail, who in l.text:gmatch("( for ([%u][%a']+))[%.,]") do
                     local w = Clean(who)
@@ -4214,7 +4212,6 @@ function T.ComposeTogether(c, lines)
         for _, l in ipairs(lines) do
             if Live(l) and (l.beat == "quests" or l.beat == "questKey") and not l.run then
                 local text = l.text
-                local head, last = text:match("^((%a+ %a+ [^%.]-), [^%.]-) and ([^%.]-)%.$")
                 local plain = PlainOf(text)
                 local commas = select(2, plain:match("^[^%.]*"):gsub(",", ""))
                 if commas >= 1 and plain:match("^[^%.]*%.$") and plain:find(" and ", 1, true) then
@@ -4226,13 +4223,11 @@ function T.ComposeTogether(c, lines)
                         for piece in (front .. ","):gmatch("(.-),%s*") do parts[#parts + 1] = piece end
                         parts[#parts + 1] = lastPart
                     end
-                    -- (only a true list of deeds: each part after the first opens on a past-tense verb)
-                    local VERBS = {took = true, cut = true, found = true, brought = true, slew = true, made = true, gave = true, put = true,
-                        led = true, freed = true, won = true, went = true, set = true}
+                    -- (only a true list of deeds: each part after the first opens on a past-tense verb, DEED_VERBS)
                     local deeds = #parts >= 3 and parts[1]:match("^%a*%s?[Ww]e ") ~= nil
                     for i = 2, #parts do
                         local w = (parts[i]:gsub("^then ", "")):match("^(%l+)")
-                        if not w or not (w:find("ed$") or VERBS[w]) then deeds = false end
+                        if not w or not (w:find("ed$") or DEED_VERBS[w]) then deeds = false end
                     end
                     if deeds then
                         Rewrite(l, parts[1] .. " and " .. (parts[2]:gsub("^then ", "")) .. ".")
@@ -4370,7 +4365,7 @@ function T.ComposeTogetherAfter(c, out, beats)
             -- carries me, not us; and the line keeps "In X," only when we are its subject, never to put
             -- a speaker somewhere he was not, "In Silverpine Forest, Bethor knew ...")
             local we = teller.base.I == "I"
-            local Iw, Wew = we and "I" or "You", we and "We" or "You"
+            local Wew = we and "We" or "You"
             -- (round 23: a close bond's bridge names the two, the friend's says "we": never the same sentence)
             if T.BondKind(c.person) == "close" then Wew = OthersAt(t2) and Party(t1, t2, true) or Cap(teller.base.pairNamed) end
             local bridge
@@ -8806,7 +8801,6 @@ function T.TellOnce(person, days, voice, player, brief)
                         passage[#passage + 1] = outcome
                         if brief and not keep[chosen] then
                             -- (dropped from Highlights: the day line keeps "finished X"; the next scene goes where this one would have)
-                            anchor, previousTitle, previousScene, previousStory = at, quest.title, quest.scene, qs
                             passage = {}
                             history.questLore[quest.qid or quest.title] = "dropped"
                         else
