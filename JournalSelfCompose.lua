@@ -4562,7 +4562,7 @@ function C.Apply(ctx)
                         return (h_.stopN - 1) % 3 + 1
                     end)()] .. stop))
                 tail = tail:gsub("^ ", "")
-                text = Cap(tail) .. "."
+                text = Cap(tail)
             end
             text = text:gsub("^(%l)", string.upper) .. "."
             local newTail = {}
