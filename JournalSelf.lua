@@ -1347,9 +1347,12 @@ A.SelfCheckHome = CheckHome
 -- Class milestones from the spells you know.
 local function CheckSpells()
     local known = IsPlayerSpell or IsSpellKnown
-    if not known then return end
+    local firsts = Firsts()
+    if not known or not firsts then return end
     for id, info in pairs(CLASS_SPELLS) do
-        if Ask(known, id) == true then First("class:" .. info[1], {d = "class", z = info[1], gate = info[2]}) end
+        -- (a first already kept needs no spell check)
+        local key = "class:" .. info[1]
+        if not firsts[key] and Ask(known, id) == true then First(key, {d = "class", z = info[1], gate = info[2]}) end
     end
 end
 local restedAt = setmetatable({}, {__mode = "k"})
