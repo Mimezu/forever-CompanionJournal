@@ -882,7 +882,7 @@ local function TidyMoves(text, h)
     do
         local from = 1
         while true do
-            local a, b, name, place = text:find("I [%a ]- ({n:[^}]+}) in t?h?e? ?{p:([^}]+)}%.", from)
+            local a, b, place = text:find("I [%a ]- {n:[^}]+} in t?h?e? ?{p:([^}]+)}%.", from)
             if not a then break end
             local prev = text:sub(1, a - 1):gsub("%s+$", "")
             local sentence = prev:match("[%.!]%s+([^%.!]+%.)$") or prev
@@ -929,17 +929,13 @@ local function TidyMoves(text, h)
             if not a then break end
             a = a + 1
             while text:sub(a, a):match("%s") do a = a + 1 end
-            if true then
-                local before = text:sub(1, a - 1)
-                local said = before:find("{p:" .. place .. "}, new to", 1, true) or before:find("{p:" .. place .. "}, where I had never been", 1, true)
-                    or before:find("{p:" .. place .. "}, where we had never been", 1, true) or before:find("{p:" .. place .. "} was new to", 1, true)
-                    or before:find("{p:" .. place .. "} were new to", 1, true)
-                if said then
-                    text = before .. text:sub(b + 1):gsub("^ +", "")
-                    from = a
-                else
-                    from = b + 1
-                end
+            local before = text:sub(1, a - 1)
+            local said = before:find("{p:" .. place .. "}, new to", 1, true) or before:find("{p:" .. place .. "}, where I had never been", 1, true)
+                or before:find("{p:" .. place .. "}, where we had never been", 1, true) or before:find("{p:" .. place .. "} was new to", 1, true)
+                or before:find("{p:" .. place .. "} were new to", 1, true)
+            if said then
+                text = before .. text:sub(b + 1):gsub("^ +", "")
+                from = a
             else
                 from = b + 1
             end
