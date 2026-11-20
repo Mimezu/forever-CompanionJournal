@@ -512,14 +512,5 @@ combatWatcher:SetScript("OnEvent", function(self)
     waitingForCombat = false
     A.RefreshGroupPrompt()
 end)
-function A.ShowGroupPrompt()
-    if InCombatLockdown and InCombatLockdown() then
-        A.RefreshGroupPrompt()
-        if not waitingForCombat then
-            waitingForCombat = true
-            combatWatcher:RegisterEvent("PLAYER_REGEN_ENABLED")
-        end
-        return
-    end
-    A.RefreshGroupPrompt()
-end
+-- (in combat, RefreshGroupPrompt hides the prompt and waits for combat to end)
+function A.ShowGroupPrompt() A.RefreshGroupPrompt() end
