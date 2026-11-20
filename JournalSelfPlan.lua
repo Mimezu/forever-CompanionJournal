@@ -25,7 +25,6 @@ for word in ("Scarlet Scourge Forsaken Deathguard Deathguards Executor Captain L
     .. "Farmstead Lake Rest Tower Camp Village Glades Quarter Watch Graves Haunt Bridge Farm Mass Then After There"):gmatch("%S+") do
     STOP[word] = true
 end
-local HOURS = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve"}
 
 local function Plain(text) return (tostring(text or ""):gsub("{%a:([^}]*)}", "%1")) end
 local function WordCount(text) local n = 0; for _ in Plain(text):gmatch("%S+") do n = n + 1 end; return n end
