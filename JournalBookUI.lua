@@ -3131,11 +3131,15 @@ if warmer then
     warmer:RegisterEvent("PLAYER_ENTERING_WORLD")
     warmer:SetScript("OnEvent", function() if C_Timer and C_Timer.After then C_Timer.After(20, WarmOwn) end end)
 end
-local baseRefresh = A.RefreshJournal
+-- (new lines in a journal: the open book redraws, and the minimap dot follows at most once a few
+-- seconds)
+local pendingDot = false
 function A.RefreshJournal(person, scrollToEnd)
-    if baseRefresh then baseRefresh(person, scrollToEnd) end
     if book and book:IsShown() and ShowsJournalOf(person, Shown()) then A.RefreshBook()
     elseif person and person.self then WarmSoon() end
+    if pendingDot or not (C_Timer and C_Timer.After) then return end
+    pendingDot = true
+    C_Timer.After(3, function() pendingDot = false; A.UpdateBookMinimap() end)
 end
 
 -- The new-chapter notice, when you rest (an inn, a city) and today's chapter is new.
@@ -3171,7 +3175,9 @@ local function ShowNotice(day)
 end
 local watcher = CreateFrame("Frame")
 watcher:RegisterEvent("PLAYER_UPDATE_RESTING")
-watcher:SetScript("OnEvent", function()
+watcher:RegisterEvent("PLAYER_ENTERING_WORLD")
+watcher:SetScript("OnEvent", function(_, event)
+    if event == "PLAYER_ENTERING_WORLD" then A.UpdateBookMinimap(); return end
     local db = A.db
     if not db or not db.bookNotice then return end
     if not (IsResting and IsResting()) then return end
@@ -3237,21 +3243,6 @@ function A.UpdateBookMinimap()
     minimap:Show()
     minimap.dot:SetShown(#AllUnread() > 0)
 end
--- (new lines in a journal: the dot, at most once a few seconds)
-local pendingDot = false
-local journalRefresh = A.RefreshJournal
-function A.RefreshJournal(person, scrollToEnd)
-    if journalRefresh then journalRefresh(person, scrollToEnd) end
-    if pendingDot or not (C_Timer and C_Timer.After) then return end
-    pendingDot = true
-    C_Timer.After(3, function() pendingDot = false; A.UpdateBookMinimap() end)
-end
-watcher:RegisterEvent("PLAYER_ENTERING_WORLD")
-local baseWatch = watcher:GetScript("OnEvent")
-watcher:SetScript("OnEvent", function(self, event, ...)
-    if event == "PLAYER_ENTERING_WORLD" then A.UpdateBookMinimap(); return end
-    return baseWatch(self, event, ...)
-end)
 
 -- The gamepad (scheme B), while the book is open in the gamepad interface:
 -- D-pad left/right, the contents or the page; up/down, move in the list or
