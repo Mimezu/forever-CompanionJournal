@@ -685,7 +685,8 @@ local function Crafted(spellID)
     if A.MoreMomentsOn() and C_TradeSkillUI and C_TradeSkillUI.GetRecipeOutputItemData then
         local output = Ask(C_TradeSkillUI.GetRecipeOutputItemData, spellID)
         local link = type(output) == "table" and (Text(output.hyperlink) or (Public(output.itemID) and tonumber(output.itemID))) or nil
-        local name, quality = link and ItemInfo(link)
+        local name, quality
+        if link then name, quality = ItemInfo(link) end
         if name and quality and quality >= 4 then First("craftepic", {d = "craftepic", z = name, n = profession}) end
     end
 end
