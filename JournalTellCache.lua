@@ -220,6 +220,11 @@ local function Start()
 end
 local function Finish(current, result)
     job = nil
+    -- (asked for again while it ran: check once more, with the newest request; queued before the
+    -- ready callbacks, so a request they make merges with it instead of checking the book twice)
+    if current.again then
+        table.insert(queue, 1, current.again)
+    end
     local fire = false
     if type(result) == "table" and current.key then
         Remember(current.key, result, current.ident, current.days)
@@ -229,10 +234,6 @@ local function Finish(current, result)
         fire = true
     end
     if fire then for _, ready in ipairs(current.ready) do pcall(ready) end end
-    -- (asked for again while it ran: check once more, with the newest request)
-    if current.again then
-        table.insert(queue, 1, current.again)
-    end
 end
 function Run()
     if not job then Start() end
