@@ -20,7 +20,6 @@ local FAINT = {0.54, 0.42, 0.26}
 local RUBRIC = {0.49, 0.11, 0.04}
 local CHAPTER = {0.42, 0.10, 0.04}
 local BOOK_MARKUP = {p = RUBRIC, q = SOFT} -- places and foes in red, quests softer
-local DIARY_MARKUP = BOOK_MARKUP             -- the diary colors places and foes too
 local FAINT_CODE = "|cff8a6b42"
 
 -- Fonts: Friz (the interface), Morpheus (the game's books), Arial Narrow
@@ -66,7 +65,6 @@ end
 
 local S = {}
 A.JournalStyles = S
-local DropCap
 
 local function Colored(text, colors) return A.JournalColored(text, colors) end
 local function Entries(scene) return #scene.entries > 0 and scene.entries or nil end
@@ -116,7 +114,7 @@ local function Item(ctx, block, i, x, y, width, glyph, text, color)
 end
 -- A small photo of a moment (a death, a level): the picture in a thin ink frame, centred
 -- in the width; a click opens its card. One solid piece: a page never cuts it.
-local PHOTO_W, PHOTO_H = 200, 100
+local PHOTO_W = 200
 local function Photo(ctx, x, y, width, p)
     local block = ctx.Block()
     local w = math.min(PHOTO_W, width - 8)
@@ -392,30 +390,6 @@ local DROP_SIZE = 46   -- the drop cap's font size
 local DROP_LINES = 2   -- lines set beside it
 local DROP_RAISE = 7   -- lifts the capital to the first line's cap height
 local DROP_GAP = 5
--- One markup tag per word, so the text can be cut between any two words.
-local function SplitWords(markup)
-    local names = {}
-    markup = markup:gsub("{([pqn]):([^}]*)}", function(kind, value)
-        local key = A.JournalNameTarget(kind, value)
-        if key then
-            return (value:gsub("%S+", function(word)
-                names[#names + 1] = {text = word, key = key}
-                return "\1" .. #names .. "\2"
-            end))
-        end
-        return (value:gsub("%S+", function(word) return "{" .. kind .. ":" .. word .. "}" end))
-    end)
-    local words, firstName = {}, nil
-    for word in markup:gmatch("%S+") do
-        local id, tail = word:match("^\1(%d+)\2(.*)$")
-        if #words == 0 and id then firstName = {text = names[tonumber(id)].text, key = names[tonumber(id)].key, tail = tail} end
-        words[#words + 1] = word:gsub("\1(%d+)\2", function(n)
-            local name = names[tonumber(n)]
-            return A.JournalTextLink(name.text, name.key)
-        end)
-    end
-    return words, firstName
-end
 -- The first letter of a word, and what is left of the word (markup kept).
 local function Initial(word)
     local kind, value, tail = word:match("^{([pqn]):([^}]*)}(.*)$")
@@ -425,40 +399,6 @@ local function Initial(word)
     local rest = text:sub(#initial + 1)
     if kind then rest = (rest ~= "" and ("{" .. kind .. ":" .. rest .. "}") or "") .. tail end
     return initial, rest
-end
--- A paragraph opened by a red drop cap: as many words as fit beside it, the
--- rest below at full width. Returns the height.
-DropCap = function(ctx, block, width, markup, font, spacing, colors)
-    local words, firstName = SplitWords(markup)
-    local initial, rest = Initial(firstName and firstName.text or words[1] or "")
-    if not initial then
-        return (Paragraph(ctx, block, "text", font, INK, spacing, 0, 0, width, Colored(markup, colors)))
-    end
-    words[1] = firstName and (A.JournalTextLink(rest, firstName.key) .. firstName.tail) or rest
-    local cap = ctx.Text(block, "cap", Font("book", DROP_SIZE), RUBRIC)
-    cap:SetPoint("TOPLEFT", 0, DROP_RAISE)
-    Fit(cap, initial, 80)
-    local indent = math.ceil(cap:GetStringWidth() or 30) + DROP_GAP
-    if firstName then cap:SetText(A.JournalTextLink(initial, firstName.key)) end
-    local capHeight = (cap:GetStringHeight() or DROP_SIZE) - DROP_RAISE - 6
-    local function Join(from, to)
-        local parts = {}
-        for n = from, to do if words[n] ~= "" then parts[#parts + 1] = words[n] end end
-        return table.concat(parts, " ")
-    end
-    -- The most words that stay within DROP_LINES beside the capital.
-    local low, high = 1, #words
-    while low < high do
-        local mid = math.floor((low + high + 1) / 2)
-        if ctx.Lines(font, spacing, width - indent, Colored(Join(1, mid), colors)) <= DROP_LINES then low = mid else high = mid - 1 end
-    end
-    local h = Paragraph(ctx, block, "text", font, INK, spacing, indent, 0, width - indent, Colored(Join(1, low), colors))
-    h = math.max(h, capHeight)
-    if low < #words then
-        local more = Paragraph(ctx, block, "more", font, INK, spacing, 0, -(h + spacing), width, Colored(Join(low + 1, #words), colors))
-        h = h + spacing + more
-    end
-    return h
 end
 -- Handwritten underlines: the diary keeps every word in ink and underlines
 -- places and foes (red) and quests (faint brown) with a quill stroke. The text
@@ -603,15 +543,8 @@ function S.d(ctx, days, person, mode)
                 y = y - 2 - RuledQuote(ctx, 18, y - 2, width - 18, p.quote, p.entries, Font("friz", 13), 4) - 10
             else
                 local block = ctx.Block(p.entries, p.what)
-                if ctx.Width then
-                    -- In ink, names underlined by hand.
-                    h = InkParagraph(ctx, block, Font("dialogue", BodySize(ctx)), BodySpacing(ctx), width, p.text, first)
-                elseif first then
-                    h = DropCap(ctx, block, width, p.text, Font("dialogue", BodySize(ctx)), BodySpacing(ctx), DIARY_MARKUP)
-                else
-                    h = Paragraph(ctx, block, "text", Font("dialogue", BodySize(ctx)), INK, BodySpacing(ctx), 0, 0, width,
-                        Colored(p.text, DIARY_MARKUP))
-                end
+                -- In ink, names underlined by hand.
+                h = InkParagraph(ctx, block, Font("dialogue", BodySize(ctx)), BodySpacing(ctx), width, p.text, first)
                 ctx.Place(block, 0, y, width, h)
                 y = y - h - ParagraphGap(ctx)
                 first = false
