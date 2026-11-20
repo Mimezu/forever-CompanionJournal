@@ -155,7 +155,9 @@ local function Mark()
         if child.parent == plate and child ~= plate.UnitFrame and child.textures then return child.textures[1] end
     end
 end
+aeryn.seen, aeryn.zone = nil, nil
 plateEvents.scripts.OnEvent(plateEvents, "NAME_PLATE_UNIT_ADDED", "nameplate1")
+check(aeryn.seen ~= nil and aeryn.zone == "Durotar", "without Forever Names, a plate notes when and where you saw them")
 local mark = Mark()
 check(mark and mark.shown, "an icon beside Blizzard's name")
 check(mark.texturePath:find("moon", 1, true), "their glyph")
@@ -187,6 +189,9 @@ aeryn.glyph = "moon"; A.RefreshPlateIcons()
 ForeverNamesAPI = {version = 1, OwnsUnit = function(unit) return unit == "nameplate1" end}
 A.RefreshPlateIcons()
 equal(mark.shown, false, "no double icon where Forever Names labels the plate")
+aeryn.seen = nil
+plateEvents.scripts.OnEvent(plateEvents, "NAME_PLATE_UNIT_ADDED", "nameplate1")
+equal(aeryn.seen, nil, "with Forever Names, it notes the sighting, not our plates")
 ForeverNamesAPI = nil
 A.RefreshPlateIcons()
 check(mark.shown, "back beside Blizzard's name without it")

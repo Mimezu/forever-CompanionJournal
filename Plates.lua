@@ -93,6 +93,8 @@ events:SetScript("OnEvent", function(_, event, unit)
     if event == "NAME_PLATE_UNIT_ADDED" then
         tracked[unit] = Lookup(unit)
         if tracked[unit] then Update(unit) else Hide(PlateFor(unit)) end
+        -- (without Forever Names, a plate is where "last seen" comes from; with it, it tells us)
+        if tracked[unit] and not A.Names() and A.NotePersonSeen then A.NotePersonSeen(tracked[unit], unit) end
     elseif event == "NAME_PLATE_UNIT_REMOVED" then
         tracked[unit] = nil
         Hide(PlateFor(unit))
