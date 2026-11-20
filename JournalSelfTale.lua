@@ -5326,8 +5326,6 @@ function ST.Tell(person, days, brief, retell, capture)
                     return #kept > 0 and kept or list
                 end
                 -- A quest with a story (Lore): why it was asked, or what came of it, once a life.
-                local loreQuest, loreStory, loreWhy, loreCallback
-                local questBeats, narratedQuests = {}, {}
                 local selectedQuests = {}
                 local questPlaces = {}
                 local function AnchorQuestPlace(start, quest, at)
@@ -5417,51 +5415,6 @@ function ST.Tell(person, days, brief, retell, capture)
                         if event.first > at then event.first = event.first + count end
                         if event.last > at then event.last = event.last + count end
                     end
-                end
-                local function OtherQuestsBefore(nextQuest)
-                    -- Uncurated work belongs at its recorded position, not in
-                    -- a tail list after a later authored chain resolution.
-                    -- Batch neighboring fallbacks, but never across a selected
-                    -- quest or a recorded conflict between their completions.
-                    local group = {}
-                    local function FlushOtherQuests()
-                        if #group == 0 then return end
-                        local names = {}
-                        for _, q in ipairs(group) do names[#names + 1] = Q(q.title) end
-                        local start = #out
-                        sayTime = group[#group].t
-                        if #group == 1 then
-                            st.quest = names[1]
-                            Say(teller:Say("questOne", Here(W.questOne), st), true, "questStart")
-                        else
-                            st.quests = List(names)
-                            local few = Here(W.questsFew)
-                            if #group ~= 2 then
-                                local kept = {}
-                                for _, line in ipairs(few) do if not line:find("^Between") then kept[#kept + 1] = line end end
-                                if #kept > 0 then few = kept end
-                            end
-                            Say(teller:Say("questsFew", few, st), true, "questStart")
-                        end
-                        PlaceQuestPassage(start, group[1])
-                        group = {}
-                    end
-                    for _, q in ipairs(s.quests) do
-                        if q == nextQuest then break end
-                        if not selectedQuests[q] and not narratedQuests[q] then
-                            local previous = group[#group]
-                            if previous then
-                                for _, event in ipairs(questAnchors) do
-                                    if event.t > (previous.t or 0) and event.t <= (q.t or 0) then FlushOtherQuests(); break end
-                                end
-                            end
-                            narratedQuests[q] = true
-                            group[#group + 1] = q
-                        elseif selectedQuests[q] then
-                            FlushOtherQuests()
-                        end
-                    end
-                    FlushOtherQuests()
                 end
                 -- The quests, told from my side (DESIGN §3.0, 2026-11-07). The chapter's plan
                 -- (dayPlan, QD.Plan) chose the few worth telling; each is one moment in the
