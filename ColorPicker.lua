@@ -44,11 +44,34 @@ local function CreateWheel(parent, name, skin)
         frame:SetBackdropColor(0.06, 0.06, 0.06, 0.98)
         heading:SetPoint("TOP", 0, -10)
     end
+    -- A drag moves the colour every frame: the swatch follows at once, the setting (which
+    -- redraws plates, the book and Forever Names) at most every 0.05 s, and once more on close.
+    local pendingRGB = {}
+    local function Flush()
+        frame.flushing = nil
+        local p = frame.pending
+        frame.pending = nil
+        if p and parent:IsShown() and (not parent.IsVisible or parent:IsVisible()) then
+            frame.changing = true
+            parent:Set(p[1], p[2], p[3])
+            frame.changing = nil
+        end
+    end
     local function Changed(r, g, b)
         if frame.syncing or not frame.original or not parent:IsShown() then return end
-        frame.changing = true
-        parent:Set(r, g, b)
-        frame.changing = nil
+        if not (C_Timer and C_Timer.After) then
+            frame.changing = true
+            parent:Set(r, g, b)
+            frame.changing = nil
+            return
+        end
+        if parent.preview then parent.preview:SetColorTexture(r, g, b) end
+        pendingRGB[1], pendingRGB[2], pendingRGB[3] = r, g, b
+        frame.pending = pendingRGB
+        if not frame.flushing then
+            frame.flushing = true
+            C_Timer.After(0.05, Flush)
+        end
     end
     local ok, selector = pcall(CreateFrame, "ColorSelect", nil, frame)
     local native = ok and selector
@@ -86,7 +109,9 @@ local function CreateWheel(parent, name, skin)
             slider:SetMinMaxValues(0, 1); slider:SetValueStep(0.001)
             if slider.SetObeyStepOnDrag then slider:SetObeyStepOnDrag(true) end
             slider:SetScript("OnValueChanged", function(_, value)
-                local color = {parent.r, parent.g, parent.b}
+                -- (from a colour not applied yet, when there is one: another channel just moved)
+                local p = frame.pending
+                local color = p and {p[1], p[2], p[3]} or {parent.r, parent.g, parent.b}
                 color[c] = value
                 Changed(color[1], color[2], color[3])
             end)
@@ -110,6 +135,8 @@ local function CreateWheel(parent, name, skin)
         self.syncing = nil
     end
     function frame:Close(commit)
+        -- (the last colour of a drag first: Done keeps it, Cancel's restore comes after it)
+        Flush()
         local original = self.original
         self.original = nil
         self:Hide()
@@ -121,6 +148,7 @@ local function CreateWheel(parent, name, skin)
     end
     function frame:Open()
         self:Close(false)
+        self.pending = nil
         self.original = {parent.r, parent.g, parent.b}
         self:SetColor(parent.r, parent.g, parent.b)
         self:SetFrameLevel(parent:GetFrameLevel() + 10)

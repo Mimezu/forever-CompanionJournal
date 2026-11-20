@@ -8,7 +8,12 @@ local function same(actual, expected)
 end
 for _, addon in ipairs({"CompanionJournal", "ForeverNames"}) do
     for _, widget in ipairs({"native", "missing", "unsupported"}) do
-        for _, childFirst in ipairs({false, true}) do
+        -- (deferred: Companion Journal's wheel applies a drag through C_Timer, CJ-ui-06)
+        for _, combo in ipairs(addon == "CompanionJournal" and {{false}, {true}, {false, true}, {true, true}} or {{false}, {true}}) do
+            local childFirst, deferred = combo[1], combo[2] or false
+            local timers = {}
+            C_Timer = deferred and {After = function(_, fn) timers[#timers + 1] = fn end} or nil
+            local function RunTimers() local list = timers; timers = {}; for _, fn in ipairs(list) do fn() end end
             local M = {}; M.__index = M
             local function object(parent)
                 local v = setmetatable({parent = parent, children = {}, scripts = {}, shown = true, enabled = true}, M)
@@ -106,6 +111,7 @@ for _, addon in ipairs({"CompanionJournal", "ForeverNames"}) do
                 else
                     wheel.sliders[1]:SetValue(r); wheel.sliders[2]:SetValue(g); wheel.sliders[3]:SetValue(b)
                 end
+                if deferred then RunTimers() end
             end
             change(.123, .456, .789)
             check(same(value, {.123, .456, .789}), "continuous color changes preview live")
@@ -139,6 +145,34 @@ for _, addon in ipairs({"CompanionJournal", "ForeverNames"}) do
             picker = open(anchorA, {current = "class", set = function(v) mode = v end})
             click(picker.modeButtons[1])
             check(mode == "custom", "selected dynamic mode can return to custom color")
+            if deferred then
+                -- A drag: the swatch follows every move, the setting once after them.
+                local function move(r)
+                    if wheel.selector then wheel.selector:SetColorRGB(r, .5, .4) else wheel.sliders[1]:SetValue(r) end
+                end
+                picker = open(); click(picker.wheel)
+                local before, count = {unpack(value)}, applies
+                move(.6); move(.61)
+                check(same(value, before) and applies == count and #timers == 1, "a drag is applied once, after the moves")
+                check(math.abs(picker.preview.color[1] - .61) < 1e-6, "the swatch follows every move")
+                RunTimers()
+                check(math.abs(value[1] - .61) < 1e-6 and applies == count + 1, "then the setting follows")
+                move(.7); click(wheel.done)
+                check(math.abs(value[1] - .7) < 1e-6, "Done keeps the last colour of a drag")
+                RunTimers()
+                check(math.abs(value[1] - .7) < 1e-6, "a late timer changes nothing after Done")
+                click(picker.wheel); move(.8); click(wheel.cancelButton)
+                check(math.abs(value[1] - .7) < 1e-6, "Cancel restores the colour from before the wheel")
+                RunTimers()
+                check(math.abs(value[1] - .7) < 1e-6, "a late timer does not bring the cancelled colour back")
+                picker:Cancel()
+                local orig = {unpack(value)}
+                picker = open(); click(picker.wheel); move(.9); ownerA:Hide()
+                check(same(value, orig), "closing the window mid-drag restores the original colour")
+                RunTimers()
+                check(same(value, orig), "and a late timer does not apply the drag")
+                ownerA:Show()
+            end
         end
     end
 end

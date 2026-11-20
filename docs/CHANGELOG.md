@@ -9,6 +9,7 @@
 - Faster: unread dot, storyteller, set and spell checks, map replay
 - Dead code removed; the text is the same as before
 - Own book: a zone or town is never kept as a "promised" name
+- Colour wheel: a drag redraws plates and the book at most 20 times a second
 
 ## 1.55.1 (2026-11-20)
 
