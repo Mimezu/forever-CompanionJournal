@@ -2999,14 +2999,20 @@ local function FoldDeaths(c, lines, Live)
                     local raises = {}
                     for rt, who in pairs((c.f and c.f.rezBy) or {}) do raises[#raises + 1] = {t = rt, by = who} end
                     for _, x in ipairs(c.ownJournal or {}) do if x.k == "rez" and x.by and x.t then raises[#raises + 1] = {t = x.t, by = Clean(x.by)} end end
+                    -- (who of my list was with me when, cleaned once for every raise)
+                    local withs = {}
+                    for _, x2 in ipairs(c.ownJournal or {}) do
+                        if x2.k == "with" and x2.n then withs[#withs + 1] = {n = (Clean(x2.n):gsub("%-.*$", "")):lower(), t = x2.t or 0, e = x2.e or x2.t or 0} end
+                    end
                     for _, r in ipairs(raises) do
                         local rt, who = r.t, r.by
                         if type(rt) == "number" and rt >= from and rt <= to + 60 then
                             local first = tostring(who):match("^(%S+)")
                             -- (only one of the party: a stranger's raise has its own line)
                             local inParty = first and first:lower() == PlainOf(name):lower()
-                            for _, x2 in ipairs(c.ownJournal or {}) do
-                                if first and x2.k == "with" and x2.n and (Clean(x2.n):gsub("%-.*$", "")):lower() == first:lower() and (x2.t or 0) <= rt and (x2.e or x2.t or 0) >= rt then inParty = true end
+                            if first and not inParty then
+                                local fl = first:lower()
+                                for _, w in ipairs(withs) do if w.n == fl and w.t <= rt and w.e >= rt then inParty = true; break end end
                             end
                             if first and inParty and not by[first] then by[first] = true; by[#by + 1] = first end
                         end
@@ -3306,7 +3312,7 @@ function T.OwnSpine(c, lines, Live)
                             for _, y in ipairs(c.ownJournal or {}) do
                                 if y.k == "quest" and y.t and y.t > x.t and y.t < q.t then
                                     local st3 = QD.Story({title = y.d, qid = y.qid})
-                                    if st3 and st3.thread == story.thread then between = true end
+                                    if st3 and st3.thread == story.thread then between = true; break end
                                 end
                             end
                             -- (the step told inside this scene: within the hour before, or on a night before)
