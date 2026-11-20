@@ -51,11 +51,15 @@ local function RecordIndex(journal)
     -- (the quests, in the record's order; the words of its places; each quest's latest hand-in
     -- time; the lines with a time and a zone, by time and then by place in the record)
     local quests, placeWords, done, timed = {}, {}, {}, {}
+    -- (each field on its own: a list {e.sz, e.z, ...} stopped at the first nil, so a line without
+    -- a sub-zone gave none of its place words)
+    local function Words_(field)
+        if type(field) == "string" then for word in field:gmatch("%a+") do placeWords[word] = true end end
+    end
     for i, e in ipairs(journal) do
         if e.k == "quest" and e.t then quests[#quests + 1] = e end
-        for _, field in ipairs({e.sz, e.z, (e.k == "town" or e.k == "rest" or e.k == "cave" or e.k == "first") and e.d or nil}) do
-            if type(field) == "string" then for word in field:gmatch("%a+") do placeWords[word] = true end end
-        end
+        Words_(e.sz); Words_(e.z)
+        if e.k == "town" or e.k == "rest" or e.k == "cave" or e.k == "first" then Words_(e.d) end
         if e.k == "quest" and tonumber(e.qid) then done[tonumber(e.qid)] = e.t or 0 end
         if e.t and e.z then timed[#timed + 1] = {e = e, i = i} end
     end

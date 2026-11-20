@@ -8,6 +8,7 @@
 - Two death photos in one paragraph: in text order
 - Faster: unread dot, storyteller, set and spell checks, map replay
 - Dead code removed; the text is the same as before
+- Own book: a zone or town is never kept as a "promised" name
 
 ## 1.55.1 (2026-11-20)
 
