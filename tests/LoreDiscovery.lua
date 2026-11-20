@@ -139,6 +139,14 @@ Event("QUEST_LOG_UPDATE")
 Check(A.db.characters.Neige.loreDiscoveries.revision == revision, "recovery is idempotent")
 completed = {}; Event("QUEST_LOG_UPDATE")
 Check(A.LoreKnowledge().masquerade_aftermath, "temporary negative API does not revoke known history")
+do
+    Reset(); completed[6403] = true
+    A.RecoverLoreDiscoveries()
+    local first = queries
+    queries = 0
+    A.RecoverLoreDiscoveries()
+    Check(first > 1 and queries == first - 1, "a completion already recorded is not asked about again")
+end
 Reset(); A.db.characters.Neige.loreDiscoveries = {presented = {[6403] = {origin = "game-history"}}}
 Present(6403)
 Check(A.LoreKnowledge().prestor_identity and A.db.characters.Neige.loreDiscoveries.presented[6403].origin == "quest-detail",

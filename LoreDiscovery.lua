@@ -130,8 +130,11 @@ end
 function A.RecoverLoreDiscoveries()
     local query = C_QuestLog and C_QuestLog.IsQuestFlaggedCompleted or IsQuestFlaggedCompleted
     if type(query) ~= "function" then return end
+    -- (a completion already in the ledger is not asked about again)
+    local character = Character()
+    local done = character and type(character.loreDiscoveries) == "table" and character.loreDiscoveries.completed
     for qid, stages in pairs(tracked) do
-        if stages.completed then
+        if stages.completed and not (type(done) == "table" and Evidence(done[qid], "completed")) then
             local ok, complete = pcall(query, qid)
             if ok and Public(complete) and complete == true then Record("completed", qid, "game-history") end
         end
@@ -181,8 +184,15 @@ if CreateFrame then
     for _, event in ipairs({"QUEST_DETAIL", "QUEST_TURNED_IN", "PLAYER_ENTERING_WORLD", "QUEST_LOG_UPDATE"}) do
         pcall(frame.RegisterEvent, frame, event)
     end
+    -- (QUEST_LOG_UPDATE comes in bursts while questing: one recovery two seconds after the first)
+    local pending = false
     frame:SetScript("OnEvent", function(_, event, qid)
-        if event == "QUEST_DETAIL" then
+        if event == "QUEST_LOG_UPDATE" and C_Timer and C_Timer.After then
+            if not pending then
+                pending = true
+                C_Timer.After(2, function() pending = false; A.RecoverLoreDiscoveries() end)
+            end
+        elseif event == "QUEST_DETAIL" then
             if type(GetQuestID) == "function" then
                 local ok, id = pcall(GetQuestID)
                 if ok then Record("presented", id, "quest-detail") end
