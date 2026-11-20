@@ -44,27 +44,50 @@ local function Any(text, list) for _, p in ipairs(list) do if text:find(p) then 
 -- record has the same lines (its length and its last line); the fields read here (kind, time,
 -- zones, quest) never change once a line is written.
 local recordIndex = setmetatable({}, {__mode = "k"})
+-- (each field on its own: a list {e.sz, e.z, ...} stopped at the first nil, so a line without
+-- a sub-zone gave none of its place words)
+local function Words_(placeWords, field)
+    if type(field) == "string" then for word in field:gmatch("%a+") do placeWords[word] = true end end
+end
+local function IndexLine(index, i, e)
+    if e.k == "quest" and e.t then index.quests[#index.quests + 1] = e end
+    Words_(index.placeWords, e.sz); Words_(index.placeWords, e.z)
+    if e.k == "town" or e.k == "rest" or e.k == "cave" or e.k == "first" then Words_(index.placeWords, e.d) end
+    if e.k == "quest" and tonumber(e.qid) then index.done[tonumber(e.qid)] = e.t or 0 end
+end
 local function RecordIndex(journal)
     local n = #journal
     local index = recordIndex[journal]
     if index and index.n == n and index.last == journal[n] then return index end
+    -- Lines added at the end since (the record kept as it was): only those are read, each timed
+    -- one placed after every line of the same time or earlier (where the sort puts it, being
+    -- the latest in the record).
+    if index and index.n < n and index.n > 0 and journal[index.n] == index.last then
+        local timed = index.timed
+        for i = index.n + 1, n do
+            local e = journal[i]
+            IndexLine(index, i, e)
+            if e.t and e.z then
+                local lo, hi = 1, #timed + 1
+                while lo < hi do
+                    local mid = math.floor((lo + hi) / 2)
+                    if timed[mid].e.t <= e.t then lo = mid + 1 else hi = mid end
+                end
+                table.insert(timed, lo, {e = e, i = i})
+            end
+        end
+        index.n, index.last = n, journal[n]
+        return index
+    end
     -- (the quests, in the record's order; the words of its places; each quest's latest hand-in
     -- time; the lines with a time and a zone, by time and then by place in the record)
-    local quests, placeWords, done, timed = {}, {}, {}, {}
-    -- (each field on its own: a list {e.sz, e.z, ...} stopped at the first nil, so a line without
-    -- a sub-zone gave none of its place words)
-    local function Words_(field)
-        if type(field) == "string" then for word in field:gmatch("%a+") do placeWords[word] = true end end
-    end
+    index = {n = n, last = journal[n], quests = {}, placeWords = {}, done = {}, timed = {}}
+    local timed = index.timed
     for i, e in ipairs(journal) do
-        if e.k == "quest" and e.t then quests[#quests + 1] = e end
-        Words_(e.sz); Words_(e.z)
-        if e.k == "town" or e.k == "rest" or e.k == "cave" or e.k == "first" then Words_(e.d) end
-        if e.k == "quest" and tonumber(e.qid) then done[tonumber(e.qid)] = e.t or 0 end
+        IndexLine(index, i, e)
         if e.t and e.z then timed[#timed + 1] = {e = e, i = i} end
     end
     table.sort(timed, function(a, b) if a.e.t ~= b.e.t then return a.e.t < b.e.t end return a.i < b.i end)
-    index = {n = n, last = journal[n], quests = quests, placeWords = placeWords, done = done, timed = timed}
     recordIndex[journal] = index
     return index
 end
@@ -370,6 +393,7 @@ local function Select(ctx, lines, inRun, episodes, D)
         end
         sel.promised = later
     end
+    if A.TellStep then A.TellStep() end
     Sel.Peaks(sel)
     Sel.Choose(sel)
     Sel.Persons(sel)
@@ -1758,6 +1782,7 @@ function C.Apply(ctx)
     -- C.AdventureFacts. Strangers who stayed ten minutes and more, with work told in their time,
     -- or a named elite fought, make the stay an adventure even without a fight-type quest; the
     -- company is told by who they were or as strangers, the parting after, the foes subtly)
+    if A.TellStep then A.TellStep() end
     for _, ep in ipairs(episodes) do
         local f = ep.kind ~= "dungeon" and C.AdventureFacts(ep) or nil
         if f then
@@ -1900,6 +1925,7 @@ function C.Apply(ctx)
         end
     end
     -- (lane O8: the danger register picks the words of an adventure's and a dungeon run's sentences)
+    if A.TellStep then A.TellStep() end
     for _, ep in ipairs(episodes) do
         if ep.adventure or ep.kind == "dungeon" then
             local r = C.EpisodeDanger(ep)
@@ -1914,6 +1940,7 @@ function C.Apply(ctx)
         end
     end
     -- (round 16: the told errand's road there and back, from the record)
+    if A.TellStep then A.TellStep() end
     for _, ep in ipairs(episodes) do
         for _, sc in ipairs(ep.errands or {}) do
             if (sc.errandTold or sc.errandBare) and P.errandOut then
@@ -1964,6 +1991,7 @@ function C.Apply(ctx)
         end
     end
     local byEp = {}
+    if A.TellStep then A.TellStep() end
     for _, ep in ipairs(episodes) do byEp[ep] = {} end
     for _, l in ipairs(lines) do byEp[l.ep][#byEp[l.ep] + 1] = l end
     for _, l in ipairs(lines) do
@@ -2048,6 +2076,7 @@ function C.Apply(ctx)
         end
     end
     -- a first told twice: a line that only says the first beside a line that names the place with it
+    if A.TellStep then A.TellStep() end
     for _, l in ipairs(lines) do
         if not l.drop and not inRun[l] and l.kind == "first" and Words(l.text) <= 10 and Any(Plain(l.text):lower(), FIRST) then
             local place = l.text:match("{p:([^}]+)}")
@@ -2062,6 +2091,7 @@ function C.Apply(ctx)
         end
     end
     -- one moment, two records: the first flight and the quest whose words are that ride are one sentence
+    if A.TellStep then A.TellStep() end
     for _, l in ipairs(lines) do
         if not l.drop and l.kind == "first" and l.meta.e and l.meta.e.d == "flight" then
             for _, x in ipairs(byEp[l.ep]) do
@@ -2077,6 +2107,7 @@ function C.Apply(ctx)
         end
     end
     -- (the same for a night flight that was the first flight: one sentence)
+    if A.TellStep then A.TellStep() end
     for _, l in ipairs(lines) do
         if not l.drop and l.kind == "first" and l.meta.e and l.meta.e.d == "flight" then
             for _, x in ipairs(byEp[l.ep]) do
@@ -2136,11 +2167,13 @@ function C.Apply(ctx)
     -- the budget of grouped lines (STUDY §3.2 step 3): three an episode and one more for every
     -- hour and a half of it, the fullest kept; a line that sets up a told story is never cut
     local storyNames = {}
+    if A.TellStep then A.TellStep() end
     for _, l in ipairs(lines) do
         if not l.drop and l.kind ~= "quests" and (l.cls == "quest" or l.cls == "what") then
             for word in Plain(l.text):gmatch("%f[%a](%u%l%l%l%l+)") do storyNames[word] = true end
         end
     end
+    if A.TellStep then A.TellStep() end
     for _, ep in ipairs(episodes) do
         local folds = {}
         for _, l in ipairs(byEp[ep]) do if not l.drop and not inRun[l] and l.kind == "quests" and not l.meta.sel then folds[#folds + 1] = l end end
@@ -2307,6 +2340,7 @@ function C.Apply(ctx)
         end
     end
     -- a quest line that narrates the road into the episode's own zone, after the arrival was told
+    if A.TellStep then A.TellStep() end
     for _, l in ipairs(lines) do
         if l.cls == "quest" and not inRun[l] and l.ep.zone then
             local zone = Clean(l.ep.zone)
@@ -2359,6 +2393,7 @@ function C.Apply(ctx)
         end
     end
     -- a city quarter named in a line told outside any city (the stay contradicts it)
+    if A.TellStep then A.TellStep() end
     for _, l in ipairs(lines) do
         if l.cls == "quest" and not inRun[l] and l.text:find(" in the %u%l+ Quarter ") then
             local city = false
@@ -2369,6 +2404,7 @@ function C.Apply(ctx)
         end
     end
     -- no "also" / "after that" stitching: the order is the composer's now
+    if A.TellStep then A.TellStep() end
     for _, l in ipairs(lines) do
         if not l.drop and not inRun[l] and l.cls == "quest" then
             l.text = l.text:gsub("^We also ", "We "):gsub("^I also ", "I "):gsub("^After that, (%l)", function(c) return c:upper() end):gsub("^After this, (%l)", function(c) return c:upper() end)
@@ -2508,6 +2544,7 @@ function C.Apply(ctx)
         end
     end
     -- (lane O8: "There, Marrow joined me." while Dahlia was already with me is "joined us")
+    if A.TellStep then A.TellStep() end
     for _, l in ipairs(lines) do
         if not l.drop and l.cls == "who" and l.text:find(" joined me", 1, true) then
             local plain = Plain(l.text)
@@ -2539,6 +2576,7 @@ function C.Apply(ctx)
         end
     end
     -- a join said as a flag takes the place it happened at, when the record has one
+    if A.TellStep then A.TellStep() end
     for _, l in ipairs(lines) do
         if l.cls == "who" and not l.drop and (l.text:match(" was with me%.$") or l.text:match("^I had .- at my side%.$")) and l.s then
             local town

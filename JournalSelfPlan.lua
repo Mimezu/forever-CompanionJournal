@@ -397,8 +397,11 @@ function Sel.Budget(sel)
       -- filled; asked once a pair, not once a pair each round)
       local namedMemo = {}
       while true do
+        -- (a long day: a telling in the background may pause between picks, JournalTellCache.lua)
+        if A.TellStep then A.TellStep() end
         local best, bestScore
         for _, u in ipairs(units) do
+            if A.TellStep then A.TellStep() end
             if not u.mode and not u.must and not u.skip then
                 local score = u.score + (u.kind == "scene" and 2 or 0) - (u.nowhere and 3 or 0) + (u.after and 3 or 0)
                     + ((u.imp >= 4 and (u.spine or u.kind == "scene") or (u.spine and u.setup)) and 4 or (u.spine and 1) or 0) + (u.own and 2 or 0)
