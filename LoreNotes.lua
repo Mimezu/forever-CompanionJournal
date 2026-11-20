@@ -6130,7 +6130,147 @@ end
 -- Annotate a rendering copy only: never saved journal records. Exact case and
 -- word boundaries keep names out of larger words, while existing markup and
 -- native links remain opaque. Curated world names cannot imply quest stages.
+-- (1.54.0) The same marking, faster: the text is copied in runs up to the next character that
+-- can start a name, a markup or a link, and a name is looked up by its length instead of trying
+-- every name of the same first letter. A text marked once is kept while the names it hangs on
+-- (the book's links, your characters and list) stay the same: turning pages draws the same
+-- chapters again. A.MarkKnownLoreSlow is the old walk, for the tests that compare the two.
+local markStarts, markWords, markBuckets, markFrom, markCache, markCount, markSig, markFor, markOwn = nil, nil, nil, nil, {}, 0, nil, nil, nil
+local function SetKeys(set)
+    local keys = {}
+    for k, v in pairs(set or {}) do if v then keys[#keys + 1] = tostring(k) end end
+    table.sort(keys)
+    return table.concat(keys, "")
+end
+local function MarkTables()
+    if markBuckets and knownNameOrder and markFrom == knownNameBuckets then return end
+    if not knownNameOrder then
+        knownNameOrder = {}
+        for name, candidate in pairs(knownNames) do
+            if candidate.plain or aliases.p[Normalize(name)] == candidate.id then
+                knownNameOrder[#knownNameOrder + 1] = name
+            end
+        end
+        table.sort(knownNameOrder, function(a, b)
+            if #a ~= #b then return #a > #b end
+            return a < b
+        end)
+        knownNameBuckets = {}
+        for _, name in ipairs(knownNameOrder) do
+            local first = name:sub(1, 1)
+            local bucket = knownNameBuckets[first] or {}
+            knownNameBuckets[first] = bucket
+            bucket[#bucket + 1] = name
+        end
+    end
+    -- (each first byte: the lengths of its names, longest first, and the names as a set)
+    markBuckets = {}
+    local chars, letters = {"{", "|"}, {}
+    -- (words are what lies between spaces. A name of one word is one of the beginnings of the
+    -- text's word; a name of two, a beginning of the text's two words; a longer one starts with
+    -- the text's first two words, whole)
+    for first, names in pairs(knownNameBuckets) do
+        local single, two, more = {}, {}, {}
+        for _, name in ipairs(names) do
+            local head = name:match("^[^ ]* [^ ]*")
+            if not head then single[name] = true
+            elseif #head == #name then two[name] = true
+            else
+                more[head] = more[head] or {}
+                local list = more[head]
+                list[#list + 1] = name
+            end
+        end
+        markBuckets[first] = {single = single, two = two, more = more}
+        if first:match("[%w_]") then letters[#letters + 1] = first
+        elseif first ~= "{" and first ~= "|" then chars[#chars + 1] = first end
+    end
+    for i, c in ipairs(chars) do chars[i] = c:match("%w") and c or ("%" .. c) end
+    for i, c in ipairs(letters) do letters[i] = c:match("%w") and c or ("%" .. c) end
+    -- (markup, links and names that start with a sign; names that start with a letter only where
+    -- a word starts, as the walk below asks)
+    markStarts = "[" .. table.concat(chars) .. "]"
+    markWords = #letters > 0 and ("%f[%w_][" .. table.concat(letters) .. "]") or nil
+    markFrom = knownNameBuckets
+    markCache, markCount = {}, 0
+end
 function A.MarkKnownLore(text)
+    if type(text) ~= "string" or text == "" then return text end
+    Import()
+    local own = OwnNames()
+    MarkTables()
+    -- (what the marking hangs on besides the text: the links' names and your own names)
+    if markFor ~= A.bookLinks or markOwn ~= own then
+        local sig = SetKeys(A.bookLinks) .. "" .. SetKeys(own)
+        markFor, markOwn = A.bookLinks, own
+        if sig ~= markSig then markSig, markCache, markCount = sig, {}, 0 end
+    end
+    local kept = markCache[text]
+    if kept then return kept end
+    local out, pos, size = {}, 1, #text
+    local nextSign, nextWord = 0, markWords and 0 or false
+    while pos <= size do
+        if nextSign and nextSign < pos then nextSign = text:find(markStarts, pos) or false end
+        if nextWord and nextWord < pos then nextWord = text:find(markWords, pos) or false end
+        local nextAt = nextSign and nextWord and math.min(nextSign, nextWord) or nextSign or nextWord
+        if not nextAt then out[#out + 1] = text:sub(pos); break end
+        if nextAt > pos then out[#out + 1] = text:sub(pos, nextAt - 1); pos = nextAt end
+        local stop
+        local c = text:sub(pos, pos)
+        if c == "{" then
+            stop = text:find("}", pos + 1, true) or size
+        elseif c == "|" and text:sub(pos + 1, pos + 1) == "H" then
+            local label = text:find("|h", pos + 2, true)
+            local finish = label and text:find("|h", label + 2, true)
+            stop = finish and finish + 1 or size
+        end
+        if stop then
+            out[#out + 1] = text:sub(pos, stop)
+            pos = stop + 1
+        else
+            local matched
+            local bucket = markBuckets[c]
+            if bucket and (pos == 1 or not text:sub(pos - 1, pos - 1):match("[%w_]")) then
+                local word = text:match("^[^ ]*", pos)
+                local words = text:match("^[^ ]* [^ ]*", pos)
+                local tries = {}
+                -- (longest first: the longer names that start with these two words, in the order
+                -- kept, then the beginnings of the two words, then of the first)
+                if words then
+                    for _, name in ipairs(bucket.more[words] or {}) do tries[#tries + 1] = name end
+                    for length = #words, #word + 1, -1 do
+                        local head = words:sub(1, length)
+                        if bucket.two[head] then tries[#tries + 1] = head end
+                    end
+                end
+                for length = #word, 1, -1 do
+                    local head = word:sub(1, length)
+                    if bucket.single[head] then tries[#tries + 1] = head end
+                end
+                for _, name in ipairs(tries) do
+                    local last = pos + #name - 1
+                    if text:sub(pos, last) == name and
+                        (last == size or not text:sub(last + 1, last + 1):match("[%w_]")) then
+                        local candidate = knownNames[name]
+                        local key = name:lower()
+                        local ownName = not name:find(" ", 1, true) and own[key]
+                            and not (candidate.kind == "n" and A.bookLinks and A.bookLinks[key])
+                        out[#out + 1] = (candidate.plain or ownName) and name or
+                            "{" .. candidate.kind .. ":" .. name .. "}"
+                        pos, matched = last + 1, true
+                        break
+                    end
+                end
+            end
+            if not matched then out[#out + 1] = c; pos = pos + 1 end
+        end
+    end
+    local marked = table.concat(out)
+    if markCount >= 2000 then markCache, markCount = {}, 0 end
+    markCache[text], markCount = marked, markCount + 1
+    return marked
+end
+function A.MarkKnownLoreSlow(text)
     if type(text) ~= "string" or text == "" then return text end
     Import()
     local own = OwnNames()

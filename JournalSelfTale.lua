@@ -701,6 +701,7 @@ function ST.Profile(days)
     local p = {gather = 0, craft = 0, fish = 0, caves = 0, dungeons = 0, deaths = 0, closes = 0, explored = 0, reads = 0, duels = 0, hk = 0,
         bgs = 0, nights = 0, stretches = 0, play = 0, with = 0, quests = 0, companions = {}}
     for _, day in ipairs(days or {}) do
+        if A.TellStep then A.TellStep() end -- (a telling in the background may pause here: JournalTellCache.lua)
         for _, scene in ipairs(day.scenes or {}) do
             if scene.kind == "outing" then
                 p.stretches = p.stretches + 1
@@ -925,7 +926,9 @@ local function TidyMoves(text)
     return text
 end
 ST.TidyMoves = TidyMoves
-function ST.Tell(person, days, brief, retell)
+-- `capture` (1.54.0, for the companions' books, JournalTale's OwnTold): a table that gets, for
+-- each day, the composed lines as they leave the composer ({dayKey = {"lines", ...}}).
+function ST.Tell(person, days, brief, retell, capture)
     local W = A.SelfWords or {}
     local L = A.Lore
     local race, faction = person.race, person.faction
@@ -986,6 +989,7 @@ function ST.Tell(person, days, brief, retell)
     local threadCount, threadLast = {}, {}
     if A.QuestDeeds then
         for _, day in ipairs(days) do
+            if A.TellStep then A.TellStep() end
             for _, scene in ipairs(day.scenes) do
                 for _, q in ipairs(scene.quests or {}) do
                     local story = A.QuestDeeds.Story(q)
@@ -5945,7 +5949,13 @@ function ST.Tell(person, days, brief, retell)
                 race = race, class = person.class, titleWords = TITLE_WORDS, Companion = Companion,
                 level = stretches[#stretches] and stretches[#stretches].level or person.level,
                 seed = (person.charKey or person.name or "me") .. ":" .. tostring(retell or person.retell or 0)}) or nil
+            if capture and day and day.key then
+                capture[day.key] = capture[day.key] or {}
+                local list = capture[day.key]
+                list[#list + 1] = table.concat(out, " ")
+            end
         end
+        if A.TellStep then A.TellStep() end
         if not planned then plan.Compose() end
         if brief then
             local counts, keep = {}, {}
@@ -5985,7 +5995,7 @@ function ST.Tell(person, days, brief, retell)
                 Companion = Companion, class = person.class, faction = person.faction}
             if ST.PlanStrict then plan.text = A.SelfPlan.Apply(ctx)
             else
-                local ok, result = pcall(A.SelfPlan.Apply, ctx)
+                local ok, result = (A.TellPcall or pcall)(A.SelfPlan.Apply, ctx)
                 plan.text = ok and result or nil
             end
             -- (a day the planned telling leaves to the current teller is composed like any other)

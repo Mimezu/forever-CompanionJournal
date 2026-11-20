@@ -39,6 +39,43 @@ local function Lower(text)
     return (text:gsub("^%u", string.lower))
 end
 local function Any(text, list) for _, p in ipairs(list) do if text:find(p) then return true end end return false end
+-- What the composer reads of the whole saved record, read once per record (1.54.0): every day
+-- used to walk all of it three times (a long life: 2000 lines x 100 days). Kept while the
+-- record has the same lines (its length and its last line); the fields read here (kind, time,
+-- zones, quest) never change once a line is written.
+local recordIndex = setmetatable({}, {__mode = "k"})
+local function RecordIndex(journal)
+    local n = #journal
+    local index = recordIndex[journal]
+    if index and index.n == n and index.last == journal[n] then return index end
+    -- (the quests, in the record's order; the words of its places; each quest's latest hand-in
+    -- time; the lines with a time and a zone, by time and then by place in the record)
+    local quests, placeWords, done, timed = {}, {}, {}, {}
+    for i, e in ipairs(journal) do
+        if e.k == "quest" and e.t then quests[#quests + 1] = e end
+        for _, field in ipairs({e.sz, e.z, (e.k == "town" or e.k == "rest" or e.k == "cave" or e.k == "first") and e.d or nil}) do
+            if type(field) == "string" then for word in field:gmatch("%a+") do placeWords[word] = true end end
+        end
+        if e.k == "quest" and tonumber(e.qid) then done[tonumber(e.qid)] = e.t or 0 end
+        if e.t and e.z then timed[#timed + 1] = {e = e, i = i} end
+    end
+    table.sort(timed, function(a, b) if a.e.t ~= b.e.t then return a.e.t < b.e.t end return a.i < b.i end)
+    index = {n = n, last = journal[n], quests = quests, placeWords = placeWords, done = done, timed = timed}
+    recordIndex[journal] = index
+    return index
+end
+-- (the line of the record with a zone and the earliest time from `from` to `to`; the first of
+-- the record among lines of the same time)
+local function FirstTimed(index, from, to)
+    local timed = index.timed
+    local lo, hi = 1, #timed + 1
+    while lo < hi do
+        local mid = math.floor((lo + hi) / 2)
+        if timed[mid].e.t < from then lo = mid + 1 else hi = mid end
+    end
+    local x = timed[lo]
+    return x and x.e.t <= to and x.e or nil
+end
 -- A town the teller knows (its own table first, then Lore's).
 local function IsTown(name)
     if not name or name == "" then return false end
@@ -311,9 +348,10 @@ local function Select(ctx, lines, inRun, episodes, D)
     do
         local later, givers = {}, {}
         local lim = (D and D.e or 0) + 3 * 86400
-        if ctx.person and type(ctx.person.journal) == "table" and QD.Story then
-            for _, e in ipairs(ctx.person.journal) do
-                if e.k == "quest" and e.t and e.t > (D and D.e or 0) and e.t <= lim then
+        local record = ctx.person and type(ctx.person.journal) == "table" and RecordIndex(ctx.person.journal)
+        if record and QD.Story then
+            for _, e in ipairs(record.quests) do
+                if e.t > (D and D.e or 0) and e.t <= lim then
                     local ok, story = pcall(QD.Story, {title = e.d, qid = e.qid})
                     if ok and type(story) == "table" and type(story.pov) == "table" then
                         local texts, giver = {}, Plain(tostring(story.pov.giver or ""))
@@ -333,10 +371,8 @@ local function Select(ctx, lines, inRun, episodes, D)
         end
         -- (whoever gives work later is introduced by that work; a place of the record is no person)
         for name in pairs(givers) do later[name] = nil end
-        for _, e in ipairs(ctx.person and type(ctx.person.journal) == "table" and ctx.person.journal or {}) do
-            for _, field in ipairs({e.sz, e.z, (e.k == "town" or e.k == "rest" or e.k == "cave" or e.k == "first") and e.d or nil}) do
-                if type(field) == "string" then for word in field:gmatch("%a+") do later[word] = nil end end
-            end
+        if record then
+            for word in pairs(later) do if record.placeWords[word] then later[word] = nil end end
         end
         sel.promised = later
     end
@@ -1722,6 +1758,8 @@ function C.Apply(ctx)
     local inRun = {}
     for _, l in ipairs(lines) do if l.s and l.s.run and l.ep.kind == "dungeon" then inRun[l] = true end end
 
+    -- (a telling in the background may pause between the steps: JournalTellCache.lua)
+    if A.TellStep then A.TellStep() end
     -- 2. Drops: furniture, cave mouths, lone companion deaths in a city, the teller's own close.
     local nightSaid = false
     local function EventsNear(s, t, span, kinds_)
@@ -2894,6 +2932,7 @@ function C.Apply(ctx)
         end
     end
 
+    if A.TellStep then A.TellStep() end
     -- 3. Levels where they came (the teller tells the day's last level at the end; the others not at all).
     local NUMBER = {one = 1, two = 2, three = 3, four = 4, five = 5, six = 6, seven = 7, eight = 8, nine = 9, ten = 10, eleven = 11, twelve = 12,
         thirteen = 13, fourteen = 14, fifteen = 15, sixteen = 16, seventeen = 17, eighteen = 18, nineteen = 19, twenty = 20, thirty = 30, forty = 40,
@@ -3261,6 +3300,7 @@ function C.Apply(ctx)
         end
     end
 
+    if A.TellStep then A.TellStep() end
     -- 4. Inside each episode, the order of a told moment.
     local PRIORITY = {open = 1, arrive = 2, who = 3, place = 4, town = 5}
     local SLOT_WHAT = 6
@@ -3568,6 +3608,7 @@ function C.Apply(ctx)
     -- (lane O8: a dungeon run, an adventure and a journey are paragraphs of their own)
     local function Solid(kind) return kind == "dungeon" or kind == "adventure" or kind == "expedition" end
 
+    if A.TellStep then A.TellStep() end
     -- 5. Paragraphs: a light one joins the next (or the last joins the one before), two bad
     -- stretches side by side are one, never more than C.MAX_PARAGRAPHS, a long one splits at a turn.
     local function Join(a, b)
@@ -3738,6 +3779,7 @@ function C.Apply(ctx)
             end
         end
     end
+    if A.TellStep then A.TellStep() end
     -- 6. The close: what the evening came to, then where it ended, from the record only.
     do
         local last = paragraphs[#paragraphs]
@@ -4612,10 +4654,7 @@ function C.Apply(ctx)
     -- (round 23: a chain the record leaves open is said to stay open, in one plain clause, when its next
     -- step is not in the record of the days after: W.compose.openThreads[qid] = {next = qid, text = ...})
     if P.openThreads then
-        local done = {}
-        for _, e in ipairs(ctx.person and type(ctx.person.journal) == "table" and ctx.person.journal or {}) do
-            if e.k == "quest" and tonumber(e.qid) then done[tonumber(e.qid)] = e.t or 0 end
-        end
+        local done = ctx.person and type(ctx.person.journal) == "table" and RecordIndex(ctx.person.journal).done or {}
         for _, p_ in ipairs(paragraphs) do
             for idx, l in ipairs(p_.lines) do
                 local q = l.meta and l.meta.entry and l.meta.entry.quest
@@ -4795,11 +4834,8 @@ function C.Apply(ctx)
                 end
             end
         end
-        local firstRaw
         local dayFrom, dayTo = (episodes[1] and episodes[1].t or 0) - 1800, (episodes[1] and episodes[1].t or 0) + 600
-        for _, e in ipairs(ctx.person and type(ctx.person.journal) == "table" and ctx.person.journal or {}) do
-            if e.t and e.z and e.t >= dayFrom and e.t <= dayTo and (not firstRaw or e.t < firstRaw.t) then firstRaw = e end
-        end
+        local firstRaw = ctx.person and type(ctx.person.journal) == "table" and FirstTimed(RecordIndex(ctx.person.journal), dayFrom, dayTo) or nil
         local opener = paragraphs[1] and paragraphs[1].lines[1]
         if firstRaw and opener and opener.cls == "open" then
             -- (only a bare opening line: one that tells something there keeps its place)
@@ -4874,6 +4910,7 @@ function C.Apply(ctx)
         C.TimeFaults = C.TimeFaults or {}
         C.TimeFaults[tostring(ctx.day and ctx.day.key or "")] = faults
     end
+    if A.TellStep then A.TellStep() end
     -- 7. Write back, one paragraph id per scene.
     -- (a level number is said once a chapter: a line of the composer's that repeats one goes)
     do

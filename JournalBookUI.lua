@@ -617,26 +617,46 @@ local function Chapters(person)
         for _, day in ipairs(A.JournalChapters(person)) do list[#list + 1] = {classic = day} end
         return list, style, styleMode, nil
     end
-    local days = A.JournalBook(person)
-    local stories, linked = {}, {}
-    local function Story(day, teller)
-        teller = teller or "you"
-        if not stories[teller] then
-            -- (told once and kept while nothing it hangs on changes: JournalTellCache.lua)
-            local Kept = A.TellCache
-            if person.self then
-                -- (in the background when told before: the book opens at once on the last telling
-                -- and turns to the fresh one when it is ready)
-                stories[teller] = A.SelfTale and (Kept and Kept.Self(person, days, styleMode == "storyBrief", nil, {background = true,
-                    ready = function() if book and book:IsShown() and state.view == "journal" then A.RefreshBook() end end})
-                    or A.SelfTale.Tell(person, days, styleMode == "storyBrief")) or {}
+    local storyMode = styleMode == "story" or styleMode == "storyBrief"
+    local Kept = A.TellCache
+    -- (1.54.0: a told book comes from JournalTellCache's C.Book: the last telling and the days it
+    -- was told from, at once, checked and told afresh in the background; the page turns to the
+    -- fresh one when it is ready. Never told yet: no chapters, and the page says it is being written)
+    local background = storyMode and Kept and Kept.Book and Kept.ON
+    local days = not background and A.JournalBook(person) or nil
+    local stories, linked, toldDays = {}, {}, {}
+    local pending = false
+    local function Ready()
+        if book and book:IsShown() and state.view == "journal" then A.RefreshBook() end
+    end
+    local function Told(teller)
+        if stories[teller] == nil then
+            local brief = styleMode == "storyBrief"
+            if background then
+                local told, from
+                local function Gather() return A.JournalBook(person) end
+                if person.self then
+                    told, from = Kept.Book("self", person, {brief = brief, retell = false}, Gather, Ready)
+                else
+                    local player = state.owner and A.CharacterPlayer(state.owner)
+                    told, from = Kept.Book("tale", person, {voice = teller or false, player = player or false, brief = brief}, Gather, Ready)
+                end
+                stories[teller], toldDays[teller] = told or false, from
+                if not told then pending = true end
+            elseif person.self then
+                stories[teller] = A.SelfTale and (Kept and Kept.Self(person, days, brief) or A.SelfTale.Tell(person, days, brief)) or {}
             else
                 local player = state.owner and A.CharacterPlayer(state.owner)
-                stories[teller] = A.JournalTale and (Kept and Kept.Tale(person, days, teller, player, styleMode == "storyBrief")
-                    or A.JournalTale.Tell(person, days, teller, player, styleMode == "storyBrief")) or {}
+                stories[teller] = A.JournalTale and (Kept and Kept.Tale(person, days, teller, player, brief)
+                    or A.JournalTale.Tell(person, days, teller, player, brief)) or {}
             end
         end
-        local story = stories[teller][day.key]
+        return stories[teller] or nil
+    end
+    local function Story(day, teller)
+        teller = teller or "you"
+        local told = Told(teller)
+        local story = told and told[day.key]
         if story and person.self and A.DeathLinks and type(story.text) == "string" then
             linked[teller] = linked[teller] or {}
             local copy = linked[teller][day.key]
@@ -650,15 +670,19 @@ local function Chapters(person)
         end
         return story
     end
-    for _, day in ipairs(days) do
-        if styleMode == "story" or styleMode == "storyBrief" then
-            local story = Story(day, style == "d" and "we" or "you")
+    if storyMode then
+        local teller = style == "d" and "we" or "you"
+        local told = Told(teller)
+        if background then days = toldDays[teller] or {} end
+        for _, day in ipairs(days) do
+            -- (which days have a chapter: the told text as it is, links come when a page is drawn)
+            local story = told and told[day.key]
             if story and (story.text ~= "" or #story.quotes > 0) then list[#list + 1] = {day = day} end
-        else
-            list[#list + 1] = {day = day}
         end
+    else
+        for _, day in ipairs(days) do list[#list + 1] = {day = day} end
     end
-    return list, style, styleMode, Story
+    return list, style, styleMode, Story, pending
 end
 
 -- Unread chapters: for each journal, the last day you read ("2026-10-01", the
@@ -2809,12 +2833,12 @@ function A.RefreshBook(toEnd, reusePages)
     book.retell:SetShown(A.JournalVoice() == "story" and not person.readOnly)
     book.input:SetShown(not person.readOnly); book.write:SetShown(not person.readOnly)
 
-    local chapters, styleKey, styleMode, Story
+    local chapters, styleKey, styleMode, Story, pending
     if reusePages and state.pageCache then
         local cache = state.pageCache
-        chapters, styleKey, styleMode, Story = cache.leaves, cache.style, cache.mode, cache.story
+        chapters, styleKey, styleMode, Story, pending = cache.leaves, cache.style, cache.mode, cache.story, cache.pending
     else
-        chapters, styleKey, styleMode, Story = Chapters(person)
+        chapters, styleKey, styleMode, Story, pending = Chapters(person)
         local portraitWhere = A.BookVariant("portraitWhere")
         local titleInfo = TitleInfo(person)
         chapters = PageChapters(book.rightPage, person, chapters, styleKey, styleMode, Story, function(page, chapter, index)
@@ -2822,7 +2846,7 @@ function A.RefreshBook(toEnd, reusePages)
             local info = not facing and PortraitFor(person, chapter, index) or nil
             PreparePage(page, info, portraitWhere, nil, index == 1 and titleInfo or nil)
         end)
-        state.pageCache = {leaves = chapters, style = styleKey, mode = styleMode, story = Story}
+        state.pageCache = {leaves = chapters, style = styleKey, mode = styleMode, story = Story, pending = pending}
     end
     state.leaves = chapters
     book.leaves = chapters
@@ -2835,10 +2859,11 @@ function A.RefreshBook(toEnd, reusePages)
     end
     if count == 0 then state.index = 0 end
     for _, page in ipairs({book.leftPage, book.rightPage}) do
-        page.empty:SetText("No adventures recorded yet.\n\nWrite the first line below.")
+        page.empty:SetText(pending and "The pages are being written..." or "No adventures recorded yet.\n\nWrite the first line below.")
     end
-    -- (a name clicked in another journal: the same day here, or the next)
-    if state.jumpDay then
+    -- (a name clicked in another journal: the same day here, or the next; a book being told for
+    -- the first time keeps the jump for when its pages are there)
+    if state.jumpDay and not pending then
         for i, chapter in ipairs(chapters) do
             local day = ChapterDay(chapter)
             if day and day >= state.jumpDay then state.index = i; break end
@@ -2847,7 +2872,7 @@ function A.RefreshBook(toEnd, reusePages)
         if spread and A.BookVariant("portraitWhere") ~= "b" and state.index % 2 == 0 then state.index = state.index - 1 end
     end
     -- (the first unread chapter, when the book opened on it)
-    if state.jumpUnread then
+    if state.jumpUnread and not pending then
         state.jumpUnread = nil
         local unread = {}
         for _, day in ipairs(UnreadDays(state.key)) do unread[day] = true end
@@ -2951,6 +2976,8 @@ function A.RefreshBook(toEnd, reusePages)
     book.prev:SetEnabled(state.index > 1)
     book.next:SetEnabled(state.index + (spread and state.spreadStep - 1 or 0) < count)
     UpdateWriteDate(person, chapters[state.index])
+    -- (its pages there, the book opens at the end unless a jump asks for a day)
+    if pending then state.index = nil end
 end
 
 -- A name in a chapter: their journal, at the same day (or the next they have).

@@ -493,11 +493,50 @@ function A.JournalPartySize(spans, from, to)
     end
     return best, largest
 end
-local function MemberSpans(outings, lines, now)
+-- The outings by their start (1.54.0), so a line looks only at the outings near its time
+-- instead of all of them (a long record: 2000 lines x 300 outings). An outing longer than
+-- LONG_OUTING (one left open, whose end is now) is always looked at.
+local LONG_OUTING = 6 * 3600
+local function OutingIndex(outings)
+    local byStart, long = {}, {}
+    for i, o in ipairs(outings) do
+        if o.e - o.t > LONG_OUTING then long[#long + 1] = i else byStart[#byStart + 1] = i end
+    end
+    table.sort(byStart, function(a, b)
+        if outings[a].t ~= outings[b].t then return outings[a].t < outings[b].t end
+        return a < b
+    end)
+    return {outings = outings, byStart = byStart, long = long}
+end
+-- The outings (their places in the list, in its order) whose span reaches from `from` to `to`:
+-- start at or before `to`, end at or after `from`. Every other outing is out of that span.
+local function Overlapping(index, from, to)
+    local outings, byStart = index.outings, index.byStart
+    local lo, hi = 1, #byStart + 1
+    while lo < hi do
+        local mid = math.floor((lo + hi) / 2)
+        if outings[byStart[mid]].t < from - LONG_OUTING then lo = mid + 1 else hi = mid end
+    end
+    local found = {}
+    for k = lo, #byStart do
+        local o = outings[byStart[k]]
+        if o.t > to then break end
+        if o.e >= from then found[#found + 1] = byStart[k] end
+    end
+    for _, i in ipairs(index.long) do
+        local o = outings[i]
+        if o.t <= to and o.e >= from then found[#found + 1] = i end
+    end
+    table.sort(found)
+    return found
+end
+local function MemberSpans(outings, lines, now, index)
+    index = index or OutingIndex(outings)
     for _, line in ipairs(lines) do
         local full = type(line.n) == "string" and line.n ~= "" and line.n or nil
         local lineEnd = line.e or now
-        for _, outing in ipairs(outings) do
+        for _, i in ipairs(Overlapping(index, line.t or 0, lineEnd)) do
+            local outing = outings[i]
             local from, to = math.max(line.t or 0, outing.t), math.min(lineEnd, outing.e)
             if full and to - from >= 60 then
                 outing.members = outing.members or {}
@@ -545,10 +584,12 @@ function A.JournalBook(person)
     for _, entry in ipairs(type(person.journal) == "table" and person.journal or {}) do entries[#entries + 1] = entry end
     local order = {}
     for index, entry in ipairs(entries) do order[entry] = index end
+    if A.TellStep then A.TellStep() end -- (in the background, a pause: see below)
     table.sort(entries, function(a, b)
         if (a.t or 0) ~= (b.t or 0) then return (a.t or 0) < (b.t or 0) end
         return order[a] < order[b]
     end)
+    if A.TellStep then A.TellStep() end
     local now = time and time() or 0
     -- Outings, merged when they follow each other in the same place.
     local outings, last = {}, nil
@@ -577,6 +618,7 @@ function A.JournalBook(person)
     -- with only the going itself (voyage, flight, hearthstone, a first crossing) kept.
     local rehome = FoldTransit(outings, entries, skip, moved)
     ResolveMoved(outings, moved, skip)
+    if A.TellStep then A.TellStep() end
     local told = {}
     for _, entry in ipairs(entries) do
         if moved[entry] ~= nil then
@@ -598,11 +640,13 @@ function A.JournalBook(person)
         end)
     end
     entries = told
+    local outingIndex = OutingIndex(outings)
     -- Your own journal: who of your list was with you, stretch by stretch
     -- (a companion for at least five minutes of it).
     for _, w in ipairs(withs) do
         local wEnd = w.e or now
-        for _, outing in ipairs(outings) do
+        for _, i in ipairs(Overlapping(outingIndex, w.t or 0, wEnd)) do
+            local outing = outings[i]
             local overlap = math.min(wEnd, outing.e) - math.max(w.t or 0, outing.t)
             if overlap >= 300 and w.n then
                 outing.with = outing.with or {}
@@ -620,19 +664,23 @@ function A.JournalBook(person)
         end
     end
     -- (everyone who travelled with you, list or not: members, partySize, partyMax on each outing)
-    MemberSpans(outings, memberLines, now)
+    MemberSpans(outings, memberLines, now, outingIndex)
     -- Everything else goes into the outing it happened in, or is a moment.
     local scenes = {}
     for _, outing in ipairs(outings) do scenes[#scenes + 1] = outing end
     local lastMoment
-    for _, entry in ipairs(entries) do
+    for position, entry in ipairs(entries) do
+        -- (gathered by a telling in the background, the days may take more than one frame:
+        -- JournalTellCache.lua; called anywhere else, this does nothing)
+        if position % 250 == 0 and A.TellStep then A.TellStep() end
         if entry.k ~= "group" and entry.k ~= "play" and entry.k ~= "with" and entry.k ~= "member" then
             -- The outing it happened in: one that holds its time (and its zone, when
             -- two touch); failing that, one within a minute of it. A companion's death
             -- a minute before a hearthstone belongs where it happened, not where you landed.
             local home, loose
-            for i = #outings, 1, -1 do
-                local o = outings[i]
+            local near = Overlapping(outingIndex, (entry.t or 0) - 60, (entry.t or 0) + 60)
+            for n = #near, 1, -1 do
+                local o = outings[near[n]]
                 local t = entry.t or 0
                 if t >= o.t and t <= o.e then
                     if not home or (entry.z and o.zone == entry.z and home.zone ~= entry.z) then home = o end

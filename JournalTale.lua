@@ -3086,19 +3086,18 @@ function T.OwnTold(charKey)
     if ownCache[key] then return ownCache[key] end
     if T.ownBusy then return nil end
     T.ownBusy = true
-    local told = {}
-    local Apply = A.SelfCompose.Apply
-    A.SelfCompose.Apply = function(ctx)
-        local r = Apply(ctx)
-        if ctx and ctx.day and ctx.day.key and ctx.out then
-            told[ctx.day.key] = (told[ctx.day.key] and (told[ctx.day.key] .. " ") or "") .. PlainOf(table.concat(ctx.out, " "))
-        end
-        return r
-    end
-    local ok = pcall(A.SelfTale.Tell, me, days, false, 0)
-    A.SelfCompose.Apply = Apply
+    -- (1.54.0: the own teller hands its composed lines over itself; the composer is no longer
+    -- swapped for the telling, which may now pause between frames: JournalTellCache.lua)
+    local capture = {}
+    local ok = (A.TellPcall or pcall)(A.SelfTale.Tell, me, days, false, 0, capture)
     T.ownBusy = false
     if not ok then return nil end
+    local told = {}
+    for dayKey, list in pairs(capture) do
+        for _, line in ipairs(list) do
+            told[dayKey] = (told[dayKey] and (told[dayKey] .. " ") or "") .. PlainOf(line)
+        end
+    end
     ownCache = {[key] = told}
     return told
 end
@@ -5242,7 +5241,7 @@ local TellPasses
 function T.Tell(person, days, voice, player, brief)
     if T.ownKeys then return TellPasses(person, days, voice, player, brief) end
     T.ownKeys = {}
-    local ok, stories = pcall(TellPasses, person, days, voice, player, brief)
+    local ok, stories = (A.TellPcall or pcall)(TellPasses, person, days, voice, player, brief)
     T.ownKeys = nil
     if not ok then error(stories, 0) end
     return stories
@@ -5253,7 +5252,7 @@ function TellPasses(person, days, voice, player, brief)
     end
     T.inPass = true
     T.collect = {}
-    local ok1, first = pcall(T.TellOnce, person, days, voice, player, brief)
+    local ok1, first = (A.TellPcall or pcall)(T.TellOnce, person, days, voice, player, brief)
     local collect = T.collect
     T.collect = nil
     T.inPass = false
@@ -5292,7 +5291,7 @@ function TellPasses(person, days, voice, player, brief)
     -- is it, word for word, since the first pass only collects)
     if next(needs) == nil then return first end
     T.needs = needs
-    local ok2, stories = pcall(T.TellOnce, person, days, voice, player, brief)
+    local ok2, stories = (A.TellPcall or pcall)(T.TellOnce, person, days, voice, player, brief)
     T.needs = nil
     if ok2 then return stories end
     return T.TellOnce(person, days, voice, player, brief)
@@ -5433,6 +5432,8 @@ function T.TellOnce(person, days, voice, player, brief)
         for i = #days, 1, -1 do firesAhead[i] = acc; acc = acc + #DayFacts(days[i]).fires end
     end
     for index, day in ipairs(days) do
+        -- (between days, a telling in the background may pause for the next frame: JournalTellCache.lua)
+        if A.TellStep then A.TellStep() end
         teller.day, teller.named, teller.roads, teller.ownCount, teller.lastPair = index, false, 0, 0, nil
         teller.started, teller.pendingTokens = false, nil
         teller.bothSaid, teller.saidPlaces = false, {}
@@ -9848,7 +9849,7 @@ function T.TellOnce(person, days, voice, player, brief)
         -- The chapter composed (lane C8, 2026-11-12): T.Compose above, before the close is written.
         S.composeWhy = "outings " .. tostring(f.outings) .. ", planned " .. tostring(S.planned)
         if not S.planned and #out > 0 and f.outings > 0 and T.COMPOSE ~= false then
-            local okC, errC = pcall(T.Compose, {out = out, beats = outBeat, times = outT, S = S, f = f, day = day, person = person, teller = teller, PB = PB,
+            local okC, errC = (A.TellPcall or pcall)(T.Compose, {out = out, beats = outBeat, times = outT, S = S, f = f, day = day, person = person, teller = teller, PB = PB,
                 rng = rng, tokens = tokens, ownJournal = ownJournal, stretches = Stretches(day, person), Place = Place, history = history,
                 mainZone = mainZone, gap = gap})
             if not okC and T.DebugLines then print("compose: " .. tostring(errC)) end

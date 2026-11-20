@@ -1,5 +1,5 @@
 local _, A = ...
--- Deaths, remembered with a picture (2026-11-19). When you die, Frame Gambit's clean
+-- Deaths and levels, remembered with a picture (2026-11-19; levels 2026-11-20). When you die, Frame Gambit's clean
 -- screenshot (no interface, for one frame) is taken; WoW Helper turns new screenshots
 -- into thumbnails in its data addon (WowHelperData\Shots\, listed in WowHelperShots by
 -- the screenshot's time). A death's card, opened from its X on the Road's map or from its
@@ -13,9 +13,9 @@ local INK, SOFT, RED = {0.20, 0.11, 0.04}, {0.36, 0.22, 0.08}, {0.42, 0.10, 0.04
 local PAPER = "paper3"
 local NEAR = 10 -- seconds between the request and a screenshot that is its picture
 
--- Taking the picture: at the moment of death, when Frame Gambit can hide the interface.
--- Returns the time of the request (kept on the death line as `shot`), or nil.
-function A.DeathShot()
+-- Taking the picture: at the moment (a death, a level), when Frame Gambit can hide the
+-- interface. Returns the time of the request (kept on the line as `shot`), or nil.
+function A.MomentShot()
     if not A.db or A.db.deathShots == false then return nil end
     if type(FrameGambit_CleanScreenshot) ~= "function" then return nil end
     local now = time and time() or nil
@@ -35,16 +35,25 @@ function A.ShotPath(at)
     return best
 end
 
--- Your own death lines, and one by its time.
+A.DeathShot = A.MomentShot
+
+-- Your own moments with a card (deaths, levels), and one by its time.
 local function MyJournal()
     local me = A.SelfPerson and A.SelfPerson()
     return me and me.journal or {}
 end
+local CARDS = {death = true, mylevel = true}
 function A.DeathEntry(t)
     for _, e in ipairs(MyJournal()) do
-        if e.k == "death" and e.t and math.abs(e.t - t) <= 2 then return e end
+        if CARDS[e.k] and e.t and math.abs(e.t - t) <= 2 then return e end
     end
     return nil
+end
+A.MomentEntry = A.DeathEntry
+-- The picture of a moment by its time (the small photo in a chapter), or nil.
+function A.MomentPicture(t)
+    local e = t and A.DeathEntry(t)
+    return e and A.ShotPath(e.shot)
 end
 
 -- The card -------------------------------------------------------------------------------
@@ -79,7 +88,7 @@ end
 -- the frame it opens over (the book or the map).
 function A.OpenDeathCard(death, owner)
     if not death then return end
-    local entry = death.k == "death" and death or (death.t and A.DeathEntry(death.t)) or death
+    local entry = CARDS[death.k] and death or (death.t and A.DeathEntry(death.t)) or death
     Make()
     local width, height = 440, 300
     card:SetParent(owner or UIParent)
@@ -90,7 +99,8 @@ function A.OpenDeathCard(death, owner)
     if paper and A.LayPaperOn then A.LayPaperOn(card, paper, width, height) end
     -- (the cause, in the book's words: "Fell to a vampiric duskbat")
     local killer = entry.d
-    local cause = killer and ("Fell to " .. (entry.a and "a " or "") .. killer)
+    local cause = entry.k == "mylevel" and ("Level " .. tostring(entry.d))
+        or killer and ("Fell to " .. (entry.a and "a " or "") .. killer)
         or (entry.env == "FALLING" and "Fell from a height") or (entry.env == "DROWNING" and "Drowned")
         or (entry.env == "FIRE" or entry.env == "LAVA") and "Burned" or (death.text) or "Fell"
     card.title:SetText(cause)
@@ -115,33 +125,65 @@ function A.OpenDeathCard(death, owner)
     card:Show(); card:Raise()
 end
 function A.CloseDeathCard() if card then card:Hide() end end
+A.OpenMomentCard = A.OpenDeathCard
 
 -- Links in a chapter: each death of the day (yours, with a known killer) makes the first
--- unlinked mention of its killer a link to its card, in order. Text already in a link or
--- in a name's markup is left alone.
+-- unlinked mention of its killer a link to its card, in order; each level with a picture,
+-- the first "level N". Text already in a link or in a name's markup is left alone.
+-- (1.54.0: where each mark starts in the text, found once per death instead of searching all
+-- the text before every match again; a chapter took up to 150 ms)
+local function Starts(text, mark)
+    local list, at = {}, text:find(mark, 1, true)
+    while at do list[#list + 1] = at; at = text:find(mark, at + 1, true) end
+    return list
+end
+-- (the last start of a mark that ends before `limit`, or 0)
+local function LastBefore(list, size, limit)
+    local best = 0
+    for _, at in ipairs(list) do
+        if at + size - 1 < limit then best = at else break end
+    end
+    return best
+end
+local linkCache, linkCacheSize = {}, 0
 function A.DeathLinks(text, day)
     if type(text) ~= "string" or not day then return text end
     local deaths = {}
     for _, scene in ipairs(day.scenes or {}) do
         for _, e in ipairs(scene.entries or {}) do
             if e.k == "death" and (e.w == nil or e.w == "you") and type(e.d) == "string" and e.d ~= "" and e.t then
-                deaths[#deaths + 1] = e
+                deaths[#deaths + 1] = {t = e.t, name = e.d:lower()}
+            elseif e.k == "mylevel" and e.shot and e.d and e.t then
+                deaths[#deaths + 1] = {t = e.t, name = "level " .. tostring(e.d), whole = true}
             end
         end
     end
+    if #deaths == 0 then return text end
     table.sort(deaths, function(a, b) return a.t < b.t end)
+    -- (the same text and the same deaths give the same links: kept, for redraws)
+    local sig = {}
+    for i, e in ipairs(deaths) do sig[i] = e.t .. "=" .. e.name end
+    local cacheKey = table.concat(sig, "\1") .. "\2" .. text
+    if linkCache[cacheKey] then return linkCache[cacheKey] end
     local from = 1
     for _, e in ipairs(deaths) do
-        local lower, name = text:lower(), e.d:lower()
+        local lower, name = text:lower(), e.name
         local at = lower:find(name, from, true)
+        local opens, shuts, hopens, hshuts, rshuts
         while at do
             -- (not inside {n:...} markup or an existing |H...|h link)
-            local before = text:sub(1, at - 1)
-            local open = before:match(".*()%{") or 0
-            local shut = before:match(".*()%}") or 0
-            local hopen = before:match(".*()|H") or 0
-            local hshut = before:match(".*()|h|r|h") or before:match(".*()|r|h") or 0
-            if open <= shut and hopen <= hshut then break end
+            if not opens then
+                opens, shuts, hopens = Starts(text, "{"), Starts(text, "}"), Starts(text, "|H")
+                hshuts, rshuts = Starts(text, "|h|r|h"), Starts(text, "|r|h")
+            end
+            local open = LastBefore(opens, 1, at)
+            local shut = LastBefore(shuts, 1, at)
+            local hopen = LastBefore(hopens, 2, at)
+            local hshut = LastBefore(hshuts, 6, at)
+            if hshut == 0 then hshut = LastBefore(rshuts, 4, at) end
+            -- ("level 2" is not the start of "level 21")
+            local whole = not e.whole or not lower:sub(at + #name, at + #name):match("%d")
+            if whole and open <= shut and hopen <= hshut then break end
             at = lower:find(name, at + 1, true)
         end
         if at then
@@ -151,5 +193,7 @@ function A.DeathLinks(text, day)
             from = at + #link
         end
     end
+    if linkCacheSize >= 200 then linkCache, linkCacheSize = {}, 0 end
+    linkCache[cacheKey], linkCacheSize = text, linkCacheSize + 1
     return text
 end

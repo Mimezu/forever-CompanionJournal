@@ -1,4 +1,4 @@
--- Companion Journal: told books kept for the session (1.43.1).
+-- Companion Journal: told books kept for the session (1.43.1; in the background 1.54.0).
 --
 -- Telling a whole book takes a fraction of a second (the own book and a companion's run the
 -- composer over every chapter), and the book used to tell it again on every open and every
@@ -12,6 +12,12 @@
 -- you read and never reaches a teller), the person, the arguments, and the clock in steps of
 -- C.OPEN_STEP seconds while one of the journal's outings is still open (the open day ends
 -- "now", so its told text can move with the clock; a closed journal never does).
+--
+-- The book (1.54.0) never tells, gathers the days or builds a key while you wait: C.Book hands
+-- back the last telling of that book with the days it was told from, at once, and checks in the
+-- background, a few milliseconds a frame, whether it still holds. When it does not, the book is
+-- told again there and the page turns to it when it is ready. A book never told this session
+-- shows a short "being written" page for the second or two that takes.
 local _, A = ...
 local C = {}
 A.TellCache = C
@@ -26,8 +32,16 @@ C.SKIP = {bookRead = true, bookPins = true, bookSize = true, bookSpread = true, 
     road = true, roadRecord = true, roadDefaultOn = true, roadSounds = true, deathShots = true}
 C.hits, C.misses = 0, 0
 
-local store, order = {}, {}
-local job -- the background telling (below)
+local store, order, daysOf = {}, {}, {}
+local job -- the background telling running now (below)
+local queue = {} -- the ones waiting, the book's own first
+local failed = {} -- (a book whose telling failed: when, so the book does not ask again every frame)
+
+-- Whether the code running now is the background job (or a protected call inside it).
+local function InJob()
+    local co = coroutine.running()
+    return job ~= nil and co ~= nil and job.cos[co] == true
+end
 
 -- A value as text: tables by their pairs (an unchanged table walks in the same order; a changed
 -- one at worst misses), strings with their length so no two values read the same.
@@ -44,7 +58,7 @@ local function Put(buf, v, depth)
     elseif t == "table" then
         if depth > 16 then buf[#buf + 1] = "^"; return end
         buf[#buf + 1] = "{"
-        if job and job.keyYield and depth <= 5 and coroutine.running() == job.co then A.TellStep() end
+        if job and job.keyYield and depth <= 5 and InJob() then A.TellStep() end
         for k, x in pairs(v) do
             Put(buf, k, depth + 1)
             buf[#buf + 1] = "="
@@ -116,12 +130,15 @@ local function Identity(kind, person, args)
     Put(buf, args or {}, 1)
     return table.concat(buf)
 end
-local function Remember(key, stories, ident)
+C.Identity = Identity
+local function Remember(key, stories, ident, days)
     if ident then latest[ident] = key end
     if not store[key] then order[#order + 1] = key end
     store[key] = stories
+    if days then daysOf[key] = days end
     while #order > C.MAX do
-        store[table.remove(order, 1)] = nil
+        local gone = table.remove(order, 1)
+        store[gone], daysOf[gone] = nil, nil
     end
 end
 
@@ -157,63 +174,6 @@ function C.Self(person, days, brief, retell, opts)
         return A.SelfTale.Tell(person, days, brief, retell)
     end, opts)
 end
--- The own book told ahead, in the background, so the book opens on it at once (while you play,
--- after a new entry; at login). Nothing happens when it is already kept. `days` may be a
--- function giving the days: the job then gathers them in its first frame, builds the key over
--- the next frames and only then tells (each step was a 30-50 ms frame when done at once).
-function C.WarmSelf(person, days, brief)
-    if not C.ON or not C.Background then return end
-    local args = {brief = brief and true or false, retell = false}
-    C.Background(nil, Identity("self", person, args), function()
-        local me = job
-        if type(days) == "function" then days = days(); coroutine.yield() end
-        if me then me.keyYield = true end
-        local key = C.Key("self", person, days, args)
-        if me then me.keyYield, me.key = nil, key end
-        if store[key] then return nil end
-        return A.SelfTale.Tell(person, days, brief, false)
-    end)
-end
-
--- In the background (1.51.3): a telling runs in a coroutine, a few milliseconds a frame, pausing
--- between days (A.TellStep, called by the teller); the book stays smooth meanwhile. One at a
--- time: a newer request replaces an older one. Only tellers that never pause inside a pcall
--- may run here (the own book's); the companions' tellers run as before.
-C.BUDGET = 6 -- milliseconds a frame
-local function Clock() return debugprofilestop and debugprofilestop() or 0 end
-function A.TellStep()
-    if job and job.co == coroutine.running() and Clock() - job.slice > C.BUDGET then coroutine.yield() end
-end
-local driver
-local function Run()
-    local current = job
-    if not current then if driver then driver:SetScript("OnUpdate", nil) end; return end
-    current.slice = Clock()
-    local ok, result = coroutine.resume(current.co)
-    if job ~= current then return end
-    if not ok then job = nil; return end
-    if coroutine.status(current.co) == "dead" then
-        job = nil
-        if type(result) == "table" then Remember(current.key, result, current.ident) end
-        for _, ready in ipairs(current.ready) do pcall(ready) end
-    end
-end
--- (key nil: the job builds its own key and sets job.key before it tells)
-function C.Background(key, ident, tell, ready)
-    if key ~= nil and job and job.key == key then
-        if ready then job.ready[#job.ready + 1] = ready end
-        return
-    end
-    job = {key = key, ident = ident, co = coroutine.create(tell), ready = {ready}, slice = Clock()}
-    if not driver and CreateFrame then driver = CreateFrame("Frame") end
-    if driver and driver.SetScript then
-        driver:SetScript("OnUpdate", Run)
-    else
-        -- (no frames: at once, to the end)
-        while job do Run() end
-    end
-end
-function C.Busy() return job ~= nil end
 -- A companion's book, as JournalTale.Tell(person, days, voice, player, brief) tells it.
 function C.Tale(person, days, voice, player, brief)
     return C.Told("tale", person, days, {voice = voice or false, player = player or false, brief = brief and true or false}, function()
@@ -221,6 +181,194 @@ function C.Tale(person, days, voice, player, brief)
     end)
 end
 
+-- In the background (1.51.3; a queue 1.54.0): a telling runs in a coroutine, a few milliseconds
+-- a frame, pausing between days (A.TellStep, called by the tellers); the book stays smooth
+-- meanwhile. One at a time, each to its end: a telling stopped halfway would leave a teller's
+-- own state half set. A newer request for a book already waiting replaces it; the book's own
+-- request goes first. A protected call inside a telling goes through A.TellPcall, which lets
+-- the pause through.
+C.BUDGET = 6 -- milliseconds a frame
+local function Clock() return debugprofilestop and debugprofilestop() or 0 end
+function A.TellStep()
+    if job and InJob() and Clock() - job.slice > C.BUDGET then coroutine.yield() end
+end
+local function Pack(...) return {n = select("#", ...), ...} end
+-- pcall, for code that may run inside the background job: there it runs `f` in a coroutine of its
+-- own and passes each pause up to the job, so a telling can pause inside a protected call.
+function A.TellPcall(f, ...)
+    if not InJob() then return pcall(f, ...) end
+    local inner = coroutine.create(f)
+    local cos = job.cos
+    cos[inner] = true
+    local res = Pack(coroutine.resume(inner, ...))
+    while true do
+        if not res[1] then cos[inner] = nil; return false, res[2] end
+        if coroutine.status(inner) == "dead" then cos[inner] = nil; return unpack(res, 1, res.n) end
+        coroutine.yield()
+        res = Pack(coroutine.resume(inner))
+    end
+end
+
+local driver
+local Run
+local function Start()
+    if job or #queue == 0 then return end
+    local request = table.remove(queue, 1)
+    job = {key = request.key, ident = request.ident, ready = request.ready, slice = Clock(), cos = {}}
+    job.co = coroutine.create(request.fn)
+    job.cos[job.co] = true
+end
+local function Finish(current, result)
+    job = nil
+    local fire = false
+    if type(result) == "table" and current.key then
+        Remember(current.key, result, current.ident, current.days)
+        if current.post then Remember(current.post, result, current.ident, current.days) end
+        fire = true
+    elseif current.changed then
+        fire = true
+    end
+    if fire then for _, ready in ipairs(current.ready) do pcall(ready) end end
+    -- (asked for again while it ran: check once more, with the newest request)
+    if current.again then
+        table.insert(queue, 1, current.again)
+    end
+end
+function Run()
+    if not job then Start() end
+    local current = job
+    if not current then if driver then driver:SetScript("OnUpdate", nil) end; return end
+    current.slice = Clock()
+    local ok, result = coroutine.resume(current.co)
+    if not ok then
+        -- (the error goes where WoW shows errors; the book shows what it has and asks again later)
+        job = nil
+        if current.ident then failed[current.ident] = Clock() end
+        local handler = geterrorhandler and geterrorhandler()
+        if handler then pcall(handler, result) elseif C.SYNC then error(result, 0) end
+        for _, ready in ipairs(current.ready) do pcall(ready) end
+        return
+    end
+    if coroutine.status(current.co) == "dead" then Finish(current, result) end
+end
+local function Drive()
+    if not driver and CreateFrame then driver = CreateFrame("Frame") end
+    if driver and driver.SetScript and not C.SYNC then
+        driver:SetScript("OnUpdate", Run)
+    else
+        -- (no frames: at once, to the end)
+        C.Drain()
+    end
+end
+-- Run every waiting telling to its end, now (tests, and a game without frames).
+function C.Drain()
+    local guard = 0
+    while (job or #queue > 0) and guard < 1000000 do Run(); guard = guard + 1 end
+end
+-- Ask for a telling. `request` = {ident, fn, ready = {...}, key}; `first`: before the others.
+local function Enqueue(request, first)
+    if job and job.ident == request.ident then
+        -- (the one running: it finishes, then checks again with this request)
+        local again = job.again or {ident = request.ident, ready = {}}
+        again.fn, again.key = request.fn, request.key
+        for _, ready in ipairs(request.ready) do again.ready[#again.ready + 1] = ready end
+        job.again = again
+        return
+    end
+    for i, waiting in ipairs(queue) do
+        if waiting.ident == request.ident then
+            for _, ready in ipairs(waiting.ready) do request.ready[#request.ready + 1] = ready end
+            table.remove(queue, i)
+            break
+        end
+    end
+    if first then table.insert(queue, 1, request) else queue[#queue + 1] = request end
+    Drive()
+end
+-- (the old way in: a telling under a known key; key nil: the job builds its own key)
+function C.Background(key, ident, tell, ready)
+    if key ~= nil and job and job.key == key then
+        if ready then job.ready[#job.ready + 1] = ready end
+        return
+    end
+    Enqueue({key = key, ident = ident, fn = tell, ready = {ready}}, true)
+end
+function C.Busy() return job ~= nil or #queue > 0 end
+
+-- The job that checks one book and tells it when needed: the days, then the key (pausing
+-- between entries), then, when no telling is kept under that key, the telling. When a telling
+-- changed the saved data (a line marked told), its key moved: the next check tells it once more,
+-- as the book always did; a second move keeps it under the new key too, so it never loops.
+local retold = {}
+local function Checker(kind, person, args, ident, gather, tell)
+    return function()
+        local me = job
+        -- (the indexes the tellers read, built here the first time, where the job may pause)
+        if A.JournalEpisodes and A.JournalEpisodes.WarmIndexes then A.JournalEpisodes.WarmIndexes() end
+        local days = gather
+        if type(days) == "function" then days = days(); A.TellStep() end
+        me.keyYield = true
+        local key = C.Key(kind, person, days, args)
+        me.keyYield = nil
+        if store[key] then
+            if not daysOf[key] then daysOf[key] = days end
+            if latest[ident] ~= key then latest[ident] = key; me.changed = true end
+            return nil
+        end
+        C.misses = C.misses + 1
+        me.key, me.days = key, days
+        local stories = tell(days)
+        if type(stories) ~= "table" then return nil end
+        me.keyYield = true
+        local post = C.Key(kind, person, days, args)
+        me.keyYield = nil
+        if post ~= key then
+            retold[ident] = (retold[ident] or 0) + 1
+            if retold[ident] >= 2 then me.post = post; retold[ident] = nil end
+        else
+            retold[ident] = nil
+        end
+        return stories
+    end
+end
+local function Tellers(kind, args)
+    if kind == "self" then
+        return function(person) return function(days) return A.SelfTale.Tell(person, days, args.brief, args.retell or nil) end end
+    end
+    return function(person) return function(days) return A.JournalTale.Tell(person, days, args.voice or nil, args.player or nil, args.brief) end end
+end
+-- The book's way in: the last telling of this book and the days it was told from, at once (nil
+-- when it was never told), and a check in the background; `ready()` when a fresh telling is kept.
+-- `gather()` gives the days. args: self {brief, retell}; tale {voice, player, brief}.
+function C.Book(kind, person, args, gather, ready)
+    local ident = Identity(kind, person, args)
+    if not C.ON then
+        local days = gather()
+        return Tellers(kind, args)(person)(days), days
+    end
+    local key = latest[ident]
+    if failed[ident] and Clock() - failed[ident] < 30000 then
+        return key and store[key] or {}, key and daysOf[key] or {}
+    end
+    failed[ident] = nil
+    Enqueue({ident = ident, fn = Checker(kind, person, args, ident, gather, Tellers(kind, args)(person)), ready = {ready}}, true)
+    key = latest[ident]
+    local stories = key and store[key]
+    if stories then C.hits = C.hits + 1; return stories, daysOf[key] end
+    return nil, nil
+end
+-- The own book told ahead, in the background, so the book opens on it at once (while you play,
+-- after a new entry; at login). Nothing is told when it is already kept. `days` may be a function
+-- giving the days: the job gathers them in its first frame, builds the key over the next frames
+-- and only then tells.
+function C.WarmSelf(person, days, brief)
+    if not C.ON then return end
+    local args = {brief = brief and true or false, retell = false}
+    local ident = Identity("self", person, args)
+    Enqueue({ident = ident, fn = Checker("self", person, args, ident, days, Tellers("self", args)(person)), ready = {}}, false)
+end
+
 function C.Clear()
-    store, order, latest, job = {}, {}, {}, nil
+    store, order, latest, daysOf, retold, failed = {}, {}, {}, {}, {}, {}
+    -- (a telling running now goes on to its end, so no teller is left half way; it is kept)
 end

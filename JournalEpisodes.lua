@@ -259,6 +259,105 @@ local function Texts(t, value)
     if type(value) == "string" then t[#t + 1] = value
     elseif type(value) == "table" then for _, v in pairs(value) do Texts(t, v) end end
 end
+-- Every dungeon and quest story, read once (1.54.0): a boss nobody had asked about used to
+-- split all of them into sentences again (~130 ms a name). Now their text is kept joined, each
+-- story closed by a full stop as the split did and set apart by "\0" (to a frontier pattern the
+-- same as a sentence's start or end); a name is found with one string search, and only the
+-- sentence around each find is read: from after the full stop (or "!" or "?") before it to the
+-- next one, which is the sentence the split gave. Each sentence's pronouns are counted once.
+local storyIndex
+local function StoryIndex(L)
+    local quests, dungeons = L and L.questStoryIDs, L and L.dungeonStory
+    local nq, nd = 0, 0
+    for _ in pairs(quests or {}) do nq = nq + 1 end
+    for _ in pairs(dungeons or {}) do nd = nd + 1 end
+    if storyIndex and storyIndex.nq == nq and storyIndex.nd == nd and storyIndex.quests == quests and storyIndex.dungeons == dungeons then
+        return storyIndex
+    end
+    local texts = {}
+    for _, story in pairs(dungeons or {}) do
+        if type(story) == "table" then Texts(texts, {story.why, story.inside, story.detail, story.unfinished, story.again, story.after}) end
+    end
+    for _, q in pairs(quests or {}) do
+        if type(q) == "table" then Texts(texts, {q.why, q.pov, q.after, q.highlight}) end
+    end
+    for i, text in ipairs(texts) do
+        texts[i] = Clean(text):gsub("{%a:([^}]*)}", "%1") .. "."
+        -- (built ahead by the background telling, E.WarmIndexes: it may pause here)
+        if E.indexMayPause and i % 400 == 0 and A.TellStep then A.TellStep() end
+    end
+    storyIndex = {nq = nq, nd = nd, quests = quests, dungeons = dungeons, text = table.concat(texts, "\0"), counts = {}}
+    return storyIndex
+end
+E.StoryIndex = function() return StoryIndex(A.Lore) end
+-- The indexes a telling reads, built ahead (JournalTellCache.lua calls this at the top of a
+-- background telling, where it may pause): the stories, the boss names' forms.
+function E.WarmIndexes()
+    E.indexMayPause = true
+    local ok, err = (A.TellPcall or pcall)(StoryIndex, A.Lore)
+    E.indexMayPause = false
+    if not ok then error(err, 0) end
+end
+local STOP = {[46] = true, [33] = true, [63] = true} -- . ! ?
+-- The sentence a find from `first` to `last` lies in: its start and end, or nil when the find
+-- crosses a sentence's end (a sentence holds no full stop but its last character).
+local function SentenceOf(text, first, last)
+    for at = first, last - 1 do if STOP[text:byte(at)] then return nil end end
+    if STOP[text:byte(first)] then return nil end
+    local start = first
+    while start > 1 do
+        local c = text:byte(start - 1)
+        if STOP[c] or c == 0 then break end
+        start = start - 1
+    end
+    local stop = text:find("[%.!?]", first)
+    return start, stop
+end
+-- Pronouns of the stories' sentences that name the boss: the same sums PronounsAbout gives
+-- over each of those texts.
+local function IndexedPronouns(index, name, short)
+    local hit = {}
+    local text = index.text
+    if name == "" then
+        -- (an empty name is in every sentence)
+        for start, sentence in text:gmatch("()([^%.!?%z]+[%.!?])") do hit[start] = start + #sentence - 1 end
+    else
+        local at = text:find(name, 1, true)
+        while at do
+            local start, stop = SentenceOf(text, at, at + #name - 1)
+            if start then hit[start] = stop end
+            at = text:find(name, at + 1, true)
+        end
+    end
+    -- (the short name as a word of its own: what "%f[%w']short%f[^%w']" finds, by a plain search;
+    -- a short name that starts or ends with a sign is never found that way)
+    if short and short:sub(1, 1):find("[%w']") and short:sub(-1):find("[%w']") then
+        local at = text:find(short, 1, true)
+        while at do
+            local last = at + #short - 1
+            if (at == 1 or not text:sub(at - 1, at - 1):find("[%w']")) and not text:sub(last + 1, last + 1):find("[%w']") then
+                local start, stop = SentenceOf(text, at, last)
+                if start then hit[start] = stop end
+            end
+            at = text:find(short, at + 1, true)
+        end
+    end
+    local f, m = 0, 0
+    for start, stop in pairs(hit) do
+        local c = index.counts[start]
+        if not c then
+            local a, b = 0, 0
+            for word in text:sub(start, stop):lower():gmatch("%a+") do
+                if SHE[word] then a = a + 1 elseif HE[word] then b = b + 1 end
+            end
+            c = {a, b}
+            index.counts[start] = c
+        end
+        f, m = f + c[1], m + c[2]
+    end
+    return f, m
+end
+E.BOSS_INDEX = true -- (false: the old scan of every story, for the tests that compare the two)
 function E.BossGender(name, lore)
     name = Clean(name)
     if pronounCache[name] ~= nil then return pronounCache[name] or nil end
@@ -277,13 +376,17 @@ function E.BossGender(name, lore)
         local id = A.LoreNoteResolve and A.LoreNoteResolve("n", name)
         local note = id and A.GetLoreNote and A.GetLoreNote(id)
         if note and note.body then texts[#texts + 1] = note.body end
-        for _, story in pairs((L and L.dungeonStory) or {}) do
-            if type(story) == "table" then Texts(texts, {story.why, story.inside, story.detail, story.unfinished, story.again, story.after}) end
-        end
-        for _, q in pairs((L and L.questStoryIDs) or {}) do
-            if type(q) == "table" then Texts(texts, {q.why, q.pov, q.after, q.highlight}) end
-        end
         local sf, sm = 0, 0
+        if E.BOSS_INDEX then
+            sf, sm = IndexedPronouns(StoryIndex(L), name, short)
+        else
+            for _, story in pairs((L and L.dungeonStory) or {}) do
+                if type(story) == "table" then Texts(texts, {story.why, story.inside, story.detail, story.unfinished, story.again, story.after}) end
+            end
+            for _, q in pairs((L and L.questStoryIDs) or {}) do
+                if type(q) == "table" then Texts(texts, {q.why, q.pov, q.after, q.highlight}) end
+            end
+        end
         for _, text in ipairs(texts) do
             local a, b = PronounsAbout(text, name, short)
             sf, sm = sf + a, sm + b
@@ -419,6 +522,32 @@ local function Mentions(low, name)
     for _, form in ipairs(forms) do if low:find(form, 1, true) then return true end end
     return false
 end
+-- (the forms of a list's names by their first two letters; forms of one letter or none, and
+-- names that are always mentioned, apart)
+E.MENTION_INDEX = true
+local mentionIndex, mentionIndexOf, mentionIndexShort
+local function MentionIndex(names)
+    local Short = A.Lore and A.Lore.Short
+    if mentionIndex and mentionIndexOf == names and mentionIndexShort == Short and mentionIndex.n == #names then return mentionIndex end
+    local index = {n = #names, pairs = {}, single = {}, always = {}}
+    for i, name in ipairs(names) do
+        local forms = LowForms(name)
+        if forms.always then index.always[#index.always + 1] = i
+        else
+            for _, form in ipairs(forms) do
+                if #form < 2 then index.single[#index.single + 1] = {i = i, form = form}
+                else
+                    local key = form:sub(1, 2)
+                    index.pairs[key] = index.pairs[key] or {}
+                    local list = index.pairs[key]
+                    list[#list + 1] = {i = i, form = form}
+                end
+            end
+        end
+    end
+    mentionIndex, mentionIndexOf, mentionIndexShort = index, names, Short
+    return index
+end
 function E.WithoutUnkilledClaims(text, killed, names)
     if not text or text == "" then return text, 0 end
     local L = A.Lore
@@ -432,7 +561,28 @@ function E.WithoutUnkilledClaims(text, killed, names)
         local named = mentionMemo[low]
         if not named then
             named = {}
-            for _, name in ipairs(names) do if Mentions(low, name) then named[#named + 1] = name end end
+            if E.MENTION_INDEX then
+                -- (1.54.0: the names found by the first two letters of their forms, then put back in
+                -- the list's order: the same names as asking every name of the list, ~1000 searches)
+                local index = MentionIndex(names)
+                local hit, order = {}, {}
+                for _, i in ipairs(index.always) do hit[i] = true; order[#order + 1] = i end
+                for at = 1, #low - 1 do
+                    local list = index.pairs[low:sub(at, at + 1)]
+                    if list then
+                        for _, x in ipairs(list) do
+                            if not hit[x.i] and low:sub(at, at + #x.form - 1) == x.form then hit[x.i] = true; order[#order + 1] = x.i end
+                        end
+                    end
+                end
+                for _, x in ipairs(index.single) do
+                    if not hit[x.i] and low:find(x.form, 1, true) then hit[x.i] = true; order[#order + 1] = x.i end
+                end
+                table.sort(order)
+                for _, i in ipairs(order) do named[#named + 1] = names[i] end
+            else
+                for _, name in ipairs(names) do if Mentions(low, name) then named[#named + 1] = name end end
+            end
             if mentionCount >= 4000 then mentionMemo, mentionCount = {}, 0 end
             mentionMemo[low], mentionCount = named, mentionCount + 1
         end

@@ -1,5 +1,13 @@
 # Companion Journal: changes
 
+## 1.54.0 (2026-11-20)
+
+- The book opens and turns pages without freezing the game
+- Books are written in the background, a few ms a frame; the page shows the last version at once
+- A book not written yet this session says "The pages are being written..." for a moment
+- Companion books are written in the background too
+- Faster lore links, death links and boss pronouns; the text is the same as before
+
 ## 1.53.1 (2026-11-20)
 
 - No hitch after a new entry: your book is prepared in the background, a few ms a frame
