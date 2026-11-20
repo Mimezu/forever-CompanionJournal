@@ -433,6 +433,8 @@ local CLAIM_NOT = {"wanted", "would ", "could ", "to kill", "unbeaten", "still "
     "before ", "until ", "to end ", "to destroy", "to slay", "to put", "to bring", "to finish", "asked ", "sent ", "meant to", "hoped", "must ",
     "should ", "whether", "orders", "ordered", "wants", "no time", "to see ", "to be ", "the time before", "earlier", "once ", "had lost ",
     "against", "beat ", "first time", "the first", "the second"}
+-- (a part of the body after a possessive name: "VanCleef's head" is a claim)
+local CLAIM_BODY = {head = true, heart = true, skull = true, corpse = true, body = true, remains = true, ashes = true, scalp = true, hide = true, blood = true, bones = true, hands = true, eye = true, eyes = true, tusk = true, fang = true, claw = true}
 function E.ClaimsDeath(sentence, name)
     local plain = Clean(sentence):gsub("{%a:([^}]*)}", "%1")
     local L = A.Lore
@@ -468,14 +470,13 @@ function E.ClaimsDeath(sentence, name)
             if s and low:sub(e + 1, e + 2) == "'s" then
                 -- (but "VanCleef's head" is one: a part of the body taken)
                 local noun = low:sub(e + 3):match("^%s*(%a+)") or ""
-                local BODY = {head = true, heart = true, skull = true, corpse = true, body = true, remains = true, ashes = true, scalp = true, hide = true, blood = true, bones = true, hands = true, eye = true, eyes = true, tusk = true, fang = true, claw = true}
-                if not BODY[noun] then s = nil end
+                if not CLAIM_BODY[noun] then s = nil end
             end
             if s and (not at or s < at) then at, after = s, e end
         end
         if at then
             local blocked = false
-            for _, w in ipairs(CLAIM_NOT) do if low:find(w, 1, true) then blocked = true end end
+            for _, w in ipairs(CLAIM_NOT) do if low:find(w, 1, true) then blocked = true; break end end
             if low:find("%f[%a]me%f[%A]") and (low:find("killed me") or low:find("got me") or low:find("fell to ")) then blocked = true end
             if not blocked then
                 -- (a list after the name, "Whitemane, Mograine, Herod and Loksey were dead")
