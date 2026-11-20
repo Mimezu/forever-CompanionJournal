@@ -509,10 +509,13 @@ local function InkParagraph(ctx, block, font, spacing, width, markup, cap)
             capHeight = (capText:GetStringHeight() or DROP_SIZE) - DROP_RAISE - 6
         end
     end
+    -- (the width of a space: one font per paragraph, so measured once)
+    local spaceW
     local function Measure(text)
         if text == "" then return 0 end
         if text:sub(-1) == " " then
-            return ctx.Width(font, text:sub(1, -2)) + ctx.Width(font, "a a") - ctx.Width(font, "aa")
+            if not spaceW then spaceW = ctx.Width(font, "a a") - ctx.Width(font, "aa") end
+            return ctx.Width(font, text:sub(1, -2)) + spaceW
         end
         return ctx.Width(font, text)
     end
