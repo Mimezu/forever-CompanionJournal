@@ -245,4 +245,30 @@ end
 check(voyage and voyage.from.map == 1420 and voyage.to.map == 1411 and voyage.from.t <= boarded + 2, "the zeppelin: from Tirisfal's tower to Durotar")
 check(hearth and hearth.from.map == 1411 and math.abs(hearth.to.x - 0.1) < 0.01, "the hearthstone: from the cast to where you landed")
 
+-- Turning the journal off and on again starts the road's clock again (CJ-ui-02).
+do
+    local tickers = {}
+    C_Timer = {NewTicker = function(_, fn)
+        local t = {fn = fn}
+        function t:Cancel() self.cancelled = true end
+        tickers[#tickers + 1] = t
+        return t
+    end}
+    SlashCmdList = SlashCmdList or {}
+    assert(loadfile(root .. "Core.lua"))("CompanionJournal", A)
+    local on = true
+    A.SelfJournalOn = function() return on end
+    Road.Start()
+    check(#tickers == 1, "the road's clock starts")
+    on = false
+    A.SetOption("peopleJournal", false)
+    tickers[1].fn()
+    check(tickers[1].cancelled, "the clock stops itself while the journal is off")
+    on = true
+    A.SetOption("peopleJournal", true)
+    check(#tickers == 2, "turning the journal back on starts the clock again")
+    A.SetOption("peopleJournal", true)
+    check(#tickers == 2, "a running clock is not started twice")
+end
+
 print("Road: " .. checks .. " checks passed (an hour of riding: " .. bytes .. " bytes)")
