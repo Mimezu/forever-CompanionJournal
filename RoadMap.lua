@@ -577,8 +577,8 @@ function Map.SetTime(t, quiet, follow)
             Sound(item.mark.kind == "death" and "death" or item.mark.kind == "level" and "level"
                 or item.mark.kind == "dungeon" and "dungeon" or "mark")
         end
-        item.shown = shown
-        Show(item, shown)
+        -- (only a mark that changes; a new drawing's marks start unset, so the first moment sets all)
+        if item.shown ~= shown then item.shown = shown; Show(item, shown) end
     end
     -- The walker: your class crest where you were then, gliding (see Map.WalkerAt).
     local walker = sheet.walker
