@@ -530,9 +530,11 @@ local function WatchParty(on)
 end
 A.JournalWatchParty = WatchParty
 -- Close by: in range, as the game reports it for a groupmate.
+-- (UnitInRange's second value, whether it could check, is read too: Ask keeps only the first)
 local function Near(unit)
-    local near, checked = Ask(UnitInRange, unit)
-    return near == true and checked ~= false
+    if not UnitInRange then return false end
+    local ok, near, checked = pcall(UnitInRange, unit)
+    return ok and Public(near) and near == true and (not Public(checked) or checked ~= false)
 end
 -- A level they reached, written only when you were together for it: grouped (an
 -- outing open) and close by. One noticed later, at a higher level, only updates
@@ -553,8 +555,7 @@ function A.JournalRestCheck()
     local place = Text(Ask(GetSubZoneText)) or Zone()
     for unit, key in pairs(partyKeys) do
         local outing = sessions[key]
-        local near, checked = Ask(UnitInRange, unit)
-        if outing and near == true and checked ~= false then
+        if outing and Near(unit) then
             local seen = restedAt[outing] or {}
             restedAt[outing] = seen
             local holder = Holder(key)
