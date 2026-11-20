@@ -956,17 +956,17 @@ local KILL2 = {{"^We killed ([%u{])", "We cut down %1"}, {"^We killed (the )", "
 local KILL3 = {{"^We killed ([%u{])", "It took all we had to bring down %1"}, {"^We killed (the )", "It took all we had to bring down %1"},
     {"^We killed (an? )", "It took all we had to bring down %1"}, {"^I killed ([%u{])", "It took all I had to bring down %1"},
     {"^I killed (the )", "It took all I had to bring down %1"}, {"^I killed (an? )", "It took all I had to bring down %1"}}
-local MOVE = {{"^We went on to ", "We pressed on to "}, {"^I went on to ", "I pressed on to "}, {"^From there we went to ", "From there we pressed on to "}}
+local REGISTER_MOVE = {{"^We went on to ", "We pressed on to "}, {"^I went on to ", "I pressed on to "}, {"^From there we went to ", "From there we pressed on to "}}
 local function Rules(...)
     local out = {}
     for _, list in ipairs({...}) do for _, rule in ipairs(list) do out[#out + 1] = rule end end
     return out
 end
 C.REGISTER = {
-    [1] = Rules(MOVE, {{"^We fought beside ", "We fought hard beside "}}),
-    [2] = Rules(MOVE, {{" came into ", " came at last into "}, {"^We fought beside ", "We fought hard beside "}, {"^We crossed ", "We pressed across "},
+    [1] = Rules(REGISTER_MOVE, {{"^We fought beside ", "We fought hard beside "}}),
+    [2] = Rules(REGISTER_MOVE, {{" came into ", " came at last into "}, {"^We fought beside ", "We fought hard beside "}, {"^We crossed ", "We pressed across "},
         {"^Inside, we brought down ", "Inside, we cut our way through to "}}, KILL2),
-    [3] = Rules(MOVE, {{" came into ", " came at last into "}, {"^We fought beside ", "We fought hard beside "}, {"^We crossed ", "We slipped across "},
+    [3] = Rules(REGISTER_MOVE, {{" came into ", " came at last into "}, {"^We fought beside ", "We fought hard beside "}, {"^We crossed ", "We slipped across "},
         {"^Inside, we brought down ", "Inside, we cut our way through to "}}, KILL3),
 }
 function C.Register(text, r)
