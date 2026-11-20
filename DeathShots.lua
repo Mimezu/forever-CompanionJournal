@@ -49,7 +49,6 @@ function A.DeathEntry(t)
     end
     return nil
 end
-A.MomentEntry = A.DeathEntry
 -- The picture of a moment by its time (the small photo in a chapter), or nil.
 function A.MomentPicture(t)
     local e = t and A.DeathEntry(t)
@@ -124,8 +123,6 @@ function A.OpenDeathCard(death, owner)
     card.close:ClearAllPoints(); card.close:SetPoint("TOPRIGHT", -26, -20)
     card:Show(); card:Raise()
 end
-function A.CloseDeathCard() if card then card:Hide() end end
-A.OpenMomentCard = A.OpenDeathCard
 
 -- Links in a chapter: each death of the day (yours, with a known killer) makes the first
 -- unlinked mention of its killer a link to its card, in order; each level with a picture,
