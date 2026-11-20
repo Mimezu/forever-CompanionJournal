@@ -695,9 +695,6 @@ PB.kill.humanoid = {"{we} killed {short}.", "{short} was cut down.", "{short} fo
 -- PB.killOne (one earlier boss)
 PB.killOne = {"{we} killed {boss}.", "{boss} went down.", "{boss} barred the way, briefly.", "{boss} fell.", "{we} dealt with {boss}."}
 
--- PB.killTwo
-PB.killTwo = {"{we} killed {bosses}.", "{bosses} both fell.", "{bosses} fell, one after the other.", "{bosses} were dealt with in turn."}
-
 -- PB.killMany
 PB.killMany = {"{we} killed {bosses}.", "{bosses} all fell.", "One after another, {bosses} went down.", "On the way through, {we} killed {bosses}."}
 
