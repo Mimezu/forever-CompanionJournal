@@ -1355,6 +1355,22 @@ local function CheckSpells()
         if not firsts[key] and Ask(known, id) == true then First(key, {d = "class", z = info[1], gate = info[2]}) end
     end
 end
+-- Tier pieces, and a whole set worn (PLAYER_EQUIPMENT_CHANGED fires once per slot: a set swap
+-- is one check, half a second later).
+local function CheckSets()
+    local count, names = {}, {}
+    for slot = 1, 19 do
+        local item = Ask(GetInventoryItemID, "player", slot)
+        local _, _, setID = ItemInfo(item)
+        if setID then count[setID] = (count[setID] or 0) + 1 end
+    end
+    for setID, n in pairs(count) do
+        names[setID] = SetName(setID)
+        if TIERS[setID] then First("tier" .. TIERS[setID], {d = "tier", z = names[setID], c = TIERS[setID]}) end
+        if n >= 8 then First("setfull:" .. setID, {d = "setfull", z = names[setID]}) end
+    end
+end
+local equipQueued = false
 local restedAt = setmetatable({}, {__mode = "k"})
 local auctionPattern -- (the auction-sold message as a pattern, built on first use)
 events:SetScript("OnEvent", function(_, event, ...)
@@ -1520,18 +1536,10 @@ events:SetScript("OnEvent", function(_, event, ...)
         elseif quality == 4 then First("epic", {d = "epic", z = name})
         elseif quality == 3 and name then First("rare", {d = "rare", z = name}) end
     elseif event == "PLAYER_EQUIPMENT_CHANGED" then
-        -- Tier pieces, and a whole set worn.
-        local count, names = {}, {}
-        for slot = 1, 19 do
-            local item = Ask(GetInventoryItemID, "player", slot)
-            local _, _, setID = ItemInfo(item)
-            if setID then count[setID] = (count[setID] or 0) + 1 end
-        end
-        for setID, n in pairs(count) do
-            names[setID] = SetName(setID)
-            if TIERS[setID] then First("tier" .. TIERS[setID], {d = "tier", z = names[setID], c = TIERS[setID]}) end
-            if n >= 8 then First("setfull:" .. setID, {d = "setfull", z = names[setID]}) end
-        end
+        if not equipQueued and C_Timer and C_Timer.After then
+            equipQueued = true
+            C_Timer.After(0.5, function() equipQueued = false; if A.SelfJournalOn() then CheckSets() end end)
+        elseif not (C_Timer and C_Timer.After) then CheckSets() end
     elseif event == "PLAYER_MOUNT_DISPLAY_CHANGED" then
         if Ask(IsMounted) == true and Ask(UnitOnTaxi, "player") ~= true and (tonumber(Ask(UnitLevel, "player")) or 0) >= 40 then
             First("mount", {d = "mount", n = MountKind()})
