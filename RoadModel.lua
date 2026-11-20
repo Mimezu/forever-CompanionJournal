@@ -136,20 +136,22 @@ end
 -- else nil.
 function M.PlaceAt(model, t)
     if not t then return nil end
-    local best, bestGap
+    -- (the closest point is remembered, and one table made for it at the end)
+    local bestPts, bestK, bestMap, bestGap
     for _, piece in ipairs(model.pieces) do
         local pts = piece.points
         if pts and #pts > 0 and t >= pts[1].t - 90 and t <= pts[#pts].t + 90 then
             for k = 1, #pts do
                 local gap = math.abs(pts[k].t - t)
-                if not bestGap or gap < bestGap then best, bestGap = {map = piece.map, x = pts[k].x, y = pts[k].y}, gap end
+                if not bestGap or gap < bestGap then bestPts, bestK, bestMap, bestGap = pts, k, piece.map, gap end
                 if pts[k].t > t then break end
             end
         elseif piece.from and t >= piece.from.t and t <= piece.to.t then
             return {map = piece.from.map, x = piece.from.x, y = piece.from.y, air = true}
         end
     end
-    return best
+    if bestPts then return {map = bestMap, x = bestPts[bestK].x, y = bestPts[bestK].y} end
+    return nil
 end
 
 -- The journal lines a map shows, and how (the book's few words for the hover).
