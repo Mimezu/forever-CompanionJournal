@@ -691,6 +691,7 @@ end
 -- Unread chapters: for each journal, the last day you read ("2026-10-01", the
 -- evening rule). A journal the book has never shown starts read.
 local function DayKeyOf(t)
+    if A.JournalDayKey then return A.JournalDayKey(t) end
     local eve = A.JournalEvening and A.JournalEvening(t or 0) or t or 0
     return date and date("%Y-%m-%d", eve) or "?"
 end

@@ -101,7 +101,22 @@ local function Evening(t)
     return t
 end
 A.JournalEvening = Evening
-local function DayKey(t) return date and date("%Y-%m-%d", Evening(t or 0)) or "?" end
+-- The book's day for a time ("2026-10-01", the evening rule). Kept by 15-minute bucket: every
+-- UTC offset is a multiple of 15 minutes and clocks change on the hour or half-hour, so the day is
+-- the same through a bucket. At most one short string per bucket that has an entry.
+local dayKeys = {}
+local function DayKey(t)
+    if not date then return "?" end
+    t = t or 0
+    local bucket = math.floor(t / 900)
+    local key = dayKeys[bucket]
+    if not key then
+        key = date("%Y-%m-%d", Evening(t))
+        dayKeys[bucket] = key
+    end
+    return key
+end
+A.JournalDayKey = DayKey
 local function FirstName(person) return person.display or (person.name or ""):match("^[^%-]+") or "They" end
 -- A stable choice among phrasings, so a day reads the same every time.
 local function Pick(seed, options)

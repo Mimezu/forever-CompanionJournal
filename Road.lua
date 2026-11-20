@@ -49,6 +49,7 @@ end
 
 -- The book's day for a time (play past midnight belongs to the evening before).
 local function DayOf(t)
+    if A.JournalDayKey and t then return A.JournalDayKey(t) end
     local evening = A.JournalEvening and A.JournalEvening(t) or t
     return date and date("%Y-%m-%d", evening) or "?"
 end

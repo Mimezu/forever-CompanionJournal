@@ -356,4 +356,17 @@ do
     A.bookLinks = nil
 end
 
+-- The day key (CJ-ui-03): kept by 15-minute bucket, always the evening rule's date.
+do
+    local function Direct(t) return date("%Y-%m-%d", A.JournalEvening(t)) end
+    local base = os.time({year = 2026, month = 3, day = 14, hour = 0, min = 0, sec = 0})
+    for _, at in ipairs({{4, 59, 59}, {5, 0, 0}, {23, 59, 59}, {0, 0, 0}}) do
+        local t = os.time({year = 2026, month = 3, day = 14, hour = at[1], min = at[2], sec = at[3]})
+        check(A.JournalDayKey(t) == Direct(t), ("day key at %02d:%02d:%02d"):format(at[1], at[2], at[3]))
+    end
+    local t = base + 7 * 900
+    check(A.JournalDayKey(t) == Direct(t) and A.JournalDayKey(t + 899) == Direct(t + 899), "day key across one bucket")
+    check(A.JournalDayKey(base + 4 * 3600 + 3599) == Direct(base + 4 * 3600 + 3599), "day key just before five, after a later bucket")
+end
+
 io.write("PASS: " .. assertions .. " book assertions\n")

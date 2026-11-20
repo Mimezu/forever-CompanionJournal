@@ -65,6 +65,12 @@ function A.JournalCanWriteNotes(person)
     local me = A.Me and A.Me()
     return Writable(person) and (not person.self or me and person.charKey == me) and true or false
 end
+-- The book's day for a time (the evening rule): JournalBook.lua's A.JournalDayKey, loaded after
+-- this file; the same reckoning inline when it is not there (a test that loads this file alone).
+local function DayKey(t)
+    if A.JournalDayKey then return A.JournalDayKey(t) end
+    return date and date("%Y-%m-%d", A.JournalEvening and A.JournalEvening(t) or t) or "?"
+end
 -- Notes dated to an earlier journal day use noon, safely away from midnight
 -- and the book's before-five-in-the-morning evening boundary.
 function A.JournalNoteTimestamp(dayKey)
@@ -74,7 +80,7 @@ function A.JournalNoteTimestamp(dayKey)
     year, month, day = tonumber(year), tonumber(month), tonumber(day)
     if month < 1 or month > 12 or day < 1 or day > 31 then return nil end
     local now = Now()
-    local today = date("%Y-%m-%d", A.JournalEvening and A.JournalEvening(now) or now)
+    local today = DayKey(now)
     if dayKey > today then return nil end
     if dayKey == today then return now end
     local ok, stamp = pcall(time, {year = year, month = month, day = day, hour = 12, min = 0, sec = 0})
@@ -88,7 +94,7 @@ function A.JournalWrite(person, text, dayKey)
     local stamp = dayKey and A.JournalNoteTimestamp(dayKey)
     if dayKey ~= nil and not stamp then return nil end
     local now = Now()
-    local today = date and date("%Y-%m-%d", A.JournalEvening and A.JournalEvening(now) or now)
+    local today = DayKey(now)
     return A.JournalAdd(person, {k = "custom", d = text:sub(1, 300), t = stamp,
         z = dayKey and dayKey ~= today and "" or nil})
 end
@@ -923,7 +929,7 @@ function A.JournalChapters(person)
     while i <= #entries do
         local entry = entries[i]
         local eve = A.JournalEvening and A.JournalEvening(entry.t or 0) or entry.t or 0
-        local key = date and date("%Y-%m-%d", eve) or "?"
+        local key = DayKey(entry.t or 0)
         if key ~= day then
             day = key
             current = {key = key, title = date and date("%A, %d %B %Y", eve) or key, lines = {}}
@@ -933,7 +939,7 @@ function A.JournalChapters(person)
         if entry.k == "quest" or entry.k == "boss" then
             -- (the same evening-day as the chapter: play past midnight stays on its day)
             while entries[i + 1] and entries[i + 1].k == entry.k and entries[i + 1].z == entry.z
-                and (date and date("%Y-%m-%d", A.JournalEvening and A.JournalEvening(entries[i + 1].t or 0) or entries[i + 1].t or 0) or "?") == day do
+                and DayKey(entries[i + 1].t or 0) == day do
                 i = i + 1
                 group[#group + 1] = entries[i]
             end
