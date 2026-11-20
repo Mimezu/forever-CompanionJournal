@@ -87,7 +87,9 @@ end
 -- same and so does a short break or a turn on another character: a sleep followed by
 -- anything within two hours, or the last line when you are back within two hours, was
 -- not a night. 2026-11-14: "Then I slept in the Undercity" after a few reloads there.
-local NIGHT = 2 * 3600
+-- 2026-11-20: a night is four and a half hours away from the game.
+A.NIGHT_AWAY = 4.5 * 3600
+local NIGHT = A.NIGHT_AWAY
 function A.ForgetShortSleeps(journal, now)
     if type(journal) ~= "table" then return end
     local after = now

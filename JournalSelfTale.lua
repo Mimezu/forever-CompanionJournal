@@ -1137,6 +1137,22 @@ function ST.Tell(person, days, brief, retell, capture)
         end
     end
     history.questZones = {}
+    -- A day is over only when you were away four and a half hours or more after it: the next
+    -- day began that much later, or (the last day) you are not playing and that long has
+    -- passed. Until then the chapter ends on its last deed, never "the night ended" or "called
+    -- it a night". 2026-11-20: "I never slept, and it was never the night", fishing in
+    -- Thunder Bluff.
+    local function DayDone(i)
+        local scenes = days[i].scenes or {}
+        local last = scenes[#scenes]
+        local endT = last and (last.e or last.t)
+        if not endT then return true end
+        local nextDay = days[i + 1]
+        local nextStart = nextDay and ((nextDay.scenes and nextDay.scenes[1] and nextDay.scenes[1].t) or nextDay.t)
+        if nextStart then return nextStart - endT >= (A.NIGHT_AWAY or 16200) end
+        if last.open then return false end
+        return not time or time() - endT >= (A.NIGHT_AWAY or 16200)
+    end
     for index, day in ipairs(days) do
         -- (between days, a telling in the background may pause for the next frame: JournalTellCache.lua)
         if A.TellStep then A.TellStep() end
@@ -6058,7 +6074,7 @@ function ST.Tell(person, days, brief, retell, capture)
             if not (A.SelfCompose and A.SelfCompose.Apply) or (A.BookVariant and A.BookVariant("compose") == "off") then return end
             plan.composed = A.SelfCompose.Apply({day = day, stretches = stretches, out = out, majors = majors, kinds = kinds, times = times,
                 scenes = scenes, metas = plan.metas, dayPlan = dayPlan, teller = teller, W = W, Place = Place, person = person,
-                history = history, index = index, brief = brief,
+                history = history, index = index, brief = brief, dayDone = DayDone(index),
                 -- (for the selection of the work, JournalSelfPlan's Sel through the composer: lane U)
                 race = race, class = person.class, titleWords = TITLE_WORDS, Companion = Companion,
                 level = stretches[#stretches] and stretches[#stretches].level or person.level,

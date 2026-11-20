@@ -1,5 +1,10 @@
 # Companion Journal: changes
 
+## 1.55.4 (2026-11-20)
+
+- A chapter ends on "the night" only after you logged out 4½ hours or more; today's chapter while you play ends on its last deed
+- A logout while resting counts as a sleep after 4½ hours away (was 2)
+
 ## 1.55.3 (2026-11-20)
 
 - Fixed: journal and companions gone when the game gives no realm name. Your record keeps your first + last name, the last realm is kept, and entries written meanwhile go back into your journal

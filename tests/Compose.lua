@@ -355,4 +355,31 @@ do
     end
 end
 
+-- 3. Still playing (2026-11-20, "I never slept, and it was never the night"): the same evening
+-- with its last stretch open and no sleep, ten minutes later, ends on its last deed, with no
+-- night words; once you have been away four and a half hours, the night is told again.
+do
+    local saved, savedTime = me.journal, time
+    local open = {}
+    for _, e in ipairs(saved) do
+        if e.k ~= "sleep" then
+            local copy = {}
+            for k, v in pairs(e) do copy[k] = v end
+            open[#open + 1] = copy
+        end
+    end
+    for i = #open, 1, -1 do if open[i].k == "play" then open[i].e = nil; break end end
+    me.journal = open
+    time = function(t) if type(t) == "table" then return os.time(t) end return At(24, 9) end
+    local now = Tell(true):lower()
+    for _, words in ipairs({"called it a night", "stopped for the night", "night ended", "slept", "evening ended"}) do
+        check(not Find(now, words), "still playing: no \"" .. words .. "\"")
+    end
+    for i = #open, 1, -1 do if open[i].k == "play" then open[i].e = At(23, 59); break end end
+    time = function(t) if type(t) == "table" then return os.time(t) end return At(23, 59) + 5 * 3600 end
+    local later = Tell(true):lower()
+    check(Find(later, "ended") or Find(later, "night"), "away five hours: the night is told")
+    me.journal, time = saved, savedTime
+end
+
 print(assertions .. " checks passed")

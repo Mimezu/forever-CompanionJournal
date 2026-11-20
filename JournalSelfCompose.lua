@@ -3849,7 +3849,7 @@ function C.Apply(ctx)
         if total <= 0 then total = wall end
         local gapped = wall - total > 3600
         local hearthHome = Any(lastPlain, {"hearthstone took me home", "hearthstone brought me home", "went home to"})
-        if total >= 3600 and not hearthHome then
+        if total >= 3600 and not hearthHome and ctx.dayDone ~= false then
             local hours = total / 3600
             local whole = math.floor(hours)
             local frac = hours - whole
