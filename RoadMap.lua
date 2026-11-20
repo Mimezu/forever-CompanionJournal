@@ -962,6 +962,8 @@ function Map.Hover(_, elapsed)
     for _, item in ipairs(state.drawnMarks or {}) do if item.mark.kind == "death" then Near(item) end end
     if not best then for _, item in ipairs(state.drawnMarks or {}) do Near(item) end end
     if not best then for _, item in ipairs(state.drawn) do Near(item) end end
+    -- (the same item, its tooltip still up: it follows the cursor by itself)
+    if best and best == state.hoverItem and GameTooltip:IsOwned(sheet.area) and GameTooltip:IsShown() then return end
     state.hoverDay = best and best.day or nil
     state.hoverItem = best
     if not best then GameTooltip:Hide(); return end
