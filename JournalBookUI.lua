@@ -403,6 +403,8 @@ end
 local function BindNoteActions(target, page)
     target:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     target:SetScript("OnClick", function(self)
+        -- (a moment's small photo: its card)
+        if self.cjMoment and A.OpenDeathCard then A.OpenDeathCard({t = self.cjMoment}, A.BookFrame and A.BookFrame() or self); return end
         local notes = ManualEntries(page, self.entries)
         if #notes == 1 then EditNote(self, page, notes[1]); return end
         if #notes == 0 then return end
@@ -484,6 +486,7 @@ local function Page(parent, side, paged)
         for _, part in pairs(block.textures) do part:Hide() end
         block:ClearAllPoints()
         block.entries = type(entries) == "table" and #entries > 0 and entries or nil
+        block.solid, block.cjMoment = nil, nil
         block:Show()
         return block
     end
@@ -550,7 +553,7 @@ function A.BookLinkable(frame)
     frame:SetScript("OnHyperlinkClick", function(self, link)
         local key = type(link) == "string" and link:match("^cjperson:(.+)$")
         if key and A.BookJump then A.BookJump(key) end
-        local death = type(link) == "string" and tonumber(link:match("^cjdeath:(%d+)$"))
+        local death = type(link) == "string" and tonumber(link:match("^cjmoment:(%d+)$") or link:match("^cjdeath:(%d+)$"))
         if death and A.OpenDeathCard then A.OpenDeathCard({t = death}, A.BookFrame and A.BookFrame() or self) end
         local id = type(link) == "string" and link:match("^cjlore:(.+)$")
         if id and A.OpenLoreNote then
@@ -562,7 +565,7 @@ function A.BookLinkable(frame)
         local key = type(link) == "string" and link:match("^cjperson:(.+)$")
         local person = key and A.People[key]
         if not person then
-            local death = type(link) == "string" and tonumber(link:match("^cjdeath:(%d+)$"))
+            local death = type(link) == "string" and tonumber(link:match("^cjmoment:(%d+)$") or link:match("^cjdeath:(%d+)$"))
             if death then
                 GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
                 GameTooltip:SetText(date and date("%H:%M", death) or "", 1, 0.82, 0)
@@ -970,7 +973,7 @@ local function PageChapters(page, person, chapters, style, mode, Story, prepare)
             local block = page.blocks[i]
             if block.layout then boundaries[#boundaries + 1] = math.max(0, -block.layout.y - 1) end
             for _, fs in pairs(block.texts) do TextLines(fs) end
-            if not next(block.texts) and block.layout then
+            if (block.solid or not next(block.texts)) and block.layout then
                 lines[#lines + 1] = {-block.layout.y, -block.layout.y + block.layout.height}
             end
         end

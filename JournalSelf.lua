@@ -1496,7 +1496,10 @@ events:SetScript("OnEvent", function(_, event, ...)
         end)
     elseif event == "PLAYER_LEVEL_UP" then
         local level = ...
-        if Public(level) and type(level) == "number" then Add({k = "mylevel", d = level}) end
+        -- (with a picture of the moment, as a death has: DeathShots.lua)
+        if Public(level) and type(level) == "number" then
+            Add({k = "mylevel", d = level, z = Zone(), sz = SubZone(), shot = A.MomentShot and A.MomentShot()})
+        end
     elseif event == "PLAYER_UPDATE_RESTING" then
         C_Timer.After(3, function()
             if Ask(IsResting) ~= true or not stretch then return end

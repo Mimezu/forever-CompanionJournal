@@ -39,4 +39,19 @@ check(first and second and first < second, "two deaths, two links, in order")
 check(linked:find("{n:Vampiric Duskbat}", 1, true), "the name's markup is left alone")
 check(not linked:find("cjdeath:150", 1, true), "a companion's death is not yours to link")
 check(A.DeathLinks("Nothing to see.", day) == "Nothing to see.", "no mention: the text unchanged")
+-- 4. Levels: a level with a picture links its "level N" (not "level 2" inside "level 21");
+-- one without a picture links nothing.
+local levels = {scenes = {{entries = {
+    {k = "mylevel", d = 2, t = 300, shot = 300},
+    {k = "mylevel", d = 3, t = 400},
+}}}}
+local told = A.DeathLinks("At level 21 once. Then I was level 2 again, and soon level 3.", levels)
+check(told:find("|Hcjdeath:300|h|cff7d1c0alevel 2|r|h again", 1, true), "the level's own mention is linked")
+check(not told:find("|Hcjdeath:300|h|cff7d1c0alevel 2|r|h1", 1, true), "level 21 is not level 2")
+check(not told:find("cjdeath:400", 1, true), "no picture: no link")
+-- 5. The photo: a moment's picture by its time, from your journal.
+A.SelfPerson = function() return {journal = {{k = "mylevel", d = 2, t = clock, shot = clock}}} end
+WowHelperShots = {[clock + 1] = "level-two"}
+check(A.MomentPicture(clock) == "level-two", "a level's picture by its time")
+check(A.MomentPicture(clock + 500) == nil, "no moment then: no picture")
 print("DeathShots: " .. checks .. " checks passed")

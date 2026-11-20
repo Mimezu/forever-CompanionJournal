@@ -114,6 +114,24 @@ local function Item(ctx, block, i, x, y, width, glyph, text, color)
     icon:SetPoint("TOPLEFT", x + 1, y - 1)
     return (Paragraph(ctx, block, "item" .. i, Font("friz", 12), color or INK, 4, x + 19, y, width - 19, Colored(text, BOOK_MARKUP)))
 end
+-- A small photo of a moment (a death, a level): the picture in a thin ink frame, centred
+-- in the width; a click opens its card. One solid piece: a page never cuts it.
+local PHOTO_W, PHOTO_H = 200, 100
+local function Photo(ctx, x, y, width, p)
+    local block = ctx.Block()
+    local w = math.min(PHOTO_W, width - 8)
+    local h = math.floor(w / 2)
+    local frame = ctx.Texture(block, "photoFrame", "BORDER")
+    frame:SetColorTexture(INK[1], INK[2], INK[3], 0.55)
+    frame:SetAllPoints()
+    local picture = ctx.Texture(block, "photo")
+    picture:SetTexture(p.photo); picture:SetTexCoord(0, 1, 0, 1)
+    picture:SetPoint("TOPLEFT", 1, -1); picture:SetPoint("BOTTOMRIGHT", -1, 1)
+    block.solid, block.cjMoment = true, p.t -- (the book's click opens the card: JournalBookUI.lua)
+    ctx.Place(block, x + math.floor((width - w - 2) / 2), y - 4, w + 2, h + 2)
+    return h + 2 + 4 + 8
+end
+
 -- A line of yours set off by a thin red rule on its left.
 local function RuledQuote(ctx, x, y, width, text, entries, font, spacing)
     local block = ctx.Block(entries, "line")
@@ -150,6 +168,17 @@ local function DayParagraphs(person, day, mode, voice, ctx)
             -- Scene breaks belong to the prose. Give each scene its own block so
             -- Diary's word-by-word ink layout keeps them, too.
             Prose(story.text)
+            -- (a moment with a picture, a death or a level: a small photo after the
+            -- paragraph that mentions it; DeathShots.lua)
+            if A.MomentPicture then
+                for i = #paragraphs, 1, -1 do
+                    local p = paragraphs[i]
+                    for t in (p.text or ""):gmatch("|Hcjdeath:(%d+)|h") do
+                        local path = A.MomentPicture(tonumber(t))
+                        if path then table.insert(paragraphs, i + 1, {photo = path, t = tonumber(t)}) end
+                    end
+                end
+            end
             for _, quote in ipairs(story.quotes) do paragraphs[#paragraphs + 1] = {quote = quote.text, entries = quote.entries} end
         end
     elseif mode == "highlights" then
@@ -183,12 +212,14 @@ function S.a(ctx, days, person, mode)
         -- (style A's Everything is the classic list, except for your own journal: its scenes)
         local shownMode = (mode == "story" or mode == "storyBrief") and mode or ((person.self and mode == "all") and "all" or "highlights")
         for _, p in ipairs(DayParagraphs(person, day, shownMode, "you", ctx)) do
-            local block = ctx.Block(p.entries, "line")
+            local block = not p.photo and ctx.Block(p.entries, "line")
             local indent = p.quote and 22 or 8
             if p.heading then
                 h = Paragraph(ctx, block, "text", Font("quest"), SOFT, 0, 0, 0, width, p.heading, "CENTER")
                 ctx.Place(block, 0, y, width, h + 2)
                 y = y - h - 2 - 5
+            elseif p.photo then
+                y = y - Photo(ctx, 0, y, width, p)
             else
             h = Paragraph(ctx, block, "text", Font("quest"), p.quote and SOFT or INK, 3, 0, 0, width - indent - 4,
                 p.quote and (OPEN .. p.quote .. CLOSE) or Colored(p.text, {}))
@@ -240,6 +271,8 @@ function S.b(ctx, days, person, mode)
                 local h = Paragraph(ctx, block, "text", Font("book", 17), INK, 0, 0, 0, width, p.heading, "CENTER")
                 ctx.Place(block, 0, y, width, h)
                 y = y - h - 8
+            elseif p.photo then
+                y = y - Photo(ctx, 0, y, width, p)
             elseif p.quote then
                 y = y - 4 - BookQuote(ctx, y - 4, p.quote, p.entries) - 12
             else
@@ -313,6 +346,8 @@ function S.c(ctx, days, person, mode)
                     local h = Paragraph(ctx, block, "text", Font("book", 16), INK, 0, 0, 0, inner, p.heading)
                     ctx.Place(block, CONTENT, bottom, inner, h)
                     bottom = bottom - h + 2
+                elseif p.photo then
+                    bottom = bottom - Photo(ctx, CONTENT, bottom, inner, p)
                 elseif p.quote then
                     bottom = bottom - RuledQuote(ctx, CONTENT, bottom, inner, p.quote, p.entries, Font("book", 14), 4)
                 else
@@ -558,6 +593,8 @@ function S.d(ctx, days, person, mode)
                 h = Paragraph(ctx, block, "text", Font("book", 17), RUBRIC, 0, 0, 0, width, p.heading, "CENTER")
                 ctx.Place(block, 0, y, width, h)
                 y = y - h - 8
+            elseif p.photo then
+                y = y - Photo(ctx, 0, y, width, p)
             elseif p.quote then
                 y = y - 2 - RuledQuote(ctx, 18, y - 2, width - 18, p.quote, p.entries, Font("friz", 13), 4) - 10
             else
@@ -634,6 +671,9 @@ function S.e(ctx, days, person, mode)
         y = y - 2 - 22 - 6
         if mode ~= "all" then
             for i, p in ipairs(DayParagraphs(person, day, mode, "you", ctx)) do
+                if p.photo then
+                    y = y - Photo(ctx, TIME_COLUMN, y, width - TIME_COLUMN, p)
+                else
                 local block = ctx.Block(p.entries, "line")
                 local h = 0
                 if p.heading then
@@ -645,6 +685,7 @@ function S.e(ctx, days, person, mode)
                 end
                 ctx.Place(block, 0, y, width, h)
                 y = y - h - ParagraphGap(ctx)
+                end
             end
         else
             for i, scene in ipairs(day.scenes) do
