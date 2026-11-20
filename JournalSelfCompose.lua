@@ -867,12 +867,11 @@ function C.AdventureFacts(ep)
         end
     end
     -- the foes: a named elite by name; a long time spent fighting elites is a dangerous place
-    for _, list in ipairs({ep.eliteNames, ep.namedElites, ep.elitesNamed}) do
-        if type(list) == "table" then
-            for _, x in ipairs(list) do
-                local name = type(x) == "table" and (x.name or x.d) or x
-                if type(name) == "string" and name ~= "" and name ~= "?" then f.named[#f.named + 1] = name end
-            end
+    local list = ep.eliteNames
+    if type(list) == "table" then
+        for _, x in ipairs(list) do
+            local name = type(x) == "table" and (x.name or x.d) or x
+            if type(name) == "string" and name ~= "" and name ~= "?" then f.named[#f.named + 1] = name end
         end
     end
     if ep.dangerous == true or (tonumber(ep.eliteSeconds) or 0) >= C.DANGEROUS_SECONDS
