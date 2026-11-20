@@ -1,5 +1,9 @@
 # Companion Journal: changes
 
+## 1.53.1 (2026-11-20)
+
+- No hitch after a new entry: your book is prepared in the background, a few ms a frame
+
 ## 1.53.0 (2026-11-19)
 
 - Storyteller: no quest or move told twice; no going "to" where you already are

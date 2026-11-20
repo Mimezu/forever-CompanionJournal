@@ -3087,7 +3087,7 @@ local function WarmOwn()
     end
     local person = A.SelfPerson()
     if not person then return end
-    A.TellCache.WarmSelf(person, A.JournalBook(person), A.JournalMode() ~= "all")
+    A.TellCache.WarmSelf(person, function() return A.JournalBook(person) end, A.JournalMode() ~= "all")
 end
 local function WarmSoon()
     if warmAt or not (C_Timer and C_Timer.After) then return end

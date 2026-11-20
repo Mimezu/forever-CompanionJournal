@@ -27,9 +27,12 @@ C.SKIP = {bookRead = true, bookPins = true, bookSize = true, bookSpread = true, 
 C.hits, C.misses = 0, 0
 
 local store, order = {}, {}
+local job -- the background telling (below)
 
 -- A value as text: tables by their pairs (an unchanged table walks in the same order; a changed
 -- one at worst misses), strings with their length so no two values read the same.
+-- The whole saved journal as text takes ~30 ms; a background job that builds its own key
+-- (job.keyYield) pauses here between entries, so that never lands in one frame.
 local function Put(buf, v, depth)
     local t = type(v)
     if t == "string" then
@@ -41,6 +44,7 @@ local function Put(buf, v, depth)
     elseif t == "table" then
         if depth > 16 then buf[#buf + 1] = "^"; return end
         buf[#buf + 1] = "{"
+        if job and job.keyYield and depth <= 5 and coroutine.running() == job.co then A.TellStep() end
         for k, x in pairs(v) do
             Put(buf, k, depth + 1)
             buf[#buf + 1] = "="
@@ -154,13 +158,21 @@ function C.Self(person, days, brief, retell, opts)
     end, opts)
 end
 -- The own book told ahead, in the background, so the book opens on it at once (while you play,
--- after a new entry; at login). Nothing happens when it is already kept.
+-- after a new entry; at login). Nothing happens when it is already kept. `days` may be a
+-- function giving the days: the job then gathers them in its first frame, builds the key over
+-- the next frames and only then tells (each step was a 30-50 ms frame when done at once).
 function C.WarmSelf(person, days, brief)
     if not C.ON or not C.Background then return end
     local args = {brief = brief and true or false, retell = false}
-    local key = C.Key("self", person, days, args)
-    if store[key] then return end
-    C.Background(key, Identity("self", person, args), function() return A.SelfTale.Tell(person, days, brief, false) end)
+    C.Background(nil, Identity("self", person, args), function()
+        local me = job
+        if type(days) == "function" then days = days(); coroutine.yield() end
+        if me then me.keyYield = true end
+        local key = C.Key("self", person, days, args)
+        if me then me.keyYield, me.key = nil, key end
+        if store[key] then return nil end
+        return A.SelfTale.Tell(person, days, brief, false)
+    end)
 end
 
 -- In the background (1.51.3): a telling runs in a coroutine, a few milliseconds a frame, pausing
@@ -168,7 +180,6 @@ end
 -- time: a newer request replaces an older one. Only tellers that never pause inside a pcall
 -- may run here (the own book's); the companions' tellers run as before.
 C.BUDGET = 6 -- milliseconds a frame
-local job
 local function Clock() return debugprofilestop and debugprofilestop() or 0 end
 function A.TellStep()
     if job and job.co == coroutine.running() and Clock() - job.slice > C.BUDGET then coroutine.yield() end
@@ -187,8 +198,9 @@ local function Run()
         for _, ready in ipairs(current.ready) do pcall(ready) end
     end
 end
+-- (key nil: the job builds its own key and sets job.key before it tells)
 function C.Background(key, ident, tell, ready)
-    if job and job.key == key then
+    if key ~= nil and job and job.key == key then
         if ready then job.ready[#job.ready + 1] = ready end
         return
     end
