@@ -708,7 +708,15 @@ local function RunUnits(f, day, person)
     return true
 end
 -- One day's facts.
-local function DayFacts(day, person)
+local DayFacts
+-- (a day's facts without the companion, once per telling: DayFacts is pure in the day, and
+-- these are only read; `cache` is the telling's own, teller.plainFacts)
+local function PlainFacts(cache, days, i)
+    local f = cache[i]
+    if not f then f = DayFacts(days[i]); cache[i] = f end
+    return f
+end
+function DayFacts(day, person)
     local f = {zones = {}, zoneTime = {}, together = 0, outings = 0, quests = {}, dungeons = {}, byDungeon = {},
         deaths = {}, wipes = {}, rez = 0, rezT = {}, levels = {}, fires = {}, rests = {}, seen = nil, met = nil, added = false,
         plStart = nil, plEnd = nil, ol = nil, quotes = {}}
@@ -5405,21 +5413,22 @@ function T.TellOnce(person, days, voice, player, brief)
     -- Story Highlights keeps only these beats.
     local KEEP = {open = true, shared = true, deathLore = true, landKey = true, day = true, dungeon = true, climax = true, death = true, rez = true, levelMark = true,
         questKey = true, rest = true, milestone = true, seen = true}
+    teller.plainFacts = {}
     -- The next day together, for each day (hindsight is only said when true).
     local nextTogether = {}
     do
         local following
         for i = #days, 1, -1 do
             nextTogether[i] = following
-            if Together(DayFacts(days[i])) then following = DayNumber(days[i].t) end
+            if Together(PlainFacts(teller.plainFacts, days, i)) then following = DayNumber(days[i].t) end
         end
     end
     -- the last recorded stage of each quest chain in the whole book (Highlights keeps
     -- it: a chain's resolution, or how far it got).
     local threadLast = {}
     if brief and A.Lore and A.Lore.QuestStory then
-        for _, d in ipairs(days) do
-            for _, quest in ipairs(DayFacts(d).quests) do
+        for i in ipairs(days) do
+            for _, quest in ipairs(PlainFacts(teller.plainFacts, days, i).quests) do
                 local story = A.Lore.QuestStory(quest.title, quest.qid)
                 if story and story.thread then threadLast[story.thread] = quest.qid or quest.title end
             end
@@ -5429,7 +5438,7 @@ function T.TellOnce(person, days, voice, player, brief)
     local firesAhead = {}
     do
         local acc = 0
-        for i = #days, 1, -1 do firesAhead[i] = acc; acc = acc + #DayFacts(days[i]).fires end
+        for i = #days, 1, -1 do firesAhead[i] = acc; acc = acc + #PlainFacts(teller.plainFacts, days, i).fires end
     end
     for index, day in ipairs(days) do
         -- (between days, a telling in the background may pause for the next frame: JournalTellCache.lua)
@@ -9359,7 +9368,7 @@ function T.TellOnce(person, days, voice, player, brief)
             if ahead and history.days == 0 and not startedTogether and rng() < 0.3 and outBeat[#out] ~= "death" and outBeat[#out] ~= "rez"
                 and not (out[#out] or ""):find("back from death", 1, true) and not (out[#out] or ""):find("raised", 1, true) and (function()
                 local later = 0
-                for j = index + 1, #days do if Together(DayFacts(days[j])) then later = later + 1 end end
+                for j = index + 1, #days do if Together(PlainFacts(teller.plainFacts, days, j)) then later = later + 1 end end
                 return later >= 3
             end)() then
                 Add(teller:Say("foreLater", PB.closeForeshadow.later, rng, tokens)); history.foreSaid = index
@@ -9535,7 +9544,7 @@ function T.TellOnce(person, days, voice, player, brief)
                 return true
             end
             local nextDay = days[index + 1]
-            local g = DayFacts(nextDay)
+            local g = PlainFacts(teller.plainFacts, days, index + 1)
             local onlyDay = true
             for i = 1, #out do if outBeat[i] ~= "day" and outBeat[i] ~= "open" then onlyDay = false end end
             if onlyDay and Quiet(f) and Quiet(g) and DayNumber(nextDay.t) == today + 1 and g.zones[1] == mainZone
