@@ -5347,11 +5347,14 @@ function T.TellOnce(person, days, voice, player, brief)
     -- grouping, by day, for the chapter's first line now and then.
     local mySelf = A.SelfPerson and A.SelfPerson((player and player.charKey) or (A.Me and A.Me()))
     local ownJournal = mySelf and type(mySelf.journal) == "table" and mySelf.journal or nil
+    -- (the "with" lines of your own journal and the companion's cleaned name, once a telling: for
+    -- AloneBefore and each day's crowd check; kept on the teller, TellOnce being at the local limit)
+    teller.ownWiths, teller.personClean = {}, Clean(person.name or "")
+    for _, e in ipairs(ownJournal or {}) do if e.k == "with" then teller.ownWiths[#teller.ownWiths + 1] = e end end
     local function AloneBefore(startT)
         if not ownJournal or not date then return nil end
         local dayKey = date("%Y-%m-%d", Evening(startT))
-        local withs = {}
-        for _, e in ipairs(ownJournal) do if e.k == "with" then withs[#withs + 1] = e end end
+        local withs = teller.ownWiths
         local byZone, total = {}, 0
         for _, e in ipairs(ownJournal) do
             -- (an evening day spans 05:00 to 05:00: an entry of startT's day is less than 30 hours older)
@@ -5460,9 +5463,10 @@ function T.TellOnce(person, days, voice, player, brief)
         if ownJournal then
             for _, scene in ipairs(day.scenes) do
                 if scene.kind == "outing" then
-                    for _, e in ipairs(ownJournal) do
-                        if e.k == "with" and e.n and Clean(e.n) ~= Clean(person.name or "") and (e.t or 0) < (scene.e or scene.t) and (e.e or e.t or 0) > scene.t then teller.crowd = true end
+                    for _, e in ipairs(teller.ownWiths) do
+                        if e.n and Clean(e.n) ~= teller.personClean and (e.t or 0) < (scene.e or scene.t) and (e.e or e.t or 0) > scene.t then teller.crowd = true; break end
                     end
+                    if teller.crowd then break end
                 end
             end
         end
