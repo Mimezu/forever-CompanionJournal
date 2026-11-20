@@ -5348,7 +5348,8 @@ function T.TellOnce(person, days, voice, player, brief)
         for _, e in ipairs(ownJournal) do if e.k == "with" then withs[#withs + 1] = e end end
         local byZone, total = {}, 0
         for _, e in ipairs(ownJournal) do
-            if e.k == "play" and e.t and e.t < startT and date("%Y-%m-%d", Evening(e.t)) == dayKey then
+            -- (an evening day spans 05:00 to 05:00: an entry of startT's day is less than 30 hours older)
+            if e.k == "play" and e.t and e.t < startT and e.t >= startT - 30 * 3600 and date("%Y-%m-%d", Evening(e.t)) == dayKey then
                 local stop = math.min(e.e or e.t, startT)
                 local company = false
                 for _, w in ipairs(withs) do if (w.t or 0) < stop and (w.e or startT) > e.t then company = true end end
