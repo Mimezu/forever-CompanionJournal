@@ -2896,7 +2896,6 @@ end
 
 -- Round 8 (the writer): epithets, stories, consequences, quest lore.
 do
-local function Extend(pool, list) for _, line in ipairs(list) do pool[#pool + 1] = line end end
 ---------------------------------------------------------------------------
 -- 7. LORE DATA (L.zones, L.zoneStory, L.bosses, L.dungeonStory)
 ---------------------------------------------------------------------------

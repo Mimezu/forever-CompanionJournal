@@ -1967,9 +1967,6 @@ end
 -- the deed restates, so it is not said again beside the deed.
 function QD.Deed(quest, story)
     if not story then return nil end
-    local W = A.SelfWords or {}
-    local qid = quest and tonumber(quest.qid)
-    local precise = qid and A.Lore and A.Lore.questStoryIDs and A.Lore.questStoryIDs[qid]
     local solo = (story.class or story.pack == "class-stories" or (story.thread and story.thread:find("^class_"))) and true or nil
     for _, line in ipairs(story.after or {}) do
         local s1 = Sentences(line)[1]
@@ -2179,7 +2176,8 @@ function QD.Folds(run, tokens, shape, named, band)
         local who = giver and (named[Short(giver)] and Short(giver) or giver)
         if giver then named[Short(giver)] = true end
         shape = shape + 1
-        local joined, text = JoinActs(acts)
+        local joined = JoinActs(acts)
+        local text
         local leads = FOLD_LEADS[band or "novice"] or FOLD_LEADS.novice
         local tail = shape == 1 and #acts >= 2 and Hash(acts[1]) % 3 == 0 and FOLD_TAILS[band or "novice"]
         if tail then tail = tail:gsub("{us}", solo and "me" or (tokens.us or "us")):gsub("{our}", solo and "my" or (tokens.our or "our")) end
