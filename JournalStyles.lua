@@ -173,9 +173,10 @@ local function DayParagraphs(person, day, mode, voice, ctx)
             if A.MomentPicture then
                 for i = #paragraphs, 1, -1 do
                     local p = paragraphs[i]
+                    local at = i + 1
                     for t in (p.text or ""):gmatch("|Hcjdeath:(%d+)|h") do
                         local path = A.MomentPicture(tonumber(t))
-                        if path then table.insert(paragraphs, i + 1, {photo = path, t = tonumber(t)}) end
+                        if path then table.insert(paragraphs, at, {photo = path, t = tonumber(t)}); at = at + 1 end
                     end
                 end
             end
