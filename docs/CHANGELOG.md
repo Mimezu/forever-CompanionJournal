@@ -1,5 +1,14 @@
 # Companion Journal: changes
 
+## 1.55.2 (2026-11-20)
+
+- First crafted epic recorded
+- "Last seen" kept without Forever Names (icons on)
+- Map recording starts again when the journal is turned back on
+- Two death photos in one paragraph: in text order
+- Faster: unread dot, storyteller, set and spell checks, map replay
+- Dead code removed; the text is the same as before
+
 ## 1.55.1 (2026-11-20)
 
 - Storyteller: dungeon returns counted and told after the run
