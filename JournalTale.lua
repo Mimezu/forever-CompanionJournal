@@ -5467,6 +5467,8 @@ function T.TellOnce(person, days, voice, player, brief)
         -- Titles draw on their own, so a day keeps its title in every telling.
         local titleRng = Rng((person.name or "") .. day.key .. (player.name or "") .. (person.retell or "") .. "title")
         local f = DayFacts(day, person)
+        -- (the day as zone stretches, once a chapter: the readers below only read it)
+        teller.dayStretches = Stretches(day, person)
         -- (a raise by this companion that your own book recorded and theirs did not, 2026-11-11)
         if ownJournal then
             local mine = (Clean(person.name or ""):gsub("%-.*$", "")):lower()
@@ -9692,7 +9694,7 @@ function T.TellOnce(person, days, voice, player, brief)
         -- lore line goes. The opening that names the companion is kept.)
         if not S.planned and firstOuting and (outBeat[1] == "open" or outBeat[1] == "day") and not out[1]:find("{n:", 1, true) and (f.together or 0) > 0 then
             -- (the first zone stay of the record: the companion's book keeps one scene per session)
-            local first = Stretches(day, person)[1]
+            local first = teller.dayStretches[1]
             local stay = first and ((first.e or first.t) - first.t) or 0
             if first and stay <= 30 * 60 and stay < 0.25 * f.together then
                 -- (the moment: a first or a crossing of your own book within the hour, then its line by its stamp)
@@ -9859,7 +9861,7 @@ function T.TellOnce(person, days, voice, player, brief)
         S.composeWhy = "outings " .. tostring(f.outings) .. ", planned " .. tostring(S.planned)
         if not S.planned and #out > 0 and f.outings > 0 and T.COMPOSE ~= false then
             local okC, errC = (A.TellPcall or pcall)(T.Compose, {out = out, beats = outBeat, times = outT, S = S, f = f, day = day, person = person, teller = teller, PB = PB,
-                rng = rng, tokens = tokens, ownJournal = ownJournal, stretches = Stretches(day, person), Place = Place, history = history,
+                rng = rng, tokens = tokens, ownJournal = ownJournal, stretches = teller.dayStretches, Place = Place, history = history,
                 mainZone = mainZone, gap = gap})
             if not okC and T.DebugLines then print("compose: " .. tostring(errC)) end
         end
@@ -9869,7 +9871,7 @@ function T.TellOnce(person, days, voice, player, brief)
         -- whether the companion stopped before you did). Never a moral, never invented, never a death
         -- or an errand as the last line.
         if not S.planned and not brief and #out > 0 and PB.closeDone and A.JournalEpisodes and A.JournalEpisodes.Day and f.outings > 0 then
-            local okD, dayE = pcall(A.JournalEpisodes.Day, Stretches(day, person))
+            local okD, dayE = pcall(A.JournalEpisodes.Day, teller.dayStretches)
             local sum = {}
             if okD and type(dayE) == "table" then
                 -- (round 4: the chapter's largest thing first, the spine; the other episodes after it)
@@ -9915,7 +9917,7 @@ function T.TellOnce(person, days, voice, player, brief)
             end
             local endLine, endKey
             if t0 and e0 and e0 - t0 >= 20 * 60 and ownJournal and PB.closeEndFar then
-                local first = Stretches(day, person)[1]
+                local first = teller.dayStretches[1]
                 local from = first and first.zone
                 local endZone, endT, ownEnd, crossings, boats = nil, nil, 0, 0, false
                 for _, x in ipairs(ownJournal) do
@@ -9947,7 +9949,7 @@ function T.TellOnce(person, days, voice, player, brief)
                         end
                         if here then endZone = here.z
                         else
-                            local st = Stretches(day, person)
+                            local st = teller.dayStretches
                             if st[#st] and st[#st].zone then endZone = st[#st].zone end
                         end
                     end
