@@ -3223,8 +3223,19 @@ function A.UpdateBookMinimap()
         local border = minimap:CreateTexture(nil, "OVERLAY")
         border:SetSize(53, 53); border:SetPoint("TOPLEFT"); border:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
         minimap:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
+        -- Something new: a red glass bead set in the ring (the game's own indicator art), breathing
+        -- slowly, like a jewel catching the light. 2026-11-21: the flat red square looked unfinished.
         minimap.dot = minimap:CreateTexture(nil, "OVERLAY", nil, 2)
-        minimap.dot:SetSize(9, 9); minimap.dot:SetPoint("TOPRIGHT", -3, -3); minimap.dot:SetColorTexture(RIBBON[1], RIBBON[2], RIBBON[3], 1)
+        minimap.dot:SetSize(14, 14); minimap.dot:SetPoint("CENTER", minimap, "TOPLEFT", 26, -6)
+        minimap.dot:SetTexture("Interface\\COMMON\\Indicator-Red")
+        local shine = minimap.dot.CreateAnimationGroup and minimap.dot:CreateAnimationGroup()
+        if shine then
+            shine:SetLooping("BOUNCE")
+            local fade = shine:CreateAnimation("Alpha")
+            fade:SetFromAlpha(1); fade:SetToAlpha(0.55); fade:SetDuration(1.6)
+            if fade.SetSmoothing then fade:SetSmoothing("IN_OUT") end
+            minimap.shine = shine
+        end
         local function Place()
             local angle = math.rad(tonumber(A.db.bookMinimapAngle) or 200)
             -- Follow the actual rim, including enlarged minimaps. A fixed
@@ -3261,7 +3272,12 @@ function A.UpdateBookMinimap()
     end
     minimap.Place()
     minimap:Show()
-    minimap.dot:SetShown(#AllUnread() > 0)
+    local new = #AllUnread() > 0
+    minimap.dot:SetShown(new)
+    if minimap.shine then
+        if new and not minimap.shine:IsPlaying() then minimap.shine:Play()
+        elseif not new then minimap.shine:Stop() end
+    end
 end
 
 -- The gamepad (scheme B), while the book is open in the gamepad interface:

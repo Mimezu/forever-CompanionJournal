@@ -1,5 +1,9 @@
 # Companion Journal: changes
 
+## 1.55.8 (2026-11-21)
+
+- Minimap button: a red glass bead in the ring for something new, softly glowing (was a flat red square)
+
 ## 1.55.7 (2026-11-21)
 
 - Pinned journals kept when someone is missing a moment; the companions lost on 20 Nov are pinned again (close ones seen this week)
