@@ -78,13 +78,33 @@ local MAX_PINS = 6
 local function Pins()
     local db = A.db
     db.bookPins = type(db.bookPins) == "table" and db.bookPins or {}
-    -- (people no longer in the list lose their pin)
-    for i = #db.bookPins, 1, -1 do if not A.People[db.bookPins[i]] then table.remove(db.bookPins, i) end end
-    return db.bookPins
+    -- (a pin is never dropped for someone missing a moment: on 2026-11-20 an empty realm name
+    -- emptied the list for a while and every pin went with it. Only those in the list show.)
+    -- (once: the companions you play with lost their pins then; your close ones of the last
+    -- week are pinned again)
+    if not db.bookPinsRestored and A.EachPerson and A.HasPeople and A.HasPeople() then
+        db.bookPinsRestored = true
+        if #db.bookPins == 0 then
+            local recent = {}
+            local now = time and time() or 0
+            for key, person in A.EachPerson() do
+                local j = type(person.journal) == "table" and person.journal
+                local last = j and j[#j] and j[#j].t
+                local close = person.bond == "spouse" or person.bond == "partner" or person.bond == "friend"
+                if close and not person.npc and last and now - last <= 7 * 86400 then recent[#recent + 1] = {key = key, t = last} end
+            end
+            table.sort(recent, function(a, b) return a.t > b.t end)
+            for i = 1, math.min(#recent, MAX_PINS) do db.bookPins[i] = recent[i].key end
+        end
+    end
+    local shown = {}
+    for _, key in ipairs(db.bookPins) do if A.People[key] then shown[#shown + 1] = key end end
+    return shown
 end
 local function IsPinned(key) for _, pinned in ipairs(Pins()) do if pinned == key then return true end end return false end
 local function TogglePin(key)
-    local pins = Pins()
+    Pins()
+    local pins = A.db.bookPins
     for i, pinned in ipairs(pins) do if pinned == key then table.remove(pins, i); return end end
     if #pins < MAX_PINS then pins[#pins + 1] = key end
 end

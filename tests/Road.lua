@@ -271,4 +271,10 @@ do
     check(#tickers == 2, "a running clock is not started twice")
 end
 
+-- A first on the map says which (2026-11-21: the hover said only "A first").
+local FW = A.RoadModel.FirstWords
+check(FW({d = "zeppelin"}) == "First zeppelin", "a first by its kind")
+check(FW({d = "notable", n = "Lady Sylvanas Windrunner"}) == "First sight of Lady Sylvanas Windrunner", "a first with a name")
+check(FW({d = "zone", z = "Desolace"}) == "First time in Desolace", "a first with a place")
+check(FW({d = "newthing"}) == "First newthing" and FW({}) == "A first", "an unknown first still says something")
 print("Road: " .. checks .. " checks passed (an hour of riding: " .. bytes .. " bytes)")

@@ -26,7 +26,7 @@ C.ON = true
 C.OPEN_STEP = 300
 C.MAX = 12                  -- books kept at once (the oldest goes first)
 -- (saved settings the tellers never read and the book changes as you read or move it)
-C.SKIP = {bookRead = true, bookPins = true, bookSize = true, bookSpread = true, bookWidth = true, bookHeight = true,
+C.SKIP = {bookRead = true, bookPins = true, bookPinsRestored = true, bookSize = true, bookSpread = true, bookWidth = true, bookHeight = true,
     bookMinimapAngle = true, bookMinimap = true, groupPromptPoint = true, bookNotice = true, bookNoticed = true,
     -- (the Road's points: read by the maps only, and they grow every evening)
     road = true, roadRecord = true, roadDefaultOn = true, roadSounds = true, deathShots = true}

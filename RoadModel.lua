@@ -154,6 +154,45 @@ function M.PlaceAt(model, t)
     return nil
 end
 
+-- A first, in a few words: "First zeppelin", "First sight of Lady Sylvanas Windrunner".
+-- 2026-11-21: the hover said only "A first".
+local FIRST = {
+    zone = function(e) return e.z and ("First time in " .. e.z) end,
+    foeseen = function(e) return "First " .. (e.n or "foe") .. " of the other side" end,
+    rarebeast = function(e) return e.z and ("First rare beast: " .. e.z) or "First rare beast" end,
+    notable = function(e) return e.n and ((e.interaction and "First words with " or "First sight of ") .. e.n) end,
+    landmark = function(e) return e.z end,
+    sunset = function(e) return e.z and ("Sunset at " .. e.z) or "A sunset" end,
+    rezother = function(e) return e.n and ("First time raising " .. e.n) or "First time raising someone" end,
+    gold = function(e) return e.c and ("First " .. tostring(e.c) .. " gold") end,
+    epic = function(e) return e.z and ("First epic: " .. e.z) end,
+    rare = function(e) return e.z and ("First rare item: " .. e.z) end,
+    worldboss = function(e) return e.z and ("First world boss: " .. e.z) end,
+    continent = function(e) return e.z and ("First steps in " .. e.z) end,
+    class = function(e) return e.z == "pet" and "First pet" or (e.z and ("First " .. e.z)) end,
+    snow = function() return "First snow" end,
+    flight = function() return "First flight" end,
+    zeppelin = function() return "First zeppelin" end,
+    boat = function() return "First voyage" end,
+    tram = function() return "First tram ride" end,
+    mount = function() return "First mount" end,
+    epicmount = function() return "First epic mount" end,
+    raid = function() return "First raid" end,
+    battleground = function() return "First battleground" end,
+    pvp = function() return "First fight with the other side" end,
+    talent = function() return "First talent" end,
+    aucsale = function() return "First auction sold" end,
+    craftepic = function(e) return e.z and ("First crafted epic: " .. e.z) or "First crafted epic" end,
+    setfull = function() return "First full set" end,
+    tier = function() return "First tier piece" end,
+    legendary = function() return "First legendary" end,
+    famous = function() return "First famous deed" end,
+}
+function M.FirstWords(e)
+    local say = FIRST[e.d]
+    return (say and say(e)) or (type(e.d) == "string" and ("First " .. e.d)) or "A first"
+end
+
 -- The journal lines a map shows, and how (the book's few words for the hover).
 local MARKS = {
     death = function(e) return "death", "Fell" .. (e.d and (" to " .. e.d) or "") end,
@@ -164,7 +203,7 @@ local MARKS = {
     dungeon = function(e) return "dungeon", e.d or "A dungeon" end,
     hearth = function(e) return "hearth", "Hearthstone" .. (e.d and (" to " .. e.d) or "") end,
     voyage = function(e) return "voyage", "By " .. (e.d or "ship") .. (e.to and (" to " .. e.to) or "") end,
-    first = function() return "first", "A first" end,
+    first = function(e) return "first", M.FirstWords(e) end,
     rez = function(e) return "rez", "Raised" .. (e.by and (" by " .. e.by) or "") end,
 }
 M.MARKS = MARKS

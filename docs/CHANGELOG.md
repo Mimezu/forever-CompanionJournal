@@ -1,5 +1,10 @@
 # Companion Journal: changes
 
+## 1.55.7 (2026-11-21)
+
+- Pinned journals kept when someone is missing a moment; the companions lost on 20 Nov are pinned again (close ones seen this week)
+- Map: a first says which ("First zeppelin", "First sight of ...")
+
 ## 1.55.6 (2026-11-20)
 
 - No stutter with companions near: their "last seen", their journals, your level or continent no longer make the book tell every chapter again
