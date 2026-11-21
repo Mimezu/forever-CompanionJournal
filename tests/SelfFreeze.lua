@@ -75,6 +75,24 @@ for _, seed in ipairs({4242, 77, 1913, 20261111}) do
                 check(F.resumed == r1, label .. ": a changed setting tells everything again")
                 A.db.bookVariants.someSetting = nil
                 Tell(life, brief, true)
+                -- What changes as you play (a companion seen, their journal, your level): the kept
+                -- days stay kept.
+                A.db.people.zz = {name = "Zz", seen = 1, zone = "Here", level = 10}
+                Tell(life, brief, true)
+                A.db.people.zz.seen, A.db.people.zz.zone, A.db.people.zz.level = 2, "There", 11
+                A.db.characters = {me = {name = "Me", continent = "Kalimdor", people = {zz = {bond = "friend", journal = {}}}}}
+                local withZz = Tell(life, brief, true)
+                local rs = F.resumed
+                A.db.characters.me.continent = "Eastern Kingdoms"
+                A.db.characters.me.people.zz.journal[1] = {k = "with", t = 1}
+                A.db.people.zz.seen = 3
+                check(Tell(life, brief, true) == withZz and F.resumed == rs + 1, label .. ": a companion seen, a continent: the kept days stay")
+                life.level = (life.level or 1) + 1
+                Tell(life, brief, true)
+                check(F.resumed == rs + 2, label .. ": a new level: the kept days stay")
+                life.level = life.level - 1
+                A.db.people.zz, A.db.characters = nil, nil
+                Tell(life, brief, true)
                 -- A kept day changed (a line edited): everything told again, as the whole telling.
                 local first = life.journal[1]
                 local saved = first.z

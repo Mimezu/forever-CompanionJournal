@@ -1,5 +1,11 @@
 # Companion Journal: changes
 
+## 1.55.6 (2026-11-20)
+
+- No stutter with companions near: their "last seen", their journals, your level or continent no longer make the book tell every chapter again
+- No book telling during combat: it waits for the fight to end
+- Keeping chapters takes short pauses too
+
 ## 1.55.5 (2026-11-20)
 
 - No more stutter every few seconds while you play: finished chapters (three days back) are told once and kept for the session, and a new line tells only the days after them. The kept chapters stay word for word; an update, Retell or a changed setting tells the whole book again

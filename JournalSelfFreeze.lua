@@ -27,34 +27,46 @@ local function Sorted(t)
 end
 
 -- Everything besides the days the words depend on: the person, the telling's arguments, the
--- saved settings and people (the journals aside: the days stand for them).
+-- saved settings and people. What changes as you play is left out: a kept chapter is the story
+-- as it was told, and later days do not change it (2026-11-20: a companion's "last seen" stamp,
+-- written every time they are near, told the whole book again after every line).
+--   SKIP_PERSON: the person's own changing state; SKIP: in the saved data, by place ("*": any key).
+local SKIP_PERSON = {level = true}
+local SKIP = {
+    journalQuests = true,
+    people = {["*"] = {seen = true, zone = true, level = true}},
+    characters = {["*"] = {journal = true, firsts = true, loreDiscoveries = true, rep = true, skills = true,
+        continent = true, people = {["*"] = {journal = true}}}},
+}
+local function PutSkip(buf, v, skip)
+    if type(v) ~= "table" or type(skip) ~= "table" then Put(buf, v); return end
+    buf[#buf + 1] = "{"
+    for _, k in ipairs(Sorted(v)) do
+        local s = skip[k]
+        if s == nil then s = skip["*"] end
+        if s ~= true then
+            Put(buf, k); buf[#buf + 1] = "="
+            PutSkip(buf, v[k], s)
+        end
+    end
+    buf[#buf + 1] = "}"
+end
+F.SKIP_PERSON, F.SKIP = SKIP_PERSON, SKIP
 function F.Ident(person, brief, retell, planned)
     local buf = {"self|", tostring(brief), "|", tostring(retell), "|", tostring(planned), "|"}
     for _, k in ipairs(Sorted(person)) do
         local v = person[k]
-        if type(v) ~= "table" then Put(buf, k); buf[#buf + 1] = "="; Put(buf, v) end
+        if type(v) ~= "table" and not SKIP_PERSON[k] then Put(buf, k); buf[#buf + 1] = "="; Put(buf, v) end
     end
     buf[#buf + 1] = "|"
     local db = A.db
     if type(db) == "table" then
         local skip = A.TellCache.SKIP or {}
         for _, k in ipairs(Sorted(db)) do
-            if not skip[k] then
+            if not skip[k] and SKIP[k] ~= true then
+                if A.TellStep then A.TellStep() end
                 Put(buf, k); buf[#buf + 1] = "="
-                if k == "characters" and type(db[k]) == "table" then
-                    for _, ck in ipairs(Sorted(db[k])) do
-                        local rec = db[k][ck]
-                        Put(buf, ck); buf[#buf + 1] = "{"
-                        if type(rec) == "table" then
-                            for _, rk in ipairs(Sorted(rec)) do
-                                if rk ~= "journal" then Put(buf, rk); buf[#buf + 1] = "="; Put(buf, rec[rk]) end
-                            end
-                        end
-                        buf[#buf + 1] = "}"
-                    end
-                else
-                    Put(buf, db[k])
-                end
+                PutSkip(buf, db[k], SKIP[k])
             end
         end
     end
@@ -82,6 +94,7 @@ local function Paths(days)
     local paths, queue, head = {[days] = {}}, {days}, 1
     while queue[head] do
         local t = queue[head]; head = head + 1
+        if A.TellStep and head % 64 == 0 then A.TellStep() end
         local base = paths[t]
         for k, v in pairs(t) do
             if type(v) == "table" and paths[v] == nil and (type(k) == "string" or type(k) == "number") then
@@ -114,6 +127,7 @@ local function Copy(v, swap, keep, seen)
     if c then return c end
     c = {}
     seen[v] = c
+    if A.TellStep then A.TellStep() end
     for k, x in pairs(v) do c[Copy(k, swap, keep, seen)] = Copy(x, swap, keep, seen) end
     local mt = getmetatable(v)
     if mt then setmetatable(c, mt) end

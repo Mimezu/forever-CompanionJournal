@@ -230,6 +230,8 @@ local function Finish(current, result)
     if fire then for _, ready in ipairs(current.ready) do pcall(ready) end end
 end
 function Run()
+    -- (none in combat: the book waits for the fight to end)
+    if InCombatLockdown and InCombatLockdown() and not C.SYNC then return end
     if not job then Start() end
     local current = job
     if not current then if driver then driver:SetScript("OnUpdate", nil) end; return end
