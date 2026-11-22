@@ -1,5 +1,9 @@
 # Companion Journal: changes
 
+## 1.55.9 (2026-11-22)
+
+- Your own book: two errors while telling some days fixed (a level after several hand-ins, a walk with no stop after)
+
 ## 1.55.8 (2026-11-21)
 
 - Minimap button: a red glass bead in the ring for something new, softly glowing (was a flat red square)

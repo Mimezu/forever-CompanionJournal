@@ -2863,9 +2863,11 @@ function C.Apply(ctx)
                 -- (round 17: the arrival lines made for a first land after this are kept)
                 -- (round 13, reader O rule 6: a first visit is said in one clause on the road out of it,
                 -- "From Westfall, new to us, my hearthstone took us back to the Sepulcher, ...")
-                if #headNames == 1 and not C.NAME_EMPTY_LANDS then
+                -- (no stop after: the tail's places were put with the head's, and may be all of them)
+                local first = head[1] or tail[1]
+                if #headNames == 1 and first and not C.NAME_EMPTY_LANDS then
                     for _, x in ipairs(lines) do
-                        if not x.drop and x.legs and x.t >= head[1].t and (not D or x.t <= D.t) and (x.text:find("^My hearthstone") or x.text:find("^Our hearthstones")) then
+                        if not x.drop and x.legs and x.t >= first.t and (not D or x.t <= D.t) and (x.text:find("^My hearthstone") or x.text:find("^Our hearthstones")) then
                             local party = WithAtDay(windows, x.t)
                             local why = ""
                             for _, h in ipairs(head) do
@@ -3017,7 +3019,8 @@ function C.Apply(ctx)
         -- the level is the burst's)
         if deed then
             for _, sc in ipairs(ep.scenes) do
-                for _, q in ipairs(sc.quests or {}) do if (q.t or 0) > deed.t + 120 and (q.t or 0) <= at then deed = nil end end
+                for _, q in ipairs(sc.quests or {}) do if (q.t or 0) > deed.t + 120 and (q.t or 0) <= at then deed = nil; break end end
+                if not deed then break end
             end
         end
         if deed and W.levelWithIt then
