@@ -54,4 +54,13 @@ A.SelfPerson = function() return {journal = {{k = "mylevel", d = 2, t = clock, s
 WowHelperShots = {[clock + 1] = "level-two"}
 check(A.MomentPicture(clock) == "level-two", "a level's picture by its time")
 check(A.MomentPicture(clock + 500) == nil, "no moment then: no picture")
+-- 6. The large copy for the card: the nearest within ten seconds, with the part it fills.
+WowHelperShotsLarge = {[clock + 2] = {"big", 0.888671875, 1}, [clock + 40] = {"far", 1, 1}}
+local big, u, v = A.ShotLarge(clock)
+check(big == "big" and u == 0.888671875 and v == 1, "the large copy and its texcoords")
+check(A.ShotLarge(clock + 100) == nil, "none near: no large copy")
+WowHelperShotsLarge = {[clock] = "not a table"}
+check(A.ShotLarge(clock) == nil, "a broken entry is no picture")
+WowHelperShotsLarge = nil
+check(A.ShotLarge(clock) == nil, "an older helper: no large copies")
 print("DeathShots: " .. checks .. " checks passed")

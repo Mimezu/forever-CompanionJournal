@@ -988,12 +988,17 @@ function Map.Hover(_, elapsed)
     GameTooltip:Show()
 end
 
+-- The map sheet's size over the book (shared: a moment's photo opens as large).
+function A.MapSheetSize()
+    local book = A.BookFrame and A.BookFrame()
+    local width = math.min(980, (book and book:GetWidth() or 1000) - 70)
+    return width, math.min((book and book:GetHeight() or 680) - 60, width * 0.62)
+end
 -- Layout: the paper, the title and tabs above, the map, the controls below.
 local function Layout()
     local book = A.BookFrame and A.BookFrame()
-    local width = math.min(980, (book and book:GetWidth() or 1000) - 70)
+    local width, height = A.MapSheetSize()
     local paper = A.LorePapers and A.LorePapers[PAPER]
-    local height = math.min((book and book:GetHeight() or 680) - 60, width * 0.62)
     sheet:ClearAllPoints(); sheet:SetPoint("CENTER", book or UIParent, "CENTER", 0, -8)
     sheet:SetSize(width, height)
     if paper and A.LayPaperOn then A.LayPaperOn(sheet, paper, width, height) end

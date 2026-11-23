@@ -2,6 +2,10 @@
 
 ## 1.55.9 (2026-11-22)
 
+- A moment's photo opens as large as the Atlas map, the whole screenshot over the paper (needs WoW Helper's large copies; the thumbnail until then)
+
+## 1.55.9 (2026-11-22)
+
 - Your own book: two errors while telling some days fixed (a level after several hand-ins, a walk with no stop after)
 
 ## 1.55.8 (2026-11-21)

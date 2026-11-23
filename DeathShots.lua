@@ -23,16 +23,26 @@ function A.MomentShot()
     return now
 end
 
--- The thumbnail for a request time: the helper's list, the nearest within NEAR seconds.
-function A.ShotPath(at)
-    local list = type(WowHelperShots) == "table" and WowHelperShots
-    if not at or not list then return nil end
+-- The helper's entry nearest a request time, within NEAR seconds.
+local function Nearest(list, at)
+    if not at or type(list) ~= "table" then return nil end
     local best, gap
-    for t, path in pairs(list) do
+    for t, value in pairs(list) do
         local d = math.abs((tonumber(t) or 0) - at)
-        if d <= NEAR and (not gap or d < gap) then best, gap = path, d end
+        if d <= NEAR and (not gap or d < gap) then best, gap = value, d end
     end
     return best
+end
+-- The thumbnail for a request time (512x256, the centre 2:1).
+function A.ShotPath(at) return Nearest(WowHelperShots, at) end
+-- The large copy for the card: the whole picture in the top-left of a 2048x1024 texture.
+-- -> path, the width and height it fills (texcoords), or nil.
+function A.ShotLarge(at)
+    local e = Nearest(WowHelperShotsLarge, at)
+    if type(e) ~= "table" or type(e[1]) ~= "string" then return nil end
+    local u, v = tonumber(e[2]) or 1, tonumber(e[3]) or 1
+    if u <= 0 or v <= 0 then return nil end
+    return e[1], u, v
 end
 
 A.DeathShot = A.MomentShot
@@ -84,18 +94,15 @@ local function Make()
     card.close:SetScript("OnClick", function() card:Hide() end)
 end
 -- Open a death's card: `death` is a journal line (or a map mark with its time), `owner`
--- the frame it opens over (the book or the map).
+-- the frame it opens over (the book or the map). With a picture it is as large as the
+-- Atlas map, the whole screenshot over the paper (2026-11-22); without, a small card.
 function A.OpenDeathCard(death, owner)
     if not death then return end
     local entry = CARDS[death.k] and death or (death.t and A.DeathEntry(death.t)) or death
     Make()
-    local width, height = 440, 300
     card:SetParent(owner or UIParent)
     card:SetFrameStrata("FULLSCREEN_DIALOG")
-    card:ClearAllPoints(); card:SetPoint("CENTER", owner or UIParent, "CENTER", 0, 0)
-    card:SetSize(width, height)
-    local paper = A.LorePapers and A.LorePapers[PAPER]
-    if paper and A.LayPaperOn then A.LayPaperOn(card, paper, width, height) end
+    card:ClearAllPoints(); card:SetPoint("CENTER", owner or UIParent, "CENTER", 0, -8)
     -- (the cause, in the book's words: "Fell to a vampiric duskbat")
     local killer = entry.d
     local cause = entry.k == "mylevel" and ("Level " .. tostring(entry.d))
@@ -106,21 +113,34 @@ function A.OpenDeathCard(death, owner)
     local when = entry.t and date and date("%H:%M", entry.t) or ""
     local where = entry.sz and entry.z and entry.sz ~= entry.z and (entry.sz .. ", " .. entry.z) or entry.z or ""
     card.sub:SetText(when .. (where ~= "" and ("  \194\183  " .. where) or ""))
-    card.title:ClearAllPoints(); card.title:SetPoint("TOP", 0, -30); card.title:SetWidth(width - 70)
-    card.sub:ClearAllPoints(); card.sub:SetPoint("TOP", card.title, "BOTTOM", 0, -6)
-    -- The picture: a 2:1 thumbnail in a thin ink frame, or a quiet line when there is none.
-    local pw, ph = 340, 170
-    card.frame:ClearAllPoints(); card.frame:SetPoint("TOP", card.sub, "BOTTOM", 0, -14); card.frame:SetSize(pw + 2, ph + 2)
-    card.picture:ClearAllPoints(); card.picture:SetPoint("CENTER", card.frame, "CENTER"); card.picture:SetSize(pw, ph)
-    local path = A.ShotPath(entry.shot)
+    -- The picture: the large copy (its own shape), else the 2:1 thumbnail, else a quiet line.
+    local large, u, v = A.ShotLarge(entry.shot)
+    local path = large or A.ShotPath(entry.shot)
+    local width, height = 440, 150
+    if path and A.MapSheetSize then width, height = A.MapSheetSize() end
+    local paper = A.LorePapers and A.LorePapers[PAPER]
+    local side, top, bottom = 40, 30, 22
+    if paper and A.PaperRoom then local _; _, side, top, bottom = A.PaperRoom(paper, width) end
+    side, top, bottom = math.max(side, 36), math.max(top, 28), math.max(bottom, 18)
+    card:SetSize(width, height)
+    if paper and A.LayPaperOn then A.LayPaperOn(card, paper, width, height) end
+    card.title:ClearAllPoints(); card.title:SetPoint("TOP", 0, -top + 4); card.title:SetWidth(width - 2 * side - 40)
+    card.sub:ClearAllPoints(); card.sub:SetPoint("TOP", card.title, "BOTTOM", 0, -4)
     card.picture:SetShown(path ~= nil); card.frame:SetShown(path ~= nil)
-    if path then card.picture:SetTexture(path) end
-    card.none:ClearAllPoints(); card.none:SetPoint("TOP", card.sub, "BOTTOM", 0, -40)
+    if path then
+        local aspect = large and (u * 2048) / (v * 1024) or 2
+        local room = height - top - bottom - 54
+        local pw = math.min(width - 2 * side, room * aspect)
+        local ph = pw / aspect
+        card.frame:ClearAllPoints(); card.frame:SetPoint("TOP", card.sub, "BOTTOM", 0, -10); card.frame:SetSize(pw + 2, ph + 2)
+        card.picture:ClearAllPoints(); card.picture:SetPoint("CENTER", card.frame, "CENTER"); card.picture:SetSize(pw, ph)
+        card.picture:SetTexture(path)
+        card.picture:SetTexCoord(0, large and u or 1, 0, large and v or 1)
+    end
+    card.none:ClearAllPoints(); card.none:SetPoint("TOP", card.sub, "BOTTOM", 0, -16)
     card.none:SetShown(path == nil)
     card.none:SetText(entry.shot and "The picture shows after a restart" or "No picture")
-    card:SetSize(width, path and (ph + 120) or 150)
-    if paper and A.LayPaperOn then A.LayPaperOn(card, paper, width, card:GetHeight()) end
-    card.close:ClearAllPoints(); card.close:SetPoint("TOPRIGHT", -26, -20)
+    card.close:ClearAllPoints(); card.close:SetPoint("TOPRIGHT", -side + 14, -top + 6)
     card:Show(); card:Raise()
 end
 
