@@ -13,10 +13,16 @@ local INK, SOFT, RED = {0.20, 0.11, 0.04}, {0.36, 0.22, 0.08}, {0.42, 0.10, 0.04
 local PAPER = "paper3"
 local NEAR = 10 -- seconds between the request and a screenshot that is its picture
 
+-- WoW Helper installed (its list of pictures loaded). Without it the pictures leave no
+-- trace: no screenshot taken, no links in chapters, no cards (2026-11-24: "nothing", so it
+-- never feels unfinished).
+local function Helper() return type(WowHelperShots) == "table" end
+A.HasShots = Helper
+
 -- Taking the picture: at the moment (a death, a level), when Frame Gambit can hide the
 -- interface. Returns the time of the request (kept on the line as `shot`), or nil.
 function A.MomentShot()
-    if not A.db or A.db.deathShots == false then return nil end
+    if not A.db or A.db.deathShots == false or not Helper() then return nil end
     if type(FrameGambit_CleanScreenshot) ~= "function" then return nil end
     local now = time and time() or nil
     if not pcall(FrameGambit_CleanScreenshot) then return nil end
@@ -164,7 +170,7 @@ local function LastBefore(list, size, limit)
 end
 local linkCache, linkCacheSize = {}, 0
 function A.DeathLinks(text, day)
-    if type(text) ~= "string" or not day then return text end
+    if type(text) ~= "string" or not day or not Helper() then return text end
     local deaths = {}
     for _, scene in ipairs(day.scenes or {}) do
         for _, e in ipairs(scene.entries or {}) do

@@ -1,5 +1,9 @@
 # Companion Journal: changes
 
+## 1.55.10 (2026-11-24)
+
+- Without WoW Helper, pictures leave no trace: no screenshot taken, no links in chapters, no cards
+
 ## 1.55.9 (2026-11-22)
 
 - A moment's photo opens as large as the Atlas map, the whole screenshot over the paper (needs WoW Helper's large copies; the thumbnail until then)

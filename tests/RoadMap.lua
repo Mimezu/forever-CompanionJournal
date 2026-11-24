@@ -454,7 +454,8 @@ do
     check(sv.playing, "a click plays")
     sheet.area.scripts.OnMouseDown(sheet.area, "LeftButton"); sheet.area.scripts.OnMouseUp(sheet.area)
     check(not sv.playing, "a second click pauses")
-    -- a click on the death's X: its card
+    -- a click on the death's X: its card (with WoW Helper there; without it, nothing)
+    WowHelperShots = {}
     Map.SetTime(math.huge, true)
     local d
     for _, item in ipairs(sv.drawnMarks) do if item.mark.kind == "death" then d = item end end

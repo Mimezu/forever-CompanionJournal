@@ -105,6 +105,7 @@ local function OldDeathLinks(text, day)
     end
     return text
 end
+WowHelperShots = {} -- (WoW Helper there: without it no links)
 local killers = {"Arugal", "Hogger", "a vampiric duskbat", "Vampiric Duskbat", "Thrall", "Dahlia", "Brill", "x"}
 for i, text in ipairs(texts) do
     if i % 3 == 0 or i > #texts - 3000 then

@@ -9,7 +9,8 @@ date = os.date
 local A = {defaults = {}, db = {}}
 assert(loadfile(root .. "DeathShots.lua"))("CompanionJournal", A)
 
--- 1. The picture is asked only with the setting on and Frame Gambit there.
+-- 1. The picture is asked only with the setting on, Frame Gambit and WoW Helper there.
+WowHelperShots = {}
 local shots = 0
 check(A.DeathShot() == nil, "no Frame Gambit: no picture")
 FrameGambit_CleanScreenshot = function() shots = shots + 1 end
@@ -49,6 +50,14 @@ local told = A.DeathLinks("At level 21 once. Then I was level 2 again, and soon 
 check(told:find("|Hcjdeath:300|h|cff7d1c0alevel 2|r|h again", 1, true), "the level's own mention is linked")
 check(not told:find("|Hcjdeath:300|h|cff7d1c0alevel 2|r|h1", 1, true), "level 21 is not level 2")
 check(not told:find("cjdeath:400", 1, true), "no picture: no link")
+-- Without WoW Helper (no list at all) the pictures leave no trace: no links, no screenshot.
+local saved = WowHelperShots
+WowHelperShots = nil
+check(not A.DeathLinks("Then I was level 2 again.", levels):find("cjdeath", 1, true), "no helper: no level link")
+check(not A.DeathLinks(text, day):find("cjdeath", 1, true), "no helper: no death link")
+A.db.deathShots = true
+check(A.MomentShot() == nil and shots == 1, "no helper: no screenshot taken")
+WowHelperShots = saved
 -- 5. The photo: a moment's picture by its time, from your journal.
 A.SelfPerson = function() return {journal = {{k = "mylevel", d = 2, t = clock, shot = clock}}} end
 WowHelperShots = {[clock + 1] = "level-two"}

@@ -586,6 +586,7 @@ end
 do
     local taken = 0
     FrameGambit_CleanScreenshot = function() taken = taken + 1 end
+    WowHelperShots = {} -- (WoW Helper there: without it no picture is asked)
     A.db.deathShots = true
     dead = true; Fire("PLAYER_DEAD"); RunTimers(); dead = false
     local death = Last("death")

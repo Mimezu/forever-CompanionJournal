@@ -858,7 +858,8 @@ local function Make()
         -- anywhere else, play or pause)
         Map.Hover()
         local item = state.hoverItem
-        if item and item.mark and (item.mark.kind == "death" or item.mark.kind == "level") and A.OpenDeathCard then
+        if item and item.mark and (item.mark.kind == "death" or item.mark.kind == "level") and A.OpenDeathCard
+            and A.HasShots and A.HasShots() then
             if state.playing then Stop() end
             A.OpenDeathCard(item.mark, sheet)
         elseif state.atlas then
