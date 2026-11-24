@@ -33,6 +33,7 @@ local function Words(n)
     n = math.floor(tonumber(n) or 0)
     if NUMBERS[n] then return NUMBERS[n] end
     if n < 100 and TENS[n - n % 10] then return TENS[n - n % 10] .. (n % 10 > 0 and ("-" .. NUMBERS[n % 10]) or "") end
+    if n >= 100 and n <= 999 then return NUMBERS[math.floor(n / 100)] .. " hundred" .. (n % 100 > 0 and (" and " .. Words(n % 100)) or "") end
     return tostring(n)
 end
 local function List(items)
@@ -5585,8 +5586,9 @@ function ST.Tell(person, days, brief, retell, capture)
                 table.sort(trades)
                 for _, trade in ipairs(trades) do
                     local line = s.craft[trade]
-                    local made = {}
-                    for _, m in ipairs(line.made or {}) do made[#made + 1] = Q(m) end
+                    local made, seen = {}, {}
+                    -- ("Bait and Tackle and Bait and Tackle": a thing made twice is named once)
+                    for _, m in ipairs(line.made or {}) do if not seen[m] then seen[m] = true; made[#made + 1] = Q(m) end end
                     st.trade, st.count, st.made = trade == "crafting" and "trade" or trade:lower(), Words(line.count or 0), List(made)
                     -- (the short telling keeps a crafter's work, an honest day's, or a big batch)
                     local craftMajor = honest or profile.crafter or (line.count or 0) >= 10
@@ -6345,6 +6347,18 @@ function ST.Tell(person, days, brief, retell, capture)
         if title then history.titles[title] = true end
         -- (did the day lead this chapter? the next one, a week or less on, opens on the place or the company)
         if chapterWhen and out[1] and out[1]:find(chapterWhen, 1, true) == 1 then history.whenLedAt = index end
+        -- The last read (JournalSelfPolish.lua): openings, "we" before company, foes by what they
+        -- are, places said twice, levels on others' words, names with a colon.
+        if A.SelfPolish and text ~= "" then
+            local foes = {}
+            for _, scene in ipairs(day.scenes or {}) do
+                for _, e in ipairs(scene.entries or {}) do
+                    if (e.k == "boss" or e.k == "death") and type(e.d) == "string" and not e.a then foes[#foes + 1] = Clean(e.d) end
+                end
+            end
+            local ok, polished = pcall(A.SelfPolish.Apply, text, foes)
+            if ok and type(polished) == "string" and polished ~= "" then text = polished end
+        end
         if text ~= "" or #f.quotes > 0 then
             history.chapter = history.chapter + 1
             stories[day.key] = {text = OneStop(A.JournalAgree and A.JournalAgree(text) or text), title = title and title:gsub("^%l", string.upper) or nil, chapter = history.chapter, quotes = f.quotes}

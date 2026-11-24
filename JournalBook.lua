@@ -51,9 +51,24 @@ local function Words(n)
         local tens, ones = math.floor(n / 10), n % 10
         return TENS[tens] .. (ones > 0 and ("-" .. ONES[ones]) or "")
     end
+    -- ("two hundred and fifty", 2026-11-24: "caught 279 fish" read as a ledger)
+    if n >= 100 and n <= 999 then
+        local rest = n % 100
+        return ONES[math.floor(n / 100)] .. " hundred" .. (rest > 0 and (" and " .. Words(rest)) or "")
+    end
     return tostring(n)
 end
 A.JournalWords = Words
+-- A large count as a person says it: "nearly three hundred", "over two hundred", "a hundred".
+local function Rough(n)
+    n = math.floor(tonumber(n) or 0)
+    if n < 100 or n > 999 then return Words(n) end
+    local h, r = math.floor(n / 100), n % 100
+    if r >= 70 and h < 9 then return "nearly " .. ONES[h + 1] .. " hundred" end
+    local round = h == 1 and "a hundred" or (ONES[h] .. " hundred")
+    return r == 0 and round or ("over " .. round)
+end
+A.JournalRough = Rough
 local function Count(n, singular, plural) return Words(n) .. " " .. (n == 1 and singular or plural) end
 local function Times(n) return n == 2 and "twice" or n == 3 and "three times" or (Words(n) .. " times") end
 local function List(items)
@@ -1188,7 +1203,7 @@ local function GatherClauses(gather)
     for _, kind in ipairs(GATHER_ORDER) do
         local n = gather and gather[kind]
         if n and n > 0 then
-            local count = Words(n)
+            local count = Rough(n)
             clauses[#clauses + 1] = kind == "mining" and ("mined " .. (n == 1 and "a vein" or (count .. " veins")))
                 or kind == "herbs" and ("picked " .. (n == 1 and "an herb" or (count .. " herbs")))
                 or kind == "fishing" and ("caught " .. (n == 1 and "a fish" or (count .. " fish")))
@@ -1210,7 +1225,8 @@ local function CraftSentences(craft)
             local what = line.count == 1 and "one thing" or (Words(line.count) .. " things")
             local at = profession == "crafting" and "" or (" at " .. profession)
             local made = {}
-            for _, name in ipairs(line.made) do made[#made + 1] = Q(name) end
+            local seen = {}
+            for _, name in ipairs(line.made) do if not seen[name] then seen[name] = true; made[#made + 1] = Q(name) end end
             local among = #made > 0 and ((line.count == 1 and ", " or ", among them ") .. List(made)) or ""
             if line.count == 1 and #made == 1 then out[#out + 1] = "I made " .. made[1] .. at .. "."
             else out[#out + 1] = "I made " .. what .. at .. among .. "." end

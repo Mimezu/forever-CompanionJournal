@@ -1,5 +1,19 @@
 # Companion Journal: changes
 
+## 1.56.0 (2026-11-24)
+
+- Your book, after a read of all of it:
+  - an hour and more spent fishing, mining or gathering is told, with the place and the time ("I spent three hours fishing at Shadowprey Village, and caught nearly three hundred fish")
+  - an opening that only said where you still were folds into leaving it ("Monday evening, I left the Undercity for ...")
+  - "I", not "we", on a road travelled before anyone joined
+  - foes that are only what they are take "the" (the Relic Guardian, the Arcane Anomaly); "X killed me. X fell." is one sentence
+  - a place said again in the next sentence is "there"; "home again in Brill" after arriving in Brill is dropped
+  - a level is never tacked onto someone else's words
+  - dungeon names with a colon read as prose ("the Wetlands Excavation Site")
+  - no more "took a lot of killing" or "on an errand" filler
+  - "new to me" only on a first visit
+  - numbers to 999 in words; a thing made twice is named once
+
 ## 1.55.10 (2026-11-24)
 
 - Without WoW Helper, pictures leave no trace: no screenshot taken, no links in chapters, no cards

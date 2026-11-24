@@ -2136,8 +2136,35 @@ function C.Apply(ctx)
             if n == 0 then n = tonumber(Plain(l.text):match("(%d+)")) or 0 end
             return n
         end
+        -- (a pastime is no tally: an hour and more at the gathering alone, no errand in that
+        -- stay, is how that part of the day went, and stays in the body. 2026-11-24: three hours
+        -- of fishing at Shadowprey Village went untold in a chapter of errands)
+        local function Pastime(l)
+            local s = l.s
+            if not (l.meta.gather and s and s.t and s.e) or inRun[l] then return false end
+            if (s.questCount or 0) > 0 or s.run then return false end
+            return s.e - s.t >= 3600 and Count(l) >= 20
+        end
         for _, l in ipairs(lines) do
-            if l.cls == "craft" and not inRun[l] then
+            if l.cls == "craft" and Pastime(l) then
+                l.pastime = true
+                -- (its own sentence: where, how long, how many of the main kind)
+                local g, kind, most = l.meta.gather, nil, 0
+                for k, n in pairs(g) do if type(n) == "number" and n > most and P.pastime and P.pastime[k] then kind, most = k, n end end
+                local pool = kind and P.pastime[kind]
+                if pool then
+                    local s = l.s
+                    local where = (s.gatherPlace or {})[kind] or s.zone
+                    local hours = (s.e - s.t) / 3600
+                    local span = hours < 1.5 and "an hour" or hours < 2.5 and "two hours" or hours < 3.5 and "three hours"
+                        or ((A.JournalWords and A.JournalWords(math.floor(hours + 0.5)) or tostring(math.floor(hours + 0.5))) .. " hours")
+                    local count = A.JournalRough and A.JournalRough(most) or tostring(most)
+                    l.text = Pick("pastime:" .. kind, pool, {span = span, count = count, place = Place(where)}, true) or l.text
+                end
+            end
+        end
+        for _, l in ipairs(lines) do
+            if l.cls == "craft" and not inRun[l] and not l.pastime then
                 local c = Count(l)
                 local floor = l.meta.gather and 10 or 5
                 l.craftCount = c
@@ -2153,12 +2180,12 @@ function C.Apply(ctx)
             if not l.drop and (inRun[l] or l.cls == "quest" or l.cls == "death") then story = true end
         end
         if story then
-            for _, l in ipairs(lines) do if l.cls == "craft" and not inRun[l] then l.drop = true end end
+            for _, l in ipairs(lines) do if l.cls == "craft" and not inRun[l] and not l.pastime then l.drop = true end end
             best = nil
         end
         if best then
             for _, l in ipairs(lines) do
-                if l.cls == "craft" and not inRun[l] and l ~= best and not l.drop then l.drop = true end
+                if l.cls == "craft" and not inRun[l] and l ~= best and not l.drop and not l.pastime then l.drop = true end
             end
             -- (the one tally goes before the night-end line, never inside a scene)
             if not inRun[best] then best.toClose, best.closeRank = true, 1 end
@@ -2902,7 +2929,13 @@ function C.Apply(ctx)
                                 lines[#lines + 1] = l; byEp[landEp][#byEp[landEp] + 1] = l
                                 x.text = "From " .. headNames[1] .. ", " .. x.text:gsub("^%u", string.lower)
                             else
-                                x.text = "From " .. headNames[1] .. ", new to " .. (party and "us" or "me") .. why .. ", " .. x.text:gsub("^%u", string.lower)
+                                -- ("new to me" only for a first visit: "From Thunder Bluff, new to me" came
+                                -- on the third, 2026-11-24)
+                                local isNew = false
+                                for _, h in ipairs(head) do
+                                    for _, f in ipairs(h.firsts or {}) do if f.what == "zone" or f.what == "town" then isNew = true end end
+                                end
+                                x.text = "From " .. headNames[1] .. (isNew and (", new to " .. (party and "us" or "me")) or "") .. why .. ", " .. x.text:gsub("^%u", string.lower)
                             end
                         end
                     end

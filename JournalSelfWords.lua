@@ -3730,7 +3730,16 @@ W.compose = {
     -- foes, told in passing, never as a count of elites; a named one by name)
     adventureCompany = {"There {we} made common cause with {company}.", "{Company} joined {us} there."},
     adventureParted = {"After that, {them} went {their} own way.", "Then the company broke up, and {them} went {their} own way."},
-    adventureDanger = {"Nothing there died easily.", "What {we} fought there took a lot of killing.", "It was hard fighting, and it went on a long while."},
+    -- (2026-11-24: "took a lot of killing" said nothing; the danger as it felt, once a chapter)
+    adventureDanger = {"Every fight there was close.", "No fight there came easy.", "There was no easy fight in that place."},
+    -- (a pastime: an hour and more of gathering alone, told as how that part of the day went;
+    -- {span} "two hours", {place} where, {count} "nearly three hundred")
+    pastime = {
+        fishing = {"I spent {span} fishing at {place}, and caught {count} fish.", "I fished at {place} for {span}, and caught {count} fish."},
+        mining = {"I spent {span} mining in {place}, and worked {count} veins.", "I mined in {place} for {span}, {count} veins in all."},
+        herbs = {"I spent {span} picking herbs in {place}, {count} of them.", "I gathered herbs in {place} for {span}, {count} in all."},
+        skinning = {"I spent {span} skinning in {place}, {count} hides in all.", "I skinned beasts in {place} for {span}, {count} hides in all."},
+    },
     adventureNamed = {"{We} fought {names} there.", "{Names} stood against {us} there."},
     -- (lane O8: a journey told as one road. The setting out, hard or easy, with the lands crossed
     -- and, when all of it was new, that; the work far above the level; the dangers by place; one
@@ -3758,7 +3767,7 @@ W.compose = {
     journeyDoneAbove = {"In {far} there was work meant for travellers far stronger than {us}, and {we} saw it through all the same."},
     journeyKilled = {[0] = "killed me", [1] = "killed me", [2] = "cut me down", [3] = "cut me down"},
     journeyHardFelt = {"It was a hard road, and I was glad not to walk it alone.", "It was a hard road, and I was glad of the company on it."},
-    journeyDangerous = {"Nothing on that road died easily.", "What lived along that road took a lot of killing."},
+    journeyDangerous = {"Every fight on that road was close.", "Nothing on that road gave way without a fight."},
     journeyBack0 = {"In {span}, {we} had gone to {far} and back.", "{We} had been to {far} and back in {span}."},
     journeyBack1 = {"In {span}, {we} had been to {far} and back.", "{We} had been to {far} and back in {span}."},
     journeyBack2 = {"In {span}, {we} had made it to {far} and back.", "{We} had made it to {far} and back in {span}."},
